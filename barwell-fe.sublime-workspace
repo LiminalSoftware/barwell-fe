@@ -1,0 +1,851 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"HTTP",
+				"HTTPNotFound"
+			],
+			[
+				"lc",
+				"lcName"
+			],
+			[
+				"chang",
+				"changeFolderOpen"
+			],
+			[
+				"active",
+				"activeBranch"
+			],
+			[
+				"refre",
+				"refreshBranches"
+			],
+			[
+				"side",
+				"sidebarTemplate"
+			],
+			[
+				"marg",
+				"margin-right"
+			],
+			[
+				"backg",
+				"background-color"
+			],
+			[
+				"trans",
+				"transactionsTemplate"
+			],
+			[
+				"time",
+				"timeStampEncoder"
+			],
+			[
+				"txn",
+				"txnSummary"
+			],
+			[
+				"pk_",
+				"pk_field_id"
+			],
+			[
+				"fields",
+				"fieldsByName"
+			],
+			[
+				"field",
+				"fieldsByName"
+			],
+			[
+				"att",
+				"attributes"
+			],
+			[
+				"get",
+				"getModel"
+			],
+			[
+				"string",
+				"stringParser"
+			],
+			[
+				"act",
+				"activeBranch"
+			],
+			[
+				"deco",
+				"decoyKlass"
+			],
+			[
+				"conn",
+				"connection"
+			],
+			[
+				"to",
+				"toLowerCase"
+			],
+			[
+				"se",
+				"sequence"
+			],
+			[
+				"seq",
+				"seqSql"
+			],
+			[
+				"HTTPNo",
+				"HTTPNotFound"
+			],
+			[
+				"tabl",
+				"table_id"
+			],
+			[
+				"dbCon",
+				"dbConfig"
+			],
+			[
+				"ent",
+				"ent-list"
+			],
+			[
+				"legal",
+				"legalEntity"
+			],
+			[
+				"id",
+				"identifier"
+			],
+			[
+				"Not",
+				"NotFoundError"
+			],
+			[
+				"su",
+				"subqueries"
+			],
+			[
+				"pro",
+				"prototype"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "package.json",
+			"settings":
+			{
+				"buffer_size": 1494,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/mainRoutes.jsx",
+			"settings":
+			{
+				"buffer_size": 318,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/C/Users/549764/Downloads/react-starter-master (1)/react-starter-master/app/mainRoutes.jsx",
+			"settings":
+			{
+				"buffer_size": 1173,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/containers/Application/index.jsx",
+			"settings":
+			{
+				"buffer_size": 789,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/components/SideBar.jsx",
+			"settings":
+			{
+				"buffer_size": 462,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app/containers/SideBar/index.jsx",
+			"settings":
+			{
+				"buffer_size": 462,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app/containers/Application/style.less",
+			"settings":
+			{
+				"buffer_size": 62,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app/simple.html",
+			"settings":
+			{
+				"buffer_size": 188,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 374.0,
+		"selected_items":
+		[
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 384.0
+	},
+	"console":
+	{
+		"height": 49.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/barwell-fe.sublime-project",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/components/MainMenu.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/mainStores.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/components/SideBar",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/lib/server-development.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/lib/server-production.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/package.json",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/simple.html",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/webpack-production.config.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/build/stats.json",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/fe.html",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/fe.sublime-workspace",
+		"/C/Users/549764/Documents/GitHub/barwell/lib/shared/stores/memstore.js",
+		"/C/Users/549764/Documents/GitHub/barwell/test/shared/memstore.js",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/dbConfig.json",
+		"/C/Users/549764/Documents/CReD/api/coords example/sample.html",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/app/orm.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/app/models.json",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/models.json",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/db/util.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/crud.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/app/crud.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/test/endpoints.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/db/query.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/app/util.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/db/config.json",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/app/setup.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/app/packer.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/server.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/orm.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/packer.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/static/css/handsontable.css",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/static/js/app.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/static/css/style.css",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/static/index.html",
+		"/C/Users/549764/AppData/Roaming/Sublime Text 2/Packages/User/cons.sublime-snippet",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/static/css/pictonic.css",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/static/js/handsontable.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/db/setup.sql",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/db/drop.sql",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/test/countries.json",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/util.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/errors.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/setup.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/test/legalStructuresSubset.json",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/test/coverage.json",
+		"/C/Users/549764/AppData/Roaming/Sublime Text 2/Packages/GitGutter/GitGutter.sublime-settings",
+		"/C/Users/549764/Documents/GitHub/barwell/lib/shared/metamodels/keys.js",
+		"/C/Users/549764/Documents/GitHub/barwell/build/client/barwell.js",
+		"/C/oraclexe/app/oracle/product/11.2.0/server/network/ADMIN/tnsnames.ora",
+		"/C/Users/549764/Documents/GitHub/barwell/test/mocha.opts",
+		"/C/Users/549764/Documents/GitHub/barwell/lib/shared/metamodels/attributes.js",
+		"/C/Users/549764/Documents/GitHub/barwell/lib/shared/metamodels/models.js",
+		"/C/Users/549764/Documents/Projects/SS T2 CIP/NDS/parser.js",
+		"/C/Users/549764/Documents/hosts",
+		"/C/Users/549764/Documents/GitHub/barwell/package.json",
+		"/C/Windows/System32/drivers/etc/hosts",
+		"/C/Users/549764/Documents/CReD/Tax/Sandbox/cred-wsidebar.css",
+		"/C/Users/549764/Documents/CReD/Tax/Sandbox/cred.css",
+		"/C/Users/549764/Documents/GitHub/barwell/lib/shared/define.js",
+		"/C/Users/549764/Documents/GitHub/barwell/lib/shared/barwell.js",
+		"/C/Users/549764/Documents/GitHub/barwell/test/shared/metamodels.js",
+		"/C/Users/549764/Desktop/hosts",
+		"/C/Users/549764/Documents/GitHub/barwell/test/coverage.json",
+		"/C/Users/549764/Documents/GitHub/barwell/coverage.html",
+		"/C/Users/549764/AppData/Roaming/Sublime Text 2/Packages/Node Coverage/NodeCoverage.py",
+		"/C/Users/549764/AppData/Roaming/Sublime Text 2/Packages/Desert Night Color Scheme/desert_night.tmTheme",
+		"/C/Users/549764/AppData/Roaming/Sublime Text 2/Packages/GitGutter/git_gutter.py",
+		"/C/Users/549764/AppData/Roaming/Sublime Text 2/Packages/Package Control/Package Control.sublime-settings",
+		"/C/Users/549764/AppData/Roaming/Sublime Text 2/Packages/User/GitGutter.sublime-settings",
+		"/C/Users/549764/Documents/GitHub/barwell/lib/shared/stores/indexdbStore.js",
+		"/C/Users/549764/AppData/Roaming/Sublime Text 2/Packages/User/Git.sublime-settings",
+		"/C/Users/549764/AppData/Roaming/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/.gitignore",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/miniORM.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/setup.sql",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/db/setup.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/dbSetup.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/db/miniORM.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/rest.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/package.json",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/dbQuery.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/dbUtil.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/dbConfig.json",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/dbTestConfig.json",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/mocha.opts",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/queries/model.js",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/queries/getAllTables.sql",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/queries/getTables.sql",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/dbConfig.sql",
+		"/C/Users/549764/Documents/GitHub/clarient-rules/dbconfig.sql",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/static/css/style.css",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/static/index.html",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/static/css/pictonic.css",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/relRelationships.sql",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/relEntities.sql",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/package.json",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/relationship.sql",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/static/js/clarientGraph.js",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/server.js",
+		"/C/Users/549764/Documents/CReD/pricing/billing_v3.sql",
+		"/C/Users/549764/Documents/CReD/pricing/billing.sql",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/documentPerms.sql",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/leDocs.sql",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/leRels.sql",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/document.sql",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/static/js/sigma.parsers.json.js",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/static/drag-nodes.html",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/leReqs.sql",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/legalEntity.sql",
+		"/C/Users/549764/Downloads/sigma.js-master/sigma.js-master/examples/add-node-on-click.html",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/static/load-external-json.html",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/leDocsQuery.sql",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/.gitignore",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/leRelsQuery.sql",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/leQuery.sql",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/relsQuery.sql",
+		"/C/Users/549764/Documents/GitHub/barwell/lib/shared/stores/memStore.js",
+		"/C/Users/549764/Documents/GitHub/metabase/server.js",
+		"/C/Users/549764/Documents/GitHub/metabase/static/css/style.less",
+		"/C/Users/549764/Documents/GitHub/metabase/static/css/definitions.less",
+		"/C/Users/549764/Documents/CReD/Tax/Tax Policies/Comply Rules/CMS/cred.css",
+		"/C/Users/549764/Documents/CReD/Tax/Tax Policies/Comply Rules/common.css",
+		"/C/Users/549764/Documents/GitHub/metabase/static/index.html",
+		"/C/Users/549764/Documents/CReD/grapher/sigma.js-master/examples/drag-nodes.html",
+		"/C/Users/549764/Documents/Personal/github/barwell/package.json",
+		"/C/Users/549764/Documents/CReD/grapher/grapher/package.json",
+		"/C/Users/549764/Documents/GitHub/metabase/static/js/bundle.js"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 89.0,
+		"where_history":
+		[
+			"C:\\Users\\549764\\Documents\\GitHub\\barwell-fe\\",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"async",
+			"style",
+			"script_	",
+			"8080",
+			"console",
+			"parseFloat\\(",
+			"parseFloat\\((rect[\\d])\\)",
+			"console",
+			"packer",
+			"retr",
+			"qry",
+			"insert",
+			"retrieve",
+			"qualif",
+			"\\s*qualifier = model.encode.*$",
+			".*qualifier = model.encode.*",
+			"\\n.*qualifier = model.encode.*",
+			"qualifier = model.encode",
+			"\"audit\": true",
+			"qualifier = _.pick(qualifier, model.superkey);",
+			"\"n\"",
+			"^\\s+, (\\w+)",
+			"z",
+			"active",
+			"border",
+			"activeB",
+			"dotted",
+			"h1",
+			"container",
+			"router",
+			"routes",
+			"console",
+			"res.body",
+			"target",
+			"3px",
+			" class=\"data-tab\"",
+			"default",
+			"\"in\"",
+			"\"US\"",
+			"us",
+			"uk",
+			"regex",
+			"cons",
+			"encoder",
+			"source",
+			"risk_field_id",
+			"risk",
+			"console",
+			"stupid",
+			": true",
+			": false",
+			"\"N\"",
+			"\"Y\"",
+			"getIndex",
+			"getModel",
+			"getIndex",
+			"getModel",
+			"orm",
+			"orm.data",
+			"decode",
+			"\\bm\\b",
+			"index",
+			"audit",
+			"console",
+			"attr:",
+			"audit",
+			"font",
+			"serif",
+			"ir",
+			"cons",
+			"self",
+			"notfound",
+			"timeout",
+			"onEvent",
+			"getRelated",
+			"metamodels",
+			"sort",
+			"      ",
+			"test",
+			"var",
+			"bold",
+			"AD5C5C",
+			"8FBC8F",
+			"AD5C5C",
+			"{",
+			"10000",
+			"git",
+			"dummy",
+			"packer",
+			"console",
+			"primaryKey",
+			"lowerCaseKeys",
+			"crudFunc",
+			"lower",
+			" \"",
+			"primaryKey",
+			"err",
+			"orm",
+			"table_name",
+			"field_name",
+			"execute",
+			"}\n",
+			"')\n",
+			"attributes",
+			");\n",
+			"util",
+			"error",
+			"DBError",
+			"error",
+			"console",
+			"[],",
+			"identifier",
+			"db.lowerCaseKeys",
+			"console.",
+			"db.dblQt",
+			"{\n",
+			"def",
+			"res.body",
+			"console",
+			"	}).",
+			"dbTimeout",
+			"dbConfig",
+			"();\n",
+			";",
+			"name",
+			"update",
+			"();\n",
+			"result"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+			"",
+			"var $1",
+			"h2",
+			": \"Y\"",
+			": \"N\"",
+			"false",
+			"true",
+			"getModel",
+			"getIndex",
+			"this",
+			"_this",
+			"4CC24C",
+			"C44629",
+			"pk",
+			"op",
+			"pk",
+			"name",
+			"primaryKey",
+			"util.lowerCaseKeys",
+			"dblQt",
+			"",
+			"\\n",
+			"foreignKey",
+			"data",
+			"children",
+			"childre",
+			"\"",
+			""
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "package.json",
+					"settings":
+					{
+						"buffer_size": 1494,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								169,
+								169
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "app/mainRoutes.jsx",
+					"settings":
+					{
+						"buffer_size": 318,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								176,
+								178
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/C/Users/549764/Downloads/react-starter-master (1)/react-starter-master/app/mainRoutes.jsx",
+					"settings":
+					{
+						"buffer_size": 1173,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								688,
+								639
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "app/containers/Application/index.jsx",
+					"settings":
+					{
+						"buffer_size": 789,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								225,
+								225
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "app/components/SideBar.jsx",
+					"settings":
+					{
+						"buffer_size": 462,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								462
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "app/containers/SideBar/index.jsx",
+					"settings":
+					{
+						"buffer_size": 462,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								462,
+								462
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "app/containers/Application/style.less",
+					"settings":
+					{
+						"buffer_size": 62,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								60,
+								60
+							]
+						],
+						"settings":
+						{
+							"auto_name": "",
+							"syntax": "Packages/LESS/LESS.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "app/simple.html",
+					"settings":
+					{
+						"buffer_size": 188,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								188,
+								188
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 33.0
+	},
+	"input":
+	{
+		"height": 34.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+			[
+				"",
+				"/C/Users/549764/Documents/GitHub/barwell-fe/barwell-fe.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 251.0,
+	"status_bar_visible": true
+}
