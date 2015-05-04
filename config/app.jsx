@@ -2,6 +2,10 @@ import async from "async";
 import React from "react";
 import Router from "react-router";
 var routes = require("../app/" + __resourceQuery.substr(1) + "Routes");
+var stores = require("../app/" + __resourceQuery.substr(1) + "Stores");
+import withTimeout from "./withTimeout";
+import ReactUpdates from "react/lib/ReactUpdates";
+import StoresWrapper from "./StoresWrapper";
 
 var initialRun = true;
 

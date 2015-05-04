@@ -10,5 +10,5 @@ if(!Object.assign)
 
 // export routes
 module.exports = (
-	<Route name="app" path="/" handler={Application}></Route>
+	<Route name="app" handler={Application}></Route>
 );
