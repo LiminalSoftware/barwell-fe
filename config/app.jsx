@@ -21,9 +21,9 @@ Router.run(routes, Router.HistoryLocation, function(Application, state) {
 	}
 	initialRun = false;
 
-	ReactUpdates.batchedUpdates(function() {
-		stores.Router.setItemData("transition", state);
-	});
+	// ReactUpdates.batchedUpdates(function() {
+	// 	stores.Router.setItemData("transition", state);
+	// });
 
 	// try to fetch data for a defined timespan
 	// when the data is not fully fetched after the timeout components are rendered (with missing/old data)

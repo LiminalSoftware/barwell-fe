@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"text",
+				"text-decoration"
+			],
+			[
 				"HTTP",
 				"HTTPNotFound"
 			],
@@ -135,70 +139,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "package.json",
-			"settings":
-			{
-				"buffer_size": 1494,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "app/mainRoutes.jsx",
-			"settings":
-			{
-				"buffer_size": 318,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/C/Users/549764/Downloads/react-starter-master (1)/react-starter-master/app/mainRoutes.jsx",
-			"settings":
-			{
-				"buffer_size": 1173,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "app/containers/Application/index.jsx",
-			"settings":
-			{
-				"buffer_size": 789,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "app/components/SideBar.jsx",
-			"settings":
-			{
-				"buffer_size": 462,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "app/containers/SideBar/index.jsx",
-			"settings":
-			{
-				"buffer_size": 462,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "app/containers/Application/style.less",
-			"settings":
-			{
-				"buffer_size": 62,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "app/simple.html",
-			"settings":
-			{
-				"buffer_size": 188,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"command_palette":
@@ -244,14 +184,29 @@
 	},
 	"file_history":
 	[
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Application/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/simple.html",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/config/joinEntry.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/lib/server.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/mainStores.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/mainRoutes.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/routeHandlers/ModelPane.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/components/SideBar.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Application/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/make-webpack-config.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/config/app.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/routeHandlers/Application.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/index.jsx",
+		"/C/Users/549764/Downloads/react-starter-master (1)/react-starter-master/app/mainRoutes.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/package.json",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/barwell-fe.sublime-project",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/barwell-fe.sublime-project",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/components/MainMenu.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/mainStores.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/components/SideBar",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/lib/server-development.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/lib/server-production.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/package.json",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/simple.html",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/webpack-production.config.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/build/stats.json",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/fe.html",
@@ -356,22 +311,7 @@
 		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/legalEntity.sql",
 		"/C/Users/549764/Downloads/sigma.js-master/sigma.js-master/examples/add-node-on-click.html",
 		"/C/Users/549764/Documents/GitHub/clarient-graph/static/load-external-json.html",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/leDocsQuery.sql",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/.gitignore",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/leRelsQuery.sql",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/leQuery.sql",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/relsQuery.sql",
-		"/C/Users/549764/Documents/GitHub/barwell/lib/shared/stores/memStore.js",
-		"/C/Users/549764/Documents/GitHub/metabase/server.js",
-		"/C/Users/549764/Documents/GitHub/metabase/static/css/style.less",
-		"/C/Users/549764/Documents/GitHub/metabase/static/css/definitions.less",
-		"/C/Users/549764/Documents/CReD/Tax/Tax Policies/Comply Rules/CMS/cred.css",
-		"/C/Users/549764/Documents/CReD/Tax/Tax Policies/Comply Rules/common.css",
-		"/C/Users/549764/Documents/GitHub/metabase/static/index.html",
-		"/C/Users/549764/Documents/CReD/grapher/sigma.js-master/examples/drag-nodes.html",
-		"/C/Users/549764/Documents/Personal/github/barwell/package.json",
-		"/C/Users/549764/Documents/CReD/grapher/grapher/package.json",
-		"/C/Users/549764/Documents/GitHub/metabase/static/js/bundle.js"
+		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/leDocsQuery.sql"
 	],
 	"find":
 	{
@@ -382,6 +322,9 @@
 		"height": 89.0,
 		"where_history":
 		[
+			"<open folders>",
+			"app",
+			"",
 			"C:\\Users\\549764\\Documents\\GitHub\\barwell-fe\\",
 			""
 		]
@@ -391,6 +334,19 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"STYLE_URL",
+			"STYLE_ULR",
+			"setItemData",
+			"mergeUpdates",
+			"loading...",
+			"stylesheetLoaders",
+			"loadersByExtension",
+			"stylesheetLoaders",
+			"loadersByExtension",
+			"joinEntry",
+			"\";\n",
+			"db",
+			"DB",
 			"async",
 			"style",
 			"script_	",
@@ -505,25 +461,12 @@
 			"identifier",
 			"db.lowerCaseKeys",
 			"console.",
-			"db.dblQt",
-			"{\n",
-			"def",
-			"res.body",
-			"console",
-			"	}).",
-			"dbTimeout",
-			"dbConfig",
-			"();\n",
-			";",
-			"name",
-			"update",
-			"();\n",
-			"result"
+			"db.dblQt"
 		],
 		"highlight": true,
 		"in_selection": false,
 		"preserve_case": false,
-		"regex": true,
+		"regex": false,
 		"replace_history":
 		[
 			"",
@@ -564,225 +507,8 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "package.json",
-					"settings":
-					{
-						"buffer_size": 1494,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								169,
-								169
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JSON.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "app/mainRoutes.jsx",
-					"settings":
-					{
-						"buffer_size": 318,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								176,
-								178
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "/C/Users/549764/Downloads/react-starter-master (1)/react-starter-master/app/mainRoutes.jsx",
-					"settings":
-					{
-						"buffer_size": 1173,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								688,
-								639
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "app/containers/Application/index.jsx",
-					"settings":
-					{
-						"buffer_size": 789,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								225,
-								225
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "app/components/SideBar.jsx",
-					"settings":
-					{
-						"buffer_size": 462,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								462
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "app/containers/SideBar/index.jsx",
-					"settings":
-					{
-						"buffer_size": 462,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								462,
-								462
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "app/containers/Application/style.less",
-					"settings":
-					{
-						"buffer_size": 62,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								60,
-								60
-							]
-						],
-						"settings":
-						{
-							"auto_name": "",
-							"syntax": "Packages/LESS/LESS.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "app/simple.html",
-					"settings":
-					{
-						"buffer_size": 188,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								188,
-								188
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],

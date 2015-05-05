@@ -1,0 +1,31 @@
+@import "../../global.less";
+
+.left-side-bar {
+	background: @darkbg;
+	color: @lighttext;
+	h2 {
+		color: @textcolor;
+		font-size: 20px;
+	}
+	ul {
+		list-style: none;
+		padding: 0;
+		padding-left: 10px;
+		margin: 0;
+		li {
+			border-bottom: 1px solid @lightaccent;
+			
+			a {
+				display: block;
+				padding: 10px;
+				text-decoration: none;
+				font-size: 12px;
+				color: @lighttext;
+				
+				&:hover {
+					background: lighten(@darkbg, 10%);
+				}
+			}
+		}
+	}
+}
