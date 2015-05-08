@@ -10,14 +10,13 @@ export default class SideBar extends React.Component {
 	render() {
 		var modelLinks = barwell.ModelMeta.store.getObjects().map(function (mdl) {
 			var _this = this;
-			return <li key={mdl.synget(101)}>
-				<a href={"/app/model/"+mdl.synget(101)}>
-					<span className="icon icon-db-datasheet"></span>
+			return <li key={"mdl-li-" + mdl.synget(101)}>
+				<Link key={"mdl-link-" + mdl.synget(101)} to={"/app/model/"+mdl.synget(101)}>
+					<span key={"mdl-icon-" + mdl.synget(101)} className="icon icon-db-datasheet"></span>
 					{mdl.synget(102)}
-				</a></li>;
+				</Link></li>;
 		});
 		return <div className="left-side-bar">
-			<h2>Models</h2>
 			<ul>{modelLinks}</ul>
 		</div>;
 	}

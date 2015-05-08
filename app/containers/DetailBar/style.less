@@ -12,21 +12,22 @@
 	}
 	
 	h3 {
-		font-size: 16px;
+		font-size: 18px;
 		border-bottom: 3px solid @pureGray2;
 	}
 
-	h2, h3 {
+	h2, h3, h4, h5 {
 		color: @pureGray1;
 		font-weight: 400;
 		padding: 5px;
+		margin-bottom: 1px;
 	}
 
 	table.detail-table {
 		width: 100%;
 		border-collapse: collapse;
 		color: @pureGray1;
-		font-size: 12px;
+		font-size: 14px;
 		td, th {
 			padding: 3px;
 		}
@@ -34,8 +35,12 @@
 			border-bottom: 1px dotted @pureGray2;
 		}
 		th {
+			text-align: left;
 			border-bottom: 1px solid @pureGray2;	
 			font-weight: 400;
+		}
+		tr:last-child > td {
+			border-bottom: 1px solid @pureGray2;
 		}
 	}
 }

@@ -10,6 +10,7 @@ export default class TabularPane extends React.Component {
 	componentDidMount () {
 		var _this = this;
 		var model = barwell.ModelMeta.store.synget(101, this.props.modelId);
+		this.model = barwell.ModelMeta.store.synget(101, this.props.modelId);
 		this.setState({offset: 0, records: 100});
 		this.cursor = this.getCursor();
 		this.cursor.on('fetch', function () {
@@ -20,7 +21,6 @@ export default class TabularPane extends React.Component {
 	getCursor () {
 		var _this = this;
 		var model = barwell.ModelMeta.store.synget(101, this.props.modelId);
-		var cursorProps = {};
 		this.cursor = model.store.getCursor(this.state);
 		return this.cursor;
 	}
@@ -47,10 +47,11 @@ export default class TabularPane extends React.Component {
 			rows.push(<tr key={i}>{props}</tr>);
 		}
 		return <div className="model-pane">
-			<h3>model detail:  {model.synget(102)}</h3>
 			<table className="data-table">
 				<tr key="header">{header}</tr>
+				<tbody>
 				{rows}
+				</tbody>
 			</table>
 		</div>;
 	}

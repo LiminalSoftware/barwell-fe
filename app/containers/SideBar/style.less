@@ -1,10 +1,16 @@
 @import "../../global.less";
 
+.wedge-icon {
+	transform: rotate(90deg);
+	font-size: 11px;
+	color: @pureGray2;
+}
+
 .left-side-bar {
 	flex: 0 0 12em;
 	order: -2;
-
 	background: @pureGray4;
+	
 	
 	p.hide-button {
 		padding: 5px;
@@ -30,12 +36,13 @@
 		padding: 5px;
 	}
 	ul {
+
 		list-style: none;
 		padding: 0;
 		margin: 0;
+		margin-top: 33px;
 		li {
 			border-bottom: 1px solid @pureGray3;
-			
 			a {
 				.icon {
 
@@ -48,7 +55,7 @@
 				color: @pureGray1;
 				border-left: 4px solid @pureGray4;
 
-				&:hover {
+				&.active {
 					background-color: @pureGray3;
 					border-left: 4px solid @green3;
 				}

@@ -11,9 +11,6 @@ export default class ModelPane extends React.Component {
 	}
 	render() {
 		return <div className="model-views">
-			<ul className="view-tabs">
-			<li>Placeholder</li>
-			</ul>
 			<div className="model-panes">
 				<DetailBar modelId={this.props.modelId}/>
 				<TabularPane modelId={this.props.modelId}/>
