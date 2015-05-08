@@ -1,29 +1,56 @@
 @import "../../global.less";
 
 .left-side-bar {
-	background: @darkbg;
-	color: @lighttext;
+	flex: 0 0 12em;
+	order: -2;
+
+	background: @pureGray4;
+	
+	p.hide-button {
+		padding: 5px;
+		color: @pureGray1;
+		border: 1px solid @pureGray3;
+		margin: 5px;
+		border-radius: 5px;
+		cursor: pointer;
+
+		.icon {
+			font-size: 15px;
+		}
+		&:hover {
+			background-color: @pureGray3;
+		}
+	}
+
 	h2 {
-		color: @textcolor;
+		color: @pureGray1;
+		font-weight: 400;
 		font-size: 20px;
+		border-bottom: 5px solid @pureGray3;
+		padding: 5px;
 	}
 	ul {
 		list-style: none;
 		padding: 0;
-		padding-left: 10px;
 		margin: 0;
 		li {
-			border-bottom: 1px solid @lightaccent;
+			border-bottom: 1px solid @pureGray3;
 			
 			a {
+				.icon {
+
+				}
 				display: block;
 				padding: 10px;
+				padding-left: 14px;
 				text-decoration: none;
-				font-size: 12px;
-				color: @lighttext;
-				
+				font-size: 14px;
+				color: @pureGray1;
+				border-left: 4px solid @pureGray4;
+
 				&:hover {
-					background: lighten(@darkbg, 10%);
+					background-color: @pureGray3;
+					border-left: 4px solid @green3;
 				}
 			}
 		}

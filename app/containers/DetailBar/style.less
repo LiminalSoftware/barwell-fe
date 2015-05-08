@@ -1,0 +1,41 @@
+@import "../../global.less";
+
+.detail-bar {
+	flex: 0 0 18em;
+	order: -1;
+	background: @pureGray3;
+	padding: 10px;
+
+	h2 {
+		font-size: 20px;
+		border-bottom: 5px solid @pureGray3;
+	}
+	
+	h3 {
+		font-size: 16px;
+		border-bottom: 3px solid @pureGray2;
+	}
+
+	h2, h3 {
+		color: @pureGray1;
+		font-weight: 400;
+		padding: 5px;
+	}
+
+	table.detail-table {
+		width: 100%;
+		border-collapse: collapse;
+		color: @pureGray1;
+		font-size: 12px;
+		td, th {
+			padding: 3px;
+		}
+		td {
+			border-bottom: 1px dotted @pureGray2;
+		}
+		th {
+			border-bottom: 1px solid @pureGray2;	
+			font-weight: 400;
+		}
+	}
+}

@@ -1,5 +1,7 @@
 import React from "react";
 import { RouteHandler } from "react-router";
+import DetailBar from "containers/DetailBar";
+import TabularPane from "containers/TabularPane";
 import barwell from "barwell";
 import styles from "./style.less";
 
@@ -8,18 +10,14 @@ export default class ModelPane extends React.Component {
 		return params;
 	}
 	render() {
-		var model = barwell.ModelMeta.store.synget(101, this.props.modelId);
-		var columns = model.synget('Fields');
-		var header = columns.map(function (col) {
-			return <th>{col.synget(202)}</th>;
-		});
-		
-
-		return <div className={"model-pane"}>
-			<h3>model detail:  {model.synget(102)}</h3>
-			<table className="data-table">
-				<tr>{header}</tr>
-			</table>
+		return <div className="model-views">
+			<ul className="view-tabs">
+			<li>Placeholder</li>
+			</ul>
+			<div className="model-panes">
+				<DetailBar modelId={this.props.modelId}/>
+				<TabularPane modelId={this.props.modelId}/>
+			</div>
 		</div>;
 	}
 }
