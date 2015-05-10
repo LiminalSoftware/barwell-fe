@@ -1,16 +1,13 @@
 import React from "react";
 import { RouteHandler } from "react-router";
-import barwell from "barwell";
+import bw from "barwell";
 import styles from "./style.less";
 
 export default class TabularPane extends React.Component {
-	static getProps (stores, params) {
-		return params;
-	}
 	componentDidMount () {
 		var _this = this;
-		var model = barwell.ModelMeta.store.synget(101, this.props.modelId);
-		this.model = barwell.ModelMeta.store.synget(101, this.props.modelId);
+		var modelId = this.props.params.modelId;
+		var model = bw.ModelMeta.store.synget(101, modelId);
 		this.setState({offset: 0, records: 100});
 		this.cursor = this.getCursor();
 		this.cursor.on('fetch', function () {
@@ -20,7 +17,7 @@ export default class TabularPane extends React.Component {
 	}
 	getCursor () {
 		var _this = this;
-		var model = barwell.ModelMeta.store.synget(101, this.props.modelId);
+		var model = bw.ModelMeta.store.synget(101, this.props.params.modelId);
 		this.cursor = model.store.getCursor(this.state);
 		return this.cursor;
 	}
@@ -30,8 +27,9 @@ export default class TabularPane extends React.Component {
 	}
 	render () {
 		var _this = this;
-		var model = barwell.ModelMeta.store.synget(101, this.props.modelId);
-		var columns = model.synget('Fields');
+		var modelId = this.props.params.modelId;
+		var model = bw.ModelMeta.store.synget(101, modelId);
+		var columns = model.synget(bw.DEF.MODEL_FIELDS);
 		var header = columns.map(function (col) {
 			return <th key={"header--"+col.synget(201)}>{col.synget(202)}</th>;
 		});

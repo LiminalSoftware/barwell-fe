@@ -21,10 +21,20 @@ url("assets/fonts/41a46789-4631-4e39-8d8c-5ca20e68195b.ttf") format("truetype"),
 url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b31b-8f900cf2750b") format("svg");
 }
 
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 @darkbg: rgb(150,140,109);
 
 
 @green3: #46b980;
+@green4: lighten(@green3,30%);
 
 @pureGray1: #F5F5F5;
 @pureGray2: #A5A5A5;
@@ -43,7 +53,33 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 @texthover: darkred;
 
 
+.clickable {
+	cursor: pointer;
+}
+
 .icon {
 	font-size: 17px;
 	padding-right: 5px;
+}
+
+.icon-grayed {
+	color: @pureGray2;
+}
+
+.icon-greened {
+	color: @green4;
+}
+
+.wedge-icon {
+	.noselect;
+	transform: rotate(90deg);
+	-webkit-transition: all 50ms ease-in;
+	cursor: pointer;
+	font-size: 11px;
+	color: @pureGray2;
+	margin-right: 8px;
+
+	&.wedge-open {
+		transform: rotate(180deg);
+	}
 }

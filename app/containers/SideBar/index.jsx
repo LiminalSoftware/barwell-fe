@@ -1,23 +1,53 @@
 import React from "react";
 import { Link } from "react-router";
-import barwell from "barwell";
+import bw from "barwell";
 import styles from "./style.less";
 
+
 export default class SideBar extends React.Component {
-	static getProps(stores, params) {
-		return params;
-	}
 	render() {
-		var modelLinks = barwell.ModelMeta.store.getObjects().map(function (mdl) {
-			var _this = this;
-			return <li key={"mdl-li-" + mdl.synget(101)}>
-				<Link key={"mdl-link-" + mdl.synget(101)} to={"/app/model/"+mdl.synget(101)}>
-					<span key={"mdl-icon-" + mdl.synget(101)} className="icon icon-db-datasheet"></span>
-					{mdl.synget(102)}
-				</Link></li>;
+		var _this = this;
+		var modelLinks = bw.ModelMeta.store.getObjects().map(function (mdl) {
+			return <ModelLink model={mdl} {..._this.props}/>;
 		});
 		return <div className="left-side-bar">
 			<ul>{modelLinks}</ul>
 		</div>;
 	}
 }
+
+class ViewLink extends React.Component {
+	render() {
+		var view = this.props.view;
+		var viewId = view.synget(bw.DEF.VIEW_ID);
+		var modelId = view.synget(bw.DEF.VIEW_MODELID);
+		return <li key={"view-li-" + view.synget(bw.DEF.VIEW_ID)}>
+			<Link to="view" params={{modelId: modelId, viewId: viewId}} key={"view-link-" + viewId}>
+				{view.synget(bw.DEF.VIEW_NAME)}
+			</Link></li>;
+	}
+}
+
+export class ModelLink extends React.Component {
+	render() {
+		var _this = this;
+		var mdl = this.props.model;
+		var modelId = mdl.synget(bw.DEF.MODEL_ID);
+		var views = mdl.synget('Views').map(function (view) {
+			return <ViewLink view={view} model={mdl}/>;
+		});
+		
+		return <li key={"mdl-li-" + modelId}>
+			<Link to="model" params={{modelId: mdl.synget(bw.DEF.MODEL_ID)}} key={"model-link-" + modelId}>
+				{mdl.synget(bw.DEF.MODEL_NAME)}
+			</Link>
+			<ul key={"model-views-ul-" + modelId} className={modelId == this.props.params.modelId ? 'active' : 'hidden'}>
+				{views}
+				<li key={"model-add-li-" + modelId}>
+					<a key={"model-add-li-" + modelId}><span className="wedge-icon icon-plus"></span> New view</a>
+				</li>
+			</ul>
+		</li>;
+	}
+}
+

@@ -1,33 +1,13 @@
 @import "../../global.less";
 
-.wedge-icon {
-	transform: rotate(90deg);
-	font-size: 11px;
-	color: @pureGray2;
-}
+
 
 .left-side-bar {
 	flex: 0 0 12em;
 	order: -2;
 	background: @pureGray4;
+	padding: 0;
 	
-	
-	p.hide-button {
-		padding: 5px;
-		color: @pureGray1;
-		border: 1px solid @pureGray3;
-		margin: 5px;
-		border-radius: 5px;
-		cursor: pointer;
-
-		.icon {
-			font-size: 15px;
-		}
-		&:hover {
-			background-color: @pureGray3;
-		}
-	}
-
 	h2 {
 		color: @pureGray1;
 		font-weight: 400;
@@ -35,23 +15,38 @@
 		border-bottom: 5px solid @pureGray3;
 		padding: 5px;
 	}
-	ul {
 
+	ul.hidden {
+		max-height: 0;
+		overflow: hidden;
+	}
+
+	ul.active {
+	}
+
+	ul {
+		-webkit-transition: all 0.2us ease-in;
 		list-style: none;
 		padding: 0;
+		
 		margin: 0;
-		margin-top: 33px;
+
+
 		li {
+			color: @pureGray1;
+			font-size: 15px;
+
 			border-bottom: 1px solid @pureGray3;
+			
+
 			a {
 				.icon {
 
 				}
 				display: block;
 				padding: 10px;
-				padding-left: 14px;
 				text-decoration: none;
-				font-size: 14px;
+				
 				color: @pureGray1;
 				border-left: 4px solid @pureGray4;
 
