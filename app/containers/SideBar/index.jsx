@@ -33,18 +33,19 @@ export class ModelLink extends React.Component {
 		var _this = this;
 		var mdl = this.props.model;
 		var modelId = mdl.synget(bw.DEF.MODEL_ID);
+		var defaultView = mdl.synget(bw.DEF.MODEL_PRIMARYVIEW);
 		var views = mdl.synget('Views').map(function (view) {
 			return <ViewLink view={view} model={mdl}/>;
 		});
 		
 		return <li key={"mdl-li-" + modelId}>
-			<Link to="model" params={{modelId: mdl.synget(bw.DEF.MODEL_ID)}} key={"model-link-" + modelId}>
+			<Link to="view" params={{modelId: mdl.synget(bw.DEF.MODEL_ID), viewId: defaultView}} key={"model-link-" + modelId}>
 				{mdl.synget(bw.DEF.MODEL_NAME)}
 			</Link>
 			<ul key={"model-views-ul-" + modelId} className={modelId == this.props.params.modelId ? 'active' : 'hidden'}>
 				{views}
 				<li key={"model-add-li-" + modelId}>
-					<a key={"model-add-li-" + modelId}><span className="wedge-icon icon-plus"></span> New view</a>
+					<a key={"model-add-li-" + modelId}><span className="small grayed icon icon-plus"></span> New view</a>
 				</li>
 			</ul>
 		</li>;

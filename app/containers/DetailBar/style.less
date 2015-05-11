@@ -1,38 +1,123 @@
 @import "../../global.less";
 
+::-webkit-scrollbar {
+   width: 8px;
+   margin: 2px;
+}
+ 
+/* Track */
+::-webkit-scrollbar-track {
+   -webkit-border-radius: 10px;
+   background: @pureGray3;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+	width: 6px;
+	margin: 1px;
+   -webkit-border-radius: 8px;
+   border-radius: 10px;
+   background: @pureGray2;
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: @pureGray2;
+}
+
+
+ul.detail-panels {
+	padding: 0;
+	margin: 0;
+	list-style: none;
+	display: flex;
+	// flex-direction: row;
+	padding: 10px;
+	padding-top: 0;
+	background-color: @pureGray3;
+	z-index: 10;
+
+	li {
+		.clickable;
+		flex-direction: column;
+		width: 100vh;
+		color: @pureGray1;
+		font-weight: 400;
+		margin: 0;
+		margin-right: 10px;
+		h2, h3, h4, h5 {
+			padding: 5px;
+			padding-left: 0;
+			margin: 0;
+			&:hover {
+				border-color: @pureGray2;	
+			}
+			&.active {
+				border-color: @green3;
+			}
+		}
+
+		
+	}
+}
+
+.model-details, .view-details {
+	flex-direction: column;
+	overflow-y: scroll;
+	display: flex;
+	overflow-y: scroll;
+	padding: 10px;
+}
+
+
 .detail-bar {
 	flex: 0 0 18em;
+	height: 100vh;	
+
+	display: flex;
+	flex-direction: column;
+	
+	
 	order: -1;
 	background: @pureGray3;
-	padding: 10px;
+	
 
 	h2 {
-		font-size: 20px;
+		font-size: 17px;
 		border-bottom: 5px solid @pureGray3;
 	}
 	
 	h3 {
-		font-size: 18px;
-		border-bottom: 3px solid @pureGray2;
+		font-size: 17px;
+		border-bottom: 2px solid @pureGray2;
 	}
 
 	h2, h3, h4, h5 {
 		color: @pureGray1;
 		font-weight: 400;
 		padding: 5px;
-		margin-bottom: 1px;
 	}
 
 	table.detail-table {
 		width: 100%;
 		border-collapse: collapse;
 		color: @pureGray1;
-		font-size: 15px;
+		font-size: 13px;
 		td, th {
 			padding: 3px;
 		}
 		td {
 			border-bottom: 1px dotted @pureGray2;
+			input {
+				border: none;
+				border-bottom: 1px solid @pureGray1;
+				background: none;
+				font-size: 13px;
+				font-family: "Neue Haas Unica Thin", "Helvetica", sans-serif;
+				color: @pureGray1;
+				width: 100%;
+				outline: 0;
+				padding: 0;
+				margin: 0;
+			}
 		}
 		th {
 			text-align: left;
@@ -42,5 +127,10 @@
 		tr:last-child > td {
 			border-bottom: 1px solid @pureGray2;
 		}
+	}
+
+	a.new-attr {
+		color: @pureGray1;
+		cursor: pointer;
 	}
 }
