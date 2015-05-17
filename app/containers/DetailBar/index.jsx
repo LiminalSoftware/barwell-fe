@@ -6,6 +6,10 @@ import ModelDefinition from "./ModelDefinition";
 import TabularViewConfig from "../Views/Tabular/Config";
 
 var DetailBar = React.createClass({
+	componentDidMount: function () {
+		var view = this.props.view;
+		view.on('update', this.render.bind(this));
+	},
 	getInitialState: function () {
 		return {activePane: "modelDef"};
 	},
@@ -20,17 +24,12 @@ var DetailBar = React.createClass({
 		var view = this.props.view;
 		var viewData = view.synget(bw.DEF.VIEW_DATA);
 		var model = this.props.model;
-		var content;
-
+		var viewConfig;
 		
-		if (this.state.activePane == "modelDef")
-				content = <ModelDefinition view={view} model={model} />;
-		if (this.state.activePane == "viewConfig") {
-			if (viewData.type === 'Tabular')
-				content = <TabularViewConfig view={view} model={model} />;
-			else 
-				content = <div>Placeholder</div>;
-		}
+		if (viewData.type === 'Tabular')
+			viewConfig = <TabularViewConfig view={view} model={model} visible={!!(this.state.activePane == "viewConfig")}/>;
+		else 
+			viewConfig = <div>Placeholder</div>;
 			
 		return <div key="detail-bar" className="detail-bar">
 			<ul className="detail-panels">
@@ -38,7 +37,8 @@ var DetailBar = React.createClass({
 				<li><h2 className={this.state.activePane == "viewConfig" ? "active" : ""} onClick={this.showViewConfig}>View</h2></li>
 				<li><h2>Details</h2></li>
 			</ul>
-			{content}
+			<ModelDefinition view={view} model={model} visible={!!(this.state.activePane == "modelDef")} />
+			{viewConfig}
 		</div>;
 	}
 });
