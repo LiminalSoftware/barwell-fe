@@ -143,7 +143,7 @@ var ColumnDetail = React.createClass({
 		var name = col.synget(bw.DEF.ATTR_NAME);
 		var wedgeClasses = "small grayed icon icon-geo-triangle " +
 			(this.state.open ? " wedge open" : "wedge closed");
-		var nameField = (this.state.editing ? <input type="textbox" value={name}/> : {name} );
+		var nameField = (this.state.editing ? <input type="text" value={name}/> : {name} );
 		var key = "attr-" + colId;
 		
 		return <tr key={key}>

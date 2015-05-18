@@ -18,6 +18,10 @@ var TabularPane = React.createClass ({
 				'top': 1,
 				'right': 0,
 				'bottom': 1
+			},
+			'anchor': {
+				"left": 0,
+				"top": 0
 			}};
 	},
 
@@ -103,7 +107,7 @@ var TabularPane = React.createClass ({
 		var viewData = view.synget(bw.DEF.VIEW_DATA);
 		var columns = _.filter(viewData.columnList, function(col) {return col.visible;});
 		var i = 0;
-		var width = 1;
+		var width = 0;
 		var height = (this.state.selection.bottom - this.state.selection.top + 1) * ROW_HEIGHT;
 		var topPx = 12 + this.state.selection.top * ROW_HEIGHT;
 		var leftPx = 1;
