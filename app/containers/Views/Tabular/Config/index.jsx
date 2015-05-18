@@ -70,7 +70,7 @@ var ColumnDetail = React.createClass({
 		var wedgeClasses = "small grayed icon icon-geo-triangle " +
 			(this.state.open ? " wedge open" : "wedge closed");
 		var name = config.name;
-		var nameField = (this.state.editing ? <input type="textbox" value={name}/> : {name} );
+		var nameField = (this.state.editing ? <input type="textbox" value={name}/> : name );
 		var key = "attr-" + config.id;
 		
 		return <tr key={key}>

@@ -7,21 +7,21 @@ import _ from 'underscore';
 
 var HEADER_HEIGHT = 35;
 var ROW_HEIGHT = 21;
-
+var TOP_OFFSET = 12;
 var TabularPane = React.createClass ({
 	getInitialState: function () {
 		return {
 			'offset': 0, 
 			'records': 100, 
 			'selection': {
-				'left': 0, 
+				'left': 1, 
 				'top': 1,
-				'right': 0,
+				'right': 1,
 				'bottom': 1
 			},
 			'anchor': {
-				"left": 0,
-				"top": 0
+				"left": 1,
+				"top": 1
 			}};
 	},
 
@@ -58,7 +58,7 @@ var TabularPane = React.createClass ({
 	},
 
 	handleKey: function (event) {
-		console.log('move!');
+		
 	},
 
 	handleClick: function (event) {
@@ -96,8 +96,6 @@ var TabularPane = React.createClass ({
 			anc.left = sel.right = sel.left = colNum;
 			anc.top = sel.top = sel.bottom = rowNum;
 		}
-		console.log('sel: '+ JSON.stringify(sel, null, 2));
-		console.log('anc: '+ JSON.stringify(anc, null, 2));
 		this.setState({"selection": sel, "anchor": anc});
 	},
 
@@ -109,8 +107,8 @@ var TabularPane = React.createClass ({
 		var i = 0;
 		var width = 0;
 		var height = (this.state.selection.bottom - this.state.selection.top + 1) * ROW_HEIGHT;
-		var topPx = 12 + this.state.selection.top * ROW_HEIGHT;
-		var leftPx = 1;
+		var topPx = TOP_OFFSET + 1 + this.state.selection.top * ROW_HEIGHT;
+		var leftPx = 2;
 		
 		columns.forEach(function (col) {
 			i++;
@@ -136,7 +134,7 @@ var TabularPane = React.createClass ({
 		var i = 0;
 		var width;
 		var height = ROW_HEIGHT;
-		var topPx = 12 + this.state.selection.top * ROW_HEIGHT;
+		var topPx = TOP_OFFSET + this.state.anchor.top * ROW_HEIGHT;
 		var leftPx = 1;
 		
 		columns.forEach(function (col) {

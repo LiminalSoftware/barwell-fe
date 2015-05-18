@@ -1,3 +1,8 @@
 /node_modules
 /build
 .vagrant
+barwell-fe.sublime-workspace
+lib-cov
+*.pid
+*.seed
+*.log
