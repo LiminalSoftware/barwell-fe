@@ -3,6 +3,19 @@ import { Link } from "react-router";
 import bw from "barwell";
 import styles from "./style.less";
 
+
+var KEY_ICONS = ["icon-geo-curvitri", "icon-geo-circle", "icon-geo-trifoil", "icon-geo-diamond"];
+var KEY_COLORS = ["greened", "blued", "reddened"];
+
+var getIconClasses = function (ordinal) {
+	return [
+		"small", 
+		"icon", 
+		KEY_ICONS[ordinal % KEY_ICONS.length], 
+		KEY_COLORS[ordinal % KEY_COLORS.length]
+	].join(" ");
+}
+
 var ModelDefinition = React.createClass({
 	handleAddNewAttr: function (event) {
 		event.preventDefault();
@@ -19,13 +32,19 @@ var ModelDefinition = React.createClass({
 		var columns = model.synget('Fields');
 		var keys = model.synget('Keys');
 		var relations = model.synget('Relations');
-		
+		var iter = 0;
+		var keyOrd = {};
+
+		keys.forEach(function (key) {
+			return keyOrd[key.synget(bw.DEF.KEY_ID)] = iter++;
+		})
+
 		var colList = columns.map(function (col) {
-			return <ColumnDetail column = {col} view = {view} />;
+			return <ColumnDetail column = {col} view = {view} keyOrd = {keyOrd} />;
 		});
 
-		var keyList = keys.map(function (bwKey) {
-			return <KeyDetail view = {view} bwKey = {bwKey} />;
+		var keyList = keys.map(function (key) {
+			return <KeyDetail view = {view} mdlKey = {key} keyOrd = {keyOrd} />;
 		});
 
 		var relList = relations.map(function (rel) {
@@ -36,10 +55,10 @@ var ModelDefinition = React.createClass({
 			<h3 key="attr-header">Attributes <span className="info-box"></span> </h3>
 			<table key="attr-table" className="detail-table">
 				<tr key="attr-header-row">
+					<th key="attr-header-actions"></th>
 					<th key="attr-header-name">Name</th>
 					<th key="attr-header-type">Type</th>
 					<th key="attr-header-key">Keys</th>
-					<th key="attr-header-actions">Actions</th>
 				</tr>
 				<tbody>{colList}</tbody>
 			</table>
@@ -50,6 +69,7 @@ var ModelDefinition = React.createClass({
 				<tr key="key-header-row">
 					<th key="key-header-expand"></th>
 					<th key="key-header-name">Name</th>
+					<th key="key-header-icon"></th>
 					<th key="key-header-uniq">Unique?</th>
 				</tr>
 				<tbody>
@@ -83,16 +103,23 @@ var KeyDetail = React.createClass({
 		this.setState({open: !this.state.open});
 	},
 	render: function () {
-		var key = this.props.bwKey;
+		var key = this.props.mdlKey;
+		var keyOrd = this.props.keyOrd;
 		var view = this.props.view;
 		var name = key.synget(bw.DEF.KEY_NAME);
 		var uniq = key.synget(bw.DEF.KEY_UNIQ);
 		var reactKey = 'key-' + key.synget(bw.DEF.KEY_ID);
-		var wedgeClasses = "small grayed icon icon-geo-triangle " +
-			(this.state.open ? " wedge open" : "wedge closed");
+		var wedgeClasses = "small grayed icon wedge icon-geo-triangle " +
+			(this.state.open ? "open" : "closed");
+		var ord = keyOrd[key.synget(bw.DEF.KEY_ID)];
+		var keyIcon = <span className={getIconClasses(ord)}></span>;
+
+		var components = key.synget('Components');
+
 		return <tr key={reactKey}>
 			<td onClick={this.toggleDetails} key={key + '-expand'}><span className={wedgeClasses}></span></td>
 			<td key={reactKey+'-name'}>{name}</td>
+			<td key={reactKey+'-icon'}>{keyIcon}</td>
 			<td key={reactKey+'-uniq'}><input type="checkbox" value={uniq}></input></td>
 		</tr>;
 	}
@@ -138,21 +165,36 @@ var ColumnDetail = React.createClass({
 	},
 	render: function () {
 		var col = this.props.column;
+		var keyOrd = this.props.keyOrd;
 		var view = this.props.view;
 		var colId = col.synget(bw.DEF.ATTR_ID);
 		var name = col.synget(bw.DEF.ATTR_NAME);
 		var wedgeClasses = "small grayed icon icon-geo-triangle " +
 			(this.state.open ? " wedge open" : "wedge closed");
 		var nameField = (this.state.editing ? <input type="text" value={name}/> : {name} );
-		var key = "attr-" + colId;
+		var keyIcons = [];
+		var components = col.synget('Key components');
 		
+		if (!!components) {
+			components.forEach(function (comp) {
+				var key = comp.synget('Key');
+				var ord = keyOrd[key.synget(bw.DEF.KEY_ID)];
+				keyIcons.push(	<span className={getIconClasses(ord)}></span>);
+			});
+		}
+
+		var key = "attr-" + colId;
 		return <tr key={key}>
+			<td key={key + '-actions'}>
+
+			</td>
 			<td onDoubleClick={this.handleClick} key={key + '-name'}>
 				{nameField}
 			</td>
 			<td key={key + '-type'}>{col.synget(203)}</td>
-			<td key={key + '-keys'}></td>
-			<td key={key + '-actions'}><span className={"clickable grayed icon icon-trash"}></span></td>
+			<td key={key + '-keys'}>
+				{keyIcons}
+			</td>
 		</tr>	
 	}
 });

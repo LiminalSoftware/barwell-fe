@@ -26,6 +26,7 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 @green3: #46b980;
 @green4: lighten(@green3,30%);
 
+@blue3: steelblue;
 @blue4: lighten(steelblue, 20%);
 
 @pureGray1: #F5F5F5;
@@ -37,6 +38,8 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 @gray2: #f1ede4;
 @gray3: #c2c0bc;
 @gray5: #484848;
+
+@red3:  lighten(red, 40%);
 
 
 @lighttext: white;
@@ -98,6 +101,7 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 	text-align: center;
 	.noselect;
 	font-size: 17px;
+	width: 10 px;
 	margin-right: 8px;
 	&.grayed {
 		-webkit-transition: all 100ms ease-in;
@@ -117,8 +121,13 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 		color: @green4;
 	}
 
+	&.reddened {
+		color: @red3;
+	}
+
 	&.small {
 		font-size: 11px;
+		margin-right: 6px;
 	}
 
 }

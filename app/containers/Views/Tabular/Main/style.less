@@ -25,8 +25,10 @@
 .data-table {
 	table-layout: fixed;
 	border-collapse: collapse;
+	.noselect;
 	
 	thead {
+		.noselect;
 		width: 1200px;
 		position: absolute;
 		top: 0px;
@@ -34,6 +36,7 @@
 		z-index: 10;
 	}
 	tbody {
+		.noselect;
 		width: 1200px;
 		position: absolute;
 		top: 35px;		
@@ -42,9 +45,8 @@
 
 	tr {
 		td, th {
+			.noselect;
 			font-size: 12px;
-			
-			
 			color: @gray5;
 			overflow: hidden;
   			text-overflow: ellipsis;
@@ -55,6 +57,14 @@
   			cursor: pointer;
 		}
 
+		th.highlighter {
+			width: 5px;
+		}
+
+		td.highlighter {
+			width: 5px;
+		}
+
 		td {
 			background: @gray1;
 			
@@ -63,6 +73,18 @@
 		th {
 			background: @gray2;
 			height: 30px;
+			position: relative;
+			.table-resizer {
+				position: absolute;
+				right: 0;
+				top: 0;
+				bottom: 0;
+				width: 5px;
+				cursor: col-resize;
+				&:hover {
+					background: rgba(20,100,255,0.1);
+				}
+			}
 		}
 	}
 }
@@ -78,6 +100,7 @@ div.selection {
 
 	-webkit-transition: all 50ms ease-in;
 	transition: all 50ms ease-in;
+	border-radius: 3px;
 }
 
 div.anchor {
@@ -86,8 +109,21 @@ div.anchor {
 	top: 0;
 	left: 0;
 	border: 2px solid steelblue;
+	border-radius: 2px;
 
 	-webkit-transition: all 50ms ease-in;
 	transition: all 50ms ease-in;
 }
 
+div.loading-banner {
+	z-index: 30;
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 300px;
+	
+	padding: 3px;
+	padding-left: 20px;
+	background: @green3;
+	color: white;
+}
