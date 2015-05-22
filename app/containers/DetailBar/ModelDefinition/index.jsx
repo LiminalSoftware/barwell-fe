@@ -52,39 +52,47 @@ var ModelDefinition = React.createClass({
 		});
 
 		return <div key="model-detail-bar" className={"model-details " + (this.props.visible ? "" : "hidden")}>
-			<h3 key="attr-header">Attributes <span className="info-box"></span> </h3>
+			<h3 key="attr-header">Attributes</h3>
 			<table key="attr-table" className="detail-table">
-				<tr key="attr-header-row">
-					<th key="attr-header-actions"></th>
-					<th key="attr-header-name">Name</th>
-					<th key="attr-header-type">Type</th>
-					<th key="attr-header-key">Keys</th>
-				</tr>
-				<tbody>{colList}</tbody>
+				<thead>
+					<tr>
+						<th key="attr-header-actions"></th>
+						<th key="attr-header-name">Name</th>
+						<th key="attr-header-type">Type</th>
+						<th key="attr-header-key">Keys</th>
+					</tr>
+				</thead>
+				<tbody>
+					{colList}
+				</tbody>
 			</table>
 			<div><a className="new-attr" onClick={this.handleAddNewAttr}><span className="small grayed icon icon-plus"></span>New attribute</a></div>
-
-			<h3 key="keys-header">Keys <span className="info-box"></span></h3>
+			
+			<h3 key="keys-header">Keys</h3>
 			<table key="keys-table" className="detail-table">
-				<tr key="key-header-row">
-					<th key="key-header-expand"></th>
-					<th key="key-header-name">Name</th>
-					<th key="key-header-icon"></th>
-					<th key="key-header-uniq">Unique?</th>
-				</tr>
+				<thead>
+					<tr key="key-header-row">
+						<th key="key-header-expand"></th>
+						<th key="key-header-name">Name</th>
+						<th key="key-header-icon"></th>
+						<th key="key-header-uniq">Unique?</th>
+					</tr>
+				</thead>
 				<tbody>
 				{keyList}
 				</tbody>
 			</table>
 
-			<h3 key="relations-header">Relations <span className="info-box"></span></h3>
+			<h3 key="relations-header">Relations</h3>
 			<table key="rels-table" className="detail-table">
-				<tr key="rel-header-row">
-					<th key="rel-header-name">Name</th>
-					<th key="rel-header-from">From</th>
-					<th key="rel-header-arrow"></th>
-					<th key="rel-header-to">To</th>
-				</tr>
+				<thead>
+					<tr key="rel-header-row">
+						<th key="rel-header-name">Name</th>
+						<th key="rel-header-from">From</th>
+						<th key="rel-header-arrow"></th>
+						<th key="rel-header-to">To</th>
+					</tr>
+				</thead>
 				<tbody>
 				{relList}
 				</tbody>
@@ -120,7 +128,7 @@ var KeyDetail = React.createClass({
 			<td onClick={this.toggleDetails} key={key + '-expand'}><span className={wedgeClasses}></span></td>
 			<td key={reactKey+'-name'}>{name}</td>
 			<td key={reactKey+'-icon'}>{keyIcon}</td>
-			<td key={reactKey+'-uniq'}><input type="checkbox" value={uniq}></input></td>
+			<td key={reactKey+'-uniq'}><input type="checkbox" checked={uniq}></input></td>
 		</tr>;
 	}
 });
@@ -146,22 +154,20 @@ var RelationDetail = React.createClass({
 });
 
 var ColumnDetail = React.createClass({
+	componentWillMount: function () {
+		var col = this.props.config;
+		this.setState(col);
+	},
 	getInitialState: function () {
 		return {open: false, editing: false, visible: true};
 	},
-	handleClick: function (event) {
+	handleDblClick: function (event) {
 		this.setState({editing: !this.state.editing});
 	},
-	toggleDetails: function (event) {
-		this.setState({open: !this.state.open});
-	},
-	toggleVisibility: function (event) {
-		var data = this.props.view.synget(bw.DEF.VIEW_DATA);
-		var colId = this.props.column.synget(bw.DEF.ATTR_ID);
-		data.columns[colId].visible = !data.columns[colId].visible;
-		this.props.view.set(bw.DEF.VIEW_DATA, data);
-		// TODO: render should automatically trigger when the listener works
-		this.forceUpdate();
+	updateName: function (name) {
+		var col = this.props.column;
+		col.set(bw.DEF.ATTR_NAME, name);
+		return name;
 	},
 	render: function () {
 		var col = this.props.column;
@@ -169,9 +175,11 @@ var ColumnDetail = React.createClass({
 		var view = this.props.view;
 		var colId = col.synget(bw.DEF.ATTR_ID);
 		var name = col.synget(bw.DEF.ATTR_NAME);
-		var wedgeClasses = "small grayed icon icon-geo-triangle " +
-			(this.state.open ? " wedge open" : "wedge closed");
-		var nameField = (this.state.editing ? <input type="text" value={name}/> : {name} );
+
+		var wedgeClasses = "small grayed icon icon-geo-triangle wedge" +
+			(this.state.open ? " open" : "closed");
+
+		var nameField = (this.state.editing ? <input value={name} onChange={this.updateName}/> : {name} );
 		var keyIcons = [];
 		var components = col.synget('Key components');
 		
@@ -188,7 +196,7 @@ var ColumnDetail = React.createClass({
 			<td key={key + '-actions'}>
 
 			</td>
-			<td onDoubleClick={this.handleClick} key={key + '-name'}>
+			<td onDoubleClick={this.handleDblClick} key={key + '-name'}>
 				{nameField}
 			</td>
 			<td key={key + '-type'}>{col.synget(203)}</td>

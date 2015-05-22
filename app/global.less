@@ -1,4 +1,3 @@
-@import url("http://fast.fonts.net/lt/1.css?apiType=css&c=842ddfd4-0ffe-433a-a2b4-9c5076100890&fontids=694027");
 @import "./assets/less/pictonic.less";
 
 @font-face{
@@ -20,6 +19,19 @@ url("assets/fonts/914e851e-cdbd-41d8-b82d-744ce5d6d30d.woff") format("woff"),
 url("assets/fonts/41a46789-4631-4e39-8d8c-5ca20e68195b.ttf") format("truetype"),
 url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b31b-8f900cf2750b") format("svg");
 }
+
+@font-face {
+	font-family: 'Computer Modern Concrete';
+	src: url('assets/fonts/cmunorm.eot');
+	src: url('assets/fonts/cmunorm.eot?#iefix') format('embedded-opentype'),
+		 url('assets/fonts/cmunorm.woff') format('woff'),
+		 url('assets/fonts/cmunorm.ttf') format('truetype'),
+		 url('assets/fonts/cmunorm.svg#cmunorm') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+
 
 
 
@@ -103,8 +115,15 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 	font-size: 17px;
 	width: 10 px;
 	margin-right: 8px;
+	&.after {
+		margin-left: 8px;
+		margin-right: 2px;
+	}
+	&.white {
+		color: white;
+	}
 	&.grayed {
-		-webkit-transition: all 100ms ease-in;
+		.transition(all 100ms ease-in);
 		color: @pureGray2;
 	}
 
@@ -117,7 +136,7 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 	}
 
 	&.greened {
-		-webkit-transition: all 100ms ease-in;
+		.transition(all 100ms ease-in);
 		color: @green4;
 	}
 
