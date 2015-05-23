@@ -28,7 +28,7 @@ var TabularPane = React.createClass ({
 				left: 0,
 				top: 0
 			},
-			anchor: void(0),
+			anchor: {left: 0, top: 0},
 			cur: {
 				offset: 0,
 				limit: CURSOR_LIMIT
@@ -44,7 +44,6 @@ var TabularPane = React.createClass ({
 		this.setState(view.synget(bw.DEF.VIEW_DATA));
 		view.on('update', this.refreshView);
 		this.fetch();
-
 		$(document.body).on('keydown', this.onKey);
 	},
 
@@ -141,12 +140,22 @@ var TabularPane = React.createClass ({
 	},
 
 	onKey: function (e) {
-		var anc = this.state.anchor;
-		if (e.keyCode == 37) offset = [-1,0];
-		if (e.keyCode == 38) offset = [0,1];
-		if (e.keyCode == 39) offset = [1,0];
-		if (e.keyCode == 40) offset = [0,-1];
+		var ptr = this.state.pointer
+		var numCols = this.state.columnList.length
+		var numRows = 10000;
+		var left = ptr.left;
+		var top = ptr.top;
 
+		if (e.keyCode == 37 && left > 0) left--;
+		else if (e.keyCode == 38 && top > 0) top--;
+		else if (e.keyCode == 39 && left < numCols) left++;
+		else if (e.keyCode == 40 && top < numRows) top++;
+		else return
+
+		e.stopPropagation()
+   	e.preventDefault()
+
+		this.updateSelect(top, left, e.shiftKey)
 	},
 
 	onClick: function (event) {
@@ -154,15 +163,15 @@ var TabularPane = React.createClass ({
 		var tableBody = React.findDOMNode(this.refs.tbody);
 		var y = event.pageY - wrapper.offsetTop + wrapper.scrollTop - HEADER_HEIGHT;
 		var x = event.pageX - wrapper.offsetLeft + wrapper.scrollLeft - 3;
-		var rowNum = Math.floor(y/ROW_HEIGHT,1);
-		var colNum = 0;
+		var r = Math.floor(y/ROW_HEIGHT,1);
+		var c = 0;
 		
 		this.state.columnList.forEach(function (col) {
 			x -= col.width + WIDTH_PADDING;
-			if (x > 0) colNum ++;
+			if (x > 0) c ++;
 		});
 
-		this.updateSelect(rowNum, colNum, event.shiftKey);
+		this.updateSelect(r, c, event.shiftKey);
 	},
 
 	getSelectorStyle: function () {
@@ -170,7 +179,7 @@ var TabularPane = React.createClass ({
 		var sel = this.state.selection;
 		var columns = _.filter(this.state.columnList, function(col) {return col.visible;});
 		var width = -1;
-		var height = (this.state.selection.bottom - this.state.selection.top + 1) * ROW_HEIGHT - 2;
+		var height = (sel.bottom - sel.top + 1) * ROW_HEIGHT - 2;
 		var left = 2;
 		var top = HEADER_HEIGHT + this.state.selection.top * ROW_HEIGHT;
 		

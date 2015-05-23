@@ -11,14 +11,14 @@ var TabularViewConfig = React.createClass({
 
 	componentDidMount: function () {
 		this.refreshView()
+		view.on('update', this.refreshView);
 	},
 
 	updateView: function (view) {
-		var oldView = this.props.view;
-		oldView.removeListener('update', this.refreshView);
-		this.setState(view);
-		view.on('update', this.refreshView);
-		this.refreshView();
+		var oldView = this.props.view
+		if (oldView) oldView.removeListener('update', this.refreshView)
+		view.on('update', this.refreshView)
+		this.refreshView()
 	},
 
 	refreshView: function () {
@@ -31,23 +31,23 @@ var TabularViewConfig = React.createClass({
 	},
 
 	render: function() {
-		if (!this.state) return;
-		var _this = this;
-		var view = this.props.view;
-		var columns = this.state.columns;
+		if (!this.state) return
+		var _this = this
+		var view = this.props.view
+		var columns = this.state.columns
 
 		var colList = (this.state.columnList || []).map(function (col) {
-			return <ColumnDetail config = {col} view= {view} />;
-		});
+			return <ColumnDetail config = {col} view= {view} />
+		})
 
 		var sortList = (this.state.sorting || []).map(function (sort) {
-			var sortOrderClass = "small grayed icon icon-arrow-" + (sort.desc ? "up" : "down");
-			var sortOrderLabel = sort.desc ? "Ascending" : "Descending";
+			var sortOrderClass = "small grayed icon icon-arrow-" + (sort.desc ? "up" : "down")
+			var sortOrderLabel = sort.desc ? "Ascending" : "Descending"
 			return <tr>
 				<td>{sort.id}</td>
 				<td><span className = {sortOrderClass}></span>{sortOrderLabel}</td>
-			</tr>;
-		});
+			</tr>
+		})
 
 		return <div key="view-detail-bar" className={"view-details " + (this.props.visible ? "" : "hidden")}>
 			
