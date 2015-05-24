@@ -1,19 +1,19 @@
-import React from "react";
-import { RouteHandler } from "react-router";
-import bw from "barwell";
-import styles from "./style.less";
-import EventListener from 'react/lib/EventListener';
-import _ from 'underscore';
-import $ from 'jquery';
+import React from "react"
+import { RouteHandler } from "react-router"
+import bw from "barwell"
+import styles from "./style.less"
+import EventListener from 'react/lib/EventListener'
+import _ from 'underscore'
+import $ from 'jquery'
+import fieldTypes from "./fields.jsx"
 
-var HEADER_HEIGHT = 35;
-var ROW_HEIGHT = 21;
-var TOP_OFFSET = 12;
-
-var CURSOR_LIMIT = 60;
-var WINDOW_SIZE = 25;
-var OFFSET_TOLERANCE = 10;
-var WIDTH_PADDING = 9;
+var HEADER_HEIGHT = 35
+var ROW_HEIGHT = 22
+var TOP_OFFSET = 12
+var CURSOR_LIMIT = 100
+var WINDOW_SIZE = 30
+var OFFSET_TOLERANCE = 20
+var WIDTH_PADDING = 9
 
 var TabularPane = React.createClass ({
 	getInitialState: function () {
@@ -29,7 +29,7 @@ var TabularPane = React.createClass ({
 				top: 0
 			},
 			anchor: {left: 0, top: 0},
-			cur: {
+			window: {
 				offset: 0,
 				limit: CURSOR_LIMIT
 			},
@@ -39,80 +39,84 @@ var TabularPane = React.createClass ({
 	},
 
 	componentDidMount: function () {
-		var _this = this;
-		var view = this.props.view;
-		this.setState(view.synget(bw.DEF.VIEW_DATA));
-		view.on('update', this.refreshView);
-		this.fetch();
-		$(document.body).on('keydown', this.onKey);
+		var view = this.props.view
+		this.refreshView() 
+		view.on('update', this.refreshView)
+		this.fetch(true)
+		$(document.body).on('keydown', this.onKey)
+	},
+
+	componentWillUnmount: function () {
+		this.cursor.removeListener('fetch', this.receiveFetch)
+		this.cursor.release()
+		$(document.body).removeListener('keydown', this.onKey)
 	},
 
 	updateView: function (view) {
-		var _this = this;
-		var oldView = this.props.view;
+		var oldView = this.props.view
 		oldView.removeListener('update', this.refreshView)
-		this.setState(view.synget(bw.DEF.VIEW_DATA));
-		view.on('update', this.refreshView);
+		this.setState(view.synget(bw.DEF.VIEW_DATA))
+		view.on('update', this.refreshView)
 	},
 
 	updateCursor: function (model) {
-		this.cursor.removeListener('fetch', this.receiveFetch);
-		this.cursor.release();
-		this.cursor = model.store.getCursor();
-		this.cursor.on('fetch', this.receiveFetch);
-		this.setState({initialized: false});
-		this.fetch();
+		this.cursor.removeListener('fetch', this.receiveFetch)
+		this.cursor.release()
+		this.cursor = model.store.getCursor()
+		this.cursor.on('fetch', this.receiveFetch)
+		this.setState({initialized: false})
+		this.fetch(true)
 	},
 
 	refreshView: function () {
-		var view = this.props.view;
+		var view = this.props.view
 		this.setState(view.synget(bw.DEF.VIEW_DATA))
 	},
 
 	componentWillMount: function () {
-		var model = this.props.model;
-		this.cursor = model.store.getCursor();
-		this.cursor.on('fetch', this.receiveFetch);
+		var model = this.props.model
+		this.cursor = model.store.getCursor()
+		this.cursor.on('fetch', this.receiveFetch)
 	},
 
 	componentWillReceiveProps: function (props) {
-		if (props.model !== this.props.model) this.updateCursor(props.model);
-		if (props.view !== this.props.view) this.updateView(props.view);
+		if (props.model !== this.props.model) this.updateCursor(props.model)
+		if (props.view !== this.props.view) this.updateView(props.view)
 	},
 
-	componentWillUnmount: function () {
-		this.cursor.removeListener('fetch', this.receiveFetch);
-		this.cursor.release();
-	},
+	fetch: function (force) {
+		var rowOffset = Math.floor(this.state.scrollTop / ROW_HEIGHT)
+		var tgtOffset = Math.floor(rowOffset - (CURSOR_LIMIT / 2) + (WINDOW_SIZE / 2))
+		var mismatch = Math.abs(rowOffset - tgtOffset)
 
-	fetch: function (state) {
-		var rowOffset = Math.floor(this.state.scrollTop / ROW_HEIGHT);
-		var tgtOffset = Math.floor(rowOffset - (CURSOR_LIMIT / 2) + (WINDOW_SIZE / 2));
-		var mismatch = Math.abs(rowOffset - tgtOffset);
+		// console.log('mismatch: '+ JSON.stringify(mismatch, null, 2))
 
-		if (!this.state.initialized || (mismatch > OFFSET_TOLERANCE)) {
+		if (force 
+			// || (mismatch > OFFSET_TOLERANCE)
+		) {
 			this.setState({
 				"fetching": true,
-				"cur": {
+				"window": {
 					offset: Math.max(tgtOffset, 0),
 					limit: CURSOR_LIMIT
 				}
-			});
+			})
 			return this.cursor.fetch(
-				this.state.cur.offset, 
-				this.state.cur.limit
-			);
+				this.state.window.offset, 
+				this.state.window.limit
+			)
 		}
 	},
 
 	receiveFetch: function () {
-		this.setState({"fetching": false});
+		this.setState({"fetching": false})
+		this.forceUpdate()
 	},
 
 	onScroll: function (event) {
-		var wrapper = React.findDOMNode(this.refs.wrapper);
-		this.setState({scrollTop: wrapper.scrollTop});
-		this.fetch();
+		var wrapper = React.findDOMNode(this.refs.wrapper)
+		this.setState({scrollTop: wrapper.scrollTop})
+		this.fetch()
 	},
 
 	updateSelect: function (row, col, shift) {
@@ -121,7 +125,7 @@ var TabularPane = React.createClass ({
 		var ptr = {left: col, top: row}
 
 		if (shift) {
-			if (!anc) anc = {left: col, top: row};
+			if (!anc) anc = {left: col, top: row}
 			sel = {
 				left: Math.min(anc.left, ptr.left),
 				right: Math.max(anc.left, ptr.left),
@@ -136,20 +140,20 @@ var TabularPane = React.createClass ({
 			pointer: ptr,
 			selection: sel,
 			anchor: anc
-		});
+		})
 	},
 
 	onKey: function (e) {
 		var ptr = this.state.pointer
 		var numCols = this.state.columnList.length
-		var numRows = 10000;
-		var left = ptr.left;
-		var top = ptr.top;
+		var numRows = 10000
+		var left = ptr.left
+		var top = ptr.top
 
-		if (e.keyCode == 37 && left > 0) left--;
-		else if (e.keyCode == 38 && top > 0) top--;
-		else if (e.keyCode == 39 && left < numCols) left++;
-		else if (e.keyCode == 40 && top < numRows) top++;
+		if (e.keyCode == 37 && left > 0) left--
+		else if (e.keyCode == 38 && top > 0) top--
+		else if (e.keyCode == 39 && left < numCols) left++
+		else if (e.keyCode == 40 && top < numRows) top++
 		else return
 
 		e.stopPropagation()
@@ -159,134 +163,158 @@ var TabularPane = React.createClass ({
 	},
 
 	onClick: function (event) {
-		var wrapper = React.findDOMNode(this.refs.wrapper);
-		var tableBody = React.findDOMNode(this.refs.tbody);
-		var y = event.pageY - wrapper.offsetTop + wrapper.scrollTop - HEADER_HEIGHT;
-		var x = event.pageX - wrapper.offsetLeft + wrapper.scrollLeft - 3;
-		var r = Math.floor(y/ROW_HEIGHT,1);
-		var c = 0;
+		var wrapper = React.findDOMNode(this.refs.wrapper)
+		var tableBody = React.findDOMNode(this.refs.tbody)
+		var y = event.pageY - wrapper.offsetTop + wrapper.scrollTop - HEADER_HEIGHT
+		var x = event.pageX - wrapper.offsetLeft + wrapper.scrollLeft - 3
+		var r = Math.floor(y/ROW_HEIGHT,1)
+		var c = 0
 		
 		this.state.columnList.forEach(function (col) {
-			x -= col.width + WIDTH_PADDING;
-			if (x > 0) c ++;
-		});
+			x -= col.width + WIDTH_PADDING
+			if (x > 0) c ++
+		})
 
-		this.updateSelect(r, c, event.shiftKey);
+		this.updateSelect(r, c, event.shiftKey)
 	},
 
 	getSelectorStyle: function () {
-		var _this = this;
-		var sel = this.state.selection;
-		var columns = _.filter(this.state.columnList, function(col) {return col.visible;});
-		var width = -1;
-		var height = (sel.bottom - sel.top + 1) * ROW_HEIGHT - 2;
-		var left = 2;
-		var top = HEADER_HEIGHT + this.state.selection.top * ROW_HEIGHT;
+		var _this = this
+		var sel = this.state.selection
+		var columns = _.filter(this.state.columnList, function(col) {return col.visible})
+		var width = -1
+		var height = (sel.bottom - sel.top + 1) * ROW_HEIGHT - 2
+		var left = 2
+		var top = HEADER_HEIGHT + this.state.selection.top * ROW_HEIGHT
 		
 		columns.forEach(function (col, idx) {
 			if (idx < sel.left)
-				left += col.width + WIDTH_PADDING;
+				left += col.width + WIDTH_PADDING
 			else if (idx < sel.right + 1)
-				width += col.width + WIDTH_PADDING;
-		});
+				width += col.width + WIDTH_PADDING
+		})
 		
 		return {
 			top: top + 'px',
 			left: left + 'px',
 			minWidth: width + 'px',
 			minHeight: height + "px"
-		};
-	},
-
-	getTableStyle: function () {
-		return {
-			top: (this.state.cur.offset * (ROW_HEIGHT) + HEADER_HEIGHT) + 'px',
-			height: '10000px'
-		};
+		}
 	},
 
 	getPointerStyle: function () {
-		var _this = this;
-		var ptr = this.state.pointer;
+		var _this = this
+		var ptr = this.state.pointer
 		var columns = _.filter(this.state.columnList, function(col) {return col.visible})
-		var width;
-		var height = ROW_HEIGHT - 2;
-		var left = 1;
-		var top = HEADER_HEIGHT + ptr.top * ROW_HEIGHT - 1;
+		var width
+		var height = ROW_HEIGHT - 2
+		var left = 1
+		var top = HEADER_HEIGHT + ptr.top * ROW_HEIGHT - 1
 		
 		columns.forEach(function (col, idx) {
 			if (idx < ptr.left)
-				left += (col.width + WIDTH_PADDING);
+				left += (col.width + WIDTH_PADDING)
 			else if (idx < ptr.left + 1)
-				width = (col.width + WIDTH_PADDING - 1);
-		});
+				width = (col.width + WIDTH_PADDING - 1)
+		})
 
 		return {
 			top: top + 'px',
 			left: left + 'px',
 			minWidth: width + 'px',
 			minHeight: height + "px"
-		};
+		}
 	},
 
 	render: function () {
-		var _this = this;
-		var model = this.props.model;
-		var view = this.props.view;
-		var columns = _.filter(this.state.columnList, function(col) {return !!col.visible;});
-		var header = [];
-		var rows = [];
+		var _this = this
+		var model = this.props.model
+		var view = this.props.view
+		var columns = _.filter(this.state.columnList, function(col) {return !!col.visible})
 		
-		header = columns.map(function (col, idx) {
-			return <TabularTH key={"th-"+col.id} column={col} view={view} idx={idx}/>;
-		});
-		
-		if (this.state) for (var i = this.state.cur.offset; i < this.state.cur.offset + this.state.cur.limit; i++) {
-			var _this = this;
-			var row = _this.cursor.at(i);
-			var props = columns.map(function (col, idx) {
-				var key = 'cell-' + i + '-' + col.id;
-				var classes = [];
-				var cellValue = (!!row) ? row.attributes[col.id] : ""
-				var cellStyle = {minWidth: col.width, maxWidth: col.width}
-
-				if (idx == 0 && i >= _this.state.selection.top && i < _this.state.selection.bottom + 1)
-					classes ='first-cell-highlight'
-				else 
-					classes = 'first-cell';
-				
-				return <td key={key} className={classes} style={cellStyle} onClick={_this.onClick}>{cellValue}</td>;
-			});
-			rows.push(<tr key={i}>{props}</tr>);
-		}
 		return <div className="tabular-wrapper" id="table-wrapper" onScroll={this.onScroll} ref="wrapper">
 				<table id="main-data-table" className="header data-table" onKeyPress={this.onKey} >
-					<thead ref="thead" style={{top: (this.state.scrollTop || 0 + 'px')}}>
-						<tr>{header}</tr>
-					</thead>
-					<tbody ref="tbody" style={this.getTableStyle()}>
-						{rows}
-					</tbody>
+					<TabularTHead ref="tbody" scrollTop={this.state.scrollTop} columns={columns} model={model} view={view}/>
+					<TabularTBody model={model} columns={columns} scrollTop={this.state.scrollTop} window={this.state.window} cursor={this.cursor} clicker={this.onClick}/>
 				</table>
 				<div className="anchor" ref="anchor" style={this.getPointerStyle()}></div>
 				<div className="selection" ref="selection" style={this.getSelectorStyle()}></div>
 		</div>
 	}
-});
+})
+
+var TabularTHead = React.createClass ({
+	render: function () {
+		var style = {top: (this.props.scrollTop || 0) + 'px'}
+		var view = this.props.view
+		var header = this.props.columns.map(function (col, idx) {
+			return <TabularTH key={"th-"+col.id} column={col} view={view} idx={idx}/>
+		})
+		return <thead id="tabular-view-header" ref="thead" style={style}>
+			<tr>{header}</tr>
+		</thead>
+	}
+})
+
+var TabularTBody = React.createClass ({
+	shouldComponentUpdate: function (nextProps, nextState) {
+		var old = this.props
+		var nxt = nextProps
+		return !(nxt.window.offset === old.window.offset && nxt.model === old.model)
+	},
+	getTableStyle: function () {
+		return {
+			top: (this.props.window.offset * (ROW_HEIGHT) + HEADER_HEIGHT) + 'px',
+			height: '10000px'
+		}
+	},
+	render: function () {
+		var rows = []
+		var window = this.props.window
+		var cursor = this.props.cursor
+		var columns = this.props.columns
+		var clicker = this.props.clicker
+		
+		for (var i = window.offset i < window.offset + window.limit i++) {
+			var obj = cursor.at(i)
+			var els = columns.map(function (col, idx) {
+				var field = fieldTypes[col.type]
+				if (!field) field = fieldTypes["Text"]
+
+				return React.createElement(field, {
+					attribute: col, 
+					value: (!!obj) ? obj.attributes[col.id] : "", 
+					clicker: clicker, 
+					key: 'cell-' + i + '-' + col.id, 
+					style: {minWidth: col.width, maxWidth: col.width}
+				})
+			})
+			rows.push(<tr key={i}>{els}</tr>)
+		}
+		return <tbody ref="tbody" style={this.getTableStyle()}>
+			{rows}
+		</tbody>
+	}
+})
 
 var TabularTH = React.createClass ({
+	// shouldComponentUpdate: function (nextProps, nextState) {
+	// 	var old = this.props.column
+	// 	var nxt = nextProps.column 
+	// 	return !(old.width == nxt.width && old.sorting == nxt.sorting)
+	// },
 	render: function () {
 		var _this = this
 		var col = this.props.column
 		var cellStyle = {
 			minWidth: col.width,
 			maxWidth: col.width
-		};
+		}
 		var sortArrow
 		var classes = ""
-		if (!!col.sorting) sortArrow = <span className={"small white after icon icon-arrow-" + (col.sorting.desc ? "up" : "down")}></span>;
+		if (!!col.sorting) sortArrow = <span className={"small white after icon icon-arrow-" + (col.sorting.desc ? "up" : "down")}></span>
 		else sortArrow = ""
-		if (!!col.sorting) classes = col.sorting.desc ? 'asc' : 'desc';
+		if (!!col.sorting) classes = col.sorting.desc ? 'asc' : 'desc'
 		return <th 
 				onClick={this.onClick}
 				key={"header-" + col.id} 
@@ -300,22 +328,19 @@ var TabularTH = React.createClass ({
 				onMouseDown = {this.onResizerMouseDown}
 				style = {{right: (-1 * this.state.pos) + 'px', top: 0}}
 			></span>
-		</th>;
+		</th>
 	},
-
 	getInitialState: function () {
 		return {
 			dragging: false,
 			rel: null,
 			pos: 0
-		};
+		}
 	},
-
 	componentWillMount: function () {
 		var col = this.props.column
 		this.setState(col)
 	},
-
 	onResizerMouseDown: function (e) {
 		// only left mouse button
 	    if (e.button !== 0) return
@@ -327,48 +352,44 @@ var TabularTH = React.createClass ({
 	    e.stopPropagation()
 	    e.preventDefault()
 	},
-
 	onMouseUp: function (e) {
-   	var view = this.props.view;   
+   	var view = this.props.view   
 		var viewData = view.synget(bw.DEF.VIEW_DATA)
-		var col = this.props.column;
+		var col = this.props.column
 
    	this.setState({dragging: false})
    	e.stopPropagation()
    	e.preventDefault()
 
-   	viewData.columns[col.id].width = (col.width + this.state.pos);
-		this.setState({pos: 0});
-		view.set(bw.DEF.VIEW_DATA, viewData); 
+   	viewData.columns[col.id].width = (col.width + this.state.pos)
+		this.setState({pos: 0})
+		view.set(bw.DEF.VIEW_DATA, viewData)
 	},
-
 	onMouseMove: function (e) {
 	   if (!this.state.dragging) return
 	   this.setState({
 	      pos: e.pageX - this.state.rel
-	   });
+	   })
 	   e.stopPropagation()
 	   e.preventDefault()
 	},
-
 	componentDidUpdate: function (props, state) {
 		if (this.state.dragging && !state.dragging) {
-		   document.addEventListener('mousemove', this.onMouseMove)
-		   document.addEventListener('mouseup', this.onMouseUp)
-		 } else if (!this.state.dragging && state.dragging) {
+			document.addEventListener('mousemove', this.onMouseMove)
+			document.addEventListener('mouseup', this.onMouseUp)
+		} else if (!this.state.dragging && state.dragging) {
 		   document.removeEventListener('mousemove', this.onMouseMove)
 		   document.removeEventListener('mouseup', this.onMouseUp)
-		 }
+		}
 	},
-
    onClick: function (event) {       
    	// TODO handle multiple sorting
-		var view = this.props.view;   
-		var viewData = view.synget(bw.DEF.VIEW_DATA);       
-		viewData.sorting = [{'id': this.props.column.id, 'desc': false}];       
-		view.set(bw.DEF.VIEW_DATA, viewData); 
-	} 
-});
+   	if (!!this.state.dragging) return
+		var view = this.props.view   
+		var viewData = view.synget(bw.DEF.VIEW_DATA)       
+		viewData.sorting = [{'id': this.props.column.id, 'desc': false}]       
+		view.set(bw.DEF.VIEW_DATA, viewData) 
+	}
+})
 
-export default TabularPane;
-
+export default TabularPane
