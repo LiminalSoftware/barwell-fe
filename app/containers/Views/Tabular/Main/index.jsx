@@ -6,13 +6,12 @@ import EventListener from 'react/lib/EventListener'
 import _ from 'underscore'
 import $ from 'jquery'
 import fieldTypes from "./fields.jsx"
+import TabularTBody from "./TabularTBody"
+
 
 var HEADER_HEIGHT = 35
 var ROW_HEIGHT = 22
 var TOP_OFFSET = 12
-var CURSOR_LIMIT = 100
-var WINDOW_SIZE = 30
-var OFFSET_TOLERANCE = 20
 var WIDTH_PADDING = 9
 
 var TabularPane = React.createClass ({
@@ -28,27 +27,24 @@ var TabularPane = React.createClass ({
 				left: 0,
 				top: 0
 			},
-			anchor: {left: 0, top: 0},
-			window: {
-				offset: 0,
-				limit: CURSOR_LIMIT
+			anchor: {
+				left: 0, 
+				top: 0
 			},
-			fetching: false,
-			initialized: false
+			scrollTop: 0
 		}
 	},
 
 	componentDidMount: function () {
 		var view = this.props.view
-		this.refreshView() 
+		this.refreshView()
 		view.on('update', this.refreshView)
-		this.fetch(true)
 		$(document.body).on('keydown', this.onKey)
 	},
 
 	componentWillUnmount: function () {
-		this.cursor.removeListener('fetch', this.receiveFetch)
-		this.cursor.release()
+		var view = this.props.view
+		view.removeListener('update', this.refreshView)
 		$(document.body).removeListener('keydown', this.onKey)
 	},
 
@@ -59,15 +55,6 @@ var TabularPane = React.createClass ({
 		view.on('update', this.refreshView)
 	},
 
-	updateCursor: function (model) {
-		this.cursor.removeListener('fetch', this.receiveFetch)
-		this.cursor.release()
-		this.cursor = model.store.getCursor()
-		this.cursor.on('fetch', this.receiveFetch)
-		this.setState({initialized: false})
-		this.fetch(true)
-	},
-
 	refreshView: function () {
 		var view = this.props.view
 		this.setState(view.synget(bw.DEF.VIEW_DATA))
@@ -75,48 +62,15 @@ var TabularPane = React.createClass ({
 
 	componentWillMount: function () {
 		var model = this.props.model
-		this.cursor = model.store.getCursor()
-		this.cursor.on('fetch', this.receiveFetch)
 	},
 
 	componentWillReceiveProps: function (props) {
-		if (props.model !== this.props.model) this.updateCursor(props.model)
 		if (props.view !== this.props.view) this.updateView(props.view)
-	},
-
-	fetch: function (force) {
-		var rowOffset = Math.floor(this.state.scrollTop / ROW_HEIGHT)
-		var tgtOffset = Math.floor(rowOffset - (CURSOR_LIMIT / 2) + (WINDOW_SIZE / 2))
-		var mismatch = Math.abs(rowOffset - tgtOffset)
-
-		// console.log('mismatch: '+ JSON.stringify(mismatch, null, 2))
-
-		if (force 
-			// || (mismatch > OFFSET_TOLERANCE)
-		) {
-			this.setState({
-				"fetching": true,
-				"window": {
-					offset: Math.max(tgtOffset, 0),
-					limit: CURSOR_LIMIT
-				}
-			})
-			return this.cursor.fetch(
-				this.state.window.offset, 
-				this.state.window.limit
-			)
-		}
-	},
-
-	receiveFetch: function () {
-		this.setState({"fetching": false})
-		this.forceUpdate()
 	},
 
 	onScroll: function (event) {
 		var wrapper = React.findDOMNode(this.refs.wrapper)
 		this.setState({scrollTop: wrapper.scrollTop})
-		this.fetch()
 	},
 
 	updateSelect: function (row, col, shift) {
@@ -146,19 +100,18 @@ var TabularPane = React.createClass ({
 	onKey: function (e) {
 		var ptr = this.state.pointer
 		var numCols = this.state.columnList.length
-		var numRows = 10000
+		var numRows = 10000 //TODO ... 
 		var left = ptr.left
 		var top = ptr.top
 
-		if (e.keyCode == 37 && left > 0) left--
-		else if (e.keyCode == 38 && top > 0) top--
-		else if (e.keyCode == 39 && left < numCols) left++
-		else if (e.keyCode == 40 && top < numRows) top++
+		if (e.keyCode == 37 && left > 0) left --
+		else if (e.keyCode == 38 && top > 0) top --
+		else if (e.keyCode == 39 && left < numCols) left ++
+		else if (e.keyCode == 40 && top < numRows) top ++
 		else return
 
 		e.stopPropagation()
    	e.preventDefault()
-
 		this.updateSelect(top, left, e.shiftKey)
 	},
 
@@ -174,12 +127,10 @@ var TabularPane = React.createClass ({
 			x -= col.width + WIDTH_PADDING
 			if (x > 0) c ++
 		})
-
 		this.updateSelect(r, c, event.shiftKey)
 	},
 
 	getSelectorStyle: function () {
-		var _this = this
 		var sel = this.state.selection
 		var columns = _.filter(this.state.columnList, function(col) {return col.visible})
 		var width = -1
@@ -193,7 +144,6 @@ var TabularPane = React.createClass ({
 			else if (idx < sel.right + 1)
 				width += col.width + WIDTH_PADDING
 		})
-		
 		return {
 			top: top + 'px',
 			left: left + 'px',
@@ -203,7 +153,6 @@ var TabularPane = React.createClass ({
 	},
 
 	getPointerStyle: function () {
-		var _this = this
 		var ptr = this.state.pointer
 		var columns = _.filter(this.state.columnList, function(col) {return col.visible})
 		var width
@@ -217,7 +166,6 @@ var TabularPane = React.createClass ({
 			else if (idx < ptr.left + 1)
 				width = (col.width + WIDTH_PADDING - 1)
 		})
-
 		return {
 			top: top + 'px',
 			left: left + 'px',
@@ -231,11 +179,12 @@ var TabularPane = React.createClass ({
 		var model = this.props.model
 		var view = this.props.view
 		var columns = _.filter(this.state.columnList, function(col) {return !!col.visible})
+		var id = view.synget(bw.DEF.MODEL_ID)
 		
-		return <div className="tabular-wrapper" id="table-wrapper" onScroll={this.onScroll} ref="wrapper">
+		return <div className="tabular-wrapper" onScroll={this.onScroll} ref="wrapper">
 				<table id="main-data-table" className="header data-table" onKeyPress={this.onKey} >
-					<TabularTHead ref="tbody" scrollTop={this.state.scrollTop} columns={columns} model={model} view={view}/>
-					<TabularTBody model={model} columns={columns} scrollTop={this.state.scrollTop} window={this.state.window} cursor={this.cursor} clicker={this.onClick}/>
+					<TabularTHead  key={"thead-" + id} scrollTop={this.state.scrollTop} columns={columns} view={view}/>
+					<TabularTBody ref="tabularbody" key={"tbody-" + id} model={model} view={view} columns={columns} scrollTop={this.state.scrollTop} window={this.state.window} clicker={this.onClick}/>
 				</table>
 				<div className="anchor" ref="anchor" style={this.getPointerStyle()}></div>
 				<div className="selection" ref="selection" style={this.getSelectorStyle()}></div>
@@ -256,46 +205,6 @@ var TabularTHead = React.createClass ({
 	}
 })
 
-var TabularTBody = React.createClass ({
-	shouldComponentUpdate: function (nextProps, nextState) {
-		var old = this.props
-		var nxt = nextProps
-		return !(nxt.window.offset === old.window.offset && nxt.model === old.model)
-	},
-	getTableStyle: function () {
-		return {
-			top: (this.props.window.offset * (ROW_HEIGHT) + HEADER_HEIGHT) + 'px',
-			height: '10000px'
-		}
-	},
-	render: function () {
-		var rows = []
-		var window = this.props.window
-		var cursor = this.props.cursor
-		var columns = this.props.columns
-		var clicker = this.props.clicker
-		
-		for (var i = window.offset i < window.offset + window.limit i++) {
-			var obj = cursor.at(i)
-			var els = columns.map(function (col, idx) {
-				var field = fieldTypes[col.type]
-				if (!field) field = fieldTypes["Text"]
-
-				return React.createElement(field, {
-					attribute: col, 
-					value: (!!obj) ? obj.attributes[col.id] : "", 
-					clicker: clicker, 
-					key: 'cell-' + i + '-' + col.id, 
-					style: {minWidth: col.width, maxWidth: col.width}
-				})
-			})
-			rows.push(<tr key={i}>{els}</tr>)
-		}
-		return <tbody ref="tbody" style={this.getTableStyle()}>
-			{rows}
-		</tbody>
-	}
-})
 
 var TabularTH = React.createClass ({
 	// shouldComponentUpdate: function (nextProps, nextState) {

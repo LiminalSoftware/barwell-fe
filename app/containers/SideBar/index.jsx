@@ -5,6 +5,10 @@ import styles from "./style.less";
 
 
 export default class SideBar extends React.Component {
+	
+	handleHide() {
+		this.setState({hidden: true})
+	}
 	render() {
 		var _this = this;
 		var modelLinks = bw.ModelMeta.store.getObjects().map(function (mdl) {
@@ -12,7 +16,8 @@ export default class SideBar extends React.Component {
 		});
 		return <div className="left-side-bar">
 			<ul>{modelLinks}</ul>
-		</div>;
+			<a className="hide-button" onClick = {this.handleHide}><span className="icon icon-minimise"></span>Hide side bar</a>
+		</div>
 	}
 }
 

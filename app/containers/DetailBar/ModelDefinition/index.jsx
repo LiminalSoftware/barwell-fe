@@ -5,7 +5,7 @@ import styles from "./style.less";
 
 
 var KEY_ICONS = ["icon-geo-curvitri", "icon-geo-circle", "icon-geo-trifoil", "icon-geo-diamond"];
-var KEY_COLORS = ["greened", "blued", "reddened"];
+var KEY_COLORS = ["green", "blue", "red"];
 
 var getIconClasses = function (ordinal) {
 	return [

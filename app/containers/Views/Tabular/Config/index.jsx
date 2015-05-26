@@ -10,15 +10,16 @@ var TabularViewConfig = React.createClass({
 	},
 
 	componentDidMount: function () {
+		var view = this.props.view
 		this.refreshView()
-		view.on('update', this.refreshView);
+		view.on('update', this.refreshView)
 	},
 
 	updateView: function (view) {
 		var oldView = this.props.view
 		if (oldView) oldView.removeListener('update', this.refreshView)
 		view.on('update', this.refreshView)
-		this.refreshView()
+		this.setState(view.synget(bw.DEF.VIEW_DATA))
 	},
 
 	refreshView: function () {
@@ -27,7 +28,7 @@ var TabularViewConfig = React.createClass({
 	},
 
 	componentWillReceiveProps: function (props) {
-		if (props.view != this.props.view) this.updateView(props.view);
+		if (props.view !== this.props.view) this.updateView(props.view);
 	},
 
 	render: function() {
@@ -76,7 +77,7 @@ var TabularViewConfig = React.createClass({
 
 			<h3>Filter</h3>
 			
-		</div>;
+		</div>
 	}
 });
 
@@ -94,42 +95,42 @@ var ColumnDetail = React.createClass({
 		};
 	},
 	handleClick: function (event) {
-		this.setState({editing: !this.state.editing});
+		this.setState({editing: !this.state.editing})
 	},
 	commitChanges: function () {
-		var data = this.props.view.synget(bw.DEF.VIEW_DATA);
-		var colId = this.props.config.id;
-		var col = data.columns[colId];
+		var data = this.props.view.synget(bw.DEF.VIEW_DATA)
+		var colId = this.props.config.id
+		var col = data.columns[colId]
 
-		col.visible = this.state.visible;
-		col.width = parseInt(this.state.width) || col.width;
-		this.props.view.set(bw.DEF.VIEW_DATA, data);
+		col.visible = this.state.visible
+		col.width = parseInt(this.state.width) || col.width
+		this.props.view.set(bw.DEF.VIEW_DATA, data)
 	},
 	componentWillReceiveProps: function (props) {
 		this.setState({
 			width: props.config.width,
 			visible: props.config.visible
-		});
+		})
 	},
 	updateWidth: function (e) {
-		var width = e.target.value;
+		var width = e.target.value
 		this.setState({width: width})
 	},
 	toggleDetails: function (event) {
-		this.setState({open: !this.state.open});
+		this.setState({open: !this.state.open})
 	},
 	toggleVisibility: function (event) {
-		this.state.visible = !this.state.visible;
-		this.commitChanges();
+		this.state.visible = !this.state.visible
+		this.commitChanges()
 	},
 	render: function () {
-		var config = this.props.config;
+		var config = this.props.config
 		var wedgeClasses = "small grayed icon icon-geo-triangle " +
-			(this.state.open ? " wedge open" : "wedge closed");
-		var name = config.name;
-		var nameField = (this.state.editing ? <input type="textbox" value={name} /> : name );
-		var key = "attr-" + config.id;
-		var detailsStyle = {display: (this.state.open ? "table-cell" : "none")};
+			(this.state.open ? " wedge open" : "wedge closed")
+		var name = config.name
+		var nameField = (this.state.editing ? <input type="textbox" value={name} /> : name )
+		var key = "attr-" + config.id
+		var detailsStyle = {display: (this.state.open ? "table-cell" : "none")}
 		var eyeSpan = <span className={"clickable icon icon-eye-" + (this.state.visible ? "3 greened":"4 grayed")}></span>;
 		return <tbody>
 			<tr key={key + '-row'}>
