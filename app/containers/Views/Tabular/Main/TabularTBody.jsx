@@ -5,9 +5,9 @@ import _ from 'underscore'
 
 var HEADER_HEIGHT = 35
 var ROW_HEIGHT = 22
-var CURSOR_LIMIT = 100
-var WINDOW_SIZE = 30
-var OFFSET_TOLERANCE = 35
+var CURSOR_LIMIT = 60
+var WINDOW_SIZE = 40
+var OFFSET_TOLERANCE = 5
 
 var limit = function (min, max, value) {
 	if (value < min) return min
@@ -49,7 +49,6 @@ var TabularTBody = React.createClass ({
 	componentWillReceiveProps: function (newProps) {
 		var newModel = newProps.model
 		if (newModel !== this.props.model) {
-			console.log('newModel->Name: ' + newModel.synget('Name'))
 			// free old cursor
 			this.cursor.removeListener('fetch', this.handleFetch)
 			this.cursor.release()
@@ -66,30 +65,31 @@ var TabularTBody = React.createClass ({
 		this.cursor.removeListener('fetch', this.handleFetch)
 	},
 	handleFetch: function () {
+		console.log('handle fetch')
 		var cursor = this.cursor
 		this.setState({fetching: false})
 		this.forceUpdate()
 	},
 	fetch: function (force) {
 		var rowOffset = Math.floor(this.props.scrollTop / ROW_HEIGHT)
-		var tgtOffset = limit(0, this.props.nRows - CURSOR_LIMIT, Math.floor(rowOffset - (CURSOR_LIMIT / 2) + (WINDOW_SIZE / 2)) )
-		var mismatch = Math.abs(rowOffset - tgtOffset)
+		var tgtOffset = Math.floor(rowOffset - (CURSOR_LIMIT / 2) + (WINDOW_SIZE / 2)) 
+		var boundedOffset = limit(0, this.props.nRows - CURSOR_LIMIT, tgtOffset)
+		var currentOffset = this.state.window.offset
+		var mismatch = Math.abs(currentOffset - tgtOffset)
 
-		// console.log('rowOffset: '+ JSON.stringify(rowOffset, null, 2))
-		// console.log('tgtOffset: '+ JSON.stringify(tgtOffset, null, 2))
-		// console.log('mismatch: '+ JSON.stringify(mismatch, null, 2))
+		// console.log('rowOffset: '+ rowOffset + '; tgtOffset: '+ tgtOffset + '; mismatch: '+ mismatch)
 
-		if (force || (mismatch > OFFSET_TOLERANCE)) {
+		if (force || (mismatch > OFFSET_TOLERANCE && currentOffset !== boundedOffset)) {
 			this.setState({
-				"fetching": true,
-				"window": {
-					offset: Math.max(tgtOffset, 0),
+				fetching: true,
+				window: {
+					offset: boundedOffset,
 					limit: CURSOR_LIMIT
 				}
 			})
-			return this.cursor.fetch(
-				this.state.window.offset, 
-				this.state.window.limit
+			this.cursor.fetch(
+				boundedOffset,
+				CURSOR_LIMIT
 			)
 		}
 	},
@@ -115,7 +115,8 @@ var TabularTBody = React.createClass ({
 				var field = fieldTypes[col.type]
 				var cellKey = rowKey + '-' + col.id
 				var value = (!!obj) ? obj.attributes[col.id] : ""
-				if (!field) field = fieldTypes["Text"]
+				// YIKES! hopefully I won't need this someday
+				if (!field) field = fieldTypes.Text
 
 				return React.createElement(field, {
 					attribute: col,
@@ -125,7 +126,7 @@ var TabularTBody = React.createClass ({
 					style: {minWidth: col.width, maxWidth: col.width}
 				})
 			})
-			rows.push(<tr key={rowKey}>{els}</tr>)
+			rows.push(<tr id={rowKey} key={rowKey}>{els}</tr>)
 		}
 		return <tbody ref="tbody" style={this.getStyle()}>
 			{rows}

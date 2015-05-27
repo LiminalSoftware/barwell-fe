@@ -4,7 +4,7 @@ import bw from "barwell";
 import styles from "./style.less";
 
 
-var KEY_ICONS = ["icon-geo-curvitri", "icon-geo-circle", "icon-geo-trifoil", "icon-geo-diamond"];
+var KEY_ICONS = ["icon-geo-str-square", "icon-geo-str-circle", "icon-geo-str-triangle", "icon-geo-str-trifold", "icon-geo-str-diamond"];
 var KEY_COLORS = ["green", "blue", "red"];
 
 var getIconClasses = function (ordinal) {

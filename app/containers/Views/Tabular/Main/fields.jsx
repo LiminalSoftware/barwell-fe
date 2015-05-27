@@ -6,9 +6,7 @@ var TextField = React.createClass({
 		var value = this.props.value
 		var style = this.props.style
 		var clicker = this.props.clicker
-		
 		return <td style={style} onClick={clicker}>{value}</td>
-
 	}
 });
 

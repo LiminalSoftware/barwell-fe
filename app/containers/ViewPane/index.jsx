@@ -21,4 +21,3 @@ var ModelPane = React.createClass({
 });
 
 export default ModelPane;
-
