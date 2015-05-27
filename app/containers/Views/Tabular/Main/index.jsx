@@ -184,7 +184,7 @@ var TabularPane = React.createClass ({
 		return <div className="tabular-wrapper" onScroll={this.onScroll} ref="wrapper">
 				<table id="main-data-table" className="header data-table" onKeyPress={this.onKey} >
 					<TabularTHead  key={"thead-" + id} scrollTop={this.state.scrollTop} columns={columns} view={view}/>
-					<TabularTBody ref="tabularbody" key={"tbody-" + id} model={model} view={view} columns={columns} scrollTop={this.state.scrollTop} window={this.state.window} clicker={this.onClick}/>
+					<TabularTBody ref="tabularbody" key={"tbody-" + id} model={model} view={view} columns={columns} scrollTop={this.state.scrollTop} numRows={1000} clicker={this.onClick}/>
 				</table>
 				<div className="anchor" ref="anchor" style={this.getPointerStyle()}></div>
 				<div className="selection" ref="selection" style={this.getSelectorStyle()}></div>
