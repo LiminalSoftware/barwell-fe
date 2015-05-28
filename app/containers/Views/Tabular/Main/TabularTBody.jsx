@@ -65,7 +65,6 @@ var TabularTBody = React.createClass ({
 		this.cursor.removeListener('fetch', this.handleFetch)
 	},
 	handleFetch: function () {
-		console.log('handle fetch')
 		var cursor = this.cursor
 		this.setState({fetching: false})
 		this.forceUpdate()

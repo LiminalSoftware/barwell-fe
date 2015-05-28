@@ -1,8 +1,7 @@
-import React from "react";
-import { Link } from "react-router";
-import bw from "barwell";
-import styles from "./style.less";
-
+import React from "react"
+import { Link } from "react-router"
+import bw from "barwell"
+import styles from "./style.less"
 
 var KEY_ICONS = ["icon-geo-str-square", "icon-geo-str-circle", "icon-geo-str-triangle", "icon-geo-str-trifold", "icon-geo-str-diamond"];
 var KEY_COLORS = ["green", "blue", "red"];
@@ -51,7 +50,7 @@ var ModelDefinition = React.createClass({
 			return <RelationDetail view = {view} relation = {rel} />;
 		});
 
-		return <div key="model-detail-bar" className={"model-details " + (this.props.visible ? "" : "hidden")}>
+		return <div key="model-detail-bar" className="model-details">
 			<h3 key="attr-header">Attributes</h3>
 			<table key="attr-table" className="detail-table">
 				<thead>

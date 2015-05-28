@@ -117,7 +117,6 @@ var TabularPane = React.createClass ({
 	},
 
 	onClick: function (event) {
-		// console.log('click!')
 		var wrapper = React.findDOMNode(this.refs.wrapper)
 		var tableBody = React.findDOMNode(this.refs.tbody)
 		var y = event.pageY - wrapper.offsetTop + wrapper.scrollTop - HEADER_HEIGHT
@@ -299,7 +298,6 @@ var TabularTH = React.createClass ({
 		var col = this.props.column
 		var viewData = view.synget(bw.DEF.VIEW_DATA)
 		var sortOrder = !!(col.sorting && !col.sorting.desc)
-		console.log('sortOrder: '+ JSON.stringify(sortOrder, null, 2));
 		var sortObj = {'id': col.id, 'desc': sortOrder}
 		if (!event.shiftKey || !(viewData.sorting instanceof Array)) viewData.sorting = []
 		else viewData.sorting = _.filter(viewData.sorting, function (obj) {return obj.id !== col.id})

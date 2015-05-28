@@ -36,11 +36,9 @@ var TabularViewConfig = React.createClass({
 		var _this = this
 		var view = this.props.view
 		var columns = this.state.columns
-
 		var colList = (this.state.columnList || []).map(function (col) {
-			return <ColumnDetail config = {col} view= {view} />
+			return <ColumnDetail key = {"detail-" + col.id} config = {col} view= {view} />
 		})
-
 		var sortList = (this.state.sorting || []).map(function (sort) {
 			var sortOrderClass = "small grayed icon icon-arrow-" + (sort.desc ? "up" : "down")
 			var sortOrderLabel = sort.desc ? "Ascending" : "Descending"
@@ -50,8 +48,7 @@ var TabularViewConfig = React.createClass({
 			</tr>
 		})
 
-		return <div key="view-detail-bar" className={"view-details " + (this.props.visible ? "" : "hidden")}>
-			
+		return <div key="view-detail-bar">
 			<h3>Columns</h3>
 			<table className="detail-table">
 				<thead><tr key="attr-header-row">
@@ -63,20 +60,17 @@ var TabularViewConfig = React.createClass({
 				</tr></thead>
 				{colList}
 			</table>
-
 			<h3>Sorting</h3>
 			<table key="sort-table" className="detail-table">
-			<thead>
-			<tr key="sort-header-row">
-				<th key="sort-header-col">Column</th>
-				<th key="sort-header-Desc">Sort Order</th>
-			</tr>
+				<thead>
+				<tr key="sort-header-row">
+					<th key="sort-header-col">Column</th>
+					<th key="sort-header-Desc">Sort Order</th>
+				</tr>
 			</thead>
-			<tbody>{sortList}</tbody>
+				<tbody>{sortList}</tbody>
 			</table>
-
 			<h3>Filter</h3>
-			
 		</div>
 	}
 });
@@ -131,7 +125,7 @@ var ColumnDetail = React.createClass({
 		var nameField = (this.state.editing ? <input type="textbox" value={name} /> : name )
 		var key = "attr-" + config.id
 		var detailsStyle = {display: (this.state.open ? "table-cell" : "none")}
-		var eyeSpan = <span className={"clickable icon icon-eye-" + (this.state.visible ? "3 greened":"4 grayed")}></span>;
+		var eyeSpan = <span className={"clickable icon icon-eye-" + (this.state.visible ? "3 green":"4 grayed")}></span>;
 		return <tbody>
 			<tr key={key + '-row'}>
 				<td onClick={this.toggleDetails} key={key + '-expand'}>

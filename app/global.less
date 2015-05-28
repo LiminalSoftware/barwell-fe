@@ -31,11 +31,40 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 	font-style: normal;
 }
 
+//=================================
+// scrollbar
+
+::-webkit-scrollbar {
+   width: 8px;
+   height: 8px;
+   margin: 2px;
+}
+ 
+/* Track */
+::-webkit-scrollbar-track {
+   -webkit-border-radius: 10px;
+   background: @pureGray3;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+	width: 6px;
+	height: 6px;
+	margin: 1px;
+   -webkit-border-radius: 8px;
+   border-radius: 10px;
+   background: @pureGray2;
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: @pureGray2;
+}
+//=================================
 
 
 
 
 @green3: #46b980;
+// @green3: gold;
 @green4: lighten(@green3,30%);
 
 @blue3: steelblue;
@@ -122,6 +151,11 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 	&.white {
 		color: white;
 	}
+
+	&.gold {
+		color: gold;
+	}
+
 	&.grayed {
 		.transition(all 100ms ease-in);
 		color: @pureGray2;
@@ -132,7 +166,7 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 	}
 
 	&.right-align {
-		
+		float: right;
 	}
 
 	&.greened {

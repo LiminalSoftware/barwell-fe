@@ -1,28 +1,56 @@
 @import "../../global.less";
 
-::-webkit-scrollbar {
-   width: 8px;
-   height: 8px;
-   margin: 2px;
+
+
+.detail-hider {
+	position: absolute;
+	top: 50%;
+	right: 0;
+	margin-right: -100%;
+	padding: 10px;
+	background-color: @pureGray3;
+	color: @pureGray1;
+	z-index: 200;
 }
- 
-/* Track */
-::-webkit-scrollbar-track {
-   -webkit-border-radius: 10px;
-   background: @pureGray3;
+
+.detail-block {
+	display: block;
+	margin-bottom: 10px;
 }
- 
-/* Handle */
-::-webkit-scrollbar-thumb {
-	width: 6px;
-	height: 6px;
-	margin: 1px;
-   -webkit-border-radius: 8px;
-   border-radius: 10px;
-   background: @pureGray2;
+
+.detail-row {
+	display: flex;
+	flex-flow: columns nowrap;
+	box-sizing: border-box;
+	padding: 0;
+	list-style: none;
+	&.selector {
+		background: @pureGray4;
+		flex-flow: columns wrap;
+	}
 }
-::-webkit-scrollbar-thumb:window-inactive {
-	background: @pureGray2;
+
+.detail-cell {
+	&.label {order: 1}
+	&.value {order: 2}
+	&.centered {text-align: center}
+	padding: 5px 0;
+	box-sizing: border-box;
+	display: block;
+	flex: 1;
+	flex-grow: 1;
+}
+
+.banner {
+	display: block;
+	padding: 5px;
+	font-size: 10px;
+	margin-top: 10px;
+
+	&.warning {
+		border: 1px solid gold;
+		color: gold;
+	}
 }
 
 
@@ -34,7 +62,7 @@ ul.detail-panels {
 	padding: 10px;
 	padding-top: 0;
 	background-color: @pureGray3;
-	z-index: 10;
+	z-index: 220;
 
 	li {
 		.clickable;
@@ -61,6 +89,9 @@ ul.detail-panels {
 
 .model-details, .view-details {
 	flex-direction: column;
+	color: @pureGray1;
+	font-weight: 400;
+	font-size: 14px;
 	overflow-y: scroll;
 	display: flex;
 	padding: 10px;
@@ -75,7 +106,7 @@ ul.detail-panels {
 	height: 100vh;	
 	display: flex;
 	flex-direction: column;
-	
+	overflow: visible;
 	
 	order: -1;
 	background: @pureGray3;
@@ -88,10 +119,11 @@ ul.detail-panels {
 	
 	h3 {
 		font-size: 17px;
-		border-bottom: 2px solid @pureGray2;
+		border-bottom: 1px solid @pureGray2;
 	}
 
 	h2, h3, h4, h5 {
+		display: block;
 		color: @pureGray1;
 		font-weight: 400;
 		padding: 5px;
@@ -102,6 +134,7 @@ ul.detail-panels {
 		border-collapse: collapse;
 		color: @pureGray1;
 		font-size: 13px;
+
 		td, th {
 			padding: 3px;
 		}
@@ -135,3 +168,4 @@ ul.detail-panels {
 		cursor: pointer;
 	}
 }
+
