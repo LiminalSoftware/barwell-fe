@@ -5,16 +5,29 @@ import styles from "./style.less"
 import _ from "underscore"
 
 var SideBar = React.createClass({
-	getInitialState: function () {
-		return {
-			addingView: false
-		}
+	componentWillMount: function () {
+		this.modelCursor = bw.ModelMeta.store.getCursor()
 	},
-
+	componentDidMount: function () {
+		this.modelCursor.on('fetch', this.handleFetch)
+		this.modelCursor.on('add', this.handleFetch)
+		this.modelCursor.on('remove', this.handleFetch)
+		this.modelCursor.fetch(0,100)
+	},
+	componentWillUnmount: function () {
+		this.modelCursor.release()
+		this.modelCursor.removeListener('fetch', this.handleFetch)
+		this.modelCursor.removeListener('add', this.handleFetch)
+		this.modelCursor.removeListener('remove', this.handleFetch)
+	},
+	handleFetch: function () {
+		this.forceUpdate()
+	},
 	render: function () {
 		var _this = this;
-		var modelLinks = bw.ModelMeta.store.getObjects().map(function (mdl) {
-			return <ModelLink model={mdl} {..._this.props}/>;
+		var curModelId = this.props.params.modelId
+		var modelLinks = this.modelCursor.map(function (model) {
+			return <ModelLink model={model} {..._this.props}/>;
 		});
 		return <div className="left-side-bar">
 			<ul>{modelLinks}</ul>
@@ -22,6 +35,29 @@ var SideBar = React.createClass({
 	}
 })
 export default SideBar
+
+var ModelLink = React.createClass ({
+	render: function() {
+		var _this = this
+		var model = this.props.model
+		if (!model) return <div>loading</div>
+		var modelId = model.synget(bw.DEF.MODEL_ID)
+		var defaultView = model.synget(bw.DEF.MODEL_PRIMARYVIEW)
+		var views = model.synget('Views').map(function (view) {
+			return <ViewLink view={view} model={model}/>;
+		})
+		
+		return <li key={"model-li-" + modelId}>
+			<Link to="view" params={{modelId: model.synget(bw.DEF.MODEL_ID), viewId: defaultView}} key={"model-link-" + modelId}>
+				{model.synget(bw.DEF.MODEL_NAME)}
+			</Link>
+			<ul key={"model-views-ul-" + modelId} className={modelId == this.props.params.modelId ? 'active' : 'hidden'}>
+				{views}
+				<ViewAdder key={"model-view-adder-"+modelId} model={model} />
+			</ul>
+		</li>
+	}
+})
 
 var ViewLink = React.createClass({
 	getInitialState: function () {
@@ -81,31 +117,8 @@ var ViewLink = React.createClass({
 	}
 })
 
-var ModelLink = React.createClass ({
-	render: function() {
-		var _this = this
-		var model = this.props.model
-		var modelId = model.synget(bw.DEF.MODEL_ID)
-		var defaultView = model.synget(bw.DEF.MODEL_PRIMARYVIEW)
-		var views = model.synget('Views').map(function (view) {
-			return <ViewLink view={view} model={model}/>;
-		})
-		
-		return <li key={"model-li-" + modelId}>
-			<Link to="view" params={{modelId: model.synget(bw.DEF.MODEL_ID), viewId: defaultView}} key={"model-link-" + modelId}>
-				{model.synget(bw.DEF.MODEL_NAME)}
-			</Link>
-			<ul key={"model-views-ul-" + modelId} className={modelId == this.props.params.modelId ? 'active' : 'hidden'}>
-				{views}
-				<ViewAdder key={"model-view-adder-"+modelId} model={model} />
-			</ul>
-		</li>
-	}
-})
-
 
 var ViewAdder = React.createClass ({
-	
 	handleAddView: function() {
 		var model = this.props.model
 		var modelId = model.synget(bw.DEF.MODEL_ID)
@@ -115,14 +128,14 @@ var ViewAdder = React.createClass ({
 			905: "New view"
 		})
 	},
-
 	render: function () {
 		var _this = this
 		var model = this.props.model
 		var modelId = model.synget(bw.DEF.MODEL_ID)
-		
 		return <li key={"model-add-li-" + modelId}>
-			<a href="#" onClick={this.handleAddView}><span className="small grayed icon icon-plus"></span> New view</a>
+			<a className="clickable" onClick={this.handleAddView}>
+				<span className="small grayed icon icon-plus"></span> New view
+			</a>
 		</li>
 	}
 })

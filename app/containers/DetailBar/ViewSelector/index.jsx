@@ -1,26 +1,8 @@
 import React from "react";
 import bw from "barwell";
 import _ from 'underscore';
-
-var viewTypes = {
-	Tabular: {
-		type: "Tabular",
-		icon: "icon-db-datasheet"
-	},
-	Cube: {
-		type: "Cube",
-		icon: "icon-geo-cube"
-	},
-	Calendar: {
-		type: "Calendar",
-		icon: "icon-calendar-empty"
-	},
-	Timeline : {
-		type: "Timeline",
-		icon: "icon-chart-bars-6"
-	}
-}
-
+import viewTypes from "../../Views/viewTypes"
+	
 var ViewSelector = React.createClass({
 	getInitialState: function () {
 		var view = this.props.view

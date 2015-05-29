@@ -31,11 +31,19 @@ var TabularTBody = React.createClass ({
 		var oldState = this.state
 		var oldCols = oldProps.columns
 		var newCols = nextProps.columns
+		var oldSort = oldProps.sorting
+		var newSort = nextProps.sorting
 
 		return !(
 			nextProps.scrollTop === oldProps.scrollTop && 
-			_.isEqual(oldCols, newCols)
+			_.isEqual(oldCols, newCols) &&
+			_.isEqual(oldSort, newSort)
 		)
+	},
+	getCursor: function () {
+		var model = this.props.model
+		var sorting = this.props.sorting
+		this.cursor = model.store.getCursor({sort: sorting})
 	},
 	componentWillMount: function () {
 		var model = this.props.model
@@ -44,6 +52,7 @@ var TabularTBody = React.createClass ({
 	componentDidMount: function () {
 		var cursor = this.cursor
 		cursor.on('fetch', this.handleFetch)
+		cursor.on('update', this.handleFetch)
 		this.fetch(true)
 	},
 	componentWillReceiveProps: function (newProps) {
@@ -63,6 +72,7 @@ var TabularTBody = React.createClass ({
 	componentWillUnmount: function () {
 		this.cursor.release()
 		this.cursor.removeListener('fetch', this.handleFetch)
+		this.cursor.removeListener('update', this.handleFetch)
 	},
 	handleFetch: function () {
 		var cursor = this.cursor
@@ -95,7 +105,7 @@ var TabularTBody = React.createClass ({
 	getStyle: function () {
 		return {
 			top: (this.state.window.offset * (ROW_HEIGHT) + HEADER_HEIGHT) + 'px',
-			height: '10000px' // TODO
+			height: (((	(this.cursor.store.objCount || 0) - this.state.window.offset) * ROW_HEIGHT) + HEADER_HEIGHT) + 'px'
 		}
 	},
 	render: function () {
@@ -104,12 +114,10 @@ var TabularTBody = React.createClass ({
 		var cursor = this.cursor
 		var columns = this.props.columns
 		var clicker = this.props.clicker
-		// var pk = this.props.model.synget('Primary key');y
+		var pk = this.props.model.synget('Primary key')
 
-		if (this.cursor) for (var i = window.offset; i < window.offset + window.limit; i++) {
-			var obj = cursor.at(i)
+		rows = this.cursor.map(function (obj, i) {
 			var rowKey = 'tabular-' +  i //(!!pk && !!obj ? obj.synget(pk) : i)
-
 			var els = columns.map(function (col, idx) {
 				var field = fieldTypes[col.type]
 				var cellKey = rowKey + '-' + col.id
@@ -125,8 +133,8 @@ var TabularTBody = React.createClass ({
 					style: {minWidth: col.width, maxWidth: col.width}
 				})
 			})
-			rows.push(<tr id={rowKey} key={rowKey}>{els}</tr>)
-		}
+			return <tr id={rowKey} key={rowKey}>{els}</tr>
+		})
 		return <tbody ref="tbody" style={this.getStyle()}>
 			{rows}
 		</tbody>

@@ -10,6 +10,18 @@ var TextField = React.createClass({
 	}
 });
 
+var IntegerField = React.createClass({
+	render: function () {
+		var value = this.props.value
+		var style = this.props.style
+		var clicker = this.props.clicker
+
+		style.textAlign = 'right'
+
+		return <td style={style} onClick={clicker}>{value}</td>
+	}
+});
+
 var CheckboxField = React.createClass({
 	
 	render: function () {
@@ -27,7 +39,7 @@ var fieldTypes = {
 	Text: TextField,
 	Boolean: CheckboxField,
 	HasOne: TextField,
-	Integer: TextField,
+	Integer: IntegerField,
 	Timestamp: TextField
 }
 

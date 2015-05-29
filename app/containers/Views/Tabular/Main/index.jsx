@@ -180,12 +180,13 @@ var TabularPane = React.createClass ({
 		var model = this.props.model
 		var view = this.props.view
 		var columns = _.filter(this.state.columnList, function(col) {return !!col.visible})
+		var sorting = this.state.sorting
 		var id = view.synget(bw.DEF.MODEL_ID)
 		
 		return <div className="tabular-wrapper" onScroll={this.onScroll} ref="wrapper">
 				<table id="main-data-table" className="header data-table" onKeyPress={this.onKey} >
 					<TabularTHead  key={"thead-" + id} scrollTop={this.state.scrollTop} columns={columns} view={view}/>
-					<TabularTBody ref="tabularbody" key={"tbody-" + id} model={model} view={view} columns={columns} scrollTop={this.state.scrollTop} numRows={1000} clicker={this.onClick}/>
+					<TabularTBody ref="tabularbody" key={"tbody-" + id} model={model} view={view} columns={columns} sorting={sorting} scrollTop={this.state.scrollTop} numRows={1000} clicker={this.onClick}/>
 				</table>
 				<div className="anchor" ref="anchor" style={this.getPointerStyle()}></div>
 				<div className="selection" ref="selection" style={this.getSelectorStyle()}></div>
