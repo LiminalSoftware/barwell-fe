@@ -6,13 +6,15 @@ import _ from "underscore"
 
 var SideBar = React.createClass({
 	componentWillMount: function () {
+		console.log('mounting sidebar')
 		this.modelCursor = bw.ModelMeta.store.getCursor()
 	},
 	componentDidMount: function () {
+		console.log('mounted sidebar')
 		this.modelCursor.on('fetch', this.handleFetch)
 		this.modelCursor.on('add', this.handleFetch)
 		this.modelCursor.on('remove', this.handleFetch)
-		this.modelCursor.fetch(0,100)
+		this.modelCursor.fetch()
 	},
 	componentWillUnmount: function () {
 		this.modelCursor.release()
@@ -26,7 +28,8 @@ var SideBar = React.createClass({
 	render: function () {
 		var _this = this;
 		var curModelId = this.props.params.modelId
-		var modelLinks = this.modelCursor.map(function (model) {
+		var modelLinks = bw.ModelMeta.store.getObjects().map(function (model) {
+			// if (!model) return <li><a>Loading</a></li>
 			return <ModelLink model={model} {..._this.props}/>;
 		});
 		return <div className="left-side-bar">
@@ -43,12 +46,13 @@ var ModelLink = React.createClass ({
 		if (!model) return <div>loading</div>
 		var modelId = model.synget(bw.DEF.MODEL_ID)
 		var defaultView = model.synget(bw.DEF.MODEL_PRIMARYVIEW)
+		
 		var views = model.synget('Views').map(function (view) {
-			return <ViewLink view={view} model={model}/>;
+			return <ViewLink view={view} model={model}/>
 		})
 		
 		return <li key={"model-li-" + modelId}>
-			<Link to="view" params={{modelId: model.synget(bw.DEF.MODEL_ID), viewId: defaultView}} key={"model-link-" + modelId}>
+			<Link to="model" params={{modelId: model.synget(bw.DEF.MODEL_ID)}} key={"model-link-" + modelId}>
 				{model.synget(bw.DEF.MODEL_NAME)}
 			</Link>
 			<ul key={"model-views-ul-" + modelId} className={modelId == this.props.params.modelId ? 'active' : 'hidden'}>

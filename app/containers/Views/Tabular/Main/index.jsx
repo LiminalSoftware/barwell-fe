@@ -46,7 +46,7 @@ var TabularPane = React.createClass ({
 	componentWillUnmount: function () {
 		var view = this.props.view
 		view.removeListener('update', this.refreshView)
-		$(document.body).removeListener('keydown', this.onKey)
+		$(document.body).off('keydown', this.onKey)
 	},
 
 	updateView: function (view) {
@@ -183,8 +183,8 @@ var TabularPane = React.createClass ({
 		var sorting = this.state.sorting
 		var id = view.synget(bw.DEF.MODEL_ID)
 		
-		return <div className="tabular-wrapper" onScroll={this.onScroll} ref="wrapper">
-				<table id="main-data-table" className="header data-table" onKeyPress={this.onKey} >
+		return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">
+				<table id="main-data-table" className="header data-table">
 					<TabularTHead  key={"thead-" + id} scrollTop={this.state.scrollTop} columns={columns} view={view}/>
 					<TabularTBody ref="tabularbody" key={"tbody-" + id} model={model} view={view} columns={columns} sorting={sorting} scrollTop={this.state.scrollTop} numRows={1000} clicker={this.onClick}/>
 				</table>

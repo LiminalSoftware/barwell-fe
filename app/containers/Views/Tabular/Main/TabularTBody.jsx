@@ -33,7 +33,6 @@ var TabularTBody = React.createClass ({
 		var newCols = nextProps.columns
 		var oldSort = oldProps.sorting
 		var newSort = nextProps.sorting
-
 		return !(
 			nextProps.scrollTop === oldProps.scrollTop && 
 			_.isEqual(oldCols, newCols) &&
@@ -45,37 +44,38 @@ var TabularTBody = React.createClass ({
 		var sorting = this.props.sorting
 		this.cursor = model.store.getCursor({sort: sorting})
 	},
-	componentWillMount: function () {
-		var model = this.props.model
-		this.cursor = model.store.getCursor()
-	},
-	componentDidMount: function () {
+	activateCursor: function () {
 		var cursor = this.cursor
 		cursor.on('fetch', this.handleFetch)
 		cursor.on('update', this.handleFetch)
 		this.fetch(true)
 	},
+	deactivateCursor: function () {
+		this.cursor.release()
+		this.cursor.removeListener('fetch', this.handleFetch)
+		this.cursor.removeListener('update', this.handleFetch)
+	},
+	componentWillMount: function () {
+		this.getCursor()
+	},
+	componentDidMount: function () {
+		this.activateCursor()
+	},
 	componentWillReceiveProps: function (newProps) {
 		var newModel = newProps.model
-		if (newModel !== this.props.model) {
-			// free old cursor
-			this.cursor.removeListener('fetch', this.handleFetch)
-			this.cursor.release()
-			// set new cursor
-			this.cursor = newModel.store.getCursor()
-			this.cursor.on('fetch', this.handleFetch)
-			this.fetch(true)
+		var newSort = newProps.sort
+		if (newModel !== this.props.model || newSort !== this.props.sort) {
+			this.deactivateCursor()
+			this.getCursor()
+			this.activateCursor()
 		} else if (newProps.scrollTop !== this.props.scrollTop) {
 			this.fetch()
 		}
 	},
 	componentWillUnmount: function () {
-		this.cursor.release()
-		this.cursor.removeListener('fetch', this.handleFetch)
-		this.cursor.removeListener('update', this.handleFetch)
+		this.deactivateCursor()
 	},
 	handleFetch: function () {
-		var cursor = this.cursor
 		this.setState({fetching: false})
 		this.forceUpdate()
 	},
@@ -105,7 +105,7 @@ var TabularTBody = React.createClass ({
 	getStyle: function () {
 		return {
 			top: (this.state.window.offset * (ROW_HEIGHT) + HEADER_HEIGHT) + 'px',
-			height: (((	(this.cursor.store.objCount || 0) - this.state.window.offset) * ROW_HEIGHT) + HEADER_HEIGHT) + 'px'
+			height: (((	(this.cursor.store.objCount || 0) - this.state.window.offset) * ROW_HEIGHT)) + 'px'
 		}
 	},
 	render: function () {

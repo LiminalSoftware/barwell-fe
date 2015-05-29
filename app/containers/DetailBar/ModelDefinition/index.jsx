@@ -26,7 +26,6 @@ var ModelDefinition = React.createClass({
 	},
 	render: function () {
 		var _this = this;
-		var view = this.props.view;
 		var model = this.props.model;
 		var columns = model.synget('Fields');
 		var keys = model.synget('Keys');
@@ -39,15 +38,15 @@ var ModelDefinition = React.createClass({
 		})
 
 		var colList = columns.map(function (col) {
-			return <ColumnDetail column = {col} view = {view} keyOrd = {keyOrd} />;
+			return <ColumnDetail column = {col} keyOrd = {keyOrd} />;
 		});
 
 		var keyList = keys.map(function (key) {
-			return <KeyDetail view = {view} mdlKey = {key} keyOrd = {keyOrd} />;
+			return <KeyDetail mdlKey = {key} keyOrd = {keyOrd} />;
 		});
 
 		var relList = relations.map(function (rel) {
-			return <RelationDetail view = {view} relation = {rel} />;
+			return <RelationDetail relation = {rel} />;
 		});
 
 		return <div key="model-detail-bar" className="model-details">
@@ -112,7 +111,6 @@ var KeyDetail = React.createClass({
 	render: function () {
 		var key = this.props.mdlKey;
 		var keyOrd = this.props.keyOrd;
-		var view = this.props.view;
 		var name = key.synget(bw.DEF.KEY_NAME);
 		var uniq = key.synget(bw.DEF.KEY_UNIQ);
 		var reactKey = 'key-' + key.synget(bw.DEF.KEY_ID);
@@ -135,7 +133,6 @@ var KeyDetail = React.createClass({
 var RelationDetail = React.createClass({
 	render: function () {
 		var relation = this.props.relation;
-		var view = this.props.view;
 		var name = relation.synget(bw.DEF.REL_NAME);
 		var fromKey = relation.synget(bw.DEF.REL_KEY);
 		var fromKeyName = fromKey.synget(bw.DEF.KEY_NAME);
@@ -171,7 +168,6 @@ var ColumnDetail = React.createClass({
 	render: function () {
 		var col = this.props.column;
 		var keyOrd = this.props.keyOrd;
-		var view = this.props.view;
 		var colId = col.synget(bw.DEF.ATTR_ID);
 		var name = col.synget(bw.DEF.ATTR_NAME);
 
