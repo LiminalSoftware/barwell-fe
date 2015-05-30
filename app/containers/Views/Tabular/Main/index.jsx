@@ -32,7 +32,7 @@ var TabularPane = React.createClass ({
 				top: 0
 			},
 			scrollTop: 0,
-			focused: false
+			focused: true
 		}
 	},
 
@@ -58,11 +58,13 @@ var TabularPane = React.createClass ({
 
 	refreshView: function () {
 		var view = this.props.view
-		this.setState(view.synget(bw.DEF.VIEW_DATA))
+		var viewData = view.synget(bw.DEF.VIEW_DATA)
+		console.log('viewData.sorting: '+ JSON.stringify(viewData.sorting, null, 2));
+		this.setState(viewData)
 	},
 
 	componentWillMount: function () {
-		var model = this.props.model
+	
 	},
 
 	componentWillReceiveProps: function (props) {
@@ -171,7 +173,8 @@ var TabularPane = React.createClass ({
 			top: top + 'px',
 			left: left + 'px',
 			minWidth: width + 'px',
-			minHeight: height + "px"
+			minHeight: height + "px",
+			borderColor: this.state.focused ? "steelblue" : "gray"
 		}
 	},
 
@@ -223,8 +226,8 @@ var TabularTH = React.createClass ({
 		}
 		var sortArrow
 		var classes = ""
-		if (!!col.sorting) sortArrow = <span className={"small white after icon icon-arrow-" + (col.sorting.desc ? "up" : "down")}></span>
-		if (!!col.sorting) classes = col.sorting.desc ? 'asc' : 'desc'
+		if (!!col.sorting) sortArrow = <span className={"small white after icon icon-arrow-" + (col.sorting.descending ? "up" : "down")}></span>
+		if (!!col.sorting) classes = col.sorting.descending ? 'asc' : 'desc'
 		return <th 
 				onClick={this.onClick}
 				key={"header-" + col.id} 
@@ -234,6 +237,7 @@ var TabularTH = React.createClass ({
 			{col.name}
 			{sortArrow}
 			<span 
+				ref = "resizer"
 				className = {"table-resizer " + (this.state.dragging ? "dragging" : "")}
 				onMouseDown = {this.onResizerMouseDown}
 				style = {{right: (-1 * this.state.pos) + 'px', top: 0}}
@@ -292,14 +296,15 @@ var TabularTH = React.createClass ({
 		   document.removeEventListener('mouseup', this.onMouseUp)
 		}
 	},
-   onClick: function (event) {       
-   	// TODO handle multiple sorting
-   	if (!!this.state.dragging) return
+   onClick: function (event) {   
+   	var resizer = React.findDOMNode(this.refs.resizer)
+   	if(event.target == resizer) return
+
 		var view = this.props.view   
 		var col = this.props.column
 		var viewData = view.synget(bw.DEF.VIEW_DATA)
-		var sortOrder = !!(col.sorting && !col.sorting.desc)
-		var sortObj = {'id': col.id, 'desc': sortOrder}
+		var sortOrder = !!(col.sorting && !col.sorting.descending)
+		var sortObj = {'id': col.id, 'descending': sortOrder}
 		if (!event.shiftKey || !(viewData.sorting instanceof Array)) viewData.sorting = []
 		else viewData.sorting = _.filter(viewData.sorting, function (obj) {return obj.id !== col.id})
 		viewData.sorting.push(sortObj)

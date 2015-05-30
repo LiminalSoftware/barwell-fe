@@ -40,11 +40,12 @@ var TabularViewConfig = React.createClass({
 			return <ColumnDetail key = {"detail-" + col.id} config = {col} view= {view} />
 		})
 		var sortList = (this.state.sorting || []).map(function (sort) {
-			var sortOrderClass = "small grayed icon icon-arrow-" + (sort.desc ? "up" : "down")
-			var sortOrderLabel = sort.desc ? "Ascending" : "Descending"
+			var sortOrderClass = "small grayed icon icon-arrow-" + (sort.descending ? "up" : "down")
+			var sortOrderLabel = sort.descending ? "Ascending" : "Descending"
 			return <tr>
 				<td>{sort.id}</td>
 				<td><span className = {sortOrderClass}></span>{sortOrderLabel}</td>
+				<td><span className = "clickable armKill icon icon-trash"></span></td>
 			</tr>
 		})
 
@@ -66,6 +67,7 @@ var TabularViewConfig = React.createClass({
 				<tr key="sort-header-row">
 					<th key="sort-header-col">Column</th>
 					<th key="sort-header-Desc">Sort Order</th>
+					<th></th>
 				</tr>
 			</thead>
 				<tbody>{sortList}</tbody>

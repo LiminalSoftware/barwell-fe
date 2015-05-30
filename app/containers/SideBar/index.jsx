@@ -137,8 +137,8 @@ var ViewAdder = React.createClass ({
 		var model = this.props.model
 		var modelId = model.synget(bw.DEF.MODEL_ID)
 		return <li key={"model-add-li-" + modelId}>
-			<a className="clickable" onClick={this.handleAddView}>
-				<span className="small grayed icon icon-plus"></span> New view
+			<a className="addNew clickable" onClick={this.handleAddView}>
+				<span className="small addNew icon icon-plus"></span> Create new view
 			</a>
 		</li>
 	}

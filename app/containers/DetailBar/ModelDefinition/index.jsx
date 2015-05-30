@@ -9,7 +9,8 @@ var KEY_COLORS = ["green", "blue", "red"];
 var getIconClasses = function (ordinal) {
 	return [
 		"small", 
-		"icon", 
+		"icon",
+		"addNew",
 		KEY_ICONS[ordinal % KEY_ICONS.length], 
 		KEY_COLORS[ordinal % KEY_COLORS.length]
 	].join(" ");
@@ -64,7 +65,7 @@ var ModelDefinition = React.createClass({
 					{colList}
 				</tbody>
 			</table>
-			<div><a className="new-attr" onClick={this.handleAddNewAttr}><span className="small grayed icon icon-plus"></span>New attribute</a></div>
+			<div><a className="new-attr" onClick={this.handleAddNewAttr}><span className="small addNew icon icon-plus"></span>New attribute</a></div>
 			
 			<h3 key="keys-header">Keys</h3>
 			<table key="keys-table" className="detail-table">

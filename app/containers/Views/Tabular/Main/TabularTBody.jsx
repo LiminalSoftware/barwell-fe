@@ -42,6 +42,7 @@ var TabularTBody = React.createClass ({
 	getCursor: function () {
 		var model = this.props.model
 		var sorting = this.props.sorting
+		console.log('sorting: '+ JSON.stringify(sorting, null, 2));
 		this.cursor = model.store.getCursor({sort: sorting})
 	},
 	activateCursor: function () {
@@ -68,6 +69,7 @@ var TabularTBody = React.createClass ({
 			this.deactivateCursor()
 			this.getCursor()
 			this.activateCursor()
+			this.fetch()
 		} else if (newProps.scrollTop !== this.props.scrollTop) {
 			this.fetch()
 		}
