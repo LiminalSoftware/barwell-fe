@@ -7,16 +7,17 @@ import TabularViewConfig from "../Views/Tabular/Config";
 import ViewSelector from "./ViewSelector"
 
 var DetailBar = React.createClass({
-	componentDidMount: function () {
-	},
 	getInitialState: function () {
-		return {activePane: "modelDef"};
+		return {activePane: "model-def"};
 	},
 	showModelDef: function () {
-		this.setState({activePane: "modelDef"});
+		this.setState({activePane: "model-def"});
 	},
 	showViewConfig: function () {
-		this.setState({activePane: "viewConfig"});
+		this.setState({activePane: "view-config"});
+	},
+	toggleSidebar: function () {
+		// this.props.toggleSidebar();
 	},
 	render: function () {
 		var _this = this
@@ -25,10 +26,10 @@ var DetailBar = React.createClass({
 		var viewConfig
 		var content
 		
-		if (!view || this.state.activePane == "modelDef") {
-			this.state.activePane = "modelDef"
+		if (!view || this.state.activePane == "model-def") {
+			this.state.activePane = "model-def"
 			content = <ModelDefinition view={view} model={model} />
-		} else if (this.state.activePane == "viewConfig") {
+		} else if (this.state.activePane == "view-config") {
 			var viewData = view.synget(bw.DEF.VIEW_DATA)
 			if (viewData.type === 'Tabular') viewConfig = <TabularViewConfig view={view} model={model}/>
 			else  viewConfig = <div>Placeholder</div>
@@ -38,12 +39,12 @@ var DetailBar = React.createClass({
 			</div>
 		}
 
-		// <div className="detail-hider">Hide sidebar</div>
 		return <div key="detail-bar" className="detail-bar">
+			<div className="detail-hider" onClick={this.toggleSidebar}><span className="small clickable right-align icon icon-arrow-left"></span></div>
 			<ul className="detail-panels">
-				<li><h2 className={this.state.activePane == "modelDef" ? "active" : ""} onClick={this.showModelDef}>Model</h2></li>
+				<li><h2 className={this.state.activePane == "model-def" ? "active" : ""} onClick={this.showModelDef}>Model</h2></li>
 				{ (!!view) ? <li><h2>Details</h2></li> : "" }
-				{ (!!view) ? <li><h2 className={this.state.activePane == "viewConfig" ? "active" : ""} onClick={this.showViewConfig}>View</h2></li> : ""}
+				{ (!!view) ? <li><h2 className={this.state.activePane == "view-config" ? "active" : ""} onClick={this.showViewConfig}>View</h2></li> : ""}
 			</ul>
 			{content}
 		</div>

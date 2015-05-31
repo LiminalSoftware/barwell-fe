@@ -3,7 +3,7 @@
 .hide-button {
 	color: @pureGray1;
 	font-size: 14px;
-	border: 5px solid @pureGray3;
+	border: 5px solid @gray-3;
 	padding: 5px;
 	border-radius: 5px;
 	position: absolute;
@@ -13,17 +13,18 @@
 
 .left-side-bar {
 	display: relative;
-	flex: 0 0 12em;
+	flex: 0 0 200px;
 	order: -2;
-	background: @pureGray4;
+	background: @gray-4;
 	padding: 0;
 	
+	// border-right: 1px solid @bluegray-hilight;
 	
 	h2 {
 		color: @pureGray1;
 		font-weight: 400;
 		font-size: 20px;
-		border-bottom: 5px solid @pureGray3;
+		border-bottom: 5px solid @gray-3	;
 		padding: 5px;
 	}
 
@@ -36,18 +37,30 @@
 	}
 
 	ul {
-		-webkit-transition: all 0.2us ease-in;
+		.transition(all 0.2us ease-in);
 		list-style: none;
-		padding: 0;
-		
+		padding: 0;		
 		margin: 0;
-
 
 		li {
 			color: @pureGray1;
 			font-size: 14px;
+			border-bottom: 1px solid @gray-4;
+					
+			&.li-view {
+				background-color: @gray-3;
+				border-right: 1px solid @gray-4;
+			}
 
-			border-bottom: 1px solid @pureGray3;
+			&.li-hilite {
+				background-color: @gray-3;
+				&.li-view {
+					border-right: 1px solid @gray-4;
+				}
+				&.li-model {
+					border-right: 1px solid @gray-4;
+				}
+			}
 			
 
 			a {
@@ -59,16 +72,18 @@
 				padding: 10px;
 				text-decoration: none;
 				
+				
 				color: @pureGray1;
-				border-left: 4px solid @pureGray4;
+				border-left: 4px solid @bluegray-4;
 
 				&.active {
-					background-color: @pureGray3;
+					background-color: @gray-3;
 					border-left: 4px solid @green-tint-1;
+					margin-right: -1px;
 				}
 
 				&:not(.active):hover {
-					border-left: 4px solid @pureGray3;
+					border-left: 4px solid @green-tint-2;
 				}
 			}
 		}
@@ -83,7 +98,7 @@ ul.view-type-options {
 	display: block;
 	list-style: none;
 	a {
-		background: @pureGray3;
+		background-color: @gray-3;
 	}
 }
 

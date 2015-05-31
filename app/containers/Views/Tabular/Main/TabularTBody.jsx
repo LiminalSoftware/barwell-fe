@@ -26,24 +26,16 @@ var TabularTBody = React.createClass ({
 			}
 		}
 	},
-	shouldComponentUpdate: function (nextProps, nextState) {
-		var oldProps = this.props
-		var oldState = this.state
-		var oldCols = oldProps.columns
-		var newCols = nextProps.columns
-		var oldSort = oldProps.sorting
-		var newSort = nextProps.sorting
+	shouldComponentUpdate: function (next) {
+		var old = this.props
 		return !(
-			nextProps.scrollTop === oldProps.scrollTop && 
-			_.isEqual(oldCols, newCols) &&
-			_.isEqual(oldSort, newSort)
+			next.scrollTop === old.scrollTop && 
+			_.isEqual(old.columns, next.columns) &&
+			_.isEqual(old.sorting, next.sort)
 		)
 	},
-	getCursor: function () {
-		var model = this.props.model
-		var sorting = this.props.sorting
-		console.log('sorting: '+ JSON.stringify(sorting, null, 2));
-		this.cursor = model.store.getCursor({sort: sorting})
+	getCursor: function (model, sorting) {
+		this.cursor = model.store.getCursor({sortBy: sorting})
 	},
 	activateCursor: function () {
 		var cursor = this.cursor
@@ -57,17 +49,18 @@ var TabularTBody = React.createClass ({
 		this.cursor.removeListener('update', this.handleFetch)
 	},
 	componentWillMount: function () {
-		this.getCursor()
+		this.getCursor(this.props.model, this.props.sorting)
 	},
 	componentDidMount: function () {
 		this.activateCursor()
 	},
 	componentWillReceiveProps: function (newProps) {
 		var newModel = newProps.model
-		var newSort = newProps.sort
-		if (newModel !== this.props.model || newSort !== this.props.sort) {
+		var newSort = newProps.sorting
+
+		if (newModel !== this.props.model || !_.isEqual(newSort, this.props.sorting)) {
 			this.deactivateCursor()
-			this.getCursor()
+			this.getCursor(newProps.model, newProps.sorting)
 			this.activateCursor()
 			this.fetch()
 		} else if (newProps.scrollTop !== this.props.scrollTop) {

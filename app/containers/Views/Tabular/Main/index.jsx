@@ -52,14 +52,12 @@ var TabularPane = React.createClass ({
 	updateView: function (view) {
 		var oldView = this.props.view
 		oldView.removeListener('update', this.refreshView)
-		this.setState(view.synget(bw.DEF.VIEW_DATA))
 		view.on('update', this.refreshView)
+		this.refreshView
 	},
 
 	refreshView: function () {
-		var view = this.props.view
-		var viewData = view.synget(bw.DEF.VIEW_DATA)
-		console.log('viewData.sorting: '+ JSON.stringify(viewData.sorting, null, 2));
+		var viewData = this.props.view.synget(bw.DEF.VIEW_DATA)
 		this.setState(viewData)
 	},
 
@@ -100,6 +98,11 @@ var TabularPane = React.createClass ({
 		})
 	},
 
+	startEdit: function (e) {
+		console.log('e.type: '+e.type)
+		this.setState({edting: !this.state.editing})
+	},
+
 	onKey: function (e) {
 		var ptr = this.state.pointer
 		var numCols = this.state.columnList.length
@@ -111,11 +114,12 @@ var TabularPane = React.createClass ({
 		else if (e.keyCode == 38 && top > 0) top --
 		else if (e.keyCode == 39 && left < numCols) left ++
 		else if (e.keyCode == 40 && top < numRows) top ++
+		else if (e.keyCode == 113) return this.startEdit() 
 		else return
 
 		e.stopPropagation()
-   	e.preventDefault()
-		this.updateSelect(top, left, e.shiftKey)
+   		e.preventDefault()
+		if (e.keyCode >= 37 && e.keyCode <= 40) this.updateSelect(top, left, e.shiftKey)
 	},
 
 	onClick: function (event) {
@@ -173,8 +177,7 @@ var TabularPane = React.createClass ({
 			top: top + 'px',
 			left: left + 'px',
 			minWidth: width + 'px',
-			minHeight: height + "px",
-			borderColor: this.state.focused ? "steelblue" : "gray"
+			minHeight: height + "px"
 		}
 	},
 
@@ -220,10 +223,7 @@ var TabularTH = React.createClass ({
 	render: function () {
 		var _this = this
 		var col = this.props.column
-		var cellStyle = {
-			minWidth: col.width,
-			maxWidth: col.width
-		}
+		var cellStyle = {minWidth: col.width, maxWidth: col.width}
 		var sortArrow
 		var classes = ""
 		if (!!col.sorting) sortArrow = <span className={"small white after icon icon-arrow-" + (col.sorting.descending ? "up" : "down")}></span>
@@ -251,7 +251,7 @@ var TabularTH = React.createClass ({
 			pos: 0
 		}
 	},
-	componentWillMount: function () {
+	componentDidMount: function () {
 		var col = this.props.column
 		this.setState(col)
 	},

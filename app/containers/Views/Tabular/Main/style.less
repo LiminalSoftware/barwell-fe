@@ -63,12 +63,6 @@
 			&.checkbox {
 				text-align: center;
 			}
-			// &.first-cell-highlight {
-			// 	border-left: 2px solid @blue4;
-			// }
-			// &.first-cell {
-			// 	border-left: 2px solid @gray2;
-			// }
 		}
 
 		th {
@@ -111,8 +105,8 @@ div.selection {
 	position: absolute;
 	top: 0;
 	left: 0;
-	border: 1px dashed steelblue;
-	background: rgba(20,100,255,0.1);
+	border: 1px dashed @green-tint-1;
+	background: @green-trans;
 	-webkit-transition: all 50ms ease-in;
 	transition: all 30ms ease-in;
 	border-radius: 3px;
@@ -123,9 +117,10 @@ div.anchor {
 	position: absolute;
 	top: 0;
 	left: 0;
-	border: 2px solid steelblue;
+	border: 2px solid @green-tint-1;
 	-webkit-transition: all 30ms ease-in;
 	transition: all 50ms ease-in;
+	// .box-shadow(0px 0px 10px hsla(255, 90%, 20%, 50%));
 }
 
 div.loading-banner {

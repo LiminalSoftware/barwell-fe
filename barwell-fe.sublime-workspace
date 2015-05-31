@@ -4,8 +4,176 @@
 		"selected_items":
 		[
 			[
+				"de",
+				"deactivateCursor"
+			],
+			[
+				"get",
+				"getCursor"
+			],
+			[
+				"hand",
+				"handleFetch"
+			],
+			[
+				"view",
+				"viewTypes"
+			],
+			[
+				"set",
+				"setState"
+			],
+			[
+				"detail",
+				"detail-cell"
+			],
+			[
+				"fun",
+				"function"
+			],
+			[
+				"V",
+				"ViewChangeWarning"
+			],
+			[
 				"text",
-				"text-decoration"
+				"text-align"
+			],
+			[
+				"type",
+				"typeSelector"
+			],
+			[
+				"model",
+				"modelDef"
+			],
+			[
+				"View",
+				"ViewSelector"
+			],
+			[
+				"pureGra",
+				"pureGray1"
+			],
+			[
+				"back",
+				"background-color"
+			],
+			[
+				"handl",
+				"handleDblClick"
+			],
+			[
+				"handle",
+				"handleAddView"
+			],
+			[
+				"fet",
+				"fetching"
+			],
+			[
+				"compnen",
+				"componentWillMount"
+			],
+			[
+				"compon",
+				"componentWillReceiveProps"
+			],
+			[
+				"componen",
+				"componentWillMount"
+			],
+			[
+				"for",
+				"forceUpdate"
+			],
+			[
+				"tbo",
+				"tbodyUpdate"
+			],
+			[
+				"nex",
+				"nextState"
+			],
+			[
+				"TabularT",
+				"TabularTHead"
+			],
+			[
+				"Text",
+				"TextField"
+			],
+			[
+				"shi",
+				"shiftKey"
+			],
+			[
+				"remove",
+				"removeListener"
+			],
+			[
+				"componentWil",
+				"componentWillMount"
+			],
+			[
+				"text-",
+				"text-align"
+			],
+			[
+				"sortOrder",
+				"sortOrderLabel"
+			],
+			[
+				"comp",
+				"components"
+			],
+			[
+				"select",
+				"selectionTop"
+			],
+			[
+				"col",
+				"colProps"
+			],
+			[
+				"getCursor",
+				"getCursorStyle"
+			],
+			[
+				"acti",
+				"activePane"
+			],
+			[
+				"defa",
+				"defaultView"
+			],
+			[
+				"pure",
+				"pureGray1"
+			],
+			[
+				"Relation",
+				"RelationDetail"
+			],
+			[
+				"border-left",
+				"border-left-width"
+			],
+			[
+				"mod",
+				"modelId"
+			],
+			[
+				"border-rad",
+				"border-top-left-radius"
+			],
+			[
+				"pureGray",
+				"pureGray3"
+			],
+			[
+				"pureG",
+				"pureGray1"
 			],
 			[
 				"HTTP",
@@ -66,10 +234,6 @@
 			[
 				"att",
 				"attributes"
-			],
-			[
-				"get",
-				"getModel"
 			],
 			[
 				"string",
@@ -143,9 +307,13 @@
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 374.0,
+		"height": 63.0,
 		"selected_items":
 		[
+			[
+				":w",
+				":w - Save"
+			],
 			[
 				"remove",
 				"Package Control: Remove Package"
@@ -184,29 +352,64 @@
 	},
 	"file_history":
 	[
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ModelDefinition/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/TabularTBody.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Config/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/global.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/mainRoutes.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ViewPane/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ViewSelector/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/fields.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/viewTypes.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/components/editableMixin.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/ViewSelector/index.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Application/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/lib/server-production.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/lib/server-development.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/package.json",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ModelDefinition/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/validateView.js",
+		"/C/Users/549764/Documents/Personal/web/style.css",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Application/index.jsx",
+		"/C/Users/549764/Documents/Personal/web/index.html",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/simple.html",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ViewPane/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/barwell-fe.sublime-project",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/.gitignore",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/assets/less/pictonic.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ViewConfig/Tabular/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ViewConfig/Tabular/index.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ViewConfig/Tabular/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/TabularPane/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/config/app.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/actions.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/routeHandlers/ViewPane.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/make-webpack-config.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/routeHandlers/HomePage.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/routeHandlers/async.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/ModelLink.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/routeHandlers/ModelPane.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/TabularPane/style.less",
+		"/C/Users/549764/Downloads/LT-WebFonts-1942127695/demo.css",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/style.less",
+		"/C/Users/549764/Downloads/react-starter-master (1)/react-starter-master/app/mainRoutes.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/config/joinEntry.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/lib/server.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/mainStores.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/mainRoutes.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/routeHandlers/ModelPane.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/components/SideBar.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/style.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Application/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/make-webpack-config.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/config/app.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/routeHandlers/Application.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/index.jsx",
-		"/C/Users/549764/Downloads/react-starter-master (1)/react-starter-master/app/mainRoutes.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/package.json",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/barwell-fe.sublime-project",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/barwell-fe.sublime-project",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/components/MainMenu.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/components/SideBar",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/lib/server-development.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/lib/server-production.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/webpack-production.config.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/build/stats.json",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/fe.html",
@@ -276,52 +479,19 @@
 		"/C/Users/549764/Documents/GitHub/clarient-rules/miniORM.js",
 		"/C/Users/549764/Documents/GitHub/clarient-rules/setup.sql",
 		"/C/Users/549764/Documents/GitHub/clarient-rules/db/setup.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/dbSetup.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/db/miniORM.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/rest.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/package.json",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/dbQuery.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/dbUtil.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/dbConfig.json",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/dbTestConfig.json",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/mocha.opts",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/queries/model.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/queries/getAllTables.sql",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/queries/getTables.sql",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/dbConfig.sql",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/dbconfig.sql",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/static/css/style.css",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/static/index.html",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/static/css/pictonic.css",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/relRelationships.sql",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/relEntities.sql",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/package.json",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/relationship.sql",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/static/js/clarientGraph.js",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/server.js",
-		"/C/Users/549764/Documents/CReD/pricing/billing_v3.sql",
-		"/C/Users/549764/Documents/CReD/pricing/billing.sql",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/documentPerms.sql",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/leDocs.sql",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/leRels.sql",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/document.sql",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/static/js/sigma.parsers.json.js",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/static/drag-nodes.html",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/leReqs.sql",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/legalEntity.sql",
-		"/C/Users/549764/Downloads/sigma.js-master/sigma.js-master/examples/add-node-on-click.html",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/static/load-external-json.html",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/queries/leDocsQuery.sql"
+		"/C/Users/549764/Documents/GitHub/clarient-rules/dbSetup.js"
 	],
 	"find":
 	{
-		"height": 34.0
+		"height": 33.0
 	},
 	"find_in_files":
 	{
 		"height": 89.0,
 		"where_history":
 		[
+			"C:\\Users\\549764\\Documents\\GitHub\\barwell-fe\\app\\containers",
+			"C:\\Users\\549764\\Documents\\GitHub\\barwell-fe\\app\\containers\\Views\\ViewSelector",
 			"<open folders>",
 			"app",
 			"",
@@ -334,141 +504,169 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"STYLE_URL",
-			"STYLE_ULR",
-			"setItemData",
-			"mergeUpdates",
-			"loading...",
-			"stylesheetLoaders",
-			"loadersByExtension",
-			"stylesheetLoaders",
-			"loadersByExtension",
-			"joinEntry",
-			"\";\n",
-			"db",
-			"DB",
-			"async",
-			"style",
-			"script_	",
-			"8080",
+			"h2",
+			"green-bright",
+			"blue",
+			"brown",
+			"green",
+			"green3",
+			"blue",
+			"green-3",
+			"blue",
+			"green3",
+			"green-2",
+			"green3",
+			"pureGray",
+			"green-4",
+			"green-2",
+			"green-3",
+			"green3",
+			"@pureGray(\\d);",
+			"green(\\d)",
+			"pureGray",
+			"ref",
+			"desc",
+			"onKey",
+			"view",
+			"ModelPane",
+			"view",
+			"green",
 			"console",
-			"parseFloat\\(",
-			"parseFloat\\((rect[\\d])\\)",
+			"conso",
+			"hide",
+			"listen",
+			"select",
+			"updateSelect",
+			"selection",
+			"view",
+			"setState",
+			"this.state.cursor",
+			"obj",
+			"model",
+			"cursor",
+			"props.offset",
+			"force",
+			"for",
+			";",
+			"this.state.cur",
+			"cursor",
+			"this.state.cursor",
+			"at",
+			"cursor",
+			"fetch",
+			"updateCursor",
+			"on('fe",
+			"8081",
+			"cur\\b",
+			"cur",
+			"TabularTBody",
+			"sel",
+			"row",
+			"componentDid",
+			"setState",
+			"visib",
+			"visibl",
+			"visible",
+			"();\n",
+			"					<",
+			"width",
+			"{{display: (this.state.open ? \"table-cell\" : \"none\")}}",
+			"Hidden",
+			"selection",
+			"overflow",
+			"icon",
+			"colId",
+			"input",
+			"fast.fonts",
+			"key=",
+			"ColumnDetail",
+			"columnDetail",
+			"info",
+			"WIDTH_PADDING",
+			".on",
 			"console",
-			"packer",
-			"retr",
-			"qry",
-			"insert",
-			"retrieve",
-			"qualif",
-			"\\s*qualifier = model.encode.*$",
-			".*qualifier = model.encode.*",
-			"\\n.*qualifier = model.encode.*",
-			"qualifier = model.encode",
-			"\"audit\": true",
-			"qualifier = _.pick(qualifier, model.superkey);",
-			"\"n\"",
-			"^\\s+, (\\w+)",
-			"z",
-			"active",
-			"border",
-			"activeB",
-			"dotted",
-			"h1",
-			"container",
-			"router",
-			"routes",
-			"console",
-			"res.body",
-			"target",
-			"3px",
-			" class=\"data-tab\"",
-			"default",
-			"\"in\"",
-			"\"US\"",
-			"us",
-			"uk",
-			"regex",
-			"cons",
-			"encoder",
-			"source",
-			"risk_field_id",
-			"risk",
-			"console",
-			"stupid",
-			": true",
-			": false",
-			"\"N\"",
-			"\"Y\"",
-			"getIndex",
-			"getModel",
-			"getIndex",
-			"getModel",
-			"orm",
-			"orm.data",
-			"decode",
-			"\\bm\\b",
-			"index",
-			"audit",
-			"console",
-			"attr:",
-			"audit",
-			"font",
-			"serif",
-			"ir",
-			"cons",
-			"self",
-			"notfound",
-			"timeout",
-			"onEvent",
-			"getRelated",
-			"metamodels",
-			"sort",
-			"      ",
-			"test",
-			"var",
-			"bold",
-			"AD5C5C",
-			"8FBC8F",
-			"AD5C5C",
-			"{",
-			"10000",
-			"git",
-			"dummy",
-			"packer",
-			"console",
-			"primaryKey",
-			"lowerCaseKeys",
-			"crudFunc",
-			"lower",
-			" \"",
-			"primaryKey",
-			"err",
-			"orm",
-			"table_name",
-			"field_name",
-			"execute",
-			"}\n",
-			"')\n",
-			"attributes",
-			");\n",
-			"util",
-			"error",
-			"DBError",
-			"error",
-			"console",
-			"[],",
-			"identifier",
-			"db.lowerCaseKeys",
 			"console.",
-			"db.dblQt"
+			"console",
+			"TH",
+			"view",
+			"viewData",
+			"_this",
+			"prepView",
+			"view.set",
+			"set",
+			"'font/",
+			"		\n",
+			"view.set",
+			"set",
+			"bw.DEF.",
+			"bw.DEF",
+			"viewData",
+			"wrapper",
+			"scrollTop",
+			"console",
+			"this.state.cur",
+			"</a></li>",
+			"handleFetch",
+			"fetchCursor",
+			"bind",
+			"radius",
+			"TOP_OFFSET",
+			"fonts/",
+			"getTableStyle",
+			"font-fam",
+			"url('",
+			"scrollTop",
+			"offset",
+			"getCursorStyle",
+			"console",
+			"key",
+			"bwKey",
+			"keyOrd",
+			"font-s",
+			"ColumnDetail",
+			";\n",
+			"lighten",
+			"ColumnDetail",
+			"return",
+			"var",
+			"ColumnDetail",
+			"console",
+			"console.log('render TabularPane');"
 		],
 		"highlight": true,
 		"in_selection": false,
 		"preserve_case": false,
-		"regex": false,
+		"regex": true,
 		"replace_history":
 		[
+			"green-tint-1",
+			"green-tint1",
+			"green-bright",
+			"green-3",
+			"green-2",
+			"brown-",
+			"green-1",
+			"green-4",
+			"green-2",
+			"green-3",
+			"@brown-$1;",
+			"green-$1",
+			"brown-",
+			"this.cursor",
+			"",
+			"{detailsStyle}",
+			"sel",
+			"'assets/fonts/",
+			"def.",
+			"</li></a>",
+			"receiveFetch",
+			"font/",
+			"url('fonts/",
+			"getSelectorStyle",
+			"wedge ",
+			"grayed",
+			"bw",
+			"assets/fonts",
 			"",
 			"var $1",
 			"h2",
@@ -572,6 +770,6 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 251.0,
+	"side_bar_width": 316.0,
 	"status_bar_visible": true
 }

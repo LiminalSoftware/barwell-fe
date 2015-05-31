@@ -43,7 +43,7 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 /* Track */
 ::-webkit-scrollbar-track {
    -webkit-border-radius: 10px;
-   background: @pureGray3;
+   background: transparent;
 }
  
 /* Handle */
@@ -89,6 +89,25 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 @green-tint-2: hsla(134,  55%, 55%, 1);
 @green-tint-3: hsla(134,  30%, 80%, 1);
 
+@green-trans: hsla(134,  50%, 70%, 0.1);
+
+@cream: rgb(239,233,211);
+@white: rgb(245,236,227);
+
+@bluegray-dark: darken(rgb(54,57,74), 10%);
+@bluegray-0: rgb(54,57,74);
+@bluegray-1: rgb(54,57,74);
+@bluegray-2: rgb(54,57,74);
+@bluegray-3: rgb(54,57,74);
+@bluegray-4: rgb(54,57,74);
+
+@gray-0: rgba(163,131,131,1);	/* Main Primary color */
+@gray-1: rgba(255,240,240,1);
+@gray-2: rgba(211,181,181,1);
+@gray-3: rgba(123, 99, 99,1);
+@gray-4: rgba( 69, 57, 57,1);
+
+@bluegray-hilight: rgb(90,93,110);
 
 
 @green3: #46b980;
@@ -116,14 +135,14 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 @textcolor: #333;
 @texthover: darkred;
 
-.background-striped {
-	border-image: url(assets/img/green3puregray4stripe.png);
-	border-left-width: 4px;
-	border-top: none;
-	border-bottom: none;
-}
 
 // mixins
+
+.box-shadow (@string) {
+	-webkit-box-shadow: @string;
+	-moz-box-shadow:    @string;
+	box-shadow:         @string;
+}
 
 .noselect {
     -webkit-touch-callout: none;
@@ -198,7 +217,7 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 
 	&.grayed {
 		.transition(all 100ms ease-in);
-		color: @pureGray2;
+		color: @gray-2;
 	}
 
 	&.blued {
@@ -211,7 +230,7 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 
 	&.greened {
 		.transition(all 100ms ease-in);
-		color: @green4;
+		color: @green-tint-2;
 	}
 
 	&.reddened {
@@ -246,4 +265,8 @@ input[type="checkbox"] +  {
    height:14px;
    background-color: @pureGray3;
    border: 1px solid @pureGray1;
+}
+
+body.hidden-sidebar {
+	margin-left: -300px;
 }

@@ -6,21 +6,32 @@ import _ from "underscore"
 
 var SideBar = React.createClass({
 	componentWillMount: function () {
-		console.log('mounting sidebar')
-		this.modelCursor = bw.ModelMeta.store.getCursor()
+		this.modelCursor = bw.models.getCursor({sortBy: 102})
+		this.viewCursor = bw.views.getCursor({sortBy: bw.DEF.VIEW_NAME})
 	},
 	componentDidMount: function () {
-		console.log('mounted sidebar')
+		var curModelId = this.props.params.modelId
 		this.modelCursor.on('fetch', this.handleFetch)
 		this.modelCursor.on('add', this.handleFetch)
 		this.modelCursor.on('remove', this.handleFetch)
 		this.modelCursor.fetch()
+		
+		this.viewCursor.on('fetch', this.handleFetch)
+		this.viewCursor.on('add', this.handleFetch)
+		this.viewCursor.on('remove', this.handleFetch)
+		this.viewCursor.fetch()
 	},
 	componentWillUnmount: function () {
+		var curModelId = this.props.params.modelId
 		this.modelCursor.release()
 		this.modelCursor.removeListener('fetch', this.handleFetch)
 		this.modelCursor.removeListener('add', this.handleFetch)
 		this.modelCursor.removeListener('remove', this.handleFetch)
+		
+		this.viewCursor.release()
+		this.viewCursor.removeListener('fetch', this.handleFetch)
+		this.viewCursor.removeListener('add', this.handleFetch)
+		this.viewCursor.removeListener('remove', this.handleFetch)
 	},
 	handleFetch: function () {
 		this.forceUpdate()
@@ -28,9 +39,10 @@ var SideBar = React.createClass({
 	render: function () {
 		var _this = this;
 		var curModelId = this.props.params.modelId
-		var modelLinks = bw.ModelMeta.store.getObjects().map(function (model) {
-			// if (!model) return <li><a>Loading</a></li>
-			return <ModelLink model={model} {..._this.props}/>;
+		var modelLinks = this.modelCursor.map(function (model, idx) {
+			if (!model) return <li key={"loader-" + idx}><a>Loading</a></li>
+			var modelId = model.synget(bw.DEF.MODEL_ID)
+			return <ModelLink viewCursor = {_this.viewCursor} key={'model-link-' + modelId} model={model} active={curModelId == modelId}/>;
 		});
 		return <div className="left-side-bar">
 			<ul>{modelLinks}</ul>
@@ -43,21 +55,29 @@ var ModelLink = React.createClass ({
 	render: function() {
 		var _this = this
 		var model = this.props.model
-		if (!model) return <div>loading</div>
 		var modelId = model.synget(bw.DEF.MODEL_ID)
 		var defaultView = model.synget(bw.DEF.MODEL_PRIMARYVIEW)
+		var sublist = []
+		var views
+
+		if (this.props.active) {
+			views = this.props.viewCursor.map(function (view) {
+				var viewId = view.synget(bw.DEF.VIEW_ID)
+				var viewModelId = view.synget(bw.DEF.VIEW_MODELID)
+				if (viewModelId !== modelId) return;
+				return <ViewLink key={'view-link-' + viewId} view={view} model={model}/>	
+			})
+			views.push(<ViewAdder key={"model-view-adder-"+modelId} model={model} />)
+		} else views = ""
 		
-		var views = model.synget('Views').map(function (view) {
-			return <ViewLink view={view} model={model}/>
-		})
-		
-		return <li key={"model-li-" + modelId}>
-			<Link to="model" params={{modelId: model.synget(bw.DEF.MODEL_ID)}} key={"model-link-" + modelId}>
-				{model.synget(bw.DEF.MODEL_NAME)}
-			</Link>
-			<ul key={"model-views-ul-" + modelId} className={modelId == this.props.params.modelId ? 'active' : 'hidden'}>
+		return <li>
+			<ul key={"model-views-ul-" + modelId}>
+				<li className={"li-model" + (this.props.active ? " li-hilite" : "")}>
+					<Link to="model" params={{modelId: model.synget(bw.DEF.MODEL_ID)}} key={"model-link-" + modelId}>
+						{model.synget(bw.DEF.MODEL_NAME)}
+					</Link>
+				</li>
 				{views}
-				<ViewAdder key={"model-view-adder-"+modelId} model={model} />
 			</ul>
 		</li>
 	}
@@ -86,7 +106,7 @@ var ViewLink = React.createClass({
 		var viewDisplay = (!!this.state.renaming) ?  
 			(<input className="view-renamer" ref="renamer" value={this.state.name} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/>) : 
 			(<span>{this.state.name}</span>) ;
-		return <li key={"view-li-" + view.synget(bw.DEF.VIEW_ID)}>
+		return <li className="li-view" key={"view-li-" + view.synget(bw.DEF.VIEW_ID)}>
 			<Link to="view" params={{modelId: modelId, viewId: viewId}} key={key} onDoubleClick={this.edit} >
 				<span className={"icon "+viewData.icon}></span>{viewDisplay}
 			</Link></li>;
@@ -136,7 +156,7 @@ var ViewAdder = React.createClass ({
 		var _this = this
 		var model = this.props.model
 		var modelId = model.synget(bw.DEF.MODEL_ID)
-		return <li key={"model-add-li-" + modelId}>
+		return <li className="li-view li-hilite" key={"model-add-li-" + modelId}>
 			<a className="addNew clickable" onClick={this.handleAddView}>
 				<span className="small addNew icon icon-plus"></span> Create new view
 			</a>

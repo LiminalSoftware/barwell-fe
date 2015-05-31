@@ -39,15 +39,18 @@ var ModelDefinition = React.createClass({
 		})
 
 		var colList = columns.map(function (col) {
-			return <ColumnDetail column = {col} keyOrd = {keyOrd} />;
+			var colId = col.synget(bw.DEF.ATTR_ID)
+			return <ColumnDetail key={"mdldef-col-"+colId} column = {col} keyOrd = {keyOrd} />;
 		});
 
 		var keyList = keys.map(function (key) {
-			return <KeyDetail mdlKey = {key} keyOrd = {keyOrd} />;
+			var keyId = key.synget(bw.DEF.KEY_ID)
+			return <KeyDetail key={"mdldef-key-"+keyId} mdlKey = {key} keyOrd = {keyOrd} />;
 		});
 
 		var relList = relations.map(function (rel) {
-			return <RelationDetail relation = {rel} />;
+			var relId = rel.synget('id')
+			return <RelationDetail key ={'mdldef-rel-' + relId} relation = {rel} />;
 		});
 
 		return <div key="model-detail-bar" className="model-details">
@@ -180,10 +183,10 @@ var ColumnDetail = React.createClass({
 		var components = col.synget('Key components');
 		
 		if (!!components) {
-			components.forEach(function (comp) {
+			components.forEach(function (comp, idx) {
 				var key = comp.synget('Key');
 				var ord = keyOrd[key.synget(bw.DEF.KEY_ID)];
-				keyIcons.push(	<span className={getIconClasses(ord)}></span>);
+				keyIcons.push(	<span key = {key + '-key-' + idx} className={getIconClasses(ord)}></span>);
 			});
 		}
 
