@@ -14,7 +14,7 @@ var ModelPane = React.createClass({
 
 		this.view = view
 
-		if (!!view) body = <TabularPane model={model} view={view} />
+		if (!!view) body = <TabularPane key={"view-"+viewId} model={model} view={view} />
 		else body = <div className="view-body-wrapper">No view selected</div>
 		
 		return <div className="model-views">

@@ -7,34 +7,29 @@ import _ from "underscore"
 var SideBar = React.createClass({
 	componentWillMount: function () {
 		this.modelCursor = bw.models.getCursor({sortBy: 102})
-		this.viewCursor = bw.views.getCursor({sortBy: bw.DEF.VIEW_NAME})
 	},
 	componentDidMount: function () {
 		var curModelId = this.props.params.modelId
 		this.modelCursor.on('fetch', this.handleFetch)
-		this.modelCursor.on('add', this.handleFetch)
-		this.modelCursor.on('remove', this.handleFetch)
+		this.modelCursor.on('add', this.handleUpdate)
+		this.modelCursor.on('remove', this.handleUpdate)
 		this.modelCursor.fetch()
-		
-		this.viewCursor.on('fetch', this.handleFetch)
-		this.viewCursor.on('add', this.handleFetch)
-		this.viewCursor.on('remove', this.handleFetch)
-		this.viewCursor.fetch()
 	},
 	componentWillUnmount: function () {
 		var curModelId = this.props.params.modelId
 		this.modelCursor.release()
 		this.modelCursor.removeListener('fetch', this.handleFetch)
-		this.modelCursor.removeListener('add', this.handleFetch)
-		this.modelCursor.removeListener('remove', this.handleFetch)
-		
-		this.viewCursor.release()
-		this.viewCursor.removeListener('fetch', this.handleFetch)
-		this.viewCursor.removeListener('add', this.handleFetch)
-		this.viewCursor.removeListener('remove', this.handleFetch)
+		this.modelCursor.removeListener('add', this.handleUpdate)
+		this.modelCursor.removeListener('remove', this.handleUpdate)
+	},
+	handleUpdate: function () {
+		this.modelCursor.fetch()
 	},
 	handleFetch: function () {
 		this.forceUpdate()
+	},
+	getInitialState: function () {
+		return {keyControl: false}
 	},
 	render: function () {
 		var _this = this;
@@ -42,7 +37,11 @@ var SideBar = React.createClass({
 		var modelLinks = this.modelCursor.map(function (model, idx) {
 			if (!model) return <li key={"loader-" + idx}><a>Loading</a></li>
 			var modelId = model.synget(bw.DEF.MODEL_ID)
-			return <ModelLink viewCursor = {_this.viewCursor} key={'model-link-' + modelId} model={model} active={curModelId == modelId}/>;
+			return <ModelLink 
+				key={'model-link-' + modelId} 
+				keyCtl={(_this.state.keyControl) ? (idx + 1) : null} 	
+				model={model} 
+				active={curModelId == modelId}/>;
 		});
 		return <div className="left-side-bar">
 			<ul>{modelLinks}</ul>
@@ -52,6 +51,48 @@ var SideBar = React.createClass({
 export default SideBar
 
 var ModelLink = React.createClass ({
+	componentDidMount: function () {
+		if (this.props.active) this.activateCursor()
+	},
+	componentWillMount: function () {
+		if (this.props.active) this.getCursor({filter: {902: this.props.modelId}})
+	},
+	componentWillUnmount: function () {
+		this.deactivateCursor()
+	},
+	componentWillReceiveProps: function (newProps) {
+		if (this.props.active == newProps.active && 
+			this.props.modelId == newProps.modelId) return
+		if (this.props.active) {
+			this.deactivateCursor()
+		}
+		if (newProps.active) {
+			this.getCursor()
+			this.activateCursor()
+		}
+	},
+	handleUpdate: function () {
+		this.viewCursor.fetch()
+	},
+	handleFetch: function () {
+		this.forceUpdate()
+	},
+	getCursor: function () {
+		this.viewCursor = bw.views.getCursor({sortBy: bw.DEF.VIEW_NAME})
+	},
+	activateCursor: function () {
+		this.viewCursor.on('fetch', this.handleFetch)
+		this.viewCursor.on('add', this.handleUpdate)
+		this.viewCursor.on('remove', this.handleUpdate)
+		this.viewCursor.fetch()
+	},
+	deactivateCursor: function () {
+		if(!this.viewCursor) return;
+		this.viewCursor.release()
+		this.viewCursor.removeListener('fetch', this.handleFetch)
+		this.viewCursor.removeListener('add', this.handleUpdate)
+		this.viewCursor.removeListener('remove', this.handleUpdate)
+	},
 	render: function() {
 		var _this = this
 		var model = this.props.model
@@ -61,7 +102,8 @@ var ModelLink = React.createClass ({
 		var views
 
 		if (this.props.active) {
-			views = this.props.viewCursor.map(function (view) {
+			views = this.viewCursor.map(function (view) {
+				if (!view) return;
 				var viewId = view.synget(bw.DEF.VIEW_ID)
 				var viewModelId = view.synget(bw.DEF.VIEW_MODELID)
 				if (viewModelId !== modelId) return;

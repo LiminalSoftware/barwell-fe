@@ -100,27 +100,49 @@
 }
 
 
-div.selection {
+.selection {
 	z-index: 5;
 	position: absolute;
 	top: 0;
 	left: 0;
 	border: 1px dashed @green-tint-1;
-	background: @green-trans;
-	-webkit-transition: all 50ms ease-in;
-	transition: all 30ms ease-in;
+	transition: all 50ms ease-in;
 	border-radius: 3px;
+	background: @gray-trans;
+	&.focused {
+		background: @green-trans;
+	}
 }
 
-div.anchor {
+.pointer {
 	z-index: 6;
 	position: absolute;
 	top: 0;
 	left: 0;
-	border: 2px solid @green-tint-1;
-	-webkit-transition: all 30ms ease-in;
+	padding: 0;
 	transition: all 50ms ease-in;
+
+	border: 2px solid @gray-0;
+	&.focused {
+		border: 2px solid @green-tint-1;
+	}
 	// .box-shadow(0px 0px 10px hsla(255, 90%, 20%, 50%));
+}
+
+.input-editor {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	min-width: 10px;
+	width: 100%;
+	background: white;
+	margin: 0;
+	border: none;
+	font-size: 12px;
+	font-family: @bodyFont;
+	outline: 0;
 }
 
 div.loading-banner {

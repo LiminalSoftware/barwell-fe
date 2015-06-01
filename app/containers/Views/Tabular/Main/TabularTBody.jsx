@@ -103,34 +103,35 @@ var TabularTBody = React.createClass ({
 			height: (((	(this.cursor.store.objCount || 0) - this.state.window.offset) * ROW_HEIGHT)) + 'px'
 		}
 	},
+	getValueAt: function (row, col) {
+		return this.cursor.at(row)
+	},
 	render: function () {
 		var rows = []
 		var window = this.state.window
 		var cursor = this.cursor
 		var columns = this.props.columns
 		var clicker = this.props.clicker
+		var dblClicker = this.props.dblClicker
 		var pk = this.props.model.synget('Primary key')
 
 		rows = this.cursor.map(function (obj, i) {
 			var rowKey = 'tabular-' +  i //(!!pk && !!obj ? obj.synget(pk) : i)
 			var els = columns.map(function (col, idx) {
-				var field = fieldTypes[col.type]
+				var element = (fieldTypes[col.type] || fieldTypes.Text).element
 				var cellKey = rowKey + '-' + col.id
 				var value = (!!obj) ? obj.attributes[col.id] : ""
-				// YIKES! hopefully I won't need this someday
-				if (!field) field = fieldTypes.Text
 
-				return React.createElement(field, {
+				return React.createElement(element, {
 					attribute: col,
-					value: value, 
-					clicker: clicker,
+					value: value,
 					key: cellKey,
 					style: {minWidth: col.width, maxWidth: col.width}
 				})
 			})
 			return <tr id={rowKey} key={rowKey}>{els}</tr>
 		})
-		return <tbody ref="tbody" style={this.getStyle()}>
+		return <tbody ref="tbody" style={this.getStyle()} onClick={clicker} onDoubleClick={dblClicker}>
 			{rows}
 		</tbody>
 	}

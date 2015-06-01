@@ -109,8 +109,14 @@ ul.view-type-options {
 	font-size: 13px;
 	font-family: "Neue Haas Unica Thin", "Helvetica", sans-serif;
 	color: @pureGray1;
-	width: 100%;
+	width: 150px;
 	outline: 0;
 	padding: 0;
 	margin: 0;
+	margin-bottom: -1px;
 }
+
+.view-renamer::selection {
+  background: @green-tint-2; /* WebKit/Blink Browsers */
+}
+

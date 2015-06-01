@@ -15,6 +15,7 @@ var TOP_OFFSET = 12
 var WIDTH_PADDING = 9
 
 var TabularPane = React.createClass ({
+	
 	getInitialState: function () {
 		return {
 			selection: {
@@ -32,7 +33,8 @@ var TabularPane = React.createClass ({
 				top: 0
 			},
 			scrollTop: 0,
-			focused: true
+			focused: false,
+			editing: false
 		}
 	},
 
@@ -61,12 +63,9 @@ var TabularPane = React.createClass ({
 		this.setState(viewData)
 	},
 
-	componentWillMount: function () {
-	
-	},
-
-	componentWillReceiveProps: function (props) {
-		if (props.view !== this.props.view) this.updateView(props.view)
+	componentWillReceiveProps: function (newProps) {
+		console.log('tabular receiving props')
+		if (newProps.view !== this.props.view) this.updateView(newProps.view)
 	},
 
 	onScroll: function (event) {
@@ -99,11 +98,42 @@ var TabularPane = React.createClass ({
 	},
 
 	startEdit: function (e) {
-		console.log('e.type: '+e.type)
-		this.setState({edting: !this.state.editing})
+		var columns = this.getVisibleColumns()
+		var col = columns[this.state.pointer.left]
+		var field = fieldTypes[col.type]
+		var obj = this.refs.tabularbody.getValueAt(this.state.pointer.top);
+		var value = obj.synget(col.id)
+
+		if (field.uneditable) return
+
+		this.setState({editing: true, editorVal: value}, function () {
+			React.findDOMNode(this.refs.inputter).focus();
+		})
+		document.addEventListener('keyup', this.handleEditKeyPress)
+	},
+
+	revert: function () {
+		document.removeEventListener('keyup', this.handleEditKeyPress)
+		this.setState({editing: false})
+	},
+	
+	handleEditKeyPress: function (event) {
+		if (event.keyCode === 27) this.cancelChanges()
+		if (event.keyCode === 13) this.commitChanges()
+	},
+	
+	cancelChanges: function () {
+		// TODO
+		this.revert()
+	},
+	
+	commitChanges: function () {
+		// TODO
+		this.revert()
 	},
 
 	onKey: function (e) {
+		if ((!this.state.focused) || this.state.editing) return;
 		var ptr = this.state.pointer
 		var numCols = this.state.columnList.length
 		var numRows = 10000 //TODO ... 
@@ -114,7 +144,7 @@ var TabularPane = React.createClass ({
 		else if (e.keyCode == 38 && top > 0) top --
 		else if (e.keyCode == 39 && left < numCols) left ++
 		else if (e.keyCode == 40 && top < numRows) top ++
-		else if (e.keyCode == 113) return this.startEdit() 
+		else if (e.keyCode == 113) return this.startEdit(e) 
 		else return
 
 		e.stopPropagation()
@@ -130,6 +160,8 @@ var TabularPane = React.createClass ({
 		var r = Math.floor(y/ROW_HEIGHT,1)
 		var c = 0
 		
+		this.setState({focused: true})
+
 		this.state.columnList.forEach(function (col) {
 			x -= col.width + WIDTH_PADDING
 			if (x > 0) c ++
@@ -137,9 +169,17 @@ var TabularPane = React.createClass ({
 		this.updateSelect(r, c, event.shiftKey)
 	},
 
+	getVisibleColumns: function () {
+		return _.filter(
+			this.state.columnList, 
+			function(col) {
+				return col.visible
+			})
+	},
+
 	getSelectorStyle: function () {
 		var sel = this.state.selection
-		var columns = _.filter(this.state.columnList, function(col) {return col.visible})
+		var columns = this.getVisibleColumns()
 		var width = -1
 		var height = (sel.bottom - sel.top + 1) * ROW_HEIGHT - 2
 		var left = 2
@@ -161,7 +201,7 @@ var TabularPane = React.createClass ({
 
 	getPointerStyle: function () {
 		var ptr = this.state.pointer
-		var columns = _.filter(this.state.columnList, function(col) {return col.visible})
+		var columns = this.getVisibleColumns()
 		var width
 		var height = ROW_HEIGHT - 2
 		var left = 1
@@ -185,17 +225,46 @@ var TabularPane = React.createClass ({
 		var _this = this
 		var model = this.props.model
 		var view = this.props.view
-		var columns = _.filter(this.state.columnList, function(col) {return !!col.visible})
+		var columns = this.getVisibleColumns()
 		var sorting = this.state.sorting
 		var id = view.synget(bw.DEF.MODEL_ID)
+		var inputter = <input
+			ref = "inputter" 
+			className = "input-editor" 
+			type = "text" 
+			value = {this.state.editorVal}
+			onBlur = {this.commitChanges} />
 		
 		return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">
 				<table id="main-data-table" className="header data-table">
-					<TabularTHead  key={"thead-" + id} scrollTop={this.state.scrollTop} columns={columns} view={view}/>
-					<TabularTBody ref="tabularbody" key={"tbody-" + id} model={model} view={view} columns={columns} sorting={sorting} scrollTop={this.state.scrollTop} numRows={1000} clicker={this.onClick}/>
+					<TabularTHead  
+						key={"thead-" + id} 
+						scrollTop={this.state.scrollTop}
+						columns={columns}
+						view={view} />
+					<TabularTBody 
+						ref="tabularbody" 
+						key={"tbody-" + id}
+						model={model}
+						view={view}
+						columns={columns}
+						sorting={sorting}
+						scrollTop={this.state.scrollTop}
+						clicker={this.onClick}
+						dblClicker={this.startEdit} />
 				</table>
-				<div className="anchor" ref="anchor" style={this.getPointerStyle()}></div>
-				<div className="selection" ref="selection" style={this.getSelectorStyle()}></div>
+				<div 
+					className={"pointer" + (this.state.focused ? " focused" : "")} 
+					ref="anchor" 
+					onDoubleClick={this.startEdit} 
+					style={this.getPointerStyle()}>
+					{this.state.editing ? inputter : ""}
+				</div>
+				<div 
+					className={"selection" + (this.state.focused ? " focused" : "")} 
+					ref="selection" 
+					style={this.getSelectorStyle()}>
+				</div>
 		</div>
 	}
 })
