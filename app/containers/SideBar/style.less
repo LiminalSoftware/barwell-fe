@@ -17,32 +17,18 @@
 	order: -2;
 	background: @gray-4;
 	padding: 0;
+	overflow: visible;
+	border-right: 2px solid @gray-2;
 	
-	// border-right: 1px solid @bluegray-hilight;
-	
-	h2 {
-		color: @pureGray1;
-		font-weight: 400;
-		font-size: 20px;
-		border-bottom: 5px solid @gray-3	;
-		padding: 5px;
-	}
-
-	ul.hidden {
-		max-height: 0;
-		overflow: hidden;
-	}
-
-	ul.active {
-	}
-
 	ul {
+		overflow: visible;
 		.transition(all 0.2us ease-in);
 		list-style: none;
 		padding: 0;		
 		margin: 0;
 
 		li {
+			overflow: visible;
 			color: @pureGray1;
 			font-size: 14px;
 			border-bottom: 1px solid @gray-4;
@@ -50,6 +36,7 @@
 			&.li-view {
 				background-color: @gray-3;
 				border-right: 1px solid @gray-4;
+				a {color: @cream;}
 			}
 
 			&.li-hilite {
@@ -59,6 +46,7 @@
 				}
 				&.li-model {
 					border-right: 1px solid @gray-4;
+					a {color: @cream;}
 				}
 			}
 			
@@ -79,7 +67,8 @@
 				&.active {
 					background-color: @gray-3;
 					border-left: 4px solid @green-tint-1;
-					margin-right: -1px;
+					margin-right: -5px;
+					z-index: 300;
 				}
 
 				&:not(.active):hover {
@@ -104,11 +93,11 @@ ul.view-type-options {
 
 .view-renamer {
 	border: none;
-	border-bottom: 1px solid @pureGray1;
+	border-bottom: 1px solid @cream;
 	background: none;
 	font-size: 13px;
 	font-family: "Neue Haas Unica Thin", "Helvetica", sans-serif;
-	color: @pureGray1;
+	color: @cream;
 	width: 150px;
 	outline: 0;
 	padding: 0;

@@ -52,7 +52,7 @@ var ModelDefinition = React.createClass({
 			var relId = rel.synget('id')
 			return <RelationDetail key ={'mdldef-rel-' + relId} relation = {rel} />;
 		});
-
+		
 		return <div key="model-detail-bar" className="model-details">
 			<h3 key="attr-header">Attributes</h3>
 			<table key="attr-table" className="detail-table">

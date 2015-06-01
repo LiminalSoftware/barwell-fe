@@ -15,6 +15,9 @@
   z-index: 200;
   text-align: left;
   .transition(all 200ms ease-in);
+  border-right: 2px solid @gray-2;
+  border-bottom: 2px solid @gray-2;
+  border-top: 2px solid @gray-2;
 }
 
 .detail-bar:hover .detail-hider {
@@ -117,6 +120,7 @@ ul.detail-panels {
 	position: relative;
 	order: -1;
 	background: @gray-3;
+	border-right: 2px solid @gray-2;
 	
 	h2 {
 		font-size: 17px;
@@ -125,7 +129,7 @@ ul.detail-panels {
 	
 	h3 {
 		font-size: 17px;
-		border-bottom: 1px solid @gray-2;	
+		
 	}
 
 	h2, h3, h4, h5 {
@@ -133,9 +137,7 @@ ul.detail-panels {
 		color: @cream;
 		font-weight: 400;
 		padding: 5px;
-		margin-bottom: 1px;
-		margin-top: 20px;
-		padding-bottom: 8px;
+		
 	}
 
 	.detail-table {
@@ -145,13 +147,13 @@ ul.detail-panels {
 		font-size: 13px;
 
 		td, th {
-			padding: 6px 2px;
+			padding: 4px 2px;
 		}
 		td {
-			
+			border-bottom: 1px dashed darken(@gray-3, 10%);
 			input {
 				border: none;
-				border-bottom: 1px solid @pureGray1;
+				border-bottom: 1px solid @cream;
 				background: none;
 				font-size: 13px;
 				font-family: "Neue Haas Unica Thin", "Helvetica", sans-serif;
@@ -164,11 +166,9 @@ ul.detail-panels {
 		}
 		th {
 			text-align: left;
-			border-bottom: 1px solid @gray-2;	
+			border-bottom: 1px solid @cream;
+			border-top: 1px solid @cream;
 			font-weight: 400;
-		}
-		th {
-
 		}
 
 		tr:last-child > td {

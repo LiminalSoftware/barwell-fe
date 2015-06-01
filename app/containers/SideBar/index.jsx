@@ -31,6 +31,28 @@ var SideBar = React.createClass({
 	getInitialState: function () {
 		return {keyControl: false}
 	},
+	handleAddModel: function() {
+		var model = bw.ModelMeta.instantiate({
+			102: "New model",
+			103: "New models",
+			104: false
+		})
+		var id = bw.MetaAttribute.instantiate({
+			202: "id",
+			203: "Integer",
+			207: model,
+		})
+		var pk = bw.MetaKey.instantiate({
+			302: "Primary",
+			304: true,
+			306: model,
+			305: [{
+				404: 1,
+				405: id,
+				406: false
+			}]
+		})
+	},
 	render: function () {
 		var _this = this;
 		var curModelId = this.props.params.modelId
@@ -44,7 +66,15 @@ var SideBar = React.createClass({
 				active={curModelId == modelId}/>;
 		});
 		return <div className="left-side-bar">
-			<ul>{modelLinks}</ul>
+			<ul>
+				{modelLinks}
+				<li className = "li-model ">
+					<a className="clickable addNew" onClick={this.handleAddModel}>
+						<span className="small addNew icon icon-plus"></span>
+						Create new model
+					</a>
+				</li>
+			</ul>
 		</div>
 	}
 })

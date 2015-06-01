@@ -22,6 +22,7 @@ var DetailBar = React.createClass({
 	render: function () {
 		var _this = this
 		var view = this.props.view
+		
 		var model = this.props.model
 		var viewConfig
 		var content
@@ -31,8 +32,15 @@ var DetailBar = React.createClass({
 			content = <ModelDefinition view={view} model={model} />
 		} else if (this.state.activePane == "view-config") {
 			var viewData = view.synget(bw.DEF.VIEW_DATA)
-			if (viewData.type === 'Tabular') viewConfig = <TabularViewConfig view={view} model={model}/>
-			else  viewConfig = <div>Placeholder</div>
+			var viewId = view.synget(bw.DEF.VIEW_ID)
+
+			if (viewData.type === 'Tabular')
+				viewConfig = <TabularViewConfig 
+					key={"view-config-" + viewId} 
+					view={view} 
+					model={model}/>
+			else  
+				viewConfig = <div>Placeholder</div>
 			content = <div className="view-details">
 				<ViewSelector view={view}/>
 				{viewConfig}

@@ -8,11 +8,16 @@ var TabularViewConfig = React.createClass({
 	getInitialState: function () {
 		return {};
 	},
-
+	
 	componentDidMount: function () {
 		var view = this.props.view
 		this.refreshView()
 		view.on('update', this.refreshView)
+	},
+
+	componentWillUnmount: function () {
+		var view = this.props.view
+		view.removeListener('update', this.refreshView)
 	},
 
 	updateView: function (view) {
@@ -81,6 +86,7 @@ export default TabularViewConfig;
 
 
 var ColumnDetail = React.createClass({
+
 	getInitialState: function () {
 		return {
 			open: false, 
@@ -90,9 +96,11 @@ var ColumnDetail = React.createClass({
 			visibility: this.props.config.visible
 		};
 	},
+	
 	handleClick: function (event) {
 		this.setState({editing: !this.state.editing})
 	},
+	
 	commitChanges: function () {
 		var data = this.props.view.synget(bw.DEF.VIEW_DATA)
 		var colId = this.props.config.id
@@ -102,23 +110,28 @@ var ColumnDetail = React.createClass({
 		col.width = parseInt(this.state.width) || col.width
 		this.props.view.set(bw.DEF.VIEW_DATA, data)
 	},
+
 	componentWillReceiveProps: function (props) {
 		this.setState({
 			width: props.config.width,
 			visible: props.config.visible
 		})
 	},
+
 	updateWidth: function (e) {
 		var width = e.target.value
 		this.setState({width: width})
 	},
+	
 	toggleDetails: function (event) {
 		this.setState({open: !this.state.open})
 	},
+	
 	toggleVisibility: function (event) {
 		this.state.visible = !this.state.visible
 		this.commitChanges()
 	},
+	
 	render: function () {
 		var config = this.props.config
 		var wedgeClasses = "small grayed icon icon-geo-triangle " +

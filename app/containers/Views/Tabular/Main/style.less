@@ -1,21 +1,7 @@
 @import "../../../../global.less";
 
 .model-pane {
-
 	
-}
-.view-body-wrapper {
-	display: flex;
-	flex-direction: column;
-	height: 100vh;
-	min-width: 500px;
-	max-height: 100vh;
-	flex-grow: 5;
-	position: relative;
-	
-	padding: 0;
-	overflow-x: auto;
-	background-color: white;
 }
 
 
@@ -48,6 +34,7 @@
   			text-overflow: ellipsis;
   			white-space: nowrap;
   			border-right: 1px solid white;
+  			border-left: 1px solid white;
   			border-bottom: 1px solid @gray2;
   			.noselect;
   			cursor: pointer;
@@ -71,6 +58,7 @@
 			background: @gray2;
 			height: 30px;
 			position: relative;
+
 			&.asc {
 				background: @blue-tint-2;
 				color: white;
@@ -85,6 +73,7 @@
 				right: 0;
 				top: 0;
 				bottom: 0;
+				height: 30px;
 				width: 5px;
 				cursor: col-resize;
 				&:hover {

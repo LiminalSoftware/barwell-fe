@@ -30,6 +30,10 @@ var ViewSelector = React.createClass({
 		var view = this.props.view
 		view.on('update', this.update)
 	},
+	componentWillUnmount: function () {
+		var view = this.props.view
+		view.removeListener('update', this.update)
+	},
 	viewClickerFactory: function (type) {
 		var view = this.props.view
 		var data = view.synget(bw.DEF.VIEW_DATA)

@@ -11,6 +11,30 @@
 	flex: 1;
 }
 
+.view-body-wrapper {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	min-width: 500px;
+	max-height: 100vh;
+	flex-grow: 5;
+	position: relative;
+	
+	padding: 0;
+	overflow-x: auto;
+	background-color: white;
+}
+
+.no-view-content {
+	background: white;
+	font-size: 18px;
+	font-family: @headerFont;
+	color: @cream;
+	text-align: center;
+	padding-top: 200px;
+}
+
+
 ul.view-tabs {
 	background: @pureGray4;
 	list-style: none;

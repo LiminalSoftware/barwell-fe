@@ -103,15 +103,29 @@ var TabularPane = React.createClass ({
 		var field = fieldTypes[col.type]
 		var obj = this.refs.tabularbody.getValueAt(this.state.pointer.top);
 		var value = obj.synget(col.id)
+		var parser = field.parser
+		var validator = field.validator
 
 		if (field.uneditable) return
 
-		this.setState({editing: true, editorVal: value}, function () {
+		this.setState({
+			editing: true, 
+			editorObj: obj,
+			editorCol: col,
+			editorVal: value,
+			editParser: parser,
+			editValidator: validator
+		}, function () {
 			React.findDOMNode(this.refs.inputter).focus();
 		})
 		document.addEventListener('keyup', this.handleEditKeyPress)
 	},
 
+	handleEditUpdate: function (e) {
+		var val = this.state.editParser(e.target.value)
+		this.setState({editorVal: val})
+	},
+	
 	revert: function () {
 		document.removeEventListener('keyup', this.handleEditKeyPress)
 		this.setState({editing: false})
@@ -128,7 +142,10 @@ var TabularPane = React.createClass ({
 	},
 	
 	commitChanges: function () {
-		// TODO
+		var obj = this.state.editorObj
+		var col = this.state.editorCol
+		var val = this.state.editorVal
+		obj.set(col.id, val)
 		this.revert()
 	},
 
@@ -145,14 +162,21 @@ var TabularPane = React.createClass ({
 		else if (e.keyCode == 39 && left < numCols) left ++
 		else if (e.keyCode == 40 && top < numRows) top ++
 		else if (e.keyCode == 113) return this.startEdit(e) 
+		else if (e.keyCode == 16) return (document.onselectstart = this.preventTextSelection)
 		else return
 
 		e.stopPropagation()
-   		e.preventDefault()
+  		e.preventDefault()
 		if (e.keyCode >= 37 && e.keyCode <= 40) this.updateSelect(top, left, e.shiftKey)
 	},
 
-	onClick: function (event) {
+	preventTextSelection: function (e) {
+		e.stopPropagation()
+		e.preventDefault()
+		return false
+	},
+
+	onClick: function (e) {
 		var wrapper = React.findDOMNode(this.refs.wrapper)
 		var tableBody = React.findDOMNode(this.refs.tbody)
 		var y = event.pageY - wrapper.offsetTop + wrapper.scrollTop - HEADER_HEIGHT
@@ -161,6 +185,9 @@ var TabularPane = React.createClass ({
 		var c = 0
 		
 		this.setState({focused: true})
+
+		e.stopPropagation()
+  		e.preventDefault()
 
 		this.state.columnList.forEach(function (col) {
 			x -= col.width + WIDTH_PADDING
@@ -182,7 +209,7 @@ var TabularPane = React.createClass ({
 		var columns = this.getVisibleColumns()
 		var width = -1
 		var height = (sel.bottom - sel.top + 1) * ROW_HEIGHT - 2
-		var left = 2
+		var left = 3
 		var top = HEADER_HEIGHT + this.state.selection.top * ROW_HEIGHT
 		
 		columns.forEach(function (col, idx) {
@@ -204,7 +231,7 @@ var TabularPane = React.createClass ({
 		var columns = this.getVisibleColumns()
 		var width
 		var height = ROW_HEIGHT - 2
-		var left = 1
+		var left = 2
 		var top = HEADER_HEIGHT + ptr.top * ROW_HEIGHT - 1
 		
 		columns.forEach(function (col, idx) {
@@ -233,6 +260,7 @@ var TabularPane = React.createClass ({
 			className = "input-editor" 
 			type = "text" 
 			value = {this.state.editorVal}
+			onChange = {this.handleEditUpdate}
 			onBlur = {this.commitChanges} />
 		
 		return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">

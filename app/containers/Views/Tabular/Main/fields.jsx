@@ -55,7 +55,9 @@ var fieldTypes = {
 				throw new Error('Validation Error')
 			return parseInt(input)
 		},
-		parser: _.identity
+		parser: function (input) {
+			return input.match(/^(\d*)/)[0]
+		}
 	},
 	Timestamp: {
 		element: VanillaElement,
