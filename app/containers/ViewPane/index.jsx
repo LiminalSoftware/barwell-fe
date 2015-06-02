@@ -14,14 +14,19 @@ var ModelPane = React.createClass({
 		
 		this.view = view
 
-		if (!!view) body = <TabularPane key={"view-"+viewId} model={model} view={view} />
+		if (!!view) body = <TabularPane 
+			key={"tabular-pane-"+viewId} 
+			model={model} 
+			view={view} />
 		else body = <div className="no-view-content view-body-wrapper">
 			<span className="icon icon-face-dark-nomimic"></span>No view selected
 		</div>
 		
 		return <div className="model-views">
 			<div className="model-panes">
-				<DetailBar model={model} view={view} />
+				<DetailBar 
+					model={model} 
+					view={view} />
 				{body}
 			</div>
 		</div>;

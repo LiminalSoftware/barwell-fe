@@ -5,7 +5,7 @@ import styles from "./style.less"
 import EventListener from 'react/lib/EventListener'
 import _ from 'underscore'
 import $ from 'jquery'
-import fieldTypes from "./fields.jsx"
+import fieldTypes from "../../fields"
 import TabularTBody from "./TabularTBody"
 
 
@@ -64,7 +64,6 @@ var TabularPane = React.createClass ({
 	},
 
 	componentWillReceiveProps: function (newProps) {
-		console.log('tabular receiving props')
 		if (newProps.view !== this.props.view) this.updateView(newProps.view)
 	},
 
@@ -152,7 +151,7 @@ var TabularPane = React.createClass ({
 	onKey: function (e) {
 		if ((!this.state.focused) || this.state.editing) return;
 		var ptr = this.state.pointer
-		var numCols = this.state.columnList.length
+		var numCols = this.getVisibleColumns().length - 1
 		var numRows = 10000 //TODO ... 
 		var left = ptr.left
 		var top = ptr.top
@@ -179,6 +178,7 @@ var TabularPane = React.createClass ({
 	onClick: function (e) {
 		var wrapper = React.findDOMNode(this.refs.wrapper)
 		var tableBody = React.findDOMNode(this.refs.tbody)
+		var columns = this.getVisibleColumns()
 		var y = event.pageY - wrapper.offsetTop + wrapper.scrollTop - HEADER_HEIGHT
 		var x = event.pageX - wrapper.offsetLeft + wrapper.scrollLeft - 3
 		var r = Math.floor(y/ROW_HEIGHT,1)
@@ -189,7 +189,7 @@ var TabularPane = React.createClass ({
 		e.stopPropagation()
   		e.preventDefault()
 
-		this.state.columnList.forEach(function (col) {
+		columns.forEach(function (col) {
 			x -= col.width + WIDTH_PADDING
 			if (x > 0) c ++
 		})

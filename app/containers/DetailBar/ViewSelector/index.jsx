@@ -55,38 +55,49 @@ var ViewSelector = React.createClass({
 		
 		if (this.state.selectingType) {
 			var typeEls = _.map(viewTypes, function (details, type) {
-				return <li className="detail-cell centered" onClick={_this.viewClickerFactory(type)}>
-				<span className={"icon "+ details.icon}></span>{type}
-				</li>
+				return <tr 
+					className = "hoverable"
+					onClick = {_this.viewClickerFactory(type)}>
+					<td className="width-30 centered clickable padded">
+						<span className={"clear icon "+ details.icon}></span>{type}
+					</td>
+					<td className="width-70 hoverable clickable">
+						{details.description}
+					</td>
+				</tr>
 			})
-			typeSelector = <ul className="selector detail-row">
+			typeSelector = <tbody>
 				{typeEls}
-			</ul>
+			</tbody>
 		} else {
 			typeSelector = void(0)
 		}
 
 		// <WarningBox text="by changing the view type, you may lose your existing configurations"/>
 
-		return <div>
+		return <div className="detail-block">
 			<h3>View Details</h3>
-			<div className="detail-block">
-				<div className="detail-row">
-					<div className="detail-cell label">Name:</div>
-					<div className="detail-cell value">{this.state.name}</div>
-				</div>
-				<div className="detail-row">
-					<div className="detail-cell label">Type:</div>
-					<div className="detail-cell value" onDoubleClick={this.chgType}>
-						<span className={"icon " + icon}></span>
-						{this.state.type}
-						<a href="#" onClick={this.chgType}><span className="small right-align grayed icon icon-geo-triangle wedge open"></span></a>
-					</div>
-				</div>
-			{typeSelector}
-			
-			</div>
-		</div>
+			<table className="detail-table">
+				<tbody>
+					<tr>
+						<td className="width-30">Name:</td>
+						<td className="width-70">{this.state.name}</td>
+					</tr>
+					<tr>
+						<td className="width-30">Type:</td>
+						<td className="width-70" 
+						   onClick={this.chgType}>
+							<a className="not-really-a-link" onClick={this.chgType}>
+								<span className={"icon " + icon}></span>
+								{this.state.type}
+								<span className="small right-align grayed icon icon-geo-triangle wedge open"></span>
+							</a>
+						</td>
+					</tr>
+				</tbody>
+				{typeSelector}
+			</table>
+	</div>
 	},
 	chgType: function () {
 		this.setState({selectingType: true})

@@ -53,7 +53,7 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 	margin: 1px;
    -webkit-border-radius: 8px;
    border-radius: 10px;
-   background: @pureGray2;
+   background: @heavyCream;
 }
 ::-webkit-scrollbar-thumb:window-inactive {
 	background: @pureGray2;
@@ -74,11 +74,6 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 @red-tint-1: hsla(346,  70%, 40%, 1);
 @red-tint-2: hsla(346,  55%, 55%, 1);
 
-@purple-base: #481940;	/* Main Secondary color (1) */
-@purple-dark: #110D11;
-@purple-1: #2E192A;
-@purple-2: #520846;
-@purple-3: #720060;
 
 @blue-base:    hsla(207,  90%, 20%, 1);
 @blue-dark:    hsla(207, 100%, 10%, 1);
@@ -95,7 +90,10 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 
 @green-trans: hsla(134,  50%, 70%, 0.1);
 
-@cream: black;
+@darkText: black;
+@cream: rgb(239,233,211);
+@heavyCream: darken(@cream, 10%);
+
 // rgb(239,233,211);
 @white: rgb(245,236,227);
 
@@ -110,7 +108,7 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 @gray-1: rgba(255,240,240,1);
 @gray-2: rgba(211,181,181,1);
 // @gray-3: rgba(102, 81, 81,1);
-@gray-3: rgb(239,233,211);
+
 // hsla(1, 5%, 45%, 100%);
 @gray-4: rgb(54,57,74);;
 // @gray-4: rgba( 69, 57, 57,1);
@@ -128,7 +126,7 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 
 @pureGray1: #F5F5F5;
 @pureGray2: #A5A5A5;
-@pureGray3: #555;
+@pureGray3: #655;
 @pureGray4: #454545;
 
 @gray1: #f8f5ec;
@@ -215,6 +213,9 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 	&.after {
 		margin-left: 8px;
 		margin-right: 2px;
+	}
+	&.clear {
+		display: block;
 	}
 	&.white {
 		color: white;

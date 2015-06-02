@@ -1,17 +1,21 @@
 @import "../../global.less";
 
+.not-really-a-link {
+	color: @darkText;
+	text-decoration: none;
+}
 
 .detail-hider {
   position: absolute;
   top: 2px;
   right: 0;
   margin-right: 0;
-  height: 10px;
+  height: 9px;
   width: 30px;
   border-radius: 0 3px 3px 0;
   padding: 8px 5px;
-  background-color: @gray-3;
-  color: @cream;
+  background-color: @cream;
+  color: @darkText;
   z-index: 200;
   text-align: left;
   .transition(all 200ms ease-in);
@@ -22,6 +26,12 @@
 
 .detail-bar:hover .detail-hider {
 	margin-right: -25px;
+}
+
+.grouping {
+	display: block;
+	padding: 0;
+	margin: 0;
 }
 
 .detail-block {
@@ -36,7 +46,7 @@
 	padding: 0;
 	list-style: none;
 	&.selector {
-		background: @pureGray4;
+		border-bottom: 1px solid @darkText;
 		flex-flow: columns wrap;
 	}
 }
@@ -72,7 +82,7 @@ ul.detail-panels {
 	display: flex;
 	padding: 10px;
 	padding-top: 0;
-	background-color: @gray-3;
+	background-color: @cream;
 	z-index: 220;
 
 	li {
@@ -98,12 +108,12 @@ ul.detail-panels {
 }
 
 .model-details, .view-details {
-	flex-direction: column;
-	color: @cream;
+	
+	color: @darkText;
 	font-weight: 400;
 	font-size: 14px;
 	overflow-y: scroll;
-	display: flex;
+	display: block;
 	padding: 10px;
 	&.hidden {
 		display: none;
@@ -119,7 +129,7 @@ ul.detail-panels {
 	overflow: visible;
 	position: relative;
 	order: -1;
-	background: @gray-3;
+	background: @cream;
 	border-right: 2px solid @gray-2;
 	
 	h2 {
@@ -134,7 +144,7 @@ ul.detail-panels {
 
 	h2, h3, h4, h5 {
 		display: block;
-		color: @cream;
+		color: @darkText;
 		font-weight: 400;
 		padding: 5px;
 		
@@ -143,21 +153,58 @@ ul.detail-panels {
 	.detail-table {
 		width: 100%;
 		border-collapse: collapse;
-		color: @cream;
+		color: @darkText;
 		font-size: 13px;
+
+		tr.hoverable:hover td {
+			background-color: @heavyCream;	
+		}
 
 		td, th {
 			padding: 4px 2px;
+			&.right-align {
+				text-align: right;
+			}
+			&.no-line {
+				border: none;
+			}
+			&.centered {
+				text-align: center;
+			}
+			&.padded {
+				padding: 4px 6px;
+			}
+			&.width-10 {
+				width: 10%;
+			}
+			&.width-20 {
+				width: 20%;
+			}
+			&.width-30 {
+				width: 20%;
+			}
+			&.width-40 {
+				width: 40%;
+			}
+			&.width-50 {
+				width: 50%;
+			}
+			&.width-60 {
+				width: 50%;
+			}
+			&.width-70 {
+				width: 70%;
+			}
 		}
 		td {
-			border-bottom: 1px dashed darken(@gray-3, 10%);
+			border-bottom: 1px dashed @heavyCream;
 			input {
 				border: none;
-				border-bottom: 1px solid @cream;
+				border-bottom: 1px solid @darkText;
 				background: none;
 				font-size: 13px;
 				font-family: "Neue Haas Unica Thin", "Helvetica", sans-serif;
-				color: @cream;
+				color: @darkText;
 				width: 100%;
 				outline: 0;
 				padding: 0;
@@ -166,8 +213,8 @@ ul.detail-panels {
 		}
 		th {
 			text-align: left;
-			border-bottom: 1px solid @cream;
-			border-top: 1px solid @cream;
+			border-bottom: 1px solid @darkText;
+			border-top: 1px solid @darkText;
 			font-weight: 400;
 		}
 
@@ -177,7 +224,7 @@ ul.detail-panels {
 	}
 
 	a.new-attr {
-		color: @cream;
+		color: @darkText;
 		cursor: pointer;
 	}
 }

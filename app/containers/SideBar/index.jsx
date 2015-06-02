@@ -61,7 +61,7 @@ var SideBar = React.createClass({
 			var modelId = model.synget(bw.DEF.MODEL_ID)
 			return <ModelLink 
 				key={'model-link-' + modelId} 
-				keyCtl={(_this.state.keyControl) ? (idx + 1) : null} 	
+				keyCtl={idx + 1} 	
 				model={model} 
 				active={curModelId == modelId}/>;
 		});
@@ -82,10 +82,10 @@ export default SideBar
 
 var ModelLink = React.createClass ({
 	componentDidMount: function () {
-		if (this.props.active) this.activateCursor()
+		
 	},
 	componentWillMount: function () {
-		if (this.props.active) this.getCursor({filter: {902: this.props.modelId}})
+		if (this.props.active) this.activateCursor()
 	},
 	componentWillUnmount: function () {
 		this.deactivateCursor()
@@ -97,7 +97,6 @@ var ModelLink = React.createClass ({
 			this.deactivateCursor()
 		}
 		if (newProps.active) {
-			this.getCursor()
 			this.activateCursor()
 		}
 	},
@@ -107,12 +106,11 @@ var ModelLink = React.createClass ({
 	handleFetch: function () {
 		this.forceUpdate()
 	},
-	getCursor: function () {
-		this.viewCursor = bw.views.getCursor({sortBy: bw.DEF.VIEW_NAME})
-	},
 	activateCursor: function () {
+		this.viewCursor = bw.views.getCursor({sortBy: bw.DEF.VIEW_NAME})
 		this.viewCursor.on('fetch', this.handleFetch)
 		this.viewCursor.on('add', this.handleUpdate)
+		this.viewCursor.on('update', this.handleUpdate)
 		this.viewCursor.on('remove', this.handleUpdate)
 		this.viewCursor.fetch()
 	},
@@ -121,7 +119,9 @@ var ModelLink = React.createClass ({
 		this.viewCursor.release()
 		this.viewCursor.removeListener('fetch', this.handleFetch)
 		this.viewCursor.removeListener('add', this.handleUpdate)
+		this.viewCursor.removeListener('update', this.handleUpdate)
 		this.viewCursor.removeListener('remove', this.handleUpdate)
+		delete this.viewCursor
 	},
 	render: function() {
 		var _this = this
@@ -137,7 +137,10 @@ var ModelLink = React.createClass ({
 				var viewId = view.synget(bw.DEF.VIEW_ID)
 				var viewModelId = view.synget(bw.DEF.VIEW_MODELID)
 				if (viewModelId !== modelId) return;
-				return <ViewLink key={'view-link-' + viewId} view={view} model={model}/>	
+				return <ViewLink 
+					key={'view-link-' + viewId} 
+					view={view} 
+					model={model}/>	
 			})
 			views.push(<ViewAdder key={"model-view-adder-"+modelId} model={model} />)
 		} else views = ""

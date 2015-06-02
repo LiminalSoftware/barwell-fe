@@ -1,6 +1,6 @@
 import React from "react"
 import bw from "barwell"
-import fieldTypes from "./fields"
+import fieldTypes from "../../fields"
 import _ from 'underscore'
 
 var HEADER_HEIGHT = 35
@@ -40,13 +40,17 @@ var TabularTBody = React.createClass ({
 	activateCursor: function () {
 		var cursor = this.cursor
 		cursor.on('fetch', this.handleFetch)
+		cursor.on('add', this.handleFetch)
 		cursor.on('update', this.handleFetch)
+		cursor.on('remove', this.handleFetch)
 		this.fetch(true)
 	},
 	deactivateCursor: function () {
 		this.cursor.release()
 		this.cursor.removeListener('fetch', this.handleFetch)
+		this.cursor.removeListener('add', this.handleFetch)
 		this.cursor.removeListener('update', this.handleFetch)
+		this.cursor.removeListener('remove', this.handleFetch)
 	},
 	componentWillMount: function () {
 		this.getCursor(this.props.model, this.props.sorting)
@@ -123,7 +127,8 @@ var TabularTBody = React.createClass ({
 				var value = (!!obj) ? obj.attributes[col.id] : ""
 
 				return React.createElement(element, {
-					attribute: col,
+					config: col,
+					object: obj,
 					value: value,
 					key: cellKey,
 					style: {minWidth: col.width, maxWidth: col.width}

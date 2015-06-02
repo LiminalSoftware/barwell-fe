@@ -6,15 +6,34 @@ import ModelDefinition from "./ModelDefinition";
 import TabularViewConfig from "../Views/Tabular/Config";
 import ViewSelector from "./ViewSelector"
 
-var DetailBar = React.createClass({
+var DetailBar = React.createClass({	
+	refresh: function () {
+		console.log('refresh')
+		this.forceUpdate()
+	},
+	componentDidMount: function () {
+		var view = this.props.view
+		if(view) view.on('update', this.refresh)
+	},
+	componentWillUnmount: function () {
+		var view = this.props.view
+		view.removeListener('update', this.refresh)
+	},
+	componentWillReceiveProps: function (newProps) {
+		var oldProps = this.props
+		if (newProps.view !== oldProps.view) {
+			if (oldProps.view) oldProps.view.removeListener('update', this.forceUpdate)
+			newProps.view.on('update', this.forceUpdate)
+		}
+	},
 	getInitialState: function () {
-		return {activePane: "model-def"};
+		return {activePane: "model-def"}
 	},
 	showModelDef: function () {
-		this.setState({activePane: "model-def"});
+		this.setState({activePane: "model-def"})
 	},
 	showViewConfig: function () {
-		this.setState({activePane: "view-config"});
+		this.setState({activePane: "view-config"})
 	},
 	toggleSidebar: function () {
 		// this.props.toggleSidebar();
@@ -41,8 +60,11 @@ var DetailBar = React.createClass({
 					model={model}/>
 			else  
 				viewConfig = <div>Placeholder</div>
+
 			content = <div className="view-details">
-				<ViewSelector view={view}/>
+				<ViewSelector 
+					view={view} 
+					key={"view-selector-" + viewId}/>
 				{viewConfig}
 			</div>
 		}
