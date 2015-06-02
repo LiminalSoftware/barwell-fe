@@ -3,48 +3,23 @@ import { Link } from "react-router";
 import bw from "barwell";
 import styles from "./style.less";
 import _ from 'underscore';
+import fieldTypes from "../../fields"
 
 var TabularViewConfig = React.createClass({
 	getInitialState: function () {
 		return {};
 	},
-	
-	componentDidMount: function () {
-		var view = this.props.view
-		this.refreshView()
-		view.on('update', this.refreshView)
-	},
-
-	componentWillUnmount: function () {
-		var view = this.props.view
-		view.removeListener('update', this.refreshView)
-	},
-
-	updateView: function (view) {
-		var oldView = this.props.view
-		if (oldView) oldView.removeListener('update', this.refreshView)
-		view.on('update', this.refreshView)
-		this.setState(view.synget(bw.DEF.VIEW_DATA))
-	},
-
-	refreshView: function () {
-		var view = this.props.view;
-		this.setState(view.synget(bw.DEF.VIEW_DATA))
-	},
-
-	componentWillReceiveProps: function (props) {
-		if (props.view !== this.props.view) this.updateView(props.view);
-	},
 
 	render: function() {
-		if (!this.state) return
+		
 		var _this = this
 		var view = this.props.view
-		var columns = this.state.columns
-		var colList = (this.state.columnList || []).map(function (col) {
+		var data = view.synget(bw.DEF.VIEW_DATA)
+		var columns = data.columns
+		var colList = (data.columnList || []).map(function (col) {
 			return <ColumnDetail key = {"detail-" + col.id} config = {col} view= {view} />
 		})
-		var sortList = (this.state.sorting || []).map(function (sort) {
+		var sortList = (data.sorting || []).map(function (sort) {
 			var sortOrderClass = "small grayed icon icon-arrow-" + (sort.descending ? "up" : "down")
 			var sortOrderLabel = sort.descending ? "Ascending" : "Descending"
 			return <tr>
@@ -54,7 +29,8 @@ var TabularViewConfig = React.createClass({
 			</tr>
 		})
 
-		return <div key="view-detail-bar">
+		return <div className = "grouping">
+			<div className = "detail-block">
 			<h3>Columns</h3>
 			<table className="detail-table">
 				<thead><tr key="attr-header-row">
@@ -62,10 +38,11 @@ var TabularViewConfig = React.createClass({
 					<th key="attr-header-name">Name</th>
 					<th key="attr-header-visibility">Viz</th>
 					<th key="attr-header-width">Width</th>
-					<th key="attr-header-display">Show as</th>
 				</tr></thead>
 				{colList}
 			</table>
+			</div>
+			<div className = "detail-block">
 			<h3>Sorting</h3>
 			<table key="sort-table" className="detail-table">
 				<thead>
@@ -77,7 +54,10 @@ var TabularViewConfig = React.createClass({
 			</thead>
 				<tbody>{sortList}</tbody>
 			</table>
+			</div>
+			<div className = "detail-block">
 			<h3>Filter</h3>
+			</div>
 		</div>
 	}
 });
@@ -88,102 +68,92 @@ export default TabularViewConfig;
 var ColumnDetail = React.createClass({
 
 	getInitialState: function () {
-		return {
-			open: false, 
-			editing: false, 
-			visible: true,
-			width: this.props.config.width,
-			visibility: this.props.config.visible
-		};
+		return {editing: false}
 	},
 	
-	handleClick: function (event) {
-		this.setState({editing: !this.state.editing})
-	},
-	
-	commitChanges: function () {
+	commitChanges: function (colProps) {
 		var data = this.props.view.synget(bw.DEF.VIEW_DATA)
 		var colId = this.props.config.id
 		var col = data.columns[colId]
 
-		col.visible = this.state.visible
-		col.width = parseInt(this.state.width) || col.width
+		col = _.extend(col, colProps)
 		this.props.view.set(bw.DEF.VIEW_DATA, data)
-	},
-
-	componentWillReceiveProps: function (props) {
-		this.setState({
-			width: props.config.width,
-			visible: props.config.visible
-		})
 	},
 
 	updateWidth: function (e) {
 		var width = e.target.value
-		this.setState({width: width})
+		this.setState({tempWidth: width})
 	},
 	
 	toggleDetails: function (event) {
-		this.setState({open: !this.state.open})
+		console.log('(!this.props.config.expanded): '+ JSON.stringify((!this.props.config.expanded), null, 2));
+		this.commitChanges({expanded: (!this.props.config.expanded)})
 	},
 	
 	toggleVisibility: function (event) {
-		this.state.visible = !this.state.visible
-		this.commitChanges()
+		var config = this.props.config
+		this.commitChanges({visible: !config.visible})
 	},
 	
 	render: function () {
 		var config = this.props.config
 		var wedgeClasses = "small grayed icon icon-geo-triangle " +
-			(this.state.open ? " wedge open" : "wedge closed")
+			(config.expanded ? " wedge open" : "wedge closed")
 		var name = config.name
-		var nameField = (this.state.editing ? <input type="textbox" value={name} /> : name )
+		var nameField = (this.state.editing ? <input type="textbox" value={name} /> : name)
 		var key = "attr-" + config.id
-		var detailsStyle = {display: (this.state.open ? "table-cell" : "none")}
-		var eyeSpan = <span className={"clickable icon icon-eye-" + (this.state.visible ? "3 green":"4 grayed")}></span>;
+		var detailsStyle = {}
+		var eyeClasses = "clickable icon icon-eye-" + (config.visible ? "3 ":"4 grayed")
+		var fieldType = fieldTypes[config.type]
+		var addlRows
+
+		if (!config.expanded) detailsStyle.display = "none"
+		if (!!fieldType && fieldType.configRows) addlRows = fieldType.configRows(config, detailsStyle)
+		else addlRows = null
+
 		return <tbody>
 			<tr key={key + '-row'}>
-				<td onClick={this.toggleDetails} key={key + '-expand'}>
+				<td 
+					className="width-10 no-line"
+					onClick={this.toggleDetails}>
 					<span className={wedgeClasses}></span>
 				</td>
-				<td onDoubleClick={this.handleClick} key={key + '-name'}>
+				<td 
+					className="width-50"
+					onDoubleClick={this.handleClick}>
 					{nameField}
 				</td>
-				<td onClick={this.toggleVisibility} key={key + '-visibility'}>
-					{this.state.open ? void(0) : eyeSpan}
+				<td className="width-20">
+					{ config.expanded ? void(0) :
+					<span className={eyeClasses} onClick={this.toggleVisibility}></span> }
 				</td>
-				<td key={key + '-width'}>
-					{this.state.open ? void(0) : (config.width + 'px') }
+				<td className="width-20">
+					{config.expanded ? void(0) : (config.width + 'px') }
 				</td>
-				<td key={key + '-display'}> 
-					{this.state.open ? void(0) : '??'}
-				</td>
-			</tr>	
-			<tr key={key + '-row-background'}>
-				<td style={detailsStyle}></td>
-				<td style={detailsStyle}> Background: </td>
-				<td style={detailsStyle} colSpan="3"> 
+			</tr>
+			<tr key={key + '-row-details'} style = {detailsStyle}>
+				<td className=	"width-10 no-line"></td>
+				<td className="width-50">Background: </td>
+				<td colSpan="2" className="right-align">
 					<span className="icon grayed icon-tl-paintbrush"></span>Default
 				</td>
 			</tr>
-			<tr key={key + '-row-visibility'}>
-				<td style={detailsStyle}></td>
-				<td style={detailsStyle}> Visibility: </td>
-				<td colSpan="3" style={detailsStyle}>
-				{eyeSpan} {this.state.visible ? "Visible":"Hidden"}
+			<tr key={key + '-row-visibility'} style = {detailsStyle}>
+				<td className="width-10 no-line"></td>
+				<td className="width-50">Visibility: </td>
+				<td colSpan="2" className="right-align">
+					<span className={eyeClasses} onClick={this.toggleVisibility}></span>
+					{config.visible ? "Visible" : "Hidden"}
 				</td>
 			</tr>
-			<tr key={key + '-row-width'}>
-				<td style={detailsStyle}></td>
-				<td style={detailsStyle}> Column width: </td>
-				<td colSpan="3" style={detailsStyle}>
+			<tr key={key + '-row-width'} style = {detailsStyle}>
+				<td></ td>
+				<td> Column width: </td>
+				<td colSpan="2" className="right-align">
 					<input value={this.state.width} style={{width: "30px"}} onBlur={this.commitChanges} onChange={this.updateWidth}/>px
 				</td>
 			</tr>
-			<tr key={key + '-row-display'}>
-				<td style={detailsStyle}></td>
-				<td  colSpan="5" style={detailsStyle}> Show as: </td>
-			</tr>
+			{addlRows}
 		</tbody>
 	}
 });

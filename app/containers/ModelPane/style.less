@@ -1,5 +1,84 @@
 @import "../../global.less";
 
+.model-views {
+	display: flex;
+	min-height: 100vh;
+	flex-direction: column;
+}
+
+.model-panes {
+	display: flex;
+	flex: 1;
+}
+
+.view-body-wrapper {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	min-width: 500px;
+	max-height: 100vh;
+	flex-grow: 5;
+	position: relative;
+	
+	padding: 0;
+	overflow-x: auto;
+	background-color: white;
+}
+
+.no-view-content {
+	background: white;
+	font-size: 18px;
+	font-family: @headerFont;
+	color: @darkText;
+	text-align: center;
+	padding-top: 200px;
+}
+
+
+ul.view-tabs {
+	background: @pureGray4;
+	list-style: none;
+	padding: 0;
+	padding-top: 3px;
+	padding-left: 3px;
+	border-bottom: 1px solid @pureGray2;
+	margin: 0;
+	display: inline-flex;
+	flex-direction: column;
+	li {
+		position: relative;
+		background: @pureGray3;
+		color: @pureGray1;
+		padding: 5px;
+		padding-left: 10px;
+		width: 150px;
+		height: 20px;
+		border-top-left-radius: 5px;
+		border-top-right-radius: 5px;
+		border-top: 1px solid @pureGray2;
+		border-left: 1px solid @pureGray2;
+		border-right: 1px solid @pureGray2;
+
+		// span.edge {
+		// 	z-index: 10;
+		// 	position: absolute;
+		// 	right: 0;
+		// 	top: 0;
+		// 	margin: 0;
+		// 	padding: 0;
+		// 	margin-right: -20px;
+		// 	width: 20px;
+		// 	height: 10px;
+		// 	border-style: solid;
+		// 	border-width: 10px;
+		// 	border-color: @pureGray2;
+		// 	border-top-color: transparent;
+		// 	border-right-color: transparent;
+		// 	background: none;
+		// }
+	}
+}
+
 .not-really-a-link {
 	color: @darkText;
 	text-decoration: none;
@@ -37,29 +116,6 @@
 .detail-block {
 	display: block;
 	margin-bottom: 10px;
-}
-
-.detail-row {
-	display: flex;
-	flex-flow: columns nowrap;
-	box-sizing: border-box;
-	padding: 0;
-	list-style: none;
-	&.selector {
-		border-bottom: 1px solid @darkText;
-		flex-flow: columns wrap;
-	}
-}
-
-.detail-cell {
-	&.label {order: 1}
-	&.value {order: 2}
-	&.centered {text-align: center}
-	padding: 5px 0;
-	box-sizing: border-box;
-	display: block;
-	flex: 1;
-	flex-grow: 1;
 }
 
 .banner {

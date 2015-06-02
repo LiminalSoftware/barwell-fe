@@ -1,7 +1,13 @@
+import TabularConfig from "./Tabular/Config/index.jsx"
+import TabularMain from "./Tabular/Main/index.jsx"
+
+
 var viewTypes = {
 	Tabular: {
 		type: "Tabular",
 		icon: "icon-db-datasheet",
+		mainElement: TabularMain,
+		configElement: TabularConfig,
 		category: "Tables",
 		description: "Just a plain old table of data.  Each object is one row in the table."
 	},

@@ -1,10 +1,7 @@
 import React from "react";
 import { Route, DefaultRoute, NotFoundRoute } from "react-router";
-
-// import Application  from "./routeHandlers/Application";
-// import ViewPane  from "./routeHandlers/ViewPane";
 import Application from "./containers/Application";
-import ViewPane from "./containers/ViewPane";
+import ModelPane from "./containers/ModelPane";
 
 
 // polyfill
@@ -14,7 +11,7 @@ if(!Object.assign)
 // export routes
 module.exports = (
 	<Route name="app/" handler={Application}>
-		<Route name="model" path="model/:modelId" handler={ViewPane}></Route>
-		<Route name="view" path="model/:modelId/view/:viewId" handler={ViewPane}></Route>
+		<Route name="model" path="model/:modelId" handler={ModelPane}></Route>
+		<Route name="view" path="model/:modelId/view/:viewId" handler={ModelPane}></Route>
 	</Route>
 );

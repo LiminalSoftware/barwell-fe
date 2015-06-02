@@ -4,12 +4,72 @@
 		"selected_items":
 		[
 			[
-				"de",
-				"deactivateCursor"
+				"ac",
+				"activePane"
+			],
+			[
+				"field",
+				"fieldTypes"
+			],
+			[
+				"detail",
+				"detailsStyle"
+			],
+			[
+				"color",
+				"colorStyle"
+			],
+			[
+				"colo",
+				"colorStyle"
+			],
+			[
+				"Colo",
+				"ColorElement"
+			],
+			[
+				"back",
+				"background-origin"
+			],
+			[
+				"active",
+				"activateCursor"
+			],
+			[
+				"componentWill",
+				"componentWillReceiveProps"
 			],
 			[
 				"get",
-				"getCursor"
+				"getVisibleColumns"
+			],
+			[
+				"model",
+				"modelId"
+			],
+			[
+				"comp",
+				"componentWillUnmount"
+			],
+			[
+				"acti",
+				"activateCursor"
+			],
+			[
+				"compon",
+				"componentDidMount"
+			],
+			[
+				"componen",
+				"componentDidMount"
+			],
+			[
+				"li",
+				"li-view"
+			],
+			[
+				"de",
+				"deactivateCursor"
 			],
 			[
 				"hand",
@@ -22,10 +82,6 @@
 			[
 				"set",
 				"setState"
-			],
-			[
-				"detail",
-				"detail-cell"
 			],
 			[
 				"fun",
@@ -44,20 +100,12 @@
 				"typeSelector"
 			],
 			[
-				"model",
-				"modelDef"
-			],
-			[
 				"View",
 				"ViewSelector"
 			],
 			[
 				"pureGra",
 				"pureGray1"
-			],
-			[
-				"back",
-				"background-color"
 			],
 			[
 				"handl",
@@ -73,14 +121,6 @@
 			],
 			[
 				"compnen",
-				"componentWillMount"
-			],
-			[
-				"compon",
-				"componentWillReceiveProps"
-			],
-			[
-				"componen",
 				"componentWillMount"
 			],
 			[
@@ -124,10 +164,6 @@
 				"sortOrderLabel"
 			],
 			[
-				"comp",
-				"components"
-			],
-			[
 				"select",
 				"selectionTop"
 			],
@@ -138,10 +174,6 @@
 			[
 				"getCursor",
 				"getCursorStyle"
-			],
-			[
-				"acti",
-				"activePane"
 			],
 			[
 				"defa",
@@ -188,10 +220,6 @@
 				"changeFolderOpen"
 			],
 			[
-				"active",
-				"activeBranch"
-			],
-			[
 				"refre",
 				"refreshBranches"
 			],
@@ -225,10 +253,6 @@
 			],
 			[
 				"fields",
-				"fieldsByName"
-			],
-			[
-				"field",
 				"fieldsByName"
 			],
 			[
@@ -303,11 +327,59 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "app/containers/ModelPane/index.jsx",
+			"settings":
+			{
+				"buffer_size": 2425,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app/containers/Views/Tabular/Main/index.jsx",
+			"settings":
+			{
+				"buffer_size": 10875,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app/containers/Views/Tabular/Main/TabularTBody.jsx",
+			"settings":
+			{
+				"buffer_size": 4061,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app/mainRoutes.jsx",
+			"settings":
+			{
+				"buffer_size": 511,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/containers/Application/index.jsx",
+			"settings":
+			{
+				"buffer_size": 404,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "app/containers/Views/viewTypes.jsx",
+			"settings":
+			{
+				"buffer_size": 894,
+				"line_ending": "Windows"
+			}
+		}
 	],
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 63.0,
+		"height": 374.0,
 		"selected_items":
 		[
 			[
@@ -352,34 +424,36 @@
 	},
 	"file_history":
 	[
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/style.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ModelDefinition/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/style.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/TabularTBody.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Config/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/global.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/style.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/mainRoutes.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ViewPane/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ViewSelector/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/fields.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Config/index.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/viewTypes.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/fields.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/TabularTBody.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ViewPane/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/fields.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/global.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ViewSelector/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/package.json",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ModelDefinition/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Application/style.less",
+		"/C/Users/549764/Documents/GitHub/metabase/test/backend/keys.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/mainRoutes.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/components/editableMixin.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/ViewSelector/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Application/style.less",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/lib/server-production.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/lib/server-development.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/package.json",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ModelDefinition/style.less",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/validateView.js",
 		"/C/Users/549764/Documents/Personal/web/style.css",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Application/index.jsx",
 		"/C/Users/549764/Documents/Personal/web/index.html",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/simple.html",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ViewPane/style.less",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/barwell-fe.sublime-project",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/.gitignore",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/assets/less/pictonic.less",
@@ -477,9 +551,7 @@
 		"/C/Users/549764/AppData/Roaming/Sublime Text 2/Packages/User/Preferences.sublime-settings",
 		"/C/Users/549764/Documents/GitHub/clarient-rules/.gitignore",
 		"/C/Users/549764/Documents/GitHub/clarient-rules/miniORM.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/setup.sql",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/db/setup.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/dbSetup.js"
+		"/C/Users/549764/Documents/GitHub/clarient-rules/setup.sql"
 	],
 	"find":
 	{
@@ -504,6 +576,53 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"viewData",
+			"ModelPane",
+			"this.state",
+			"fieldTypes",
+			"noselect",
+			"select",
+			"this.state.open",
+			"config",
+			"span",
+			"tbody",
+			"td",
+			"colSPan",
+			"style={detailsStyle}",
+			"WIDTH_PADDING",
+			"icon",
+			"gray-3",
+			"@gray-3;",
+			"@cream",
+			"componentWillReceiveProps",
+			"gray-3",
+			"gray-4",
+			"color:",
+			"edit",
+			"th",
+			"helvetica",
+			"view-body-wrapper",
+			"No view selected",
+			"filter",
+			"pointer",
+			"selection",
+			"tabularbody",
+			"view-renamer",
+			"input",
+			"focused",
+			"cons",
+			"padding",
+			"console",
+			"body",
+			"input",
+			"select",
+			"onDoubleClick",
+			"double",
+			"onCl",
+			"this.forceUpdate",
+			"this.handleFetch",
+			"border-ri",
+			"addNew",
 			"h2",
 			"green-bright",
 			"blue",
@@ -584,61 +703,23 @@
 			"info",
 			"WIDTH_PADDING",
 			".on",
-			"console",
-			"console.",
-			"console",
-			"TH",
-			"view",
-			"viewData",
-			"_this",
-			"prepView",
-			"view.set",
-			"set",
-			"'font/",
-			"		\n",
-			"view.set",
-			"set",
-			"bw.DEF.",
-			"bw.DEF",
-			"viewData",
-			"wrapper",
-			"scrollTop",
-			"console",
-			"this.state.cur",
-			"</a></li>",
-			"handleFetch",
-			"fetchCursor",
-			"bind",
-			"radius",
-			"TOP_OFFSET",
-			"fonts/",
-			"getTableStyle",
-			"font-fam",
-			"url('",
-			"scrollTop",
-			"offset",
-			"getCursorStyle",
-			"console",
-			"key",
-			"bwKey",
-			"keyOrd",
-			"font-s",
-			"ColumnDetail",
-			";\n",
-			"lighten",
-			"ColumnDetail",
-			"return",
-			"var",
-			"ColumnDetail",
-			"console",
-			"console.log('render TabularPane');"
+			"console"
 		],
 		"highlight": true,
 		"in_selection": false,
 		"preserve_case": false,
-		"regex": true,
+		"regex": false,
 		"replace_history":
 		[
+			"config.expanded",
+			"td",
+			" span",
+			" ",
+			"",
+			"@cream;",
+			"@darkText",
+			"this.handleFetch",
+			"this.forceUpdate",
 			"green-tint-1",
 			"green-tint1",
 			"green-bright",
@@ -705,8 +786,169 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "app/containers/ModelPane/index.jsx",
+					"settings":
+					{
+						"buffer_size": 2425,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								743,
+								743
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 170.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "app/containers/Views/Tabular/Main/index.jsx",
+					"settings":
+					{
+						"buffer_size": 10875,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								10875,
+								10875
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "app/containers/Views/Tabular/Main/TabularTBody.jsx",
+					"settings":
+					{
+						"buffer_size": 4061,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3680,
+								3846
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1444.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "app/mainRoutes.jsx",
+					"settings":
+					{
+						"buffer_size": 511,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								93,
+								93
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "app/containers/Application/index.jsx",
+					"settings":
+					{
+						"buffer_size": 404,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								113,
+								113
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "app/containers/Views/viewTypes.jsx",
+					"settings":
+					{
+						"buffer_size": 894,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								29,
+								29
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
 			]
 		}
 	],
