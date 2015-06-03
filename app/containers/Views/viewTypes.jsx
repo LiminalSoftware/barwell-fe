@@ -1,5 +1,7 @@
 import TabularConfig from "./Tabular/Config/index.jsx"
 import TabularMain from "./Tabular/Main/index.jsx"
+import CalendarConfig from "./Calendar/Config/index.jsx"
+import CalendarMain from "./Calendar/Main/index.jsx"
 
 
 var viewTypes = {
@@ -20,6 +22,8 @@ var viewTypes = {
 	Calendar: {
 		type: "Calendar",
 		icon: "icon-calendar-empty",
+		mainElement: CalendarMain,
+		configElement: CalendarConfig,
 		category: "Dates and Times",
 		description: "Lays out your data on a calendar."
 	},

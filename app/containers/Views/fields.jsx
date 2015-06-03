@@ -127,11 +127,11 @@ var fieldTypes = {
 				var value = this.props.value
 				var config = this.props.config || {}
 				var style = this.props.style
-				var object = this.props.object
-
-				var format = config.format || "DD MMMM YYYY";
+				var format = config.dateFormat || "DD MMMM YYYY";
 				var dateObj = new Date(value)
 				var prettyDate = moment(parseInt(value)).format(format)
+
+				style.textAlign = 'right'
 
 				return <td style={style}>{prettyDate}</td>
 			}

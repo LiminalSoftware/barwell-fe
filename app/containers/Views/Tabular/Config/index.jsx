@@ -86,7 +86,6 @@ var ColumnDetail = React.createClass({
 	},
 	
 	toggleDetails: function (event) {
-		console.log('(!this.props.config.expanded): '+ JSON.stringify((!this.props.config.expanded), null, 2));
 		this.commitChanges({expanded: (!this.props.config.expanded)})
 	},
 	

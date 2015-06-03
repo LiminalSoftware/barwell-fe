@@ -57,6 +57,7 @@ var ViewSelector = React.createClass({
 			var typeEls = _.map(viewTypes, function (details, type) {
 				return <tr 
 					className = "hoverable"
+					key = {"view-type-selector-" + type} 
 					onClick = {_this.viewClickerFactory(type)}>
 					<td className="width-30 centered clickable padded">
 						<span className={"clear icon "+ details.icon}></span>{type}
