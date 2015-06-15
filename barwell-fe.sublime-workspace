@@ -4,48 +4,44 @@
 		"selected_items":
 		[
 			[
-				"ac",
-				"activePane"
+				"Meta",
+				"MetasheetConst"
 			],
 			[
-				"field",
-				"fieldTypes"
+				"emi",
+				"emitChange"
 			],
 			[
-				"detail",
-				"detailsStyle"
+				"Cal",
+				"CalendarTHead"
 			],
 			[
-				"color",
-				"colorStyle"
+				"width",
+				"widthPadding"
 			],
 			[
-				"colo",
-				"colorStyle"
+				"header",
+				"headerHeight"
 			],
 			[
-				"Colo",
-				"ColorElement"
+				"component",
+				"componentWillUnmount"
 			],
 			[
-				"back",
-				"background-origin"
+				"model",
+				"model-def"
 			],
 			[
-				"active",
-				"activateCursor"
+				"Model",
+				"ModelDefinition"
 			],
 			[
-				"componentWill",
-				"componentWillReceiveProps"
+				"Mode",
+				"ModelDefinition"
 			],
 			[
 				"get",
 				"getVisibleColumns"
-			],
-			[
-				"model",
-				"modelId"
 			],
 			[
 				"comp",
@@ -84,6 +80,10 @@
 				"setState"
 			],
 			[
+				"detail",
+				"detail-cell"
+			],
+			[
 				"fun",
 				"function"
 			],
@@ -106,6 +106,10 @@
 			[
 				"pureGra",
 				"pureGray1"
+			],
+			[
+				"back",
+				"background-color"
 			],
 			[
 				"handl",
@@ -220,6 +224,10 @@
 				"changeFolderOpen"
 			],
 			[
+				"active",
+				"activeBranch"
+			],
+			[
 				"refre",
 				"refreshBranches"
 			],
@@ -253,6 +261,10 @@
 			],
 			[
 				"fields",
+				"fieldsByName"
+			],
+			[
+				"field",
 				"fieldsByName"
 			],
 			[
@@ -328,50 +340,26 @@
 	"buffers":
 	[
 		{
-			"file": "app/containers/ModelPane/index.jsx",
+			"file": "app/constants/MetasheetConstants.js",
 			"settings":
 			{
-				"buffer_size": 2425,
+				"buffer_size": 341,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "app/containers/Views/Tabular/Main/index.jsx",
+			"file": "app/components/editableMixin.jsx",
 			"settings":
 			{
-				"buffer_size": 10875,
+				"buffer_size": 577,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "app/containers/Views/Tabular/Main/TabularTBody.jsx",
+			"file": "app/stores/ViewStore.js",
 			"settings":
 			{
-				"buffer_size": 4061,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "app/mainRoutes.jsx",
-			"settings":
-			{
-				"buffer_size": 511,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "app/containers/Application/index.jsx",
-			"settings":
-			{
-				"buffer_size": 404,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "app/containers/Views/viewTypes.jsx",
-			"settings":
-			{
-				"buffer_size": 894,
+				"buffer_size": 1442,
 				"line_ending": "Windows"
 			}
 		}
@@ -424,26 +412,49 @@
 	},
 	"file_history":
 	[
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ViewPane/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/AttributeStore.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/KeyStore.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/ModelStore.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Application/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/index.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Config/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/viewTypes.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/fields.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/TabularTBody.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ViewPane/style.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/style.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/TableMixin.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/viewUpdateMixin.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ViewSelector/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/TabularTBody.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/package.json",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/dispatcher/MetasheetDispatcher.js",
+		"/C/Users/549764/Documents/GitHub/node-js-getting-started/Procfile",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/TabularTHead.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Calendar/Config/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Calendar/Main/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Calendar/Main/CalendarTHead.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Calendar/Main/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/viewTypes.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Calendar/Config/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/fields.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelDefinition/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell/test/shared/metamodels.js",
+		"/C/Users/549764/Documents/GitHub/barwell/lib/shared/barwell.js",
+		"/C/Users/549764/Documents/GitHub/barwell/lib/shared/stores/memstore.js",
+		"/C/Users/549764/Documents/GitHub/barwell/barwell.sublime-project",
+		"/C/Users/549764/Documents/GitHub/barwell/test/shared/data/countries.json",
+		"/C/Users/549764/Documents/GitHub/clarient-graph/server.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/style.less",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/fields.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/global.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/style.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/style.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ViewSelector/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/package.json",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ModelDefinition/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ViewPane/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/style.less",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Application/style.less",
-		"/C/Users/549764/Documents/GitHub/metabase/test/backend/keys.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ModelDefinition/index.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/mainRoutes.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ViewSelector/index.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/components/editableMixin.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/ViewSelector/index.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/lib/server-production.js",
@@ -451,9 +462,9 @@
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ModelDefinition/style.less",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/validateView.js",
 		"/C/Users/549764/Documents/Personal/web/style.css",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Application/index.jsx",
 		"/C/Users/549764/Documents/Personal/web/index.html",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/simple.html",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ViewPane/style.less",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/barwell-fe.sublime-project",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/.gitignore",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/assets/less/pictonic.less",
@@ -470,11 +481,9 @@
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/routeHandlers/HomePage.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/routeHandlers/async.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/ModelLink.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/index.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/routeHandlers/ModelPane.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/TabularPane/style.less",
 		"/C/Users/549764/Downloads/LT-WebFonts-1942127695/demo.css",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/style.less",
 		"/C/Users/549764/Downloads/react-starter-master (1)/react-starter-master/app/mainRoutes.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/config/joinEntry.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/lib/server.js",
@@ -488,7 +497,6 @@
 		"/C/Users/549764/Documents/GitHub/barwell-fe/build/stats.json",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/fe.html",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/fe.sublime-workspace",
-		"/C/Users/549764/Documents/GitHub/barwell/lib/shared/stores/memstore.js",
 		"/C/Users/549764/Documents/GitHub/barwell/test/shared/memstore.js",
 		"/C/Users/549764/Documents/GitHub/clarient-graph/dbConfig.json",
 		"/C/Users/549764/Documents/CReD/api/coords example/sample.html",
@@ -531,27 +539,7 @@
 		"/C/Users/549764/Documents/GitHub/barwell/lib/shared/metamodels/models.js",
 		"/C/Users/549764/Documents/Projects/SS T2 CIP/NDS/parser.js",
 		"/C/Users/549764/Documents/hosts",
-		"/C/Users/549764/Documents/GitHub/barwell/package.json",
-		"/C/Windows/System32/drivers/etc/hosts",
-		"/C/Users/549764/Documents/CReD/Tax/Sandbox/cred-wsidebar.css",
-		"/C/Users/549764/Documents/CReD/Tax/Sandbox/cred.css",
-		"/C/Users/549764/Documents/GitHub/barwell/lib/shared/define.js",
-		"/C/Users/549764/Documents/GitHub/barwell/lib/shared/barwell.js",
-		"/C/Users/549764/Documents/GitHub/barwell/test/shared/metamodels.js",
-		"/C/Users/549764/Desktop/hosts",
-		"/C/Users/549764/Documents/GitHub/barwell/test/coverage.json",
-		"/C/Users/549764/Documents/GitHub/barwell/coverage.html",
-		"/C/Users/549764/AppData/Roaming/Sublime Text 2/Packages/Node Coverage/NodeCoverage.py",
-		"/C/Users/549764/AppData/Roaming/Sublime Text 2/Packages/Desert Night Color Scheme/desert_night.tmTheme",
-		"/C/Users/549764/AppData/Roaming/Sublime Text 2/Packages/GitGutter/git_gutter.py",
-		"/C/Users/549764/AppData/Roaming/Sublime Text 2/Packages/Package Control/Package Control.sublime-settings",
-		"/C/Users/549764/AppData/Roaming/Sublime Text 2/Packages/User/GitGutter.sublime-settings",
-		"/C/Users/549764/Documents/GitHub/barwell/lib/shared/stores/indexdbStore.js",
-		"/C/Users/549764/AppData/Roaming/Sublime Text 2/Packages/User/Git.sublime-settings",
-		"/C/Users/549764/AppData/Roaming/Sublime Text 2/Packages/User/Preferences.sublime-settings",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/.gitignore",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/miniORM.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/setup.sql"
+		"/C/Users/549764/Documents/GitHub/barwell/package.json"
 	],
 	"find":
 	{
@@ -562,6 +550,8 @@
 		"height": 89.0,
 		"where_history":
 		[
+			"C:\\Users\\549764\\Documents\\GitHub\\barwell-fe",
+			"C:\\Users\\549764\\Documents\\GitHub\\barwell",
 			"C:\\Users\\549764\\Documents\\GitHub\\barwell-fe\\app\\containers",
 			"C:\\Users\\549764\\Documents\\GitHub\\barwell-fe\\app\\containers\\Views\\ViewSelector",
 			"<open folders>",
@@ -573,36 +563,46 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": false,
+		"case_sensitive": true,
 		"find_history":
 		[
-			"viewData",
-			"ModelPane",
-			"this.state",
-			"fieldTypes",
+			"EditableMixin",
+			"bw",
+			"model",
+			"Model",
+			"DEF",
+			"bw",
+			"synget",
+			"data",
+			"synget",
+			"bw",
+			"cursor",
+			"handleFet",
+			"col.name",
+			"simple.html",
+			"OFFSET_TOLERANCE",
 			"noselect",
-			"select",
-			"this.state.open",
-			"config",
-			"span",
-			"tbody",
-			"td",
-			"colSPan",
-			"style={detailsStyle}",
-			"WIDTH_PADDING",
-			"icon",
-			"gray-3",
-			"@gray-3;",
-			"@cream",
-			"componentWillReceiveProps",
-			"gray-3",
-			"gray-4",
-			"color:",
-			"edit",
-			"th",
-			"helvetica",
-			"view-body-wrapper",
-			"No view selected",
+			"this\\.state\\.(rowHeight|widthPadding|headerHeight)",
+			"[A-Z]+_[A-Z]+",
+			"geomoetry",
+			"[A-Z]*_[A-Z]*",
+			"[A-Z]_[Z-A]",
+			"ROW_HEIGHT",
+			"HEADER_HEIGHT",
+			"componentWill",
+			"updateView",
+			"console",
+			"viewselector",
+			"state.active",
+			"detailContent",
+			"detail",
+			"==",
+			"console",
+			"setOptions",
+			"store",
+			"fetch",
+			"handleAdd",
+			"refile",
 			"filter",
 			"pointer",
 			"selection",
@@ -693,31 +693,16 @@
 			"Hidden",
 			"selection",
 			"overflow",
-			"icon",
-			"colId",
-			"input",
-			"fast.fonts",
-			"key=",
-			"ColumnDetail",
-			"columnDetail",
-			"info",
-			"WIDTH_PADDING",
-			".on",
-			"console"
+			"icon"
 		],
 		"highlight": true,
 		"in_selection": false,
 		"preserve_case": false,
-		"regex": false,
+		"regex": true,
 		"replace_history":
 		[
-			"config.expanded",
-			"td",
-			" span",
-			" ",
-			"",
-			"@cream;",
-			"@darkText",
+			"attribute",
+			"Attribute",
 			"this.handleFetch",
 			"this.forceUpdate",
 			"green-tint-1",
@@ -786,50 +771,51 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "app/containers/ModelPane/index.jsx",
+					"file": "app/constants/MetasheetConstants.js",
 					"settings":
 					{
-						"buffer_size": 2425,
+						"buffer_size": 341,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								743,
-								743
+								61,
+								61
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 170.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "app/containers/Views/Tabular/Main/index.jsx",
+					"file": "app/components/editableMixin.jsx",
 					"settings":
 					{
-						"buffer_size": 10875,
+						"buffer_size": 577,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								10875,
-								10875
+								79,
+								85
 							]
 						],
 						"settings":
@@ -845,103 +831,25 @@
 				},
 				{
 					"buffer": 2,
-					"file": "app/containers/Views/Tabular/Main/TabularTBody.jsx",
+					"file": "app/stores/ViewStore.js",
 					"settings":
 					{
-						"buffer_size": 4061,
+						"buffer_size": 1442,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3680,
-								3846
+								335,
+								335
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1444.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "app/mainRoutes.jsx",
-					"settings":
-					{
-						"buffer_size": 511,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								93,
-								93
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "app/containers/Application/index.jsx",
-					"settings":
-					{
-						"buffer_size": 404,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								113,
-								113
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "app/containers/Views/viewTypes.jsx",
-					"settings":
-					{
-						"buffer_size": 894,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								29,
-								29
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,

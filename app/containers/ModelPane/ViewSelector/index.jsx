@@ -2,51 +2,66 @@ import React from "react";
 import bw from "barwell";
 import _ from 'underscore';
 import viewTypes from "../../Views/viewTypes"
-	
+import dispatcher from "../../../dispatcher/MetasheetDispatcher"
+
 var ViewSelector = React.createClass({
+
 	getInitialState: function () {
 		var view = this.props.view
-		var name = view.synget(bw.DEF.VIEW_NAME)
-		var data = view.synget(bw.DEF.VIEW_DATA)
-		var type = data.type
 		return {
 			renaming: false,
 			selectingType: false,
-			name: name,
-			type: type
+			name: view.view,
+			type: view.type
 		}
 	},
+
 	update: function () {
 		var view = this.props.view
-		var name = view.synget(bw.DEF.VIEW_NAME)
-		var data = view.synget(bw.DEF.VIEW_DATA)
-		var type = data.type
 		this.setState({
-			name: name,
-			type: type
+			name: view.view,
+			type: view.type
 		})
 	},
+	
+	componentWillMount: function () {
+		ViewStore.addChangeListener(this._onChange);
+		this.update()
+	},
+
 	componentDidMount: function () {
 		var view = this.props.view
-		view.on('update', this.update)
+		ViewStore.addChangeListener(this._onChange);
 	},
+
 	componentWillUnmount: function () {
 		var view = this.props.view
-		view.removeListener('update', this.update)
+		ViewStore.removeChangeListener(this._onChange);
 	},
-	viewClickerFactory: function (type) {
+
+	_onChange: function () {
+		var viewData = ViewStore.get(this.props.view_id)
+		this.setState(viewData)
+	},
+
+	viewClickerFactory: function (type) {	
 		var view = this.props.view
-		var data = view.synget(bw.DEF.VIEW_DATA)
+		var data = view.data
+		data.type = type
 		var _this = this
 		return function () {
-			data.type = type
-			view.set(bw.DEF.VIEW_DATA, data)
+			dispatcher.dispatch({
+				type: constants.VIEW_CREATE,
+				data: data
+			})
 			_this.revert()
 		}
 	},
+
 	revert: function () {
 		this.setState({selectingType: false})
 	},
+
 	render: function () {
 		var view = this.props.view
 		var icon = viewTypes[this.state.type].icon

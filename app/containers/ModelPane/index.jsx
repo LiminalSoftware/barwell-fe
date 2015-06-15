@@ -1,10 +1,11 @@
 import React from "react"
 import { RouteHandler } from "react-router"
 import viewTypes from "containers/Views/viewTypes"
-import bw from "barwell"
 import ViewSelector from "./ViewSelector"
 import styles from "./style.less"
 import ModelDefinition from "./ModelDefinition"
+import ModelStore from "../../stores/ModelStore"
+import ViewStore from "../../stores/ViewStore"
 
 var ModelPane = React.createClass({
 
@@ -21,40 +22,24 @@ var ModelPane = React.createClass({
 	},
 
 	componentWillUnmount: function () {
-		this.dropListener(this.props.params.viewId)
+		ModelStore.removeChangeListener(this._onChange)
+		ViewStore.removeChangeListener(this._onChange)
 	},
 
 	componentWillMount: function () {
-		this.addListener(this.props.params.viewId)
+		ModelStore.addChangeListener(this._onChange)
+		ViewStore.addChangeListener(this._onChange)
 	},
 
-	componentWillReceiveProps: function (newProps) {
-		if (this.props.params.viewId != newProps.params.viewId) {
-			this.dropListener(this.props.params.viewId)
-			this.addListener(newProps.params.viewId)
-		}
-	},
-
-	refresh: function () {
+	_onChange: function () {
 		this.forceUpdate()
 	},
 
-	addListener: function (viewId) {
-		var view = (!!viewId) ? bw.MetaView.store.synget(901, viewId) : null
-		if (!!view) view.on('update', this.refresh)
-	},
-
-	dropListener: function (viewId) {
-		var view = (!!viewId) ? bw.MetaView.store.synget(901, viewId) : null
-		if (!!view) view.removeListener('update', this.refresh)
-	},
-
 	render: function() {
-		var modelId = this.props.params.modelId
-		var viewId = this.props.params.viewId
-		var view = (!!viewId) ? bw.MetaView.store.synget(901, viewId) : null
-		var viewData
-		var model = bw.ModelMeta.store.synget(101, modelId)
+		var model_pk = this.props.params.modelId
+		var view_pk = this.props.params.viewId
+		var view = ViewStore.get(view_pk)
+		var model = ModelStore.get(model_pk)
 		
 		var viewDetailContent
 		var detailContent
@@ -63,12 +48,11 @@ var ModelPane = React.createClass({
 		var activePane = this.state.activePane
 		
 
-		if (view && view.synget(bw.DEF.VIEW_MODELID) != modelId) view = null
+		if (view && view.model_pk != model_pk) view = null
 		if (!view) activePane = 'model-def'
-		viewData = (!!view) ? view.synget(bw.DEF.VIEW_DATA) : {}
-
-		if (viewData.type in viewTypes) {
-			var type = viewTypes[viewData.type]
+		
+		if (!!view && (view.type in viewTypes)) {
+			var type = viewTypes[view.type]
 			var bodyElement = type.mainElement
 			var configElement = type.configElement
 

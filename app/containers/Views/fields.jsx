@@ -111,6 +111,10 @@ var fieldTypes = {
 	},
 
 	Date: {
+		configCleanser: function (config) {
+			config.dateFormat = config.dateFormat || "MM/DD/YYYY"
+			return config
+		},
 		configRows: function (config, style) {
 			var key = "attr-" + config.id
 

@@ -1,7 +1,9 @@
 import React from "react"
 import { Link } from "react-router"
-import bw from "barwell"
 import styles from "./style.less"
+import ModelStore from "../../../stores/ModelStore"
+import AttributeStore from "../../../stores/AttributeStore"
+import KeyStore from "../../../stores/KeyStore"
 
 var KEY_ICONS = ["icon-geo-str-square", "icon-geo-str-circle", "icon-geo-str-triangle", "icon-geo-str-trifold", "icon-geo-str-diamond"];
 var KEY_COLORS = ["green", "blue", "red"];
@@ -17,41 +19,46 @@ var getIconClasses = function (ordinal) {
 }
 
 var ModelDefinition = React.createClass({
+	
 	handleAddNewAttr: function (event) {
+		
+		MetasheetDispatcher.handleViewAction({
+	      actionType: MetasheetConst.ATTRIBUTE_CREATE,
+	    	attribute: 'New Attribute',
+	    	model_pk: this.props.params.modelId
+	    });
 		event.preventDefault();
-		var attrProps = {};
-		attrProps[bw.DEF.ATTR_NAME] = 'New Attribute';
-		attrProps[bw.DEF.ATTR_MODEL] = this.props.params.modelId;
-		bw.MetaAttribute.instantiate(attrProps);
-		this.render();
 	},
+
 	render: function () {
 		var _this = this;
 		var model = this.props.model;
-		var columns = model.synget('Fields');
-		var keys = model.synget('Keys');
-		var relations = model.synget('Relations');
+		// var relations = model.synget('Relations');
 		var iter = 0;
 		var keyOrd = {};
 
-		keys.forEach(function (key) {
-			return keyOrd[key.synget(bw.DEF.KEY_ID)] = iter++;
+		if(!model) return <div key="model-detail-bar" className="model-details">
+			<h3 key="attr-header">No Model Selected</h3>
+		</div>
+
+		if(model.keys) model.keys.forEach(function (key) {
+			return keyOrd[key.key_id] = iter++;
 		})
 
-		var colList = columns.map(function (col) {
-			var colId = col.synget(bw.DEF.ATTR_ID)
+		var colList = AttributeStore.getModelAttributes(model.model_id).map(function (col) {
+			var colId = col.attribute_id;
 			return <ColumnDetail key={"mdldef-col-"+colId} column = {col} keyOrd = {keyOrd} />;
 		});
 
-		var keyList = keys.map(function (key) {
-			var keyId = key.synget(bw.DEF.KEY_ID)
+		var keyList = KeyStore.getModelKeys(model.model_id).map(function (key) {
+			var keyId = key.key_id
 			return <KeyDetail key={"mdldef-key-"+keyId} mdlKey = {key} keyOrd = {keyOrd} />;
 		});
 
-		var relList = relations.map(function (rel) {
-			var relId = rel.synget('id')
-			return <RelationDetail key ={'mdldef-rel-' + relId} relation = {rel} />;
-		});
+		// var relList = relations.map(function (rel) {
+		// 	var relId = rel.synget('id')
+		// 	return <RelationDetail key ={'mdldef-rel-' + relId} relation = {rel} />;
+		// });
 		
 		return <div key="model-detail-bar" className="model-details">
 			<h3 key="attr-header">Attributes</h3>
@@ -96,7 +103,6 @@ var ModelDefinition = React.createClass({
 					</tr>
 				</thead>
 				<tbody>
-				{relList}
 				</tbody>
 			</table>
 		</div>;
@@ -115,43 +121,41 @@ var KeyDetail = React.createClass({
 	render: function () {
 		var key = this.props.mdlKey;
 		var keyOrd = this.props.keyOrd;
-		var name = key.synget(bw.DEF.KEY_NAME);
-		var uniq = key.synget(bw.DEF.KEY_UNIQ);
-		var reactKey = 'key-' + key.synget(bw.DEF.KEY_ID);
+		var reactKey = 'key-' + key.key_id;
 		var wedgeClasses = "small grayed icon wedge icon-geo-triangle " +
 			(this.state.open ? "open" : "closed");
-		var ord = keyOrd[key.synget(bw.DEF.KEY_ID)];
+		var ord = keyOrd[key.key_id];
 		var keyIcon = <span className={getIconClasses(ord)}></span>;
 
-		var components = key.synget('Components');
+		var components = key.components;
 
 		return <tr key={reactKey}>
 			<td onClick={this.toggleDetails} key={key + '-expand'}><span className={wedgeClasses}></span></td>
-			<td key={reactKey+'-name'}>{name}</td>
+			<td key={reactKey+'-name'}>{key.name}</td>
 			<td key={reactKey+'-icon'}>{keyIcon}</td>
-			<td key={reactKey+'-uniq'}><input type="checkbox" checked={uniq}></input></td>
+			<td key={reactKey+'-uniq'}><input type="checkbox" checked={key.uniq}></input></td>
 		</tr>;
 	}
 });
 
-var RelationDetail = React.createClass({
-	render: function () {
-		var relation = this.props.relation;
-		var name = relation.synget(bw.DEF.REL_NAME);
-		var fromKey = relation.synget(bw.DEF.REL_KEY);
-		var fromKeyName = fromKey.synget(bw.DEF.KEY_NAME);
-		var opposite = relation.synget(bw.DEF.REL_OPPOSITE);
-		var toKey = opposite.synget(bw.DEF.REL_KEY);
-		var toKeyName = toKey.synget(bw.DEF.KEY_NAME);
-		var reactKey = 'relation-' + relation.synget(bw.DEF.REL_ID);
-		return <tr key={reactKey}>
-			<td key={reactKey+'-name'}>{name}</td>
-			<td key={reactKey+'-from-key'}>{fromKeyName}</td>
-			<td key={reactKey+'-arrow'}><span className="icon greened icon-shuffle"></span></td>
-			<td key={reactKey+'-to'}>{toKeyName}</td>
-		</tr>;
-	}
-});
+// var RelationDetail = React.createClass({
+// 	render: function () {
+// 		var relation = this.props.relation;
+// 		var name = relation.synget(bw.DEF.REL_NAME);
+// 		var fromKey = relation.synget(bw.DEF.REL_KEY);
+// 		var fromKeyName = fromKey.synget(bw.DEF.KEY_NAME);
+// 		var opposite = relation.synget(bw.DEF.REL_OPPOSITE);
+// 		var toKey = opposite.synget(bw.DEF.REL_KEY);
+// 		var toKeyName = toKey.synget(bw.DEF.KEY_NAME);
+// 		var reactKey = 'relation-' + relation.synget(bw.DEF.REL_ID);
+// 		return <tr key={reactKey}>
+// 			<td key={reactKey+'-name'}>{name}</td>
+// 			<td key={reactKey+'-from-key'}>{fromKeyName}</td>
+// 			<td key={reactKey+'-arrow'}><span className="icon greened icon-shuffle"></span></td>
+// 			<td key={reactKey+'-to'}>{toKeyName}</td>
+// 		</tr>;
+// 	}
+// });
 
 var ColumnDetail = React.createClass({
 	componentWillMount: function () {
@@ -166,26 +170,27 @@ var ColumnDetail = React.createClass({
 	},
 	updateName: function (name) {
 		var col = this.props.column;
-		col.set(bw.DEF.ATTR_NAME, name);
+		col.attribute = attribute;
+
 		return name;
 	},
 	render: function () {
 		var col = this.props.column;
 		var keyOrd = this.props.keyOrd;
-		var colId = col.synget(bw.DEF.ATTR_ID);
-		var name = col.synget(bw.DEF.ATTR_NAME);
+		var colId = col.attribute_id;
+		var name = col.attribute;
 
 		var wedgeClasses = "small grayed icon icon-geo-triangle wedge" +
 			(this.state.open ? " open" : "closed");
 
 		var nameField = (this.state.editing ? <input value={name} onChange={this.updateName}/> : {name} );
 		var keyIcons = [];
-		var components = col.synget('Key components');
+		var components = KeycompStore.getAttrComps(col.attribute_id);
 		
 		if (!!components) {
 			components.forEach(function (comp, idx) {
-				var key = comp.synget('Key');
-				var ord = keyOrd[key.synget(bw.DEF.KEY_ID)];
+				var key = KeyStore.get(key.key_id)
+				var ord = keyOrd[key.key_id]
 				keyIcons.push(	<span key = {key + '-key-' + idx} className={getIconClasses(ord)}></span>);
 			});
 		}
@@ -198,10 +203,10 @@ var ColumnDetail = React.createClass({
 			<td onDoubleClick={this.handleDblClick} key={key + '-name'}>
 				{nameField}
 			</td>
-			<td key={key + '-type'}>{col.synget(203)}</td>
+			<td key={key + '-type'}>{col.type}</td>
 			<td key={key + '-keys'}>
 				{keyIcons}
 			</td>
-		</tr>	
+		</tr>
 	}
 });

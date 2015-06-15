@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router";
-import bw from "barwell";
+import dispatcher from "../../../../dispatcher/MetasheetDispatcher"
 import styles from "./style.less";
 import _ from 'underscore';
 import fieldTypes from "../../fields"
@@ -14,7 +14,7 @@ var TabularViewConfig = React.createClass({
 		
 		var _this = this
 		var view = this.props.view
-		var data = view.synget(bw.DEF.VIEW_DATA)
+		var data = view.data
 		var columns = data.columns
 		var colList = (data.columnList || []).map(function (col) {
 			return <ColumnDetail key = {"detail-" + col.id} config = {col} view= {view} />
@@ -25,7 +25,7 @@ var TabularViewConfig = React.createClass({
 			return <tr>
 				<td>{sort.id}</td>
 				<td><span className = {sortOrderClass}></span>{sortOrderLabel}</td>
-				<td><span className = "clickable armKill icon icon-trash"></span></td>
+				<td><span className = "clickable icon icon-trash"></span></td>
 			</tr>
 		})
 
@@ -72,12 +72,16 @@ var ColumnDetail = React.createClass({
 	},
 	
 	commitChanges: function (colProps) {
-		var data = this.props.view.synget(bw.DEF.VIEW_DATA)
+		var data = this.props.view.data
 		var colId = this.props.config.id
 		var col = data.columns[colId]
+		col = _.extend(_.clone(col), colProps)
+		data.columns[colId] = col;
 
-		col = _.extend(col, colProps)
-		this.props.view.set(bw.DEF.VIEW_DATA, data)
+		dispatcher.dispatch({
+			type: constants.VIEW_UPDATE,
+			data: col
+		})
 	},
 
 	updateWidth: function (e) {

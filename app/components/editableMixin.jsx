@@ -1,4 +1,4 @@
-var SetIntervalMixin = {
+var EditableMixin = {
 	edit: function () {
 		var view = this.props.view;
 		var viewId = view.synget(bw.DEF.VIEW_ID);

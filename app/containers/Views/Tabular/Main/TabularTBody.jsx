@@ -1,7 +1,7 @@
 import React from "react"
 import bw from "barwell"
 import fieldTypes from "../../fields"
-import _ from 'underscore'
+import _ from "underscore"
 
 var HEADER_HEIGHT = 35
 var ROW_HEIGHT = 22
@@ -26,6 +26,7 @@ var TabularTBody = React.createClass ({
 			}
 		}
 	},
+
 	shouldComponentUpdate: function (next) {
 		var old = this.props
 		return !(
@@ -34,9 +35,11 @@ var TabularTBody = React.createClass ({
 			_.isEqual(old.sorting, next.sort)
 		)
 	},
+
 	getCursor: function (model, sorting) {
 		this.cursor = model.store.getCursor({sortBy: sorting})
 	},
+
 	activateCursor: function () {
 		var cursor = this.cursor
 		cursor.on('fetch', this.handleFetch)
@@ -45,6 +48,7 @@ var TabularTBody = React.createClass ({
 		cursor.on('remove', this.handleFetch)
 		this.fetch(true)
 	},
+
 	deactivateCursor: function () {
 		this.cursor.release()
 		this.cursor.removeListener('fetch', this.handleFetch)
@@ -52,12 +56,15 @@ var TabularTBody = React.createClass ({
 		this.cursor.removeListener('update', this.handleFetch)
 		this.cursor.removeListener('remove', this.handleFetch)
 	},
+
 	componentWillMount: function () {
 		this.getCursor(this.props.model, this.props.sorting)
 	},
+
 	componentDidMount: function () {
 		this.activateCursor()
 	},
+
 	componentWillReceiveProps: function (newProps) {
 		var newModel = newProps.model
 		var newSort = newProps.sorting
@@ -71,13 +78,16 @@ var TabularTBody = React.createClass ({
 			this.fetch()
 		}
 	},
+
 	componentWillUnmount: function () {
 		this.deactivateCursor()
 	},
+
 	handleFetch: function () {
 		this.setState({fetching: false})
 		this.forceUpdate()
 	},
+	
 	fetch: function (force) {
 		var rowOffset = Math.floor(this.props.scrollTop / ROW_HEIGHT)
 		var tgtOffset = Math.floor(rowOffset - (CURSOR_LIMIT / 2) + (WINDOW_SIZE / 2)) 
@@ -101,15 +111,18 @@ var TabularTBody = React.createClass ({
 			)
 		}
 	},
+
 	getStyle: function () {
 		return {
 			top: (this.state.window.offset * (ROW_HEIGHT) + HEADER_HEIGHT) + 'px',
 			height: (((	(this.cursor.store.objCount || 0) - this.state.window.offset) * ROW_HEIGHT)) + 'px'
 		}
 	},
+
 	getValueAt: function (row, col) {
 		return this.cursor.at(row)
 	},
+
 	render: function () {
 		var rows = []
 		var window = this.state.window
