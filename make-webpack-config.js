@@ -54,6 +54,7 @@ module.exports = function(options) {
 	var output = {
 		path: path.join(__dirname, "build", options.prerender ? "prerender" : "public"),
 		publicPath: publicPath,
+		headers: { "Access-Control-Allow-Origin": "*" },
 		filename: "[name].js" + (options.longTermCaching && !options.prerender ? "?[chunkhash]" : ""),
 		chunkFilename: (options.devServer ? "[id].js" : "[name].js") + (options.longTermCaching && !options.prerender ? "?[chunkhash]" : ""),
 		sourceMapFilename: "debugging/[file].map",
@@ -159,6 +160,7 @@ module.exports = function(options) {
 			alias: alias
 		},
 		plugins: plugins,
+		headers: { "Access-Control-Allow-Origin": "*" },
 		devServer: {
 			headers: { "Access-Control-Allow-Origin": "*" },
 			stats: {

@@ -3,6 +3,7 @@ var Dispatcher = require('../dispatcher/MetasheetDispatcher');
 var EventEmitter = require('events').EventEmitter;
 var CHANGE_EVENT = 'CHANGE_EVENT'
 var _ = require('underscore')
+import serverActionCreators from '../actions/serverActionCreators';
 
 var _models = {}
 var _modelsByCid = {}
@@ -14,6 +15,7 @@ function create (model) {
   var name = model.model
   var cid = model.model_cid
   if (!id) id = model.model_id = model.model_cid = 'c' + _sequence++;
+
 	_models[id] = _modelsByCid[cid] = _modelsByName[name] = model
 }
 
@@ -31,7 +33,7 @@ var ModelStore = assign({}, EventEmitter.prototype, {
   },
 
   get: function (id) {
-    if (id.slice(0,1) === 'c') return this.getByCid(id)
+    if (/^c\d+/.test(id)) return this.getByCid(id)
     return _.clone(_models[id])
   },
 
@@ -70,11 +72,12 @@ ModelStore.dispatchToken = Dispatcher.register(function(payload) {
       break;
 
     case 'MODEL_RECEIVE':
-      console.log('payload: '+ JSON.stringify(payload, null, 2));
-      if (!(payload instanceof Array)) payload = [payload]
-      payload.forEach(function (model) {
+      var models = _.isArray(payload.model)  ? payload.model : [payload.model]
+      models.forEach(function (model) {
         create(model)
       })
+      ModelStore.emitChange()
+      break;
   }
 })
 

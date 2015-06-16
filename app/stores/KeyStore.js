@@ -23,7 +23,7 @@ var KeyStore = assign({}, EventEmitter.prototype, {
   getModelKeys: function (model_id) {
 		// return a list of keys associated with the model
    	return _.values(_keys).filter(function (key) {
-      return key.model_id = model_id;
+      return key.model_id === model_id;
     })
   },
   

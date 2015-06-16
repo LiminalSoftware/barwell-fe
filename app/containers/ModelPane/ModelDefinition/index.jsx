@@ -4,6 +4,7 @@ import styles from "./style.less"
 import ModelStore from "../../../stores/ModelStore"
 import AttributeStore from "../../../stores/AttributeStore"
 import KeyStore from "../../../stores/KeyStore"
+import KeycompStore from "../../../stores/KeycompStore"
 
 var KEY_ICONS = ["icon-geo-str-square", "icon-geo-str-circle", "icon-geo-str-triangle", "icon-geo-str-trifold", "icon-geo-str-diamond"];
 var KEY_COLORS = ["green", "blue", "red"];
@@ -190,7 +191,7 @@ var ColumnDetail = React.createClass({
 
 		var nameField = (this.state.editing ? <input value={name} onChange={this.updateName}/> : {name} );
 		var keyIcons = [];
-		var components = KeycompStore.getAttrComps(col.attribute_id);
+		var components = KeycompStore.getAttributeKeycomps	(col.attribute_id);
 		
 		if (!!components) {
 			components.forEach(function (comp, idx) {

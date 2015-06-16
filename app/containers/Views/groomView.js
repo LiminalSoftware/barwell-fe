@@ -31,9 +31,8 @@ var groomView = module.exports.prepView = function (view) {
 	
 	fields.forEach(function (field) {
 		
+		var id = field.attribute_id
 		var col = data.columns[id] || {};
-		
-		col.id = id
 		col.type = field.type
 		col.name = field.attribute
 		col.visible = col.visible === false ? false : true

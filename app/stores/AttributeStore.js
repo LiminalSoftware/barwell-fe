@@ -23,7 +23,7 @@ var AttributeStore = assign({}, EventEmitter.prototype, {
   getModelAttributes: function (model_id) {
 		// return a list of attributes sorted by their name
    	return _.values(_attributes).filter(function (attribute) {
-      return attribute.model_id = model_id;
+      return attribute.model_id === model_id;
     })
   },
   
@@ -59,10 +59,12 @@ AttributeStore.dispatchToken = Dispatcher.register(function(payload) {
       break;
 
     case 'ATTRIBUTE_RECEIVE':
-      if (!(payload instanceof Array)) payload = [payload]
-      payload.forEach(function (attribute) {
+      var attributes = _.isArray(payload.attribute)  ? payload.attribute : [payload.attribute]
+      attributes.forEach(function (attribute) {
         create(attribute)
       })
+      AttributeStore.emitChange()
+      break;
   }
 })
 

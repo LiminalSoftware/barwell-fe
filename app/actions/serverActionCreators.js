@@ -6,11 +6,25 @@ import $ from "jquery";
 
 module.exports = {
 
-  receiveModels: function(model) {
+  receiveModels: function(models) {
     MetasheetDispatcher.dispatch({
     	actionType: 'MODEL_RECEIVE',
-    	model: model
+    	model: models
     });
+    models.forEach(function (model) {
+    	MetasheetDispatcher.dispatch({
+	    	actionType: 'ATTRIBUTE_RECEIVE',
+	    	attribute: model.attributes
+	    });	
+      MetasheetDispatcher.dispatch({
+        actionType: 'KEY_RECEIVE',
+        attribute: model.keys
+      });
+      MetasheetDispatcher.dispatch({
+        actionType: 'VIEW_RECEIVE',
+        attribute: model.views
+      }); 
+    })
   },
 
   receiveAttributes: function(attribute) {
@@ -18,6 +32,13 @@ module.exports = {
   		actionType: 'ATTRIBUTE_RECEIVE',
   		attribute: attribute
   	})
-  }
+  },
+
+  receiveViews: function(views) {
+    MetasheetDispatcher.dispatch({
+    	actionType: 'VIEW_RECEIVE',
+    	view: views
+    });
+  },
 
 };

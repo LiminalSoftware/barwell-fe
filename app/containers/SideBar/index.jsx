@@ -31,13 +31,11 @@ var SideBar = React.createClass({
 		return {keyControl: false}
 	},
 
-	handleAddModel: function() {
-		MetasheetDispatcher.dispatch({
-	    	actionType: 'MODEL_CREATE',
-	    	model: {
-	    		model: 'New Model'
-	    	}
-	    });
+	handleAddModel: function () {
+		modelActionCreators.createModel({
+			model: 'New model',
+			plural: 'New models'
+		})
 	},
 
 	render: function () {

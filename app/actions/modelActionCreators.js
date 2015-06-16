@@ -17,6 +17,16 @@ module.exports = {
 		webUtils.createModel(model);
 	},
 
+	createView: function(view) {
+		if (!model) model = {}
+		
+		MetasheetDispatcher.dispatch({
+			actionType: 'VIEW_CREATE',
+			view: view
+		});
+		webUtils.createView(view);
+	},
+
 	createAttribute: function(attribute) {
 		if (!attribute) attribute = {}
 		
