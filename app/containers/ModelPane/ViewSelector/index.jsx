@@ -29,11 +29,6 @@ var ViewSelector = React.createClass({
 		this.update()
 	},
 
-	componentDidMount: function () {
-		var view = this.props.view
-		ViewStore.addChangeListener(this._onChange);
-	},
-
 	componentWillUnmount: function () {
 		var view = this.props.view
 		ViewStore.removeChangeListener(this._onChange);

@@ -132,7 +132,7 @@ var KeyDetail = React.createClass({
 
 		return <tr key={reactKey}>
 			<td onClick={this.toggleDetails} key={key + '-expand'}><span className={wedgeClasses}></span></td>
-			<td key={reactKey+'-name'}>{key.name}</td>
+			<td key={reactKey+'-name'}>{key.key}</td>
 			<td key={reactKey+'-icon'}>{keyIcon}</td>
 			<td key={reactKey+'-uniq'}><input type="checkbox" checked={key.uniq}></input></td>
 		</tr>;
@@ -166,7 +166,11 @@ var ColumnDetail = React.createClass({
 	},
 	
 	getInitialState: function () {
-		return {open: false, editing: false, visible: true};
+		return {
+			open: false, 
+			editing: false, 
+			visible: true
+		};
 	},
 	
 	handleDblClick: function (event) {
@@ -193,13 +197,16 @@ var ColumnDetail = React.createClass({
 		var keyIcons = [];
 		var components = KeycompStore.getAttributeKeycomps	(col.attribute_id);
 		
-		if (!!components) {
-			components.forEach(function (comp, idx) {
-				var key = KeyStore.get(key.key_id)
-				var ord = keyOrd[key.key_id]
-				keyIcons.push(	<span key = {key + '-key-' + idx} className={getIconClasses(ord)}></span>);
-			});
-		}
+		
+		components.forEach(function (comp, idx) {
+			var key = KeyStore.get(comp.key_id)
+			var ord = keyOrd[key.key_id]
+			keyIcons.push(<span 
+				key = {'keycomp-' + comp.keycomp_id} 
+				className={getIconClasses(ord)}></span>
+			);
+		});
+	
 
 		var key = "attr-" + colId;
 		return <tr key={key}>

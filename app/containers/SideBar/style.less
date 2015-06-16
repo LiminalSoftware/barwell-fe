@@ -1,5 +1,17 @@
 @import "../../global.less";
 
+.view-delete {
+	.clickable;
+	position: absolute;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	width: 20px;
+	padding: 10px;
+	background: @cream;
+	color: @darkText;
+}
+
 .left-side-bar {
 	display: relative;
 	flex: 0 0 200px;
@@ -17,6 +29,7 @@
 		margin: 0;
 
 		li {
+			position: relative;
 			overflow: visible;
 			color: @pureGray1;
 			font-size: 14px;
@@ -93,7 +106,7 @@ ul.view-type-options {
 	}
 }
 
-.view-renamer {
+.view-renamer, .model-renamer {
 	border: none;
 	border-bottom: 1px solid @darkText;
 	background: none;
@@ -107,7 +120,7 @@ ul.view-type-options {
 	margin-bottom: -1px;
 }
 
-.view-renamer::selection {
+.view-renamer::selection, .model-renamer::selection {
   background: @green-tint-2; /* WebKit/Blink Browsers */
 }
 

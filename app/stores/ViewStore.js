@@ -1,33 +1,34 @@
-var assign = require('object-assign');
-var Dispatcher = require('../dispatcher/MetasheetDispatcher');
-var EventEmitter = require('events').EventEmitter;
-var _ = require('underscore')
-var groomView = require('../containers/Views/groomView')
+import assign from 'object-assign'
+import Dispatcher from '../dispatcher/MetasheetDispatcher'
+import EventEmitter from 'events'
+import _ from 'underscore'
+import groomView from '../containers/Views/groomView'
 
 var _views = {}
+var _viewsByCid = {}
 var _sequence = 0
 
 function create (view) {
-	var id = view.view_id
-  
-  if (!id) id = view.view_id = 'c' + _sequence++;
-  view = _.extend(_views[id] || {}, view)  
-  view = groomView(view);
-
-	_views[id] = view
+  // view = groomView(view)
+	if (view.view_id) {
+    _views[view.view_id] = view
+  } else if (!view.cid) {
+    view.cid = 'c' + _sequence++
+  }
+  if (view.cid) {
+    _viewsByCid[view.cid] = view;
+  }
 }
 
 function destroy (view) {
-	var id = view.view_id
-	delete _views[id]
+	delete _views[view.view_id]
+  delete _viewsByCid[view.cid]
 }
 
 var ViewStore = assign({}, EventEmitter.prototype, {
 	getModelViews: function (model_id) {
 		// return a list of views sorted by their name
    	return _.values(_views).filter(function (view) {
-      console.log('view.model_id: '+ JSON.stringify(view.model_id, null, 2));
-      console.log('model_id: '+ JSON.stringify(model_id, null, 2));
       return view.model_id === model_id;
     }).sort(function (A, B) {
    		return A.view > B.view;
@@ -56,13 +57,21 @@ ViewStore.dispatchToken = Dispatcher.register(function(payload) {
 
     switch (payload.actionType) {
       case 'VIEW_CREATE':
-        console.log('create view event')
         create(payload.view)
         ViewStore.emitChange()
         break;
 
       case 'VIEW_DESTROY':
         destroy(payload.view)
+        ViewStore.emitChange()
+        break;
+
+      case 'VIEW_RECEIVE':
+        var views = _.isArray(payload.view)  ? payload.view : [payload.view]
+        views.forEach(function (view) {
+          if (!view) return;
+          create(view)
+        })
         ViewStore.emitChange()
         break;
     }

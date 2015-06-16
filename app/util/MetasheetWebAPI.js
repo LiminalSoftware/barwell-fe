@@ -1,55 +1,41 @@
 import modelActionCreators from '../actions/modelActionCreators';
 import serverActionCreators from '../actions/serverActionCreators';
 import $ from "jquery";
+import _ from 'underscore'
+
 
 $.ajaxSetup({
     headers: {"Prefer": 'return=representation'}
 });
 
 module.exports = {
-  
-  getAllModels: function () {
-    $.ajax({
-      type: 'GET',
-      url: 'https://api.metasheet.io/model',
-      contentType: 'application/json',
-      success: serverActionCreators.receiveModels,
-      failure: serverActionCreators.receiveModels
-    })
-  },
 
-  createModel: function (model) {
-    $.ajax({
-      type: 'PUT',
-      url: 'https://api.metasheet.io/model',
-      data: JSON.stringify(model),
-      dataType: "json",
-      contentType: 'application/json',
-      success: serverActionCreators.receiveModels,
-      failure: serverActionCreators.receiveModels
-    })
-  },
+  persist: function (subject, action, data) {
+    var identifier = (subject + '_id')
+    var url = 'https://api.metasheet.io/' + subject;
+    var camelSubject = subject.slice(0,1).toUpperCase() + subject.slice(1,100) + 's'
+    var camelAction = action.slice(0,1).toUpperCase() + action.slice(1,100).toLowerCase()
+    var success = 'successfully' + camelAction + camelSubject
+    var failure = 'failTo' + camelAction + camelSubject
+    var json = (action === 'CREATE') ? JSON.stringify(data) : null;
+    var method;
 
-  createView: function (view) {
-    $.ajax({
-      type: 'PUT',
-      url: 'https://api.metasheet.io/view',
-      data: view,
-      contentType: 'application/json',
-      success: serverActionCreators.receiveViews,
-      failure: serverActionCreators.receiveViews
-    })
-  },
+    if (action == 'FETCH') method = 'GET';
+    else if (action == 'DESTROY') method = 'DELETE';
+    else if (action === 'CREATE' && data[identifier]) method = 'PATCH'
+    else if (action === 'CREATE') method = 'POST'
+    else return;
+    
+    if (method === 'PATCH' || method === 'DELETE') url = url + '?' + identifier + '=eq.' + data[identifier];
 
-  createAttribute: function (attribute) {
     $.ajax({
-      type: 'PUT',
-      url: 'https://api.metasheet.io/model',
-      data: model,
+      type: method,
+      url: url,
+      data: json,
       contentType: 'application/json',
-      success: serverActionCreators.receiveAttributes,
-      failure: serverActionCreators.receiveAttributes
+      success: serverActionCreators[success],
+      error: serverActionCreators[failure]
     })
-  },
+  }
 
 };

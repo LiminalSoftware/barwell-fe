@@ -1,9 +1,9 @@
-var assign = require('object-assign');
-var Dispatcher = require('../dispatcher/MetasheetDispatcher');
-var EventEmitter = require('events').EventEmitter;
+import assign from 'object-assign'
+import Dispatcher from '../dispatcher/MetasheetDispatcher'
+import EventEmitter from 'events'
+import _ from 'underscore'
+
 var CHANGE_EVENT = 'CHANGE_EVENT'
-var _ = require('underscore')
-import serverActionCreators from '../actions/serverActionCreators';
 
 var _models = {}
 var _modelsByCid = {}
@@ -11,12 +11,14 @@ var _modelsByName = {}
 var _sequence = 0;
 
 function create (model) {
-	var id = model.model_id
-  var name = model.model
-  var cid = model.model_cid
-  if (!id) id = model.model_id = model.model_cid = 'c' + _sequence++;
-
-	_models[id] = _modelsByCid[cid] = _modelsByName[name] = model
+  if (model.model_id) {
+    _models[model.model_id] = model
+  } else if (!model.cid) {
+    model.cid = 'c' + _sequence++
+  }
+  if (model.cid) {
+    _modelsByCid[model.cid] = model;
+  }
 }
 
 function destroy (model) {
@@ -65,12 +67,12 @@ ModelStore.dispatchToken = Dispatcher.register(function(payload) {
       create(payload.model)
       ModelStore.emitChange()
       break;
-
+      
     case 'MODEL_DESTROY':
       destroy(payload.model)
       ModelStore.emitChange()
       break;
-
+      
     case 'MODEL_RECEIVE':
       var models = _.isArray(payload.model)  ? payload.model : [payload.model]
       models.forEach(function (model) {

@@ -68,8 +68,8 @@ export default SideBar
 
 var ModelLink = React.createClass ({
 
-	componentDidMount: function () {
-		
+	getInitialState: function () {
+		return {renaming: false}
 	},
 	
 	componentWillUnmount: function () {
@@ -85,11 +85,53 @@ var ModelLink = React.createClass ({
 	_onChange: function (changeEvent) {
 		this.forceUpdate()
 	},
+
+	commitChanges: function () {
+		var model = this.props.model;
+		model.model = this.state.name
+		modelActionCreators.createModel(model)
+		this.revert()
+	},
+	
+	cancelChanges: function () {
+		this.revert()
+	},
+	
+	edit: function () {
+		var model = this.props.model;
+		if (this.state.renaming) return
+		this.setState({
+			renaming: true,
+			name: model.model
+		}, function () {
+			React.findDOMNode(this.refs.renamer).focus();
+		})
+		document.addEventListener('keyup', this.handleKeyPress)
+	},
+	
+	revert: function () {
+		document.removeEventListener('keyup', this.handleKeyPress)
+		this.setState({renaming: false})
+	},
+
+	handleKeyPress: function (event) {
+		if (event.keyCode === 27) this.cancelChanges()
+		if (event.keyCode === 13) this.commitChanges()
+	},
+
+	handleNameUpdate: function (e) {
+		var name = e.target.value
+		this.setState({name: name})
+	},
 	
 	render: function() {
 		var _this = this
 		var model = this.props.model
 		var views
+
+		var modelDisplay = (!!this.state.renaming) ?  
+			(<input className="model-renamer" ref="renamer" value={this.state.name} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/>) : 
+			(<span>{model.model}</span>) ;
 
 		if (this.props.active) {
 			views = ViewStore.getModelViews(model.model_id).map(function (view) {
@@ -107,8 +149,8 @@ var ModelLink = React.createClass ({
 		return <li>
 			<ul key={"model-views-ul-" + model.model_id}>
 				<li className={"li-model" + (this.props.active ? " li-hilite" : "")}>
-					<Link to="model" params={{modelId: model.model_id}} key={"model-link-" + model.model_id}>
-						{model.model}
+					<Link to="model" params={{modelId: model.model_id}} key={"model-link-" + model.model_id} onDoubleClick={this.edit}>
+						{modelDisplay}
 					</Link>
 				</li>
 				{views}
@@ -120,17 +162,20 @@ var ModelLink = React.createClass ({
 var ViewLink = React.createClass({
 	
 	getInitialState: function () {
-		var view = this.props.view
-		var viewName = view.view
 		return {
-			renaming: false,
-			name: viewName
+			renaming: false
 		}
 	},
 	
 	handleNameUpdate: function (e) {
 		var name = e.target.value
 		this.setState({name: name})
+	},
+
+	handleDelete:function (e) {
+		var view = this.props.view;
+		modelActionCreators.destroyView(view)
+		e.preventDefault();
 	},
 	
 	render: function () {
@@ -139,11 +184,13 @@ var ViewLink = React.createClass({
 		var key = "view-link-" + view.view_id
 		var viewDisplay = (!!this.state.renaming) ?  
 			(<input className="view-renamer" ref="renamer" value={this.state.name} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/>) : 
-			(<span>{this.state.name}</span>) ;
+			(<span>{view.view}</span>) ;
 		return <li className="li-view" key={"view-li-" + view.view_id}>
 			<Link to="view" params={{modelId: model.model_id, viewId: view.view_id}} key={key} onDoubleClick={this.edit} >
 				<span className={"icon "+view.data.icon}></span>{viewDisplay}
-			</Link></li>;
+			</Link>
+			<span className="view-delete icon icon-trash" onClick={this.handleDelete}></span>
+			</li>;
 	},
 	
 	commitChanges: function () {
@@ -151,27 +198,18 @@ var ViewLink = React.createClass({
 		var model = this.props.model;
 		view.view = this.state.name
 
-		MetasheetDispatcher.dispatch({
-	    	actionType: 'VIEW_CREATE',
-	    	view: {
-	    		model_id: model.model_id,
-	    		view_id: view.view_id,
-	    		view: this.state.name
-	    	}
-	    });
+		modelActionCreators.createView(view)
 		this.revert()
 	},
 	
 	cancelChanges: function () {
-		var view = this.props.view
-		this.setState({name: view.view})
 		this.revert()
 	},
 	
 	edit: function () {
 		var view = this.props.view;
 		if (this.state.renaming) return
-		this.setState({renaming: true}, function () {
+		this.setState({renaming: true, name: view.view}, function () {
 			React.findDOMNode(this.refs.renamer).focus();
 		})
 		document.addEventListener('keyup', this.handleKeyPress)
@@ -193,14 +231,10 @@ var ViewAdder = React.createClass ({
 
 	handleAddView: function() {
 		var model = this.props.model
-		MetasheetDispatcher.dispatch({
-	      	actionType: 'VIEW_CREATE',
-	    	view: {
-	    		view: "New view",
-	    		model_id: model.model_id,
-	    		type: "Tabular"
-	    	}
-	    });
+		modelActionCreators.createView({
+			model_id: model.model_id,
+			view: (model.model + ' - New view')
+		})
 	},
 
 	render: function () {

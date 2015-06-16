@@ -1,15 +1,6 @@
-var keyMirror = require('keymirror');
+
 
 module.exports = {
-
-  ActionTypes: keyMirror({
-    MODEL_CREATE: null,
-    MODEL_DESTROY: null,
-    VIEW_CREATE: null,
-    VIEW_DESTROY: null,
-    CLICK_VIEW: null,
-    CREATE_VIEW: null
-  }),
 
   Constants: {
   	KEY_ENTER: 13,

@@ -1,8 +1,7 @@
-var assign = require('object-assign');
-var Dispatcher = require('../dispatcher/MetasheetDispatcher');
-var EventEmitter = require('events').EventEmitter;
-var MetasheetConst = require('../constants/MetasheetConstants')
-var _ = require('underscore')
+import assign from 'object-assign'
+import Dispatcher from '../dispatcher/MetasheetDispatcher'
+import EventEmitter from 'events'
+import _ from 'underscore'
 
 var _attributes = {}
 var _sequence = 0;
@@ -61,6 +60,7 @@ AttributeStore.dispatchToken = Dispatcher.register(function(payload) {
     case 'ATTRIBUTE_RECEIVE':
       var attributes = _.isArray(payload.attribute)  ? payload.attribute : [payload.attribute]
       attributes.forEach(function (attribute) {
+        if (!attribute) return;
         create(attribute)
       })
       AttributeStore.emitChange()

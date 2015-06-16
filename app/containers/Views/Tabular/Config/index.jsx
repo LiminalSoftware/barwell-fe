@@ -1,23 +1,41 @@
 import React from "react";
 import { Link } from "react-router";
-import dispatcher from "../../../../dispatcher/MetasheetDispatcher"
 import styles from "./style.less";
 import _ from 'underscore';
 import fieldTypes from "../../fields"
+import ViewUpdateMixin from '../../ViewUpdateMixin.jsx'
+import ViewStore from "../../../../stores/ViewStore"
+import modelActionCreators from "../../../../actions/modelActionCreators.js"
 
 var TabularViewConfig = React.createClass({
+	
+	componentWillMount: function () {
+		ViewStore.addChangeListener(this._onChange);
+	},
+
+	componentWillUnmount: function () {
+		var view = this.props.view
+		ViewStore.removeChangeListener(this._onChange);
+	},
+
+	_onChange: function () {
+		var view = ViewStore.get(this.props.view.view_id || this.props.view.cid)
+		this.setState(view.data)
+	},
+
 	getInitialState: function () {
-		return {};
+		var view = this.props.view
+		return view.data
 	},
 
 	render: function() {
-		
 		var _this = this
 		var view = this.props.view
-		var data = view.data
+		var data = this.state
 		var columns = data.columns
+
 		var colList = (data.columnList || []).map(function (col) {
-			return <ColumnDetail key = {"detail-" + col.id} config = {col} view= {view} />
+			return <ColumnDetail key = {"detail-" + col.attribute_id} config = {col} view= {view} />
 		})
 		var sortList = (data.sorting || []).map(function (sort) {
 			var sortOrderClass = "small grayed icon icon-arrow-" + (sort.descending ? "up" : "down")
@@ -72,16 +90,13 @@ var ColumnDetail = React.createClass({
 	},
 	
 	commitChanges: function (colProps) {
-		var data = this.props.view.data
+		var view = this.props.view
 		var colId = this.props.config.id
-		var col = data.columns[colId]
+		var col = view.data.columns[colId]
 		col = _.extend(_.clone(col), colProps)
-		data.columns[colId] = col;
+		view.data.columns[colId] = col;
 
-		dispatcher.dispatch({
-			actionType: "VIEW_UPDATE",
-			data: data
-		})
+		modelActionCreators.createView(view)
 	},
 
 	updateWidth: function (e) {

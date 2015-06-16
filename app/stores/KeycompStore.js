@@ -1,16 +1,20 @@
-var assign = require('object-assign');
-var Dispatcher = require('../dispatcher/MetasheetDispatcher');
-var EventEmitter = require('events').EventEmitter;
-var MetasheetConst = require('../constants/MetasheetConstants')
-var _ = require('underscore')
+import assign from 'object-assign'
+import Dispatcher from '../dispatcher/MetasheetDispatcher'
+import EventEmitter from 'events'
+import _ from 'underscore'
 
 var _keycomps = {}
 var _sequence = 0;
 
 function create (keycomp) {
-	var id = keycomp.keycomp_id
-  if (!id) id = model.keycomp_id = 'c' + _sequence++;
-	_keycomps[id] = keycomp
+	if (keycomp.keycomp_id) {
+    _keycomps[keycomp.keycomp_id] = keycomp
+  } else if (!keycomp.cid) {
+    keycomp.cid = 'c' + _sequence++
+  }
+  if (keycomp.cid) {
+    _keycompsByCid[keycomp.cid] = keycomp;
+  }
 }
 
 function destroy (keycomp) {
@@ -24,11 +28,11 @@ var KeycompStore = assign({}, EventEmitter.prototype, {
 		// return a list of keycomps associated with the attribute
    	return _.values(_keycomps).filter(function (keycomp) {
       return keycomp.attribute_id === attribute_id;
-    })
+    }).map(_.clone)
   },
   
   get: function (id) {
-    return _keycomps[id]
+    return _.clone(_keycomps[id])
   },
 
 	emitChange: function () {
@@ -57,6 +61,15 @@ KeycompStore.dispatchToken =  Dispatcher.register(function(payload) {
       case 'KEYCOMP_DESTROY':
         create(payload.keycomp)
         destroy(details)
+        KeycompStore.emitChange()
+        break;
+
+      case 'KEYCOMP_RECEIVE':
+        if (!payload.keycomp) return;
+        var keycomps = _.isArray(payload.keycomp)  ? payload.keycomp : [payload.keycomp]
+        keycomps.forEach(function (keycomp) {
+          create(keycomp)
+        })
         KeycompStore.emitChange()
         break;
     }
