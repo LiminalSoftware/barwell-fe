@@ -1,6 +1,5 @@
 import React from "react"
 import { RouteHandler } from "react-router"
-import bw from "barwell"
 import styles from "./style.less"
 import EventListener from 'react/lib/EventListener'
 import _ from 'underscore'
@@ -71,7 +70,7 @@ var TabularPane = React.createClass ({
 		var view = this.props.view
 		var columns = this.getVisibleColumns()
 		var sorting = this.state.sorting
-		var id = view.synget(bw.DEF.MODEL_ID)
+		
 		var inputter = <input
 			ref = "inputter" 
 			className = "input-editor" 
@@ -83,13 +82,13 @@ var TabularPane = React.createClass ({
 		return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">
 				<table id="main-data-table" className="header data-table">
 					<TabularTHead  
-						key={"tabular-thead-" + id} 
+						key={"tabular-thead-" + view.view_id} 
 						scrollTop={this.state.scrollTop}
 						columns={columns}
 						view={view} />
 					<TabularTBody 
 						ref="tabularbody" 
-						key={"tbody-" + id}
+						key={"tbody-" + view.view_id}
 						model={model}
 						view={view}
 						columns={columns}

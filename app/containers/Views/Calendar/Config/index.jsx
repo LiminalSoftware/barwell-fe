@@ -1,6 +1,5 @@
 import React from "react"
 import { RouteHandler } from "react-router"
-import bw from "barwell"
 import styles from "./style.less"
 import EventListener from 'react/lib/EventListener'
 import _ from 'underscore'

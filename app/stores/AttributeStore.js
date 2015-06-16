@@ -57,6 +57,12 @@ AttributeStore.dispatchToken = Dispatcher.register(function(payload) {
       destroy(payload.attribute)
       AttributeStore.emitChange()
       break;
+
+    case 'ATTRIBUTE_RECEIVE':
+      if (!(payload instanceof Array)) payload = [payload]
+      payload.forEach(function (attribute) {
+        create(attribute)
+      })
   }
 })
 

@@ -1,8 +1,8 @@
 import React from "react";
-import bw from "barwell";
 import _ from 'underscore';
 import viewTypes from "../../Views/viewTypes"
 import dispatcher from "../../../dispatcher/MetasheetDispatcher"
+import ViewStore from "../../../stores/ViewStore"
 
 var ViewSelector = React.createClass({
 
@@ -44,14 +44,14 @@ var ViewSelector = React.createClass({
 		this.setState(viewData)
 	},
 
-	viewClickerFactory: function (type) {	
+	viewClickerFactory: function (type) {
 		var view = this.props.view
 		var data = view.data
 		data.type = type
 		var _this = this
 		return function () {
 			dispatcher.dispatch({
-				type: constants.VIEW_CREATE,
+				type: "VIEW_CREATE",
 				data: data
 			})
 			_this.revert()

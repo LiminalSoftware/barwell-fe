@@ -2,7 +2,11 @@ import React from "react"
 import { Link } from "react-router"
 import styles from "./style.less"
 import _ from "underscore"
+
+import modelActionCreators from '../../actions/modelActionCreators';
+
 import MetasheetDispatcher from '../../dispatcher/MetasheetDispatcher';
+
 import ModelStore from "../../stores/ModelStore"
 import ViewStore from "../../stores/ViewStore"
 import MetasheetConst from '../../constants/MetasheetConstants'
@@ -80,7 +84,7 @@ var ModelLink = React.createClass ({
 		ViewStore.addChangeListener(this._onChange)
 	},
 
-	_onChange: function () {
+	_onChange: function (changeEvent) {
 		this.forceUpdate()
 	},
 	
@@ -146,11 +150,13 @@ var ViewLink = React.createClass({
 	
 	commitChanges: function () {
 		var view = this.props.view;
+		var model = this.props.model;
 		view.view = this.state.name
 
 		MetasheetDispatcher.dispatch({
 	    	actionType: 'VIEW_CREATE',
 	    	view: {
+	    		model_id: model.model_id,
 	    		view_id: view.view_id,
 	    		view: this.state.name
 	    	}

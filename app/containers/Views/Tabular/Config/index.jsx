@@ -79,8 +79,8 @@ var ColumnDetail = React.createClass({
 		data.columns[colId] = col;
 
 		dispatcher.dispatch({
-			type: constants.VIEW_UPDATE,
-			data: col
+			actionType: "VIEW_UPDATE",
+			data: data
 		})
 	},
 

@@ -1,5 +1,4 @@
 import React from "react"
-import bw from "barwell"
 import $ from "jquery"
 import EventListener from 'react/lib/EventListener'
 import _ from 'underscore'
@@ -74,15 +73,15 @@ var TabularTH = React.createClass ({
 	    e.preventDefault()
 	},
 	onMouseUp: function (e) {
-   	var view = this.props.view   
-		var viewData = view.synget(bw.DEF.VIEW_DATA)
+   		var view = this.props.view   
+		var viewData = view.data
 		var col = this.props.column
 
-   	this.setState({dragging: false})
-   	e.stopPropagation()
-   	e.preventDefault()
+   		this.setState({dragging: false})
+   		e.stopPropagation()
+   		e.preventDefault()
 
-   	viewData.columns[col.id].width = (col.width + this.state.pos)
+   		viewData.columns[col.id].width = (col.width + this.state.pos)
 		this.setState({pos: 0})
 		view.set(bw.DEF.VIEW_DATA, viewData)
 	},
@@ -94,6 +93,7 @@ var TabularTH = React.createClass ({
 	   e.stopPropagation()
 	   e.preventDefault()
 	},
+
 	componentDidUpdate: function (props, state) {
 		if (this.state.dragging && !state.dragging) {
 			document.addEventListener('mousemove', this.onMouseMove)
@@ -103,19 +103,23 @@ var TabularTH = React.createClass ({
 		   document.removeEventListener('mouseup', this.onMouseUp)
 		}
 	},
-   onClick: function (event) {   
-   	var resizer = React.findDOMNode(this.refs.resizer)
-   	if(event.target == resizer) return
+
+   	onClick: function (event) {   
+   		var resizer = React.findDOMNode(this.refs.resizer)
+   		if(event.target == resizer) return
 
 		var view = this.props.view   
 		var col = this.props.column
-		var viewData = view.synget(bw.DEF.VIEW_DATA)
+		var viewData = view.data
 		var sortOrder = !!(col.sorting && !col.sorting.descending)
 		var sortObj = {'id': col.id, 'descending': sortOrder}
 		if (!event.shiftKey || !(viewData.sorting instanceof Array)) viewData.sorting = []
 		else viewData.sorting = _.filter(viewData.sorting, function (obj) {return obj.id !== col.id})
 		viewData.sorting.push(sortObj)
 		      
-		view.set(bw.DEF.VIEW_DATA, viewData) 
+		dispatcher.dispatch({
+			actionType: "VIEW_UPDATE",
+			data: viewData
+		})
 	}
 })

@@ -1,4 +1,3 @@
-import bw from "barwell"
 import ViewStore from "../../stores/ViewStore"
 
 var ViewUpdateMixin = {
@@ -17,8 +16,8 @@ var ViewUpdateMixin = {
 	},
 
 	_onChange: function () {
-		var viewData = ViewStore.get(this.props.view_id)
-		this.setState(viewData)
+		var view = ViewStore.get(this.props.view.view_id)
+		this.setState(view.data)
 	},
 }
 

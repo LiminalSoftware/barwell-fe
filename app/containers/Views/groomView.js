@@ -1,5 +1,6 @@
 var _ = require("underscore");
 var AttributeStore = require('../../stores/AttributeStore')
+var ModelStore = require('../../stores/ModelStore')
 var fieldTypes = require('./fields')
 var viewTypes = require('./viewTypes')
 
@@ -25,9 +26,9 @@ var groomView = module.exports.prepView = function (view) {
 
 	view.type = (data.type || "Tabular")
 	data = data || {};
-	data.icon = viewTypes[data.type].icon
+	data.icon = viewTypes[view.type].icon
 	data.columns = data.columns || {}
-
+	
 	fields.forEach(function (field) {
 		
 		var col = data.columns[id] || {};
@@ -53,8 +54,8 @@ var groomView = module.exports.prepView = function (view) {
 	data.pointer = _.extend({"left": 0, "top": 0}, data.pointer || {});
 	data.scrollTop = data.scrollTop || 0;
 	data.fetching = false;
-	
-	this.attributes[def.VIEW_DATA] = JSON.stringify(data);
+	view.data = data;
+	return view
 }
 
 export default groomView;

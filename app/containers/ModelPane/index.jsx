@@ -36,10 +36,10 @@ var ModelPane = React.createClass({
 	},
 
 	render: function() {
-		var model_pk = this.props.params.modelId
-		var view_pk = this.props.params.viewId
-		var view = ViewStore.get(view_pk)
-		var model = ModelStore.get(model_pk)
+		var model_id = this.props.params.modelId
+		var view_id = this.props.params.viewId
+		var view = ViewStore.get(view_id)
+		var model = ModelStore.get(model_id)
 		
 		var viewDetailContent
 		var detailContent
@@ -48,7 +48,7 @@ var ModelPane = React.createClass({
 		var activePane = this.state.activePane
 		
 
-		if (view && view.model_pk != model_pk) view = null
+		if (view && view.model_id != model_id) view = null
 		if (!view) activePane = 'model-def'
 		
 		if (!!view && (view.type in viewTypes)) {
@@ -59,15 +59,16 @@ var ModelPane = React.createClass({
 			bodyContent = React.createElement(bodyElement, {
 				model: model,
 				view: view,
-				key: "view-pane-" + viewId		
+				key: "view-pane-" + view_id
 			})
 
 			viewDetailContent = React.createElement(configElement, {
 				model: model,
 				view: view,
-				key: "view-config-" + viewId	
+				key: "view-config-" + view_id
 			})
 		}
+		
 		else {
 			bodyContent = <div className="no-view-content view-body-wrapper">
 				<span className="icon icon-face-nomimic"></span>No view selected
@@ -82,7 +83,7 @@ var ModelPane = React.createClass({
 			detailContent = <div className="view-details">
 				<ViewSelector 
 					view={view}
-					key={"view-selector-" + viewId}/>
+					key={"view-selector-" + view_id}/>
 				{viewDetailContent}
 			</div>
 		}

@@ -23,9 +23,9 @@ var ModelDefinition = React.createClass({
 	handleAddNewAttr: function (event) {
 		
 		MetasheetDispatcher.handleViewAction({
-	      actionType: MetasheetConst.ATTRIBUTE_CREATE,
+	      actionType: "ATTRIBUTE_CREATE",
 	    	attribute: 'New Attribute',
-	    	model_pk: this.props.params.modelId
+	    	model_id: this.props.model.model_id
 	    });
 		event.preventDefault();
 	},
@@ -158,22 +158,27 @@ var KeyDetail = React.createClass({
 // });
 
 var ColumnDetail = React.createClass({
+
 	componentWillMount: function () {
 		var col = this.props.config;
 		this.setState(col);
 	},
+	
 	getInitialState: function () {
 		return {open: false, editing: false, visible: true};
 	},
+	
 	handleDblClick: function (event) {
 		this.setState({editing: !this.state.editing});
 	},
+	
 	updateName: function (name) {
 		var col = this.props.column;
 		col.attribute = attribute;
 
 		return name;
 	},
+	
 	render: function () {
 		var col = this.props.column;
 		var keyOrd = this.props.keyOrd;

@@ -1,5 +1,4 @@
 import React from "react"
-import bw from "barwell"
 import fieldTypes from "../../fields"
 import _ from "underscore"
 
@@ -36,51 +35,20 @@ var TabularTBody = React.createClass ({
 		)
 	},
 
-	getCursor: function (model, sorting) {
-		this.cursor = model.store.getCursor({sortBy: sorting})
-	},
-
-	activateCursor: function () {
-		var cursor = this.cursor
-		cursor.on('fetch', this.handleFetch)
-		cursor.on('add', this.handleFetch)
-		cursor.on('update', this.handleFetch)
-		cursor.on('remove', this.handleFetch)
-		this.fetch(true)
-	},
-
-	deactivateCursor: function () {
-		this.cursor.release()
-		this.cursor.removeListener('fetch', this.handleFetch)
-		this.cursor.removeListener('add', this.handleFetch)
-		this.cursor.removeListener('update', this.handleFetch)
-		this.cursor.removeListener('remove', this.handleFetch)
-	},
-
 	componentWillMount: function () {
-		this.getCursor(this.props.model, this.props.sorting)
+		
 	},
 
 	componentDidMount: function () {
-		this.activateCursor()
+		
 	},
 
 	componentWillReceiveProps: function (newProps) {
-		var newModel = newProps.model
-		var newSort = newProps.sorting
 
-		if (newModel !== this.props.model || !_.isEqual(newSort, this.props.sorting)) {
-			this.deactivateCursor()
-			this.getCursor(newProps.model, newProps.sorting)
-			this.activateCursor()
-			this.fetch()
-		} else if (newProps.scrollTop !== this.props.scrollTop) {
-			this.fetch()
-		}
 	},
 
 	componentWillUnmount: function () {
-		this.deactivateCursor()
+
 	},
 
 	handleFetch: function () {
@@ -104,35 +72,33 @@ var TabularTBody = React.createClass ({
 					offset: boundedOffset,
 					limit: CURSOR_LIMIT
 				}
-			})
-			this.cursor.fetch(
-				boundedOffset,
-				CURSOR_LIMIT
-			)
+			})	
 		}
 	},
 
 	getStyle: function () {
 		return {
 			top: (this.state.window.offset * (ROW_HEIGHT) + HEADER_HEIGHT) + 'px',
-			height: (((	(this.cursor.store.objCount || 0) - this.state.window.offset) * ROW_HEIGHT)) + 'px'
+			height: (((	(this.props.view.rows || 0) - this.state.window.offset) * ROW_HEIGHT)) + 'px'
 		}
 	},
 
 	getValueAt: function (row, col) {
-		return this.cursor.at(row)
+		// return this.cursor.at(row)
+		return null
 	},
 
 	render: function () {
 		var rows = []
 		var window = this.state.window
-		var cursor = this.cursor
+		var model = this.props.model
+		var view = this.props.view
 		var columns = this.props.columns
 		var clicker = this.props.clicker
 		var dblClicker = this.props.dblClicker
-		var pk = this.props.model.synget('Primary key')
+		var pk = model.primary_key_attribute_id
 
-		rows = this.cursor.map(function (obj, i) {
+		rows = (view.records || []).map(function (obj, i) {
 			var rowKey = 'tabular-' +  i //(!!pk && !!obj ? obj.synget(pk) : i)
 			var els = columns.map(function (col, idx) {
 				var element = (fieldTypes[col.type] || fieldTypes.Text).element

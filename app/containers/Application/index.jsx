@@ -2,6 +2,7 @@ import React from "react";
 import { RouteHandler } from "react-router";
 import SideBar from "containers/SideBar";
 import styles from "./style.less";
+import modelActionCreators from "../../actions/modelActionCreators"
 
 export default class Application extends React.Component {
 	render() {
@@ -10,5 +11,9 @@ export default class Application extends React.Component {
 			<SideBar {...this.props} />
 			<RouteHandler {...this.props} />
 		</div>;
+	}
+
+	componentWillMount() {
+		modelActionCreators.fetchModels()
 	}
 }

@@ -1,4 +1,3 @@
-import bw from "barwell"
 import React from "react"
 import $ from "jquery"
 import fieldTypes from "./fields.jsx"

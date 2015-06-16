@@ -160,6 +160,7 @@ module.exports = function(options) {
 		},
 		plugins: plugins,
 		devServer: {
+			headers: { "Access-Control-Allow-Origin": "*" },
 			stats: {
 				cached: false,
 				exclude: excludeFromStats

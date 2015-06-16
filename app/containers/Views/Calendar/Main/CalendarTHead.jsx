@@ -1,5 +1,4 @@
 import React from "react"
-import bw from "barwell"
 import $ from "jquery"
 import EventListener from 'react/lib/EventListener'
 import _ from 'underscore'
@@ -9,7 +8,6 @@ var CalendarTHead = React.createClass ({
 	render: function () {
 		var model = this.props.model
 		var view = this.props.view
-		var id = view.synget(bw.DEF.MODEL_ID)
 		var style = {top: (this.props.scrollTop || 0) + 'px'}
 		
 		return <thead id="calendar-view-header" ref="thead" style={style}>
