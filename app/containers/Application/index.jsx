@@ -8,8 +8,12 @@ export default class Application extends React.Component {
 	render() {
 		var { loading } = this.props;
 		return <div className="application">
-			<SideBar {...this.props} />
-			<RouteHandler {...this.props} />
+			
+			<div className="app-container">
+			
+				<SideBar {...this.props} />
+				<RouteHandler {...this.props} />
+			</div>
 		</div>;
 	}
 

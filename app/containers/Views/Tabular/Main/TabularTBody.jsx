@@ -38,7 +38,7 @@ var TabularTBody = React.createClass ({
 	componentWillMount: function () {
 		
 	},
-
+	
 	componentDidMount: function () {
 		
 	},
@@ -96,7 +96,7 @@ var TabularTBody = React.createClass ({
 		var columns = this.props.columns
 		var clicker = this.props.clicker
 		var dblClicker = this.props.dblClicker
-		var pk = model.primary_key_attribute_id
+		//var pk = model.primary_key_attribute_id
 
 		rows = (view.records || []).map(function (obj, i) {
 			var rowKey = 'tabular-' +  i //(!!pk && !!obj ? obj.synget(pk) : i)

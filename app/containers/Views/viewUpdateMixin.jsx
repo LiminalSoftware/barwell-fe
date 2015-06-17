@@ -12,7 +12,7 @@ var ViewUpdateMixin = {
 
 	_onChange: function () {
 		var view = ViewStore.get(this.props.view.view_id || this.props.view.cid)
-		this.setState(view)
+		this.setState(view.data)
 	},
 }
 

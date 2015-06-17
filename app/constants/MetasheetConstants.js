@@ -1,16 +1,28 @@
 
 
 module.exports = {
-
-  Constants: {
-  	KEY_ENTER: 13,
-  	KEY_ESC: 27,
-  	KEY_ARROW_UP: 38,
-  	KEY_ARROW_DOWN: 40,
-  	KEY_ARROW_LEFT: 37,
-  	KEY_ARROW_RIGHT: 39,
-  	KEY_F2: 113,
-  	KEY_SHIFT: 16
+  
+  fieldTypes: {
+    'INTEGER': 'Integer',
+    'COLOR': 'Color',
+    'DECIMAL': 'Decimal',
+    'DATE_TIME': 'Date / Time',
+    'DATE': 'Date',
+    'TEXT': 'Text',
+    'LOCATION': 'Location',
+    'REGION': 'Region',
+    'PRIMARY_KEY': 'Primary id'
+  },
+  
+  keycodes: {
+  	ENTER: 13,
+  	ESC: 27,
+  	ARROW_UP: 38,
+  	ARROW_DOWN: 40,
+  	ARROW_LEFT: 37,
+  	ARROW_RIGHT: 39,
+  	F2: 113,
+  	SHIFT: 16
   }
 
 };

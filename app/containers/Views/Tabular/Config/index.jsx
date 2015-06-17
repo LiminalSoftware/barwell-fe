@@ -4,25 +4,38 @@ import styles from "./style.less";
 import _ from 'underscore';
 import fieldTypes from "../../fields"
 import ViewUpdateMixin from '../../ViewUpdateMixin.jsx'
+
 import ViewStore from "../../../../stores/ViewStore"
+import ModelStore from "../../../../stores/ModelStore"
+import AttributeStore from "../../../../stores/AttributeStore"
+import KeyStore from "../../../../stores/KeyStore"
+import KeycompStore from "../../../../stores/KeycompStore"
+
 import modelActionCreators from "../../../../actions/modelActionCreators.js"
+import groomView from '../../groomView'
 
 var TabularViewConfig = React.createClass({
 	
 	componentWillMount: function () {
 		ViewStore.addChangeListener(this._onChange);
+		ModelStore.addChangeListener(this._onChange)
+		AttributeStore.addChangeListener(this._onChange)
+		KeyStore.addChangeListener(this._onChange)
 	},
 
 	componentWillUnmount: function () {
 		var view = this.props.view
 		ViewStore.removeChangeListener(this._onChange);
+		ModelStore.removeChangeListener(this._onChange)
+		AttributeStore.removeChangeListener(this._onChange)
+		KeyStore.removeChangeListener(this._onChange)
 	},
 
 	_onChange: function () {
 		var view = ViewStore.get(this.props.view.view_id || this.props.view.cid)
 		this.setState(view.data)
 	},
-
+	
 	getInitialState: function () {
 		var view = this.props.view
 		return view.data
@@ -30,7 +43,7 @@ var TabularViewConfig = React.createClass({
 
 	render: function() {
 		var _this = this
-		var view = this.props.view
+		var view = groomView(this.props.view)
 		var data = this.state
 		var columns = data.columns
 
@@ -91,10 +104,10 @@ var ColumnDetail = React.createClass({
 	
 	commitChanges: function (colProps) {
 		var view = this.props.view
-		var colId = this.props.config.id
-		var col = view.data.columns[colId]
+		var attribute_id = this.props.config.attribute_id
+		var col = view.data.columns[attribute_id]
 		col = _.extend(_.clone(col), colProps)
-		view.data.columns[colId] = col;
+		view.data.columns[attribute_id] = col;
 
 		modelActionCreators.createView(view)
 	},

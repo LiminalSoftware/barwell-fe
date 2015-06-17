@@ -22,7 +22,7 @@ var groomView = module.exports.prepView = function (view) {
 	var columns = {}
 	var data = view.data || {};
 	if (!model) return view;
-	var fields = AttributeStore.getModelAttributes(view.model_id);
+	var fields = AttributeStore.query({model_id: view.model_id});
 	var iter =  BIG_NUM;
 	var cols = {};
 	var sorting = enumerate(data.sorting || [], 'attribute_id');

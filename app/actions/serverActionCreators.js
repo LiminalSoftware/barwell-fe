@@ -2,15 +2,13 @@ import MetasheetDispatcher from "../dispatcher/MetasheetDispatcher"
 import modelActionCreators from '../actions/modelActionCreators';
 import serverActionCreators from '../actions/serverActionCreators';
 import $ from "jquery";
+import _ from "underscore"
 
 
 module.exports = {
 
   successfullyFetchModels: function(models) {
-    MetasheetDispatcher.dispatch({
-    	actionType: 'MODEL_RECEIVE',
-    	model: models
-    });
+    
     models.forEach(function (model) {
     	MetasheetDispatcher.dispatch({
 	    	actionType: 'ATTRIBUTE_RECEIVE',
@@ -31,6 +29,11 @@ module.exports = {
         });
       });
     })
+
+    MetasheetDispatcher.dispatch({
+      actionType: 'MODEL_RECEIVE',
+      model: models
+    });
   },
 
   failToCreateModels: function (message) {
@@ -57,6 +60,14 @@ module.exports = {
       actionType: 'ATTRIBUTE_RECEIVE',
       attribute: attribute
     })
+  },
+
+  failToCreateAttributes: function (message) {
+    console.log('message: '+ JSON.stringify(message, null, 2));
+  },
+
+  failToDestroyAttributes: function (message) {
+    console.log('message: '+ JSON.stringify(message, null, 2));
   },
 
   failToFetchAttributes: function (message) {

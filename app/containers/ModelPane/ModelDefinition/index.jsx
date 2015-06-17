@@ -5,6 +5,9 @@ import ModelStore from "../../../stores/ModelStore"
 import AttributeStore from "../../../stores/AttributeStore"
 import KeyStore from "../../../stores/KeyStore"
 import KeycompStore from "../../../stores/KeycompStore"
+import modelActionCreators from '../../../actions/modelActionCreators'
+import constants from '../../../constants/MetasheetConstants'
+import _ from 'underscore'
 
 var KEY_ICONS = ["icon-geo-str-square", "icon-geo-str-circle", "icon-geo-str-triangle", "icon-geo-str-trifold", "icon-geo-str-diamond"];
 var KEY_COLORS = ["green", "blue", "red"];
@@ -21,13 +24,31 @@ var getIconClasses = function (ordinal) {
 
 var ModelDefinition = React.createClass({
 	
+	componentWillUnmount: function () {
+		ModelStore.removeChangeListener(this._onChange)
+		AttributeStore.removeChangeListener(this._onChange)
+		KeyStore.removeChangeListener(this._onChange)
+	},
+
+	componentWillMount: function () {
+		ModelStore.addChangeListener(this._onChange)
+		AttributeStore.addChangeListener(this._onChange)
+		KeyStore.addChangeListener(this._onChange)
+	},
+
+	_onChange: function () {
+		this.forceUpdate()
+	},
+
 	handleAddNewAttr: function (event) {
+		var model = this.props.model;
+		modelActionCreators.createAttribute({
+			attribute: 'New attribute',
+			type: 'INTEGER',
+			model_id: model.model_id,
+			persist: false
+		})
 		
-		MetasheetDispatcher.handleViewAction({
-	      actionType: "ATTRIBUTE_CREATE",
-	    	attribute: 'New Attribute',
-	    	model_id: this.props.model.model_id
-	    });
 		event.preventDefault();
 	},
 
@@ -46,14 +67,14 @@ var ModelDefinition = React.createClass({
 			return keyOrd[key.key_id] = iter++;
 		})
 
-		var colList = AttributeStore.getModelAttributes(model.model_id).map(function (col) {
-			var colId = col.attribute_id;
-			return <ColumnDetail key={"mdldef-col-"+colId} column = {col} keyOrd = {keyOrd} />;
+		var colList = AttributeStore.query({model_id: model.model_id}).map(function (col) {
+			var colId = (col.attribute_id || col.cid);
+			return <ColumnDetail key={"model-definition-col-"+colId} column = {col} keyOrd = {keyOrd} />;
 		});
 
-		var keyList = KeyStore.getModelKeys(model.model_id).map(function (key) {
-			var keyId = key.key_id
-			return <KeyDetail key={"mdldef-key-"+keyId} mdlKey = {key} keyOrd = {keyOrd} />;
+		var keyList = KeyStore.query({model_id: model.model_id}).map(function (key) {
+			var keyId = (key.key_id || key.cid)
+			return <KeyDetail key={"model-definition-key-"+keyId} mdlKey = {key} keyOrd = {keyOrd} />;
 		});
 
 		// var relList = relations.map(function (rel) {
@@ -66,10 +87,10 @@ var ModelDefinition = React.createClass({
 			<table key="attr-table" className="detail-table">
 				<thead>
 					<tr>
-						<th key="attr-header-actions"></th>
-						<th key="attr-header-name">Name</th>
-						<th key="attr-header-type">Type</th>
-						<th key="attr-header-key">Keys</th>
+						<th style={{width: "10%"}} key="attr-header-actions"></th>
+						<th style={{width: "35%"}} key="attr-header-name">Name</th>
+						<th style={{width: "35%"}} key="attr-header-type">Type</th>
+						<th style={{width: "20%"}} key="attr-header-key">Keys</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -122,7 +143,7 @@ var KeyDetail = React.createClass({
 	render: function () {
 		var key = this.props.mdlKey;
 		var keyOrd = this.props.keyOrd;
-		var reactKey = 'key-' + key.key_id;
+		var reactKey = 'key-' + (key.key_id || key.cid);
 		var wedgeClasses = "small grayed icon wedge icon-geo-triangle " +
 			(this.state.open ? "open" : "closed");
 		var ord = keyOrd[key.key_id];
@@ -160,43 +181,99 @@ var KeyDetail = React.createClass({
 
 var ColumnDetail = React.createClass({
 
-	componentWillMount: function () {
-		var col = this.props.config;
-		this.setState(col);
-	},
-	
 	getInitialState: function () {
+		var attribute = this.props.column;
 		return {
-			open: false, 
-			editing: false, 
-			visible: true
+			renaming: false,
+			attribute: attribute.attribute,
+			type: attribute.type
 		};
 	},
 	
-	handleDblClick: function (event) {
-		this.setState({editing: !this.state.editing});
+	commitChanges: function () {
+		var attribute = _.clone(this.props.column);
+
+		attribute.attribute = this.state.attribute
+		attribute.type = this.state.type
+
+		console.log('attribute: '+ JSON.stringify(attribute, null, 2));
+
+		modelActionCreators.createAttribute(attribute)
+		this.revert()
 	},
 	
-	updateName: function (name) {
-		var col = this.props.column;
-		col.attribute = attribute;
+	cancelChanges: function () {
+		this.revert()
+	},
+	
+	edit: function () {
+		var attribute = this.props.column;
+		if (this.state.renaming) return
+		this.setState({
+			renaming: true,
+			attribute: attribute.attribute
+		}, function () {
+			React.findDOMNode(this.refs.renamer).focus();
+		})
+		document.addEventListener('keyup', this.handleKeyPress)
+	},
+	
+	revert: function () {
+		var attribute = this.props.column;
+		document.removeEventListener('keyup', this.handleKeyPress)
+		this.setState({
+			renaming: false,
+			attribute: attribute.attribute,
+			type: attribute.type
+		})
+	},
 
-		return name;
+	handleKeyPress: function (event) {
+		if (event.keyCode === 27) this.cancelChanges()
+		if (event.keyCode === 13) this.commitChanges()
+	},
+
+	handleNameUpdate: function (event) {
+		this.setState({attribute: event.target.value})
+	},
+
+	handleTypeChange: function (event) {
+		var attribute = this.props.column;
+		attribute.type = event.target.value;
+		modelActionCreators.createAttribute(attribute)
+		this.revert()
 	},
 	
 	render: function () {
+		var _this = this;
 		var col = this.props.column;
 		var keyOrd = this.props.keyOrd;
-		var colId = col.attribute_id;
 		var name = col.attribute;
 
 		var wedgeClasses = "small grayed icon icon-geo-triangle wedge" +
 			(this.state.open ? " open" : "closed");
 
-		var nameField = (this.state.editing ? <input value={name} onChange={this.updateName}/> : {name} );
+		var nameField = (this.state.renaming) ? 
+			<input ref="renamer" value={this.state.attribute} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/> 
+			: {name};
 		var keyIcons = [];
-		var components = KeycompStore.getAttributeKeycomps	(col.attribute_id);
-		
+		var components = KeycompStore.query({attribute_id: col.attribute_id});
+
+		var typeFieldChoices = Object.keys(constants.fieldTypes).filter(function (type) {
+			return type !== 'PRIMARY_KEY'
+		}).map(function (type) {
+  			return <option value={type}>
+  				{constants.fieldTypes[type]}
+  			</option>;
+		});
+
+		var typeSelector = (col.persist == false) ?
+			<select name="type" value={col.type} onChange={this.handleTypeChange}>
+				{typeFieldChoices}
+			</select>
+			:
+			<span>{constants.fieldTypes[col.type]}</span>
+			;
 		
 		components.forEach(function (comp, idx) {
 			var key = KeyStore.get(comp.key_id)
@@ -206,17 +283,18 @@ var ColumnDetail = React.createClass({
 				className={getIconClasses(ord)}></span>
 			);
 		});
-	
-
-		var key = "attr-" + colId;
+		
+		var key = "attribute-" + (col.attribute_id || col.cid);
 		return <tr key={key}>
 			<td key={key + '-actions'}>
-
+				{(col.persist === false) ? <span className="clickable grayed icon icon-check" alt="Save column" title="Save column"></span> : ''}
 			</td>
-			<td onDoubleClick={this.handleDblClick} key={key + '-name'}>
+			<td onDoubleClick={this.edit} key={key + '-name'}>
 				{nameField}
 			</td>
-			<td key={key + '-type'}>{col.type}</td>
+			<td key={key + '-type'}>
+				{typeSelector}
+			</td>
 			<td key={key + '-keys'}>
 				{keyIcons}
 			</td>

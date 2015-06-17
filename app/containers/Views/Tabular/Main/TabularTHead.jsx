@@ -3,13 +3,14 @@ import $ from "jquery"
 import EventListener from 'react/lib/EventListener'
 import _ from 'underscore'
 import fieldTypes from "../../fields"
+import modelActionCreators from "../../../../actions/modelActionCreators.js"
 
 var TabularTHead = React.createClass ({
 	render: function () {
 		var style = {top: (this.props.scrollTop || 0) + 'px'}
 		var view = this.props.view
 		var header = this.props.columns.map(function (col, idx) {
-			return <TabularTH key={"th-"+col.id} column={col} view={view} idx={idx}/>
+			return <TabularTH key={"th-"+col.attribute_id} column={col} view={view} idx={idx}/>
 		})
 		return <thead id="tabular-view-header" ref="thead" style={style}>
 			<tr>{header}</tr>
@@ -81,9 +82,10 @@ var TabularTH = React.createClass ({
    		e.stopPropagation()
    		e.preventDefault()
 
-   		viewData.columns[col.id].width = (col.width + this.state.pos)
+   		viewData.columns[col.attribute_id].width = (col.width + this.state.pos)
 		this.setState({pos: 0})
-		view.set(bw.DEF.VIEW_DATA, viewData)
+
+		modelActionCreators.createView(view)
 	},
 	onMouseMove: function (e) {
 	   if (!this.state.dragging) return

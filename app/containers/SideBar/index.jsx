@@ -41,7 +41,8 @@ var SideBar = React.createClass({
 	render: function () {
 		var _this = this;
 		var curModelId = this.props.params.modelId
-		var modelLinks = ModelStore.getAll().map(function (model, idx) {
+
+		var modelLinks = ModelStore.query(null, ['model']).map(function (model, idx) {
 			if (!model) return <li key={"loader-" + idx}><a>Loading</a></li>
 			var modelId = model.model_id
 			return <ModelLink 
@@ -70,16 +71,6 @@ var ModelLink = React.createClass ({
 
 	getInitialState: function () {
 		return {renaming: false}
-	},
-	
-	componentWillUnmount: function () {
-		ModelStore.removeChangeListener(this._onChange)
-		ViewStore.removeChangeListener(this._onChange)
-	},
-
-	componentWillMount: function () {
-		ModelStore.addChangeListener(this._onChange)
-		ViewStore.addChangeListener(this._onChange)
 	},
 
 	_onChange: function (changeEvent) {
@@ -119,8 +110,9 @@ var ModelLink = React.createClass ({
 		if (event.keyCode === 13) this.commitChanges()
 	},
 
-	handleNameUpdate: function (e) {
-		var name = e.target.value
+	handleNameUpdate: function (event) {
+		console.log('handleNameUpdate')
+		var name = event.target.value
 		this.setState({name: name})
 	},
 	
@@ -134,10 +126,9 @@ var ModelLink = React.createClass ({
 			(<span>{model.model}</span>) ;
 
 		if (this.props.active) {
-			views = ViewStore.getModelViews(model.model_id).map(function (view) {
+			views = ViewStore.query({model_id: model.model_id}, ['view']).map(function (view) {
 				if (!view) return;
 				
-				if (view.model_id !== model.model_id) return;
 				return <ViewLink 
 					key={'view-link-' + view.view_id} 
 					view={view} 
@@ -181,12 +172,12 @@ var ViewLink = React.createClass({
 	render: function () {
 		var view = this.props.view;
 		var model = this.props.model;
-		var key = "view-link-" + view.view_id
+		var key = "view-link-" + (view.view_id || view.cid)
 		var viewDisplay = (!!this.state.renaming) ?  
 			(<input className="view-renamer" ref="renamer" value={this.state.name} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/>) : 
 			(<span>{view.view}</span>) ;
 		return <li className="li-view" key={"view-li-" + view.view_id}>
-			<Link to="view" params={{modelId: model.model_id, viewId: view.view_id}} key={key} onDoubleClick={this.edit} >
+			<Link to="view" params={{modelId: model.model_id, viewId: (view.view_id || view.cid)}} key={key} onDoubleClick={this.edit} >
 				<span className={"icon "+view.data.icon}></span>{viewDisplay}
 			</Link>
 			<span className="view-delete icon icon-trash" onClick={this.handleDelete}></span>
@@ -229,12 +220,14 @@ var ViewLink = React.createClass({
 
 var ViewAdder = React.createClass ({
 
-	handleAddView: function() {
+	handleAddView: function(event) {
 		var model = this.props.model
 		modelActionCreators.createView({
 			model_id: model.model_id,
-			view: (model.model + ' - New view')
+			view: (model.model + ' - New view'),
+			type: 'Tabular'
 		})
+		event.preventDefault()
 	},
 
 	render: function () {
@@ -242,7 +235,7 @@ var ViewAdder = React.createClass ({
 		var model = this.props.model
 		
 		return <li className="li-view li-hilite" key={"model-add-li-" + model.model_id}>
-			<a className="addNew clickable" onClick={this.handleAddView}>
+			<a herf="#" className="addNew clickable" onClick={this.handleAddView}>
 				<span className="small addNew icon icon-plus"></span> Create new view
 			</a>
 		</li>

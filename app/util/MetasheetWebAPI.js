@@ -9,7 +9,7 @@ $.ajaxSetup({
 });
 
 module.exports = {
-
+  
   persist: function (subject, action, data) {
     var identifier = (subject + '_id')
     var url = 'https://api.metasheet.io/' + subject;
@@ -27,6 +27,10 @@ module.exports = {
     else return;
     
     if (method === 'PATCH' || method === 'DELETE') url = url + '?' + identifier + '=eq.' + data[identifier];
+
+    console.log('method: '+ JSON.stringify(method, null, 2));
+    console.log('data: '+ JSON.stringify(data, null, 2));
+    console.log('url: '+ JSON.stringify(url, null, 2));
 
     $.ajax({
       type: method,
