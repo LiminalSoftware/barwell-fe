@@ -21,6 +21,7 @@ var KeyStore = storeFactory({
         var _this = this
         var keys = _.isArray(payload.key)  ? payload.key : [payload.key]
         keys.forEach(function (key) {
+          key.dirty = false
           _this.create(key)
         })
         this.emitChange()

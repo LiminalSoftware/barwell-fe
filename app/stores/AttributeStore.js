@@ -21,7 +21,7 @@ var AttributeStore = storeFactory({
         var _this = this
         var attributes = _.isArray(payload.attribute)  ? payload.attribute : [payload.attribute]
         attributes.forEach(function (attribute) {
-          attribute.persist = true;
+          attribute.dirty = false;
           if (!attribute) return;
           _this.create(attribute)
         })

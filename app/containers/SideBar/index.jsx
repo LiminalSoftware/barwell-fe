@@ -180,7 +180,7 @@ var ViewLink = React.createClass({
 			<Link to="view" params={{modelId: model.model_id, viewId: (view.view_id || view.cid)}} key={key} onDoubleClick={this.edit} >
 				<span className={"icon "+view.data.icon}></span>{viewDisplay}
 			</Link>
-			<span className="view-delete icon icon-trash" onClick={this.handleDelete}></span>
+			<span className="view-delete grayed icon icon-kub-trash" onClick={this.handleDelete}></span>
 			</li>;
 	},
 	

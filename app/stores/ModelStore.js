@@ -21,6 +21,7 @@ var ModelStore = storeFactory({
         var _this = this
         var models = _.isArray(payload.model)  ? payload.model : [payload.model]
         models.forEach(function (model) {
+          model.dirty = false
           _this.create(model)
         })
         this.emitChange()
