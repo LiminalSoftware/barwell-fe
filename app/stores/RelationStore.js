@@ -21,7 +21,7 @@ var RelationStore = storeFactory({
         var _this = this
         var relations = _.isArray(payload.relation)  ? payload.relation : [payload.relation]
         models.forEach(function (relation) {
-          relation.dirty = false
+          relation._dirty = false
           _this.create(relation)
         })
         this.emitChange()

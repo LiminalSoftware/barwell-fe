@@ -11,13 +11,14 @@ $.ajaxSetup({
 module.exports = {
   
   persist: function (subject, action, data) {
+    action = action.toUpperCase()
     var identifier = (subject + '_id')
     var url = 'https://api.metasheet.io/' + subject;
     var camelSubject = subject.slice(0,1).toUpperCase() + subject.slice(1,100) + 's'
     var camelAction = action.slice(0,1).toUpperCase() + action.slice(1,100).toLowerCase()
     var success = 'successfully' + camelAction + camelSubject
     var failure = 'failTo' + camelAction + camelSubject
-    var json = (action === 'CREATE') ? JSON.stringify(data) : null;
+    var json = (action === 'CREATE') ? JSON.stringify(_.without(data,'_dirty','_persist')) : null;
     var method;
 
     if (action == 'FETCH') method = 'GET';

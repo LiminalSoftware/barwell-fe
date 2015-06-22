@@ -23,7 +23,7 @@ var KeycompStore = storeFactory({
         if (!payload.keycomp) return;
         var keycomps = _.isArray(payload.keycomp)  ? payload.keycomp : [payload.keycomp]
         keycomps.forEach(function (keycomp) {
-          keycomp.dirty = false;
+          keycomp._dirty = false;
           _this.create(keycomp)
         })
         this.emitChange()

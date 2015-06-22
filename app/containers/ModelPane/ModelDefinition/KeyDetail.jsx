@@ -11,6 +11,7 @@ import getIconClasses from './getIconClasses'
 import _ from 'underscore'
 
 var KeyDetailList = React.createClass({
+
 	handleAddNewKey: function (event) {
 		var model = this.props.model;
 		var key = modelActionCreators.genericAction(
@@ -21,25 +22,23 @@ var KeyDetailList = React.createClass({
 			model_id: model.model_id,
 			indexed: false,
 			uniq: false,
-			persist: false
+			_persist: false
 		})
 	},
-	
+
 	render: function () {
 		var model = this.props.model
 		var iter = 0
 		var keyOrd = {}
+		var keyList
+
 		KeyStore.query({model_id: model.model_id}, 'key_id').forEach(function (key) {
-			return keyOrd[key.key_id] = iter++;
+			return keyOrd[key.key_id] = iter ++ ;
 		})
-		var keyList = KeyStore.query({model_id: (model.model_id || model.cid)}).map(function (key) {
+		keyList = KeyStore.query({model_id: (model.model_id || model.cid)}).map(function (key) {
 			var keyId = (key.key_id || key.cid)
 			return <KeyDetail key={"model-definition-key-" + keyId} mdlKey = {key} keyOrd = {keyOrd} />;
-		});
-		
-		
-
-		
+		})
 
 		return <div className = "detail-block">
 			<h3 key="keys-header">Keys</h3>
@@ -58,23 +57,41 @@ var KeyDetailList = React.createClass({
 			<div><a className="new-adder new-key" onClick={this.handleAddNewKey}><span className="small addNew icon icon-plus"></span>New key</a></div>
 		</div>
 	}
+
 })
 
 var KeyDetail = React.createClass({
+
 	getInitialState: function () {
 		var key = this.props.mdlKey; 
 		return {
-			open: (key.persist === false),
+			open: (key._persist === false),
 			renaming: false,
 			key: key.key
 		}
 	},
+
 	toggleDetails: function (event) {
 		this.setState({open: !this.state.open});
 	},
+
 	handleDelete: function (event) {
 
 	},
+
+	handleUniqClick: function (event) {
+		var key = this.props.mdlKey
+		key.uniq = !(key.uniq)
+		key._dirty = true
+		key._persist = true
+
+		modelActionCreators.genericAction(
+			'keycomp',
+			'create',
+			key
+		)
+	},
+
 	render: function () {
 		var _this = this
 		var key = this.props.mdlKey;
@@ -83,7 +100,7 @@ var KeyDetail = React.createClass({
 		var wedgeClasses = "small grayed icon wedge icon-geo-triangle " +
 			(this.state.open ? "open" : "closed");
 		var ord = keyOrd[key.key_id];
-		var keyIcon = <span className={getIconClasses(ord)}></span>;
+		var keyIcon = <span className={getIconClasses(ord, key)}></span>;
 		var components = KeycompStore.query({key_id: (key.key_id || key.cid)}, 'ord');
 
 		var attrSelections = AttributeStore.query({model_id: key.model_id}).map(function (attr) {
@@ -101,20 +118,24 @@ var KeyDetail = React.createClass({
 				keycomp = {keycomp}/>
 		});
 
-		if (key.persist === false) compTrs.push(<KeycompDetail 
+		if (key._persist === false) compTrs.push(<KeycompDetail 
 				key = {'keycomp-new'}
 				_key = {key}
 				idx = {compTrs.length}/>)
 
-		return <tbody key={reactKey}><tr key={reactKey + '-' + 'keyrow'} className={key.persist === false?'unsaved':''}>
-			<td onClick={this.toggleDetails}><span className={wedgeClasses}></span></td>
+		return <tbody key={reactKey} className={this.state.open ? '' : 'singleton'}>
+					<tr 
+					key={reactKey + '-' + 'keyrow'} 
+					className={key._persist === false?'unsaved':''}>
+			<td onClick={this.toggleDetails} className="no-line"><span className={wedgeClasses}></span></td>
 			<td>{key.key}</td>
 			<td>{keyIcon}</td>
-			<td><input type="checkbox" checked={key.uniq}></input></td>
+			<td><input type="checkbox" checked={key.uniq} onClick={this.handleUniqClick}></input></td>
 			<td className="centered"><span className="showonhover clickable grayed icon icon-kub-trash" title="Delete attribute" onClick={_this.handleDelete}></span></td>
 
 		</tr>{this.state.open ? compTrs : null}</tbody>;
 	}
+
 });
 
 var KeycompDetail = React.createClass({
@@ -134,7 +155,7 @@ var KeycompDetail = React.createClass({
 				key_id: (key.cid),
 				model_id: model.model_id,
 				attribute_id: attribute_id,
-				persist: false
+				_persist: false
 			})
 	},
 
@@ -161,12 +182,12 @@ var KeycompDetail = React.createClass({
 		})
 		if (!keycomp) attrSelections.unshift(<option value={0}> ---- </option>)
 
-		return <tr className = {key.persist === false ? 'unsaved':''}>
-			<td></td>
+		return <tr className = {key._persist === false ? 'unsaved':''}>
+			<td className="no-line"></td>
 			<td>
 				<span className="num-circle">{idx + 1}</span> 
 				<span>
-					{key.persist === false ?
+					{key._persist === false ?
 						<select 
 							ref="selector" 
 							name="type" 
@@ -182,7 +203,7 @@ var KeycompDetail = React.createClass({
 			<td></td>
 			<td></td>
 			<td className="centered">
-			{key.persist === false && (!!keycomp) ? <span 
+			{key._persist === false && (!!keycomp) ? <span 
 				className="showonhover small clickable grayed icon icon-kub-remove" 
 				title="Delete component" 
 				onClick={this.handleDelete}>

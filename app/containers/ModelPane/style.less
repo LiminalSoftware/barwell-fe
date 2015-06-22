@@ -232,7 +232,7 @@ ul.detail-panels {
 				text-align: right;
 			}
 			&.no-line {
-				border: none;
+				border-bottom: none;
 			}
 			&.centered {
 				text-align: center;
@@ -285,7 +285,7 @@ ul.detail-panels {
 			font-weight: 400;
 		}
 
-		tr:last-child > td {
+		tbody:not(.singleton) tr:last-child > td {
 			border-bottom: 1px solid @gray-2;	
 		}
 	}

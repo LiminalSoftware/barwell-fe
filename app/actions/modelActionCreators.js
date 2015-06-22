@@ -8,12 +8,12 @@ var modelActions = {
 
 	genericAction: function(subject, action, data) {
 		var message = {}
-		data.dirty = true;
+		data._dirty = true;
 		message.actionType = subject.toUpperCase() + '_' + action.toUpperCase()
 		message[subject] = data
 		MetasheetDispatcher.dispatch(message)
 
-		if (!(data.persist === false)) webUtils.persist(subject, action, data)
+		if (!(data._persist === false)) webUtils.persist(subject, action, data)
 		return data;
 	},
 
@@ -93,7 +93,7 @@ var modelActions = {
 			attribute: attribute
 		});
 
-		if (attribute.persist === true) webUtils.persist('attribute', 'CREATE', 
+		if (attribute._persist === true) webUtils.persist('attribute', 'CREATE', 
 			_.pick(attribute, 'cid', 'attribute_id', 'attribute', 'type', 'model_id'));
 	},
 

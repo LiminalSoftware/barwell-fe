@@ -10,6 +10,10 @@ module.exports = {
   successfullyFetchModels: function(models) {
     
     models.forEach(function (model) {
+      MetasheetDispatcher.dispatch({
+        actionType: 'ATTRIBUTE_PURGE',
+        attribute: {model_id: model.model_id}
+      });
     	MetasheetDispatcher.dispatch({
 	    	actionType: 'ATTRIBUTE_RECEIVE',
 	    	attribute: model.attributes

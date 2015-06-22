@@ -7,13 +7,21 @@ var AttributeStore = storeFactory({
   dispatcher: dispatcher,
   pivot: function (payload) {
     switch (payload.actionType) {
+
       case 'ATTRIBUTE_CREATE':
         this.create(payload.attribute)
         this.emitChange()
         break;
 
       case 'ATTRIBUTE_DESTROY':
-        this.destroy(payload.attribute)
+        var objects = this.query(payload.attribute).forEach(function (obj) {
+          this.destroy(obj)
+        });
+        this.emitChange()
+        break;
+
+      case 'ATTRIBUTE_PURGE':
+        var objects = this.purge(payload.attribute)
         this.emitChange()
         break;
 
@@ -21,12 +29,13 @@ var AttributeStore = storeFactory({
         var _this = this
         var attributes = _.isArray(payload.attribute)  ? payload.attribute : [payload.attribute]
         attributes.forEach(function (attribute) {
-          attribute.dirty = false;
+          attribute._dirty = false;
           if (!attribute) return;
           _this.create(attribute)
         })
         this.emitChange()
         break;
+
     }
   }
 })

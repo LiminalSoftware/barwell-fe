@@ -21,7 +21,7 @@ var ColumnDetailList = React.createClass({
 				attribute: 'New attribute',
 				type: 'INTEGER',
 				model_id: model.model_id,
-				persist: false
+				_persist: false
 			})
 		event.preventDefault();
 	},
@@ -80,7 +80,7 @@ var ColumnDetail = React.createClass({
 		var attribute = _.clone(this.props.column);
 		attribute.attribute = this.state.attribute
 		attribute.type = this.state.type
-		attribute.dirty = true
+		attribute._dirty = true
 
 		modelActionCreators.genericAction('attribute', 'create', attribute)
 		this.revert()
@@ -136,8 +136,8 @@ var ColumnDetail = React.createClass({
 
 	handleSave: function (event) {
 		var attribute = this.props.column
-		attribute.persist = false;
-		modelActionCreators.genericAction('attribute','create',attribute)
+		attribute._persist = false;
+		modelActionCreators.genericAction('attribute', 'create', attribute)
 		this.revert()
 		event.preventDefault()
 	},
@@ -165,7 +165,7 @@ var ColumnDetail = React.createClass({
   			</option>;
 		});
 
-		var typeSelector = (col.persist == false) ?
+		var typeSelector = (col._persist == false) ?
 			<select name="type" value={col.type} onChange={this.handleTypeChange}>
 				{typeFieldChoices}
 			</select>
@@ -178,12 +178,12 @@ var ColumnDetail = React.createClass({
 			var ord = keyOrd[key.key_id]
 			keyIcons.push(<span 
 				key = {'keycomp-' + comp.keycomp_id} 
-				className={getIconClasses(ord)}></span>
+				className={getIconClasses(ord, key)}></span>
 			);
 		});
 		
 		var key = "attribute-" + (col.attribute_id || col.cid);
-		return <tr key={key} className={col.dirty?'unsaved':''}>
+		return <tr key={key} className={col._dirty?'unsaved':''}>
 			
 			<td onDoubleClick={this.edit} key={key + '-name'}>
 				{nameField}
@@ -195,7 +195,7 @@ var ColumnDetail = React.createClass({
 				{keyIcons}
 			</td>
 			<td key={key + '-actions'} className="centered">
-				{(col.persist === false) ? 
+				{(col._persist === false) ? 
 					<span>
 					<span className="showonhover small tight clickable grayed icon icon-kub-remove" alt="Cancel" title="Cancel" onClick={this.handleDelete}></span> 
 					</span>

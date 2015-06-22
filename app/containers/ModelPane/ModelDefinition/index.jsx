@@ -5,6 +5,7 @@ import ModelStore from "../../../stores/ModelStore"
 import AttributeStore from "../../../stores/AttributeStore"
 import KeyStore from "../../../stores/KeyStore"
 import KeycompStore from "../../../stores/KeycompStore"
+import RelationStore from "../../../stores/RelationStore"
 import modelActionCreators from '../../../actions/modelActionCreators'
 import constants from '../../../constants/MetasheetConstants'
 import ColumnDetailList from './ColumnDetail'
@@ -22,6 +23,7 @@ var ModelDefinition = React.createClass({
 		AttributeStore.removeChangeListener(this._onChange)
 		KeyStore.removeChangeListener(this._onChange)
 		KeycompStore.removeChangeListener(this._onChange)
+		RelationStore.removeChangeListener(this._onChange)
 	},
 
 	componentWillMount: function () {
@@ -29,15 +31,37 @@ var ModelDefinition = React.createClass({
 		AttributeStore.addChangeListener(this._onChange)
 		KeyStore.addChangeListener(this._onChange)
 		KeycompStore.addChangeListener(this._onChange)
+		RelationStore.addChangeListener(this._onChange)
 	},
 
 	_onChange: function () {
 		this.forceUpdate()
 	},
 
+	fetchModel: function () {
+		var model = this.props.model
+		modelActionCreators.genericAction('model', 'fetch', {model_id: model.model_id})
+	},
+
+	isDirty: function () {
+		var model = this.props.model;
+		var dirty = false;
+		if (!model) return false
+		dirty = dirty || _.any(AttributeStore.query({model_id: model.model_id}).map(function (attr) {
+			return attr._dirty
+		}))
+
+		dirty = dirty || _.any(KeyStore.query({model_id: model.model_id}).map(function (key) {
+			return key._dirty
+		}))
+
+		return dirty;
+	},
+
 	render: function () {
 		var _this = this;
 		var model = this.props.model;
+		var dirty = this.isDirty()
 		
 		if(!model) return <div key="model-detail-bar" className="model-details">
 			<h3 key="attr-header">No Model Selected</h3>
@@ -49,40 +73,19 @@ var ModelDefinition = React.createClass({
 			<RelationDetailList model={model} />
 			<KeyDetailList model={model} />
 
-			<div className="decision-row">
-				<div className="cancel-button">
+			{(dirty) ? <div className="decision-row">
+				<div className="cancel-button" onClick={this.fetchModel}>
 					<span className="gray large icon icon-cld-delete"></span>
 					Cancel changes
 				</div>	
 				<div className="save-button">
-					<span className="gray large icon icon-cld-add"></span>
+					<span className="gray large icon icon-cld-upload"></span>
 					Commit changes
 				</div>
-			</div>
+			</div> : null}
 
 		</div>;
 	}
 });
 
 export default ModelDefinition;
-
-
-// var RelationDetail = React.createClass({
-// 	render: function () {
-// 		var relation = this.props.relation;
-// 		var name = relation.synget(bw.DEF.REL_NAME);
-// 		var fromKey = relation.synget(bw.DEF.REL_KEY);
-// 		var fromKeyName = fromKey.synget(bw.DEF.KEY_NAME);
-// 		var opposite = relation.synget(bw.DEF.REL_OPPOSITE);
-// 		var toKey = opposite.synget(bw.DEF.REL_KEY);
-// 		var toKeyName = toKey.synget(bw.DEF.KEY_NAME);
-// 		var reactKey = 'relation-' + relation.synget(bw.DEF.REL_ID);
-// 		return <tr key={reactKey}>
-// 			<td key={reactKey+'-name'}>{name}</td>
-// 			<td key={reactKey+'-from-key'}>{fromKeyName}</td>
-// 			<td key={reactKey+'-arrow'}><span className="icon greened icon-shuffle"></span></td>
-// 			<td key={reactKey+'-to'}>{toKeyName}</td>
-// 		</tr>;
-// 	}
-// });
-

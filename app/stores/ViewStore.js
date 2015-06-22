@@ -23,6 +23,7 @@ var ViewStore = storeFactory({
         var views = _.isArray(payload.view)  ? payload.view : [payload.view]
         views.forEach(function (view) {
           if (!view) return;
+          view._dirty = false
           _this.create(view)
         })
         this.emitChange()
