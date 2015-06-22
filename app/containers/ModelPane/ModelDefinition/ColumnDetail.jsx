@@ -12,18 +12,16 @@ import _ from 'underscore'
 
 
 var ColumnDetailList = React.createClass({
+
 	handleAddNewAttr: function (event) {
 		var model = this.props.model;
-		modelActionCreators.genericAction(
-			'attribute', 
-			'create',
-			{
-				attribute: 'New attribute',
-				type: 'INTEGER',
-				model_id: model.model_id,
-				_persist: false
-			})
-		event.preventDefault();
+		var obj = {
+			attribute: 'New attribute',
+			type: 'INTEGER',
+			model_id: model.model_id
+		}
+		modelActionCreators.create('attribute', false, obj)
+		event.preventDefault()
 	},
 
 	render: function () {
@@ -37,11 +35,11 @@ var ColumnDetailList = React.createClass({
 
 		var colList = AttributeStore.query({model_id: (model.model_id || model.cid)}).map(function (col) {
 			var colId = (col.attribute_id || col.cid);
-			return <ColumnDetail key={"model-definition-col-" + colId} column = {col} keyOrd = {keyOrd} />;
+			return <ColumnDetail key={"model-definition-col-" + colId} model={model} column = {col} keyOrd = {keyOrd} />;
 		});
 
 		return <div className = "detail-block">
-			<h3 key="attr-header">Attributes</h3>
+			<h3 key="attr-header">Attribute</h3>
 			<table key="attr-table" className="detail-table">
 				<thead>
 					<tr>
@@ -82,7 +80,7 @@ var ColumnDetail = React.createClass({
 		attribute.type = this.state.type
 		attribute._dirty = true
 
-		modelActionCreators.genericAction('attribute', 'create', attribute)
+		modelActionCreators.create('attribute', false, attribute)
 		this.revert()
 	},
 	
@@ -90,7 +88,7 @@ var ColumnDetail = React.createClass({
 		this.revert()
 	},
 	
-	edit: function () {
+	handleEdit: function () {
 		var attribute = this.props.column;
 		if (this.state.renaming) return
 		this.setState({
@@ -130,21 +128,21 @@ var ColumnDetail = React.createClass({
 
 	handleDelete: function (event) {
 		var attribute = this.props.column
-		modelActionCreators.destroyAttribute(attribute)
+		console.log('handleDelete attribute: '+ JSON.stringify(attribute, null, 2));
+		modelActionCreators.destroy('attribute', false, attribute)
 		event.preventDefault()
 	},
 
-	handleSave: function (event) {
+	handleUndelete: function (event) {
 		var attribute = this.props.column
-		attribute._persist = false;
-		modelActionCreators.genericAction('attribute', 'create', attribute)
-		this.revert()
+		modelActionCreators.undestroy('attribute', attribute)
 		event.preventDefault()
 	},
 	
 	render: function () {
 		var _this = this;
 		var col = this.props.column;
+		var model = this.props.model;
 		var keyOrd = this.props.keyOrd;
 		var name = col.attribute;
 
@@ -165,7 +163,7 @@ var ColumnDetail = React.createClass({
   			</option>;
 		});
 
-		var typeSelector = (col._persist == false) ?
+		var typeSelector = (!col.attribute_id) ?
 			<select name="type" value={col.type} onChange={this.handleTypeChange}>
 				{typeFieldChoices}
 			</select>
@@ -178,14 +176,47 @@ var ColumnDetail = React.createClass({
 			var ord = keyOrd[key.key_id]
 			keyIcons.push(<span 
 				key = {'keycomp-' + comp.keycomp_id} 
-				className={getIconClasses(ord, key)}></span>
+				className={getIconClasses(ord, key)}
+				title={key.key}>
+				</span>
 			);
 		});
 		
 		var key = "attribute-" + (col.attribute_id || col.cid);
-		return <tr key={key} className={col._dirty?'unsaved':''}>
+
+		var actions = [];
+
+		if (col._destroy) {
+			actions.push(<span className="showonhover clickable grayed icon icon-tl-undo" 
+				title="Restore" 
+				onClick={this.handleUndelete}>
+				</span> )
+		} else if (col.attribute_id) {
+			actions.push(<span className="showonhover clickable grayed icon icon-kub-trash" 
+				title="Delete attribute" 
+				onClick={this.handleDelete}>
+				</span>)
+			actions.push(<span className="showonhover clickable grayed icon icon-tl-pencil" 
+				title="Edit attribute" 
+				onClick={this.handleEdit}>
+				</span>)
 			
-			<td onDoubleClick={this.edit} key={key + '-name'}>
+		} else {
+			actions.push(<span className="showonhover small clickable grayed icon icon-kub-remove" 
+				title="Cancel" 
+				onClick={this.handleDelete}>
+				</span>)
+			actions.push(<span className="showonhover clickable grayed icon icon-tl-pencil" 
+				title="Edit attribute" 
+				onClick={this.handleEdit}>
+				</span>)
+		}
+
+		return <tr 
+			key={key} 
+			className={(col._dirty?'unsaved':'') + (col._destroy?'destroyed':'')}>
+			
+			<td onDoubleClick={this.handleEdit} key={key + '-name'}>
 				{nameField}
 			</td>
 			<td key={key + '-type'}>
@@ -195,17 +226,7 @@ var ColumnDetail = React.createClass({
 				{keyIcons}
 			</td>
 			<td key={key + '-actions'} className="centered">
-				{(col._persist === false) ? 
-					<span>
-					<span className="showonhover small tight clickable grayed icon icon-kub-remove" alt="Cancel" title="Cancel" onClick={this.handleDelete}></span> 
-					</span>
-					: 
-					<span>
-					<span className="showonhover clickable grayed icon icon-kub-trash" title="Delete attribute" onClick={this.handleDelete}></span>
-					<span className="showonhover clickable grayed icon icon-tl-pencil" title="Edit attribute" onClick={this.handleEdit}></span>
-					</span>
-					
-				}
+				{actions}
 			</td>
 		</tr>
 	}

@@ -111,7 +111,6 @@ var ModelLink = React.createClass ({
 	},
 
 	handleNameUpdate: function (event) {
-		console.log('handleNameUpdate')
 		var name = event.target.value
 		this.setState({name: name})
 	},
@@ -120,6 +119,7 @@ var ModelLink = React.createClass ({
 		var _this = this
 		var model = this.props.model
 		var views
+		var lock_icon
 
 		var modelDisplay = (!!this.state.renaming) ?  
 			(<input className="model-renamer" ref="renamer" value={this.state.name} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/>) : 
@@ -136,12 +136,18 @@ var ModelLink = React.createClass ({
 			})
 			views.push(<ViewAdder key={"model-view-adder-" + model.model_id} model={model} />)
 		} else views = ""
+
+		if (model.lock_user) 
+			lock_icon = <span className="icon grayed icon-lock-close" 
+							title={'locked by ' + model.lock_user}></span>
+						
 		
 		return <li>
 			<ul key={"model-views-ul-" + model.model_id}>
 				<li className={"li-model" + (this.props.active ? " li-hilite" : "")}>
 					<Link to="model" params={{modelId: model.model_id}} key={"model-link-" + model.model_id} onDoubleClick={this.edit}>
-						{modelDisplay}
+					{lock_icon}
+					{modelDisplay}
 					</Link>
 				</li>
 				{views}

@@ -14,16 +14,13 @@ var KeyDetailList = React.createClass({
 
 	handleAddNewKey: function (event) {
 		var model = this.props.model;
-		var key = modelActionCreators.genericAction(
-		'key',
-		'create',
-		{
+		var obj = {
 			key: 'New key',
 			model_id: model.model_id,
 			indexed: false,
-			uniq: false,
-			_persist: false
-		})
+			uniq: false
+		}
+		modelActionCreators.create('key', false, obj)
 	},
 
 	render: function () {
@@ -65,7 +62,7 @@ var KeyDetail = React.createClass({
 	getInitialState: function () {
 		var key = this.props.mdlKey; 
 		return {
-			open: (key._persist === false),
+			open: (key._dirty === true),
 			renaming: false,
 			key: key.key
 		}
@@ -82,14 +79,7 @@ var KeyDetail = React.createClass({
 	handleUniqClick: function (event) {
 		var key = this.props.mdlKey
 		key.uniq = !(key.uniq)
-		key._dirty = true
-		key._persist = true
-
-		modelActionCreators.genericAction(
-			'keycomp',
-			'create',
-			key
-		)
+		modelActionCreators.create('key', false, key)
 	},
 
 	render: function () {
@@ -118,7 +108,7 @@ var KeyDetail = React.createClass({
 				keycomp = {keycomp}/>
 		});
 
-		if (key._persist === false) compTrs.push(<KeycompDetail 
+		if (key._dirty === true) compTrs.push(<KeycompDetail 
 				key = {'keycomp-new'}
 				_key = {key}
 				idx = {compTrs.length}/>)
@@ -126,7 +116,7 @@ var KeyDetail = React.createClass({
 		return <tbody key={reactKey} className={this.state.open ? '' : 'singleton'}>
 					<tr 
 					key={reactKey + '-' + 'keyrow'} 
-					className={key._persist === false?'unsaved':''}>
+					className={key._dirty ? 'unsaved' : ''}>
 			<td onClick={this.toggleDetails} className="no-line"><span className={wedgeClasses}></span></td>
 			<td>{key.key}</td>
 			<td>{keyIcon}</td>
@@ -140,23 +130,20 @@ var KeyDetail = React.createClass({
 
 var KeycompDetail = React.createClass({
 
-	handleTypeChoice: function (event) {
+	handleAttrChoice: function (event) {
 		var key = this.props._key;
-		var keycomp = this.props.keycomp;
+		var keycomp = {
+			key_id: key.cid,
+			attribute_id: attribute_id,
+			ord: this.props.idx
+		}
 		var model = ModelStore.get(key.model_id)
 		var attribute_id = event.target.value
 
-		console.log('attribute_id: '+ JSON.stringify(attribute_id, null, 2));
+		keycomp.key_id = key.cid
+		keycomp.attribute_id = attribute_id
 
-		modelActionCreators.genericAction(
-			'keycomp',
-			'create',
-			{
-				key_id: (key.cid),
-				model_id: model.model_id,
-				attribute_id: attribute_id,
-				_persist: false
-			})
+		modelActionCreators.create('keycomp', false, keycomp)
 	},
 
 	handleDelete: function (event) {
@@ -182,17 +169,19 @@ var KeycompDetail = React.createClass({
 		})
 		if (!keycomp) attrSelections.unshift(<option value={0}> ---- </option>)
 
-		return <tr className = {key._persist === false ? 'unsaved':''}>
-			<td className="no-line"></td>
-			<td>
+		return <tr className = {key._dirty ? 'unsaved':''}>
+			<td className="no-line">
 				<span className="num-circle">{idx + 1}</span> 
+			</td>
+			<td>
+				
 				<span>
-					{key._persist === false ?
+					{key._dirty ?
 						<select 
 							ref="selector" 
 							name="type" 
 							value = {attribute_id || 0} 
-							onChange = {this.handleTypeChoice}>
+							onChange = {this.handleAttrChoice}>
 							{attrSelections}
 						</select>
 						: attribute_name

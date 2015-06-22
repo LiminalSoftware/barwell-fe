@@ -8,13 +8,78 @@ var modelActions = {
 
 	genericAction: function(subject, action, data) {
 		var message = {}
-		data._dirty = true;
+		data._dirty = true
 		message.actionType = subject.toUpperCase() + '_' + action.toUpperCase()
 		message[subject] = data
 		MetasheetDispatcher.dispatch(message)
 
 		if (!(data._persist === false)) webUtils.persist(subject, action, data)
 		return data;
+	},
+
+	create: function (subject, persist, obj) {
+		var message = {}
+		obj._dirty = true
+		obj._destroy = false
+		message[subject] = obj
+		message.actionType = subject.toUpperCase() + '_CREATE'
+		MetasheetDispatcher.dispatch(message)
+		if (persist) return webUtils.persist(subject, 'CREATE', obj);
+		else return new Promise(function(resolve, reject){
+			return resolve(obj)
+		})
+	},
+
+	undestroy: function (subject, obj) {
+		var message = {}
+		obj._destroy = false
+		message[subject] = obj
+		message.actionType = subject.toUpperCase() + '_CREATE'
+		MetasheetDispatcher.dispatch(message)
+	},
+
+	destroy: function (subject, persist, obj) {
+		var message = {}
+		message[subject] = obj
+
+
+		if (!persist && ((subject+'_id') in obj)) {
+			// mark the object for destruction, but dont actually do it
+			message.actionType = subject.toUpperCase() + '_CREATE'
+			obj._destroy = true
+		} else {
+			message.actionType = subject.toUpperCase() + '_DESTROY'
+			if (persist) return webUtils.persist(subject, 'DESTROY', obj)
+		}
+		return new Promise(function (resolve, reject) {
+			console.log('message: '+ JSON.stringify(message, null, 2));
+			MetasheetDispatcher.dispatch(message)
+			return resolve(obj)
+		});
+	},
+
+	// relations
+
+	createRelation: function (relation) {
+		var opposite = RelationStore.get(relation.opposite_relation_id) || {};
+		opposite._dirty = true;
+		opposite._persist = true;
+		relation._dirty = true;
+		relation._persist = true;
+		MetasheetDispatcher.dispatch({
+			actionType: 'RELATION_CREATE',
+			relation: relation
+		});
+		opposite.opposite_relation_id = (relation.relation_id || relation.cid)
+		MetasheetDispatcher.dispatch({
+			actionType: 'RELATION_CREATE',
+			relation: opposite
+		});
+		relation.opposite_relation_id = (opposite.relation_id || opposite.cid)
+		MetasheetDispatcher.dispatch({
+			actionType: 'RELATION_CREATE',
+			relation: relation
+		});
 	},
 
 	// models

@@ -9,6 +9,7 @@ import RelationStore from "../../../stores/RelationStore"
 import modelActionCreators from '../../../actions/modelActionCreators'
 import constants from '../../../constants/MetasheetConstants'
 import ColumnDetailList from './ColumnDetail'
+import CalculationDetailList from './CalculationDetail'
 import RelationDetailList from './RelationDetail'
 import KeyDetailList from './KeyDetail'
 import getIconClasses from './getIconClasses'
@@ -43,16 +44,36 @@ var ModelDefinition = React.createClass({
 		modelActionCreators.genericAction('model', 'fetch', {model_id: model.model_id})
 	},
 
+	commitModel: function () {
+		var _this = this;
+		var model = this.props.model
+		model.lock_user = 'me'
+
+		modelActionCreators.create('model', true, model).then(function () {
+			return Promise.all(
+			AttributeStore.query({model_id: model.model_id}).map(function (attr) {
+				if (attr._dirty) return modelActionCreators.create('attribute', true, attr)
+				if (attr._destroy) return modelActionCreators.destroy('attribute', true, attr)
+			}))
+		}).then(function (){
+			model.lock_user = null
+			return modelActionCreators.create('model', true, model)
+		}).then(function () {
+			_this.fetchModel()
+		})
+
+	},
+
 	isDirty: function () {
 		var model = this.props.model;
 		var dirty = false;
 		if (!model) return false
 		dirty = dirty || _.any(AttributeStore.query({model_id: model.model_id}).map(function (attr) {
-			return attr._dirty
+			return attr._dirty || attr._destroy
 		}))
 
 		dirty = dirty || _.any(KeyStore.query({model_id: model.model_id}).map(function (key) {
-			return key._dirty
+			return key._dirty || key._destroy
 		}))
 
 		return dirty;
@@ -72,13 +93,14 @@ var ModelDefinition = React.createClass({
 			<ColumnDetailList model={model} />
 			<RelationDetailList model={model} />
 			<KeyDetailList model={model} />
+			<CalculationDetailList model={model} />
 
 			{(dirty) ? <div className="decision-row">
 				<div className="cancel-button" onClick={this.fetchModel}>
 					<span className="gray large icon icon-cld-delete"></span>
 					Cancel changes
 				</div>	
-				<div className="save-button">
+				<div className="save-button" onClick={this.commitModel}>
 					<span className="gray large icon icon-cld-upload"></span>
 					Commit changes
 				</div>

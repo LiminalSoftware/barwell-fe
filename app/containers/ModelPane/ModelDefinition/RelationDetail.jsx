@@ -16,15 +16,35 @@ var RelationDetailList = React.createClass({
 	handleNewRelation: function () {
 		var model = this.props.model;
 		var relation = modelActionCreators.genericAction(
-		'relation',
-		'create',
-		{
-			relation: 'New relation',
-			model_id: model.model_id,
-			type: 'Has one',
-			_persist: false,
-			_dirty: true
-		})
+			'relation',
+			'create',
+			{
+				relation: 'New relation',
+				model_id: model.model_id,
+				type: 'Has one',
+				_persist: false,
+				_dirty: true
+			})
+		var opposite = modelActionCreators.genericAction(
+			'relation',
+			'create',
+			{
+				relation: 'New relation',
+				opposite_relation_id: relation.cid,
+				type: 'Has one',
+				_persist: false,
+				_dirty: true
+			})
+		relation = modelActionCreators.genericAction(
+			'relation',
+			'create',
+			{
+				relation: 'New relation',
+				model_id: model.model_id,
+				type: 'Has one',
+				_persist: false,
+				_dirty: true
+			})
 	},
 
 	render: function () {
@@ -34,15 +54,19 @@ var RelationDetailList = React.createClass({
 				key ={relation.relation_id || relation.cid} 
 				relation = {relation} />;
 		});
-		
+		if (relList.length === 0) {
+			relList = <tr><td className="grayed centered" colSpan="4">No relations defined</td></tr>;
+		}
+
 		return <div className = "detail-block">
 			<h3>Relations</h3>
 			<table className="detail-table">
 				<thead>
 					<tr key="rel-header-row">
-						<th>Name</th>
-						<th>Related Model</th>
-						<th>Type</th>
+						<th className="width-30">Name</th>
+						<th className="width-30">Related Model</th>
+						<th className="width-30">Type</th>
+						<th className="width-10"></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -60,7 +84,20 @@ var RelationDetailList = React.createClass({
 })
 
 var RelationDetail = React.createClass({
-	
+
+	handleModelSelect: function () {
+
+	},
+
+	handleRelationCancel: function () {
+		var relation = this.props.relation;
+		if (!relation) return
+		modelActionCreators.genericAction(
+			'relation',
+			'destroy',
+			{cid: relation.cid})
+	},
+
 	render: function () {
 		var relation = this.props.relation;
 		// var relatedModel = ModelStore.get(relation.related_model_id)
@@ -73,9 +110,9 @@ var RelationDetail = React.createClass({
 
 		return <tr 
 			key={'relation-'+(relation.relation_id || relation.cid)}
-			className={relation._dirty?'unsaved':''}>
+			className={relation._dirty ? 'unsaved':''}>
 			<td>{relation.relation}</td>
-			<td> <select value={0} onChange={this.selectModel}>
+			<td> <select value={0} onChange={this.handleModelSelect}>
 				{relatedModelChoices}
 			</select></td>
 			<td><select value="Has one" on>
@@ -83,6 +120,12 @@ var RelationDetail = React.createClass({
 				<option value="Has one">Has many</option>
 				<option value="Has one">One to one</option>
 			</select></td>
+			<td className="centered">
+			{relation._persist === false ? <span 
+				className="showonhover small clickable grayed icon icon-kub-remove" 
+				title="Delete component" 
+				onClick={this.handleRelationCancel}>
+			</span> : null }</td>
 		</tr>;
 	}
 });

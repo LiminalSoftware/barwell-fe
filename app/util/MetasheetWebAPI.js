@@ -8,6 +8,14 @@ $.ajaxSetup({
     headers: {"Prefer": 'return=representation'}
 });
 
+var stripInternalVars = function (obj) {
+  var newObj = {}
+  Object.keys(obj).forEach(function (key) {
+    if (key.slice(0,1) !== '_') newObj[key] = obj[key];
+  });
+  return newObj;
+}
+
 module.exports = {
   
   persist: function (subject, action, data) {
@@ -18,7 +26,7 @@ module.exports = {
     var camelAction = action.slice(0,1).toUpperCase() + action.slice(1,100).toLowerCase()
     var success = 'successfully' + camelAction + camelSubject
     var failure = 'failTo' + camelAction + camelSubject
-    var json = (action === 'CREATE') ? JSON.stringify(_.without(data,'_dirty','_persist')) : null;
+    var json = (action === 'CREATE') ? JSON.stringify(stripInternalVars(data)) : null;
     var method;
 
     if (action == 'FETCH') method = 'GET';
@@ -29,18 +37,28 @@ module.exports = {
     
     if (method === 'PATCH' || method === 'DELETE') url = url + '?' + identifier + '=eq.' + data[identifier];
 
-    console.log('method: '+ JSON.stringify(method, null, 2));
-    console.log('data: '+ JSON.stringify(data, null, 2));
-    console.log('url: '+ JSON.stringify(url, null, 2));
-
-    $.ajax({
-      type: method,
-      url: url,
-      data: json,
-      contentType: 'application/json',
-      success: serverActionCreators[success],
-      error: serverActionCreators[failure]
+    console.log(method + '->' + url)
+    return new Promise(function (resolve, reject) {
+      $.ajax({
+        type: method,
+        url: url,
+        data: json,
+        contentType: 'application/json',
+        success: function (obj, status, xhr) {
+          var f = serverActionCreators[success]
+          if (f) f(obj)
+          resolve(obj)
+        },
+        error: function (xhr, error, status) {
+          console.log('xhr: '+ JSON.stringify(xhr, null, 2));
+          console.log('error: '+ JSON.stringify(error, null, 2));
+          console.log('status: '+ JSON.stringify(status, null, 2));
+          var f = serverActionCreators[success]
+          if (f) f(status)
+          reject(status)
+        }
+      })
     })
+    
   }
-
 };

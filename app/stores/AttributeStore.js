@@ -14,9 +14,7 @@ var AttributeStore = storeFactory({
         break;
 
       case 'ATTRIBUTE_DESTROY':
-        var objects = this.query(payload.attribute).forEach(function (obj) {
-          this.destroy(obj)
-        });
+        this.destroy(payload.attribute)
         this.emitChange()
         break;
 

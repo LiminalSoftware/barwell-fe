@@ -56,19 +56,22 @@ var TabularViewConfig = React.createClass({
 			return <tr>
 				<td>{sort.id}</td>
 				<td><span className = {sortOrderClass}></span>{sortOrderLabel}</td>
-				<td><span className = "clickable icon icon-trash"></span></td>
+				<td><span className = "small showonhover grayed clickable icon icon-kub-remove"></span></td>
 			</tr>
 		})
+		if (sortList.length === 0) {
+			sortList = <tr><td className="grayed centered" colSpan="3">No sort order defined</td></tr>;
+		}
 
 		return <div className = "grouping">
 			<div className = "detail-block">
 			<h3>Columns</h3>
 			<table className="detail-table">
 				<thead><tr key="attr-header-row">
-					<th key="attr-header-expand"></th>
-					<th key="attr-header-name">Name</th>
-					<th key="attr-header-visibility">Viz</th>
-					<th key="attr-header-width">Width</th>
+					<th className="width-10"></th>
+					<th className="width-50">Name</th>
+					<th className="width-20">Viz</th>
+					<th className="width-20">Width</th>
 				</tr></thead>
 				{colList}
 			</table>
@@ -78,9 +81,9 @@ var TabularViewConfig = React.createClass({
 			<table key="sort-table" className="detail-table">
 				<thead>
 				<tr key="sort-header-row">
-					<th key="sort-header-col">Column</th>
-					<th key="sort-header-Desc">Sort Order</th>
-					<th></th>
+					<th className="width-60">Column</th>
+					<th className="width-30">Sort Order</th>
+					<th className="width-10"></th>
 				</tr>
 			</thead>
 				<tbody>{sortList}</tbody>

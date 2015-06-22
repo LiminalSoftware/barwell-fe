@@ -8,7 +8,6 @@ import _ from "underscore"
 module.exports = {
 
   successfullyFetchModels: function(models) {
-    
     models.forEach(function (model) {
       MetasheetDispatcher.dispatch({
         actionType: 'ATTRIBUTE_PURGE',
@@ -33,7 +32,6 @@ module.exports = {
         });
       });
     })
-
     MetasheetDispatcher.dispatch({
       actionType: 'MODEL_RECEIVE',
       model: models
