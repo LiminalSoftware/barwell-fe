@@ -8,7 +8,7 @@ import KeycompStore from "../../../stores/KeycompStore"
 import RelationStore from "../../../stores/RelationStore"
 import modelActionCreators from '../../../actions/modelActionCreators'
 import constants from '../../../constants/MetasheetConstants'
-import ColumnDetailList from './ColumnDetail'
+import AttributeDetailList from './AttributeDetail'
 import CalculationDetailList from './CalculationDetail'
 import RelationDetailList from './RelationDetail'
 import KeyDetailList from './KeyDetail'
@@ -51,10 +51,22 @@ var ModelDefinition = React.createClass({
 
 		modelActionCreators.create('model', true, model).then(function () {
 			return Promise.all(
-			AttributeStore.query({model_id: model.model_id}).map(function (attr) {
-				if (attr._dirty) return modelActionCreators.create('attribute', true, attr)
-				if (attr._destroy) return modelActionCreators.destroy('attribute', true, attr)
-			}))
+				AttributeStore.query({model_id: model.model_id}).map(function (attr) {
+					if (attr._dirty) return modelActionCreators.create('attribute', true, attr)
+					if (attr._destroy) return modelActionCreators.destroy('attribute', true, attr)
+				}))
+		}).then(function () {
+			return Promise.all(
+				KeyStore.query({model_id: model.model_id}).map(function (attr) {
+					if (attr._dirty) return modelActionCreators.create('key', true, attr)
+					if (attr._destroy) return modelActionCreators.destroy('key', true, attr)
+				}))
+		}).then(function () {
+			KeyStore.query({model_id: model.model_id}).map(function (key) {
+				// KeycompStore.query({key_id: key.key_id}).map()
+				if (key._dirty) return modelActionCreators.create('key', true, attr)
+				if (key._destroy) return modelActionCreators.destroy('key', true, attr)
+			})
 		}).then(function (){
 			model.lock_user = null
 			return modelActionCreators.create('model', true, model)
@@ -90,7 +102,7 @@ var ModelDefinition = React.createClass({
 
 		return <div key="model-detail-bar" className="model-details">
 			
-			<ColumnDetailList model={model} />
+			<AttributeDetailList model={model} />
 			<RelationDetailList model={model} />
 			<KeyDetailList model={model} />
 			<CalculationDetailList model={model} />

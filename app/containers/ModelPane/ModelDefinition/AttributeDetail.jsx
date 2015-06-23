@@ -11,7 +11,7 @@ import getIconClasses from './getIconClasses'
 import _ from 'underscore'
 
 
-var ColumnDetailList = React.createClass({
+var AttributeDetailList = React.createClass({
 
 	handleAddNewAttr: function (event) {
 		var model = this.props.model;
@@ -35,7 +35,11 @@ var ColumnDetailList = React.createClass({
 
 		var colList = AttributeStore.query({model_id: (model.model_id || model.cid)}).map(function (col) {
 			var colId = (col.attribute_id || col.cid);
-			return <ColumnDetail key={"model-definition-col-" + colId} model={model} column = {col} keyOrd = {keyOrd} />;
+			return <AttributeDetail 
+				key={colId} 
+				model={model} 
+				attribute = {col} 
+				keyOrd = {keyOrd} />;
 		});
 
 		return <div className = "detail-block">
@@ -43,9 +47,9 @@ var ColumnDetailList = React.createClass({
 			<table key="attr-table" className="detail-table">
 				<thead>
 					<tr>
-						<th className="width-40" key="attr-header-name">Name</th>
+						<th className="width-30" key="attr-header-name">Name</th>
 						<th className="width-30" key="attr-header-type">Type</th>
-						<th className="width-10" key="attr-header-key">Keys</th>
+						<th className="width-20" key="attr-header-key">Keys</th>
 						<th className="width-20" key="attr-header-actions"></th>
 					</tr>
 				</thead>
@@ -63,10 +67,14 @@ var ColumnDetailList = React.createClass({
 	}
 })
 
-var ColumnDetail = React.createClass({
+var AttributeDetail = React.createClass({
+
+	componentWillUnmount: function () {
+		document.removeEventListener('keyup', this.handleKeyPress)
+	},
 
 	getInitialState: function () {
-		var attribute = this.props.column;
+		var attribute = this.props.attribute;
 		return {
 			renaming: false,
 			attribute: attribute.attribute,
@@ -75,11 +83,8 @@ var ColumnDetail = React.createClass({
 	},
 	
 	commitChanges: function () {
-		var attribute = _.clone(this.props.column);
+		var attribute = _.clone(this.props.attribute);
 		attribute.attribute = this.state.attribute
-		attribute.type = this.state.type
-		attribute._dirty = true
-
 		modelActionCreators.create('attribute', false, attribute)
 		this.revert()
 	},
@@ -89,7 +94,8 @@ var ColumnDetail = React.createClass({
 	},
 	
 	handleEdit: function () {
-		var attribute = this.props.column;
+		console.log('edit!')
+		var attribute = this.props.attribute;
 		if (this.state.renaming) return
 		this.setState({
 			renaming: true,
@@ -101,7 +107,7 @@ var ColumnDetail = React.createClass({
 	},
 	
 	revert: function () {
-		var attribute = this.props.column;
+		var attribute = this.props.attribute;
 		document.removeEventListener('keyup', this.handleKeyPress)
 		this.setState({
 			renaming: false,
@@ -120,28 +126,28 @@ var ColumnDetail = React.createClass({
 	},
 
 	handleTypeChange: function (event) {
-		var attribute = this.props.column
+		var attribute = this.props.attribute
 		attribute.type = event.target.value
 		modelActionCreators.createAttribute(attribute)
 		this.revert()
 	},
 
 	handleDelete: function (event) {
-		var attribute = this.props.column
+		var attribute = this.props.attribute
 		console.log('handleDelete attribute: '+ JSON.stringify(attribute, null, 2));
 		modelActionCreators.destroy('attribute', false, attribute)
 		event.preventDefault()
 	},
 
 	handleUndelete: function (event) {
-		var attribute = this.props.column
+		var attribute = this.props.attribute
 		modelActionCreators.undestroy('attribute', attribute)
 		event.preventDefault()
 	},
 	
 	render: function () {
 		var _this = this;
-		var col = this.props.column;
+		var col = this.props.attribute;
 		var model = this.props.model;
 		var keyOrd = this.props.keyOrd;
 		var name = col.attribute;
@@ -150,7 +156,10 @@ var ColumnDetail = React.createClass({
 			(this.state.open ? " open" : "closed");
 
 		var nameField = (this.state.renaming) ? 
-			<input ref="renamer" value={this.state.attribute} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/> 
+			<input ref="renamer" 
+				value={this.state.attribute} 
+				onChange={this.handleNameUpdate} 
+				onBlur={this.commitChanges}/> 
 			: {name};
 		var keyIcons = [];
 		var components = KeycompStore.query({attribute_id: col.attribute_id});
@@ -232,4 +241,4 @@ var ColumnDetail = React.createClass({
 	}
 });
 
-export default ColumnDetailList
+export default AttributeDetailList

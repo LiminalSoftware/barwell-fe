@@ -52,7 +52,6 @@ var modelActions = {
 			if (persist) return webUtils.persist(subject, 'DESTROY', obj)
 		}
 		return new Promise(function (resolve, reject) {
-			console.log('message: '+ JSON.stringify(message, null, 2));
 			MetasheetDispatcher.dispatch(message)
 			return resolve(obj)
 		});

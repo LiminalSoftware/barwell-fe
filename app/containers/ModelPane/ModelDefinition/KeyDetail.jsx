@@ -34,7 +34,7 @@ var KeyDetailList = React.createClass({
 		})
 		keyList = KeyStore.query({model_id: (model.model_id || model.cid)}).map(function (key) {
 			var keyId = (key.key_id || key.cid)
-			return <KeyDetail key={"model-definition-key-" + keyId} mdlKey = {key} keyOrd = {keyOrd} />;
+			return <KeyDetail key={"model-definition-key-" + keyId} _key = {key} keyOrd = {keyOrd} />;
 		})
 
 		return <div className = "detail-block">
@@ -60,31 +60,84 @@ var KeyDetailList = React.createClass({
 var KeyDetail = React.createClass({
 
 	getInitialState: function () {
-		var key = this.props.mdlKey; 
+		var key = this.props._key; 
 		return {
 			open: (key._dirty === true),
 			renaming: false,
-			key: key.key
+			name: key.key
 		}
+	},
+
+	componentWillUnmount: function () {
+		document.removeEventListener('keyup', this.handleKeyPress)
+	},
+
+	commitChanges: function () {
+		var key = _.clone(this.props._key);
+		key.key = this.state.name
+		modelActionCreators.create('key', false, key)
+		this.revert()
+	},
+	
+	cancelChanges: function () {
+		this.revert()
+	},
+	
+	handleEdit: function () {
+		var key = this.props._key;
+		if (this.state.renaming) return
+		this.setState({
+			renaming: true,
+			name: key.key
+		}, function () {
+			React.findDOMNode(this.refs.renamer).focus();
+		})
+		document.addEventListener('keyup', this.handleKeyPress)
+	},
+	
+	revert: function () {
+		var key = this.props._key;
+		document.removeEventListener('keyup', this.handleKeyPress)
+		this.setState({
+			renaming: false,
+			name: key.key
+		})
+	},
+
+	handleKeyPress: function (event) {
+		if (event.keyCode === 27) this.cancelChanges()
+		if (event.keyCode === 13) this.commitChanges()
+	},
+
+	handleNameUpdate: function (event) {
+		this.setState({name: event.target.value})
+	},
+
+	handleDelete: function (event) {
+		var key = this.props._key
+		modelActionCreators.destroy('key', false, key)
+		event.preventDefault()
+	},
+
+	handleUndelete: function (event) {
+		var key = this.props._key
+		modelActionCreators.undestroy('key', key)
+		event.preventDefault()
 	},
 
 	toggleDetails: function (event) {
 		this.setState({open: !this.state.open});
 	},
 
-	handleDelete: function (event) {
-
-	},
-
 	handleUniqClick: function (event) {
-		var key = this.props.mdlKey
+		var key = this.props._key
 		key.uniq = !(key.uniq)
 		modelActionCreators.create('key', false, key)
 	},
 
 	render: function () {
 		var _this = this
-		var key = this.props.mdlKey;
+		var key = this.props._key;
 		var keyOrd = this.props.keyOrd;
 		var reactKey = 'key-' + (key.key_id || key.cid);
 		var wedgeClasses = "small grayed icon wedge icon-geo-triangle " +
@@ -92,13 +145,7 @@ var KeyDetail = React.createClass({
 		var ord = keyOrd[key.key_id];
 		var keyIcon = <span className={getIconClasses(ord, key)}></span>;
 		var components = KeycompStore.query({key_id: (key.key_id || key.cid)}, 'ord');
-
-		var attrSelections = AttributeStore.query({model_id: key.model_id}).map(function (attr) {
-			return <option value={(attr.attribute_id || attr.cid)}>
-  				{attr.attribute}
-  			</option>;
-		})
-		attrSelections.unshift(<option value="0"> ---- </option>)
+		var nameField
 
 		var compTrs = components.map(function (keycomp, idx) {
 			return <KeycompDetail 
@@ -108,17 +155,29 @@ var KeyDetail = React.createClass({
 				keycomp = {keycomp}/>
 		});
 
-		if (key._dirty === true) compTrs.push(<KeycompDetail 
+		if (key._dirty === true) 
+			compTrs.push(<KeycompDetail 
 				key = {'keycomp-new'}
 				_key = {key}
 				idx = {compTrs.length}/>)
+
+
+		if (this.state.renaming) 
+			nameField = <input ref="renamer" 
+				value={this.state.name} 
+				onChange={this.handleNameUpdate} 
+				onBlur={this.commitChanges}/> 
+		else nameField = key.key;
+
 
 		return <tbody key={reactKey} className={this.state.open ? '' : 'singleton'}>
 					<tr 
 					key={reactKey + '-' + 'keyrow'} 
 					className={key._dirty ? 'unsaved' : ''}>
 			<td onClick={this.toggleDetails} className="no-line"><span className={wedgeClasses}></span></td>
-			<td>{key.key}</td>
+			<td onDoubleClick={this.handleEdit}>
+				{nameField}
+			</td>
 			<td>{keyIcon}</td>
 			<td><input type="checkbox" checked={key.uniq} onClick={this.handleUniqClick}></input></td>
 			<td className="centered"><span className="showonhover clickable grayed icon icon-kub-trash" title="Delete attribute" onClick={_this.handleDelete}></span></td>
@@ -132,16 +191,13 @@ var KeycompDetail = React.createClass({
 
 	handleAttrChoice: function (event) {
 		var key = this.props._key;
-		var keycomp = {
-			key_id: key.cid,
-			attribute_id: attribute_id,
-			ord: this.props.idx
-		}
+		var keycomp = this.props.keycomp || {}
 		var model = ModelStore.get(key.model_id)
 		var attribute_id = event.target.value
 
 		keycomp.key_id = key.cid
 		keycomp.attribute_id = attribute_id
+		keycomp.ord = this.props.idx
 
 		modelActionCreators.create('keycomp', false, keycomp)
 	},
@@ -156,18 +212,30 @@ var KeycompDetail = React.createClass({
 	},
 
 	render: function () {
-		var keycomp = this.props.keycomp;
+		var keycomp = this.props.keycomp || {};
 		var key = this.props._key;
-		var attribute_id = (!!keycomp) ? keycomp.attribute_id : 0;
-		var attribute_name = (!!keycomp) ? AttributeStore.get(keycomp.attribute_id).attribute : '';
-		var idx = this.props.idx;
-
-		var attrSelections = AttributeStore.query({model_id: key.model_id}).map(function (attr) {
-			return <option value={(attr.attribute_id || attr.cid)}>
-  				{attr.attribute}
-  			</option>;
-		})
-		if (!keycomp) attrSelections.unshift(<option value={0}> ---- </option>)
+		var attribute_name = (!!keycomp.attribute_id) ? AttributeStore.get(keycomp.attribute_id).attribute : ''
+		var idx = this.props.idx
+		var existingComps = {}
+		var attrSelections = []
+		
+		if (key._dirty) {
+			// find existing selections so we can exclude them from the menu
+			KeycompStore.query({key_id: (key.key_id || key.cid)}).forEach(function (kc) {
+				existingComps[kc.attribute_id] = kc.attribute_id
+			})
+			AttributeStore.query({model_id: key.model_id}).forEach(function (attr) {
+				if (attr.attribute_id != keycomp.attribute_id && attr.attribute_id in existingComps) return;
+				if (attr._destroy) return;
+				attrSelections.push(
+					<option value={(attr.attribute_id || attr.cid)}>
+  						{attr.attribute}
+  					</option>
+  				);
+  			})
+  			if (!keycomp.keycomp_id) attrSelections.unshift(<option value={0}> ---- </option>);
+		}
+		
 
 		return <tr className = {key._dirty ? 'unsaved':''}>
 			<td className="no-line">
@@ -180,7 +248,7 @@ var KeycompDetail = React.createClass({
 						<select 
 							ref="selector" 
 							name="type" 
-							value = {attribute_id || 0} 
+							value = {keycomp.attribute_id || 0}
 							onChange = {this.handleAttrChoice}>
 							{attrSelections}
 						</select>
@@ -192,11 +260,11 @@ var KeycompDetail = React.createClass({
 			<td></td>
 			<td></td>
 			<td className="centered">
-			{key._persist === false && (!!keycomp) ? <span 
+			{!keycomp.keycomp_id && !keycomp.cid ? null : <span 
 				className="showonhover small clickable grayed icon icon-kub-remove" 
 				title="Delete component" 
 				onClick={this.handleDelete}>
-			</span> : null }</td>
+			</span>}</td>
 		</tr>
 	}
 })

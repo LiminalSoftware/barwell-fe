@@ -2,11 +2,13 @@ import modelActionCreators from '../actions/modelActionCreators';
 import serverActionCreators from '../actions/serverActionCreators';
 import $ from "jquery";
 import _ from 'underscore'
-
-
+  
 $.ajaxSetup({
     headers: {"Prefer": 'return=representation'}
 });
+
+var MAX_RETRIES = 5
+var INITIAL_WAIT = 100
 
 var stripInternalVars = function (obj) {
   var newObj = {}
@@ -16,10 +18,36 @@ var stripInternalVars = function (obj) {
   return newObj;
 }
 
+var ajax = function (method, url, json, retry) {
+  retry = retry || 1;
+  return new Promise(function (resolve, reject) {
+    $.ajax({
+      type: method,
+      url: url,
+      data: json,
+      contentType: 'application/json',
+      success: function (obj, status, xhr) {
+        resolve(obj)
+      },
+      error: function (xhr, error, status) {
+        if (error === 'timeout') {
+          if (retry++ >= MAX_RETRIES) return 
+          console.log('timeout, trying again: ' + retry)
+          $.ajax(this);
+        } else {
+          console.log('xhr: '+ JSON.stringify(xhr, null, 2));
+          reject(status)
+        }
+      }
+    })
+  })
+}
+
 module.exports = {
   
   persist: function (subject, action, data) {
     action = action.toUpperCase()
+    var retryCount = 0
     var identifier = (subject + '_id')
     var url = 'https://api.metasheet.io/' + subject;
     var camelSubject = subject.slice(0,1).toUpperCase() + subject.slice(1,100) + 's'
@@ -38,27 +66,10 @@ module.exports = {
     if (method === 'PATCH' || method === 'DELETE') url = url + '?' + identifier + '=eq.' + data[identifier];
 
     console.log(method + '->' + url)
-    return new Promise(function (resolve, reject) {
-      $.ajax({
-        type: method,
-        url: url,
-        data: json,
-        contentType: 'application/json',
-        success: function (obj, status, xhr) {
-          var f = serverActionCreators[success]
-          if (f) f(obj)
-          resolve(obj)
-        },
-        error: function (xhr, error, status) {
-          console.log('xhr: '+ JSON.stringify(xhr, null, 2));
-          console.log('error: '+ JSON.stringify(error, null, 2));
-          console.log('status: '+ JSON.stringify(status, null, 2));
-          var f = serverActionCreators[success]
-          if (f) f(status)
-          reject(status)
-        }
-      })
-    })
-    
+    return ajax(method, url, json).then(function (obj) {
+      var f = serverActionCreators[success]
+      if (f) f(obj)
+    });
   }
+
 };
