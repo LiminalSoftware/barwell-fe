@@ -4,52 +4,48 @@
 		"selected_items":
 		[
 			[
-				"key",
-				"keycomp_id"
-			],
-			[
-				"att",
+				"attr",
 				"attribute_id"
 			],
 			[
 				"Key",
-				"KeycompDetail"
+				"KeycompStore"
 			],
 			[
-				"Attr",
-				"AttributeStore"
+				"rel",
+				"relList"
 			],
 			[
-				"attri",
-				"attributes"
+				"action",
+				"actionType"
 			],
 			[
-				"_att",
-				"_attributesByCid"
+				"key",
+				"keycomp"
 			],
 			[
-				"Metasheet",
-				"MetasheetWebAPI"
-			],
-			[
-				"field",
-				"fieldTypes"
-			],
-			[
-				"Mo",
-				"ModelStore"
-			],
-			[
-				"Meta",
-				"MetasheetConst"
-			],
-			[
-				"emi",
-				"emitChange"
+				"opposite",
+				"opposite_relation_id"
 			],
 			[
 				"Cal",
-				"CalendarTHead"
+				"CalculationDetailList"
+			],
+			[
+				"attribu",
+				"attribute_type"
+			],
+			[
+				"UNIQ",
+				"uniq_clause"
+			],
+			[
+				"uni",
+				"uniq_clause"
+			],
+			[
+				"attrib",
+				"attribute_type"
 			],
 			[
 				"width",
@@ -300,6 +296,14 @@
 				"fieldsByName"
 			],
 			[
+				"field",
+				"fieldsByName"
+			],
+			[
+				"att",
+				"attributes"
+			],
+			[
 				"string",
 				"stringParser"
 			],
@@ -368,21 +372,42 @@
 	"buffers":
 	[
 		{
-			"file": "app/containers/ModelPane/ModelDefinition/KeyDetail.jsx",
+			"file": "app/containers/ModelPane/ModelDefinition/index.jsx",
 			"settings":
 			{
-				"buffer_size": 4312,
+				"buffer_size": 4080,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"contents": "import React from \"react\"\nimport { Link } from \"react-router\"\nimport styles from \"./style.less\"\nimport ModelStore from \"../../../stores/ModelStore\"\nimport AttributeStore from \"../../../stores/AttributeStore\"\nimport KeyStore from \"../../../stores/KeyStore\"\nimport KeycompStore from \"../../../stores/KeycompStore\"\nimport modelActionCreators from '../../../actions/modelActionCreators'\nimport constants from '../../../constants/MetasheetConstants'\nimport ColumnDetail from './ColumnDetail'\nimport KeyDetail from './KeyDetail'\nimport getIconClasses from './getIconClasses'\nimport _ from 'underscore'\n\n\n\nvar ModelDefinition = React.createClass({\n	\n	componentWillUnmount: function () {\n		ModelStore.removeChangeListener(this._onChange)\n		AttributeStore.removeChangeListener(this._onChange)\n		KeyStore.removeChangeListener(this._onChange)\n		KeycompStore.removeChangeListener(this._onChange)\n	},\n\n	componentWillMount: function () {\n		ModelStore.addChangeListener(this._onChange)\n		AttributeStore.addChangeListener(this._onChange)\n		KeyStore.addChangeListener(this._onChange)\n		KeycompStore.addChangeListener(this._onChange)\n	},\n\n	_onChange: function () {\n		this.forceUpdate()\n	},\n\n	findUnsavedChanges: function() {\n		AttributeStore.\n	},\n\n	handleAddNewAttr: function (event) {\n		var model = this.props.model;\n		modelActionCreators.genericAction(\n			'attribute', \n			'create',\n			{\n				attribute: 'New attribute',\n				type: 'INTEGER',\n				model_id: model.model_id,\n				persist: false\n			})\n		event.preventDefault();\n	},\n\n	handleAddNewKey: function (event) {\n		var model = this.props.model;\n		var key = modelActionCreators.genericAction(\n		'key',\n		'create',\n		{\n			key: 'New key',\n			model_id: model.model_id,\n			indexed: false,\n			uniq: false,\n			persist: false\n		})\n	},\n\n	render: function () {\n		var _this = this;\n		var model = this.props.model;\n		// var relations = model.synget('Relations');\n		var iter = 0;\n		var keyOrd = {};\n\n		if(!model) return <div key=\"model-detail-bar\" className=\"model-details\">\n			<h3 key=\"attr-header\">No Model Selected</h3>\n		</div>\n\n		if(model.keys) model.keys.forEach(function (key) {\n			return keyOrd[key.key_id] = iter++;\n		})\n\n		var colList = AttributeStore.query({model_id: (model.model_id || model.cid)}).map(function (col) {\n			var colId = (col.attribute_id || col.cid);\n			return <ColumnDetail key={\"model-definition-col-\"+colId} column = {col} keyOrd = {keyOrd} />;\n		});\n\n		var keyList = KeyStore.query({model_id: (model.model_id || model.cid)}).map(function (key) {\n			var keyId = (key.key_id || key.cid)\n			return <KeyDetail key={\"model-definition-key-\"+keyId} mdlKey = {key} keyOrd = {keyOrd} />;\n		});\n\n		// var relList = relations.map(function (rel) {\n		// 	var relId = rel.synget('id')\n		// 	return <RelationDetail key ={'mdldef-rel-' + relId} relation = {rel} />;\n		// });\n		\n		return <div key=\"model-detail-bar\" className=\"model-details\">\n			<div className=\"save-button\"><span className=\"gray large icon icon-cld2-upload\"></span>Save changes</div>	\n\n			<h3 key=\"attr-header\">Attributes</h3>\n			<table key=\"attr-table\" className=\"detail-table\">\n				<thead>\n					<tr>\n						<th className=\"width-40\" key=\"attr-header-name\">Name</th>\n						<th className=\"width-30\" key=\"attr-header-type\">Type</th>\n						<th className=\"width-10\" key=\"attr-header-key\">Keys</th>\n						<th className=\"width-20\" key=\"attr-header-actions\"></th>\n					</tr>\n				</thead>\n				<tbody>\n					{colList}\n				</tbody>\n			</table>\n			<div><a className=\"new-adder new-attr\" onClick={this.handleAddNewAttr}><span className=\"small addNew icon icon-plus\"></span>New attribute</a></div>\n			\n			<h3 key=\"keys-header\">Keys</h3>\n			<table key=\"keys-table\" className=\"detail-table\">\n				<thead>\n					<tr key=\"key-header-row\">\n						<th className=\"width-10\" key=\"key-header-expand\"></th>\n						<th className=\"width-40\" key=\"key-header-name\">Name / Component</th>\n						<th className=\"width-10\" key=\"key-header-icon\"></th>\n						<th className=\"width-20\" key=\"key-header-uniq\">Unique?</th>\n						<th className=\"width-20\" key=\"attr-header-actions\"></th>\n					</tr>\n				</thead>\n				{keyList}\n			</table>\n			<div><a className=\"new-adder new-key\" onClick={this.handleAddNewKey}><span className=\"small addNew icon icon-plus\"></span>New key</a></div>\n\n			<h3 key=\"relations-header\">Relations</h3>\n			<table key=\"rels-table\" className=\"detail-table\">\n				<thead>\n					<tr key=\"rel-header-row\">\n						<th key=\"rel-header-name\">Name</th>\n						<th key=\"rel-header-from\">From</th>\n						<th key=\"rel-header-arrow\"></th>\n						<th key=\"rel-header-to\">To</th>\n					</tr>\n				</thead>\n				<tbody>\n				</tbody>\n			</table>\n		</div>;\n	}\n});\n\nexport default ModelDefinition;\n\n\n// var RelationDetail = React.createClass({\n// 	render: function () {\n// 		var relation = this.props.relation;\n// 		var name = relation.synget(bw.DEF.REL_NAME);\n// 		var fromKey = relation.synget(bw.DEF.REL_KEY);\n// 		var fromKeyName = fromKey.synget(bw.DEF.KEY_NAME);\n// 		var opposite = relation.synget(bw.DEF.REL_OPPOSITE);\n// 		var toKey = opposite.synget(bw.DEF.REL_KEY);\n// 		var toKeyName = toKey.synget(bw.DEF.KEY_NAME);\n// 		var reactKey = 'relation-' + relation.synget(bw.DEF.REL_ID);\n// 		return <tr key={reactKey}>\n// 			<td key={reactKey+'-name'}>{name}</td>\n// 			<td key={reactKey+'-from-key'}>{fromKeyName}</td>\n// 			<td key={reactKey+'-arrow'}><span className=\"icon greened icon-shuffle\"></span></td>\n// 			<td key={reactKey+'-to'}>{toKeyName}</td>\n// 		</tr>;\n// 	}\n// });\n\n",
-			"file": "app/containers/ModelPane/ModelDefinition/index.jsx",
-			"file_size": 5558,
-			"file_write_time": 130792034523880168,
+			"file": "app/containers/ModelPane/ModelDefinition/KeyDetail.jsx",
 			"settings":
 			{
-				"buffer_size": 5448,
+				"buffer_size": 7588,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app/containers/ModelPane/ModelDefinition/AttributeDetail.jsx",
+			"settings":
+			{
+				"buffer_size": 6615,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app/containers/ModelPane/renameable.jsx",
+			"settings":
+			{
+				"buffer_size": 1715,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app/containers/ModelPane/style.less",
+			"settings":
+			{
+				"buffer_size": 5994,
 				"line_ending": "Windows"
 			}
 		},
@@ -390,15 +415,26 @@
 			"file": "app/actions/modelActionCreators.js",
 			"settings":
 			{
-				"buffer_size": 2784,
+				"buffer_size": 4546,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "app/containers/ModelPane/ModelDefinition/ColumnDetail.jsx",
+			"contents": "import React from \"react\"\nimport { Link } from \"react-router\"\nimport styles from \"./style.less\"\nimport ModelStore from \"../../../stores/ModelStore\"\nimport AttributeStore from \"../../../stores/AttributeStore\"\nimport KeyStore from \"../../../stores/KeyStore\"\nimport RelationStore from \"../../../stores/RelationStore\"\nimport KeycompStore from \"../../../stores/KeycompStore\"\nimport modelActionCreators from '../../../actions/modelActionCreators'\nimport constants from '../../../constants/MetasheetConstants'\nimport getIconClasses from './getIconClasses'\nimport _ from 'underscore'\n\nvar RelationDetailList = React.createClass({\n	\n	handleNewRelation: function () {\n		var model = this.props.model;\n		var relation = {\n			relation: 'New relation',\n			model_id: model.model_id,\n			type: 'Has one'\n		}\n		modelActionCreators.create('relation', false, relation);\n\n		// b\n	},\n\n	render: function () {\n		var model = this.props.model\n		var relList = RelationStore.query({model_id: model.model_id}).map(function (relation) {\n			return <RelationDetail \n				key ={relation.relation_id || relation.cid} \n				relation = {relation} />;\n		});\n		if (relList.length === 0) {\n			relList = <tr><td className=\"grayed centered\" colSpan=\"4\">No relations defined</td></tr>;\n		}\n\n		return <div className = \"detail-block\">\n			<h3>Relations</h3>\n			<table className=\"detail-table\">\n				<thead>\n					<tr key=\"rel-header-row\">\n						<th className=\"width-30\">Name</th>\n						<th className=\"width-30\">Related Model</th>\n						<th className=\"width-30\">Type</th>\n						<th className=\"width-10\"></th>\n					</tr>\n				</thead>\n				<tbody>\n					{relList}\n				</tbody>\n			</table>\n			<div><a \n				className=\"new-adder new-attr\" \n				onClick={this.handleNewRelation}>\n				<span className=\"small addNew icon icon-plus\"></span>\n				New relation\n			</a></div>\n		</div>\n	}\n})\n\nvar RelationDetail = React.createClass({\n\n	handleModelSelect: function () {\n\n	},\n\n	handleRelationCancel: function () {\n		var relation = this.props.relation;\n		if (!relation) return\n		modelActionCreators.genericAction(\n			'relation',\n			'destroy',\n			{cid: relation.cid})\n	},\n\n	render: function () {\n		var relation = this.props.relation;\n		// var relatedModel = ModelStore.get(relation.related_model_id)\n		var relatedModelChoices = ModelStore.query(null, 'model').map(function (model) {\n			return <option value={(model.model_id || model.cid)}>\n  				{model.model}\n  			</option>;\n		})\n		relatedModelChoices.unshift(<option value=\"0\"> ---- </option>)\n\n		return <tr \n			key={'relation-'+(relation.relation_id || relation.cid)}\n			className={relation._dirty ? 'unsaved':''}>\n			<td>{relation.relation}</td>\n			<td> <select value={0} onChange={this.handleModelSelect}>\n				{relatedModelChoices}\n			</select></td>\n			<td><select value=\"Has one\" on>\n				<option value=\"Has one\">Has one</option>\n				<option value=\"Has one\">Has many</option>\n				<option value=\"Has one\">One to one</option>\n			</select></td>\n			<td className=\"centered\">\n			{relation._persist === false ? <span \n				className=\"showonhover small clickable grayed icon icon-kub-remove\" \n				title=\"Delete component\" \n				onClick={this.handleRelationCancel}>\n			</span> : null }</td>\n		</tr>;\n	}\n});\n\nexport default RelationDetailList",
+			"file": "app/containers/ModelPane/ModelDefinition/RelationDetail.jsx",
+			"file_size": 3562,
+			"file_write_time": 130795517838501758,
 			"settings":
 			{
-				"buffer_size": 4451,
+				"buffer_size": 3214,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "app/util/MetasheetWebAPI.js",
+			"settings":
+			{
+				"buffer_size": 2290,
 				"line_ending": "Windows"
 			}
 		}
@@ -409,6 +445,10 @@
 		"height": 374.0,
 		"selected_items":
 		[
+			[
+				":package",
+				"Package Control: Install Package"
+			],
 			[
 				":w",
 				":w - Save"
@@ -434,7 +474,7 @@
 				"Package Control: Install Package"
 			]
 		],
-		"width": 384.0
+		"width": 368.0
 	},
 	"console":
 	{
@@ -451,58 +491,56 @@
 	},
 	"file_history":
 	[
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/ColumnDetail.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/TabularTHead.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Config/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/RelationStore.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/style.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/actions/modelActionCreators.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/getIconClasses.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/index.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/KeyDetail.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/style.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/style.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/global.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/util/MetasheetWebAPI.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/ColumnDetail.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/AttributeStore.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/actions/modelActionCreators.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/RelationDetail.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/TabularTBody.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Application/style.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Application/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/actions/serverActionCreators.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/util/MetasheetWebAPI.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Config/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Config/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/style.less",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/global.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/CalculationDetail.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDetail/ColumnDetail.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDetail/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDetail/CalculationDetail.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Application/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/ModelStore.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/RelationStore.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/getIconClasses.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/KeycompStore.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/package.json",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/groomView.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/KeyStore.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/ViewStore.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/ModelStore.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/actions/serverActionCreators.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/AttributeStore.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/constants/MetasheetConstants.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/dispatcher/MetasheetDispatcher.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/viewUpdateMixin.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ViewSelector/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/make-webpack-config.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/lib/server.js",
-		"/C/Program Files/openssl-0.9.8r-x64_86-win64-rev2/openssl.cnf",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/lib/server-development.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/TableMixin.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/webpack.config.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/webpack-hot-dev-server.config.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/webpack-dev-server.config.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/barwell-fe.sublime-project",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Calendar/Main/CalendarTHead.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Calendar/Config/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Calendar/Main/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/fields.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/viewTypes.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/groomView.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/util/groomView.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/components/editableMixin.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/make-webpack-config.js",
+		"/C/Users/549764/Documents/GitHub/metasheet-be/sql/30_columns.sql",
+		"/C/Users/549764/Documents/GitHub/barwell/lib/shared/validators.js",
+		"/C/Users/549764/Documents/GitHub/metabase/test/backend/keys.js",
+		"/C/Users/549764/Documents/GitHub/metasheet-be/sql/00_preliminaries.sql.old",
+		"/C/Users/549764/Documents/GitHub/bw-be2/sql/10_columns.sql",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/package.json",
 		"/C/Users/549764/Documents/GitHub/node-js-getting-started/Procfile",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/TabularTHead.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Calendar/Config/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/TabularTBody.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/TableMixin.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Calendar/Main/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Calendar/Main/CalendarTHead.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Calendar/Main/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/viewUpdateMixin.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/viewTypes.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Calendar/Config/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ViewSelector/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/fields.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelDefinition/index.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell/test/shared/metamodels.js",
 		"/C/Users/549764/Documents/GitHub/barwell/lib/shared/barwell.js",
@@ -517,14 +555,18 @@
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ModelDefinition/index.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/mainRoutes.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ViewSelector/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/components/editableMixin.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/ViewSelector/index.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/lib/server-production.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/lib/server-development.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ModelDefinition/style.less",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/validateView.js",
 		"/C/Users/549764/Documents/Personal/web/style.css",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Application/index.jsx",
 		"/C/Users/549764/Documents/Personal/web/index.html",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/simple.html",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ViewPane/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/barwell-fe.sublime-project",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/.gitignore",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/assets/less/pictonic.less",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/index.jsx",
@@ -544,6 +586,7 @@
 		"/C/Users/549764/Downloads/LT-WebFonts-1942127695/demo.css",
 		"/C/Users/549764/Downloads/react-starter-master (1)/react-starter-master/app/mainRoutes.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/config/joinEntry.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/lib/server.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/mainStores.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/components/SideBar.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/routeHandlers/Application.jsx",
@@ -575,10 +618,7 @@
 		"/C/Users/549764/Documents/GitHub/clarient-rules/static/css/handsontable.css",
 		"/C/Users/549764/Documents/GitHub/clarient-rules/static/js/app.js",
 		"/C/Users/549764/Documents/GitHub/clarient-rules/static/css/style.css",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/static/index.html",
-		"/C/Users/549764/AppData/Roaming/Sublime Text 2/Packages/User/cons.sublime-snippet",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/static/css/pictonic.css",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/static/js/handsontable.js"
+		"/C/Users/549764/Documents/GitHub/clarient-rules/static/index.html"
 	],
 	"find":
 	{
@@ -605,82 +645,38 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"add",
-			"adder",
+			"components",
+			"attribute",
+			"mdlKey",
+			"column",
+			"renameable",
 			"select",
-			"persis",
-			"Name",
-			"trash",
-			"ordinal",
-			"getIconClasses",
-			"green",
-			"center",
-			"link",
-			"2px",
-			"id",
-			"create",
-			"save",
-			"getAll",
-			"getModel",
-			"getModelAtt",
-			"dispat",
-			"font",
-			"value",
-			"renamer",
-			"model",
-			"setState",
-			"^var \\w+ = require",
-			"var (\\w+) = require\\((['\"][\\w\\-]+[\"'])\\);?",
-			"require",
-			":",
-			"conso",
-			"con",
-			"consol",
-			"col.attribute",
-			"conso",
-			"model",
-			"ColumnDetail",
-			"cons",
+			"border-left",
+			"width: (\\d+)%;",
+			"handleDelete",
+			"handleSave",
+			"persist",
+			"select",
+			"relation\\.model",
+			"persist",
+			"\\.persist",
+			"_dirty",
+			"dirty",
+			"IconClasses",
+			"dirty",
+			"iconclasses",
 			"key",
+			"IconClasses",
+			"iconClasses",
+			"dirty",
+			"\\.dirty",
+			"persis",
+			"dirty",
+			"indexed",
+			"keycom_keycomp",
+			"keycom_seq",
 			"model",
-			"model.attributes",
-			"(key)",
-			"2992",
-			"cursor",
-			"\"\n",
-			"import $",
-			"$",
-			"add",
-			"height",
-			"bw",
-			"groom",
-			"bw",
-			"barwell",
-			"memstore",
-			"fieldType",
-			"  \n",
-			"relList",
-			"viewAdder",
-			"CHANGE_EVENT",
-			"const",
-			"dispatch",
-			"MetaSheet",
-			"MetasheetConst",
-			"BW",
-			"bw",
-			"ModelStore",
-			"disp",
-			"bw",
-			"EditableMixin",
-			"bw",
-			"model",
-			"Model",
-			"DEF",
-			"bw",
-			"synget",
-			"data",
-			"synget",
-			"bw",
+			"CREATE TABLE bwmetadata.attribute (\n	pk BIGSERIAL PRIMARY KEY,\n	model_id BIGINT REFERENCES bwmetadata.model(pk),\n	plural VARCHAR UNIQUE\n);\nALTER SEQUENCE bwmetadata.models_pk_seq restart with 1000;\n\nCREATE VIEW \"1\".models as\nSELECT\n	pk,\n	model,\n	plural\nFROM\n	bwmetadata.models;\n",
 			"cursor",
 			"handleFet",
 			"col.name",
@@ -732,7 +728,51 @@
 			"green-bright",
 			"blue",
 			"brown",
-			"green"
+			"green",
+			"green3",
+			"blue",
+			"green-3",
+			"blue",
+			"green3",
+			"green-2",
+			"green3",
+			"pureGray",
+			"green-4",
+			"green-2",
+			"green-3",
+			"green3",
+			"@pureGray(\\d);",
+			"green(\\d)",
+			"pureGray",
+			"ref",
+			"desc",
+			"onKey",
+			"view",
+			"ModelPane",
+			"view",
+			"green",
+			"console",
+			"conso",
+			"hide",
+			"listen",
+			"select",
+			"updateSelect",
+			"selection",
+			"view",
+			"setState",
+			"this.state.cursor",
+			"obj",
+			"model",
+			"cursor",
+			"props.offset",
+			"force",
+			"for",
+			";",
+			"this.state.cur",
+			"cursor",
+			"this.state.cursor",
+			"at",
+			"cursor"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -740,18 +780,10 @@
 		"regex": true,
 		"replace_history":
 		[
-			")\n",
+			"_key",
 			"attribute",
-			"import \\1 from \\2",
-			"import \\1 from '\\2'",
-			" =",
-			"view",
-			"keycomp",
-			"key",
-			"\\1comp",
-			"ttribute\n\"CHANGE_EVENT\"",
+			"width: \\1%; max-width: \\1%; min-width: \\1%;",
 			"attribute",
-			"Attribute",
 			"this.handleFetch",
 			"this.forceUpdate",
 			"green-tint-1",
@@ -820,23 +852,23 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 7,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "app/containers/ModelPane/ModelDefinition/KeyDetail.jsx",
+					"file": "app/containers/ModelPane/ModelDefinition/index.jsx",
 					"settings":
 					{
-						"buffer_size": 4312,
+						"buffer_size": 4080,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1843,
-								1843
+								2091,
+								2091
 							]
 						],
 						"settings":
@@ -845,25 +877,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 683.0,
+						"translation.y": 109.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "app/containers/ModelPane/ModelDefinition/index.jsx",
+					"file": "app/containers/ModelPane/ModelDefinition/KeyDetail.jsx",
 					"settings":
 					{
-						"buffer_size": 5448,
+						"buffer_size": 7588,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1224,
-								1224
+								2736,
+								2736
 							]
 						],
 						"settings":
@@ -872,25 +904,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 222.0,
+						"translation.y": 1343.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "app/actions/modelActionCreators.js",
+					"file": "app/containers/ModelPane/ModelDefinition/AttributeDetail.jsx",
 					"settings":
 					{
-						"buffer_size": 2784,
+						"buffer_size": 6615,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								535,
-								535
+								6283,
+								6314
 							]
 						],
 						"settings":
@@ -899,25 +931,78 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 2936.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "app/containers/ModelPane/ModelDefinition/ColumnDetail.jsx",
+					"file": "app/containers/ModelPane/renameable.jsx",
 					"settings":
 					{
-						"buffer_size": 4451,
+						"buffer_size": 1715,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2131,
-								2131
+								772,
+								772
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 337.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "app/containers/ModelPane/style.less",
+					"settings":
+					{
+						"buffer_size": 5994,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5586,
+								5586
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LESS/LESS.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 4915.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "app/actions/modelActionCreators.js",
+					"settings":
+					{
+						"buffer_size": 4546,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1644,
+								1644
 							]
 						],
 						"settings":
@@ -926,7 +1011,62 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 739.0,
+						"translation.y": 435.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "app/containers/ModelPane/ModelDefinition/RelationDetail.jsx",
+					"settings":
+					{
+						"buffer_size": 3214,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								856,
+								856
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 159.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "app/util/MetasheetWebAPI.js",
+					"settings":
+					{
+						"buffer_size": 2290,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2152,
+								2152
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 497.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -994,6 +1134,6 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 316.0,
+	"side_bar_width": 369.0,
 	"status_bar_visible": true
 }

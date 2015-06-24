@@ -15,36 +15,23 @@ var RelationDetailList = React.createClass({
 	
 	handleNewRelation: function () {
 		var model = this.props.model;
-		var relation = modelActionCreators.genericAction(
-			'relation',
-			'create',
-			{
-				relation: 'New relation',
-				model_id: model.model_id,
-				type: 'Has one',
-				_persist: false,
-				_dirty: true
-			})
-		var opposite = modelActionCreators.genericAction(
-			'relation',
-			'create',
-			{
-				relation: 'New relation',
-				opposite_relation_id: relation.cid,
-				type: 'Has one',
-				_persist: false,
-				_dirty: true
-			})
-		relation = modelActionCreators.genericAction(
-			'relation',
-			'create',
-			{
-				relation: 'New relation',
-				model_id: model.model_id,
-				type: 'Has one',
-				_persist: false,
-				_dirty: true
-			})
+		var relation = {
+			relation: 'New relation',
+			model_id: model.model_id,
+			type: 'Has one'
+		}
+		modelActionCreators.create('relation', false, relation);
+
+		// relation = modelActionCreators.genericAction(
+		// 	'relation',
+		// 	'create',
+		// 	{
+		// 		relation: 'New relation',
+		// 		model_id: model.model_id,
+		// 		type: 'Has one',
+		// 		_persist: false,
+		// 		_dirty: true
+		// 	})
 	},
 
 	render: function () {
@@ -102,7 +89,8 @@ var RelationDetail = React.createClass({
 		var relation = this.props.relation;
 		// var relatedModel = ModelStore.get(relation.related_model_id)
 		var relatedModelChoices = ModelStore.query(null, 'model').map(function (model) {
-			return <option value={(model.model_id || model.cid)}>
+			var model_id = (model.model_id || model.cid)
+			return <option value={model_id} key={model_id}>
   				{model.model}
   			</option>;
 		})

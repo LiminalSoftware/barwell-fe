@@ -41,8 +41,7 @@ var modelActions = {
 	destroy: function (subject, persist, obj) {
 		var message = {}
 		message[subject] = obj
-
-
+		
 		if (!persist && ((subject+'_id') in obj)) {
 			// mark the object for destruction, but dont actually do it
 			message.actionType = subject.toUpperCase() + '_CREATE'

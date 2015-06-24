@@ -49,7 +49,8 @@ var ModelDefinition = React.createClass({
 		var model = this.props.model
 		model.lock_user = 'me'
 
-		modelActionCreators.create('model', true, model).then(function () {
+		modelActionCreators.create('model', true, _.pick(model, 'model_id', 'model', 'lock_user'))
+		.then(function () {
 			return Promise.all(
 				AttributeStore.query({model_id: model.model_id}).map(function (attr) {
 					if (attr._dirty) return modelActionCreators.create('attribute', true, attr)
@@ -57,21 +58,27 @@ var ModelDefinition = React.createClass({
 				}))
 		}).then(function () {
 			return Promise.all(
-				KeyStore.query({model_id: model.model_id}).map(function (attr) {
-					if (attr._dirty) return modelActionCreators.create('key', true, attr)
-					if (attr._destroy) return modelActionCreators.destroy('key', true, attr)
+				KeyStore.query({model_id: model.model_id}).map(function (key) {
+					if (key._dirty) 
+						return modelActionCreators.create('key', true, key).then(function () {
+							return Promise.all(KeycompStore.query({key_id: key.cid}).map(function (keycomp) {
+								keycomp.key_id = KeyStore.get(keycomp.key_id).key_id;
+								keycomp.attribute_id = AttributeStore.get(keycomp.attribute_id).attribute_id;
+								console.log('keycomp: '+ JSON.stringify(keycomp, null, 2));
+								return modelActionCreators.create('keycomp', true, keycomp)
+							}))
+						});
+					if (key._destroy)
+						return modelActionCreators.destroy('key', true, key)
 				}))
 		}).then(function () {
-			KeyStore.query({model_id: model.model_id}).map(function (key) {
-				// KeycompStore.query({key_id: key.key_id}).map()
-				if (key._dirty) return modelActionCreators.create('key', true, attr)
-				if (key._destroy) return modelActionCreators.destroy('key', true, attr)
-			})
-		}).then(function (){
 			model.lock_user = null
-			return modelActionCreators.create('model', true, model)
+			return modelActionCreators.create('model', true, _.pick(model, 'model_id', 'model', 'lock_user'))
 		}).then(function () {
 			_this.fetchModel()
+		}).catch(function (error) {
+			model.lock_user = null
+			return modelActionCreators.create('model', true, _.pick(model, 'model_id', 'model', 'lock_user'))
 		})
 
 	},

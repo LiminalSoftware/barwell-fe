@@ -1,6 +1,7 @@
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../dispatcher/MetasheetDispatcher'
 import _ from 'underscore'
+import util from '../util/util'
 
 var RelationStore = storeFactory({
   identifier: 'relation_id',
@@ -18,12 +19,9 @@ var RelationStore = storeFactory({
         break;
         
       case 'RELATION_RECEIVE':
-        var _this = this
-        var relations = _.isArray(payload.relation)  ? payload.relation : [payload.relation]
-        models.forEach(function (relation) {
-          relation._dirty = false
-          _this.create(relation)
-        })
+        var relation = payload.relation
+        relation._dirty = false
+        this.create(relation)
         this.emitChange()
         break;
     }

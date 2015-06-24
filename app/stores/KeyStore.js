@@ -1,6 +1,7 @@
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../dispatcher/MetasheetDispatcher'
 import _ from 'underscore'
+import util from '../util/util'
 
 var KeyStore = storeFactory({
   identifier: 'key_id',
@@ -17,14 +18,24 @@ var KeyStore = storeFactory({
         this.emitChange()
         break;
 
+      case 'KEY_PURGE':
+        this.purge(payload.selector)
+        this.emitChange()
+        break;
+
       case 'KEY_RECEIVE':
-        var _this = this
-        var keys = _.isArray(payload.key)  ? payload.key : [payload.key]
+        var key = payload.key
         keys.forEach(function (key) {
           key._dirty = false
           _this.create(key)
         })
         this.emitChange()
+        break;
+
+      case 'MODEL_RECEIVE':
+        var model = payload.model
+        this.purge({model_id: model.model_id})
+        model.keys.map(util.clean).map(this.create)
         break;
     }
   }

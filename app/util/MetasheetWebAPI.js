@@ -1,5 +1,6 @@
 import modelActionCreators from '../actions/modelActionCreators';
 import serverActionCreators from '../actions/serverActionCreators';
+import MetasheetDispatcher from "../dispatcher/MetasheetDispatcher"
 import $ from "jquery";
 import _ from 'underscore'
   
@@ -66,9 +67,14 @@ module.exports = {
     if (method === 'PATCH' || method === 'DELETE') url = url + '?' + identifier + '=eq.' + data[identifier];
 
     console.log(method + '->' + url)
-    return ajax(method, url, json).then(function (obj) {
-      var f = serverActionCreators[success]
-      if (f) f(obj)
+    console.log(data)
+    return ajax(method, url, json).then(function (results) {
+      (_.isArray(results) ? results : [results]).forEach(function (obj) {
+        var message = {}
+        message.actionType = (subject.toUpperCase() + '_RECEIVE')
+        message[subject] = obj
+        MetasheetDispatcher.dispatch(message)
+      });
     });
   }
 

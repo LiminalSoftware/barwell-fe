@@ -18,12 +18,10 @@ var ModelStore = storeFactory({
         break;
         
       case 'MODEL_RECEIVE':
-        var _this = this
-        var models = _.isArray(payload.model)  ? payload.model : [payload.model]
-        models.forEach(function (model) {
-          model._dirty = false
-          _this.create(model)
-        })
+        var model = payload.model
+        model._dirty = false
+        this.create(_.pick(model, 'model', 'model_id', 'cid', 
+            'plural', 'lock_user', '_dirty', '_destroy'))
         this.emitChange()
         break;
     }

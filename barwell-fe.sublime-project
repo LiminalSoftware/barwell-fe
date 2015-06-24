@@ -2,7 +2,12 @@
 	"folders":
 	[
 		{
-			"path": "/C/Users/549764/Documents/GitHub/barwell-fe"
+			"path": "/C/Users/549764/Documents/GitHub/barwell-fe",
+			"folder_exclude_patterns": ["build", "node_modules", "app/assets"],
+			"file_exclude_patterns": ["*sublime-workspace","*coverage.json"]
 		}
-	]
+	],
+	"settings": {
+		"tab_size": 3
+	}
 }

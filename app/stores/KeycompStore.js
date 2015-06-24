@@ -1,6 +1,7 @@
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../dispatcher/MetasheetDispatcher'
 import _ from 'underscore'
+import util from '../util/util'
 
 var KeycompStore = storeFactory({
   identifier: 'keycomp_id',
@@ -19,14 +20,19 @@ var KeycompStore = storeFactory({
         break;
         
       case 'KEYCOMP_RECEIVE':
-        var _this = this
-        if (!payload.keycomp) return;
-        var keycomps = _.isArray(payload.keycomp)  ? payload.keycomp : [payload.keycomp]
-        keycomps.forEach(function (keycomp) {
-          keycomp._dirty = false;
-          _this.create(keycomp)
-        })
+        var keycomps = payload.keycomp
+        keycomp._dirty = false;
+        this.create(keycomp)
         this.emitChange()
+        break;
+
+      case 'MODEL_RECEIVE':
+        var _this = this
+        var model = payload.model
+        model.keys.forEach(function (key) {
+          _this.purge({key_id: key.key_id});
+          (key.keycomps || []).map(util.clean).map(_this.create)
+        })
         break;
     }
   }

@@ -94,7 +94,6 @@ var AttributeDetail = React.createClass({
 	},
 	
 	handleEdit: function () {
-		console.log('edit!')
 		var attribute = this.props.attribute;
 		if (this.state.renaming) return
 		this.setState({
@@ -134,7 +133,6 @@ var AttributeDetail = React.createClass({
 
 	handleDelete: function (event) {
 		var attribute = this.props.attribute
-		console.log('handleDelete attribute: '+ JSON.stringify(attribute, null, 2));
 		modelActionCreators.destroy('attribute', false, attribute)
 		event.preventDefault()
 	},
@@ -157,6 +155,7 @@ var AttributeDetail = React.createClass({
 
 		var nameField = (this.state.renaming) ? 
 			<input ref="renamer" 
+				className="renamer"
 				value={this.state.attribute} 
 				onChange={this.handleNameUpdate} 
 				onBlur={this.commitChanges}/> 
@@ -167,7 +166,7 @@ var AttributeDetail = React.createClass({
 		var typeFieldChoices = Object.keys(constants.fieldTypes).filter(function (type) {
 			return type !== 'PRIMARY_KEY'
 		}).map(function (type) {
-  			return <option value={type}>
+  			return <option value={type} key={type}>
   				{constants.fieldTypes[type]}
   			</option>;
 		});
@@ -182,6 +181,7 @@ var AttributeDetail = React.createClass({
 		
 		components.forEach(function (comp, idx) {
 			var key = KeyStore.get(comp.key_id)
+			if (!key) return;
 			var ord = keyOrd[key.key_id]
 			keyIcons.push(<span 
 				key = {'keycomp-' + comp.keycomp_id} 
@@ -198,25 +198,30 @@ var AttributeDetail = React.createClass({
 		if (col._destroy) {
 			actions.push(<span className="showonhover clickable grayed icon icon-tl-undo" 
 				title="Restore" 
+				key="restore"
 				onClick={this.handleUndelete}>
 				</span> )
 		} else if (col.attribute_id) {
 			actions.push(<span className="showonhover clickable grayed icon icon-kub-trash" 
 				title="Delete attribute" 
+				key="delete"
 				onClick={this.handleDelete}>
 				</span>)
 			actions.push(<span className="showonhover clickable grayed icon icon-tl-pencil" 
 				title="Edit attribute" 
+				key="edit"
 				onClick={this.handleEdit}>
 				</span>)
 			
 		} else {
 			actions.push(<span className="showonhover small clickable grayed icon icon-kub-remove" 
-				title="Cancel" 
+				title="Cancel"
+				key="cancel"
 				onClick={this.handleDelete}>
 				</span>)
 			actions.push(<span className="showonhover clickable grayed icon icon-tl-pencil" 
 				title="Edit attribute" 
+				key="edit"
 				onClick={this.handleEdit}>
 				</span>)
 		}
@@ -228,13 +233,13 @@ var AttributeDetail = React.createClass({
 			<td onDoubleClick={this.handleEdit} key={key + '-name'}>
 				{nameField}
 			</td>
-			<td key={key + '-type'}>
+			<td>
 				{typeSelector}
 			</td>
-			<td key={key + '-keys'} className="centered">
+			<td className="centered">
 				{keyIcons}
 			</td>
-			<td key={key + '-actions'} className="centered">
+			<td className="centered">
 				{actions}
 			</td>
 		</tr>

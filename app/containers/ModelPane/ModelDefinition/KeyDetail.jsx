@@ -131,7 +131,7 @@ var KeyDetail = React.createClass({
 
 	handleUniqClick: function (event) {
 		var key = this.props._key
-		key.uniq = !(key.uniq)
+		key.uniq = event.value
 		modelActionCreators.create('key', false, key)
 	},
 
@@ -173,13 +173,13 @@ var KeyDetail = React.createClass({
 		return <tbody key={reactKey} className={this.state.open ? '' : 'singleton'}>
 					<tr 
 					key={reactKey + '-' + 'keyrow'} 
-					className={key._dirty ? 'unsaved' : ''}>
+					className={(key._dirty?'unsaved':'') + (key._destroy?'destroyed':'')}>
 			<td onClick={this.toggleDetails} className="no-line"><span className={wedgeClasses}></span></td>
 			<td onDoubleClick={this.handleEdit}>
 				{nameField}
 			</td>
 			<td>{keyIcon}</td>
-			<td><input type="checkbox" checked={key.uniq} onClick={this.handleUniqClick}></input></td>
+			<td><input type="checkbox" checked={key.uniq} onChange={this.handleUniqClick}></input></td>
 			<td className="centered"><span className="showonhover clickable grayed icon icon-kub-trash" title="Delete attribute" onClick={_this.handleDelete}></span></td>
 
 		</tr>{this.state.open ? compTrs : null}</tbody>;
@@ -227,8 +227,9 @@ var KeycompDetail = React.createClass({
 			AttributeStore.query({model_id: key.model_id}).forEach(function (attr) {
 				if (attr.attribute_id != keycomp.attribute_id && attr.attribute_id in existingComps) return;
 				if (attr._destroy) return;
+				var attribute_id = (attr.attribute_id || attr.cid)
 				attrSelections.push(
-					<option value={(attr.attribute_id || attr.cid)}>
+					<option value={attribute_id} key={attribute_id}>
   						{attr.attribute}
   					</option>
   				);

@@ -20,13 +20,17 @@ var ViewStore = storeFactory({
 
       case 'VIEW_RECEIVE':
         var _this = this
-        var views = _.isArray(payload.view)  ? payload.view : [payload.view]
-        views.forEach(function (view) {
-          if (!view) return;
-          view._dirty = false
-          _this.create(view)
-        })
+        var view = payload.view
+        if (!view) return;
+        view._dirty = false
+        this.create(view)
         this.emitChange()
+        break;
+
+      case 'MODEL_RECEIVE':
+        var model = payload.model
+        this.purge({model_id: model.model_id});
+        (model.views || []).map(this.create)
         break;
     }
   }

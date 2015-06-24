@@ -1,6 +1,7 @@
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../dispatcher/MetasheetDispatcher'
 import _ from 'underscore'
+import util from '../util/util'
 
 var AttributeStore = storeFactory({
   identifier: 'attribute_id',
@@ -19,21 +20,21 @@ var AttributeStore = storeFactory({
         break;
 
       case 'ATTRIBUTE_PURGE':
-        var objects = this.purge(payload.attribute)
+        this.purge(payload.selector)
         this.emitChange()
         break;
 
       case 'ATTRIBUTE_RECEIVE':
-        var _this = this
-        var attributes = _.isArray(payload.attribute)  ? payload.attribute : [payload.attribute]
-        attributes.forEach(function (attribute) {
-          attribute._dirty = false;
-          if (!attribute) return;
-          _this.create(attribute)
-        })
+        var attribute = payload.attribute
+        this.create(util.clean(attribute))
         this.emitChange()
         break;
 
+      case 'MODEL_RECEIVE':
+        var model = payload.model
+        this.purge({model_id: model.model_id})  
+        model.attributes.map(util.clean).map(this.create)
+        break;
     }
   }
 })
