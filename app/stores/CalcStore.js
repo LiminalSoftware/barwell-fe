@@ -1,41 +1,39 @@
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../dispatcher/MetasheetDispatcher'
 import _ from 'underscore'
+import util from '../util/util'
 
-var ViewStore = storeFactory({
-  identifier: 'view_id',
+var CalcStore = storeFactory({
+  identifier: 'keycomp_id',
   dispatcher: dispatcher,
   pivot: function(payload) {
 
     switch (payload.actionType) {
-      case 'VIEW_CREATE':
-        this.create(payload.view)
+      case 'CALC_CREATE':
+        this.create(payload.calc)
         this.emitChange()
         break;
 
-      case 'VIEW_DESTROY':
-        this.destroy(payload.view)
+      case 'CALC_DESTROY':
+        this.destroy(payload.calc)
         this.emitChange()
         break;
-
-      case 'VIEW_RECEIVE':
-        var _this = this
-        var view = payload.view
-        if (!view) return;
-        view._dirty = false
-        this.create(view)
+        
+      case 'CALC_RECEIVE':
+        var calc = payload.calc
+        calc._dirty = false;
+        this.create(calc)
         this.emitChange()
         break;
 
       case 'MODEL_RECEIVE':
         var model = payload.model
-        if(!('views' in model)) return;
         this.purge({model_id: model.model_id});
-        (model.views || []).map(this.create)
+        (model.calcs || []).map(util.clean).map(this.create)
         this.emitChange()
         break;
     }
   }
 })
 
-export default ViewStore;
+export default CalcStore;

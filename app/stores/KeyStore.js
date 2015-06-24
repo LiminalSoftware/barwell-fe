@@ -25,20 +25,22 @@ var KeyStore = storeFactory({
 
       case 'KEY_RECEIVE':
         var key = payload.key
-        keys.forEach(function (key) {
-          key._dirty = false
-          _this.create(key)
-        })
+        if(!key) return;
+        key._dirty = false
+        this.create(key)
         this.emitChange()
         break;
 
       case 'MODEL_RECEIVE':
         var model = payload.model
-        this.purge({model_id: model.model_id})
-        model.keys.map(util.clean).map(this.create)
+        this.purge({model_id: model.model_id});
+        (model.keys || []).map(util.clean).map(this.create)
+        this.emitChange()
         break;
     }
   }
 })
+
+global.KeyStore = KeyStore;
 
 export default KeyStore;

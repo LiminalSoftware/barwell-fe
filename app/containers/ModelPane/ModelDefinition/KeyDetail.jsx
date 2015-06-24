@@ -146,6 +146,7 @@ var KeyDetail = React.createClass({
 		var keyIcon = <span className={getIconClasses(ord, key)}></span>;
 		var components = KeycompStore.query({key_id: (key.key_id || key.cid)}, 'ord');
 		var nameField
+		var actions = []
 
 		var compTrs = components.map(function (keycomp, idx) {
 			return <KeycompDetail 
@@ -154,6 +155,37 @@ var KeyDetail = React.createClass({
 				idx = {idx}
 				keycomp = {keycomp}/>
 		});
+
+		if (key._destroy) {
+			actions.push(<span className="showonhover clickable grayed icon icon-tl-undo" 
+				title="Restore" 
+				key="restore"
+				onClick={this.handleUndelete}>
+				</span> )
+		} else if (key.key_id) {
+			if(!key.is_primary) actions.push(<span className="showonhover clickable grayed icon icon-kub-trash" 
+				title="Delete key" 
+				key="delete"
+				onClick={this.handleDelete}>
+				</span>)
+			actions.push(<span className="showonhover clickable grayed icon icon-tl-pencil" 
+				title="Edit key" 
+				key="edit"
+				onClick={this.handleEdit}>
+				</span>)
+			
+		} else {
+			actions.push(<span className="showonhover small clickable grayed icon icon-kub-remove" 
+				title="Cancel"
+				key="cancel"
+				onClick={this.handleDelete}>
+				</span>)
+			actions.push(<span className="showonhover clickable grayed icon icon-tl-pencil" 
+				title="Edit key" 
+				key="edit"
+				onClick={this.handleEdit}>
+				</span>)
+		}
 
 		if (key._dirty === true) 
 			compTrs.push(<KeycompDetail 
@@ -175,12 +207,14 @@ var KeyDetail = React.createClass({
 					key={reactKey + '-' + 'keyrow'} 
 					className={(key._dirty?'unsaved':'') + (key._destroy?'destroyed':'')}>
 			<td onClick={this.toggleDetails} className="no-line"><span className={wedgeClasses}></span></td>
-			<td onDoubleClick={this.handleEdit}>
+			<td onDoubleClick={this.handleEdit} title={key.key_id}>
 				{nameField}
 			</td>
 			<td>{keyIcon}</td>
 			<td><input type="checkbox" checked={key.uniq} onChange={this.handleUniqClick}></input></td>
-			<td className="centered"><span className="showonhover clickable grayed icon icon-kub-trash" title="Delete attribute" onClick={_this.handleDelete}></span></td>
+			<td className="centered">
+				{actions}
+			</td>
 
 		</tr>{this.state.open ? compTrs : null}</tbody>;
 	}
@@ -238,7 +272,7 @@ var KeycompDetail = React.createClass({
 		}
 		
 
-		return <tr className = {key._dirty ? 'unsaved':''}>
+		return <tr className={(key._dirty?'unsaved':'') + (key._destroy?'destroyed':'')}>
 			<td className="no-line">
 				<span className="num-circle">{idx + 1}</span> 
 			</td>

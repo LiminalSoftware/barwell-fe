@@ -22,11 +22,9 @@ var stripInternalVars = function (obj) {
 var ajax = function (method, url, json, retry) {
   retry = retry || 1;
   return new Promise(function (resolve, reject) {
-    $.ajax({
+    var params = {
       type: method,
       url: url,
-      data: json,
-      contentType: 'application/json',
       success: function (obj, status, xhr) {
         resolve(obj)
       },
@@ -40,13 +38,18 @@ var ajax = function (method, url, json, retry) {
           reject(status)
         }
       }
-    })
+    };
+    if (json) {
+      params.data = json
+      params.contentType = 'application/json'
+    }
+    $.ajax(params)
   })
 }
 
 module.exports = {
   
-  persist: function (subject, action, data) {
+  persist: function (subject, action, data, update) {
     action = action.toUpperCase()
     var retryCount = 0
     var identifier = (subject + '_id')
@@ -70,6 +73,7 @@ module.exports = {
     console.log(data)
     return ajax(method, url, json).then(function (results) {
       (_.isArray(results) ? results : [results]).forEach(function (obj) {
+        if (update === false || method=='DELETE') return;  // temporary hack until I refactor model push
         var message = {}
         message.actionType = (subject.toUpperCase() + '_RECEIVE')
         message[subject] = obj

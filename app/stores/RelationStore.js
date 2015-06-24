@@ -9,6 +9,8 @@ var RelationStore = storeFactory({
   pivot: function(payload) {
     switch (payload.actionType) {
       case 'RELATION_CREATE':
+
+        console.log('RELATION_CREATE payload.relation: '+ JSON.stringify(payload.relation, null, 2));
         this.create(payload.relation)
         this.emitChange()
         break;
@@ -22,6 +24,14 @@ var RelationStore = storeFactory({
         var relation = payload.relation
         relation._dirty = false
         this.create(relation)
+        this.emitChange()
+        break;
+
+      case 'MODEL_RECEIVE':
+        var model = payload.model
+        if(!('relations' in model)) return;
+        this.purge({model_id: model.model_id});
+        (model.relations || []).map(this.create)
         this.emitChange()
         break;
     }

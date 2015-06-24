@@ -26,14 +26,16 @@ var AttributeStore = storeFactory({
 
       case 'ATTRIBUTE_RECEIVE':
         var attribute = payload.attribute
-        this.create(util.clean(attribute))
+        if (!attribute) return;
+        this.create(util.clean(payload.attribute))
         this.emitChange()
         break;
 
       case 'MODEL_RECEIVE':
         var model = payload.model
-        this.purge({model_id: model.model_id})  
+        this.purge({model_id: model.model_id})
         model.attributes.map(util.clean).map(this.create)
+        this.emitChange()
         break;
     }
   }

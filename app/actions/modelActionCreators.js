@@ -5,26 +5,22 @@ import ModelStore from '../stores/ModelStore'
 import groomView from '../containers/Views/groomView'
 
 var modelActions = {
-
-	genericAction: function(subject, action, data) {
+	
+	fetch: function (subject, selector) {
 		var message = {}
-		data._dirty = true
-		message.actionType = subject.toUpperCase() + '_' + action.toUpperCase()
-		message[subject] = data
-		MetasheetDispatcher.dispatch(message)
-
-		if (!(data._persist === false)) webUtils.persist(subject, action, data)
-		return data;
+		message.selector = selector
+		webUtils.persist(subject, 'FETCH', selector)
 	},
 
-	create: function (subject, persist, obj) {
+	create: function (subject, persist, obj, update) {
 		var message = {}
+		if (update !== false) update = true
 		obj._dirty = true
 		obj._destroy = false
 		message[subject] = obj
 		message.actionType = subject.toUpperCase() + '_CREATE'
 		MetasheetDispatcher.dispatch(message)
-		if (persist) return webUtils.persist(subject, 'CREATE', obj);
+		if (persist) return webUtils.persist(subject, 'CREATE', obj, update);
 		else return new Promise(function(resolve, reject){
 			return resolve(obj)
 		})

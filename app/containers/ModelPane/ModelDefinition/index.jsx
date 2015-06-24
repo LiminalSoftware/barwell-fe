@@ -6,6 +6,7 @@ import AttributeStore from "../../../stores/AttributeStore"
 import KeyStore from "../../../stores/KeyStore"
 import KeycompStore from "../../../stores/KeycompStore"
 import RelationStore from "../../../stores/RelationStore"
+import CalcStore from "../../../stores/CalcStore"
 import modelActionCreators from '../../../actions/modelActionCreators'
 import constants from '../../../constants/MetasheetConstants'
 import AttributeDetailList from './AttributeDetail'
@@ -25,6 +26,7 @@ var ModelDefinition = React.createClass({
 		KeyStore.removeChangeListener(this._onChange)
 		KeycompStore.removeChangeListener(this._onChange)
 		RelationStore.removeChangeListener(this._onChange)
+		CalcStore.removeChangeListener(this._onChange)
 	},
 
 	componentWillMount: function () {
@@ -33,10 +35,17 @@ var ModelDefinition = React.createClass({
 		KeyStore.addChangeListener(this._onChange)
 		KeycompStore.addChangeListener(this._onChange)
 		RelationStore.addChangeListener(this._onChange)
+		CalcStore.addChangeListener(this._onChange)
 	},
 
 	_onChange: function () {
 		this.forceUpdate()
+	},
+
+	getInitialState: function () {
+		return {
+			committing: false
+		}
 	},
 
 	fetchModel: function () {
@@ -49,22 +58,24 @@ var ModelDefinition = React.createClass({
 		var model = this.props.model
 		model.lock_user = 'me'
 
-		modelActionCreators.create('model', true, _.pick(model, 'model_id', 'model', 'lock_user'))
+		this.setState({committing: true})
+
+		modelActionCreators.create('model', true, model, false)
 		.then(function () {
+
 			return Promise.all(
-				AttributeStore.query({model_id: model.model_id}).map(function (attr) {
+				AttributeStore.query({model_id: (model.model_id || model.cid)}).map(function (attr) {
 					if (attr._dirty) return modelActionCreators.create('attribute', true, attr)
 					if (attr._destroy) return modelActionCreators.destroy('attribute', true, attr)
 				}))
 		}).then(function () {
 			return Promise.all(
 				KeyStore.query({model_id: model.model_id}).map(function (key) {
-					if (key._dirty) 
+					if (key._dirty)
 						return modelActionCreators.create('key', true, key).then(function () {
-							return Promise.all(KeycompStore.query({key_id: key.cid}).map(function (keycomp) {
+							return Promise.all(KeycompStore.query({key_id: (key.key_id || key.cid)}).map(function (keycomp) {
 								keycomp.key_id = KeyStore.get(keycomp.key_id).key_id;
 								keycomp.attribute_id = AttributeStore.get(keycomp.attribute_id).attribute_id;
-								console.log('keycomp: '+ JSON.stringify(keycomp, null, 2));
 								return modelActionCreators.create('keycomp', true, keycomp)
 							}))
 						});
@@ -72,13 +83,13 @@ var ModelDefinition = React.createClass({
 						return modelActionCreators.destroy('key', true, key)
 				}))
 		}).then(function () {
+			_this.setState({committing: false})
 			model.lock_user = null
-			return modelActionCreators.create('model', true, _.pick(model, 'model_id', 'model', 'lock_user'))
-		}).then(function () {
-			_this.fetchModel()
-		}).catch(function (error) {
+			return modelActionCreators.create('model', true, model, true)
+		}).catch(function () {
+			_this.setState({committing: false})
 			model.lock_user = null
-			return modelActionCreators.create('model', true, _.pick(model, 'model_id', 'model', 'lock_user'))
+			return modelActionCreators.create('model', true, model, true)
 		})
 
 	},
@@ -101,7 +112,6 @@ var ModelDefinition = React.createClass({
 	render: function () {
 		var _this = this;
 		var model = this.props.model;
-		var dirty = this.isDirty()
 		
 		if(!model) return <div key="model-detail-bar" className="model-details">
 			<h3 key="attr-header">No Model Selected</h3>
@@ -114,19 +124,47 @@ var ModelDefinition = React.createClass({
 			<KeyDetailList model={model} />
 			<CalculationDetailList model={model} />
 
-			{(dirty) ? <div className="decision-row">
-				<div className="cancel-button" onClick={this.fetchModel}>
+			<div className = {(this.isDirty() || this.state.committing ? 'active' : 'inactive') + ' decision-row'}>
+				{(this.state.committing) ? <Spinner/> : null}
+				{(this.state.committing) ? null : <div className="cancel-button" onClick={this.fetchModel}>
 					<span className="gray large icon icon-cld-delete"></span>
 					Cancel changes
-				</div>	
-				<div className="save-button" onClick={this.commitModel}>
+				</div>}
+				{(this.state.committing) ? null : <div className="save-button" onClick={this.commitModel}>
 					<span className="gray large icon icon-cld-upload"></span>
 					Commit changes
-				</div>
-			</div> : null}
-
+				</div>}
+			</div>
+			
+			
 		</div>;
 	}
 });
 
 export default ModelDefinition;
+
+var Spinner = React.createClass({
+	componentDidMount: function () {
+		setTimeout(this.increment, 100);
+	},
+
+	increment: function () {
+		var spin = ((this.state.spin + 1) % 9);
+		if(!this.isMounted()) return;
+		this.setState({spin: spin})
+		setTimeout(this.increment, 100);
+	},
+
+	getInitialState: function () {
+		return {
+			spin: 0
+		}
+	},
+
+	render: function () {
+		return <span className="cancel-button">
+				<span className={"gray large icon icon-loadingcr-" + (this.state.spin + 1)}></span>
+				Committing changes...
+			</span>
+	}
+});

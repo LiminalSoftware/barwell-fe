@@ -20,7 +20,8 @@ var KeycompStore = storeFactory({
         break;
         
       case 'KEYCOMP_RECEIVE':
-        var keycomps = payload.keycomp
+        var keycomp = payload.keycomp
+        if (!keycomp) return;
         keycomp._dirty = false;
         this.create(keycomp)
         this.emitChange()
@@ -29,13 +30,17 @@ var KeycompStore = storeFactory({
       case 'MODEL_RECEIVE':
         var _this = this
         var model = payload.model
+        if(!('keys' in model)) return;
         model.keys.forEach(function (key) {
           _this.purge({key_id: key.key_id});
           (key.keycomps || []).map(util.clean).map(_this.create)
         })
+        this.emitChange()
         break;
     }
   }
 })
+
+global.KeycompStore = KeycompStore;
 
 export default KeycompStore;

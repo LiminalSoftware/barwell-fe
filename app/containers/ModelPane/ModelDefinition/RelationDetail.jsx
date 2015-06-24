@@ -38,7 +38,7 @@ var RelationDetailList = React.createClass({
 		var model = this.props.model
 		var relList = RelationStore.query({model_id: model.model_id}).map(function (relation) {
 			return <RelationDetail 
-				key ={relation.relation_id || relation.cid} 
+				key = {relation.relation_id || relation.cid} 
 				relation = {relation} />;
 		});
 		if (relList.length === 0) {
@@ -72,21 +72,88 @@ var RelationDetailList = React.createClass({
 
 var RelationDetail = React.createClass({
 
-	handleModelSelect: function () {
+	getInitialState: function () {
+		var relation = this.props.relation;
+		return {
+			renaming: false,
+			name: relation.relation,
+			hasBeenRenamed: false
+		}
+	},
 
+	componentWillUnmount: function () {
+		document.removeEventListener('keyup', this.handleKeyPress)
+	},
+
+	commitChanges: function () {
+		var relation = this.props.relation
+		relation.relation = this.state.name
+		this.setState({hasBeenRenamed: true})
+		modelActionCreators.create('relation', false, relation)
+		this.revert()
+	},
+	
+	cancelChanges: function () {
+		this.revert()
+	},
+	
+	handleEdit: function () {
+		var relation = this.props.relation;
+		if (this.state.renaming) return
+		this.setState({
+			renaming: true,
+			name: relation.relation
+		}, function () {
+			React.findDOMNode(this.refs.renamer).focus();
+		})
+		document.addEventListener('keyup', this.handleKeyPress)
+	},
+	
+	revert: function () {
+		var relation = this.props.relation;
+		document.removeEventListener('keyup', this.handleKeyPress)
+		this.setState({
+			renaming: false,
+			name: relation.relation
+		})
+	},
+
+	handleKeyPress: function (event) {
+		if (event.keyCode === 27) this.cancelChanges()
+		if (event.keyCode === 13) this.commitChanges()
+	},
+
+	handleNameUpdate: function (event) {
+		this.setState({name: event.target.value})
+	},
+
+	handleModelSelect: function (event) {
+		var model_id = event.target.value
+		var relation = this.props.relation
+		var relatedModel = ModelStore.get(model_id)
+		relation.related_model_id = model_id
+		if(!this.state.hasBeenRenamed) relation.relation = relatedModel.model
+		modelActionCreators.create('relation', false, relation)
+	},
+
+	handleTypeSelect: function (event) {
+		var relation = this.props.relation
+		relation.type = event.target.value
+		modelActionCreators.create('relation', false, relation)
 	},
 
 	handleRelationCancel: function () {
 		var relation = this.props.relation;
 		if (!relation) return
-		modelActionCreators.genericAction(
-			'relation',
-			'destroy',
-			{cid: relation.cid})
+		modelActionCreators.destroy('relation', false, {cid: relation.cid})
 	},
 
 	render: function () {
 		var relation = this.props.relation;
+		var relatedModel
+		var relatedModelField
+		var nameField
+		var typeField
 		// var relatedModel = ModelStore.get(relation.related_model_id)
 		var relatedModelChoices = ModelStore.query(null, 'model').map(function (model) {
 			var model_id = (model.model_id || model.cid)
@@ -96,20 +163,42 @@ var RelationDetail = React.createClass({
 		})
 		relatedModelChoices.unshift(<option value="0"> ---- </option>)
 
+		if(!relation.relation_id){
+			relatedModelField = <select value={relation.related_model_id || 0} onChange={this.handleModelSelect}>
+				{relatedModelChoices}
+			</select>
+			typeField = <select value={relation.type} onChange={this.handleTypeSelect}>
+				<option value="Has one">Has one</option>
+				<option value="Has many">Has many</option>
+				<option value="One to one">One to one</option>
+			</select>
+		} else {
+			relatedModel = ModelStore.get(relation.related_model_id)
+			relatedModelField = <span>{!!relatedModel ? relatedModel.model : ''}</span>
+			typeField = <span>{relation.type}</span>
+		}
+
+		if (this.state.renaming) 
+			nameField = <input ref="renamer" 
+				value={this.state.name} 
+				onChange={this.handleNameUpdate} 
+				onBlur={this.commitChanges}/> 
+		else nameField = relation.relation;
+
 		return <tr 
 			key={'relation-'+(relation.relation_id || relation.cid)}
-			className={relation._dirty ? 'unsaved':''}>
-			<td>{relation.relation}</td>
-			<td> <select value={0} onChange={this.handleModelSelect}>
-				{relatedModelChoices}
-			</select></td>
-			<td><select value="Has one" on>
-				<option value="Has one">Has one</option>
-				<option value="Has one">Has many</option>
-				<option value="Has one">One to one</option>
-			</select></td>
+				className={(relation._dirty?'unsaved':'') + (relation._destroy?'destroyed':'')}>
+			<td  onDoubleClick={this.handleEdit}>
+				{nameField}
+			</td>
+			<td>
+				{relatedModelField}
+			</td>
+			<td>
+				{typeField}
+			</td>
 			<td className="centered">
-			{relation._persist === false ? <span 
+			{relation._dirty ? <span 
 				className="showonhover small clickable grayed icon icon-kub-remove" 
 				title="Delete component" 
 				onClick={this.handleRelationCancel}>

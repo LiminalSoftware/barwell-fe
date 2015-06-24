@@ -3,8 +3,8 @@ import { Link } from "react-router"
 import styles from "./style.less"
 import ModelStore from "../../../stores/ModelStore"
 import AttributeStore from "../../../stores/AttributeStore"
-import KeyStore from "../../../stores/KeyStore"
-import KeycompStore from "../../../stores/KeycompStore"
+import CalcStore from "../../../stores/CalcStore"
+
 import modelActionCreators from '../../../actions/modelActionCreators'
 import constants from '../../../constants/MetasheetConstants'
 import getIconClasses from './getIconClasses'
@@ -14,7 +14,8 @@ var CalculationDetailList = React.createClass({
 
 	handleAddNewCalc: function (event) {
 		var model = this.props.model;
-		// var key = modelActionCreators.genericAction(
+		var calc = {model_id: model.model_id, calc: 'New calculation'};
+		modelActionCreators.create('calc', false, calc)
 		// 'key',
 		// 'create',
 		// {
@@ -28,21 +29,39 @@ var CalculationDetailList = React.createClass({
 
 	render: function () {
 		var model = this.props.model
-		var calcList
-
-		// calcList = CalcStore.query({model_id: (model.model_id || model.cid)}).map(function (key) {
-		// 	var keyId = (key.key_id || key.cid)
-		// 	return <CalcDetail key={"model-definition-key-" + keyId} mdlKey = {key} keyOrd = {keyOrd} />;
-		// })
+		var calcList = CalcStore.query({model_id: (model.model_id || model.cid)}).map(function (calc) {
+			return <CalcDetail key={(calc.calc_id || calc.cid)} calc={calc} />;
+		})
 
 		return <div className = "detail-block">
 			<h3 key="calcs-header">Calculations</h3>
 			<table key="keys-table" className="detail-table">
+			{calcList}
 			</table>
 			<div><a className="new-adder new-key" onClick={this.handleAddNewCalc}>
 				<span className="small addNew icon icon-plus"></span>New calculation
 			</a></div>
 		</div>
+	}
+
+})
+
+var CalcDetail = React.createClass({
+	getInitialState: function () {
+		return {
+			focusElement: null,
+		}
+	},
+
+	render: function () {
+		var calc = this.props.calc
+		return <tbody>
+		<tr><td>
+			{calc.calc}
+		</td></tr><tr><td>
+			<input ref="calc-in" value=""/>
+		</td></tr>
+		</tbody>
 	}
 
 })

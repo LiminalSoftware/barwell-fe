@@ -18,7 +18,7 @@ var AttributeDetailList = React.createClass({
 		var obj = {
 			attribute: 'New attribute',
 			type: 'INTEGER',
-			model_id: model.model_id
+			model_id: (model.model_id || model.cid)
 		}
 		modelActionCreators.create('attribute', false, obj)
 		event.preventDefault()
