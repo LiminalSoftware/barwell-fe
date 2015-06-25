@@ -43,7 +43,7 @@ var AttributeDetailList = React.createClass({
 		});
 
 		return <div className = "detail-block">
-			<h3 key="attr-header">Attribute</h3>
+			<h3 key="attr-header">Attributes</h3>
 			<table key="attr-table" className="detail-table">
 				<thead>
 					<tr>
@@ -202,11 +202,12 @@ var AttributeDetail = React.createClass({
 				onClick={this.handleUndelete}>
 				</span> )
 		} else if (col.attribute_id) {
-			actions.push(<span className="showonhover clickable grayed icon icon-kub-trash" 
-				title="Delete attribute" 
-				key="delete"
-				onClick={this.handleDelete}>
-				</span>)
+			if (col.type !== 'PRIMARY_KEY')
+				actions.push(<span className="showonhover clickable grayed icon icon-kub-trash" 
+					title="Delete attribute" 
+					key="delete"
+					onClick={this.handleDelete}>
+					</span>)
 			actions.push(<span className="showonhover clickable grayed icon icon-tl-pencil" 
 				title="Edit attribute" 
 				key="edit"

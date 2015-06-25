@@ -13,6 +13,7 @@ import AttributeDetailList from './AttributeDetail'
 import CalculationDetailList from './CalculationDetail'
 import RelationDetailList from './RelationDetail'
 import KeyDetailList from './KeyDetail'
+import ModelDetails from './ModelDetails'
 import getIconClasses from './getIconClasses'
 import _ from 'underscore'
 
@@ -98,6 +99,7 @@ var ModelDefinition = React.createClass({
 		var model = this.props.model;
 		var dirty = false;
 		if (!model) return false
+		
 		dirty = dirty || _.any(AttributeStore.query({model_id: model.model_id}).map(function (attr) {
 			return attr._dirty || attr._destroy
 		}))
@@ -106,25 +108,31 @@ var ModelDefinition = React.createClass({
 			return key._dirty || key._destroy
 		}))
 
+		dirty = dirty || _.any(RelationStore.query({model_id: model.model_id}).map(function (rel) {
+			return rel._dirty || rel._destroy
+		}))
+
 		return dirty;
 	},
 
 	render: function () {
 		var _this = this;
 		var model = this.props.model;
+		var dirty = this.isDirty()
 		
 		if(!model) return <div key="model-detail-bar" className="model-details">
 			<h3 key="attr-header">No Model Selected</h3>
 		</div>
 
-		return <div key="model-detail-bar" className="model-details">
+		return <div key="model-detail-bar" className={"model-details " + (dirty ? 'dirty' : '')}>
 			
+			<ModelDetails model={model} />
 			<AttributeDetailList model={model} />
 			<RelationDetailList model={model} />
 			<KeyDetailList model={model} />
 			<CalculationDetailList model={model} />
 
-			<div className = {(this.isDirty() || this.state.committing ? 'active' : 'inactive') + ' decision-row'}>
+			<div className = {(dirty || this.state.committing ? 'active' : 'inactive') + ' decision-row'}>
 				{(this.state.committing) ? <Spinner/> : null}
 				{(this.state.committing) ? null : <div className="cancel-button" onClick={this.fetchModel}>
 					<span className="gray large icon icon-cld-delete"></span>

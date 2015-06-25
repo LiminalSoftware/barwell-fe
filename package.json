@@ -39,6 +39,7 @@
     "moment": "^2.10.3",
     "null-loader": "^0.1.0",
     "object-assign": "*",
+    "pluralize": "^1.0.0",
     "react": "^0.13.1",
     "react-hot-loader": "^1.0.0",
     "react-proxy-loader": "^0.3.1",

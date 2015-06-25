@@ -31,7 +31,6 @@
 	
 	ul {
 		overflow: visible;
-		.transition(all 0.2us ease-in);
 		list-style: none;
 		padding: 0;		
 		margin: 0;
@@ -45,10 +44,19 @@
 					
 			&.li-view {
 				background-color: @cream;
+
+				.transition(all 200ms ease-in);
+				
 				border-right: 1px solid @pureGray3;
 				a {
 					border-left: 4px solid @heavyCream;
 					color: @darkText;
+				}
+
+				&.new {
+					margin-left: 150px;
+					margin-right: -150px;
+
 				}
 			}
 

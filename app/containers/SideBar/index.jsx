@@ -157,10 +157,20 @@ var ModelLink = React.createClass ({
 })
 
 var ViewLink = React.createClass({
+
+	componentDidMount: function () {
+		var _this = this
+		var view = this.props.view;
+		setTimeout(function () {
+			view._new = false;
+			modelActionCreators.create('view', false, view)
+		}, 0)
+	},
 	
 	getInitialState: function () {
 		return {
-			renaming: false
+			renaming: false,
+			isnew: true
 		}
 	},
 	
@@ -182,7 +192,7 @@ var ViewLink = React.createClass({
 		var viewDisplay = (!!this.state.renaming) ?  
 			(<input className="view-renamer" ref="renamer" value={this.state.name} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/>) : 
 			(<span>{view.view}</span>) ;
-		return <li className="li-view" key={"view-li-" + view.view_id}>
+		return <li className={"li-view " + (view._new ? "new" : "")} key={"view-li-" + view.view_id}>
 			<Link to="view" params={{modelId: model.model_id, viewId: (view.view_id || view.cid)}} key={key} onDoubleClick={this.edit} >
 				<span className={"icon "+view.data.icon}></span>{viewDisplay}
 			</Link>
@@ -231,7 +241,8 @@ var ViewAdder = React.createClass ({
 		modelActionCreators.createView({
 			model_id: model.model_id,
 			view: (model.model + ' - New view'),
-			type: 'Tabular'
+			type: 'Tabular',
+			_new: true
 		})
 		event.preventDefault()
 	},
