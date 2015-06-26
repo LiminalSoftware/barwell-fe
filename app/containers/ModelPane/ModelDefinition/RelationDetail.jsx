@@ -132,13 +132,17 @@ var RelationDetail = React.createClass({
 		var relation = this.props.relation
 		var relatedModel = ModelStore.get(model_id)
 		relation.related_model_id = model_id
-		if(!this.state.hasBeenRenamed) relation.relation = relatedModel.model
+		if(!this.state.hasBeenRenamed) 
+			relation.relation = relation.type === 'Has one' ? relatedModel.model : relatedModel.plural
 		modelActionCreators.create('relation', false, relation)
 	},
 
 	handleTypeSelect: function (event) {
 		var relation = this.props.relation
+		var relatedModel = ModelStore.get(relation.related_model_id) || {}
 		relation.type = event.target.value
+		if(!this.state.hasBeenRenamed) 
+			relation.relation = relation.type === 'Has one' ? relatedModel.model : relatedModel.plural
 		modelActionCreators.create('relation', false, relation)
 	},
 

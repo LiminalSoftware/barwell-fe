@@ -2,6 +2,18 @@ import React from "react"
 import fieldTypes from "../../fields"
 import _ from "underscore"
 
+import modelActionCreators from "../../../../actions/modelActionCreators.js"
+
+import ModelStore from "../../../../stores/ModelStore"
+import KeyStore from "../../../../stores/KeyStore"
+import KeycompStore from "../../../../stores/KeycompStore"
+import AttributeStore from "../../../../stores/AttributeStore"
+
+import ViewDataStores from "../../../../stores/ViewDataStores"
+import storeFactory from 'flux-store-factory';
+import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
+
+
 var HEADER_HEIGHT = 35
 var ROW_HEIGHT = 22
 var CURSOR_LIMIT = 60
@@ -12,6 +24,47 @@ var limit = function (min, max, value) {
 	if (value < min) return min
 	if (value > max) return max
 	else return value
+}
+
+
+var createTabularStore = function (model) {
+	var primaryAttrId = AttributeStore.query(
+		{model_id: model.model_id, type: 'PRIMARY_KEY'}
+	)[0].attribute_id;
+
+	return storeFactory({
+		identifier: ('a' + primaryAttrId),
+  		dispatcher: dispatcher,
+  		pivot: function(payload) {
+	    	var type = payload.actionType
+	    	var label = 'm' + model.model_id
+	    	var upperLabel = label.toUpperCase()
+
+    		if (type === (upperLabel + '_CREATE')) {
+    			this.create(payload[label])
+    			this.emitChange()
+    		}
+
+    		if (type === (upperLabel + '_DESTROY')) {
+    			this.destroy(payload[label])
+    			this.emitChange()
+    		}
+	        
+	      if (type === (upperLabel + '_RECEIVE')) {
+	      	var _this = this
+	      	var objects = payload[label]
+	      	var startIndex = payload.startIndex
+	        	var endIndex = payload.endIndex
+
+	        	if (!_.isArray(objects)) objects = [objects]
+	      	objects.forEach(function (obj, idx) {
+	      		obj.idx = startIndex + idx;
+	      		_this.create(obj)
+	      	});
+    			this.emitChange()
+    		}
+  		}
+	})
 }
 
 var TabularTBody = React.createClass ({
@@ -26,6 +79,36 @@ var TabularTBody = React.createClass ({
 		}
 	},
 
+	_onChange: function () {
+		this.forceUpdate()
+	},
+
+	componentWillMount: function () {
+		var view = this.props.view
+		var model = ModelStore.get(view.model_id)
+		
+		if (!this.store) {
+			this.store = ViewDataStores[view.view_id] = createTabularStore(model)
+		} else {
+			this.store.register()
+		}
+
+		this.store.addChangeListener(this._onChange)
+		
+	},
+	
+	componentDidMount: function () {
+		var view = this.props.view
+		var model = ModelStore.get(view.model_id)
+
+		modelActionCreators.fetchRecords(model, 0, 10)
+	},
+
+	componentWillUnmount: function () {
+		this.store.removeChangeListener(this._onChange)
+		this.store.unregister()
+	},
+
 	shouldComponentUpdate: function (next) {
 		var old = this.props
 		return !(
@@ -33,27 +116,6 @@ var TabularTBody = React.createClass ({
 			_.isEqual(old.columns, next.columns) &&
 			_.isEqual(old.sorting, next.sort)
 		)
-	},
-
-	componentWillMount: function () {
-		
-	},
-	
-	componentDidMount: function () {
-		
-	},
-
-	componentWillReceiveProps: function (newProps) {
-
-	},
-
-	componentWillUnmount: function () {
-
-	},
-
-	handleFetch: function () {
-		this.setState({fetching: false})
-		this.forceUpdate()
 	},
 	
 	fetch: function (force) {
@@ -63,9 +125,8 @@ var TabularTBody = React.createClass ({
 		var currentOffset = this.state.window.offset
 		var mismatch = Math.abs(currentOffset - tgtOffset)
 
-		// console.log('rowOffset: '+ rowOffset + '; tgtOffset: '+ tgtOffset + '; mismatch: '+ mismatch)
-
 		if (force || (mismatch > OFFSET_TOLERANCE && currentOffset !== boundedOffset)) {
+			modelActionCreators.fetchRecords(model, 0, 10)
 			this.setState({
 				fetching: true,
 				window: {
@@ -83,11 +144,6 @@ var TabularTBody = React.createClass ({
 		}
 	},
 
-	getValueAt: function (row, col) {
-		// return this.cursor.at(row)
-		return null
-	},
-
 	render: function () {
 		var rows = []
 		var window = this.state.window
@@ -98,12 +154,12 @@ var TabularTBody = React.createClass ({
 		var dblClicker = this.props.dblClicker
 		//var pk = model.primary_key_attribute_id
 
-		rows = (view.records || []).map(function (obj, i) {
-			var rowKey = 'tabular-' +  i //(!!pk && !!obj ? obj.synget(pk) : i)
+		rows = this.store.query({}, 'idx').map(function (obj, i) {
+			var rowKey = 'tabular-' +  obj.idx //(!!pk && !!obj ? obj.synget(pk) : i)
 			var els = columns.map(function (col, idx) {
 				var element = (fieldTypes[col.type] || fieldTypes.Text).element
-				var cellKey = rowKey + '-' + col.id
-				var value = (!!obj) ? obj.attributes[col.id] : ""
+				var cellKey = rowKey + '-' + col.attribute_id
+				var value = (!!obj) ? obj[('a' + col.attribute_id)] : ""
 
 				return React.createElement(element, {
 					config: col,

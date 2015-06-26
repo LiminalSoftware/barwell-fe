@@ -42,7 +42,7 @@ var ModelDefinition = React.createClass({
 	_onChange: function () {
 		this.forceUpdate()
 	},
-
+	
 	getInitialState: function () {
 		return {
 			committing: false
@@ -51,7 +51,11 @@ var ModelDefinition = React.createClass({
 
 	fetchModel: function () {
 		var model = this.props.model
-		modelActionCreators.genericAction('model', 'fetch', {model_id: model.model_id})
+		var _this = this;
+		_this.setState({committing: true})
+		modelActionCreators.fetch('model', {model_id: model.model_id}).then(function () {
+			_this.setState({committing: false})
+		})
 	},
 
 	commitModel: function () {
@@ -99,6 +103,8 @@ var ModelDefinition = React.createClass({
 		var model = this.props.model;
 		var dirty = false;
 		if (!model) return false
+
+		dirty = dirty || model._dirty
 		
 		dirty = dirty || _.any(AttributeStore.query({model_id: model.model_id}).map(function (attr) {
 			return attr._dirty || attr._destroy
@@ -126,7 +132,7 @@ var ModelDefinition = React.createClass({
 
 		return <div key="model-detail-bar" className={"model-details " + (dirty ? 'dirty' : '')}>
 			
-			<ModelDetails model={model} />
+			<ModelDetails model={model} key={'details-'+model.model_id} />
 			<AttributeDetailList model={model} />
 			<RelationDetailList model={model} />
 			<KeyDetailList model={model} />

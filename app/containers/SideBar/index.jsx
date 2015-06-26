@@ -31,11 +31,13 @@ var SideBar = React.createClass({
 		return {keyControl: false}
 	},
 
-	handleAddModel: function () {
-		modelActionCreators.createModel({
+	handleAddModel: function (event) {
+		var model = {	
 			model: 'New model',
 			plural: 'New models'
-		})
+		}
+		modelActionCreators.create('model', true, model)
+		event.preventDefault();
 	},
 
 	render: function () {
@@ -55,7 +57,7 @@ var SideBar = React.createClass({
 			<ul>
 				{modelLinks}
 				<li className = "li-model ">
-					<a className="clickable addNew" onClick={this.handleAddModel}>
+					<a className="clickable addNew" href="#" onClick={this.handleAddModel}>
 						<span className="small addNew icon icon-plus"></span>
 						Create new model
 					</a>
@@ -179,10 +181,10 @@ var ViewLink = React.createClass({
 		this.setState({name: name})
 	},
 
-	handleDelete:function (e) {
+	handleDelete:function (event) {
 		var view = this.props.view;
 		modelActionCreators.destroyView(view)
-		e.preventDefault();
+		event.preventDefault();
 	},
 	
 	render: function () {

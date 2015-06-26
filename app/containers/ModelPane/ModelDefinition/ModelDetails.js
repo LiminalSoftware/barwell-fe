@@ -12,6 +12,7 @@ import _ from 'underscore'
 import pluralize from 'pluralize'
 
 var ModelDetails = React.createClass({
+
 	getInitialState: function () {
 		var model = this.props.model;
 		return {
@@ -31,9 +32,7 @@ var ModelDetails = React.createClass({
 		var name = this.state.name
 		var plural = this.state.plural
 
-		if (this.editingName) plural = pluralize.plural(name)
-
-		console.log('plural: '+ JSON.stringify(plural, null, 2));
+		if (this.state.editingName) plural = pluralize.plural(name)
 		
 		this.setState({
 			plural: plural
@@ -100,30 +99,48 @@ var ModelDetails = React.createClass({
 	},
 
 	render: function () {
+		var model = this.props.model;
 		return <div className="detail-block">
 			<h3>Details</h3>
 			<table className="detail-table">
 				<tbody>
-					<tr className="top-line">
+					<tr 
+					className={'top-line ' + (model._dirty?'unsaved':'')}>
+					
 						<td className="width-30">Name:</td>
-						<td className="width-70"onDoubleClick={this.handleEditName}>
-							{this.state.editingName ? 
-								<input value={this.state.name} onChange={this.handleNameUpdate} ref="renamer"/>
-								: <span>{this.state.name}
+						<td className="width-60"onDoubleClick={this.handleEditName}>
+								{this.state.editingName ? 
+									<input 
+										value={this.state.name} 
+										onChange={this.handleNameUpdate} 
+										ref="renamer"/>
+								: <span>
+									{this.state.name}
+								</span>
+								}
+						</td>
+						<td className="width-10">
+							
 								<span className="showonhover clickable grayed icon icon-tl-pencil" 
-									title="Edit name" onClick={this.handleEditName}></span></span>
-							}
+									title="Edit name" onClick={this.handleEditName}></span>
 						</td>
 					</tr>
-					<tr className="bottom-line">
+					<tr className={ (model._dirty?'unsaved':'')}>
 						<td className="width-30">Plural:</td>
-						<td className="width-70" onDoubleClick={this.handleEditPlural}>
+						<td className="width-60" onDoubleClick={this.handleEditPlural}>
 							{this.state.editingPlural ? 
-								<input value={this.state.plural} onChange={this.handlePluralUpdate} ref="replural"/>
-								: <span>{this.state.plural}
-								<span className="showonhover clickable grayed icon icon-tl-pencil" 
-									title="Edit plural" onClick={this.handleEditPlural}></span></span>
+								<input 
+									value={this.state.plural} 
+									onChange={this.handlePluralUpdate} 
+									ref="replural"/>
+								: <span>
+									{this.state.plural}
+								</span>
 							}
+						</td>
+						<td>
+							<span className="showonhover clickable grayed icon icon-tl-pencil" 
+									title="Edit plural" onClick={this.handleEditPlural}></span>
 						</td>
 					</tr>
 				</tbody>
@@ -131,6 +148,15 @@ var ModelDetails = React.createClass({
 		</div>
 	}
 });
+
+var ModelDeleter = React.createClass({
+	render: function () {
+		return <tr>
+			<td>To delete mode, type "destroy":</td>
+			<td><input onChange={this.handleTyping} ref="deleteInput"/></td>
+		</tr>
+	}
+})
 
 export default ModelDetails;
 

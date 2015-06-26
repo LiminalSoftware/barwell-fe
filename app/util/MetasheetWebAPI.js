@@ -19,14 +19,23 @@ var stripInternalVars = function (obj) {
   return newObj;
 }
 
-var ajax = function (method, url, json, retry) {
+var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
   retry = retry || 1;
   return new Promise(function (resolve, reject) {
     var params = {
       type: method,
       url: url,
-      success: function (obj, status, xhr) {
-        resolve(obj)
+      beforeSend: function (xhr) {
+        _.each(headers, function (value, key) {
+          xhr.setRequestHeader(key, value)
+        })
+      },
+      success: function (data, status, xhr) {
+        resolve({
+          data: data,
+          status: status,
+          xhr: xhr
+        })
       },
       error: function (xhr, error, status) {
         if (error === 'timeout') {
@@ -47,39 +56,36 @@ var ajax = function (method, url, json, retry) {
   })
 }
 
-module.exports = {
+var issueReceipt = function (subject, obj) {
+  var message = {}
+  message.actionType = (subject.toUpperCase() + '_RECEIVE')
+  message[subject] = obj
+  MetasheetDispatcher.dispatch(message)
+}
+
+var persist = module.exports.persist = function (subject, action, data, update, split) {
+  action = action.toUpperCase()
+
+  var identifier = (subject + '_id')
+  var url = 'https://api.metasheet.io/' + subject;
+  var json = (action === 'CREATE') ? JSON.stringify(stripInternalVars(data)) : null;
+  var method;
+
+  if (action == 'FETCH') method = 'GET';
+  else if (action == 'DESTROY') method = 'DELETE';
+  else if (action === 'CREATE' && data[identifier]) method = 'PATCH'
+  else if (action === 'CREATE') method = 'POST'
+  else return;
   
-  persist: function (subject, action, data, update) {
-    action = action.toUpperCase()
-    var retryCount = 0
-    var identifier = (subject + '_id')
-    var url = 'https://api.metasheet.io/' + subject;
-    var camelSubject = subject.slice(0,1).toUpperCase() + subject.slice(1,100) + 's'
-    var camelAction = action.slice(0,1).toUpperCase() + action.slice(1,100).toLowerCase()
-    var success = 'successfully' + camelAction + camelSubject
-    var failure = 'failTo' + camelAction + camelSubject
-    var json = (action === 'CREATE') ? JSON.stringify(stripInternalVars(data)) : null;
-    var method;
+  if (method === 'PATCH' || method === 'DELETE') url = url + '?' + identifier + '=eq.' + data[identifier];
 
-    if (action == 'FETCH') method = 'GET';
-    else if (action == 'DESTROY') method = 'DELETE';
-    else if (action === 'CREATE' && data[identifier]) method = 'PATCH'
-    else if (action === 'CREATE') method = 'POST'
-    else return;
-    
-    if (method === 'PATCH' || method === 'DELETE') url = url + '?' + identifier + '=eq.' + data[identifier];
+  console.log(method + '->' + url)
+  console.log(data)
 
-    console.log(method + '->' + url)
-    console.log(data)
-    return ajax(method, url, json).then(function (results) {
-      (_.isArray(results) ? results : [results]).forEach(function (obj) {
-        if (update === false || method=='DELETE') return;  // temporary hack until I refactor model push
-        var message = {}
-        message.actionType = (subject.toUpperCase() + '_RECEIVE')
-        message[subject] = obj
-        MetasheetDispatcher.dispatch(message)
-      });
-    });
-  }
-
-};
+  return ajax(method, url, json).then(function (results) {
+    if (update === false || method=='DELETE') return;  // temporary hack until I refactor model push
+    _.each(results.data, function (obj) {
+      issueReceipt(subject, obj)
+    })
+  });
+}

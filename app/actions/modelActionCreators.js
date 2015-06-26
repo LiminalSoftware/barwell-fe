@@ -5,11 +5,34 @@ import ModelStore from '../stores/ModelStore'
 import groomView from '../containers/Views/groomView'
 
 var modelActions = {
+
+	fetchRecords: function (model, offset, limit) {
+		var model_id = model.model_id
+		var url = 'https://api.metasheet.io/m' + model_id;
+		var header = {
+			'Range-Unit': 'items',
+			'Range': (offset + '-' + (offset + limit))
+		}
+		webUtils.ajax('GET', url, null, header).then(function (results) {
+			var message = {}
+			var range = results.xhr.getResponseHeader('Content-Range')
+			var rangeParts = range.split(/[-/]/)
+
+			message.startIndex = rangeParts[0]
+			message.endIndex = rangeParts[1]
+			message.recordCount = rangeParts[2]
+			
+			message.actionType = ('M' + model.model_id + '_RECEIVE')
+			message['m' + model_id] = results.data
+
+			MetasheetDispatcher.dispatch(message)
+		});
+	},
 	
 	fetch: function (subject, selector) {
 		var message = {}
 		message.selector = selector
-		webUtils.persist(subject, 'FETCH', selector)
+		return webUtils.persist(subject, 'FETCH', selector)
 	},
 
 	create: function (subject, persist, obj, update) {
