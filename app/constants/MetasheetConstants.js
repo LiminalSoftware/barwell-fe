@@ -4,9 +4,10 @@ module.exports = {
   
   fieldTypes: {
     'INTEGER': 'Integer',
+    'BOOLEAN': 'Yes/No',
     'COLOR': 'Color',
     'DECIMAL': 'Decimal',
-    'DATE_TIME': 'Date / Time',
+    'DATE_TIME': 'Date/Time',
     'DATE': 'Date',
     'TEXT': 'Text',
     'LOCATION': 'Location',

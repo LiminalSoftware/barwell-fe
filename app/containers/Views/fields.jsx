@@ -1,6 +1,9 @@
 import React from "react"
 import _ from "underscore"
 import moment from "moment"
+import AttributeStore from "../../stores/AttributeStore"
+
+import modelActionCreators from "../../actions/modelActionCreators.js"
 
 var VanillaElement = React.createClass({
 	render: function () {
@@ -32,6 +35,7 @@ var NumericElement = React.createClass({
 	}
 });
 
+
 var ColorElement = React.createClass({
 	render: function () {
 		var value = this.props.value
@@ -61,12 +65,12 @@ var CheckboxElement = React.createClass({
 });
 
 var fieldTypes = {
-	Text: {
+	TEXT: {
 		element: VanillaElement,
 		validator: _.identity,
 		parser: _.identity
 	},
-	Boolean: {
+	BOOLEAN: {
 		element: CheckboxElement,
 		uneditable: true
 	},
@@ -75,12 +79,67 @@ var fieldTypes = {
 		uneditable: true
 	},
 
-	Color: {
+	HAS_MANY: {
+		configRows: React.createClass({
+			getInitialState: function () {
+				var view = this.props.view 
+				var config = this.props.config
+				return {label: config.label}
+			},
+			onLabelChange: function (event) {
+				var label = event.target.value
+				var config = this.props.config
+				var column_id = config.column_id
+				var view = this.props.view
+				var data = view.data
+				var col = data.columns[column_id] 
+				var value = event.target.value
+
+				this.setState({'label': label})
+				col.label = label
+				modelActionCreators.create('view', true, view)
+			},
+			render: function () {
+				var config = this.props.config
+				var view = this.props.view
+				var style = this.props.style
+				var key = "attr-" + config.id
+				var model_id = config.related_model_id
+
+				return <tr key = {key + '-label-attribute'} style={style}>
+					<td className="no-line"></td>
+					<td>Label attribute: </td>
+					<td className="right-align" colSpan="2">
+						<select onChange={this.onLabelChange} value={this.state.label}>
+							{AttributeStore.query({model_id: model_id}).map(function (attr) {
+								return <option value={'a' + attr.attribute_id}>{attr.attribute}</option>
+							})}
+						</select>
+					</td>
+				</tr>
+			}	
+		}),
+		element: React.createClass({
+			render: function () {
+				var value = this.props.value
+				var config = this.props.config || {}
+				var style = this.props.style
+				var label = config.label;
+				
+				if (value) return <td style={style}>{value.map(function(obj) {
+					return <span className="has-many-bubble">{obj[label || 0]}</span>
+				})}</td>
+				else return <td style={style}></td>
+			}
+		}),
+	},
+
+	COLOR: {
 		element: ColorElement,
 		uneditable: true
 	},
 
-	Integer: {
+	INTEGER: {
 		element: NumericElement,
 		validator: function (input) {
 			if (!(/^\d+$/).test(input))
@@ -92,7 +151,7 @@ var fieldTypes = {
 		}
 	},
 
-	Decimal: {
+	DECIMAL: {
 		element: NumericElement,
 		validator: function (input) {
 			if (!(/^\d*(\.\d*)?$/).test(input))
@@ -104,28 +163,49 @@ var fieldTypes = {
 		}
 	},
 
-	Timestamp: {
+	TIMESTAMP: {
 		element: VanillaElement,
 		validator: _.identity,
 		parser: _.identity
 	},
 
-	Date: {
+	DATE: {
 		configCleanser: function (config) {
 			config.dateFormat = config.dateFormat || "MM/DD/YYYY"
 			return config
 		},
-		configRows: function (config, style) {
-			var key = "attr-" + config.id
+		configRows: React.createClass({
+			getInitialState: function () {
+				return {dateFormat: 'DD/MM/YYYY'}
+			},
+			onDateChange: function (event) {
+				var config = this.props.config
+				var column_id = config.column_id
+				var view = this.props.view
+				var data = view.data
+				var col = data.columns[column_id] 
+				var value = event.target.value
+				this.setState({dateFormat: value})
 
-			return <tr key = {key + '-dateformat'} style={style}>
-				<td className="width-10 no-line"></td>
-				<td className="width-50">Date Format: </td>
-				<td className="right-align" colSpan="2">
-					<input type="text" value="DD MMMM YYYY"/>
-				</td>
-			</tr>
-		},
+				// _.debounce(function () {
+				col.dateFormat = value
+				modelActionCreators.create('view', false, view, false)
+				// }, 100)
+			},
+			render: function () {
+				var config = this.props.config
+				var key = "attr-" + config.id
+				var style = this.props.style
+
+				return <tr key = {key + '-dateformat'} style={style}>
+					<td className="no-line"></td>
+					<td className="">Date Format: </td>
+					<td className="" colSpan="2">
+						<input type="text" value={this.state.dateFormat} onChange={this.onDateChange}/>
+					</td>
+				</tr>	
+			}	
+		}),
 		element: React.createClass({
 			render: function () {
 				var value = this.props.value
@@ -133,11 +213,11 @@ var fieldTypes = {
 				var style = this.props.style
 				var format = config.dateFormat || "DD MMMM YYYY";
 				var dateObj = new Date(value)
-				var prettyDate = moment(parseInt(value)).format(format)
+				var prettyDate = moment(value).format(format)
 
 				style.textAlign = 'right'
 
-				return <td style={style}>{prettyDate}</td>
+				return <td style={style}>{value ? prettyDate : ''}</td>
 			}
 		}),
 		validator: _.identity,

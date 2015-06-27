@@ -51,17 +51,20 @@ var TabularTH = React.createClass ({
 			></span>
 		</th>
 	},
+
 	getInitialState: function () {
 		return {
 			dragging: false,
 			rel: null,
 			pos: 0
 		}
+
 	},
 	componentDidMount: function () {
 		var col = this.props.column
 		this.setState(col)
 	},
+
 	onResizerMouseDown: function (e) {
 		// only left mouse button
 	    if (e.button !== 0) return
@@ -73,20 +76,24 @@ var TabularTH = React.createClass ({
 	    e.stopPropagation()
 	    e.preventDefault()
 	},
+
 	onMouseUp: function (e) {
-   		var view = this.props.view   
+   	var view = this.props.view   
 		var viewData = view.data
 		var col = this.props.column
 
-   		this.setState({dragging: false})
-   		e.stopPropagation()
-   		e.preventDefault()
+		this.setState({dragging: false})
+		e.stopPropagation()
+		e.preventDefault()
 
-   		viewData.columns[col.attribute_id].width = (col.width + this.state.pos)
+   	viewData.columns[col.column_id].width = (col.width + this.state.pos)
 		this.setState({pos: 0})
+		view.data = viewData
 
-		modelActionCreators.createView(view)
+		// modelActionCreators.create('view', true, view, false)
+		modelActionCreators.createView(view, true, false)
 	},
+
 	onMouseMove: function (e) {
 	   if (!this.state.dragging) return
 	   this.setState({
@@ -106,22 +113,23 @@ var TabularTH = React.createClass ({
 		}
 	},
 
-   	onClick: function (event) {   
-   		var resizer = React.findDOMNode(this.refs.resizer)
-   		if(event.target == resizer) return
+   onClick: function (event) {
+   	var resizer = React.findDOMNode(this.refs.resizer)
+   	if(event.target == resizer) return
 
-		var view = this.props.view   
+		var view = this.props.view
 		var col = this.props.column
+		console.log('col: '+ JSON.stringify(col, null, 2));
 		var viewData = view.data
 		var sortOrder = !!(col.sorting && !col.sorting.descending)
-		var sortObj = {'id': col.id, 'descending': sortOrder}
+		var sortObj = {'attribute_id': col.attribute_id, 'descending': sortOrder}
+		console.log('sortObj: '+ JSON.stringify(sortObj, null, 2));
 		if (!event.shiftKey || !(viewData.sorting instanceof Array)) viewData.sorting = []
 		else viewData.sorting = _.filter(viewData.sorting, function (obj) {return obj.id !== col.id})
 		viewData.sorting.push(sortObj)
-		      
-		dispatcher.dispatch({
-			actionType: "VIEW_UPDATE",
-			data: viewData
-		})
+		view.data = viewData
+
+		modelActionCreators.createView(view, true, false)
 	}
+
 })

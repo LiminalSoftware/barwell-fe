@@ -6,9 +6,9 @@ import groomView from '../containers/Views/groomView'
 
 var modelActions = {
 
-	fetchRecords: function (model, offset, limit) {
-		var model_id = model.model_id
-		var url = 'https://api.metasheet.io/m' + model_id;
+	fetchRecords: function (view, offset, limit) {
+		var view_id = view.view_id
+		var url = 'https://api.metasheet.io/v' + view_id;
 		var header = {
 			'Range-Unit': 'items',
 			'Range': (offset + '-' + (offset + limit))
@@ -18,12 +18,14 @@ var modelActions = {
 			var range = results.xhr.getResponseHeader('Content-Range')
 			var rangeParts = range.split(/[-/]/)
 
-			message.startIndex = rangeParts[0]
-			message.endIndex = rangeParts[1]
-			message.recordCount = rangeParts[2]
+			message.startIndex = parseInt(rangeParts[0])
+			message.endIndex = parseInt(rangeParts[1])
+			message.recordCount = parseInt(rangeParts[2])
 			
-			message.actionType = ('M' + model.model_id + '_RECEIVE')
-			message['m' + model_id] = results.data
+			message.actionType = ('V' + view.view_id + '_RECEIVE')
+			message['v' + view_id] = results.data
+
+			// console.log('Z message: '+ JSON.stringify(message, null, 2));
 
 			MetasheetDispatcher.dispatch(message)
 		});
@@ -43,6 +45,7 @@ var modelActions = {
 		message[subject] = obj
 		message.actionType = subject.toUpperCase() + '_CREATE'
 		MetasheetDispatcher.dispatch(message)
+		console.log(message);
 		if (persist) return webUtils.persist(subject, 'CREATE', obj, update);
 		else return new Promise(function(resolve, reject){
 			return resolve(obj)
@@ -73,6 +76,10 @@ var modelActions = {
 			MetasheetDispatcher.dispatch(message)
 			return resolve(obj)
 		});
+	},
+
+	handleDateChange: function (event) {
+		console.log('event.target.value: '+ JSON.stringify(event.target.value, null, 2));		
 	},
 
 	// relations
@@ -133,23 +140,8 @@ var modelActions = {
 	},
 
 	// views
-	createView: function(view) {
-		if (!view) return;
-		
-      	view.view = view.view,
-      	view.model_id = ModelStore.get(view.model_id).model_id,
-      	view.type = view.type || 'Tabular',
-    	view.data = view.data || {}
-    	
-    	view = groomView(view)
-		
-		MetasheetDispatcher.dispatch({
-			actionType: 'VIEW_CREATE',
-			view: view
-		});
-		
-		webUtils.persist('view', 'CREATE', _.pick(view, 'cid', 'view_id', 'view', 'model_id', 'type', 'data'));
-
+	createView: function(view, persist, update) {
+		modelActions.create('view', persist, groomView(view), update)
 	},
 
 	destroyView: function(view) {

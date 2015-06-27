@@ -240,12 +240,12 @@ var ViewAdder = React.createClass ({
 
 	handleAddView: function(event) {
 		var model = this.props.model
-		modelActionCreators.createView({
+		var view = {
 			model_id: model.model_id,
 			view: (model.model + ' - New view'),
-			type: 'Tabular',
-			_new: true
-		})
+		}
+		
+		modelActionCreators.createView(view, true)
 		event.preventDefault()
 	},
 

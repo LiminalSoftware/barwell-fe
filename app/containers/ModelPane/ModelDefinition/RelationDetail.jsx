@@ -70,6 +70,12 @@ var RelationDetailList = React.createClass({
 	}
 })
 
+var relationPrettyNames = {
+	HAS_MANY: 'Has many',
+	HAS_ONE: 'Has one',
+	ONE_TO_ONE: 'One to one'
+}
+
 var RelationDetail = React.createClass({
 
 	getInitialState: function () {
@@ -172,14 +178,14 @@ var RelationDetail = React.createClass({
 				{relatedModelChoices}
 			</select>
 			typeField = <select value={relation.type} onChange={this.handleTypeSelect}>
-				<option value="Has one">Has one</option>
-				<option value="Has many">Has many</option>
-				<option value="One to one">One to one</option>
+				<option value="HAS_ONE">Has one</option>
+				<option value="HAS_MANY">Has many</option>
+				<option value="ONE_TO_ONE">One to one</option>
 			</select>
 		} else {
 			relatedModel = ModelStore.get(relation.related_model_id)
 			relatedModelField = <span>{!!relatedModel ? relatedModel.model : ''}</span>
-			typeField = <span>{relation.type}</span>
+			typeField = <span>{relationPrettyNames[relation.type]}</span>
 		}
 
 		if (this.state.renaming) 

@@ -1,7 +1,7 @@
 import React from "react";
 import _ from 'underscore';
 import viewTypes from "../../Views/viewTypes"
-import dispatcher from "../../../dispatcher/MetasheetDispatcher"
+import modelActionCreators from "../../../actions/modelActionCreators.js"
 import ViewStore from "../../../stores/ViewStore"
 
 var ViewSelector = React.createClass({
@@ -35,20 +35,18 @@ var ViewSelector = React.createClass({
 	},
 
 	_onChange: function () {
-		var viewData = ViewStore.get(this.props.view_id)
+		var viewData = this.props.view.data;
 		this.setState(viewData)
 	},
 
 	viewClickerFactory: function (type) {
+		var _this = this
 		var view = this.props.view
 		var data = view.data
 		data.type = type
-		var _this = this
+		
 		return function () {
-			dispatcher.dispatch({
-				type: "VIEW_CREATE",
-				data: data
-			})
+			modelActionCreators.create('view', true, view, true);
 			_this.revert()
 		}
 	},
@@ -66,13 +64,12 @@ var ViewSelector = React.createClass({
 		if (this.state.selectingType) {
 			var typeEls = _.map(viewTypes, function (details, type) {
 				return <tr 
-					className = "hoverable"
 					key = {"view-type-selector-" + type} 
 					onClick = {_this.viewClickerFactory(type)}>
-					<td className="width-30 centered clickable padded">
+					<td className="width-20 centered clickable padded">
 						<span className={"clear icon "+ details.icon}></span>{type}
 					</td>
-					<td className="width-70 hoverable clickable">
+					<td className="width-80 hoverable clickable">
 						{details.description}
 					</td>
 				</tr>
@@ -91,12 +88,12 @@ var ViewSelector = React.createClass({
 			<table className="detail-table">
 				<tbody>
 					<tr>
-						<td className="width-30">Name:</td>
-						<td className="width-70">{this.state.name}</td>
+						<td className="width-20">Name:</td>
+						<td className="width-80">{this.state.name}</td>
 					</tr>
 					<tr>
-						<td className="width-30">Type:</td>
-						<td className="width-70" 
+						<td className="width-20">Type:</td>
+						<td className="width-80" 
 						   onClick={this.chgType}>
 							<a className="not-really-a-link" onClick={this.chgType}>
 								<span className={"icon " + icon}></span>

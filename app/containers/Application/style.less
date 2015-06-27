@@ -28,6 +28,11 @@ h1, h2, h3, h4, h5 {
 .app-container {
 	display: flex;
 	flex: 1;
+	.transition(all 150ms ease-in);
+
+	&.hide-sidebar {
+		margin-left: -580px;
+	}
 }
 
 .session-header {

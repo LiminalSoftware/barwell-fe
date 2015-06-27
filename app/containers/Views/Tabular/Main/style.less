@@ -5,6 +5,17 @@
 }
 
 
+.has-many-bubble {
+
+	border: 2px solid @heavyCream;
+	border-radius: 5px;
+	padding: 0 3px;
+	margin-right: 2px;
+	&:hover {
+		border: 2px solid @darkText;
+	}
+}
+
 .data-table {
 	table-layout: fixed;
 	border-collapse: collapse;
@@ -97,7 +108,7 @@
 	left: 0;
 	border: 1px dashed @green-tint-1;
 	transition: all 50ms ease-in;
-	border-radius: 3px;
+	
 	background: @gray-trans;
 	&.focused {
 		background: @green-trans;

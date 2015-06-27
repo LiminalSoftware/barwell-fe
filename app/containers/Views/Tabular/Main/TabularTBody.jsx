@@ -5,6 +5,7 @@ import _ from "underscore"
 import modelActionCreators from "../../../../actions/modelActionCreators.js"
 
 import ModelStore from "../../../../stores/ModelStore"
+import ViewStore from "../../../../stores/ViewStore"
 import KeyStore from "../../../../stores/KeyStore"
 import KeycompStore from "../../../../stores/KeycompStore"
 import AttributeStore from "../../../../stores/AttributeStore"
@@ -27,7 +28,8 @@ var limit = function (min, max, value) {
 }
 
 
-var createTabularStore = function (model) {
+var createTabularStore = function (view) {
+	var model = ModelStore.get(view.model_id)
 	var primaryAttrId = AttributeStore.query(
 		{model_id: model.model_id, type: 'PRIMARY_KEY'}
 	)[0].attribute_id;
@@ -37,7 +39,7 @@ var createTabularStore = function (model) {
   		dispatcher: dispatcher,
   		pivot: function(payload) {
 	    	var type = payload.actionType
-	    	var label = 'm' + model.model_id
+	    	var label = 'v' + view.view_id
 	    	var upperLabel = label.toUpperCase()
 
     		if (type === (upperLabel + '_CREATE')) {
@@ -80,7 +82,8 @@ var TabularTBody = React.createClass ({
 	},
 
 	_onChange: function () {
-		this.forceUpdate()
+		var view = ViewStore.get(this.props.view.view_id || this.props.view.cid)
+		this.setState(view.data)
 	},
 
 	componentWillMount: function () {
@@ -88,20 +91,17 @@ var TabularTBody = React.createClass ({
 		var model = ModelStore.get(view.model_id)
 		
 		if (!this.store) {
-			this.store = ViewDataStores[view.view_id] = createTabularStore(model)
+			this.store = ViewDataStores[view.view_id] = createTabularStore(view)
 		} else {
 			this.store.register()
 		}
 
 		this.store.addChangeListener(this._onChange)
-		
 	},
 	
 	componentDidMount: function () {
 		var view = this.props.view
-		var model = ModelStore.get(view.model_id)
-
-		modelActionCreators.fetchRecords(model, 0, 10)
+		modelActionCreators.fetchRecords(view, 0, 10)
 	},
 
 	componentWillUnmount: function () {
@@ -124,9 +124,10 @@ var TabularTBody = React.createClass ({
 		var boundedOffset = limit(0, this.props.nRows - CURSOR_LIMIT, tgtOffset)
 		var currentOffset = this.state.window.offset
 		var mismatch = Math.abs(currentOffset - tgtOffset)
+		var view = this.props.view
 
 		if (force || (mismatch > OFFSET_TOLERANCE && currentOffset !== boundedOffset)) {
-			modelActionCreators.fetchRecords(model, 0, 10)
+			modelActionCreators.fetchRecords(view, 0, 10)
 			this.setState({
 				fetching: true,
 				window: {
@@ -144,6 +145,10 @@ var TabularTBody = React.createClass ({
 		}
 	},
 
+	getValueAt: function (idx) {
+		return this.store.query({idx: idx})[0]
+	},
+
 	render: function () {
 		var rows = []
 		var window = this.state.window
@@ -157,12 +162,14 @@ var TabularTBody = React.createClass ({
 		rows = this.store.query({}, 'idx').map(function (obj, i) {
 			var rowKey = 'tabular-' +  obj.idx //(!!pk && !!obj ? obj.synget(pk) : i)
 			var els = columns.map(function (col, idx) {
-				var element = (fieldTypes[col.type] || fieldTypes.Text).element
+				var element = (fieldTypes[col.type] || fieldTypes.TEXT).element
 				var cellKey = rowKey + '-' + col.attribute_id
-				var value = (!!obj) ? obj[('a' + col.attribute_id)] : ""
+				var value = (!!obj) ? obj[col.column_id] : ""
 
 				return React.createElement(element, {
 					config: col,
+					model: model,
+					view: view,
 					object: obj,
 					value: value,
 					key: cellKey,

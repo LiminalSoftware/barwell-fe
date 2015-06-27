@@ -4,20 +4,34 @@ import SideBar from "containers/SideBar";
 import styles from "./style.less";
 import modelActionCreators from "../../actions/modelActionCreators"
 
-export default class Application extends React.Component {
-	render() {
-		var { loading } = this.props;
-		return <div className="application">
+var Application = React.createClass({
+	getInitialState: function () {
+		return {hiddenSidebar: false}
+	},
+
+	render: function() {
+
+		// var { loading } = this.props;
+		this.props.toggleSidebar = this.toggleSidebar
+		return <div className="application ">
 			
-			<div className="app-container">
+			<div className={"app-container " + (this.state.hiddenSidebar ? "hide-sidebar" : "")}>
 			
 				<SideBar {...this.props} />
 				<RouteHandler {...this.props} />
 			</div>
 		</div>;
-	}
+	},
 
-	componentWillMount() {
+	componentWillMount: function () {
 		modelActionCreators.fetchModels()
+	},
+
+	toggleSidebar: function() {
+		this.setState({
+			hiddenSidebar: !this.state.hiddenSidebar
+		})
 	}
-}
+})
+
+export default Application

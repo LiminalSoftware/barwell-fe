@@ -10,7 +10,10 @@ import ViewStore from "../../stores/ViewStore"
 var ModelPane = React.createClass({
 
 	getInitialState: function () {
-		return {activePane: "model-def"}
+		return {
+			activePane: "model-def",
+			miniaturized: false
+		}
 	},
 
 	showModelDef: function () {
@@ -33,6 +36,10 @@ var ModelPane = React.createClass({
 
 	_onChange: function () {
 		this.forceUpdate()
+	},
+
+	toggleSidebar: function () {
+		this.props.toggleSidebar();
 	},
 
 	render: function() {
@@ -91,7 +98,9 @@ var ModelPane = React.createClass({
 		return <div className="model-views">
 			<div className = "model-panes">
 				<div className="detail-bar">
-					<div className="detail-hider" onClick={this.toggleSidebar}><span className="small clickable right-align icon icon-arrow-left"></span></div>
+					<div className="detail-hider" onClick={this.toggleSidebar}>
+						<span className="small clickable right-align icon icon-chevron-left" title="Hide sidebar">
+					</span></div>
 					<ul className="detail-panels">
 						<li><h2 className={activePane == "model-def" ? "active" : ""} onClick={this.showModelDef}>Model</h2></li>
 						{ (!!view) ? <li><h2>Details</h2></li> : "" }

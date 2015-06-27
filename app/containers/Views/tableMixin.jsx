@@ -13,7 +13,7 @@ var TableMixin = {
 		var col = columns[this.state.pointer.left]
 		var field = fieldTypes[col.type]
 		var obj = this.refs.tabularbody.getValueAt(this.state.pointer.top);
-		var value = obj.synget(col.id)
+		var value = obj['a' + col.attribute_id]
 		var parser = field.parser
 		var validator = field.validator
 

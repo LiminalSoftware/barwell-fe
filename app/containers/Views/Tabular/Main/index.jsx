@@ -9,6 +9,7 @@ import modelActionCreators from "../../../../actions/modelActionCreators.js"
 
 import ModelStore from "../../../../stores/ModelStore"
 import KeyStore from "../../../../stores/KeyStore"
+import ViewStore from "../../../../stores/ViewStore"
 import KeycompStore from "../../../../stores/KeycompStore"
 import AttributeStore from "../../../../stores/AttributeStore"
 
@@ -30,12 +31,19 @@ var TabularPane = React.createClass ({
 
 	mixins: [ViewUpdateMixin, TableMixin],
 
+	componentWillMount: function () {
+		ViewStore.addChangeListener(this._onChange)
+		ModelStore.addChangeListener(this._onChange)
+	},
+
 	componentDidMount: function () {
 		$(document.body).on('keydown', this.onKey)
 	},
 
 	componentWillUnmount: function () {
 		$(document.body).off('keydown', this.onKey)
+		ViewStore.removeChangeListener(this._onChange)
+		ModelStore.removeChangeListener(this._onChange)
 	},
 	
 	getInitialState: function () {

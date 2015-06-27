@@ -53,8 +53,10 @@ var TabularViewConfig = React.createClass({
 		var sortList = (data.sorting || []).map(function (sort) {
 			var sortOrderClass = "small grayed icon icon-arrow-" + (sort.descending ? "up" : "down")
 			var sortOrderLabel = sort.descending ? "Ascending" : "Descending"
+			var attribute = AttributeStore.get(sort.attribute_id);
+
 			return <tr>
-				<td>{sort.id}</td>
+				<td>{(attribute || {}).attribute}</td>
 				<td><span className = {sortOrderClass}></span>{sortOrderLabel}</td>
 				<td><span className = "small showonhover grayed clickable icon icon-kub-remove"></span></td>
 			</tr>
@@ -69,9 +71,9 @@ var TabularViewConfig = React.createClass({
 			<table className="detail-table">
 				<thead><tr key="attr-header-row">
 					<th className="width-10"></th>
-					<th className="width-50">Name</th>
-					<th className="width-20">Viz</th>
-					<th className="width-20">Width</th>
+					<th className="width-30">Name</th>
+					<th className="width-30">Viz</th>
+					<th className="width-30">Width</th>
 				</tr></thead>
 				{colList}
 			</table>
@@ -90,7 +92,7 @@ var TabularViewConfig = React.createClass({
 			</table>
 			</div>
 			<div className = "detail-block">
-			<h3>Filter</h3>
+			
 			</div>
 		</div>
 	}
@@ -107,12 +109,12 @@ var ColumnDetail = React.createClass({
 	
 	commitChanges: function (colProps) {
 		var view = this.props.view
-		var attribute_id = this.props.config.attribute_id
-		var col = view.data.columns[attribute_id]
-		col = _.extend(_.clone(col), colProps)
-		view.data.columns[attribute_id] = col;
+		var column_id = this.props.config.column_id
+		var col = view.data.columns[column_id]
+		col = _.extend(col, colProps)
+		view.data.columns[column_id] = col;
 
-		modelActionCreators.createView(view)
+		modelActionCreators.createView(view, true, false)
 	},
 
 	updateWidth: function (e) {
@@ -128,56 +130,95 @@ var ColumnDetail = React.createClass({
 		var config = this.props.config
 		this.commitChanges({visible: !config.visible})
 	},
+
+	toggleRightAlign: function (event) {
+		var config = this.props.config
+		this.commitChanges({align: 'right'})
+	},
+
+	toggleCenterAlign: function (event) {
+		var config = this.props.config
+		console.log('toggle center')
+		this.commitChanges({align: 'center'})
+	},
+
+	toggleLeftAlign: function (event) {
+		var config = this.props.config
+		this.commitChanges({align: 'left'})
+	},
 	
 	render: function () {
+		var view = this.props.view
 		var config = this.props.config
 		var wedgeClasses = "small grayed icon icon-geo-triangle " +
 			(config.expanded ? " wedge open" : "wedge closed")
 		var name = config.name
 		var nameField = (this.state.editing ? <input type="textbox" value={name} /> : name)
-		var key = "attr-" + config.id
+		var key = "attr-" + config.column_id
 		var detailsStyle = {}
 		var eyeClasses = "clickable icon icon-eye-" + (config.visible ? "3 ":"4 grayed")
 		var fieldType = fieldTypes[config.type]
 		var addlRows
 
+
 		if (!config.expanded) detailsStyle.display = "none"
-		if (!!fieldType && fieldType.configRows) addlRows = fieldType.configRows(config, detailsStyle)
+		if (!!fieldType && fieldType.configRows) 
+			addlRows = React.createElement(fieldType.configRows, {
+				view: this.props.view,
+				config: this.props.config,
+				style: detailsStyle
+			})
 		else addlRows = null
 
 		return <tbody>
 			<tr key={key + '-row'}>
 				<td 
-					className="width-10 no-line"
+					className="no-line"
 					onClick={this.toggleDetails}>
 					<span className={wedgeClasses}></span>
 				</td>
-				<td 
-					className="width-50"
-					onDoubleClick={this.handleClick}>
+				<td onDoubleClick={this.handleClick}>
 					{nameField}
 				</td>
-				<td className="width-20">
+				<td>
 					{ config.expanded ? void(0) :
 					<span className={eyeClasses} onClick={this.toggleVisibility}></span> }
 				</td>
-				<td className="width-20">
+				<td>
 					{config.expanded ? void(0) : (config.width + 'px') }
 				</td>
 			</tr>
-			<tr key={key + '-row-details'} style = {detailsStyle}>
-				<td className=	"width-10 no-line"></td>
-				<td className="width-50">Background: </td>
-				<td colSpan="2" className="right-align">
-					<span className="icon grayed icon-tl-paintbrush"></span>Default
-				</td>
-			</tr>
 			<tr key={key + '-row-visibility'} style = {detailsStyle}>
-				<td className="width-10 no-line"></td>
-				<td className="width-50">Visibility: </td>
+				<td className="no-line"></td>
+				<td>Visibility: </td>
 				<td colSpan="2" className="right-align">
 					<span className={eyeClasses} onClick={this.toggleVisibility}></span>
 					{config.visible ? "Visible" : "Hidden"}
+				</td>
+			</tr>
+			<tr key={key + '-row-background'} style = {detailsStyle}>
+				<td className=	"no-line"></td>
+				<td>Background: </td>
+				<td colSpan="2" className="right-align">
+					<span className="icon grayed icon-tl-paint"></span>Default
+				</td>
+			</tr>
+			<tr key={key + '-row-alignment'} style = {detailsStyle}>
+				<td className=	"no-line"></td>
+				<td className="width-50">Alignment: </td>
+				<td colSpan="2" className="right-align">
+					<span className={"clickable icon icon-align-left " 
+						+ (config.align === 'left' ? '' : 'grayed')}
+						onClick={this.toggleLeftAlign}>
+					</span>
+					<span className={"clickable icon grayed icon-align-center " 
+						+ (config.align === 'center' ? '' : 'grayed')}
+						onClick={this.toggleCenterAlign}>
+					</span>
+					<span className={"clickable icon grayed icon-align-right " 
+						+ (config.align === 'right' ? '' : 'grayed')}
+						onClick={this.toggleRightAlign}>
+					</span>
 				</td>
 			</tr>
 			<tr key={key + '-row-width'} style = {detailsStyle}>
