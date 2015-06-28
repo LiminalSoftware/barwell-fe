@@ -16,7 +16,7 @@ import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 
 
 var HEADER_HEIGHT = 35
-var ROW_HEIGHT = 22
+var ROW_HEIGHT = 24
 var CURSOR_LIMIT = 60
 var WINDOW_SIZE = 40
 var OFFSET_TOLERANCE = 5
@@ -83,7 +83,7 @@ var TabularTBody = React.createClass ({
 
 	_onChange: function () {
 		var view = ViewStore.get(this.props.view.view_id || this.props.view.cid)
-		this.setState(view.data)
+		this.setState(view.data)	
 	},
 
 	componentWillMount: function () {
@@ -92,6 +92,7 @@ var TabularTBody = React.createClass ({
 		
 		if (!this.store) {
 			this.store = ViewDataStores[view.view_id] = createTabularStore(view)
+			this.store.register()
 		} else {
 			this.store.register()
 		}
@@ -101,14 +102,14 @@ var TabularTBody = React.createClass ({
 	
 	componentDidMount: function () {
 		var view = this.props.view
-		modelActionCreators.fetchRecords(view, 0, 10)
+		this.fetch(true)
 	},
 
 	componentWillUnmount: function () {
 		this.store.removeChangeListener(this._onChange)
 		this.store.unregister()
 	},
-
+	
 	shouldComponentUpdate: function (next) {
 		var old = this.props
 		return !(
@@ -117,8 +118,13 @@ var TabularTBody = React.createClass ({
 			_.isEqual(old.sorting, next.sort)
 		)
 	},
+
+	componentWillReceiveProps: function (next) {
+		this.fetch()
+	},
 	
 	fetch: function (force) {
+		var oldSort = this.state.sortSpec;
 		var rowOffset = Math.floor(this.props.scrollTop / ROW_HEIGHT)
 		var tgtOffset = Math.floor(rowOffset - (CURSOR_LIMIT / 2) + (WINDOW_SIZE / 2)) 
 		var boundedOffset = limit(0, this.props.nRows - CURSOR_LIMIT, tgtOffset)
@@ -126,10 +132,12 @@ var TabularTBody = React.createClass ({
 		var mismatch = Math.abs(currentOffset - tgtOffset)
 		var view = this.props.view
 
-		if (force || (mismatch > OFFSET_TOLERANCE && currentOffset !== boundedOffset)) {
-			modelActionCreators.fetchRecords(view, 0, 10)
+		if (force || (mismatch > OFFSET_TOLERANCE && currentOffset !== boundedOffset)
+			|| !_.isEqual(oldSort, view.data.sorting)) {
+			modelActionCreators.fetchRecords(view, 0, 10, view.data.sorting)
 			this.setState({
 				fetching: true,
+				sortSpec: view.data.sorting,
 				window: {
 					offset: boundedOffset,
 					limit: CURSOR_LIMIT
@@ -157,13 +165,16 @@ var TabularTBody = React.createClass ({
 		var columns = this.props.columns
 		var clicker = this.props.clicker
 		var dblClicker = this.props.dblClicker
-		//var pk = model.primary_key_attribute_id
+		//var ` = model.primary_key_attribute_id
+		var pkColId = 'a' + AttributeStore.query(
+			{model_id: model.model_id, type: 'PRIMARY_KEY'}
+		)[0].attribute_id;
 
-		rows = this.store.query({}, 'idx').map(function (obj, i) {
-			var rowKey = 'tabular-' +  obj.idx //(!!pk && !!obj ? obj.synget(pk) : i)
+		rows = this.store.query(null, 'idx').map(function (obj, i) {
+			var rowKey = 'tabular-' +  obj[pkColId]
 			var els = columns.map(function (col, idx) {
 				var element = (fieldTypes[col.type] || fieldTypes.TEXT).element
-				var cellKey = rowKey + '-' + col.attribute_id
+				var cellKey = rowKey + '-' + col.column_id
 				var value = (!!obj) ? obj[col.column_id] : ""
 
 				return React.createElement(element, {
@@ -171,9 +182,10 @@ var TabularTBody = React.createClass ({
 					model: model,
 					view: view,
 					object: obj,
+					pk: pkColId,
 					value: value,
 					key: cellKey,
-					style: {minWidth: col.width, maxWidth: col.width}
+					style: {minWidth: col.width, maxWidth: col.width, textAlign: col.align}
 				})
 			})
 			return <tr id={rowKey} key={rowKey}>{els}</tr>

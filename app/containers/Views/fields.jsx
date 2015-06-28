@@ -5,12 +5,79 @@ import AttributeStore from "../../stores/AttributeStore"
 
 import modelActionCreators from "../../actions/modelActionCreators.js"
 
+var editableInputMixin = {
+	getInitialState: function () {
+		return {
+			editing: false,
+			value: this.props.value
+		}
+	},
+
+	parser: _.identity,
+	
+	handleKeyPress: function (event) {
+		if (event.keyCode === 27) this.cancelChanges()
+		if (event.keyCode === 13) this.commitChanges()
+	},
+	
+	cancelChanges: function () {
+		this.revert()
+	},
+
+	commitChanges: function () {
+		var config = this.props.config
+		var pk = this.props.pk
+		var obj = this.props.object
+		var patch = {}
+		var selector = {}
+		patch[config.column_id] = this.state.value
+		selector[pk] = obj[pk]
+
+		modelActionCreators.patchRecords(
+			this.props.view,
+			patch,
+			selector
+		)
+		this.revert();
+	},
+	
+	revert: function () {
+		document.removeEventListener('keyup', this.handleKeyPress)
+		this.setState({
+			editing: false,
+			value: this.props.value
+		})
+	},
+
+	handleEdit: function (event) {
+		document.addEventListener('keyup', this.handleKeyPress)
+		this.setState({editing: true})
+	},
+
+	handleChange: function (event) {
+		var val = this.parser(event.target.value)
+		this.setState({value: val})
+	}
+}
+
 var VanillaElement = React.createClass({
+
+	mixins: [editableInputMixin],
+	
 	render: function () {
 		var value = this.props.value
 		var style = this.props.style
 
-		return <td style={style}>{value}</td>
+		return <td style={style} onDoubleClick={this.handleEdit}>
+			{this.state.editing ?
+			<input 
+				className = "input-editor" 
+				value = {this.state.value} 
+				autoFocus
+				onChange = {this.handleChange} />
+			:
+			this.props.value}
+		</td>
 	}
 });
 
@@ -29,8 +96,6 @@ var NumericElement = React.createClass({
 	render: function () {
 		var value = this.props.value
 		var style = this.props.style
-
-		style.textAlign = 'right'
 		return <td style={style}>{value}</td>
 	}
 });
@@ -74,6 +139,7 @@ var fieldTypes = {
 		element: CheckboxElement,
 		uneditable: true
 	},
+
 	HasOne: {
 		element: VanillaElement,
 		uneditable: true
@@ -125,9 +191,10 @@ var fieldTypes = {
 				var config = this.props.config || {}
 				var style = this.props.style
 				var label = config.label;
+				var pk = config.related_primary_key
 				
 				if (value) return <td style={style}>{value.map(function(obj) {
-					return <span className="has-many-bubble">{obj[label || 0]}</span>
+					return <span key={config.column_id + '-' + (obj[pk] || obj.cid)} className="has-many-bubble">{obj[label]}</span>
 				})}</td>
 				else return <td style={style}></td>
 			}
@@ -176,7 +243,8 @@ var fieldTypes = {
 		},
 		configRows: React.createClass({
 			getInitialState: function () {
-				return {dateFormat: 'DD/MM/YYYY'}
+				var config = this.props.config;
+				return {dateFormat: (config.dateFormat || 'DD/MM/YYYY')}
 			},
 			onDateChange: function (event) {
 				var config = this.props.config
@@ -214,8 +282,6 @@ var fieldTypes = {
 				var format = config.dateFormat || "DD MMMM YYYY";
 				var dateObj = new Date(value)
 				var prettyDate = moment(value).format(format)
-
-				style.textAlign = 'right'
 
 				return <td style={style}>{value ? prettyDate : ''}</td>
 			}

@@ -41,9 +41,13 @@ var TabularViewConfig = React.createClass({
 		return view.data
 	},
 
+	focus: function () {
+		modelActionCreators.setFocus('view-config')
+	},
+
 	render: function() {
 		var _this = this
-		var view = groomView(this.props.view)
+		var view = this.props.view
 		var data = this.state
 		var columns = data.columns
 
@@ -65,7 +69,7 @@ var TabularViewConfig = React.createClass({
 			sortList = <tr><td className="grayed centered" colSpan="3">No sort order defined</td></tr>;
 		}
 
-		return <div className = "grouping">
+		return <div className = "grouping" onClick={this.focus}>
 			<div className = "detail-block">
 			<h3>Columns</h3>
 			<table className="detail-table">
@@ -138,7 +142,6 @@ var ColumnDetail = React.createClass({
 
 	toggleCenterAlign: function (event) {
 		var config = this.props.config
-		console.log('toggle center')
 		this.commitChanges({align: 'center'})
 	},
 
@@ -211,11 +214,11 @@ var ColumnDetail = React.createClass({
 						+ (config.align === 'left' ? '' : 'grayed')}
 						onClick={this.toggleLeftAlign}>
 					</span>
-					<span className={"clickable icon grayed icon-align-center " 
+					<span className={"clickable icon icon-align-center " 
 						+ (config.align === 'center' ? '' : 'grayed')}
 						onClick={this.toggleCenterAlign}>
 					</span>
-					<span className={"clickable icon grayed icon-align-right " 
+					<span className={"clickable icon icon-align-right " 
 						+ (config.align === 'right' ? '' : 'grayed')}
 						onClick={this.toggleRightAlign}>
 					</span>

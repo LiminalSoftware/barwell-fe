@@ -6,9 +6,45 @@ import groomView from '../containers/Views/groomView'
 
 var modelActions = {
 
-	fetchRecords: function (view, offset, limit) {
+	setFocus: function (focus, obj, col) {
+		var message = {
+			actionType: 'SET_FOCUS',
+			focus: focus
+		}
+		MetasheetDispatcher.dispatch(message);
+	},
+
+	patchRecords: function (view, patch, selector) {
+		var view_id = view.view_id
+		var message = {}
+		message.actionType = 'V' + view.view_id + '_UPDATE'
+		message['v' + view.view_id] = patch
+		message.selector = selector
+		MetasheetDispatcher.dispatch(message)
+
+		var url = 'https://api.metasheet.io/m' + view.model_id;
+		if (!selector instanceof Object) throw new Error ('NOOOOOOOOOOOoOooooo!!!!!!!')
+		else url += '?' + _.map(selector, function (value, key) {
+			return key + '=eq.' + value;
+		}).join('&')
+
+		webUtils.ajax('PATCH', url, JSON.stringify(patch), {"Prefer": 'return=representation'}).then(function (results) {
+			var message = {}
+			message.actionType = 'V' + view.view_id + '_RECEIVEUPDATE'
+			message['v' + view.view_id] = results.data
+			// console.log('message: '+ JSON.stringify(message, null, 2));
+			MetasheetDispatcher.dispatch(message)
+		})
+	},
+
+	fetchRecords: function (view, offset, limit, sortSpec) {
 		var view_id = view.view_id
 		var url = 'https://api.metasheet.io/v' + view_id;
+		if (sortSpec) {
+			url = url + '?order=' + _.map(sortSpec, function (comp) {
+				return 'a' + comp.attribute_id + '.' + (comp.descending ? 'desc' : 'asc') 
+			}).join(",")
+		}
 		var header = {
 			'Range-Unit': 'items',
 			'Range': (offset + '-' + (offset + limit))
@@ -24,8 +60,6 @@ var modelActions = {
 			
 			message.actionType = ('V' + view.view_id + '_RECEIVE')
 			message['v' + view_id] = results.data
-
-			// console.log('Z message: '+ JSON.stringify(message, null, 2));
 
 			MetasheetDispatcher.dispatch(message)
 		});
@@ -45,7 +79,7 @@ var modelActions = {
 		message[subject] = obj
 		message.actionType = subject.toUpperCase() + '_CREATE'
 		MetasheetDispatcher.dispatch(message)
-		console.log(message);
+		// console.log(message);
 		if (persist) return webUtils.persist(subject, 'CREATE', obj, update);
 		else return new Promise(function(resolve, reject){
 			return resolve(obj)
@@ -141,7 +175,7 @@ var modelActions = {
 
 	// views
 	createView: function(view, persist, update) {
-		modelActions.create('view', persist, groomView(view), update)
+		modelActions.create('view', persist, (view), update)
 	},
 
 	destroyView: function(view) {

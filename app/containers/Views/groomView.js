@@ -42,6 +42,7 @@ var groomView = module.exports.prepView = function (view) {
 		col.name = field.attribute
 		if (!col.align) {
 			if(col.type === 'INTEGER' || col.type === 'DECIMAL' || col.type === 'DATE') col.align = 'right'
+			else if (col.type === 'BOOLEAN') col.align = 'center'
 			else col.align = 'left'
 		}
 		col.visible = (col.visible === false) ? false : true
@@ -59,11 +60,15 @@ var groomView = module.exports.prepView = function (view) {
 	relations.forEach(function (relation) {
 		var col = data.columns['r' + relation.relation_id] || {};
 		var attrs = AttributeStore.query({model_id: relation.related_model_id});
+		var pk = AttributeStore.query({model_id: relation.related_model_id, type: 'PRIMARY_KEY'})[0];
 
 		col.column_id = 'r' + relation.relation_id
 		col.related_model_id = relation.related_model_id
 		col.label = col.label || ('a' + attrs[0].attribute_id)
 		col.relation_id = relation.relation_id;
+		col.related_primary_key = 'a' + (pk || {}).attribute_id;
+
+
 		col.type = relation.type
 		col.name = relation.relation
 		col.visible = (col.visible === false) ? false : true

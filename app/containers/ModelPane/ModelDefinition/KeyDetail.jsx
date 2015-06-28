@@ -89,8 +89,6 @@ var KeyDetail = React.createClass({
 		this.setState({
 			renaming: true,
 			name: key.key
-		}, function () {
-			React.findDOMNode(this.refs.renamer).focus();
 		})
 		document.addEventListener('keyup', this.handleKeyPress)
 	},
@@ -196,6 +194,7 @@ var KeyDetail = React.createClass({
 
 		if (this.state.renaming) 
 			nameField = <input ref="renamer" 
+				autoFocus
 				value={this.state.name} 
 				onChange={this.handleNameUpdate} 
 				onBlur={this.commitChanges}/> 

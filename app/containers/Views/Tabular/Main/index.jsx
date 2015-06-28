@@ -12,6 +12,7 @@ import KeyStore from "../../../../stores/KeyStore"
 import ViewStore from "../../../../stores/ViewStore"
 import KeycompStore from "../../../../stores/KeycompStore"
 import AttributeStore from "../../../../stores/AttributeStore"
+import FocusStore from "../../../../stores/FocusStore"
 
 import ViewDataStores from "../../../../stores/ViewDataStores"
 import storeFactory from 'flux-store-factory';
@@ -25,15 +26,15 @@ import TableMixin from '../../TableMixin.jsx'
 
 
 
-
-
 var TabularPane = React.createClass ({
 
 	mixins: [ViewUpdateMixin, TableMixin],
 
 	componentWillMount: function () {
 		ViewStore.addChangeListener(this._onChange)
+		AttributeStore.addChangeListener(this._onChange)
 		ModelStore.addChangeListener(this._onChange)
+		FocusStore.addChangeListener(this._onChange)
 	},
 
 	componentDidMount: function () {
@@ -43,14 +44,16 @@ var TabularPane = React.createClass ({
 	componentWillUnmount: function () {
 		$(document.body).off('keydown', this.onKey)
 		ViewStore.removeChangeListener(this._onChange)
+		AttributeStore.removeChangeListener(this._onChange)
 		ModelStore.removeChangeListener(this._onChange)
+		FocusStore.removeChangeListener(this._onChange)
 	},
 	
 	getInitialState: function () {
 		return {
 			geometry: {
 				headerHeight: 35,
-				rowHeight: 22,
+				rowHeight: 24,
 				topOffset: 12,
 				widthPadding: 9
 			},
@@ -75,16 +78,15 @@ var TabularPane = React.createClass ({
 	},
 
 	getVisibleColumns: function () {
-		return _.filter(
-			this.state.columnList, 
-			function(col) {return col.visible})
+		var view = this.props.view
+		return _.filter(view.data.columnList, 'visible');
 	},
 
 	commitChanges: function () {
 		var obj = this.state.editorObj
 		var col = this.state.editorCol
 		var val = this.state.editorVal
-		obj.set(col.id, val)
+		// obj.set(col.id, val)
 		this.revert()
 	},
 
@@ -94,14 +96,7 @@ var TabularPane = React.createClass ({
 		var view = this.props.view
 		var columns = this.getVisibleColumns()
 		var sorting = this.state.sorting
-		
-		var inputter = <input
-			ref = "inputter" 
-			className = "input-editor" 
-			type = "text" 
-			value = {this.state.editorVal}
-			onChange = {this.handleEditUpdate}
-			onBlur = {this.commitChanges} />
+		var focused = (FocusStore.getFocus() == 'view')
 		
 		return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">
 				<table id="main-data-table" className="header data-table">
@@ -122,14 +117,13 @@ var TabularPane = React.createClass ({
 						dblClicker={this.startEdit} />
 				</table>
 				<div 
-					className={"pointer" + (this.state.focused ? " focused" : "")} 
+					className={"pointer" + (focused ? " focused" : "")} 
 					ref="anchor" 
 					onDoubleClick={this.startEdit} 
 					style={this.getPointerStyle()}>
-					{this.state.editing ? inputter : ""}
 				</div>
 				<div 
-					className={"selection" + (this.state.focused ? " focused" : "")} 
+					className={"selection" + (focused ? " focused" : "")} 
 					ref="selection" 
 					style={this.getSelectorStyle()}>
 				</div>

@@ -1,6 +1,7 @@
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../dispatcher/MetasheetDispatcher'
 import _ from 'underscore'
+import groomView from '../containers/Views/groomView'
 
 var ViewStore = storeFactory({
   identifier: 'view_id',
@@ -20,7 +21,7 @@ var ViewStore = storeFactory({
 
       case 'VIEW_RECEIVE':
         var _this = this
-        var view = payload.view
+        var view = groomView(payload.view)
         if (!view) return;
         view._dirty = false
         this.create(view)
@@ -31,7 +32,7 @@ var ViewStore = storeFactory({
         var model = payload.model
         if(!('views' in model)) return;
         this.purge({model_id: model.model_id});
-        (model.views || []).map(this.create)
+        (model.views || []).map(groomView).map(this.create)
         this.emitChange()
         break;
     }

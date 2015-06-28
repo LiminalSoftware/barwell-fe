@@ -99,8 +99,6 @@ var AttributeDetail = React.createClass({
 		this.setState({
 			renaming: true,
 			attribute: attribute.attribute
-		}, function () {
-			React.findDOMNode(this.refs.renamer).focus();
 		})
 		document.addEventListener('keyup', this.handleKeyPress)
 	},
@@ -156,6 +154,7 @@ var AttributeDetail = React.createClass({
 		var nameField = (this.state.renaming) ? 
 			<input ref="renamer" 
 				className="renamer"
+				autoFocus
 				value={this.state.attribute} 
 				onChange={this.handleNameUpdate} 
 				onBlur={this.commitChanges}/> 

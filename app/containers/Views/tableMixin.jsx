@@ -1,6 +1,8 @@
 import React from "react"
 import $ from "jquery"
 import fieldTypes from "./fields.jsx"
+import FocusStore from '../../stores/FocusStore'
+import modelActionCreators from "../../actions/modelActionCreators.js"
 
 var TableMixin = {
 
@@ -11,45 +13,9 @@ var TableMixin = {
 	startEdit: function (e) {
 		var columns = this.getVisibleColumns()
 		var col = columns[this.state.pointer.left]
-		var field = fieldTypes[col.type]
 		var obj = this.refs.tabularbody.getValueAt(this.state.pointer.top);
-		var value = obj['a' + col.attribute_id]
-		var parser = field.parser
-		var validator = field.validator
 
-		if (field.uneditable) return
 
-		this.setState({
-			editing: true, 
-			editorObj: obj,
-			editorCol: col,
-			editorVal: value,
-			editParser: parser,
-			editValidator: validator
-		}, function () {
-			React.findDOMNode(this.refs.inputter).focus();
-		})
-		document.addEventListener('keyup', this.handleEditKeyPress)
-	},
-
-	handleEditUpdate: function (e) {
-		var val = this.state.editParser(e.target.value)
-		this.setState({editorVal: val})
-	},
-	
-	handleEditKeyPress: function (event) {
-		if (event.keyCode === 27) this.cancelChanges()
-		if (event.keyCode === 13) this.commitChanges()
-	},
-	
-	cancelChanges: function () {
-		// TODO
-		this.revert()
-	},
-	
-	revert: function () {
-		document.removeEventListener('keyup', this.handleEditKeyPress)
-		this.setState({editing: false})
 	},
 
 	// ========================================================================
@@ -57,7 +23,7 @@ var TableMixin = {
 	// ========================================================================
 
 	onKey: function (e) {
-		if ((!this.state.focused) || this.state.editing) return;
+		if (FocusStore.getFocus() !== 'view') return;
 		var ptr = this.state.pointer
 		var numCols = this.getVisibleColumns().length - 1
 		var numRows = 10000 //TODO ... 
@@ -84,6 +50,7 @@ var TableMixin = {
 	// },
 
 	onClick: function (e) {
+		modelActionCreators.setFocus('view')
 		var wrapper = React.findDOMNode(this.refs.wrapper)
 		var tableBody = React.findDOMNode(this.refs.tbody)
 		var geometry = this.state.geometry
@@ -92,8 +59,6 @@ var TableMixin = {
 		var x = event.pageX - wrapper.offsetLeft + wrapper.scrollLeft - 3
 		var r = Math.floor(y/geometry.rowHeight,1)
 		var c = 0
-		
-		this.setState({focused: true})
 
 		e.stopPropagation()
   		e.preventDefault()
@@ -114,6 +79,7 @@ var TableMixin = {
 		var sel = this.state.selection
 		var anc = this.state.anchor
 		var ptr = {left: col, top: row}
+		var view = this.props.view
 
 		if (shift) {
 			if (!anc) anc = {left: col, top: row}
@@ -132,6 +98,10 @@ var TableMixin = {
 			selection: sel,
 			anchor: anc
 		})
+		view.data.selection = sel
+		view.data.pointer = ptr
+		view.data.anchor = anc
+		// modelActionCreators.createView(view, false, false)
 	},
 
 	// ========================================================================

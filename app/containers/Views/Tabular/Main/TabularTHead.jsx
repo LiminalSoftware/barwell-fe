@@ -4,6 +4,7 @@ import EventListener from 'react/lib/EventListener'
 import _ from 'underscore'
 import fieldTypes from "../../fields"
 import modelActionCreators from "../../../../actions/modelActionCreators.js"
+import FocusStore from "../../../../stores/FocusStore"
 
 var TabularTHead = React.createClass ({
 	render: function () {
@@ -12,14 +13,13 @@ var TabularTHead = React.createClass ({
 		var header = this.props.columns.map(function (col, idx) {
 			return <TabularTH key={"th-"+col.attribute_id} column={col} view={view} idx={idx}/>
 		})
-		return <thead id="tabular-view-header" ref="thead" style={style}>
+		return <thead id="tabular-view-header" ref="thead" style={style} key={"tabular-thead-" + view.view_id}>
 			<tr>{header}</tr>
 		</thead>
 	}
 })
 
 export default TabularTHead
-
 
 var TabularTH = React.createClass ({
 	// shouldComponentUpdate: function (nextProps, nextState) {
@@ -32,14 +32,16 @@ var TabularTH = React.createClass ({
 		var col = this.props.column
 		var cellStyle = {minWidth: col.width, maxWidth: col.width}
 		var sortArrow
-		var classes = ""
+		var classes = []
+
 		if (!!col.sorting) sortArrow = <span className={"small white after icon icon-arrow-" + (col.sorting.descending ? "up" : "down")}></span>
-		if (!!col.sorting) classes = col.sorting.descending ? 'asc' : 'desc'
+		if (!!col.sorting) classes.push(col.sorting.descending ? 'asc' : 'desc')
+		if (FocusStore.getFocus() === 'view') classes.push('focused')
+
 		return <th 
 				onClick={this.onClick}
-				key={"header-" + col.id} 
 				style={cellStyle} 
-				className={classes}
+				className={classes.join(' ')}
 			>
 			{col.name}
 			{sortArrow}
@@ -119,11 +121,11 @@ var TabularTH = React.createClass ({
 
 		var view = this.props.view
 		var col = this.props.column
-		console.log('col: '+ JSON.stringify(col, null, 2));
+		
 		var viewData = view.data
 		var sortOrder = !!(col.sorting && !col.sorting.descending)
 		var sortObj = {'attribute_id': col.attribute_id, 'descending': sortOrder}
-		console.log('sortObj: '+ JSON.stringify(sortObj, null, 2));
+		
 		if (!event.shiftKey || !(viewData.sorting instanceof Array)) viewData.sorting = []
 		else viewData.sorting = _.filter(viewData.sorting, function (obj) {return obj.id !== col.id})
 		viewData.sorting.push(sortObj)
