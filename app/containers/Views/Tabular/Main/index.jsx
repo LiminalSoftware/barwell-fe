@@ -82,12 +82,9 @@ var TabularPane = React.createClass ({
 		return _.filter(view.data.columnList, 'visible');
 	},
 
-	commitChanges: function () {
-		var obj = this.state.editorObj
-		var col = this.state.editorCol
-		var val = this.state.editorVal
-		// obj.set(col.id, val)
-		this.revert()
+	startEdit: function (e) {
+		var ptr = this.state.pointer
+		this.refs.tabularbody.editCell(ptr.top, ptr.left)
 	},
 
 	render: function () {
@@ -101,20 +98,20 @@ var TabularPane = React.createClass ({
 		return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">
 				<table id="main-data-table" className="header data-table">
 					<TabularTHead  
-						key={"tabular-thead-" + view.view_id} 
-						scrollTop={this.state.scrollTop}
-						columns={columns}
-						view={view} />
+						key = {"tabular-thead-" + view.view_id} 
+						scrollTop = {this.state.scrollTop}
+						columns = {columns}
+						view = {view} />
 					<TabularTBody 
-						ref="tabularbody" 
-						key={"tbody-" + view.view_id}
-						model={model}
-						view={view}
-						columns={columns}
-						sorting={sorting}
-						scrollTop={this.state.scrollTop}
-						clicker={this.onClick}
-						dblClicker={this.startEdit} />
+						ref = "tabularbody" 
+						key = {"tbody-" + view.view_id}
+						model = {model}
+						view = {view}
+						columns = {columns}
+						sorting = {sorting}
+						scrollTop = {this.state.scrollTop}
+						clicker = {this.onClick}
+						dblClicker = {this.startEdit} />
 				</table>
 				<div 
 					className={"pointer" + (focused ? " focused" : "")} 

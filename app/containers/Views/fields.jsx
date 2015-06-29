@@ -2,14 +2,39 @@ import React from "react"
 import _ from "underscore"
 import moment from "moment"
 import AttributeStore from "../../stores/AttributeStore"
+import FocusStore from "../../stores/FocusStore"
 
 import modelActionCreators from "../../actions/modelActionCreators.js"
+
+var commitMixin = {
+
+	getInitialState: function () {
+		return {
+			value: this.props.value
+		}
+	},
+
+	commitChanges: function () {
+
+		var config = this.props.config
+		var view = this.props.view
+		var pk = this.props.pk
+		var obj = this.props.object
+		var patch = {}
+		var selector = {}
+
+		patch[config.column_id] = this.state.value
+		selector[pk] = obj[pk]
+
+		modelActionCreators.patchRecords(view, patch, selector)
+		this.revert();
+	}
+}
 
 var editableInputMixin = {
 	getInitialState: function () {
 		return {
-			editing: false,
-			value: this.props.value
+			editing: false
 		}
 	},
 
@@ -23,23 +48,6 @@ var editableInputMixin = {
 	cancelChanges: function () {
 		this.revert()
 	},
-
-	commitChanges: function () {
-		var config = this.props.config
-		var pk = this.props.pk
-		var obj = this.props.object
-		var patch = {}
-		var selector = {}
-		patch[config.column_id] = this.state.value
-		selector[pk] = obj[pk]
-
-		modelActionCreators.patchRecords(
-			this.props.view,
-			patch,
-			selector
-		)
-		this.revert();
-	},
 	
 	revert: function () {
 		document.removeEventListener('keyup', this.handleKeyPress)
@@ -50,6 +58,9 @@ var editableInputMixin = {
 	},
 
 	handleEdit: function (event) {
+		var pk = this.props.pk;
+		var column_id = this.props.config.column_id;
+		
 		document.addEventListener('keyup', this.handleKeyPress)
 		this.setState({editing: true})
 	},
@@ -62,18 +73,20 @@ var editableInputMixin = {
 
 var VanillaElement = React.createClass({
 
-	mixins: [editableInputMixin],
+	mixins: [editableInputMixin, commitMixin],
 	
 	render: function () {
 		var value = this.props.value
 		var style = this.props.style
+		var editing = this.props.editing
 
-		return <td style={style} onDoubleClick={this.handleEdit}>
+		return <td style={style} >
 			{this.state.editing ?
 			<input 
 				className = "input-editor" 
 				value = {this.state.value} 
 				autoFocus
+				onBlur = {this.revert}
 				onChange = {this.handleChange} />
 			:
 			this.props.value}
@@ -93,6 +106,8 @@ var HasOneElement = React.createClass({
 });
 
 var NumericElement = React.createClass({
+	mixins: [editableInputMixin, commitMixin],
+
 	render: function () {
 		var value = this.props.value
 		var style = this.props.style
@@ -119,17 +134,36 @@ var ColorElement = React.createClass({
 });
 
 var CheckboxElement = React.createClass({
+	
+	mixins: [commitMixin],
+
+	revert: _.noop,
+
+	handleClick: function (event) {
+		this.toggle()
+		event.preventDefault()
+	},
+
+	toggle: function () {
+		this.setState({value: !this.state.value})
+		this.commitChanges()
+	},
+
 	render: function () {
 		var value = this.props.value
 		var style = this.props.style
 		
 		return <td style={style} className="checkbox">
-			<input type="checkbox" checked={value}></input>
+			<input type="checkbox" checked={value} onClick={this.handleClick}></input>
 		</td>
 	}
 });
 
 var fieldTypes = {
+	PRIMARY_KEY: {
+		element: VanillaElement,
+		uneditable: true
+	},
 	TEXT: {
 		element: VanillaElement,
 		validator: _.identity,
@@ -246,7 +280,7 @@ var fieldTypes = {
 				var config = this.props.config;
 				return {dateFormat: (config.dateFormat || 'DD/MM/YYYY')}
 			},
-			onDateChange: function (event) {
+			onFormatChange: function (event) {
 				var config = this.props.config
 				var column_id = config.column_id
 				var view = this.props.view
@@ -269,7 +303,7 @@ var fieldTypes = {
 					<td className="no-line"></td>
 					<td className="">Date Format: </td>
 					<td className="" colSpan="2">
-						<input type="text" value={this.state.dateFormat} onChange={this.onDateChange}/>
+						<input type="text" value={this.state.dateFormat} onChange={this.onFormatChange}/>
 					</td>
 				</tr>	
 			}	

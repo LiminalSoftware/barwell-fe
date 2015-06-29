@@ -30,12 +30,12 @@ var limit = function (min, max, value) {
 
 var createTabularStore = function (view) {
 	var model = ModelStore.get(view.model_id)
-	var primaryAttrId = AttributeStore.query(
+	var primaryAttrId = 'a' + AttributeStore.query(
 		{model_id: model.model_id, type: 'PRIMARY_KEY'}
 	)[0].attribute_id;
 
-	return storeFactory({
-		identifier: ('a' + primaryAttrId),
+	var store = storeFactory({
+		identifier: (primaryAttrId),
   		dispatcher: dispatcher,
   		pivot: function(payload) {
 	    	var type = payload.actionType
@@ -49,6 +49,29 @@ var createTabularStore = function (view) {
 
     		if (type === (upperLabel + '_DESTROY')) {
     			this.destroy(payload[label])
+    			this.emitChange()
+    		}
+
+    		if (type === (upperLabel + '_RECEIVEUPDATE')) {
+    			var update = payload[label][0]
+    			var existing = store.get(update[primaryAttrId])
+    			var clean = {_dirty: false}
+    			existing = _.extend(existing, update, clean)
+    			this.create(existing)
+    			this.emitChange()
+    		}
+
+    		if (type === (upperLabel + '_UPDATE')) {
+    			var _this = this
+    			var update = payload[label]
+    			var selector = payload.selector
+    			var existing = store.get(update[primaryAttrId])
+    			var dirty = {_dirty: true}
+
+    			store.query(selector).forEach(function (obj) {
+    				obj = _.extend(obj, update)
+    				_this.create(obj)
+    			})
     			this.emitChange()
     		}
 	        
@@ -67,6 +90,8 @@ var createTabularStore = function (view) {
     		}
   		}
 	})
+
+	return store;
 }
 
 var TabularTBody = React.createClass ({
@@ -83,33 +108,53 @@ var TabularTBody = React.createClass ({
 
 	_onChange: function () {
 		var view = ViewStore.get(this.props.view.view_id || this.props.view.cid)
-		this.setState(view.data)	
+		this.setState(view.data)
 	},
 
 	componentWillMount: function () {
 		var view = this.props.view
 		var model = ModelStore.get(view.model_id)
 		
-		if (!this.store) {
-			this.store = ViewDataStores[view.view_id] = createTabularStore(view)
-			this.store.register()
-		} else {
-			this.store.register()
+		if (view.view_id && !this.store) {
+			console.log('A')
+			this.initStore()
 		}
+		if (this.store) {
+			console.log('B')
+			this.store.register()
+			this.store.addChangeListener(this._onChange)
+			this.fetch(true)
+		}
+	},
 
-		this.store.addChangeListener(this._onChange)
+	initStore: function () {
+		var view = this.props.view
+		this.store = ViewDataStores[view.view_id] = createTabularStore(view)
+	},
+
+	componentWillReceiveProps: function (newProps) {
+		var oldProps = this.props;
+		if (!oldProps.view_id && newProps.view_id) {
+			this.initStore()
+			this.store.register()
+			this.store.addChangeListener(this._onChange)
+			this.fetch(true)
+		}
+		if (!_.isEqual(oldProps.sorting, newProps.sorting)) {
+			this.fetch(true)
+		}
 	},
 	
 	componentDidMount: function () {
 		var view = this.props.view
-		this.fetch(true)
 	},
 
 	componentWillUnmount: function () {
+		if (!this.store) return;
 		this.store.removeChangeListener(this._onChange)
 		this.store.unregister()
 	},
-	
+
 	shouldComponentUpdate: function (next) {
 		var old = this.props
 		return !(
@@ -117,10 +162,6 @@ var TabularTBody = React.createClass ({
 			_.isEqual(old.columns, next.columns) &&
 			_.isEqual(old.sorting, next.sort)
 		)
-	},
-
-	componentWillReceiveProps: function (next) {
-		this.fetch()
 	},
 	
 	fetch: function (force) {
@@ -132,9 +173,18 @@ var TabularTBody = React.createClass ({
 		var mismatch = Math.abs(currentOffset - tgtOffset)
 		var view = this.props.view
 
+
+		if (!view.view_id) {
+			console.log('view id not yet assigned')
+			return;
+		}
+
 		if (force || (mismatch > OFFSET_TOLERANCE && currentOffset !== boundedOffset)
 			|| !_.isEqual(oldSort, view.data.sorting)) {
+
+			console.log('fetching')
 			modelActionCreators.fetchRecords(view, 0, 10, view.data.sorting)
+			
 			this.setState({
 				fetching: true,
 				sortSpec: view.data.sorting,
@@ -157,6 +207,21 @@ var TabularTBody = React.createClass ({
 		return this.store.query({idx: idx})[0]
 	},
 
+	editCell: function (row, col) {
+		var col = this.props.columns[col].column_id
+		var obj = this.getValueAt(row);
+		var view = this.props.view
+		var pkColId = 'a' + AttributeStore.query(
+			{model_id: view.model_id, type: 'PRIMARY_KEY'}
+		)[0].attribute_id;
+
+		var rowKey = 'tabular-' +  obj[pkColId]
+		var cellKey = rowKey + '-' + col
+		
+		var field = this.refs[cellKey]
+		field.handleEdit();
+	},
+
 	render: function () {
 		var rows = []
 		var window = this.state.window
@@ -170,7 +235,8 @@ var TabularTBody = React.createClass ({
 			{model_id: model.model_id, type: 'PRIMARY_KEY'}
 		)[0].attribute_id;
 
-		rows = this.store.query(null, 'idx').map(function (obj, i) {
+		if (!this.store) rows = []
+		else rows = this.store.query(null, 'idx').map(function (obj, i) {
 			var rowKey = 'tabular-' +  obj[pkColId]
 			var els = columns.map(function (col, idx) {
 				var element = (fieldTypes[col.type] || fieldTypes.TEXT).element
@@ -185,6 +251,7 @@ var TabularTBody = React.createClass ({
 					pk: pkColId,
 					value: value,
 					key: cellKey,
+					ref: cellKey,
 					style: {minWidth: col.width, maxWidth: col.width, textAlign: col.align}
 				})
 			})

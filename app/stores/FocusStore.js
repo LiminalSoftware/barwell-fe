@@ -6,8 +6,6 @@ import EventEmitter from 'events'
 var focusStore = module.exports = {focus: 'view-config'};
 
 var _focus = null;
-var _obj = null;
-var _col = null;
 
 var FocusStore = assign({}, EventEmitter.prototype, {
 	addChangeListener: function(callback) {
@@ -26,8 +24,6 @@ var FocusStore = assign({}, EventEmitter.prototype, {
 		switch(payload.actionType) {
 			case 'SET_FOCUS':
 				_focus = payload.focus
-				_obj = payload.objid
-				_col = payload.colid
 				FocusStore.emit('CHANGE_EVENT');
 		}
 	})

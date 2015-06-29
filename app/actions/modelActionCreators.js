@@ -6,7 +6,7 @@ import groomView from '../containers/Views/groomView'
 
 var modelActions = {
 
-	setFocus: function (focus, obj, col) {
+	setFocus: function (focus) {
 		var message = {
 			actionType: 'SET_FOCUS',
 			focus: focus
@@ -29,10 +29,8 @@ var modelActions = {
 		}).join('&')
 
 		webUtils.ajax('PATCH', url, JSON.stringify(patch), {"Prefer": 'return=representation'}).then(function (results) {
-			var message = {}
 			message.actionType = 'V' + view.view_id + '_RECEIVEUPDATE'
 			message['v' + view.view_id] = results.data
-			// console.log('message: '+ JSON.stringify(message, null, 2));
 			MetasheetDispatcher.dispatch(message)
 		})
 	},
@@ -60,7 +58,7 @@ var modelActions = {
 			
 			message.actionType = ('V' + view.view_id + '_RECEIVE')
 			message['v' + view_id] = results.data
-
+			
 			MetasheetDispatcher.dispatch(message)
 		});
 	},
@@ -175,7 +173,7 @@ var modelActions = {
 
 	// views
 	createView: function(view, persist, update) {
-		modelActions.create('view', persist, (view), update)
+		modelActions.create('view', persist, groomView(view), update)
 	},
 
 	destroyView: function(view) {

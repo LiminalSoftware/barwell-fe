@@ -21,8 +21,9 @@ var ViewStore = storeFactory({
 
       case 'VIEW_RECEIVE':
         var _this = this
-        var view = groomView(payload.view)
-        if (!view) return;
+        var view = payload.view
+        if (!(view instanceof Object)) return;
+        view = view
         view._dirty = false
         this.create(view)
         this.emitChange()

@@ -84,7 +84,7 @@ var persist = module.exports.persist = function (subject, action, data, update, 
 
   return ajax(method, url, json).then(function (results) {
     if (update === false || method=='DELETE') return;  // temporary hack until I refactor model push
-    _.each(results.data, function (obj) {
+    (results.data instanceof Array ? results.data : [results.data]).forEach(function (obj) {
       issueReceipt(subject, obj)
     })
   });

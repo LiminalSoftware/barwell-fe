@@ -3,6 +3,7 @@ import $ from "jquery"
 import fieldTypes from "./fields.jsx"
 import FocusStore from '../../stores/FocusStore'
 import modelActionCreators from "../../actions/modelActionCreators.js"
+import constants from '../../constants/MetasheetConstants'
 
 var TableMixin = {
 
@@ -10,32 +11,36 @@ var TableMixin = {
 	// cell editing
 	// ========================================================================
 
-	startEdit: function (e) {
-		var columns = this.getVisibleColumns()
-		var col = columns[this.state.pointer.left]
-		var obj = this.refs.tabularbody.getValueAt(this.state.pointer.top);
-
-
-	},
+	
 
 	// ========================================================================
 	// selection control
 	// ========================================================================
 
 	onKey: function (e) {
-		if (FocusStore.getFocus() !== 'view') return;
+		var sel = this.state.selection
+		var keycodes = constants.keycodes
+		if (FocusStore.getFocus() !== 'view' || this.state.editing) return;
 		var ptr = this.state.pointer
 		var numCols = this.getVisibleColumns().length - 1
 		var numRows = 10000 //TODO ... 
 		var left = ptr.left
 		var top = ptr.top
 
-		if (e.keyCode == 37 && left > 0) left --
-		else if (e.keyCode == 38 && top > 0) top --
-		else if (e.keyCode == 39 && left < numCols) left ++
-		else if (e.keyCode == 40 && top < numRows) top ++
-		else if (e.keyCode == 113) return this.startEdit(e)
+		if (e.keyCode == keycodes.ARROW_LEFT && left > 0) left --
+		else if (e.keyCode == keycodes.ARROW_UP && top > 0) top --
+		else if (e.keyCode == keycodes.ARROW_RIGHT && left < numCols) left ++
+		else if (e.keyCode == keycodes.ARROW_DOWN && top < numRows) top ++
+		else if (e.keyCode == keycodes.F2) return this.startEdit(e)
 		// else if (e.keyCode == 16) return (document.onselectstart = this.preventTextSelection)
+		else if (e.keyCode == keycodes.SPACE && e.shiftKey) { 
+			sel.left = 0; 
+			sel.right = numCols;
+			this.setState({selection: sel})
+			return;
+		} else if (e.keyCode == keycodes.TAB) { 
+			if (left < numCols) left++
+		}
 		else return
 
 		e.stopPropagation()
@@ -98,9 +103,9 @@ var TableMixin = {
 			selection: sel,
 			anchor: anc
 		})
-		view.data.selection = sel
-		view.data.pointer = ptr
-		view.data.anchor = anc
+		// view.data.selection = sel
+		// view.data.pointer = ptr
+		// view.data.anchor = anchor
 		// modelActionCreators.createView(view, false, false)
 	},
 

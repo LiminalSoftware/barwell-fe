@@ -23,7 +23,9 @@ module.exports = {
   	ARROW_LEFT: 37,
   	ARROW_RIGHT: 39,
   	F2: 113,
-  	SHIFT: 16
+  	SHIFT: 16,
+    SPACE: 32,
+    TAB: 9
   }
 
 };

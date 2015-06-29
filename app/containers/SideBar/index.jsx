@@ -46,12 +46,12 @@ var SideBar = React.createClass({
 
 		var modelLinks = ModelStore.query(null, ['model']).map(function (model, idx) {
 			if (!model) return <li key={"loader-" + idx}><a>Loading</a></li>
-			var modelId = model.model_id
+			var modelId = model.cid || model.model_id;
 			return <ModelLink 
-				key={'model-link-' + modelId} 
-				keyCtl={idx + 1} 	
-				model={model} 
-				active={curModelId == modelId}/>;
+				key = {'model-link-' + modelId} 
+				keyCtl = {idx + 1} 	
+				model = {model} 
+				active = {curModelId == modelId}/>;
 		});
 		return <div className="left-side-bar">
 			<ul>
@@ -120,6 +120,7 @@ var ModelLink = React.createClass ({
 	render: function() {
 		var _this = this
 		var model = this.props.model
+		var model_id = model.cid || model.model_id
 		var views
 		var lock_icon
 
@@ -128,15 +129,15 @@ var ModelLink = React.createClass ({
 			(<span>{model.model}</span>) ;
 
 		if (this.props.active) {
-			views = ViewStore.query({model_id: model.model_id}, ['view']).map(function (view) {
+			views = ViewStore.query({model_id: model_id}, ['view']).map(function (view) {
 				if (!view) return;
 				
 				return <ViewLink 
-					key={'view-link-' + view.view_id} 
+					key={'view-link-' + (view.cid || view.view_id)} 
 					view={view} 
 					model={model}/>	
 			})
-			views.push(<ViewAdder key={"model-view-adder-" + model.model_id} model={model} />)
+			views.push(<ViewAdder key={"model-view-adder-" + model_id} model={model} />)
 		} else views = ""
 
 		if (model.lock_user) 
@@ -145,9 +146,9 @@ var ModelLink = React.createClass ({
 						
 		
 		return <li>
-			<ul key={"model-views-ul-" + model.model_id}>
+			<ul key={"model-views-ul-" + model_id}>
 				<li className={"li-model" + (this.props.active ? " li-hilite" : "")}>
-					<Link to="model" params={{modelId: model.model_id}} key={"model-link-" + model.model_id} onDoubleClick={this.edit}>
+					<Link to="model" params={{modelId: model_id}} key={"model-link-" + model_id} onDoubleClick={this.edit}>
 					{lock_icon}
 					{modelDisplay}
 					</Link>
@@ -190,12 +191,11 @@ var ViewLink = React.createClass({
 	render: function () {
 		var view = this.props.view;
 		var model = this.props.model;
-		var key = "view-link-" + (view.view_id || view.cid)
 		var viewDisplay = (!!this.state.renaming) ?  
 			(<input className="view-renamer" ref="renamer" value={this.state.name} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/>) : 
 			(<span>{view.view}</span>) ;
-		return <li className={"li-view " + (view._new ? "new" : "")} key={"view-li-" + view.view_id}>
-			<Link to="view" params={{modelId: model.model_id, viewId: (view.view_id || view.cid)}} key={key} onDoubleClick={this.edit} >
+		return <li className={"li-view " + (view._new ? "new" : "")} >
+			<Link to="view" params={{modelId: model.model_id, viewId: (view.view_id || view.cid)}} onDoubleClick={this.edit} >
 				<span className={"icon "+view.data.icon}></span>{viewDisplay}
 			</Link>
 			<span className="view-delete grayed icon icon-kub-trash" onClick={this.handleDelete}></span>
@@ -241,11 +241,11 @@ var ViewAdder = React.createClass ({
 	handleAddView: function(event) {
 		var model = this.props.model
 		var view = {
+			_new: true,
 			model_id: model.model_id,
 			view: (model.model + ' - New view'),
 		}
-		
-		modelActionCreators.createView(view, true)
+		modelActionCreators.createView(view, true, true)
 		event.preventDefault()
 	},
 
@@ -253,7 +253,7 @@ var ViewAdder = React.createClass ({
 		var _this = this
 		var model = this.props.model
 		
-		return <li className="li-view li-hilite" key={"model-add-li-" + model.model_id}>
+		return <li className="li-view li-hilite">
 			<a herf="#" className="addNew clickable" onClick={this.handleAddView}>
 				<span className="small addNew icon icon-plus"></span> Create new view
 			</a>
