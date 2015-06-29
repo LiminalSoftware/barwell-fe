@@ -3,7 +3,6 @@ import { Route, DefaultRoute, NotFoundRoute } from "react-router";
 import Application from "./containers/Application";
 import ModelPane from "./containers/ModelPane";
 
-
 // polyfill
 if(!Object.assign)
 	Object.assign = React.__spread;

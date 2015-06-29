@@ -1,7 +1,7 @@
 import React from "react";
 import _ from 'underscore';
 import viewTypes from "../../Views/viewTypes"
-import modelActionCreators from "../../../actions/modelActionCreators.js"
+import modelActionCreators from "../../../actions/modelActionCreators"
 import ViewStore from "../../../stores/ViewStore"
 
 var ViewSelector = React.createClass({

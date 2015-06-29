@@ -11,7 +11,7 @@ import AttributeStore from "../../../../stores/AttributeStore"
 import KeyStore from "../../../../stores/KeyStore"
 import KeycompStore from "../../../../stores/KeycompStore"
 
-import modelActionCreators from "../../../../actions/modelActionCreators.js"
+import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
 import groomView from '../../groomView'
 
 var TabularViewConfig = React.createClass({

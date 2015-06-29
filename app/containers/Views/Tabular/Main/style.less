@@ -45,8 +45,22 @@
 		left: 3px;
 	}
 
+	
+
 	tr {
 		height: 24px;
+		line-height: 24px;
+
+		&.dirty {
+			td:first-child {
+				border-left: 2px solid @green-tint-2;	
+			}
+		}
+
+		td:first-child {
+			border-left: 2px solid transparent;
+			.transition(all 100ms ease-in);
+		}
 		td, th {
 			position: relative;
 			.noselect;
@@ -68,14 +82,13 @@
 		}
 
 		td {
-			background-color: transparent;
-			z-index: 100;
 			&.checkbox {
 				text-align: center;
 			}
 		}
 
 		th {
+			z-index: 200;
 			overflow: visible;
 			font-weight: 400;
 			background: @cream;

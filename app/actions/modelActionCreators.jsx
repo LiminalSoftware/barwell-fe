@@ -1,5 +1,5 @@
 import MetasheetDispatcher from "../dispatcher/MetasheetDispatcher"
-import webUtils from "../util/MetasheetWebAPI"
+import webUtils from "../util/MetasheetWebAPI.jsx"
 import _ from 'underscore'
 import ModelStore from '../stores/ModelStore'
 import groomView from '../containers/Views/groomView'
@@ -14,6 +14,38 @@ var modelActions = {
 		MetasheetDispatcher.dispatch(message);
 	},
 
+	createRecord: function (view, idx) {
+		var view_id = view.view_id
+		var message = {}
+		var obj = {}
+		obj._idx = idx + 0.1;
+		
+		message.actionType = 'V' + view.view_id + '_CREATE'
+		message['v' + view.view_id] = obj
+		MetasheetDispatcher.dispatch(message)
+	},
+
+	insertRecord: function (view, obj) {
+		var view_id = view.view_id
+		var message = {}
+		message.actionType = 'V' + view.view_id + '_UPDATE'
+		message['v' + view.view_id] = obj
+		message.selector = {cid: obj.cid}
+
+		console.log('obj: '+ JSON.stringify(obj, null, 2));
+		var json = JSON.stringify(webUtils.stripInternalVars(_.omit(obj, 'cid')))
+		
+		console.log('V json: '+ JSON.stringify(json, null, 2));
+		var url = 'https://api.metasheet.io/m' + view.model_id;
+
+		webUtils.ajax('POST', url, json, {"Prefer": 'return=representation'}).then(function (results) {
+			message.actionType = 'V' + view.view_id + '_RECEIVEUPDATE'
+			results.data.cid = obj.cid
+			message['v' + view.view_id] = [results.data]
+			MetasheetDispatcher.dispatch(message)
+		})
+	},
+
 	patchRecords: function (view, patch, selector) {
 		var view_id = view.view_id
 		var message = {}
@@ -21,6 +53,7 @@ var modelActions = {
 		message['v' + view.view_id] = patch
 		message.selector = selector
 		MetasheetDispatcher.dispatch(message)
+
 
 		var url = 'https://api.metasheet.io/m' + view.model_id;
 		if (!selector instanceof Object) throw new Error ('NOOOOOOOOOOOoOooooo!!!!!!!')
@@ -47,6 +80,7 @@ var modelActions = {
 			'Range-Unit': 'items',
 			'Range': (offset + '-' + (offset + limit))
 		}
+		console.log('header: '+ JSON.stringify(header, null, 2));
 		webUtils.ajax('GET', url, null, header).then(function (results) {
 			var message = {}
 			var range = results.xhr.getResponseHeader('Content-Range')

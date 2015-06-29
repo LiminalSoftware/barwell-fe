@@ -5,7 +5,7 @@ import EventListener from 'react/lib/EventListener'
 import _ from 'underscore'
 import $ from 'jquery'
 
-import modelActionCreators from "../../../../actions/modelActionCreators.js"
+import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
 
 import ModelStore from "../../../../stores/ModelStore"
 import KeyStore from "../../../../stores/KeyStore"
@@ -53,7 +53,7 @@ var TabularPane = React.createClass ({
 		return {
 			geometry: {
 				headerHeight: 35,
-				rowHeight: 24,
+				rowHeight: 25,
 				topOffset: 12,
 				widthPadding: 9
 			},

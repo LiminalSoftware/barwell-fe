@@ -25,7 +25,8 @@ module.exports = {
   	F2: 113,
   	SHIFT: 16,
     SPACE: 32,
-    TAB: 9
+    TAB: 9,
+    PLUS: 187
   }
 
 };

@@ -2,7 +2,7 @@ import React from "react"
 import fieldTypes from "../../fields"
 import _ from "underscore"
 
-import modelActionCreators from "../../../../actions/modelActionCreators.js"
+import modelActionCreators from "../../../../actions/modelActionCreators"
 
 import ModelStore from "../../../../stores/ModelStore"
 import ViewStore from "../../../../stores/ViewStore"
@@ -43,9 +43,17 @@ var createTabularStore = function (view) {
 	    	var upperLabel = label.toUpperCase()
 
     		if (type === (upperLabel + '_CREATE')) {
-    			this.create(payload[label])
+    			var obj = payload[label]
+    			console.log('create obj: '+ JSON.stringify(obj, null, 2));
+    			this.create(obj)
     			this.emitChange()
+    			console.log('created obj: '+ JSON.stringify(obj, null, 2));
     		}
+
+    		// if (type === (upperLabel + '_INSERT')) {
+    		// 	var obj = payload[label]
+    		// 	this.create(obj)
+    		// }
 
     		if (type === (upperLabel + '_DESTROY')) {
     			this.destroy(payload[label])
@@ -54,8 +62,12 @@ var createTabularStore = function (view) {
 
     		if (type === (upperLabel + '_RECEIVEUPDATE')) {
     			var update = payload[label][0]
-    			var existing = store.get(update[primaryAttrId])
+    			var existing = store.get(update.cid || update[primaryAttrId])
     			var clean = {_dirty: false}
+    			
+    			console.log('update: '+ JSON.stringify(update, null, 2));
+    			console.log('existing: '+ JSON.stringify(existing, null, 2));
+
     			existing = _.extend(existing, update, clean)
     			this.create(existing)
     			this.emitChange()
@@ -65,11 +77,11 @@ var createTabularStore = function (view) {
     			var _this = this
     			var update = payload[label]
     			var selector = payload.selector
-    			var existing = store.get(update[primaryAttrId])
+    			var existing = store.get(update[primaryAttrId]  || update.cid)
     			var dirty = {_dirty: true}
 
     			store.query(selector).forEach(function (obj) {
-    				obj = _.extend(obj, update)
+    				obj = _.extend(obj, update, dirty)
     				_this.create(obj)
     			})
     			this.emitChange()
@@ -83,7 +95,7 @@ var createTabularStore = function (view) {
 
 	        	if (!_.isArray(objects)) objects = [objects]
 	      	objects.forEach(function (obj, idx) {
-	      		obj.idx = startIndex + idx;
+	      		obj._idx = startIndex + idx;
 	      		_this.create(obj)
 	      	});
     			this.emitChange()
@@ -116,11 +128,10 @@ var TabularTBody = React.createClass ({
 		var model = ModelStore.get(view.model_id)
 		
 		if (view.view_id && !this.store) {
-			console.log('A')
 			this.initStore()
 		}
 		if (this.store) {
-			console.log('B')
+			global.tbodystore = this.store
 			this.store.register()
 			this.store.addChangeListener(this._onChange)
 			this.fetch(true)
@@ -182,8 +193,7 @@ var TabularTBody = React.createClass ({
 		if (force || (mismatch > OFFSET_TOLERANCE && currentOffset !== boundedOffset)
 			|| !_.isEqual(oldSort, view.data.sorting)) {
 
-			console.log('fetching')
-			modelActionCreators.fetchRecords(view, 0, 10, view.data.sorting)
+			modelActionCreators.fetchRecords(view, 0, 100, view.data.sorting)
 			
 			this.setState({
 				fetching: true,
@@ -204,7 +214,7 @@ var TabularTBody = React.createClass ({
 	},
 
 	getValueAt: function (idx) {
-		return this.store.query({idx: idx})[0]
+		return this.store.query(null, '_idx')[idx]
 	},
 
 	editCell: function (row, col) {
@@ -215,7 +225,7 @@ var TabularTBody = React.createClass ({
 			{model_id: view.model_id, type: 'PRIMARY_KEY'}
 		)[0].attribute_id;
 
-		var rowKey = 'tabular-' +  obj[pkColId]
+		var rowKey = 'tabular-' +  (obj[pkColId] || obj.cid)
 		var cellKey = rowKey + '-' + col
 		
 		var field = this.refs[cellKey]
@@ -236,8 +246,8 @@ var TabularTBody = React.createClass ({
 		)[0].attribute_id;
 
 		if (!this.store) rows = []
-		else rows = this.store.query(null, 'idx').map(function (obj, i) {
-			var rowKey = 'tabular-' +  obj[pkColId]
+		else rows = this.store.query(null, '_idx').map(function (obj, i) {
+			var rowKey = 'tabular-' +  (obj[pkColId] || obj.cid)
 			var els = columns.map(function (col, idx) {
 				var element = (fieldTypes[col.type] || fieldTypes.TEXT).element
 				var cellKey = rowKey + '-' + col.column_id
@@ -255,7 +265,7 @@ var TabularTBody = React.createClass ({
 					style: {minWidth: col.width, maxWidth: col.width, textAlign: col.align}
 				})
 			})
-			return <tr id={rowKey} key={rowKey}>{els}</tr>
+			return <tr id={rowKey} key={rowKey} className={obj._dirty ? "dirty" : ""}>{els}</tr>
 		})
 		return <tbody ref="tbody" style={this.getStyle()} onClick={clicker} onDoubleClick={dblClicker}>
 			{rows}

@@ -2,7 +2,7 @@ import React from "react"
 import $ from "jquery"
 import fieldTypes from "./fields.jsx"
 import FocusStore from '../../stores/FocusStore'
-import modelActionCreators from "../../actions/modelActionCreators.js"
+import modelActionCreators from "../../actions/modelActionCreators.jsx"
 import constants from '../../constants/MetasheetConstants'
 
 var TableMixin = {
@@ -19,27 +19,33 @@ var TableMixin = {
 
 	onKey: function (e) {
 		var sel = this.state.selection
+		var view = this.props.view
 		var keycodes = constants.keycodes
-		if (FocusStore.getFocus() !== 'view' || this.state.editing) return;
+		if (FocusStore.getFocus() !== 'view' || (this.state.editing && 
+			e.keyCode != keycodes.ENTER && e.keyCode != keycodes.TAB)) return;
 		var ptr = this.state.pointer
 		var numCols = this.getVisibleColumns().length - 1
 		var numRows = 10000 //TODO ... 
 		var left = ptr.left
 		var top = ptr.top
 
+
 		if (e.keyCode == keycodes.ARROW_LEFT && left > 0) left --
 		else if (e.keyCode == keycodes.ARROW_UP && top > 0) top --
 		else if (e.keyCode == keycodes.ARROW_RIGHT && left < numCols) left ++
 		else if (e.keyCode == keycodes.ARROW_DOWN && top < numRows) top ++
-		else if (e.keyCode == keycodes.F2) return this.startEdit(e)
+		else if (e.keyCode == keycodes.F2) return this.startEdit(e);
 		// else if (e.keyCode == 16) return (document.onselectstart = this.preventTextSelection)
-		else if (e.keyCode == keycodes.SPACE && e.shiftKey) { 
+		else if (e.keyCode == keycodes.ENTER && top < numRows) top ++;
+		else if (e.keyCode == keycodes.TAB) { 
+			if (left < numCols) left++;
+		} else if (e.keyCode == keycodes.SPACE && e.shiftKey) { 
 			sel.left = 0; 
 			sel.right = numCols;
 			this.setState({selection: sel})
 			return;
-		} else if (e.keyCode == keycodes.TAB) { 
-			if (left < numCols) left++
+		} else if (e.keyCode == keycodes.PLUS && e.shiftKey) {
+			modelActionCreators.createRecord(view, top)
 		}
 		else return
 
@@ -118,7 +124,7 @@ var TableMixin = {
 		var sel = this.state.selection
 		var columns = this.getVisibleColumns()
 		var width = -1
-		var height = (sel.bottom - sel.top + 1) * geometry.rowHeight - 2
+		var height = (sel.bottom - sel.top + 1) * geometry.rowHeight - 1
 		var left = 3
 		var top = geometry.headerHeight + this.state.selection.top * geometry.rowHeight
 		

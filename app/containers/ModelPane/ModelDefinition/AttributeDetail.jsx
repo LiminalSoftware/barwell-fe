@@ -230,7 +230,7 @@ var AttributeDetail = React.createClass({
 			key={key} 
 			className={(col._dirty?'unsaved':'') + (col._destroy?'destroyed':'')}>
 			
-			<td onDoubleClick={this.handleEdit} key={key + '-name'}>
+			<td onDoubleClick={this.handleEdit} key={key + '-name'} title={col.attribute_id}>
 				{nameField}
 			</td>
 			<td>

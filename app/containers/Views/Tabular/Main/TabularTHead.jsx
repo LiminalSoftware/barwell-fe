@@ -3,7 +3,7 @@ import $ from "jquery"
 import EventListener from 'react/lib/EventListener'
 import _ from 'underscore'
 import fieldTypes from "../../fields"
-import modelActionCreators from "../../../../actions/modelActionCreators.js"
+import modelActionCreators from "../../../../actions/modelActionCreators"
 import FocusStore from "../../../../stores/FocusStore"
 
 var TabularTHead = React.createClass ({

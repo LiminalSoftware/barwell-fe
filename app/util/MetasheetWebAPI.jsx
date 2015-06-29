@@ -11,7 +11,7 @@ $.ajaxSetup({
 var MAX_RETRIES = 5
 var INITIAL_WAIT = 100
 
-var stripInternalVars = function (obj) {
+var stripInternalVars = module.exports.stripInternalVars = function (obj) {
   var newObj = {}
   Object.keys(obj).forEach(function (key) {
     if (key.slice(0,1) !== '_') newObj[key] = obj[key];

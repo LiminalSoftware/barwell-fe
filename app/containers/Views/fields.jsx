@@ -4,7 +4,7 @@ import moment from "moment"
 import AttributeStore from "../../stores/AttributeStore"
 import FocusStore from "../../stores/FocusStore"
 
-import modelActionCreators from "../../actions/modelActionCreators.js"
+import modelActionCreators from "../../actions/modelActionCreators"
 
 var commitMixin = {
 
@@ -26,7 +26,8 @@ var commitMixin = {
 		patch[config.column_id] = this.state.value
 		selector[pk] = obj[pk]
 
-		modelActionCreators.patchRecords(view, patch, selector)
+		if (obj[pk]) modelActionCreators.patchRecords(view, patch, selector)
+		else modelActionCreators.insertRecord(view, _.extend(obj, patch))
 		this.revert();
 	}
 }
@@ -37,8 +38,6 @@ var editableInputMixin = {
 			editing: false
 		}
 	},
-
-	parser: _.identity,
 	
 	handleKeyPress: function (event) {
 		if (event.keyCode === 27) this.cancelChanges()
@@ -74,6 +73,8 @@ var editableInputMixin = {
 var VanillaElement = React.createClass({
 
 	mixins: [editableInputMixin, commitMixin],
+
+	parser: _.identity,
 	
 	render: function () {
 		var value = this.props.value
@@ -108,10 +109,32 @@ var HasOneElement = React.createClass({
 var NumericElement = React.createClass({
 	mixins: [editableInputMixin, commitMixin],
 
+	validator: function (input) {
+		if (!(/^\d+$/).test(input))
+			throw new Error('Validation Error')
+		return parseInt(input)
+	},
+
+	parser: function (input) {
+		return input.match(/^(\d*)/)[0]
+	},
+
 	render: function () {
 		var value = this.props.value
 		var style = this.props.style
-		return <td style={style}>{value}</td>
+		var editing = this.props.editing
+
+		return <td style={style} >
+			{this.state.editing ?
+			<input 
+				className = "input-editor" 
+				value = {this.state.value} 
+				autoFocus
+				onBlur = {this.revert}
+				onChange = {this.handleChange} />
+			:
+			this.props.value}
+		</td>
 	}
 });
 
@@ -154,7 +177,7 @@ var CheckboxElement = React.createClass({
 		var style = this.props.style
 		
 		return <td style={style} className="checkbox">
-			<input type="checkbox" checked={value} onClick={this.handleClick}></input>
+			<input type="checkbox" checked={value} onChange={this.handleClick}></input>
 		</td>
 	}
 });
@@ -241,15 +264,7 @@ var fieldTypes = {
 	},
 
 	INTEGER: {
-		element: NumericElement,
-		validator: function (input) {
-			if (!(/^\d+$/).test(input))
-				throw new Error('Validation Error')
-			return parseInt(input)
-		},
-		parser: function (input) {
-			return input.match(/^(\d*)/)[0]
-		}
+		element: NumericElement
 	},
 
 	DECIMAL: {
