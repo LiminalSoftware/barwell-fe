@@ -20,11 +20,11 @@ var ModelStore = storeFactory({
       case 'MODEL_RECEIVE':
         var model = payload.model
         model._dirty = false
-        if (model.attributes instanceof Array) model.pk = 'a' + model.attributes.filter(function (attr) {
+        if (model.attributes instanceof Array) model._pk = 'a' + model.attributes.filter(function (attr) {
           return attr.type === 'PRIMARY_KEY'
         })[0].attribute_id
 
-        this.create(_.pick(model, 'pk', 'model', 'model_id', 'cid', 
+        this.create(_.pick(model, '_pk', 'model', 'model_id', 'cid', 
             'plural', 'lock_user', '_dirty', '_destroy'))
         this.emitChange()
         break;

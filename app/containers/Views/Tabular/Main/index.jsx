@@ -22,13 +22,19 @@ import fieldTypes from "../../fields"
 import TabularTBody from "./TabularTBody"
 import TabularTHead from "./TabularTHead"
 import ViewUpdateMixin from '../../ViewUpdateMixin.jsx'
-import TableMixin from '../../TableMixin.jsx'
+
 
 
 
 var TabularPane = React.createClass ({
 
-	mixins: [ViewUpdateMixin, TableMixin],
+	mixins: [ViewUpdateMixin],
+
+	getInitialState: function () {
+		return {
+			sorting: null
+		}
+	},
 
 	componentWillMount: function () {
 		ViewStore.addChangeListener(this._onChange)
@@ -37,45 +43,12 @@ var TabularPane = React.createClass ({
 		FocusStore.addChangeListener(this._onChange)
 	},
 
-	componentDidMount: function () {
-		$(document.body).on('keydown', this.onKey)
-	},
 
 	componentWillUnmount: function () {
-		$(document.body).off('keydown', this.onKey)
 		ViewStore.removeChangeListener(this._onChange)
 		AttributeStore.removeChangeListener(this._onChange)
 		ModelStore.removeChangeListener(this._onChange)
 		FocusStore.removeChangeListener(this._onChange)
-	},
-	
-	getInitialState: function () {
-		return {
-			geometry: {
-				headerHeight: 35,
-				rowHeight: 25,
-				topOffset: 12,
-				leftOffset: 3,
-				widthPadding: 9
-			},
-			selection: {
-				left: 0, 
-				top: 0,
-				right: 0,
-				bottom: 0
-			},
-			pointer: {
-				left: 0,
-				top: 0
-			},
-			anchor: {
-				left: 0, 
-				top: 0
-			},
-			scrollTop: 0,
-			focused: false,
-			editing: false
-		}
 	},
 
 	getVisibleColumns: function () {
@@ -83,9 +56,9 @@ var TabularPane = React.createClass ({
 		return _.filter(view.data.columnList, 'visible');
 	},
 
-	startEdit: function (e) {
-		var ptr = this.state.pointer
-		this.refs.tabularbody.editCell(ptr.top, ptr.left)
+	onScroll: function (event) {
+		var wrapper = React.findDOMNode(this.refs.wrapper)
+		this.setState({scrollTop: wrapper.scrollTop})
 	},
 
 	render: function () {
@@ -102,29 +75,19 @@ var TabularPane = React.createClass ({
 						key = {"tabular-thead-" + view.view_id} 
 						scrollTop = {this.state.scrollTop}
 						columns = {columns}
+						focused = {focused}
 						view = {view} />
 					<TabularTBody 
 						ref = "tabularbody" 
 						key = {"tbody-" + view.view_id}
 						model = {model}
 						view = {view}
+						focused = {focused}
 						columns = {columns}
 						sorting = {sorting}
 						scrollTop = {this.state.scrollTop}
-						clicker = {this.onClick}
-						dblClicker = {this.startEdit} />
+						/>
 				</table>
-				<div 
-					className={"pointer" + (focused ? " focused" : "")} 
-					ref="anchor" 
-					onDoubleClick={this.startEdit} 
-					style={this.getPointerStyle()}>
-				</div>
-				<div 
-					className={"selection" + (focused ? " focused" : "")} 
-					ref="selection" 
-					style={this.getSelectorStyle()}>
-				</div>
 		</div>
 	}
 })

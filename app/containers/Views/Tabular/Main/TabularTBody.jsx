@@ -9,11 +9,13 @@ import ViewStore from "../../../../stores/ViewStore"
 import KeyStore from "../../../../stores/KeyStore"
 import KeycompStore from "../../../../stores/KeycompStore"
 import AttributeStore from "../../../../stores/AttributeStore"
+import FocusStore from "../../../../stores/FocusStore"
 
 import ViewDataStores from "../../../../stores/ViewDataStores"
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 
+import TableMixin from '../../TableMixin.jsx'
 
 var HEADER_HEIGHT = 35
 var ROW_HEIGHT = 24
@@ -102,13 +104,22 @@ var createTabularStore = function (view) {
 }
 
 var TabularTBody = React.createClass ({
+
+	mixins: [TableMixin],
+
 	getInitialState: function () {
 		return {
 			scrollTop: 0,
-			fetching: false,
 			window: {
 				offset: 0,
 				limit: CURSOR_LIMIT
+			},
+			geometry: {
+				headerHeight: 35,
+				rowHeight: 25,
+				topOffset: 13,
+				leftOffset: 3,
+				widthPadding: 9
 			}
 		}
 	},
@@ -212,18 +223,24 @@ var TabularTBody = React.createClass ({
 		return this.store.query(null, '_idx')[idx]
 	},
 
-	editCell: function (row, col) {
+	editCell: function (event, initialValue) {
+		var row = this.state.pointer.top
+		var col = this.state.pointer.left
 		var colId = this.props.columns[col].column_id
 		var obj = this.getValueAt(row);
 		var model = this.props.model
-		var pk = model.pk
-		var objId = (obj[pk] || obj.cid);
+		var pk = model._pk
+		var objId = (obj.cid || obj[pk]);
 		var rowKey = 'tr-' + objId
 		var cellKey = rowKey + '-' + colId
 		
-		this.setState({editing: true, editObjId: objId, editColId: colId})
+		this.setState({
+			editing: true, 
+			editObjId: objId, 
+			editColId: colId
+		})
 		var field = this.refs[rowKey].refs[cellKey]
-		field.handleEdit();
+		field.handleEdit(event, initialValue);
 	},
 
 	handleBlur: function () {
@@ -236,11 +253,14 @@ var TabularTBody = React.createClass ({
 		var clicker = this.props.clicker
 		var dblClicker = this.props.dblClicker
 		var handleBlur = this.handleBlur
-		var pk = _this.props.model.pk
+		var pk = model._pk
 		var editObjId = this.state.editObjId
 
-		if (!this.store) return <tbody ref="tbody"></tbody>;
-		return <tbody ref="tbody" style={this.getStyle()} onClick={clicker} onDoubleClick={dblClicker}>
+		if (!this.store) return <tbody ref = "tbody"></tbody>;
+		return <tbody ref = "tbody" 
+			style = {_this.getStyle()} 
+			onClick = {_this.onClick} 
+			onDoubleClick = {_this.editCell}>
 		{	
 			_this.store.query(null, '_idx').map(function (obj, i) {
 				var rowKey = 'tr-' + (obj.cid || obj[pk])
@@ -250,9 +270,20 @@ var TabularTBody = React.createClass ({
 					rowKey = {rowKey}
 					ref = {rowKey}
 					key = {rowKey}
-					handleBlur={_this.handleBlur} />;
+					handleBlur = {_this.handleBlur} />;
 			})	
 		}
+		<div 
+			className={"pointer" + (this.props.focused ? " focused" : "")} 
+			ref="anchor" 
+			onDoubleClick={this.startEdit} 
+			style={this.getPointerStyle()}>
+		</div>
+		<div 
+			className={"selection" + (this.props.focused ? " focused" : "")} 
+			ref="selection" 
+			style={this.getSelectorStyle()}>
+		</div>
 		</tbody>;
 	}
 })
@@ -266,18 +297,6 @@ var TabularTR = React.createClass({
 			updt.editing == old.editing
 		)
 	},
-
-	// componentWillMount: function () {
-	// 	ViewStore.addChangeListener(this._onChange)
-	// },
-
-	// componentWillUnmount: function () {
-	// 	ViewStore.removeChangeListener(this._onChange)
-	// },
-
-	// _onChange: function () {
-	// 	this.forceUpdate()
-	// },
 
 	render: function () {
 		var _this = this

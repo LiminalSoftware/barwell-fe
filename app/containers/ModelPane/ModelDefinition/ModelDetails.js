@@ -143,6 +143,20 @@ var ModelDetails = React.createClass({
 									title="Edit plural" onClick={this.handleEditPlural}></span>
 						</td>
 					</tr>
+					<tr className={ (model._dirty?'unsaved':'')}>
+						<td className="width-30">Label:</td>
+						<td className="width-60">
+							<select> {
+								AttributeStore.query({model_id: model.model_id, type: 'TEXT'}).map(function (attr) {
+									return <option value={attr.attribute_id} key={attr.attribute_id}>
+				  						{attr.attribute}
+				  					</option>
+								})
+							} </select>
+						</td>
+						<td>
+						</td>
+					</tr>
 				</tbody>
 			</table>
 		</div>

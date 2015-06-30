@@ -11,7 +11,35 @@ var TableMixin = {
 	// cell editing
 	// ========================================================================
 
-	
+	getInitialState: function () {
+		return {
+			selection: {
+				left: 0, 
+				top: 0,
+				right: 0,
+				bottom: 0
+			},
+			pointer: {
+				left: 0,
+				top: 0
+			},
+			anchor: {
+				left: 0, 
+				top: 0
+			},
+			
+			focused: false,
+			editing: false
+		}
+	},
+
+	componentDidMount: function () {
+		$(document.body).on('keydown', this.onKey)
+	},
+
+	componentWillUnmount: function () {
+		$(document.body).off('keydown', this.onKey)
+	},
 
 	// ========================================================================
 	// selection control
@@ -23,23 +51,26 @@ var TableMixin = {
 		var keycodes = constants.keycodes
 		
 		var ptr = this.state.pointer
-		var numCols = this.getVisibleColumns().length - 1
+		var numCols = this.props.columns.length - 1
 		var numRows = 10000 //TODO ... 
 		var left = ptr.left
 		var top = ptr.top
+		
+		if (!this.props.focused || (
+			this.state.editing &&
+			e.keyCode != keycodes.ENTER &&
+			e.keyCode != keycodes.TAB
+		)) return;
 
-		// if (e.keyCode == keycodes.TAB) { 
-		// 	if (left < numCols) return left++;
-		// }
-		// if (e.keyCode == keycodes.ENTER && top < numRows) return top ++;
-
-		if (FocusStore.getFocus() !== 'view' || this.state.editing) return;
-
-		if (e.keyCode == keycodes.ARROW_LEFT && left > 0) left --;
+		if (e.keyCode == keycodes.TAB) { 
+			if (left < numCols) left++;
+		}
+		else if (e.keyCode == keycodes.ENTER && top < numRows) top ++;
+		else if (e.keyCode == keycodes.ARROW_LEFT && left > 0) left --;
 		else if (e.keyCode == keycodes.ARROW_UP && top > 0) top --;
 		else if (e.keyCode == keycodes.ARROW_RIGHT && left < numCols) left ++;
 		else if (e.keyCode == keycodes.ARROW_DOWN && top < numRows) top ++;
-		else if (e.keyCode == keycodes.F2) return this.startEdit(e);
+		else if (e.keyCode == keycodes.F2) return this.editCell(e);
 		// else if (e.keyCode == 16) return (document.onselectstart = this.preventTextSelection)
 		
 		else if (e.keyCode == keycodes.SPACE && e.shiftKey) { 
@@ -67,25 +98,21 @@ var TableMixin = {
 
 	onClick: function (e) {
 		modelActionCreators.setFocus('view')
-		var wrapper = React.findDOMNode(this.refs.wrapper)
+		
 		var tableBody = React.findDOMNode(this.refs.tbody)
 		var geometry = this.state.geometry
-		var columns = this.getVisibleColumns()
-		var y = event.pageY - wrapper.offsetTop + wrapper.scrollTop - geometry.headerHeight
-		var x = event.pageX - wrapper.offsetLeft + wrapper.scrollLeft - 3
-		var r = Math.floor(y/geometry.rowHeight,1)
+		var columns = this.props.columns
+		var offset = $(tableBody).offset()
+		var y = event.pageY - offset.top
+		var x = event.pageX - offset.left
+		var r = Math.floor(y / geometry.rowHeight, 1)
 		var c = 0
 
 		columns.forEach(function (col) {
-			x -= col.width + geometry.widthPadding
+			x -= (col.width + geometry.widthPadding)
 			if (x > 0) c ++
 		})
 		this.updateSelect(r, c, event.shiftKey)
-	},
-
-	onScroll: function (event) {
-		var wrapper = React.findDOMNode(this.refs.wrapper)
-		this.setState({scrollTop: wrapper.scrollTop})
 	},
 
 	updateSelect: function (row, col, shift) {
@@ -124,7 +151,7 @@ var TableMixin = {
 	getSelectorStyle: function () {
 		var geometry = this.state.geometry
 		var sel = this.state.selection
-		var columns = this.getVisibleColumns()
+		var columns = this.props.columns
 		var width = 0
 		var height = (sel.bottom - sel.top + 1) * geometry.rowHeight - 1
 		var left = geometry.leftOffset
@@ -147,7 +174,7 @@ var TableMixin = {
 	getPointerStyle: function () {
 		var geometry = this.state.geometry
 		var ptr = this.state.pointer
-		var columns = this.getVisibleColumns()
+		var columns = this.props.columns
 		var width = 0
 		var height = geometry.rowHeight - 1
 		var left = geometry.leftOffset
