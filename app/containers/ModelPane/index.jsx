@@ -66,7 +66,7 @@ var ModelPane = React.createClass({
 			bodyContent = React.createElement(bodyElement, {
 				model: model,
 				view: view,
-				key: "view-pane-" + view_id
+				key: "view-pane-" + (view.cid || view.view_id)
 			})
 
 			viewDetailContent = React.createElement(configElement, {
@@ -77,7 +77,7 @@ var ModelPane = React.createClass({
 		}
 		
 		else {
-			bodyContent = <div className="no-view-content view-body-wrapper">
+			bodyContent = <div className="no-view-content view-body-wrapper" key="no-view">
 				<span className="icon icon-face-nomimic"></span>No view selected
 			</div>
 

@@ -27,7 +27,10 @@ var groomView = module.exports.prepView = function (view) {
 	var relations = RelationStore.query({model_id: view.model_id})
 	var iter =  BIG_NUM;
 	var cols = {};
-	var sorting = enumerate(data.sorting || [], 'attribute_id');
+	var sorting = enumerate((data.sorting || []).filter(function(item) {
+		var attribute = AttributeStore.get(item.attribute_id)
+		return _.contains(['PRIMARY_KEY', 'INTEGER', 'TEXT', 'DATE', 'BOOLEAN', 'DECIMAL', 'DATE_TIME'], attribute.type)
+	}), 'attribute_id');
 
 	view.type = (data.type || "Tabular")
 	data.icon = viewTypes[view.type].icon
@@ -60,14 +63,13 @@ var groomView = module.exports.prepView = function (view) {
 	relations.forEach(function (relation) {
 		var col = data.columns['r' + relation.relation_id] || {};
 		var attrs = AttributeStore.query({model_id: relation.related_model_id});
-		var pk = AttributeStore.query({model_id: relation.related_model_id, type: 'PRIMARY_KEY'})[0];
+		var relatedModel = ModelStore.get(relation.related_model_id)
+		var pk =  (relatedModel || {}).pk;
 
 		col.column_id = 'r' + relation.relation_id
 		col.related_model_id = relation.related_model_id
 		col.label = col.label || ('a' + attrs[0].attribute_id)
 		col.relation_id = relation.relation_id;
-		col.related_primary_key = 'a' + (pk || {}).attribute_id;
-
 
 		col.type = relation.type
 		col.name = relation.relation

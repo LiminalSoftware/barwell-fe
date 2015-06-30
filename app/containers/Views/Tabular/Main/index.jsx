@@ -55,6 +55,7 @@ var TabularPane = React.createClass ({
 				headerHeight: 35,
 				rowHeight: 25,
 				topOffset: 12,
+				leftOffset: 3,
 				widthPadding: 9
 			},
 			selection: {

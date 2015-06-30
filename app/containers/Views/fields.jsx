@@ -3,16 +3,13 @@ import _ from "underscore"
 import moment from "moment"
 import AttributeStore from "../../stores/AttributeStore"
 import FocusStore from "../../stores/FocusStore"
+import ModelStore from "../../stores/ModelStore"
+
+import $ from "jquery"
 
 import modelActionCreators from "../../actions/modelActionCreators"
 
 var commitMixin = {
-
-	getInitialState: function () {
-		return {
-			value: this.props.value
-		}
-	},
 
 	commitChanges: function () {
 
@@ -29,10 +26,17 @@ var commitMixin = {
 		if (obj[pk]) modelActionCreators.patchRecords(view, patch, selector)
 		else modelActionCreators.insertRecord(view, _.extend(obj, patch))
 		this.revert();
-	}
+	},
+
+	getInitialState: function () {
+		return {
+			value: this.parser(this.props.value)
+		}
+	},
 }
 
 var editableInputMixin = {
+
 	getInitialState: function () {
 		return {
 			editing: false
@@ -54,6 +58,7 @@ var editableInputMixin = {
 			editing: false,
 			value: this.props.value
 		})
+		this.props.handleBlur()
 	},
 
 	handleEdit: function (event) {
@@ -69,6 +74,18 @@ var editableInputMixin = {
 		this.setState({value: val})
 	}
 }
+
+var PrimaryKeyElement = React.createClass({
+	render: function () {
+		var value = this.props.value
+		var style = this.props.style
+		var editing = this.props.editing
+
+		return <td style={style} className="uneditable">
+			{this.props.value}
+		</td>
+	}
+})
 
 var VanillaElement = React.createClass({
 
@@ -162,6 +179,10 @@ var CheckboxElement = React.createClass({
 
 	revert: _.noop,
 
+	parser: function (input) {
+		return (!!input);
+	},
+
 	handleClick: function (event) {
 		this.toggle()
 		event.preventDefault()
@@ -182,9 +203,83 @@ var CheckboxElement = React.createClass({
 	}
 });
 
+var HasManyBubble = React.createClass({
+
+	getInitialState: function () {
+		return {
+			dragging: false,
+			relX: null,
+			relY: null,
+			posX: 0,
+			posY: 0
+		}
+	},
+
+	render: function () {
+		var obj = this.props.obj
+		var label = this.props.label
+		var model = this.props.model
+		var style = {
+			position: this.state.dragging ? 'absolute' : 'relative',
+			marginLeft: (this.state.posX),
+			marginTop: (this.state.posY)
+		}
+		return <span key={obj[model.pk]} 
+			className="has-many-bubble"
+			style = {style} 
+			onMouseDown = {this.onMouseDown}
+			>
+			{obj[label]}
+		</span>
+	},
+
+	onMouseDown: function (e) {
+	    if (e.button !== 0) return
+	    var pos = $(this.getDOMNode()).offset()
+	    this.setState({
+	      dragging: true,
+	      relX: e.pageX,
+	      relY: e.pageY
+	    })
+	    e.stopPropagation()
+	    e.preventDefault()
+	},
+
+	onMouseUp: function (e) {
+   	var view = this.props.view   
+		var viewData = view.data
+		var col = this.props.column
+
+		this.setState({
+			dragging: false,
+			posX: 0, 
+			posY: 0
+		})
+	},
+
+	onMouseMove: function (e) {
+	   if (!this.state.dragging) return
+	   this.setState({
+	      posX: e.pageX - this.state.relX,
+	      posY: e.pageY - this.state.relY
+	   })
+	},
+
+	componentDidUpdate: function (props, state) {
+		if (this.state.dragging && !state.dragging) {
+			document.addEventListener('mousemove', this.onMouseMove)
+			document.addEventListener('mouseup', this.onMouseUp)
+		} else if (!this.state.dragging && state.dragging) {
+		   document.removeEventListener('mousemove', this.onMouseMove)
+		   document.removeEventListener('mouseup', this.onMouseUp)
+		}
+	},
+
+})
+
 var fieldTypes = {
 	PRIMARY_KEY: {
-		element: VanillaElement,
+		element: PrimaryKeyElement,
 		uneditable: true
 	},
 	TEXT: {
@@ -204,11 +299,17 @@ var fieldTypes = {
 
 	HAS_MANY: {
 		configRows: React.createClass({
+
+			handleEdit: function () {
+
+			},
+			
 			getInitialState: function () {
 				var view = this.props.view 
 				var config = this.props.config
 				return {label: config.label}
 			},
+
 			onLabelChange: function (event) {
 				var label = event.target.value
 				var config = this.props.config
@@ -222,6 +323,7 @@ var fieldTypes = {
 				col.label = label
 				modelActionCreators.create('view', true, view)
 			},
+
 			render: function () {
 				var config = this.props.config
 				var view = this.props.view
@@ -242,20 +344,26 @@ var fieldTypes = {
 				</tr>
 			}	
 		}),
+
 		element: React.createClass({
 			render: function () {
 				var value = this.props.value
 				var config = this.props.config || {}
 				var style = this.props.style
 				var label = config.label;
-				var pk = config.related_primary_key
+				var relatedModel = ModelStore.get(config.related_model_id)
 				
-				if (value) return <td style={style}>{value.map(function(obj) {
-					return <span key={config.column_id + '-' + (obj[pk] || obj.cid)} className="has-many-bubble">{obj[label]}</span>
+				if (value) return <td style={style}> {value.map(function(obj) {
+					return <HasManyBubble 
+						key = {obj.cid || obj[relatedModel.pk]} 
+						obj={obj} 
+						model = {relatedModel} 
+						label = {label} />
 				})}</td>
 				else return <td style={style}></td>
 			}
-		}),
+		})
+
 	},
 
 	COLOR: {

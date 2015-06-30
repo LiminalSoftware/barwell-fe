@@ -28,17 +28,16 @@ var modelActions = {
 	insertRecord: function (view, obj) {
 		var view_id = view.view_id
 		var message = {}
+		var json = JSON.stringify(webUtils.stripInternalVars(_.omit(obj, 'cid')))
+		var url = 'https://api.metasheet.io/m' + view.model_id;
+
 		message.actionType = 'V' + view.view_id + '_UPDATE'
 		message['v' + view.view_id] = obj
 		message.selector = {cid: obj.cid}
-
-		console.log('obj: '+ JSON.stringify(obj, null, 2));
-		var json = JSON.stringify(webUtils.stripInternalVars(_.omit(obj, 'cid')))
-		
-		console.log('V json: '+ JSON.stringify(json, null, 2));
-		var url = 'https://api.metasheet.io/m' + view.model_id;
+		MetasheetDispatcher.dispatch(message)
 
 		webUtils.ajax('POST', url, json, {"Prefer": 'return=representation'}).then(function (results) {
+			message = {}
 			message.actionType = 'V' + view.view_id + '_RECEIVEUPDATE'
 			results.data.cid = obj.cid
 			message['v' + view.view_id] = [results.data]
@@ -80,7 +79,6 @@ var modelActions = {
 			'Range-Unit': 'items',
 			'Range': (offset + '-' + (offset + limit))
 		}
-		console.log('header: '+ JSON.stringify(header, null, 2));
 		webUtils.ajax('GET', url, null, header).then(function (results) {
 			var message = {}
 			var range = results.xhr.getResponseHeader('Content-Range')
@@ -111,7 +109,7 @@ var modelActions = {
 		message[subject] = obj
 		message.actionType = subject.toUpperCase() + '_CREATE'
 		MetasheetDispatcher.dispatch(message)
-		// console.log(message);
+
 		if (persist) return webUtils.persist(subject, 'CREATE', obj, update);
 		else return new Promise(function(resolve, reject){
 			return resolve(obj)

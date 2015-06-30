@@ -44,10 +44,8 @@ var createTabularStore = function (view) {
 
     		if (type === (upperLabel + '_CREATE')) {
     			var obj = payload[label]
-    			console.log('create obj: '+ JSON.stringify(obj, null, 2));
     			this.create(obj)
     			this.emitChange()
-    			console.log('created obj: '+ JSON.stringify(obj, null, 2));
     		}
 
     		// if (type === (upperLabel + '_INSERT')) {
@@ -64,9 +62,6 @@ var createTabularStore = function (view) {
     			var update = payload[label][0]
     			var existing = store.get(update.cid || update[primaryAttrId])
     			var clean = {_dirty: false}
-    			
-    			console.log('update: '+ JSON.stringify(update, null, 2));
-    			console.log('existing: '+ JSON.stringify(existing, null, 2));
 
     			existing = _.extend(existing, update, clean)
     			this.create(existing)
@@ -120,7 +115,7 @@ var TabularTBody = React.createClass ({
 
 	_onChange: function () {
 		var view = ViewStore.get(this.props.view.view_id || this.props.view.cid)
-		this.setState(view.data)
+		this.forceUpdate()
 	},
 
 	componentWillMount: function () {
@@ -218,58 +213,97 @@ var TabularTBody = React.createClass ({
 	},
 
 	editCell: function (row, col) {
-		var col = this.props.columns[col].column_id
+		var colId = this.props.columns[col].column_id
 		var obj = this.getValueAt(row);
-		var view = this.props.view
-		var pkColId = 'a' + AttributeStore.query(
-			{model_id: view.model_id, type: 'PRIMARY_KEY'}
-		)[0].attribute_id;
-
-		var rowKey = 'tabular-' +  (obj[pkColId] || obj.cid)
-		var cellKey = rowKey + '-' + col
+		var model = this.props.model
+		var pk = model.pk
+		var objId = (obj[pk] || obj.cid);
+		var rowKey = 'tr-' + objId
+		var cellKey = rowKey + '-' + colId
 		
-		var field = this.refs[cellKey]
+		this.setState({editing: true, editObjId: objId, editColId: colId})
+		var field = this.refs[rowKey].refs[cellKey]
 		field.handleEdit();
 	},
 
+	handleBlur: function () {
+		this.setState({editing: false})
+	},
+
 	render: function () {
-		var rows = []
-		var window = this.state.window
+		var _this = this
 		var model = this.props.model
-		var view = this.props.view
-		var columns = this.props.columns
 		var clicker = this.props.clicker
 		var dblClicker = this.props.dblClicker
-		//var ` = model.primary_key_attribute_id
-		var pkColId = 'a' + AttributeStore.query(
-			{model_id: model.model_id, type: 'PRIMARY_KEY'}
-		)[0].attribute_id;
+		var handleBlur = this.handleBlur
+		var pk = _this.props.model.pk
+		var editObjId = this.state.editObjId
 
-		if (!this.store) rows = []
-		else rows = this.store.query(null, '_idx').map(function (obj, i) {
-			var rowKey = 'tabular-' +  (obj[pkColId] || obj.cid)
-			var els = columns.map(function (col, idx) {
+		if (!this.store) return <tbody ref="tbody"></tbody>;
+		return <tbody ref="tbody" style={this.getStyle()} onClick={clicker} onDoubleClick={dblClicker}>
+		{	
+			_this.store.query(null, '_idx').map(function (obj, i) {
+				var rowKey = 'tr-' + (obj.cid || obj[pk])
+				return <TabularTR  {..._this.props} 
+					obj={obj}
+					editing = {obj[pk] === editObjId}
+					rowKey = {rowKey}
+					ref = {rowKey}
+					key = {rowKey}
+					handleBlur={_this.handleBlur} />;
+			})	
+		}
+		</tbody>;
+	}
+})
+
+var TabularTR = React.createClass({
+	shouldComponentUpdate: function (updt) {
+		var old = this.props
+		return !(
+			_.isEqual(updt.obj, old.obj) &&
+			updt.view == old.view &&
+			updt.editing == old.editing
+		)
+	},
+
+	// componentWillMount: function () {
+	// 	ViewStore.addChangeListener(this._onChange)
+	// },
+
+	// componentWillUnmount: function () {
+	// 	ViewStore.removeChangeListener(this._onChange)
+	// },
+
+	// _onChange: function () {
+	// 	this.forceUpdate()
+	// },
+
+	render: function () {
+		var _this = this
+		var rowKey = this.props.rowKey
+		var obj = this.props.obj
+		
+		return <tr id={rowKey} className = {obj._dirty ? "dirty" : ""}>
+			{_this.props.columns.map(function (col) {
 				var element = (fieldTypes[col.type] || fieldTypes.TEXT).element
 				var cellKey = rowKey + '-' + col.column_id
-				var value = (!!obj) ? obj[col.column_id] : ""
 
 				return React.createElement(element, {
 					config: col,
-					model: model,
-					view: view,
+					model: _this.props.model,
+					view: _this.props.view,
 					object: obj,
-					pk: pkColId,
-					value: value,
+					pk: _this.props.model.pk,
+					value: obj[col.column_id],
+					handleBlur: _this.props.handleBlur,
 					key: cellKey,
+					cellKey: cellKey,
 					ref: cellKey,
 					style: {minWidth: col.width, maxWidth: col.width, textAlign: col.align}
 				})
-			})
-			return <tr id={rowKey} key={rowKey} className={obj._dirty ? "dirty" : ""}>{els}</tr>
-		})
-		return <tbody ref="tbody" style={this.getStyle()} onClick={clicker} onDoubleClick={dblClicker}>
-			{rows}
-		</tbody>
+			})}
+		</tr>	
 	}
 })
 
