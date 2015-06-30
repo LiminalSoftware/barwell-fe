@@ -55,24 +55,54 @@ var TableMixin = {
 		var numRows = 10000 //TODO ... 
 		var left = ptr.left
 		var top = ptr.top
-		
+		var outline
+
 		if (!this.props.focused || (
 			this.state.editing &&
-			e.keyCode != keycodes.ENTER &&
-			e.keyCode != keycodes.TAB
+			e.keyCode !== keycodes.ENTER &&
+			e.keyCode !== keycodes.TAB
 		)) return;
 
-		if (e.keyCode == keycodes.TAB) { 
-			if (left < numCols) left++;
+		if (sel.left == sel.right && sel.top == sel.bottom) {
+			outline = {left: 0, right: numCols, top: 0, bottom: numRows}
+		} else {
+			outline = sel
 		}
-		else if (e.keyCode == keycodes.ENTER && top < numRows) top ++;
+		
+		if (e.keyCode == keycodes.TAB) {
+			if (left < outline.right) left++;
+			else {
+				left = outline.left;
+				top++;
+				if (top > outline.bottom)
+					top = outline.top
+			}
+			this.setState({
+				pointer: {left: left, top: top}, 
+			})
+			if (sel.left == sel.right && sel.top == sel.bottom) this.setState({
+				selection: {left: left, right: left, top: top, bottom: top}
+			})
+		} else if (e.keyCode == keycodes.ENTER) {
+			if (top < outline.bottom) top++;
+			else {
+				top = outline.top;
+				left++;
+				if (left > outline.right)
+					left = outline.left
+			}
+			this.setState({
+				pointer: {left: left, top: top}, 
+			})
+			if (sel.left == sel.right && sel.top == sel.bottom) this.setState({
+				selection: {left: left, right: left, top: top, bottom: top}
+			})
+		}
 		else if (e.keyCode == keycodes.ARROW_LEFT && left > 0) left --;
 		else if (e.keyCode == keycodes.ARROW_UP && top > 0) top --;
 		else if (e.keyCode == keycodes.ARROW_RIGHT && left < numCols) left ++;
 		else if (e.keyCode == keycodes.ARROW_DOWN && top < numRows) top ++;
 		else if (e.keyCode == keycodes.F2) return this.editCell(e);
-		// else if (e.keyCode == 16) return (document.onselectstart = this.preventTextSelection)
-		
 		else if (e.keyCode == keycodes.SPACE && e.shiftKey) { 
 			sel.left = 0; 
 			sel.right = numCols;
@@ -82,7 +112,7 @@ var TableMixin = {
 			modelActionCreators.createRecord(view, top)
 		}
 		else if (e.keyCode >= 48 && e.keyCode <= 90) {
-			return this.startEdit(e);
+			return this.editCell(e);
 		} else return;
 
 		e.stopPropagation()

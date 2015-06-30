@@ -7,6 +7,8 @@ import ModelDefinition from "./ModelDefinition"
 import ModelStore from "../../stores/ModelStore"
 import ViewStore from "../../stores/ViewStore"
 
+import modelActionCreators from "../../actions/modelActionCreators"
+
 var ModelPane = React.createClass({
 
 	getInitialState: function () {
@@ -41,6 +43,10 @@ var ModelPane = React.createClass({
 	toggleSidebar: function () {
 		this.props.toggleSidebar();
 	},
+
+	focus: function () {
+   	modelActionCreators.setFocus('model-config')
+   },
 
 	render: function() {
 		var model_id = this.props.params.modelId
@@ -97,7 +103,7 @@ var ModelPane = React.createClass({
 		
 		return <div className="model-views">
 			<div className = "model-panes">
-				<div className="detail-bar">
+				<div className="detail-bar" onClick={this.focus}>
 					<div className="detail-hider" onClick={this.toggleSidebar}>
 						<span className="small clickable right-align icon icon-chevron-left" title="Hide sidebar">
 					</span></div>

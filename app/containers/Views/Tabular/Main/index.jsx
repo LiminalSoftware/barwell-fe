@@ -28,7 +28,7 @@ import ViewUpdateMixin from '../../ViewUpdateMixin.jsx'
 
 var TabularPane = React.createClass ({
 
-	mixins: [ViewUpdateMixin],
+	
 
 	getInitialState: function () {
 		return {
@@ -49,6 +49,10 @@ var TabularPane = React.createClass ({
 		AttributeStore.removeChangeListener(this._onChange)
 		ModelStore.removeChangeListener(this._onChange)
 		FocusStore.removeChangeListener(this._onChange)
+	},
+
+	_onChange: function () {
+		this.forceUpdate()
 	},
 
 	getVisibleColumns: function () {

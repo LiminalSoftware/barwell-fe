@@ -42,14 +42,16 @@ var editableInputMixin = {
 		this.props.handleBlur()
 	},
 
-	handleEdit: function (event, initialValue) {
+	handleEdit: function (event) {
 		var pk = this.props.pk;
 		var column_id = this.props.config.column_id;
 		var prettyValue = this.format ? this.format(this.props.value) : this.props.value
 		
 		document.addEventListener('keyup', this.handleKeyPress)
 		this.setState({editing: true})
-		if (initialValue) this.setValue(initialValue)
+		
+		if (event.keyCode >= 48 && event.keyCode <= 90)
+			this.setValue('')
 		else this.setValue(prettyValue)
 	},
 
