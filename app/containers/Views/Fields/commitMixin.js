@@ -23,8 +23,8 @@ var commitMixin = {
 		patch[config.column_id] = this.validator(this.state.value)
 		selector[model._pk] = obj[model._pk]
 
-		if (obj[model._pk]) modelActionCreators.patchRecords(view, patch, selector)
-		else modelActionCreators.insertRecord(view, _.extend(obj, patch))
+		if (obj[model._pk]) modelActionCreators.patchRecords(model, patch, selector)
+		else modelActionCreators.insertRecord(model, _.extend(obj, patch))
 		if (this.revert) this.revert();
 	},
 

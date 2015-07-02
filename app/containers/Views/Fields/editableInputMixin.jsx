@@ -22,6 +22,10 @@ var editableInputMixin = {
 			editing: false
 		}
 	},
+
+	componentWillUnmount: function () {
+		$(document.body).off('keydown', this.onKey)
+	},
 	
 	handleKeyPress: function (event) {
 		if (event.keyCode === constant.keycodes.ESC) this.cancelChanges()

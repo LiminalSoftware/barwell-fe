@@ -14,7 +14,7 @@ var TabularTHead = React.createClass ({
 		
 		return <thead 
 			id="tabular-view-header" 
-			ref="thead" style={style} 
+			ref="thead" style={style}
 			key={"tabular-thead-" + view.view_id}><tr>
 		{
 			_this.props.columns.map(function (col, idx) {

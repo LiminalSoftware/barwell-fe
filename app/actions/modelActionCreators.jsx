@@ -14,61 +14,61 @@ var modelActions = {
 		MetasheetDispatcher.dispatch(message);
 	},
 
-	createRecord: function (view, idx) {
-		var view_id = view.view_id
+	createRecord: function (model, idx) {
+		var model_id = model.model_id
 		var message = {}
 		var obj = {}
 		obj._idx = idx + 0.1;
 		
-		message.actionType = 'V' + view.view_id + '_CREATE'
-		message['v' + view.view_id] = obj
+		message.actionType = 'M' + model.model_id + '_CREATE'
+		message['m' + model.model_id] = obj
 		MetasheetDispatcher.dispatch(message)
 	},
 
-	insertRecord: function (view, obj) {
-		var view_id = view.view_id
+	insertRecord: function (model, obj) {
+		var model_id = model.model_id
 		var message = {}
 		var json = JSON.stringify(webUtils.stripInternalVars(_.omit(obj, 'cid')))
-		var url = 'https://api.metasheet.io/m' + view.model_id;
+		var url = 'https://api.metasheet.io/m' + model.model_id;
 
-		message.actionType = 'V' + view.view_id + '_UPDATE'
-		message['v' + view.view_id] = obj
+		message.actionType = 'M' + model.model_id + '_UPDATE'
+		message['m' + model.model_id] = obj
 		message.selector = {cid: obj.cid}
 		MetasheetDispatcher.dispatch(message)
 
 		webUtils.ajax('POST', url, json, {"Prefer": 'return=representation'}).then(function (results) {
 			message = {}
-			message.actionType = 'V' + view.view_id + '_RECEIVEUPDATE'
+			message.actionType = 'M' + model.model_id + '_RECEIVEUPDATE'
 			results.data.cid = obj.cid
-			message['v' + view.view_id] = [results.data]
+			message['m' + model.model_id] = [results.data]
 			MetasheetDispatcher.dispatch(message)
 		})
 	},
 
-	patchRecords: function (view, patch, selector) {
-		var view_id = view.view_id
+	patchRecords: function (model, patch, selector) {
+		var model_id = model.model_id
 		var message = {}
-		message.actionType = 'V' + view.view_id + '_UPDATE'
-		message['v' + view.view_id] = patch
+		message.actionType = 'M' + model.model_id + '_UPDATE'
+		message['m' + model.model_id] = patch
 		message.selector = selector
 		MetasheetDispatcher.dispatch(message)
 
-
-		var url = 'https://api.metasheet.io/m' + view.model_id;
+		var url = 'https://api.metasheet.io/m' + model.model_id;
 		if (!selector instanceof Object) throw new Error ('NOOOOOOOOOOOoOooooo!!!!!!!')
 		else url += '?' + _.map(selector, function (value, key) {
 			return key + '=eq.' + value;
 		}).join('&')
 
 		webUtils.ajax('PATCH', url, JSON.stringify(patch), {"Prefer": 'return=representation'}).then(function (results) {
-			message.actionType = 'V' + view.view_id + '_RECEIVEUPDATE'
-			message['v' + view.view_id] = results.data
+			message.actionType = 'M' + model.model_id + '_RECEIVEUPDATE'
+			message['m' + model.model_id] = results.data
 			MetasheetDispatcher.dispatch(message)
 		})
 	},
 
 	fetchRecords: function (view, offset, limit, sortSpec) {
 		var view_id = view.view_id
+		var model_id = view.model_id
 		var url = 'https://api.metasheet.io/v' + view_id;
 		if (sortSpec) {
 			url = url + '?order=' + _.map(sortSpec, function (comp) {
@@ -88,8 +88,8 @@ var modelActions = {
 			message.endIndex = parseInt(rangeParts[1])
 			message.recordCount = parseInt(rangeParts[2])
 			
-			message.actionType = ('V' + view.view_id + '_RECEIVE')
-			message['v' + view_id] = results.data
+			message.actionType = ('M' + model_id + '_RECEIVE')
+			message['m' + model_id] = results.data
 			
 			MetasheetDispatcher.dispatch(message)
 		});
@@ -184,6 +184,14 @@ var modelActions = {
 			model: model
 		});
 		webUtils.persist('model', 'CREATE', _.pick(model, 'model_id', 'model', 'plural'));
+	},
+
+	dropModel: function (model) {
+		webUtils.persist('model', 'DESTROY', model);
+		MetasheetDispatcher.dispatch({
+			actionType: 'MODEL_DESTROY',
+			model: model
+		});
 	},
 
 	// keys

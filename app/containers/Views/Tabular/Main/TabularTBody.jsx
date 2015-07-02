@@ -1,6 +1,7 @@
 import React from "react"
 import fieldTypes from "../../fields"
 import _ from "underscore"
+import $ from 'jquery'
 
 import modelActionCreators from "../../../../actions/modelActionCreators"
 
@@ -9,6 +10,7 @@ import ViewStore from "../../../../stores/ViewStore"
 import KeyStore from "../../../../stores/KeyStore"
 import KeycompStore from "../../../../stores/KeycompStore"
 import AttributeStore from "../../../../stores/AttributeStore"
+import RelationStore from "../../../../stores/RelationStore"
 import FocusStore from "../../../../stores/FocusStore"
 
 import ViewDataStores from "../../../../stores/ViewDataStores"
@@ -17,31 +19,20 @@ import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 
 import TableMixin from '../../TableMixin.jsx'
 
-var HEADER_HEIGHT = 35
-var ROW_HEIGHT = 24
-var CURSOR_LIMIT = 60
-var WINDOW_SIZE = 40
-var OFFSET_TOLERANCE = 5
-
 var limit = function (min, max, value) {
 	if (value < min) return min
 	if (value > max) return max
 	else return value
 }
 
-
 var createTabularStore = function (view) {
 	var model = ModelStore.get(view.model_id)
-	var primaryAttrId = 'a' + AttributeStore.query(
-		{model_id: model.model_id, type: 'PRIMARY_KEY'}
-	)[0].attribute_id;
-
 	var store = storeFactory({
-		identifier: (primaryAttrId),
+		identifier: (model._pk),
   		dispatcher: dispatcher,
   		pivot: function(payload) {
 	    	var type = payload.actionType
-	    	var label = 'v' + view.view_id
+	    	var label = 'm' + view.model_id
 	    	var upperLabel = label.toUpperCase()
 
     		if (type === (upperLabel + '_CREATE')) {
@@ -62,7 +53,7 @@ var createTabularStore = function (view) {
 
     		if (type === (upperLabel + '_RECEIVEUPDATE')) {
     			var update = payload[label][0]
-    			var existing = store.get(update.cid || update[primaryAttrId])
+    			var existing = store.get(update.cid || update[model._pk])
     			var clean = {_dirty: false}
 
     			existing = _.extend(existing, update, clean)
@@ -72,9 +63,9 @@ var createTabularStore = function (view) {
 
     		if (type === (upperLabel + '_UPDATE')) {
     			var _this = this
-    			var update = payload[label]
+    			var update = payload[label]	
     			var selector = payload.selector
-    			var existing = store.get(update[primaryAttrId]  || update.cid)
+    			var existing = store.get(update[model._pk]  || update.cid)
     			var dirty = {_dirty: true}
 
     			store.query(selector).forEach(function (obj) {
@@ -112,11 +103,13 @@ var TabularTBody = React.createClass ({
 			scrollTop: 0,
 			window: {
 				offset: 0,
-				limit: CURSOR_LIMIT
+				limit: 100,
+				windowSize: 40
 			},
 			geometry: {
-				headerHeight: 35,
+				headerHeight: 29,
 				rowHeight: 25,
+				rowPadding: 1,
 				topOffset: 13,
 				leftOffset: 3,
 				widthPadding: 9
@@ -163,7 +156,7 @@ var TabularTBody = React.createClass ({
 	},
 	
 	componentDidMount: function () {
-		var view = this.props.view
+		$(this.refs.tbody)
 	},
 
 	componentWillUnmount: function () {
@@ -172,27 +165,27 @@ var TabularTBody = React.createClass ({
 		this.store.unregister()
 	},
 
-	shouldComponentUpdate: function (next) {
-		var old = this.props
-		return !(
-			next.scrollTop === old.scrollTop && 
-			_.isEqual(old.columns, next.columns) &&
-			_.isEqual(old.sorting, next.sort)
-		)
-	},
+	// shouldComponentUpdate: function (next) {
+	// 	var old = this.props
+	// 	return !(
+	// 		next.scrollTop === old.scrollTop && 
+	// 		_.isEqual(old.columns, next.columns) &&
+	// 		_.isEqual(old.sorting, next.sorting)
+	// 	)
+	// },
 	
 	fetch: function (force) {
-		var oldSort = this.state.sortSpec;
-		var rowOffset = Math.floor(this.props.scrollTop / ROW_HEIGHT)
-		var tgtOffset = Math.floor(rowOffset - (CURSOR_LIMIT / 2) + (WINDOW_SIZE / 2)) 
-		var boundedOffset = limit(0, this.props.nRows - CURSOR_LIMIT, tgtOffset)
+		var window = this.state.window
+		var geometry = this.state.geometry
+		var rowOffset = Math.floor(this.props.scrollTop / geometry.rowHeight)
+		var tgtOffset = Math.floor(rowOffset - (window.cursorLimit / 2) + (window.windowSize / 2)) 
+		var boundedOffset = limit(0, this.props.nRows - window.cursorLimit, tgtOffset)
 		var currentOffset = this.state.window.offset
 		var mismatch = Math.abs(currentOffset - tgtOffset)
 		var view = this.props.view
 
 
 		if (!view.view_id) {
-			console.log('view id not yet assigned')
 			return;
 		}
 
@@ -206,16 +199,19 @@ var TabularTBody = React.createClass ({
 				sortSpec: view.data.sorting,
 				window: {
 					offset: boundedOffset,
-					limit: CURSOR_LIMIT
+					limit: this.state.window.limit
 				}
 			})	
 		}
 	},
 
 	getStyle: function () {
+		var geometry = this.state.geometry
 		return {
-			top: (this.state.window.offset * (ROW_HEIGHT) + HEADER_HEIGHT) + 'px',
-			height: (((	(this.props.view.rows || 0) - this.state.window.offset) * ROW_HEIGHT)) + 'px'
+			top: (this.state.window.offset * (geometry.rowHeight + geometry.rowPadding) + 
+				geometry.headerHeight) + 'px',
+			height: ((	(this.props.view.rows || 0) - this.state.window.offset) *
+				(geometry.rowHeight + geometry.rowPadding)) + 'px'
 		}
 	},
 
@@ -247,6 +243,7 @@ var TabularTBody = React.createClass ({
 		this.setState({editing: false})
 	},
 
+
 	render: function () {
 		var _this = this
 		var model = this.props.model
@@ -255,14 +252,16 @@ var TabularTBody = React.createClass ({
 		var handleBlur = this.handleBlur
 		var pk = model._pk
 		var editObjId = this.state.editObjId
+		var rows = _this.store.query(null, '_idx')
+		
+		var geometry = this.state.geometry
+		var height = (rows.length * (geometry.rowHeight + geometry.rowPadding)) + ' px'
 
-		if (!this.store) return <tbody ref = "tbody"></tbody>;
 		return <tbody ref = "tbody" 
-			style = {_this.getStyle()} 
 			onClick = {_this.onClick} 
 			onDoubleClick = {_this.editCell}>
 		{	
-			_this.store.query(null, '_idx').map(function (obj, i) {
+			rows.map(function (obj, i) {
 				var rowKey = 'tr-' + (obj.cid || obj[pk])
 				return <TabularTR  {..._this.props} 
 					obj={obj}
@@ -270,13 +269,14 @@ var TabularTBody = React.createClass ({
 					rowKey = {rowKey}
 					ref = {rowKey}
 					key = {rowKey}
+					geometry = {_this.state.geometry}
 					handleBlur = {_this.handleBlur} />;
 			})	
 		}
 		<div 
 			className={"pointer" + (this.props.focused ? " focused" : "")} 
 			ref="anchor" 
-			onDoubleClick={this.startEdit} 
+			onDoubleClick={this.startEdit}
 			style={this.getPointerStyle()}>
 		</div>
 		<div 
@@ -302,8 +302,14 @@ var TabularTR = React.createClass({
 		var _this = this
 		var rowKey = this.props.rowKey
 		var obj = this.props.obj
+		var geometry = this.props.geometry
+		var style = {
+			lineHeight: geometry.rowHeight + 'px',
+			height: (geometry.rowHeight) + 'px'
+			// lineHeight: '0px'
+		}
 		
-		return <tr id={rowKey} className = {obj._dirty ? "dirty" : ""}>
+		return <tr id={rowKey} style={style} className = {obj._dirty ? "dirty" : ""}>
 			{_this.props.columns.map(function (col) {
 				var element = (fieldTypes[col.type] || fieldTypes.TEXT).element
 				var cellKey = rowKey + '-' + col.column_id
@@ -319,7 +325,12 @@ var TabularTR = React.createClass({
 					key: cellKey,
 					cellKey: cellKey,
 					ref: cellKey,
-					style: {minWidth: col.width, maxWidth: col.width, textAlign: col.align}
+					style: {
+						minWidth: col.width, 
+						maxWidth: col.width, 
+						textAlign: col.align,
+						height: (geometry.rowHeight) + 'px',
+					}
 				})
 			})}
 		</tr>	

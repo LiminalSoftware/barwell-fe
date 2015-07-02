@@ -20,7 +20,7 @@ var dateField = {
 	},
 
 	configRows: React.createClass({
-
+		
 		getInitialState: function () {
 			var config = this.props.config;
 			return {dateFormat: (config.dateFormat || 'DD/MM/YYYY')}

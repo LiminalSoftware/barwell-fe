@@ -61,6 +61,8 @@ var NumericElement = React.createClass({
 });
 
 
+
+
 var ColorElement = React.createClass({
 	render: function () {
 		var value = this.props.value
@@ -137,19 +139,36 @@ var fieldTypes = {
 	},
 
 	INTEGER: {
-		element: NumericElement
+		element: React.createClass({
+			mixins: [editableInputMixin, commitMixin],
+
+			validator: function (input) {
+				if (_.isNumber(input) ) 
+					return Math.floor(input)
+				if (!(/^\d+$/).test(input))
+					return null
+				return parseInt(input)
+			},
+
+			parser: function (input) {
+				return input.match(/^(\d*)/)[0]
+			}
+		})
 	},
 
-	DECIMAL: {
-		element: NumericElement,
-		validator: function (input) {
-			if (!(/^\d*(\.\d*)?$/).test(input))
-				return null
-			return parseFloat(input)
-		},
-		parser: function (input) {
-			return input.match(/^(\d*\.?\d*)/)[0]
-		}
+	DECIMAL: {element: React.createClass({
+			mixins: [editableInputMixin, commitMixin],
+
+			validator: function (input) {
+				if (!(/^\d*(\.\d*)?$/).test(input))
+					return null
+				return parseFloat(input)
+			},
+
+			parser: function (input) {
+				return input.match(/^(\d*\.?\d*)/)[0]
+			}
+		})
 	},
 
 	TIMESTAMP: {

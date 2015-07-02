@@ -157,6 +157,7 @@ var ModelDetails = React.createClass({
 						<td>
 						</td>
 					</tr>
+					<ModelDeleter model={model} />
 				</tbody>
 			</table>
 		</div>
@@ -164,11 +165,54 @@ var ModelDetails = React.createClass({
 });
 
 var ModelDeleter = React.createClass({
+	getInitialState: function () {
+		return {
+			armed: false, 
+			input: ''
+		}
+	},
+	arm: function () {
+		this.setState({armed: true})
+		document.addEventListener('keyup', this.handleKeyPress)
+	},
+	disarm: function () {
+		this.setState({armed: false, input: ''})
+		document.removeEventListener('keyup', this.handleKeyPress)
+	},
+	handleKeyPress: function (event) {
+		if (event.keyCode === constants.keycodes.ESC) 
+			this.disarm()
+	},
+	handleTyping: function (event) {
+		var val = event.target.value
+		this.setState({input: val})
+		if (val.toUpperCase() == 'DESTROY') {
+			console.log('launch code complete')
+			modelActionCreators.dropModel(this.props.model)
+		}
+	},
 	render: function () {
-		return <tr>
-			<td>To delete mode, type "destroy":</td>
-			<td><input onChange={this.handleTyping} ref="deleteInput"/></td>
+		return !this.state.armed ?
+		<tr>
+			<td colSpan="3" className="clickable" onClick = {this.arm}>
+				Delete this model
+			</td>
 		</tr>
+		:
+		<tr>
+			<td className="destroy-td">
+				<span className="large icon redened icon-skull-bones"></span>
+				Type "destroy":
+			</td>
+			<td colSpan="2">
+				<input className="destroyer" 
+					onBlur = {this.disarm}
+					value = {this.state.input}
+					autoFocus onChange={this.handleTyping} 
+					ref="deleteInput"/>
+			</td>
+		</tr>
+		;
 	}
 })
 

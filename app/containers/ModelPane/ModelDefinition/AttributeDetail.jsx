@@ -132,6 +132,10 @@ var AttributeDetail = React.createClass({
 	handleDelete: function (event) {
 		var attribute = this.props.attribute
 		modelActionCreators.destroy('attribute', false, attribute)
+		KeycompStore.query({attribute_id: attribute.attribute_id}).forEach(function (keycomp) {
+			var key =KeyStore.get(keycomp.key_id)
+			modelActionCreators.destroy('key', false, key)
+		})
 		event.preventDefault()
 	},
 

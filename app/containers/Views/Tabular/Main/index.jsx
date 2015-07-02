@@ -70,7 +70,6 @@ var TabularPane = React.createClass ({
 		var model = this.props.model
 		var view = this.props.view
 		var columns = this.getVisibleColumns()
-		var sorting = this.state.sorting
 		var focused = (FocusStore.getFocus() == 'view')
 		
 		return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">
@@ -88,7 +87,7 @@ var TabularPane = React.createClass ({
 						view = {view}
 						focused = {focused}
 						columns = {columns}
-						sorting = {sorting}
+						sorting = {view.data.sorting}
 						scrollTop = {this.state.scrollTop}
 						/>
 				</table>

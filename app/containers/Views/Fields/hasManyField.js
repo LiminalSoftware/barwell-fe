@@ -4,6 +4,8 @@ import $ from "jquery"
 
 import AttributeStore from "../../../stores/AttributeStore"
 import ModelStore from "../../../stores/ModelStore"
+import KeyStore from "../../../stores/KeyStore"
+import KeycompStore from "../../../stores/KeycompStore"
 
 import constant from "../../../constants/MetasheetConstants"
 import modelActionCreators from "../../../actions/modelActionCreators"
@@ -57,6 +59,53 @@ var hasManyField = {
 	}),
 
 	element: React.createClass({
+		getInitialState: function () {
+			return {droppable: false}
+		},
+
+		handleDragEnter: function (event) {
+			event.preventDefault();
+			this.setState({droppable: true})
+		},
+
+		preventDefault: function (event) {
+			event.preventDefault();
+		},
+
+		handleDragLeave: function () {
+			this.setState({droppable: false})
+		},
+
+		handleDragEnd: function () {
+			this.setState({droppable: false})
+		},
+
+		handleDrop: function (event) {
+			var config = this.props.config
+			var obj = this.props.object
+			var relatedModel = ModelStore.get(config.related_model_id)
+			var rObj = JSON.parse(
+				event.dataTransfer.getData('application/json')
+			)
+			var selector = _.pick(rObj, relatedModel._pk)
+			var patch = {}
+
+			var keycomps = KeycompStore.query({key_id: config.key_id}, 'ord')
+			var related_keycomps = KeycompStore.query({key_id: config.related_key_id}, 'ord')
+			
+			keycomps.forEach(function (kc, i) {
+				var rkcId = 'a' + related_keycomps[i].attribute_id
+				var kcId =  'a' + kc.attribute_id
+				patch[rkcId] = obj[kcId]
+			});
+
+			modelActionCreators.patchRecords(relatedModel, patch, selector).then(function () {
+				
+			});
+			event.dataTransfer.dropEffect = 'move'
+			this.setState({droppable: false})
+		},
+
 		render: function () {
 			var value = this.props.value
 			var config = this.props.config || {}
@@ -64,14 +113,24 @@ var hasManyField = {
 			var label = config.label;
 			var relatedModel = ModelStore.get(config.related_model_id)
 			
-			if (value) return <td style={style}> {value.map(function(obj) {
+			return <td
+				className = {this.state.droppable ? "droppable" : ""}
+				style={style}
+				onDragEnter = {this.handleDragEnter}
+				onDragLeave = {this.handleDragLeave}
+				onDragEnd = {this.handleDragEnd}
+				onDragOver = {this.preventDefault}
+				onDrop = {this.handleDrop}
+			> 
+			{(value || []).map(function(obj) {
 				return <HasManyBubble 
 					key = {obj.cid || obj[relatedModel._pk]} 
 					obj={obj} 
 					model = {relatedModel} 
 					label = {label} />
-			})}</td>
-			else return <td style={style}></td>
+			})}
+			</td>
+			
 		}
 	})
 
@@ -84,75 +143,28 @@ export default hasManyField
 
 var HasManyBubble = React.createClass({
 
-	getInitialState: function () {
-		return {
-			dragging: false,
-			relX: null,
-			relY: null,
-			posX: 0,
-			posY: 0
-		}
+	handleDragStart (event) {
+		var obj = this.props.obj
+		obj._model_id = this.props.model.model_id
+		event.dataTransfer.effectAllowed = 'move';
+		event.dataTransfer.setData('application/json', JSON.stringify(obj));
 	},
-
+	
 	render: function () {
 		var obj = this.props.obj
 		var label = this.props.label
 		var model = this.props.model
-		var style = {
-			position: this.state.dragging ? 'absolute' : 'relative',
-			marginLeft: (this.state.posX),
-			marginTop: (this.state.posY)
-		}
-		return <span key={obj[model._pk]} 
+		var style = {}
+		return <span key={obj[model._pk]}
 			className="has-many-bubble"
-			style = {style} 
-			onMouseDown = {this.onMouseDown}
+			style = {style}
+			onDrop = {this.handleDrop}
+			draggable = "true"
+			onDragStart = {this.handleDragStart}
 			>
 			{obj[label]}
 		</span>
-	},
-
-	onMouseDown: function (e) {
-	    if (e.button !== 0) return
-	    var pos = $(this.getDOMNode()).offset()
-	    this.setState({
-	      dragging: true,
-	      relX: e.pageX,
-	      relY: e.pageY
-	    })
-	    e.stopPropagation()
-	    e.preventDefault()
-	},
-
-	onMouseUp: function (e) {
-   	var view = this.props.view   
-		var viewData = view.data
-		var col = this.props.column
-
-		this.setState({
-			dragging: false,
-			posX: 0, 
-			posY: 0
-		})
-	},
-
-	onMouseMove: function (e) {
-	   if (!this.state.dragging) return
-	   this.setState({
-	      posX: e.pageX - this.state.relX,
-	      posY: e.pageY - this.state.relY
-	   })
-	},
-
-	componentDidUpdate: function (props, state) {
-		if (this.state.dragging && !state.dragging) {
-			document.addEventListener('mousemove', this.onMouseMove)
-			document.addEventListener('mouseup', this.onMouseUp)
-		} else if (!this.state.dragging && state.dragging) {
-		   document.removeEventListener('mousemove', this.onMouseMove)
-		   document.removeEventListener('mouseup', this.onMouseUp)
-		}
-	},
+	}
 
 })
 

@@ -120,6 +120,11 @@ var KeyDetail = React.createClass({
 	handleUndelete: function (event) {
 		var key = this.props._key
 		modelActionCreators.undestroy('key', key)
+		KeycompStore.query({key_id: key.key_id}).forEach(function (keycomp) {
+			var attribute = AttributeStore.get(keycomp.attribute_id)
+			attribute._destroy = false;
+			modelActionCreators.create('attribute', false, attribute)
+		})
 		event.preventDefault()
 	},
 

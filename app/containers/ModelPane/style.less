@@ -87,13 +87,17 @@ ul.view-tabs {
 
 .detail-hider {
   position: absolute;
-  top: 2px;
-  right: 0;
-  margin-right: 0;
-  height: 9px;
+  top: 50%;
+  margin-top: -20px;
   width: 25px;
-  border-radius: 0 3px 3px 0;
-  padding: 8px 5px;
+  right: 0;
+  height: 9px;
+  visibility: hidden;
+  opacity: 0;
+  
+  border-radius: 0 15px 15px 0;
+  padding-top: 8px;
+  padding-bottom: 8px;
   padding-right: 1px;
   background-color: @cream;
   color: @darkText;
@@ -107,11 +111,14 @@ ul.view-tabs {
 
 .detail-bar:hover .detail-hider {
 	margin-right: -20px;
+	opacity: 1;	
+	visibility: visible;
 }
 
 .hide-sidebar .detail-hider {
 	margin-right: -20px;
-	
+	opacity: 1;	
+	visibility: visible;
 }
 
 .grouping {
@@ -146,7 +153,7 @@ ul.detail-panels {
 	padding: 10px;
 	padding-top: 0;
 	background-color: @cream;
-	z-index: 220;
+	z-index: 100;
 
 	li {
 		.clickable;
@@ -177,6 +184,8 @@ ul.detail-panels {
 	overflow-y: scroll;
 	display: block;
 	padding: 10px;
+	// z-index: 10;
+	background-color: @cream;
 
 	&.hidden {
 		display: none;
@@ -236,6 +245,11 @@ ul.detail-panels {
 			padding-left: 8px;
 			border-left: 2px solid transparent;
 			.transition(all 200ms ease-in);
+		}
+
+		td.destroy-td {
+			color: @red-tint-2;
+			font-weight: 500;
 		}
 
 		tr:hover > td:first-child {
@@ -329,6 +343,13 @@ ul.detail-panels {
 				padding: 0;
 				margin: 0;
 				margin-bottom: -1px;
+
+				&.destroyer {
+					color: @red-tint-2;
+					border-bottom: 1px solid @red-tint-2;
+					text-transform: uppercase;
+					font-weight: 600;
+				}
 			}
 			input::selection {
   				background: @green-tint-2; /* WebKit/Blink Browsers */
@@ -411,6 +432,7 @@ tr:hover .showonhover {
 	border-top: 2px solid @heavyCream;
 
 	.transition(all 200ms ease-in);
+
 	&.active {
 		margin-bottom: 0;
 	}

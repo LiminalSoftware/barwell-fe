@@ -48,6 +48,7 @@ var TableMixin = {
 	onKey: function (e) {
 		var sel = this.state.selection
 		var view = this.props.view
+		var model = this.props.model
 		var keycodes = constants.keycodes
 		
 		var ptr = this.state.pointer
@@ -83,6 +84,8 @@ var TableMixin = {
 			if (sel.left == sel.right && sel.top == sel.bottom) this.setState({
 				selection: {left: left, right: left, top: top, bottom: top}
 			})
+			e.preventDefault()
+			return;
 		} else if (e.keyCode == keycodes.ENTER) {
 			if (top < outline.bottom) top++;
 			else {
@@ -97,6 +100,8 @@ var TableMixin = {
 			if (sel.left == sel.right && sel.top == sel.bottom) this.setState({
 				selection: {left: left, right: left, top: top, bottom: top}
 			})
+			e.preventDefault()
+			return;
 		}
 		else if (e.keyCode == keycodes.ARROW_LEFT && left > 0) left --;
 		else if (e.keyCode == keycodes.ARROW_UP && top > 0) top --;
@@ -109,7 +114,7 @@ var TableMixin = {
 			this.setState({selection: sel})
 			return;
 		} else if (e.keyCode == keycodes.PLUS && e.shiftKey) {
-			modelActionCreators.createRecord(view, top)
+			modelActionCreators.createRecord(model, top)
 		}
 		else if (e.keyCode >= 48 && e.keyCode <= 90) {
 			return this.editCell(e);
@@ -131,11 +136,12 @@ var TableMixin = {
 		
 		var tableBody = React.findDOMNode(this.refs.tbody)
 		var geometry = this.state.geometry
+		var effHeight = geometry.rowPadding + geometry.rowHeight
 		var columns = this.props.columns
 		var offset = $(tableBody).offset()
 		var y = event.pageY - offset.top
 		var x = event.pageX - offset.left
-		var r = Math.floor(y / geometry.rowHeight, 1)
+		var r = Math.floor(y / effHeight, 1)
 		var c = 0
 
 		columns.forEach(function (col) {
@@ -180,12 +186,15 @@ var TableMixin = {
 
 	getSelectorStyle: function () {
 		var geometry = this.state.geometry
+		var effectiveHeight = geometry.rowHeight 
+			+ geometry.rowPadding
+
 		var sel = this.state.selection
 		var columns = this.props.columns
 		var width = 0
-		var height = (sel.bottom - sel.top + 1) * geometry.rowHeight - 1
+		var height = (sel.bottom - sel.top + 1) * effectiveHeight - geometry.rowPadding
 		var left = geometry.leftOffset
-		var top = geometry.headerHeight + this.state.selection.top * geometry.rowHeight -1
+		var top = geometry.headerHeight + sel.top * effectiveHeight - geometry.rowPadding
 		
 		columns.forEach(function (col, idx) {
 			if (idx < sel.left)
@@ -203,12 +212,15 @@ var TableMixin = {
 
 	getPointerStyle: function () {
 		var geometry = this.state.geometry
+		var effectiveHeight = geometry.rowHeight 
+			+ geometry.rowPadding
 		var ptr = this.state.pointer
 		var columns = this.props.columns
 		var width = 0
 		var height = geometry.rowHeight - 1
 		var left = geometry.leftOffset
-		var top = geometry.headerHeight + ptr.top * geometry.rowHeight - 2
+		var top = geometry.headerHeight + ptr.top * (effectiveHeight) 
+			- geometry.rowPadding
 		
 		columns.forEach(function (col, idx) {
 			if (idx < ptr.left)

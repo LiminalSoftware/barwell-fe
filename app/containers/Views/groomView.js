@@ -68,6 +68,8 @@ var groomView = module.exports.prepView = function (view) {
 
 		col.column_id = 'r' + relation.relation_id
 		col.related_model_id = relation.related_model_id
+		col.related_key_id = relation.related_key_id
+		col.key_id = relation.key_id
 		col.label = col.label || ('a' + attrs[0].attribute_id)
 		col.relation_id = relation.relation_id;
 
