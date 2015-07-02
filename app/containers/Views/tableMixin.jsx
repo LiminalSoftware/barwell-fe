@@ -33,6 +33,12 @@ var TableMixin = {
 		}
 	},
 
+	calibrateRowHeight: function () {
+		var $tbody = $('#main-data-table tbody')
+		return $tbody.height() / $tbody.children().length
+		
+	},
+
 	componentDidMount: function () {
 		$(document.body).on('keydown', this.onKey)
 	},
@@ -137,11 +143,12 @@ var TableMixin = {
 		var tableBody = React.findDOMNode(this.refs.tbody)
 		var geometry = this.state.geometry
 		var effHeight = geometry.rowPadding + geometry.rowHeight
+		var actHeight = this.calibrateRowHeight()
 		var columns = this.props.columns
 		var offset = $(tableBody).offset()
 		var y = event.pageY - offset.top
 		var x = event.pageX - offset.left
-		var r = Math.floor(y / effHeight, 1)
+		var r = Math.floor(y / actHeight, 1)
 		var c = 0
 
 		columns.forEach(function (col) {
@@ -192,9 +199,10 @@ var TableMixin = {
 		var sel = this.state.selection
 		var columns = this.props.columns
 		var width = 0
-		var height = (sel.bottom - sel.top + 1) * effectiveHeight - geometry.rowPadding
+		var actHeight = this.calibrateRowHeight()
+		var height = (sel.bottom - sel.top + 1) * actHeight - geometry.rowPadding
 		var left = geometry.leftOffset
-		var top = geometry.headerHeight + sel.top * effectiveHeight - geometry.rowPadding
+		var top = geometry.headerHeight + sel.top * actHeight - geometry.rowPadding
 		
 		columns.forEach(function (col, idx) {
 			if (idx < sel.left)
@@ -217,10 +225,11 @@ var TableMixin = {
 		var ptr = this.state.pointer
 		var columns = this.props.columns
 		var width = 0
-		var height = geometry.rowHeight - 1
+		var actHeight = this.calibrateRowHeight()
+		var height = actHeight - geometry.rowPadding
 		var left = geometry.leftOffset
-		var top = geometry.headerHeight + ptr.top * (effectiveHeight) 
-			- geometry.rowPadding
+		var top = geometry.headerHeight + ptr.top * (actHeight) 
+			- geometry.rowPadding * 2
 		
 		columns.forEach(function (col, idx) {
 			if (idx < ptr.left)

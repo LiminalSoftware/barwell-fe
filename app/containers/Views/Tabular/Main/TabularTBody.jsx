@@ -19,6 +19,8 @@ import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 
 import TableMixin from '../../TableMixin.jsx'
 
+global.$$ = $
+
 var limit = function (min, max, value) {
 	if (value < min) return min
 	if (value > max) return max

@@ -47,6 +47,19 @@ var ModelDetails = React.createClass({
 	cancelChanges: function () {
 		this.revert()
 	},
+
+	handlePickLabel:function (event) {
+		var model = this.props.model
+		var value = event.target.value
+		var key
+		var numComps = _.countBy(KeycompStore.query(), 'key_id')
+		var candidateKc = KeycompStore.query({attribute_id: value}).forEach(function (kc) {
+			if (numComps[kc.key_id] === 1) key = KeyStore.get(kc.key_id)
+		});
+		if (!key) {
+			
+		}
+	},
 	
 	handleEditName: function () {
 		var model = this.props.model;
@@ -107,14 +120,18 @@ var ModelDetails = React.createClass({
 					<tr 
 					className={'top-line ' + (model._dirty?'unsaved':'')}>
 					
-						<td className="width-30">Name:</td>
-						<td className="width-60"onDoubleClick={this.handleEditName}>
+						<td className="width-30">
+							Name:
+						</td>
+						<td className="width-60"
+							onDoubleClick={this.handleEditName}>
 								{this.state.editingName ? 
-									<input 
-										value={this.state.name} 
-										onChange={this.handleNameUpdate} 
-										ref="renamer"/>
-								: <span>
+								<input 
+									value={this.state.name} 
+									onChange={this.handleNameUpdate} 
+									ref="renamer"/>
+								: 
+								<span>
 									{this.state.name}
 								</span>
 								}
@@ -146,7 +163,7 @@ var ModelDetails = React.createClass({
 					<tr className={ (model._dirty?'unsaved':'')}>
 						<td className="width-30">Label:</td>
 						<td className="width-60">
-							<select> {
+							<select value = {model.label_attribute_id} onChange = {this.handlePickLabel}> {
 								AttributeStore.query({model_id: model.model_id, type: 'TEXT'}).map(function (attr) {
 									return <option value={attr.attribute_id} key={attr.attribute_id}>
 				  						{attr.attribute}

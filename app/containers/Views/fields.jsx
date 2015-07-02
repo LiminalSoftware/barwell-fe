@@ -61,22 +61,33 @@ var NumericElement = React.createClass({
 });
 
 
+function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
 
+function rgbToHex(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
 
 var ColorElement = React.createClass({
 	render: function () {
 		var value = this.props.value
 		var style = this.props.style || {}
 		var config = this.props.col
+		var color = {}
 
-		if (!!value) try {
-			var color = JSON.parse(this.props.value)
-			style.background = "rgb(" + [color.r, color.g, color.b].join(",") + ")"
-		} catch (err) {
-			style.background = "white"
+		if (!!value) {
+			color = JSON.parse(this.props.value)
 		}
+
+		color.r = color.r || 255
+		color.g = color.g || 255
+		color.b = color.b || 255
 		
-		return <td style={style}></td>
+		return <td style={style}>
+			
+		</td>
 	}
 });
 
