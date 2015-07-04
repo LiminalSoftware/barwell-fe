@@ -42,12 +42,12 @@ var ViewSelector = React.createClass({
 	viewClickerFactory: function (type) {
 		var _this = this
 		var view = this.props.view
-		var data = view.data
-		data.type = type
+		// var data = view.data
 		
 		return function () {
-			modelActionCreators.create('view', true, view, true);
+			view.type = type
 			_this.revert()
+			modelActionCreators.create('view', true, view, true);
 		}
 	},
 
@@ -60,7 +60,7 @@ var ViewSelector = React.createClass({
 		var icon = viewTypes[this.state.type].icon
 		var typeSelector
 		var _this = this
-		
+
 		if (this.state.selectingType) {
 			var typeEls = _.map(viewTypes, function (details, type) {
 				return <tr 
@@ -95,11 +95,9 @@ var ViewSelector = React.createClass({
 						<td className="width-20">Type:</td>
 						<td className="width-80" 
 						   onClick={this.chgType}>
-							<a className="not-really-a-link" onClick={this.chgType}>
 								<span className={"icon " + icon}></span>
 								{this.state.type}
 								<span className="small right-align grayed icon icon-geo-triangle wedge open"></span>
-							</a>
 						</td>
 					</tr>
 				</tbody>

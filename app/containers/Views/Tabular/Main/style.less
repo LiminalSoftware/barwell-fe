@@ -4,6 +4,10 @@
 	
 }
 
+div.color-block {
+	height: 12px;
+	display: block;
+}
 
 .has-many-bubble {
 	cursor: grab;
@@ -143,7 +147,7 @@
 	position: absolute;
 	top: 0;
 	left: 0;
-	border: 1px dashed @green-tint-1;
+	border: 1.5px dashed @gray-0;
 	transition: all 50ms ease-in;
 	
 	pointer-events:none; 
@@ -151,6 +155,7 @@
 	background: @gray-trans;
 	&.focused {
 		background: @green-trans;
+		border: 1.5px dashed @green-tint-1;
 	}
 }
 

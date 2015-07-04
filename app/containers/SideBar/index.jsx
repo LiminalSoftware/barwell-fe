@@ -11,6 +11,8 @@ import ModelStore from "../../stores/ModelStore"
 import ViewStore from "../../stores/ViewStore"
 import MetasheetConst from '../../constants/MetasheetConstants'
 
+import viewTypes from '../Views/viewTypes'
+
 var SideBar = React.createClass({
 
 	componentWillUnmount: function () {
@@ -196,7 +198,7 @@ var ViewLink = React.createClass({
 			(<span>{view.view}</span>) ;
 		return <li className={"li-view " + (view._new ? "new" : "")} >
 			<Link to="view" params={{modelId: model.model_id, viewId: (view.view_id || view.cid)}} onDoubleClick={this.edit} >
-				<span className={"icon "+view.data.icon}></span>{viewDisplay}
+				<span className={"icon "+viewTypes[view.type].icon}></span>{viewDisplay}
 			</Link>
 			<span className="view-delete grayed icon icon-kub-trash" onClick={this.handleDelete}></span>
 			</li>;

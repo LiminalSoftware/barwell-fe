@@ -18,7 +18,8 @@ var KeyDetailList = React.createClass({
 			key: 'New key',
 			model_id: model.model_id,
 			indexed: false,
-			uniq: false
+			uniq: false,
+			_named: false
 		}
 		modelActionCreators.create('key', false, obj)
 	},
@@ -74,10 +75,12 @@ var KeyDetail = React.createClass({
 
 	commitChanges: function () {
 		var key = _.clone(this.props._key);
+		if (key.name !== this.state.name) key._named = true
 		key.key = this.state.name
 		modelActionCreators.create('key', false, key)
 		this.revert()
 	},
+
 	
 	cancelChanges: function () {
 		this.revert()
@@ -243,10 +246,7 @@ var KeycompDetail = React.createClass({
 	handleDelete: function (event) {
 		var keycomp = this.props.keycomp;
 		if (!keycomp) return
-		modelActionCreators.genericAction(
-			'keycomp',
-			'destroy',
-			{cid: keycomp.cid})
+		modelActionCreators.destroy('keycomp', false, keycomp)
 	},
 
 	render: function () {

@@ -71,23 +71,19 @@ function rgbToHex(r, g, b) {
 }
 
 var ColorElement = React.createClass({
-	render: function () {
+	mixins: [editableInputMixin, commitMixin],
+
+	validator: function (input) {
+		if (!(/^#[0-9A-F]{3,6}$/).test(input))
+			return '#FFF'		
+		else
+			return input
+	},
+
+	format: function (value) {
 		var value = this.props.value
-		var style = this.props.style || {}
-		var config = this.props.col
-		var color = {}
 
-		if (!!value) {
-			color = JSON.parse(this.props.value)
-		}
-
-		color.r = color.r || 255
-		color.g = color.g || 255
-		color.b = color.b || 255
-		
-		return <td style={style}>
-			
-		</td>
+		return <div style={{backgroundColor: value}} className="color-block"></div>
 	}
 });
 

@@ -57,7 +57,13 @@ var ModelDetails = React.createClass({
 			if (numComps[kc.key_id] === 1) key = KeyStore.get(kc.key_id)
 		});
 		if (!key) {
-			
+			modelActionCreators.create('key', false, {
+				_named: false, 
+				_label: true, 
+				model_id: model.model_id
+			}).then(function (key) {
+				modelActionCreators.create('keycomp', false, {key_id: key.cid, attribute_id: value})
+			})
 		}
 	},
 	

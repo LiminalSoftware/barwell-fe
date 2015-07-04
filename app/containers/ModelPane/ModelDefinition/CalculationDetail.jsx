@@ -55,6 +55,8 @@ var CalcDetail = React.createClass({
 
 	render: function () {
 		var calc = this.props.calc
+		var nodes = CalcnodeStore.query({calc_id: calc.calc_id})
+
 		return <tbody>
 		<tr><td>
 			{calc.calc}

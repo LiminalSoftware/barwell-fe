@@ -4,7 +4,7 @@ import _ from 'underscore'
 import util from '../util/util'
 
 var CalcnodeStore = storeFactory({
-  identifier: 'keycomp_id',
+  identifier: 'calcnode_id',
   dispatcher: dispatcher,
   pivot: function(payload) {
 

@@ -27,6 +27,22 @@ module.exports = {
     SPACE: 32,
     TAB: 9,
     PLUS: 187
+  },
+
+  calcFunctions: {
+    sum: ['@INTEGER|DECIMAL'], 
+    count: ['@*'],
+    average: ['@INTEGER|DECIMAL'],
+    heat: ['@DECIMAL'],
+    concatenate: ['@TEXT|INTEGER'],
+    month: ['DATE|DATE_TIME'],
+    day: ['DATE|DATE_TIME']
+  },
+
+  calcOperators: {
+    'TEXT|INTEGER': '&',
+    'DECIMAL|INTEGER': '+',
+    'DATE|INTEGER': '&',
   }
 
 };
