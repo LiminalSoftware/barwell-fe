@@ -15,11 +15,8 @@ var groomView = function (view) {
 	if (!model) return view;
 
 	var groupCleanser = function (group) {
-		if (!(group instanceof Object)) return null;
-		var field = AttributeStore.get(group.attribute_id)
+		var field = AttributeStore.get(group)
 		if (!field) return null
-		if (!_.contains(['sum','count','average','maximum','minimum'], group.aggregate)) 
-			group.aggregate = null;
 		return  group
 	}
 
@@ -33,7 +30,8 @@ var groomView = function (view) {
 	data.rowGroups = (data.rowGroups || []).map(groupCleanser).filter(_.identity);
 	data.columnGroups = (data.columnGroups || []).map(groupCleanser).filter(_.identity);
 
-	view.aggregates = data.rowGroups.concat(data.columnGroups)
+	view.row_aggregates = data.rowGroups
+	view.column_aggregates = data.columnGroups
 
 	view.data = data
 

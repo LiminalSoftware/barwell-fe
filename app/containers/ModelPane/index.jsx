@@ -105,7 +105,7 @@ var ModelPane = React.createClass({
 			<div className = "model-panes">
 				<div className="detail-bar" onClick={this.focus}>
 					<div className="detail-hider" onClick={this.toggleSidebar}>
-						<span className="small clickable right-align icon icon-chevron-left" title="Hide sidebar">
+						<span className="clickable grayed right-align icon icon-cl-chevron-left" title="Hide sidebar">
 					</span></div>
 					<ul className="detail-panels">
 						<li><h2 className={activePane == "model-def" ? "active" : ""} onClick={this.showModelDef}>Model</h2></li>

@@ -40,6 +40,22 @@ var CubeViewConfig = React.createClass({
 		return {};
 	},
 
+	getOptions: function () {
+		var model = this.props.model
+		var view = this.props.view
+		var config = view.data
+		var group = this.props.group || {}
+		var existingGroups = config.rowGroups.concat(config.columnGroups)
+
+		return AttributeStore.query({model_id: model.model_id}).map(function (attr) {
+			if (_.contains(existingGroups, attr.attribute_id) && attr.attribute_id !== group)
+				return null
+			return <option value = {attr.attribute_id} key={'choice-'+attr.attribute_id}> 
+				{attr.attribute}
+			</option>
+		}).filter(_.identity);
+	},
+
 	render: function() {
 		var model = this.props.model
 		var view = this.props.view
@@ -51,9 +67,9 @@ var CubeViewConfig = React.createClass({
 			<h3>Values</h3>
 			<table className="detail-table">
 				<tbody>
-					<tr>
-						<td>Aggregator</td>
-						<td><select>
+					<tr className="top-line">
+						<td className="width-30">Aggregator:</td>
+						<td className="width-70"><select>
 							<option>List</option>
 							<option>Sum</option>
 							<option>Average</option>
@@ -62,29 +78,45 @@ var CubeViewConfig = React.createClass({
 						</select></td>
 					</tr>
 					<tr>
-						<td>Value</td>
-						<td></td>
+						<td>Value:</td>
+						<td>
+							<select value={config.valueAttribute}>
+								{this.getOptions()}
+							</select>
+						</td>
 					</tr>
 				</tbody>
 			</table>
 			</div>
 
 			<div className = "detail-block">
-			<h3>Rows</h3>
+			<h3>Grouping</h3>
+			<table className="detail-table">
+				<tbody>
+				<tr className="top-line"><td colSpan={3} className="top-line">Row Groupings</td></tr>
+				</tbody>
+			</table>
+			<table className="detail-table">
 				<GroupingSelector
 					dimension = 'rowGroups'
 					config = {config}
+					getOptions = {this.getOptions}
 					view = {view}
 					model = {model} />
-			</div>
-
-			
-			<h3>Columns</h3>
+				<tr><td colSpan={3}>Column Groupings</td></tr>
 				<GroupingSelector
 					dimension = 'columnGroups'
 					config = {config}
+					getOptions = {this.getOptions}
 					view = {view}
 					model = {model} />
+			</table>
+			<div><a className="new-adder new-key">
+			<span className="small grayed icon icon-kub-remove"></span>Clear all
+			</a></div>
+			</div>
+
+			
 			
 
 		</div>
@@ -93,30 +125,20 @@ var CubeViewConfig = React.createClass({
 
 var GroupingSelector = React.createClass({
 	render: function () {
+		var _this = this
 		var dimension = this.props.dimension
 		var model = this.props.model
-		var view = this.props.view
 		var config = this.props.config
 
-		return <div className = "detail-block">
-		<table className="detail-table">
-			
-			<tbody>
+		return <tbody>
 				{config[dimension].concat([null]).map(function (group, ord) {
 					return <GroupingDetail 
-						dimension = {dimension}
-						config = {config}
+						{... _this.props} 
 						group = {group}
-						order = {ord}
-						model = {model}
-						view = {view} />
+						order = {ord}/>
 				})}
-			</tbody>
-		</table>
-		<div><a className="new-adder new-key" onClick={this.handleAddNewKey}>
-			<span className="small reddened icon icon-kub-remove"></span>Clear all
-		</a></div>
-		</div>
+				</tbody>
+			
 	}
 })
 
@@ -134,8 +156,7 @@ var GroupingDetail = React.createClass({
 
 		var groupings = (config[dimension] || [])
 		groupings = groupings.filter(function (existing) {
-			if (!existing) return false;
-			return existing.attribute_id !== group.attribute_id
+			return existing !== group
 		})
 		config[dimension] = groupings
 		view.data = config
@@ -151,55 +172,44 @@ var GroupingDetail = React.createClass({
 		var attr = AttributeStore.get(value)
 
 		var groupings = (config[dimension] || [])
-		groupings.push({
-			attribute_id: value,
-			attribute: attr.attribute,
-			order: order
-		})
+		groupings.push(value)
 		config[dimension] = groupings
 		view.data = config
 
 		modelActionCreators.createView(view, true, false)
 	},
+
+	commit: function () {
+
+	},
 	
 	render: function () {
 		var model = this.props.model
-		var view = this.props.view
-		var dimension = this.props.dimension
 		var config = this.props.config
-		var group = this.props.group || {}
+		var group = this.props.group || null
 		var order = this.props.order
-		var key = 'attr-' + (group.attribute_id || 'new')
+		var key = 'attr-' + (group || 'new')
+		console.log('group: '+ JSON.stringify(group, null, 2));
+		var attr = AttributeStore.get(group) || {}
 
-		var existingGroups = _.pluck(config.rowGroups, 'attribute_id').concat(
-			_.pluck(config.columnGroups, 'attribute_id'))
-
-		var options = AttributeStore.query({model_id: model.model_id}).map(function (attr) {
-			if (_.contains(existingGroups, attr.attribute_id) && attr.attribute_id !== group.attribute_id)
-				return null
-			return <option value = {attr.attribute_id} key={'choice-'+attr.attribute_id}> 
-				{attr.attribute}
-			</option>
-		}).filter(_.identity);
-
-		return <tr key={key + '-row'}>
-			<td>
+		return <tr key={key + '-row'} >
+			<td className="width-10">
 				<span className="num-circle">{order + 1}</span>
 			</td>
-			<td>
-				{group.attribute_id ? 
-				group.attribute
+			<td className="width-80">
+				{group ? 
+				attr.attribute
 				:
-				<select value = {group.attribute_id || 0} onChange={this.handleAddGrouping}>
+				<select value = {attr.attribute_id || 0} onChange={this.handleAddGrouping}>
 					<option value={0} disabled> 
 						-----
 					</option>
-					{options}
+					{this.props.getOptions()}
 				</select>
 				}
 			</td>
-			<td className="centered">
-				{!!group.attribute_id ? 
+			<td className="centered width-10">
+				{!!attr.attribute_id ? 
 				<span 
 					onClick = {this.handleDelete}
 					className = "small showonhover grayed clickable icon icon-kub-remove">

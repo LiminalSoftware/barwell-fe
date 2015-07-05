@@ -80,45 +80,46 @@ ul.view-tabs {
 	}
 }
 
-.not-really-a-link {
-	color: @darkText;
-	text-decoration: none;
-}
-
 .detail-hider {
-  position: absolute;
-  top: 50%;
-  margin-top: -20px;
-  width: 25px;
-  right: 0;
-  height: 9px;
-  visibility: hidden;
-  opacity: 0;
-  
-  border-radius: 0 15px 15px 0;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-right: 1px;
-  background-color: @cream;
-  color: @darkText;
-  z-index: 200;
-  text-align: left;
-  .transition(all 200ms ease-in);
-  border-right: 2px solid @gray-2;
-  border-bottom: 2px solid @gray-2;
-  border-top: 2px solid @gray-2;
+	position: absolute;
+	top: 50%;
+	margin-top: -20px;
+	width: 25px;
+	right: 0;
+	
+	visibility: hidden;
+	opacity: 0;
+
+	border-radius: 0 15px 15px 0;
+	padding: 0;
+	background-color: @cream;
+	color: @darkText;
+	z-index: 200;
+	text-align: left;
+	.transition(all 200ms ease-in);
+	border-right: 2px solid @gray-2;
+	border-bottom: 2px solid @gray-2;
+	border-top: 2px solid @gray-2;
+
+	span {
+  		margin: 0;
+  		padding: 5px;
+  	}
 }
 
 .detail-bar:hover .detail-hider {
-	margin-right: -20px;
+	margin-right: -27px;
 	opacity: 1;	
 	visibility: visible;
 }
 
 .hide-sidebar .detail-hider {
-	margin-right: -20px;
+	margin-right: -10px;
 	opacity: 1;	
 	visibility: visible;
+	span {
+		.rotate (180deg)
+	}
 }
 
 .grouping {
@@ -358,7 +359,7 @@ ul.detail-panels {
 		th {
 			text-align: left;
 			border-bottom: 1px solid @heavyCream;
-			border-top: 1px solid @darkText;
+			border-top: 1px solid @gray-2;
 			font-weight: 400;
 		}
 
@@ -367,11 +368,11 @@ ul.detail-panels {
 		}
 
 		.top-line td {
-			border-top: 1px solid @darkText;
+			border-top: 1px solid @gray-2;
 		}
 
 		.bottom-line td {
-			border-bottom: 1px solid @darkText !important;
+			border-bottom: 1px solid @gray-2 !important;
 		}
 	}
 
@@ -415,7 +416,7 @@ tr:hover .showonhover {
 .new-adder {
 	display: block;
 	padding: 5px;
-	border-bottom:1px solid @darkText;
+	border-bottom:1px solid @gray-2;
 	.clickable;
 	text-align: right;
 }
