@@ -176,9 +176,6 @@ var modelActions = {
 	},
 
 	createModel: function(model) {
-		model.model = model.model || 'New model'
-		model.plural = model.plural || (model.model + 's')
-		
 		MetasheetDispatcher.dispatch({
 			actionType: 'MODEL_CREATE',
 			model: model

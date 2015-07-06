@@ -66,10 +66,10 @@ var ViewSelector = React.createClass({
 				return <tr 
 					key = {"view-type-selector-" + type} 
 					onClick = {_this.viewClickerFactory(type)}>
-					<td className="width-20 centered clickable padded">
+					<td className="width-25 centered clickable padded">
 						<span className={"clear icon "+ details.icon}></span>{type}
 					</td>
-					<td className="width-80 hoverable clickable">
+					<td className="width-75 hoverable clickable">
 						{details.description}
 					</td>
 				</tr>
@@ -87,13 +87,13 @@ var ViewSelector = React.createClass({
 			<h3>View Details</h3>
 			<table className="detail-table">
 				<tbody>
-					<tr>
-						<td className="width-20">Name:</td>
-						<td className="width-80">{this.state.name}</td>
+					<tr className = "top-line">
+						<td className="width-25">Name:</td>
+						<td className="width-75">{this.state.name}</td>
 					</tr>
 					<tr>
-						<td className="width-20">Type:</td>
-						<td className="width-80" 
+						<td className="width-25">Type:</td>
+						<td className="width-75 clickable" 
 						   onClick={this.chgType}>
 								<span className={"icon " + icon}></span>
 								{this.state.type}

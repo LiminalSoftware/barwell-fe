@@ -10,6 +10,7 @@ import KeyStore from "../../../../stores/KeyStore"
 import KeycompStore from "../../../../stores/KeycompStore"
 import FocusStore from "../../../../stores/FocusStore"
 
+import constants from '../../../../constants/MetasheetConstants'
 
 import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
 import _ from 'underscore'
@@ -37,29 +38,41 @@ var CubeViewConfig = React.createClass({
 	},
 
 	getInitialState: function () {
-		return {};
+		return {
+
+		};
 	},
 
 	getOptions: function () {
 		var model = this.props.model
 		var view = this.props.view
-		var config = view.data
 		var group = this.props.group || {}
-		var existingGroups = config.rowGroups.concat(config.columnGroups)
+		var existingGroups = view.row_aggregates.concat(view.column_aggregates)
 
 		return AttributeStore.query({model_id: model.model_id}).map(function (attr) {
 			if (_.contains(existingGroups, attr.attribute_id) && attr.attribute_id !== group)
 				return null
-			return <option value = {attr.attribute_id} key={'choice-'+attr.attribute_id}> 
+			return <option value = {attr.attribute_id} key={'choice-' + attr.attribute_id}> 
 				{attr.attribute}
 			</option>
 		}).filter(_.identity);
 	},
 
+	handleSelectAggregator: function (event) {
+		var view = this.props.view
+		view.aggregator = event.target.value
+		modelActionCreators.createView(view, true, false)
+	},
+
+	handleSelectValue: function (event) {
+		var view = this.props.view
+		view.value = event.target.value
+		modelActionCreators(view, true, false)
+	},
+
 	render: function() {
 		var model = this.props.model
 		var view = this.props.view
-		var config = view.data
 
 		return <div className = "grouping">
 
@@ -68,19 +81,25 @@ var CubeViewConfig = React.createClass({
 			<table className="detail-table">
 				<tbody>
 					<tr className="top-line">
-						<td className="width-30">Aggregator:</td>
-						<td className="width-70"><select>
-							<option>List</option>
-							<option>Sum</option>
-							<option>Average</option>
-							<option>Maximum</option>
-							<option>Minimum</option>
+						<td className="width-25">Aggregator:</td>
+						<td className="width-75"><select value = {view.aggregator} onChange={this.handleSelectAggregator}>
+							{_.map(constants.aggregators, function (label, key) {
+								return <option value = {key} key = {key}>
+									{label}
+								</option>
+							})}
 						</select></td>
 					</tr>
 					<tr>
-						<td>Value:</td>
 						<td>
-							<select value={config.valueAttribute}>
+							{view.aggregator === 'LIST' ?
+							"Label:"
+							:
+							"Value:"
+							}
+						</td>
+						<td>
+							<select value={view.value} onChange={this.handleSelectValue}>
 								{this.getOptions()}
 							</select>
 						</td>
@@ -98,15 +117,13 @@ var CubeViewConfig = React.createClass({
 			</table>
 			<table className="detail-table">
 				<GroupingSelector
-					dimension = 'rowGroups'
-					config = {config}
+					dimension = 'row_aggregates'
 					getOptions = {this.getOptions}
 					view = {view}
 					model = {model} />
 				<tr><td colSpan={3}>Column Groupings</td></tr>
 				<GroupingSelector
-					dimension = 'columnGroups'
-					config = {config}
+					dimension = 'column_aggregates'
 					getOptions = {this.getOptions}
 					view = {view}
 					model = {model} />
@@ -115,10 +132,6 @@ var CubeViewConfig = React.createClass({
 			<span className="small grayed icon icon-kub-remove"></span>Clear all
 			</a></div>
 			</div>
-
-			
-			
-
 		</div>
 	}
 });
@@ -127,18 +140,16 @@ var GroupingSelector = React.createClass({
 	render: function () {
 		var _this = this
 		var dimension = this.props.dimension
-		var model = this.props.model
-		var config = this.props.config
+		var view = this.props.view
 
 		return <tbody>
-				{config[dimension].concat([null]).map(function (group, ord) {
-					return <GroupingDetail 
-						{... _this.props} 
-						group = {group}
-						order = {ord}/>
-				})}
-				</tbody>
-			
+			{(view[dimension] || []).concat([null]).map(function (group, ord) {
+				return <GroupingDetail 
+					{... _this.props} 
+					group = {group}
+					order = {ord}/>
+			})}
+		</tbody>
 	}
 })
 
@@ -151,15 +162,14 @@ var GroupingDetail = React.createClass({
 	handleDelete: function () {
 		var view = this.props.view
 		var dimension = this.props.dimension
-		var config = this.props.config
 		var group = this.props.group || {}
 
-		var groupings = (config[dimension] || [])
+		var groupings = (view[dimension] || [])
 		groupings = groupings.filter(function (existing) {
 			return existing !== group
 		})
-		config[dimension] = groupings
-		view.data = config
+
+		view[dimension] = groupings
 		modelActionCreators.createView(view, true, false)
 	},
 
@@ -167,14 +177,12 @@ var GroupingDetail = React.createClass({
 		var view = this.props.view
 		var value = parseInt(event.target.value)
 		var dimension = this.props.dimension
-		var config = this.props.config
 		var order = this.props.order
 		var attr = AttributeStore.get(value)
 
-		var groupings = (config[dimension] || [])
+		var groupings = (view[dimension] || [])
 		groupings.push(value)
-		config[dimension] = groupings
-		view.data = config
+		view[dimension] = groupings
 
 		modelActionCreators.createView(view, true, false)
 	},
@@ -185,11 +193,9 @@ var GroupingDetail = React.createClass({
 	
 	render: function () {
 		var model = this.props.model
-		var config = this.props.config
 		var group = this.props.group || null
 		var order = this.props.order
 		var key = 'attr-' + (group || 'new')
-		console.log('group: '+ JSON.stringify(group, null, 2));
 		var attr = AttributeStore.get(group) || {}
 
 		return <tr key={key + '-row'} >

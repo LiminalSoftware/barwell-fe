@@ -14,6 +14,14 @@ module.exports = {
     'REGION': 'Region',
     'PRIMARY_KEY': 'Primary id'
   },
+
+  aggregators: {
+    'SUM': 'Sum',
+    'LIST': 'List',
+    'MAXIMUM': 'Maximum',
+    'MINIMUM': 'Minimum',
+    'AVERAGE': 'Average'
+  },
   
   keycodes: {
   	ENTER: 13,

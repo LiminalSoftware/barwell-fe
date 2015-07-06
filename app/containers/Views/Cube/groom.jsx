@@ -17,7 +17,7 @@ var groomView = function (view) {
 	var groupCleanser = function (group) {
 		var field = AttributeStore.get(group)
 		if (!field) return null
-		return  group
+		return  field.attribute_id
 	}
 
 	delete data.columns;
@@ -27,13 +27,11 @@ var groomView = function (view) {
 	var fields = AttributeStore.query({model_id: view.model_id});
 	var relations = RelationStore.query({model_id: view.model_id});
 
-	data.rowGroups = (data.rowGroups || []).map(groupCleanser).filter(_.identity);
-	data.columnGroups = (data.columnGroups || []).map(groupCleanser).filter(_.identity);
+	view.row_aggregates = (view.row_aggregates || []).map(groupCleanser).filter(_.identity);
+	view.column_aggregates = (view.column_aggregates || []).map(groupCleanser).filter(_.identity);
 
-	view.row_aggregates = data.rowGroups
-	view.column_aggregates = data.columnGroups
-
-	view.data = data
+	// view.value = view.value
+	// view.aggregator = view.aggregator
 
 	return view
 }
