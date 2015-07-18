@@ -52,7 +52,7 @@ var TabularTBody = React.createClass ({
 	},
 
 	_onChange: function () {
-		var view = ViewStore.get(this.props.view.view_id || this.props.view.cid)
+		console.log('update!!!!')
 		this.forceUpdate()
 	},
 
@@ -64,8 +64,6 @@ var TabularTBody = React.createClass ({
 			this.initStore()
 		}
 		if (this.store) {
-			global.tbodystore = this.store
-			this.store.register()
 			this.store.addChangeListener(this._onChange)
 			this.fetch(true)
 		}
@@ -80,7 +78,6 @@ var TabularTBody = React.createClass ({
 		var oldProps = this.props;
 		if (!oldProps.view_id && newProps.view_id) {
 			this.initStore()
-			this.store.register()
 			this.store.addChangeListener(this._onChange)
 			this.fetch(true)
 		}
@@ -96,17 +93,7 @@ var TabularTBody = React.createClass ({
 	componentWillUnmount: function () {
 		if (!this.store) return;
 		this.store.removeChangeListener(this._onChange)
-		this.store.unregister()
 	},
-
-	// shouldComponentUpdate: function (next) {
-	// 	var old = this.props
-	// 	return !(
-	// 		next.scrollTop === old.scrollTop && 
-	// 		_.isEqual(old.columns, next.columns) &&
-	// 		_.isEqual(old.sorting, next.sorting)
-	// 	)
-	// },
 	
 	fetch: function (force) {
 		var window = this.state.window
@@ -149,7 +136,7 @@ var TabularTBody = React.createClass ({
 	},
 
 	getValueAt: function (idx) {
-		return this.store.query(null, '_idx')[idx]
+		return this.store.getObjects()[idx]
 	},
 
 	editCell: function (event, initialValue) {
@@ -173,9 +160,9 @@ var TabularTBody = React.createClass ({
 	},
 
 	handleBlur: function () {
+		console.log('handleBlur')
 		this.setState({editing: false})
 	},
-
 
 	render: function () {
 		var _this = this
@@ -186,7 +173,7 @@ var TabularTBody = React.createClass ({
 		var pk = model._pk
 		var editObjId = this.state.editObjId
 		var rows = _this.store ? 
-			_this.store.query(null, '_idx') :
+			_this.store.getObjects() :
 			[]
 			;
 		
@@ -196,7 +183,7 @@ var TabularTBody = React.createClass ({
 		return <tbody ref = "tbody" 
 			onClick = {_this.onClick} 
 			onDoubleClick = {_this.editCell}>
-		{	
+		{
 			rows.map(function (obj, i) {
 				var rowKey = 'tr-' + (obj.cid || obj[pk])
 				return <TabularTR  {..._this.props} 

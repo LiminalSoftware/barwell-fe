@@ -1,5 +1,7 @@
 import _ from "underscore"
 import $ from 'jquery'
+import assign from 'object-assign'
+import EventEmitter from 'events'
 
 import ModelStore from "../../../../stores/ModelStore"
 
@@ -10,72 +12,84 @@ import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 
 var createTabularStore = function (view) {
-	var model = ModelStore.get(view.model_id)
-	var store = storeFactory({
-		identifier: (model._pk),
-  		dispatcher: dispatcher,
-  		pivot: function(payload) {
-	    	var type = payload.actionType
-	    	var label = 'm' + view.model_id
-	    	var upperLabel = label.toUpperCase()
+    var model = ModelStore.get (view.model_id)
+    var label = 'm' + view.model_id
+    var upperLabel = label.toUpperCase ()
 
-    		if (type === (upperLabel + '_CREATE')) {
-    			var obj = payload[label]
-    			this.create(obj)
-    			this.emitChange()
-    		}
+    var _records = []
+    var _recordCount = null
+    var _startIndex = 0
 
-    		// if (type === (upperLabel + '_INSERT')) {
-    		// 	var obj = payload[label]
-    		// 	this.create(obj)
-    		// }
+    var TabularStore = assign({}, EventEmitter.prototype, {
 
-    		if (type === (upperLabel + '_DESTROY')) {
-    			this.destroy(payload[label])
-    			this.emitChange()
-    		}
+        emitChange: function () {
+            this.emit('CHANGE_EVENT');
+        },
 
-    		if (type === (upperLabel + '_RECEIVEUPDATE')) {
-    			var update = payload[label][0]
-    			var existing = store.get(update.cid || update[model._pk])
-    			var clean = {_dirty: false}
+        addChangeListener: function (callback) {
+            this.on('CHANGE_EVENT', callback);
+        },
 
-    			existing = _.extend(existing, update, clean)
-    			this.create(existing)
-    			this.emitChange()
-    		}
+        removeChangeListener: function (callback) {
+            this.removeListener('CHANGE_EVENT', callback);
+        },
 
-    		if (type === (upperLabel + '_UPDATE')) {
-    			var _this = this
-    			var update = payload[label]	
-    			var selector = payload.selector
-    			var existing = store.get(update[model._pk]  || update.cid)
-    			var dirty = {_dirty: true}
+        getObjects: function (from, to) {
+            return _records;
+        },
 
-    			store.query(selector).forEach(function (obj) {
-    				obj = _.extend(obj, update, dirty)
-    				_this.create(obj)
-    			})
-    			this.emitChange()
-    		}
-	        
-	      if (type === (upperLabel + '_RECEIVE')) {
-	      	var _this = this
-	      	var objects = payload[label]
-	      	var startIndex = payload.startIndex
-	        	var endIndex = payload.endIndex
+        dispatchToken: dispatcher.register(function (payload) {
+            var type = payload.actionType
 
-	        	if (!_.isArray(objects)) objects = [objects]
-	      	objects.forEach(function (obj, idx) {
-	      		obj._idx = startIndex + idx;
-	      		_this.create(obj)
-	      	});
-    			this.emitChange()
-    		}
-  		}
-	})
+            if (type === (upperLabel + '_CREATE')) {
+                var object = payload[label]
+                var index = payload.index
 
-	return store;
+                TabularStore.emitChange()
+            }
+
+            // if (type === (upperLabel + '_INSERT')) {
+            //  var obj = payload[label]
+            //  this.create(obj)
+            // }
+
+            if (type === (upperLabel + '_DESTROY')) {
+                _records = _.filter(_records, function (rec) {
+                    rec[model._pk] !== payload[label][model._pk]
+                })
+
+                TabularStore.emitChange()
+            }
+
+            if (type === (upperLabel + '_UPDATE') || type === (upperLabel + '_RECEIVEUPDATE')) {
+                var _this = this
+                var update = payload[label]
+                var selector = payload.selector
+                var dirty = {_dirty: (type === (upperLabel + '_UPDATE'))}
+                
+                _.filter(_records, _.matcher(selector) ).map(function (rec) {
+                    rec = _.extend(rec, update, dirty)
+                });
+
+                TabularStore.emitChange()
+            }    
+            
+            if (type === (upperLabel + '_RECEIVE')) {
+                var _this = this
+                var objects = payload[label]
+                var startIndex = payload.startIndex
+                var endIndex = payload.endIndex
+
+                _records = payload[label]
+                _recordCount = payload.endIndex
+                _startIndex = payload.startIndex
+                               
+                TabularStore.emitChange()
+            }
+        })
+    })
+
+    return TabularStore;
 }
 
 

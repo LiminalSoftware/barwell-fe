@@ -45,6 +45,26 @@ var modelActions = {
 		})
 	},
 
+	moveHasMany: function (localKeyId, relatedKeyId, obj, rObj) {
+		var keycomps = KeycompStore.query({key_id: localKeyId}, 'ord')
+		var related_keycomps = KeycompStore.query({key_id: relatedKeyId}, 'ord')
+		var relatedKey = KeyStore.get(relatedKeyId)
+		var relatedModel = ModelStore.get(relatedKey.model_id)
+		var selector = _.pick(rObj, relatedModel._pk)
+		var patch = {}
+		var message = {}
+
+		keycomps.forEach(function (kc, i) {
+			var rkcId = 'a' + related_keycomps[i].attribute_id
+			var kcId =  'a' + kc.attribute_id
+			patch[rkcId] = obj[kcId]
+		});
+
+		message.actionType = 'M' + model.model_id + '_RELATIONUPDATE'
+
+		modelActions.patchRecords(relatedModel, patch, selector)
+	},
+
 	patchRecords: function (model, patch, selector) {
 		var model_id = model.model_id
 		var message = {}

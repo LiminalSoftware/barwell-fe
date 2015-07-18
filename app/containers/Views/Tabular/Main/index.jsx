@@ -25,7 +25,7 @@ import ViewUpdateMixin from '../../ViewUpdateMixin.jsx'
 
 
 var TabularPane = React.createClass ({
-
+	
 	getInitialState: function () {
 		return {
 			sorting: null

@@ -48,7 +48,11 @@ var CubePane = React.createClass ({
 		var focused = (FocusStore.getFocus() == 'view')
 		
 		return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">
-				
+				<table id="main-data-table" className="data-table">
+					<thead> { 
+
+					} </thead>
+				</table>
 		</div>
 	}
 })

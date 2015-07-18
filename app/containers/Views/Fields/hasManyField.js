@@ -83,25 +83,13 @@ var hasManyField = {
 		handleDrop: function (event) {
 			var config = this.props.config
 			var obj = this.props.object
-			var relatedModel = ModelStore.get(config.related_model_id)
 			var rObj = JSON.parse(
 				event.dataTransfer.getData('application/json')
 			)
-			var selector = _.pick(rObj, relatedModel._pk)
-			var patch = {}
+			var relatedKeyId = config.related_key_id
+			var localKeyId = config.key_id
 
-			var keycomps = KeycompStore.query({key_id: config.key_id}, 'ord')
-			var related_keycomps = KeycompStore.query({key_id: config.related_key_id}, 'ord')
-			
-			keycomps.forEach(function (kc, i) {
-				var rkcId = 'a' + related_keycomps[i].attribute_id
-				var kcId =  'a' + kc.attribute_id
-				patch[rkcId] = obj[kcId]
-			});
-
-			modelActionCreators.patchRecords(relatedModel, patch, selector).then(function () {
-				
-			});
+			modelActionCreators.moveHasMany(localKeyId, relatedKeyId, obj, rObj)
 			event.dataTransfer.dropEffect = 'move'
 			this.setState({droppable: false})
 		},

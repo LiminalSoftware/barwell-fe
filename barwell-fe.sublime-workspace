@@ -4,6 +4,54 @@
 		"selected_items":
 		[
 			[
+				"create",
+				"createTabularStore"
+			],
+			[
+				"col",
+				"column_aggregates"
+			],
+			[
+				"handle",
+				"handleSelectValue"
+			],
+			[
+				"get",
+				"getOptions"
+			],
+			[
+				"wi",
+				"width-10"
+			],
+			[
+				"Attr",
+				"AttributeStore"
+			],
+			[
+				"existing",
+				"existingGroups"
+			],
+			[
+				"row",
+				"rowGroups"
+			],
+			[
+				"column",
+				"columnGroups"
+			],
+			[
+				"Groupin",
+				"GroupingSelector"
+			],
+			[
+				"colu",
+				"columnGroups"
+			],
+			[
+				"Tabul",
+				"TabularGroomer"
+			],
+			[
 				"attr",
 				"attribute_id"
 			],
@@ -12,12 +60,144 @@
 				"KeycompStore"
 			],
 			[
+				"act",
+				"actHeight"
+			],
+			[
+				"ac",
+				"actHeight"
+			],
+			[
+				"Ke",
+				"KeycompStore"
+			],
+			[
+				"att",
+				"attribute_id"
+			],
+			[
+				"di",
+				"display"
+			],
+			[
+				"handl",
+				"handleTyping"
+			],
+			[
+				"c",
+				"capitalize"
+			],
+			[
 				"rel",
-				"relList"
+				"relLabel"
+			],
+			[
+				"component",
+				"componentDidMount"
+			],
+			[
+				"windo",
+				"windowSize"
+			],
+			[
+				"handleDr",
+				"handleDragEnd"
+			],
+			[
+				"dra",
+				"dragenter"
+			],
+			[
+				"handleDt",
+				"handleDragEnter"
+			],
+			[
+				"commi",
+				"commitMixin"
+			],
+			[
+				"label",
+				"labelProp"
+			],
+			[
+				"unde",
+				"uneditable"
+			],
+			[
+				"edit",
+				"editObjId"
+			],
+			[
+				"hand",
+				"handleChange"
+			],
+			[
+				"comm",
+				"commitChanges"
+			],
+			[
+				"com",
+				"commitMixin"
+			],
+			[
+				"model",
+				"modelActionCreators"
+			],
+			[
+				"compone",
+				"componentWillUnmount"
 			],
 			[
 				"action",
-				"actionType"
+				"modelActionCreators"
+			],
+			[
+				"toggle",
+				"toggleRightAlign"
+			],
+			[
+				"detail",
+				"detailsStyle"
+			],
+			[
+				"active",
+				"activePane"
+			],
+			[
+				"creat",
+				"createTabularStore"
+			],
+			[
+				"Mode",
+				"ModelDeleter"
+			],
+			[
+				"plu",
+				"pluralize"
+			],
+			[
+				"edi",
+				"editingName"
+			],
+			[
+				"Model",
+				"ModelDetails"
+			],
+			[
+				"paddin",
+				"padding-right"
+			],
+			[
+				"mar",
+				"margin-bottom"
+			],
+			[
+				"related",
+				"relatedModelField"
+			],
+			[
+				"Calc",
+				"CalcStore"
 			],
 			[
 				"key",
@@ -56,26 +236,6 @@
 				"headerHeight"
 			],
 			[
-				"component",
-				"componentWillUnmount"
-			],
-			[
-				"model",
-				"model-def"
-			],
-			[
-				"Model",
-				"ModelDefinition"
-			],
-			[
-				"Mode",
-				"ModelDefinition"
-			],
-			[
-				"get",
-				"getVisibleColumns"
-			],
-			[
 				"comp",
 				"componentWillUnmount"
 			],
@@ -100,20 +260,12 @@
 				"deactivateCursor"
 			],
 			[
-				"hand",
-				"handleFetch"
-			],
-			[
 				"view",
 				"viewTypes"
 			],
 			[
 				"set",
 				"setState"
-			],
-			[
-				"detail",
-				"detail-cell"
 			],
 			[
 				"fun",
@@ -142,14 +294,6 @@
 			[
 				"back",
 				"background-color"
-			],
-			[
-				"handl",
-				"handleDblClick"
-			],
-			[
-				"handle",
-				"handleAddView"
 			],
 			[
 				"fet",
@@ -204,10 +348,6 @@
 				"selectionTop"
 			],
 			[
-				"col",
-				"colProps"
-			],
-			[
 				"getCursor",
 				"getCursorStyle"
 			],
@@ -256,10 +396,6 @@
 				"changeFolderOpen"
 			],
 			[
-				"active",
-				"activeBranch"
-			],
-			[
 				"refre",
 				"refreshBranches"
 			],
@@ -300,16 +436,8 @@
 				"fieldsByName"
 			],
 			[
-				"att",
-				"attributes"
-			],
-			[
 				"string",
 				"stringParser"
-			],
-			[
-				"act",
-				"activeBranch"
 			],
 			[
 				"deco",
@@ -372,69 +500,69 @@
 	"buffers":
 	[
 		{
-			"file": "app/containers/ModelPane/ModelDefinition/index.jsx",
+			"file": "app/containers/Views/Cube/groom.jsx",
 			"settings":
 			{
-				"buffer_size": 4080,
+				"buffer_size": 1058,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "app/containers/ModelPane/ModelDefinition/KeyDetail.jsx",
+			"file": "app/containers/Views/Cube/Config/index.jsx",
 			"settings":
 			{
-				"buffer_size": 7588,
+				"buffer_size": 5954,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "app/containers/ModelPane/ModelDefinition/AttributeDetail.jsx",
+			"file": "app/actions/modelActionCreators.jsx",
 			"settings":
 			{
-				"buffer_size": 6615,
+				"buffer_size": 7134,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "app/containers/ModelPane/renameable.jsx",
+			"file": "app/stores/ViewStore.js",
 			"settings":
 			{
-				"buffer_size": 1715,
+				"buffer_size": 1125,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "app/containers/ModelPane/style.less",
+			"contents": "import React from \"react\"\nimport { RouteHandler } from \"react-router\"\nimport styles from \"./style.less\"\nimport EventListener from 'react/lib/EventListener'\nimport _ from 'underscore'\nimport $ from 'jquery'\n\nimport modelActionCreators from \"../../../../actions/modelActionCreators.jsx\"\n\nimport ModelStore from \"../../../../stores/ModelStore\"\nimport KeyStore from \"../../../../stores/KeyStore\"\nimport ViewStore from \"../../../../stores/ViewStore\"\nimport KeycompStore from \"../../../../stores/KeycompStore\"\nimport AttributeStore from \"../../../../stores/AttributeStore\"\nimport FocusStore from \"../../../../stores/FocusStore\"\n\nimport ViewDataStores from \"../../../../stores/ViewDataStores\"\nimport storeFactory from 'flux-store-factory';\nimport dispatcher from '../../../../dispatcher/MetasheetDispatcher'\n\nimport fieldTypes from \"../../fields\"\n\n\nvar CubePane = React.createClass ({\n\n	componentWillMount: function () {\n		ViewStore.addChangeListener(this._onChange)\n		AttributeStore.addChangeListener(this._onChange)\n		ModelStore.addChangeListener(this._onChange)\n		FocusStore.addChangeListener(this._onChange)\n	},\n\n	componentWillUnmount: function () {\n		ViewStore.removeChangeListener(this._onChange)\n		AttributeStore.removeChangeListener(this._onChange)\n		ModelStore.removeChangeListener(this._onChange)\n		FocusStore.removeChangeListener(this._onChange)\n	},\n\n	_onChange: function () {\n		this.forceUpdate()\n	},\n\n	render: function () {\n		var _this = this\n		var model = this.props.model\n		var view = this.props.view\n		var focused = (FocusStore.getFocus() == 'view')\n		\n		return <div className=\"view-body-wrapper\" onScroll={this.onScroll} ref=\"wrapper\">\n				<table id=\"main-data-table\" className=\"data-table\">\n					<thead> { \n\n					} </thead>\n				</table>\n		</div>\n	}\n})\n\nexport default CubePane\n",
+			"file": "app/containers/Views/Cube/Main/index.jsx",
+			"file_size": 1747,
+			"file_write_time": 130804313128638391,
 			"settings":
 			{
-				"buffer_size": 5994,
+				"buffer_size": 1788,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "app/actions/modelActionCreators.js",
+			"file": "app/containers/Views/Tabular/Main/index.jsx",
 			"settings":
 			{
-				"buffer_size": 4546,
+				"buffer_size": 2725,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"contents": "import React from \"react\"\nimport { Link } from \"react-router\"\nimport styles from \"./style.less\"\nimport ModelStore from \"../../../stores/ModelStore\"\nimport AttributeStore from \"../../../stores/AttributeStore\"\nimport KeyStore from \"../../../stores/KeyStore\"\nimport RelationStore from \"../../../stores/RelationStore\"\nimport KeycompStore from \"../../../stores/KeycompStore\"\nimport modelActionCreators from '../../../actions/modelActionCreators'\nimport constants from '../../../constants/MetasheetConstants'\nimport getIconClasses from './getIconClasses'\nimport _ from 'underscore'\n\nvar RelationDetailList = React.createClass({\n	\n	handleNewRelation: function () {\n		var model = this.props.model;\n		var relation = {\n			relation: 'New relation',\n			model_id: model.model_id,\n			type: 'Has one'\n		}\n		modelActionCreators.create('relation', false, relation);\n\n		// b\n	},\n\n	render: function () {\n		var model = this.props.model\n		var relList = RelationStore.query({model_id: model.model_id}).map(function (relation) {\n			return <RelationDetail \n				key ={relation.relation_id || relation.cid} \n				relation = {relation} />;\n		});\n		if (relList.length === 0) {\n			relList = <tr><td className=\"grayed centered\" colSpan=\"4\">No relations defined</td></tr>;\n		}\n\n		return <div className = \"detail-block\">\n			<h3>Relations</h3>\n			<table className=\"detail-table\">\n				<thead>\n					<tr key=\"rel-header-row\">\n						<th className=\"width-30\">Name</th>\n						<th className=\"width-30\">Related Model</th>\n						<th className=\"width-30\">Type</th>\n						<th className=\"width-10\"></th>\n					</tr>\n				</thead>\n				<tbody>\n					{relList}\n				</tbody>\n			</table>\n			<div><a \n				className=\"new-adder new-attr\" \n				onClick={this.handleNewRelation}>\n				<span className=\"small addNew icon icon-plus\"></span>\n				New relation\n			</a></div>\n		</div>\n	}\n})\n\nvar RelationDetail = React.createClass({\n\n	handleModelSelect: function () {\n\n	},\n\n	handleRelationCancel: function () {\n		var relation = this.props.relation;\n		if (!relation) return\n		modelActionCreators.genericAction(\n			'relation',\n			'destroy',\n			{cid: relation.cid})\n	},\n\n	render: function () {\n		var relation = this.props.relation;\n		// var relatedModel = ModelStore.get(relation.related_model_id)\n		var relatedModelChoices = ModelStore.query(null, 'model').map(function (model) {\n			return <option value={(model.model_id || model.cid)}>\n  				{model.model}\n  			</option>;\n		})\n		relatedModelChoices.unshift(<option value=\"0\"> ---- </option>)\n\n		return <tr \n			key={'relation-'+(relation.relation_id || relation.cid)}\n			className={relation._dirty ? 'unsaved':''}>\n			<td>{relation.relation}</td>\n			<td> <select value={0} onChange={this.handleModelSelect}>\n				{relatedModelChoices}\n			</select></td>\n			<td><select value=\"Has one\" on>\n				<option value=\"Has one\">Has one</option>\n				<option value=\"Has one\">Has many</option>\n				<option value=\"Has one\">One to one</option>\n			</select></td>\n			<td className=\"centered\">\n			{relation._persist === false ? <span \n				className=\"showonhover small clickable grayed icon icon-kub-remove\" \n				title=\"Delete component\" \n				onClick={this.handleRelationCancel}>\n			</span> : null }</td>\n		</tr>;\n	}\n});\n\nexport default RelationDetailList",
-			"file": "app/containers/ModelPane/ModelDefinition/RelationDetail.jsx",
-			"file_size": 3562,
-			"file_write_time": 130795517838501758,
+			"file": "app/containers/Views/Tabular/Main/TabularStore.jsx",
 			"settings":
 			{
-				"buffer_size": 3214,
+				"buffer_size": 2800,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "app/util/MetasheetWebAPI.js",
+			"file": "app/containers/Views/Cube/Main/createCubeStore.jsx",
 			"settings":
 			{
-				"buffer_size": 2290,
+				"buffer_size": 0,
 				"line_ending": "Windows"
 			}
 		}
@@ -491,33 +619,82 @@
 	},
 	"file_history":
 	[
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/KeyDetail.jsx",
+		"/C/Users/549764/Documents/Everbank/Organization/style.css",
+		"/C/Users/549764/Documents/Everbank/Organization/data.js",
+		"/C/Users/549764/Documents/Everbank/Organization/everbank.html",
+		"/C/Users/549764/Documents/Everbank/Organization/marcus_org.html",
+		"/C/Users/549764/Documents/Everbank/Organization/d3.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/TabularTBody.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ViewSelector/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/config/simple.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/package.json",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/constants/MetasheetConstants.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/index.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/style.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/ColumnDetail.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/AttributeStore.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/actions/modelActionCreators.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/RelationDetail.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/actions/serverActionCreators.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/util/MetasheetWebAPI.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Config/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Config/style.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/style.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Cube/Config/index.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/global.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/KeyDetail.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Cube/Config/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Cube/Main/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/viewTypes.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/groom.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/groomView.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Calendar/groom.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Cube/groom.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/RelationDetail.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/TableMixin.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/KeyStore.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/AttributeDetail.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/ModelDetails.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/fields.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Cube/Main/index.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Cube/Config/index.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/CalculationDetail.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDetail/ColumnDetail.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Cube/Main/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Fields/dateField.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/CalcnodeStore.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/CalcStore.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/RelationStore.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/actions/modelActionCreators.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Fields/commitMixin.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Fields/editableInputMixin.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Fields/hasManyField.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/ModelStore.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/util/MetasheetWebAPI.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/TabularTHead.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Fields/editable_mixin.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/mainRoutes.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/mainStoresDescriptions.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/ViewStore.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/actions/modelActionCreators.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/util/MetasheetWebAPI.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/FocusStore.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/viewUpdateMixin.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/KeycompStore.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Application/index.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Application/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/mainStores.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Config/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/ViewDataStores.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/style.less",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/AttributeStore.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/CalculationStore.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/util/util.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/actions/serverActionCreators.js",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/renameable.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/barwell-fe.sublime-project",
+		"/C/Users/549764/Documents/GitHub/barwell-be/barwell-be.sublime-workspace",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/ColumnDetail.jsx",
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDetail/ColumnDetail.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDetail/index.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDetail/CalculationDetail.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Application/style.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/ModelStore.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/RelationStore.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ModelDefinition/getIconClasses.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/KeycompStore.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/KeyStore.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/stores/ViewStore.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/webpack-dev-server.config.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/make-webpack-config.js",
 		"/C/Users/549764/Documents/GitHub/metasheet-be/sql/30_columns.sql",
@@ -525,22 +702,12 @@
 		"/C/Users/549764/Documents/GitHub/metabase/test/backend/keys.js",
 		"/C/Users/549764/Documents/GitHub/metasheet-be/sql/00_preliminaries.sql.old",
 		"/C/Users/549764/Documents/GitHub/bw-be2/sql/10_columns.sql",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/package.json",
 		"/C/Users/549764/Documents/GitHub/node-js-getting-started/Procfile",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/TabularTHead.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Calendar/Config/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/TabularTBody.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/TableMixin.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/Main/index.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Calendar/Main/index.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Calendar/Main/CalendarTHead.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Calendar/Main/style.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/viewUpdateMixin.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/viewTypes.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Calendar/Config/style.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelPane/ViewSelector/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/fields.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ModelDefinition/index.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell/test/shared/metamodels.js",
 		"/C/Users/549764/Documents/GitHub/barwell/lib/shared/barwell.js",
@@ -553,7 +720,6 @@
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/style.less",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/index.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ModelDefinition/index.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/mainRoutes.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ViewSelector/index.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/components/editableMixin.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/ViewSelector/index.jsx",
@@ -562,11 +728,9 @@
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/DetailBar/ModelDefinition/style.less",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/validateView.js",
 		"/C/Users/549764/Documents/Personal/web/style.css",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Application/index.jsx",
 		"/C/Users/549764/Documents/Personal/web/index.html",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/simple.html",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/ViewPane/style.less",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/barwell-fe.sublime-project",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/.gitignore",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/assets/less/pictonic.less",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/Views/Tabular/index.jsx",
@@ -582,43 +746,7 @@
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/routeHandlers/async.js",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/SideBar/ModelLink.jsx",
 		"/C/Users/549764/Documents/GitHub/barwell-fe/app/routeHandlers/ModelPane.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/TabularPane/style.less",
-		"/C/Users/549764/Downloads/LT-WebFonts-1942127695/demo.css",
-		"/C/Users/549764/Downloads/react-starter-master (1)/react-starter-master/app/mainRoutes.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/config/joinEntry.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/lib/server.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/mainStores.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/components/SideBar.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/routeHandlers/Application.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/barwell-fe.sublime-project",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/components/MainMenu.jsx",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/components/SideBar",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/webpack-production.config.js",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/build/stats.json",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/app/fe.html",
-		"/C/Users/549764/Documents/GitHub/barwell-fe/fe.sublime-workspace",
-		"/C/Users/549764/Documents/GitHub/barwell/test/shared/memstore.js",
-		"/C/Users/549764/Documents/GitHub/clarient-graph/dbConfig.json",
-		"/C/Users/549764/Documents/CReD/api/coords example/sample.html",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/app/orm.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/app/models.json",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/models.json",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/db/util.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/crud.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/app/crud.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/test/endpoints.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/db/query.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/app/util.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/db/config.json",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/app/setup.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/app/packer.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/server.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/orm.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/packer.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/static/css/handsontable.css",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/static/js/app.js",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/static/css/style.css",
-		"/C/Users/549764/Documents/GitHub/clarient-rules/static/index.html"
+		"/C/Users/549764/Documents/GitHub/barwell-fe/app/containers/TabularPane/style.less"
 	],
 	"find":
 	{
@@ -626,9 +754,11 @@
 	},
 	"find_in_files":
 	{
-		"height": 89.0,
+		"height": 0.0,
 		"where_history":
 		[
+			"C:\\Users\\549764\\Documents\\GitHub\\barwell-fe",
+			"C:\\Users\\549764\\Documents\\GitHub\\barwell-fe\\app",
 			"C:\\Users\\549764\\Documents\\GitHub\\barwell-fe",
 			"C:\\Users\\549764\\Documents\\GitHub\\barwell",
 			"C:\\Users\\549764\\Documents\\GitHub\\barwell-fe\\app\\containers",
@@ -645,134 +775,134 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"components",
-			"attribute",
-			"mdlKey",
-			"column",
-			"renameable",
+			"size",
+			"height",
+			"height:",
+			"body",
+			"footer",
+			"people",
+			"noise",
+			"groom",
+			"config",
+			"polyfill",
+			"dark",
+			"tr\\b",
+			"tr",
+			".border-top",
+			"border-top",
+			"new-adder",
+			"addnew",
+			"columnGroup",
+			"view",
+			"icon",
+			"renam",
+			"onchoos",
+			"renameKey",
+			"choos",
+			"onChoose",
+			"hasbee",
+			"label",
+			"table",
+			"arm",
+			"z-index",
+			"action",
+			"style",
+			"2",
+			"td",
+			"hider",
+			"consol",
+			"getStyle",
+			"height:",
+			"rowHe",
+			"tr",
+			"'v'",
+			"modelAction",
+			"view",
+			"actionCreators",
+			"setFocus",
+			"focus",
+			"editCell",
+			"edit",
+			"focused",
+			"offsetLeft",
+			"getVisib",
+			"noop",
+			"editableMixin",
+			"pars",
+			"hasMany",
+			"has_",
 			"select",
-			"border-left",
-			"width: (\\d+)%;",
-			"handleDelete",
-			"handleSave",
-			"persist",
-			"select",
-			"relation\\.model",
-			"persist",
-			"\\.persist",
-			"_dirty",
-			"dirty",
-			"IconClasses",
-			"dirty",
-			"iconclasses",
-			"key",
-			"IconClasses",
-			"iconClasses",
-			"dirty",
-			"\\.dirty",
-			"persis",
-			"dirty",
-			"indexed",
-			"keycom_keycomp",
-			"keycom_seq",
-			"model",
-			"CREATE TABLE bwmetadata.attribute (\n	pk BIGSERIAL PRIMARY KEY,\n	model_id BIGINT REFERENCES bwmetadata.model(pk),\n	plural VARCHAR UNIQUE\n);\nALTER SEQUENCE bwmetadata.models_pk_seq restart with 1000;\n\nCREATE VIEW \"1\".models as\nSELECT\n	pk,\n	model,\n	plural\nFROM\n	bwmetadata.models;\n",
+			"parser",
+			"pk",
+			"model.pk",
+			"move",
+			"getInitia",
 			"cursor",
-			"handleFet",
-			"col.name",
-			"simple.html",
-			"OFFSET_TOLERANCE",
-			"noselect",
-			"this\\.state\\.(rowHeight|widthPadding|headerHeight)",
-			"[A-Z]+_[A-Z]+",
-			"geomoetry",
-			"[A-Z]*_[A-Z]*",
-			"[A-Z]_[Z-A]",
+			"fetch",
+			")\n",
+			"conso",
+			"has",
+			"transition",
+			"classname",
+			"json",
 			"ROW_HEIGHT",
-			"HEADER_HEIGHT",
-			"componentWill",
-			"updateView",
-			"console",
-			"viewselector",
-			"state.active",
-			"detailContent",
-			"detail",
-			"==",
-			"console",
-			"setOptions",
+			"_CREATE",
+			"createRecord",
+			"cons",
+			"idx",
+			"fetch",
+			"view",
+			"first-child",
+			"babel/register",
+			"modelActionCreators.js\\b",
+			"modelActionCreators.js",
+			"td",
+			"_new",
+			"NEW",
+			"model_id",
+			"VIEW_RECEIVE",
+			"ViewAdder",
+			"key",
 			"store",
 			"fetch",
-			"handleAdd",
-			"refile",
-			"filter",
-			"pointer",
-			"selection",
-			"tabularbody",
-			"view-renamer",
-			"input",
-			"focused",
-			"cons",
-			"padding",
-			"console",
-			"body",
-			"input",
-			"select",
-			"onDoubleClick",
-			"double",
-			"onCl",
-			"this.forceUpdate",
-			"this.handleFetch",
-			"border-ri",
-			"addNew",
-			"h2",
-			"green-bright",
-			"blue",
-			"brown",
-			"green",
-			"green3",
-			"blue",
-			"green-3",
-			"blue",
-			"green3",
-			"green-2",
-			"green3",
-			"pureGray",
-			"green-4",
-			"green-2",
-			"green-3",
-			"green3",
-			"@pureGray(\\d);",
-			"green(\\d)",
-			"pureGray",
-			"ref",
-			"desc",
-			"onKey",
+			"view_id",
 			"view",
-			"ModelPane",
-			"view",
-			"green",
+			"getVisible",
+			"AttributeStore",
 			"console",
+			"console.log('message: '+ JSON.stringify(message, null, 2));",
+			"fetch",
+			"focus",
+			"click",
+			"focus",
+			"pk",
+			"PRIMARY_KEY",
+			"primary_key",
+			"pk",
+			"PRIMARY_KEY",
+			"input",
+			"groomView",
+			"fetch",
+			"columnList",
+			"grromView",
 			"conso",
-			"hide",
-			"listen",
+			"console",
+			"type: 'PRIMARY_KEY'",
+			"col.id",
+			"},\n",
+			"focus",
+			"height",
+			"background",
+			"pointer",
+			"right",
+			"align",
+			"resizer",
+			"modelAction",
+			"hider",
 			"select",
-			"updateSelect",
-			"selection",
-			"view",
-			"setState",
-			"this.state.cursor",
-			"obj",
-			"model",
-			"cursor",
-			"props.offset",
-			"force",
-			"for",
-			";",
-			"this.state.cur",
-			"cursor",
-			"this.state.cursor",
-			"at",
-			"cursor"
+			"pick",
+			"modelAction",
+			"fieldTypes"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -780,6 +910,11 @@
 		"regex": true,
 		"replace_history":
 		[
+			"model",
+			"modelActionCreators.jsx",
+			"groomView",
+			"key",
+			"calc",
 			"_key",
 			"attribute",
 			"width: \\1%; max-width: \\1%; min-width: \\1%;",
@@ -852,23 +987,23 @@
 	"groups":
 	[
 		{
-			"selected": 7,
+			"selected": 6,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "app/containers/ModelPane/ModelDefinition/index.jsx",
+					"file": "app/containers/Views/Cube/groom.jsx",
 					"settings":
 					{
-						"buffer_size": 4080,
+						"buffer_size": 1058,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2091,
-								2091
+								423,
+								423
 							]
 						],
 						"settings":
@@ -877,25 +1012,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 109.0,
+						"translation.y": 14.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "app/containers/ModelPane/ModelDefinition/KeyDetail.jsx",
+					"file": "app/containers/Views/Cube/Config/index.jsx",
 					"settings":
 					{
-						"buffer_size": 7588,
+						"buffer_size": 5954,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2736,
-								2736
+								4004,
+								4004
 							]
 						],
 						"settings":
@@ -904,25 +1039,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1343.0,
+						"translation.y": 1726.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "app/containers/ModelPane/ModelDefinition/AttributeDetail.jsx",
+					"file": "app/actions/modelActionCreators.jsx",
 					"settings":
 					{
-						"buffer_size": 6615,
+						"buffer_size": 7134,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6283,
-								6314
+								449,
+								449
 							]
 						],
 						"settings":
@@ -931,132 +1066,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2936.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "app/containers/ModelPane/renameable.jsx",
+					"file": "app/stores/ViewStore.js",
 					"settings":
 					{
-						"buffer_size": 1715,
+						"buffer_size": 1125,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								772,
-								772
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 337.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "app/containers/ModelPane/style.less",
-					"settings":
-					{
-						"buffer_size": 5994,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5586,
-								5586
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/LESS/LESS.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 4915.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "app/actions/modelActionCreators.js",
-					"settings":
-					{
-						"buffer_size": 4546,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1644,
-								1644
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 435.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "app/containers/ModelPane/ModelDefinition/RelationDetail.jsx",
-					"settings":
-					{
-						"buffer_size": 3214,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								856,
-								856
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 159.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "app/util/MetasheetWebAPI.js",
-					"settings":
-					{
-						"buffer_size": 2290,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2152,
-								2152
+								219,
+								219
 							]
 						],
 						"settings":
@@ -1066,7 +1094,115 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 497.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "app/containers/Views/Cube/Main/index.jsx",
+					"settings":
+					{
+						"buffer_size": 1788,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								839,
+								839
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "app/containers/Views/Tabular/Main/index.jsx",
+					"settings":
+					{
+						"buffer_size": 2725,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1054,
+								1054
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 100.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "app/containers/Views/Tabular/Main/TabularStore.jsx",
+					"settings":
+					{
+						"buffer_size": 2800,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								911,
+								911
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 103.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "app/containers/Views/Cube/Main/createCubeStore.jsx",
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

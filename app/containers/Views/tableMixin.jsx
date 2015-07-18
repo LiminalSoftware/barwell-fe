@@ -36,7 +36,6 @@ var TableMixin = {
 	calibrateRowHeight: function () {
 		var $tbody = $('#main-data-table tbody')
 		return $tbody.height() / $tbody.children().length
-		
 	},
 
 	componentDidMount: function () {
