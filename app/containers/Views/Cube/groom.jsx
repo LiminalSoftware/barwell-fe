@@ -20,9 +20,10 @@ var groomView = function (view) {
 		return  field.attribute_id
 	}
 
-	delete data.columns;
-	delete data.columnList;
-	delete data.sorting;
+	data.sorting = data.sorting || {}
+	data.columnWidth = data.columnWidth || '100'
+	data.rowHeight = data.rowHeight || '30'
+	data.padding = 1
 
 	var fields = AttributeStore.query({model_id: view.model_id});
 	var relations = RelationStore.query({model_id: view.model_id});

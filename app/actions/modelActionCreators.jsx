@@ -41,7 +41,7 @@ var modelActions = {
 			message.actionType = 'M' + model.model_id + '_RECEIVEUPDATE'
 			results.data.cid = obj.cid
 			message['m' + model.model_id] = [results.data]
-			MetasheetDispatcher.dispatch(message)
+			MetasheetDispatcher.dispatch (message)
 		})
 	},
 
@@ -49,7 +49,9 @@ var modelActions = {
 		var keycomps = KeycompStore.query({key_id: localKeyId}, 'ord')
 		var related_keycomps = KeycompStore.query({key_id: relatedKeyId}, 'ord')
 		var relatedKey = KeyStore.get(relatedKeyId)
+		var localKey = KeyStore.get(localKeyId)
 		var relatedModel = ModelStore.get(relatedKey.model_id)
+		var localModel = ModelStore.get(localKey.model_id)
 		var selector = _.pick(rObj, relatedModel._pk)
 		var patch = {}
 		var message = {}
@@ -60,7 +62,9 @@ var modelActions = {
 			patch[rkcId] = obj[kcId]
 		});
 
-		message.actionType = 'M' + model.model_id + '_RELATIONUPDATE'
+		message.actionType = 'M' + relatedModel.model_id + '_UPDATE'
+		message.fromObjPk = obj._parentPk
+		message.toObjPk = obj[localModel._pk]
 
 		modelActions.patchRecords(relatedModel, patch, selector)
 	},
@@ -69,7 +73,7 @@ var modelActions = {
 		var model_id = model.model_id
 		var message = {}
 		message.actionType = 'M' + model.model_id + '_UPDATE'
-		message['m' + model.model_id] = patch
+		message.update = patch
 		message.selector = selector
 		MetasheetDispatcher.dispatch(message)
 
@@ -81,7 +85,7 @@ var modelActions = {
 
 		webUtils.ajax('PATCH', url, JSON.stringify(patch), {"Prefer": 'return=representation'}).then(function (results) {
 			message.actionType = 'M' + model.model_id + '_RECEIVEUPDATE'
-			message['m' + model.model_id] = results.data
+			message.update = results.data
 			MetasheetDispatcher.dispatch(message)
 		})
 	},
@@ -115,6 +119,39 @@ var modelActions = {
 		});
 	},
 	
+	fetchLevels: function (view, dimension, offset, limit) {
+		var view_id = view.view_id
+		var model_id = view.model_id
+		var url = 'https://api.metasheet.io/v' + view_id + '_' + dimension;
+		
+		url += '?order=' + view[dimension.slice(0,-1) + '_aggregates'].map(function (grouping) {
+			var sortDirection = !!(view.data.sorting[grouping] )
+			return 'a' + grouping + (sortDirection ? '.asc' : '.desc')
+		}).join(',')
+
+		console.log('url: ' + url)
+
+		var header = {
+			'Range-Unit': 'items',
+			'Range': (offset + '-' + (offset + limit))
+		}
+		
+		webUtils.ajax('GET', url, null, header).then(function (results) {
+			var message = {}
+			var range = results.xhr.getResponseHeader('Content-Range')
+			var rangeParts = range.split(/[-/]/)
+
+			message.startIndex = parseInt(rangeParts[0])
+			message.endIndex = parseInt(rangeParts[1])
+			message.recordCount = parseInt(rangeParts[2])
+			
+			message.actionType = ('V' + view_id + '_' + dimension + '_RECEIVELEVELS').toUpperCase()
+			message.levels = results.data
+			
+			MetasheetDispatcher.dispatch(message)
+		})
+	},
+
 	fetch: function (subject, selector) {
 		var message = {}
 		message.selector = selector

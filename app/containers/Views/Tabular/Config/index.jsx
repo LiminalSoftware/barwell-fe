@@ -25,7 +25,7 @@ var TabularViewConfig = React.createClass({
 
 	componentWillUnmount: function () {
 		var view = this.props.view
-		ViewStore.removeChangeListener(this._onChange);
+		ViewStore.removeChangeListener(this._onChange)
 		ModelStore.removeChangeListener(this._onChange)
 		AttributeStore.removeChangeListener(this._onChange)
 		KeyStore.removeChangeListener(this._onChange)

@@ -4,6 +4,7 @@ import assign from 'object-assign'
 import EventEmitter from 'events'
 
 import ModelStore from "../../../../stores/ModelStore"
+import RelationStore from "../../../../stores/RelationStore"
 
 import modelActionCreators from "../../../../actions/modelActionCreators"
 
@@ -13,6 +14,7 @@ import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 
 var createTabularStore = function (view) {
     var model = ModelStore.get (view.model_id)
+    var relations = RelationStore.query({model_id: view.model_id})
     var label = 'm' + view.model_id
     var upperLabel = label.toUpperCase ()
 
@@ -35,17 +37,16 @@ var createTabularStore = function (view) {
         },
 
         getObjects: function (from, to) {
-            return _records;
+            return _.map(_records, _.clone);
         },
 
         dispatchToken: dispatcher.register(function (payload) {
             var type = payload.actionType
 
-            if (type === (upperLabel + '_CREATE')) {
+            if (type === upperLabel + '_CREATE') {
                 var object = payload[label]
                 var index = payload.index
-
-                TabularStore.emitChange()
+                var rec = _records[index]
             }
 
             // if (type === (upperLabel + '_INSERT')) {
@@ -53,26 +54,26 @@ var createTabularStore = function (view) {
             //  this.create(obj)
             // }
 
-            if (type === (upperLabel + '_DESTROY')) {
+            if (type === upperLabel + '_DESTROY') {
                 _records = _.filter(_records, function (rec) {
                     rec[model._pk] !== payload[label][model._pk]
                 })
-
                 TabularStore.emitChange()
             }
 
             if (type === (upperLabel + '_UPDATE') || type === (upperLabel + '_RECEIVEUPDATE')) {
                 var _this = this
-                var update = payload[label]
+                var update = payload.update
                 var selector = payload.selector
+
+
                 var dirty = {_dirty: (type === (upperLabel + '_UPDATE'))}
                 
                 _.filter(_records, _.matcher(selector) ).map(function (rec) {
                     rec = _.extend(rec, update, dirty)
                 });
-
                 TabularStore.emitChange()
-            }    
+            }
             
             if (type === (upperLabel + '_RECEIVE')) {
                 var _this = this
@@ -86,6 +87,18 @@ var createTabularStore = function (view) {
                                
                 TabularStore.emitChange()
             }
+
+            relations.forEach(function (rel) {
+                var relLabel = 'm' + rel.related_model_id
+                var relUpperLabel = relLabel.toUpperCase()
+                
+                if (type === relUpperLabel + '_UPDATE') {
+                    _records.forEach(function (rec) {
+                        var relatedRecords = rec['r' + rel.relation_id]
+                    })
+                }
+            })
+
         })
     })
 

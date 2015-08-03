@@ -12,53 +12,24 @@ import $ from "jquery"
 import modelActionCreators from "../../actions/modelActionCreators"
 
 import hasManyField from './Fields/hasManyField'
+import hasOneField from './Fields/hasOneField'
+import colorField from './Fields/colorField'
+import integerField from './Fields/integerField'
+import decimalField from './Fields/decimalField'
 import dateField from './Fields/dateField'
+import booleanField from './Fields/booleanField'
+import primaryKeyField from './Fields/primaryKeyField'
 import commitMixin from './Fields/commitMixin'
 import editableInputMixin from './Fields/editableInputMixin'
 
 
-var PrimaryKeyElement = React.createClass({
-	render: function () {
-		var value = this.props.value
-		var style = this.props.style
 
-		return <td style={style} className="uneditable">
-			{this.props.value}
-		</td>
-	}
-})
 
 var VanillaElement = React.createClass({
 	mixins: [commitMixin, editableInputMixin],
 	validator: _.identity
 });
 
-var HasOneElement = React.createClass({
-	render: function () {
-		var value = this.props.value
-		var config = this.props.config || {}
-		var style = this.props.style || {}
-		var object = this.props.object
-
-		return <td style={style}>{value}</td>
-	}
-});
-
-var NumericElement = React.createClass({
-	mixins: [editableInputMixin, commitMixin],
-
-	validator: function (input) {
-		if (_.isNumber(input) ) 
-			return Math.floor(input)
-		if (!(/^\d+$/).test(input))
-			return null
-		return parseInt(input)
-	},
-
-	parser: function (input) {
-		return input.match(/^(\d*)/)[0]
-	}
-});
 
 
 function componentToHex(c) {
@@ -70,114 +41,22 @@ function rgbToHex(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
-var ColorElement = React.createClass({
-	mixins: [editableInputMixin, commitMixin],
-
-	validator: function (input) {
-		if (!(/^#[0-9A-F]{3,6}$/).test(input))
-			return '#FFF'		
-		else
-			return input
-	},
-
-	format: function (value) {
-		var value = this.props.value
-
-		return <div style={{backgroundColor: value}} className="color-block"></div>
-	}
-});
-
-var CheckboxElement = React.createClass({
-	
-	mixins: [commitMixin],
-
-	revert: _.noop,
-
-	validator: function (input) {
-		return (!!input)
-	},
-
-	handleClick: function (event) {
-		this.toggle()
-		event.preventDefault()
-	},
-
-	toggle: function () {
-		this.setState({value: !this.state.value})
-		this.commitChanges()
-	},
-
-	render: function () {
-		var value = this.props.value
-		var style = this.props.style
-		
-		return <td style={style} className="checkbox">
-			<input type="checkbox" checked={value} onChange={this.handleClick}></input>
-		</td>
-	}
-});
-
 
 var fieldTypes = {
-	PRIMARY_KEY: {
-		element: PrimaryKeyElement,
-		uneditable: true
-	},
+	PRIMARY_KEY: primaryKeyField,
 	TEXT: {
 		element: VanillaElement,
 		validator: _.identity,
 		parser: _.identity
 	},
-	BOOLEAN: {
-		element: CheckboxElement,
-		uneditable: true
-	},
+	BOOLEAN: booleanField,
 
-	HasOne: {
-		element: VanillaElement,
-		uneditable: true
-	},
+	HAS_ONE: hasOneField,
 
 	HAS_MANY: hasManyField,
-
-	COLOR: {
-		element: ColorElement,
-		uneditable: true
-	},
-
-	INTEGER: {
-		element: React.createClass({
-			mixins: [editableInputMixin, commitMixin],
-
-			validator: function (input) {
-				if (_.isNumber(input) ) 
-					return Math.floor(input)
-				if (!(/^\d+$/).test(input))
-					return null
-				return parseInt(input)
-			},
-
-			parser: function (input) {
-				return input.match(/^(\d*)/)[0]
-			}
-		})
-	},
-
-	DECIMAL: {element: React.createClass({
-			mixins: [editableInputMixin, commitMixin],
-
-			validator: function (input) {
-				if (!(/^\d*(\.\d*)?$/).test(input))
-					return null
-				return parseFloat(input)
-			},
-
-			parser: function (input) {
-				return input.match(/^(\d*\.?\d*)/)[0]
-			}
-		})
-	},
-
+	COLOR: colorField,
+	INTEGER: integerField,
+	DECIMAL: decimalField,
 	TIMESTAMP: {
 		element: VanillaElement,
 		validator: _.identity,

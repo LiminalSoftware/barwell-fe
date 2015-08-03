@@ -19,9 +19,18 @@ import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 
 import fieldTypes from "../../fields"
-
+import CubeColTHead from "./CubeColTHead"
+import CubeRowTHead from "./CubeRowTHead"
+import OverflowHider from "./OverflowHider"
 
 var CubePane = React.createClass ({
+
+	getInitialState: function () {
+		return {
+			scrollTop: 0,
+			scrollLeft: 0
+		}
+	},
 
 	componentWillMount: function () {
 		ViewStore.addChangeListener(this._onChange)
@@ -41,6 +50,14 @@ var CubePane = React.createClass ({
 		this.forceUpdate()
 	},
 
+	onScroll: function (event) {
+		var wrapper = React.findDOMNode(this.refs.wrapper)
+		this.setState({
+			scrollTop: wrapper.scrollTop, 
+			scrollLeft: wrapper.scrollLeft
+		})
+	},
+
 	render: function () {
 		var _this = this
 		var model = this.props.model
@@ -48,10 +65,26 @@ var CubePane = React.createClass ({
 		var focused = (FocusStore.getFocus() == 'view')
 		
 		return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">
-				<table id="main-data-table" className="data-table">
-					<thead> { 
+				<table id="main-data-table" className="header data-table">
+					<CubeColTHead 
+						key = {"cube-col-thead-" + view.view_id}
+						config = {view.data}
+						focused = {focused}
+						dimension = 'column'
+						scrollTop = {_this.state.scrollTop}
+						view = {view} />
+					<CubeRowTHead 
+						key = {"cube-row-thead-" + view.view_id}
+						config = {view.data}
+						focused = {focused}
+						dimension = 'row'
+						scrollLeft = {_this.state.scrollLeft}
+						view = {view} />
+					<OverflowHider
+						scrollLeft = {_this.state.scrollLeft}
+						scrollTop = {_this.state.scrollTop}
+						view = {view} />
 
-					} </thead>
 				</table>
 		</div>
 	}

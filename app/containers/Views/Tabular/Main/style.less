@@ -16,7 +16,7 @@ div.color-block {
 	border: 2px solid @heavyCream;
 	
 	background-color: white;
-	z-index: 300;
+	z-index: 100;
 	border-radius: 8px;
 	padding: 0 5px;
 	margin-right: 2px;
@@ -101,17 +101,17 @@ div.color-block {
 		}
 
 		th {
-			z-index: 200;
+			z-index: 10;
 			overflow: visible;
 			font-weight: 400;
 			background: @cream;
+			// background: @green-trans;
 			height: 26px;
 			position: relative;
 			border-right: 1px solid white;
 			
 
 			&.desc, &.asc {
-				background: @gray-2;
 				// background: @green-tint-2;	
 				color: white;
 				&.focused {
@@ -121,7 +121,7 @@ div.color-block {
 
 			.table-resizer {
 				position: absolute;
-				z-index: 100;
+				z-index: 20;
 				right: 0;
 				top: 0;
 				bottom: 0;
@@ -140,6 +140,7 @@ div.color-block {
 		}
 	}
 }
+
 
 
 .selection {

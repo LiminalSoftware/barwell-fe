@@ -52,7 +52,6 @@ var TabularTBody = React.createClass ({
 	},
 
 	_onChange: function () {
-		console.log('update!!!!')
 		this.forceUpdate()
 	},
 
@@ -181,7 +180,7 @@ var TabularTBody = React.createClass ({
 		var height = (rows.length * (geometry.rowHeight + geometry.rowPadding)) + ' px'
 
 		return <tbody ref = "tbody" 
-			onClick = {_this.onClick} 
+			onClick = {_this.onClick}
 			onDoubleClick = {_this.editCell}>
 		{
 			rows.map(function (obj, i) {

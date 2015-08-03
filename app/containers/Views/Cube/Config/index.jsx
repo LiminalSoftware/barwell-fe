@@ -76,6 +76,43 @@ var CubeViewConfig = React.createClass({
 
 		return <div className = "grouping">
 
+			
+
+			<div className = "detail-block">
+			<h3>Grouping</h3>
+			<table className="detail-table">
+				<tbody>
+				<tr className="top-line">
+					<td className="width-10"></td>
+					<td className="width-60 top-line">Row Groupings</td>
+					<td className="width-20">Order</td>
+					<td className="width-10"></td>
+				</tr>
+				</tbody>
+				<GroupingSelector
+					dimension = 'row_aggregates'
+					getOptions = {this.getOptions}
+					view = {view}
+					model = {model} />
+				<tbody>
+				<tr className="top-line">
+					<td className="width-10"></td>
+					<td className="width-60 top-line">Column Groupings</td>
+					<td className="width-20">Order</td>
+					<td className="width-10"></td>
+				</tr>
+				</tbody>
+				<GroupingSelector
+					dimension = 'column_aggregates'
+					getOptions = {this.getOptions}
+					view = {view}
+					model = {model} />
+			</table>
+			<div><a className="new-adder new-key">
+			<span className="small grayed icon icon-kub-remove"></span>Clear all
+			</a></div>
+			</div>
+
 			<div className = "detail-block">
 			<h3>Values</h3>
 			<table className="detail-table">
@@ -108,30 +145,6 @@ var CubeViewConfig = React.createClass({
 			</table>
 			</div>
 
-			<div className = "detail-block">
-			<h3>Grouping</h3>
-			<table className="detail-table">
-				<tbody>
-				<tr className="top-line"><td colSpan={3} className="top-line">Row Groupings</td></tr>
-				</tbody>
-			</table>
-			<table className="detail-table">
-				<GroupingSelector
-					dimension = 'row_aggregates'
-					getOptions = {this.getOptions}
-					view = {view}
-					model = {model} />
-				<tr><td colSpan={3}>Column Groupings</td></tr>
-				<GroupingSelector
-					dimension = 'column_aggregates'
-					getOptions = {this.getOptions}
-					view = {view}
-					model = {model} />
-			</table>
-			<div><a className="new-adder new-key">
-			<span className="small grayed icon icon-kub-remove"></span>Clear all
-			</a></div>
-			</div>
 		</div>
 	}
 });
@@ -144,10 +157,14 @@ var GroupingSelector = React.createClass({
 
 		return <tbody>
 			{(view[dimension] || []).concat([null]).map(function (group, ord) {
+				var key = 'attr-' + (group || 'new');
 				return <GroupingDetail 
 					{... _this.props} 
 					group = {group}
-					order = {ord}/>
+					order = {ord}
+					key = {key + '-row'}
+					index = {group}
+					/>
 			})}
 		</tbody>
 	}
@@ -163,7 +180,7 @@ var GroupingDetail = React.createClass({
 		var view = this.props.view
 		var dimension = this.props.dimension
 		var group = this.props.group || {}
-
+		
 		var groupings = (view[dimension] || [])
 		groupings = groupings.filter(function (existing) {
 			return existing !== group
@@ -183,6 +200,7 @@ var GroupingDetail = React.createClass({
 		var groupings = (view[dimension] || [])
 		groupings.push(value)
 		view[dimension] = groupings
+		view.data.sorting[value] = {}
 
 		modelActionCreators.createView(view, true, false)
 	},
@@ -190,19 +208,32 @@ var GroupingDetail = React.createClass({
 	commit: function () {
 
 	},
+
+	handleFlipSort: function (event) {
+		console.log('handleFlipSort')
+		var view = this.props.view
+		var group = this.props.group || null
+		var sorting = view.data.sorting [group]
+		console.log('sorting: ' + sorting)
+		view.data.sorting [group] = !sorting
+
+		modelActionCreators.createView(view, true, false)
+	},
 	
 	render: function () {
+		var view = this.props.view
 		var model = this.props.model
 		var group = this.props.group || null
 		var order = this.props.order
-		var key = 'attr-' + (group || 'new')
 		var attr = AttributeStore.get(group) || {}
+		var sorting = !!view.data.sorting [group]
+		var dimension = this.props.dimension 
 
-		return <tr key={key + '-row'} >
+		return <tr>
 			<td className="width-10">
-				<span className="num-circle">{order + 1}</span>
+				<span className={"grayed icon " + (dimension === 'column_aggregates' ? "icon-Layer_1" : "icon-Layer_8")}></span>
 			</td>
-			<td className="width-80">
+			<td className="width-60">
 				{group ? 
 				attr.attribute
 				:
@@ -213,6 +244,12 @@ var GroupingDetail = React.createClass({
 					{this.props.getOptions()}
 				</select>
 				}
+			</td>
+			<td className="centered width-20">
+				{group ? <span 
+					onClick = {this.handleFlipSort}
+					className={"small clickable grayed icon icon-arrow-" + (sorting ? 'down' : 'up')}>
+				</span> : null}
 			</td>
 			<td className="centered width-10">
 				{!!attr.attribute_id ? 

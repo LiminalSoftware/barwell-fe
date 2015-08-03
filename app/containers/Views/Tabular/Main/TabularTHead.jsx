@@ -40,8 +40,8 @@ var TabularTH = React.createClass ({
 		var sortArrow
 		var classes = []
 
-		if (!!col.sorting) sortArrow = <span className={"small white after icon icon-arrow-" + (col.sorting.descending ? "up" : "down")}></span>
-		if (!!col.sorting) classes.push(col.sorting.descending ? 'asc' : 'desc')
+		if (!!col.sorting) sortArrow = <span className={"small sort-icon white after icon icon-arrow-" + (col.sorting.descending ? "up" : "down")}></span>
+		// if (!!col.sorting) classes.push(col.sorting.descending ? 'asc' : 'desc')
 		if (FocusStore.getFocus() === 'view') classes.push('focused')
 
 		return <th 
