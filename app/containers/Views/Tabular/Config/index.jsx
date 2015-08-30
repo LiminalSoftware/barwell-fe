@@ -3,7 +3,6 @@ import { Link } from "react-router";
 import styles from "./style.less";
 import _ from 'underscore';
 import fieldTypes from "../../fields"
-import ViewUpdateMixin from '../../ViewUpdateMixin.jsx'
 
 import ViewStore from "../../../../stores/ViewStore"
 import ModelStore from "../../../../stores/ModelStore"

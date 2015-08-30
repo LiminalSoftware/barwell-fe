@@ -116,9 +116,16 @@ var CubeViewConfig = React.createClass({
 			<div className = "detail-block">
 			<h3>Values</h3>
 			<table className="detail-table">
-				<tbody>
+				<thead>
 					<tr className="top-line">
-						<td className="width-25">Aggregator:</td>
+						<th className="width-10"></th>
+						<th className="width-25">Aggregator</th>
+						<th className="width-65">Value / Label</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td className="width-10"><span className="icon grayed icon-Layer_6"></span></td>
 						<td className="width-75"><select value = {view.aggregator} onChange={this.handleSelectAggregator}>
 							{_.map(constants.aggregators, function (label, key) {
 								return <option value = {key} key = {key}>
@@ -126,15 +133,6 @@ var CubeViewConfig = React.createClass({
 								</option>
 							})}
 						</select></td>
-					</tr>
-					<tr>
-						<td>
-							{view.aggregator === 'LIST' ?
-							"Label:"
-							:
-							"Value:"
-							}
-						</td>
 						<td>
 							<select value={view.value} onChange={this.handleSelectValue}>
 								{this.getOptions()}

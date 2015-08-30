@@ -5,28 +5,55 @@ import _ from 'underscore'
 import fieldTypes from "../../fields"
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import FocusStore from "../../../../stores/FocusStore"
-
-import createCubeLevelStore from './CubeLevelStore.jsx'
 import consolidate from './consolidate'
 
 
 var CubeRowTHead = React.createClass ({
+
+	getCalibration: function () {
+		if (!this.isMounted()) return;
+		
+		return ($(React.findDOMNode(this.refs.rowhead)).get(0).scrollHeight / 
+				$(React.findDOMNode(this.refs.rowhead)).children().length)
+	},
+
 	render: function () {
 		var _this = this
 		var view = this.props.view
-		var dimension = this.props.dimension
+		var geo = view.data.geometry
+		var rowHeight = geo.rowHeight + 'px'
+		var actRowHt = this.props.actRowHt + geo.rowPadding
+
+		var vStart = this.props.vStart
+		var hStart = this.props.hStart
+
+		var store = this.props.store
+		var levels = store.getLevels('rows', vStart, vStart + geo.renderBufferRows)
+		levels = consolidate(levels, view.row_aggregates)
+
 		var rowHeadStyle = {
-			top: ( view.column_aggregates.length * view.data.columnHeight) + 'px',
-			left: (this.props.scrollLeft || 0)
+			top: ((view.column_aggregates.length + vStart) * actRowHt ) + 'px',
+			left: ((this.props.scrollLeft || 0) + geo.leftGutter) + 'px'
 		}
-		var levels = this.store ? this.store.getLevels() : []
+
 		var trStyle = {
-			lineHeight: view.data.rowHeight + 'px'
+			lineHeight: rowHeight,
+			// height: rowHeight,
+			// maxHeight: rowHeight,
+			// minHeight: rowHeight
 		}
+
+		var spans = {}
+		view.row_aggregates.forEach(function (group) {
+			spans['a' + group] = 1
+		})
+
+		// console.log('vStart: ' + vStart)
 		
 		return <tbody
 			id="cube-row-view-header"
-			ref="row-head" 
+			ref="rowhead" 
+			className = "cube-rowhead"
 			style = {rowHeadStyle}
 			key={"cube-row-thead-" + view.view_id}>
 			{
@@ -34,17 +61,21 @@ var CubeRowTHead = React.createClass ({
 				return <tr key={'cube-rowhead-' + i} style = {trStyle}>
 				{
 					view['row_aggregates'].map(function (group) {
-						var width = view.data.columnWidth + 'px'
-						var thStyle = {
-							minWidth: width,
-							maxWidth: width,
-							lineHeight: view.data.rowHeight + 'px'
-						}
+						var thStyle = _.extend({
+							minWidth: geo.columnWidth + 'px',
+							maxWidth: geo.columnWidth + 'px'
+						}, trStyle)
+
+						if (spans['a' + group]-- > 1) return null
+						else spans['a' + group] = level.spans['a' + group]
 						return <th
 							style = {thStyle}
+							rowSpan = {level.spans['a' + group]}
 							key={'cube-header-' + group}>
 						{level['a' + group]}
 						</th>
+						
+
 					})
 				}
 				</tr>
@@ -58,18 +89,12 @@ var CubeRowTHead = React.createClass ({
 	},
 
 	componentWillMount: function () {
-		var view = this.props.view
-		if (view.view_id && !this.store) this.initStore()
+		var store = this.props.store
 		
-		if (this.store) {
-			this.store.addChangeListener(this._onChange)
+		if (store) {
+			store.addChangeListener(this._onChange)
 			this.fetch(true)
 		}
-	},
-
-	initStore: function () {
-		var view = this.props.view
-		this.store = createCubeLevelStore(view, 'rows')
 	},
 
 	fetch: function (force) {

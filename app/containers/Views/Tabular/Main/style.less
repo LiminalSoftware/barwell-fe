@@ -31,12 +31,135 @@ div.color-block {
 	}
 }
 
+.cube-colhead th {
+	height: 26px;
+	background: @cream;
+	font-weight: 400;
+	border-bottom: 1px solid white;
+	border-right: 1px solid white;
+}
+
+.cube-rowhead th {
+	height: 26px;
+	border-top: 1px solid white;
+	border-bottom: 1px solid white;
+	background: @cream;
+	font-weight: 400;
+	border-right: 1px solid white;
+}
+
+.cube-main-tbody td.present {
+	background: white;
+	border: 1px solid @heavyCream !important;
+}
+
+.cube-main-tbody td.empty {
+	// background-image: linear-gradient(-45deg, @heavyCream 25%, transparent 25%, transparent 50%, @heavyCream 50%, @heavyCream 75%, transparent 75%, transparent);
+	background: @cream;
+	border: 1px solid @white !important;
+}
+
+.cube-main-tbody tr, .cube-rowhead tr {
+	
+}
+
+
+
+.tabular-main-table th {
+	z-index: 500;
+	overflow: visible;
+	font-weight: 400;
+	background: @cream;
+	// background: @green-trans;
+	position: relative;
+	border-right: 1px solid white;
+	
+
+	&.desc, &.asc {
+		// background: @green-tint-2;	
+		color: white;
+		&.focused {
+			
+		}
+	}
+
+	.table-resizer {
+		position: absolute;
+		z-index: 20;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		height: 30px;
+		width: 5px;
+		cursor: col-resize;
+		&:hover {
+			background: rgba(20,100,255,0.1);
+		}
+		&.dragging {
+			background: rgba(255,0,0,0.3);
+			height: 5000px;
+			width: 2px;
+		}
+	}
+}
+
+.tabular-main-table td {
+	border-bottom: 1px solid @heavyCream;
+	border-right: 1px solid transparent;
+}
+
 .data-table {
 	zoom: 100%;
 	table-layout: fixed;
 	border-collapse: collapse;
 	.noselect;
-	
+
+	thead {
+		.noselect;
+		position: absolute;
+		top: 0px;
+		left: 3px;
+		z-index: 10;
+	}
+
+	tbody {	
+		.noselect;
+		position: absolute;	
+		left: 3px;
+	}
+
+	td, th {
+		.noselect;
+		.transition(all 100ms ease-in);
+		position: relative;
+		font-size: 12px;
+		color: @gray5;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+
+		
+		
+		cursor: pointer;
+		padding: 0 4px;
+		input[type="checkbox"] {
+			margin: 2px;
+			padding: 0;
+		}
+	}
+
+	td {
+
+		&.uneditable {
+			background: #FFE;
+			font-style: italic;
+		}
+	}
+
+}
+
+.tabular-main-table {
+
 	thead {
 		.noselect;
 		position: absolute;
@@ -46,12 +169,9 @@ div.color-block {
 	}
 	tbody {	
 		.noselect;
-		position: absolute;
-		top: 29px;		
+		position: absolute;	
 		left: 3px;
 	}
-
-	
 
 	tr {
 
@@ -65,86 +185,22 @@ div.color-block {
 			border-left: 2px solid transparent;
 		}
 		th:first-child {
-			border-left: 2px solid @cream;
+			// border-left: 2px solid @cream;
 		}
 
 		td.droppable {
 			background: lighten(@green-tint-2, 42%) !important;
 		}
 		
-		td, th {
-			.transition(all 100ms ease-in);
-			position: relative;
-			.noselect;
-			font-size: 12px;
-			color: @gray5;
-			overflow: hidden;
-  			text-overflow: ellipsis;
-  			white-space: nowrap;
-  			border-bottom: 1px solid @heavyCream;
-  			border-right: 1px solid transparent;
-  			.noselect;
-  			cursor: pointer;
-  			padding: 0 4px;
-  			input[type="checkbox"] {
-  				margin: 2px;
-  				padding: 0;
-  			}
-		}
-
-		td {
-
-			&.uneditable {
-				background: #FFE;
-				font-style: italic;
-			}
-		}
-
-		th {
-			z-index: 10;
-			overflow: visible;
-			font-weight: 400;
-			background: @cream;
-			// background: @green-trans;
-			height: 26px;
-			position: relative;
-			border-right: 1px solid white;
-			
-
-			&.desc, &.asc {
-				// background: @green-tint-2;	
-				color: white;
-				&.focused {
-					
-				}
-			}
-
-			.table-resizer {
-				position: absolute;
-				z-index: 20;
-				right: 0;
-				top: 0;
-				bottom: 0;
-				height: 30px;
-				width: 5px;
-				cursor: col-resize;
-				&:hover {
-					background: rgba(20,100,255,0.1);
-				}
-				&.dragging {
-					background: rgba(255,0,0,0.3);
-					height: 5000px;
-					width: 2px;
-				}
-			}
-		}
+		
+		
 	}
 }
 
 
 
 .selection {
-	z-index: 5;
+	z-index: 501;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -156,12 +212,12 @@ div.color-block {
 	background: @gray-trans;
 	&.focused {
 		background: @green-trans;
-		border: 1.5px dashed @green-tint-1;
+		border: 1px dashed @green-tint-1;
 	}
 }
 
 .pointer {
-	z-index: 6;
+	z-index: 502;
 	position: absolute;
 	top: 0;
 	left: 0;

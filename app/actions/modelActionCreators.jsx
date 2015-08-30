@@ -123,13 +123,14 @@ var modelActions = {
 		var view_id = view.view_id
 		var model_id = view.model_id
 		var url = 'https://api.metasheet.io/v' + view_id + '_' + dimension;
+		var aggregates = view[dimension.slice(0,-1) + '_aggregates']
+
+		if (aggregates.length === 0) return
 		
-		url += '?order=' + view[dimension.slice(0,-1) + '_aggregates'].map(function (grouping) {
-			var sortDirection = !!(view.data.sorting[grouping] )
+		url += '?order=' + aggregates.map(function (grouping) {
+			var sortDirection = !!(view.data.sorting[grouping])
 			return 'a' + grouping + (sortDirection ? '.asc' : '.desc')
 		}).join(',')
-
-		console.log('url: ' + url)
 
 		var header = {
 			'Range-Unit': 'items',
@@ -143,13 +144,38 @@ var modelActions = {
 
 			message.startIndex = parseInt(rangeParts[0])
 			message.endIndex = parseInt(rangeParts[1])
-			message.recordCount = parseInt(rangeParts[2])
-			
-			message.actionType = ('V' + view_id + '_' + dimension + '_RECEIVELEVELS').toUpperCase()
+			message.numberLevels = parseInt(rangeParts[2])
+
+			message.dimension = dimension
 			message.levels = results.data
+			message.actionType = ('V' + view_id + '_RECEIVELEVELS').toUpperCase()
 			
 			MetasheetDispatcher.dispatch(message)
 		})
+	},
+
+	fetchCubeValues: function (view, filter) {
+		var offset = 0
+		var limit = 1000
+		var view_id = view.view_id
+		var url = 'https://api.metasheet.io/v' + view_id
+		url += '?' + filter.join('&')
+
+		var header = {
+			'Range-Unit': 'items',
+			'Range': (offset + '-' + (offset + limit))
+		}
+
+		webUtils.ajax('GET', url, null, header).then(function (results) {
+			var message ={}
+			var range = results.xhr.getResponseHeader('Content-Range')
+			var rangeParts = range.split(/[-/]/)
+			message.numberResults = parseInt(rangeParts[2])
+			message.actionType = ('V' + view_id + '_RECEIVEVALUES').toUpperCase()
+			message.values = results.data
+
+			MetasheetDispatcher.dispatch(message)
+		});
 	},
 
 	fetch: function (subject, selector) {
@@ -262,7 +288,7 @@ var modelActions = {
 			key: key
 		});
 		
-		webUtils.persist('key', 'CREATE', _.pick(key, 'cid', 'key_id', 'key', 'key_id'));
+		webUtils.persist('key', 'CREATE', key);
 	},
 
 	// views

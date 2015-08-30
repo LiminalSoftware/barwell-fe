@@ -47,7 +47,7 @@ var ViewSelector = React.createClass({
 		return function () {
 			view.type = type
 			_this.revert()
-			modelActionCreators.create('view', true, view, true);
+			modelActionCreators.createView(view, true, true);
 		}
 	},
 

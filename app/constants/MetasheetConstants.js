@@ -15,6 +15,8 @@ module.exports = {
     'PRIMARY_KEY': 'Primary id'
   },
 
+  delimiter: String.prototype.charCodeAt(31),
+
   aggregators: {
     'SUM': 'Sum',
     'LIST': 'List',

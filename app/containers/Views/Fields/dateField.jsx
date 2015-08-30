@@ -55,6 +55,7 @@ var dateField = {
 			</tr>	
 		}	
 	}),
+	
 	element: React.createClass({
 
 		mixins: [commitMixin, editableInputMixin],

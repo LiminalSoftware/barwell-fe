@@ -40,6 +40,10 @@ var createTabularStore = function (view) {
             return _.map(_records, _.clone);
         },
 
+        getRecordCount: function () {
+            return _recordCount || 0;
+        },
+
         dispatchToken: dispatcher.register(function (payload) {
             var type = payload.actionType
 
@@ -65,9 +69,9 @@ var createTabularStore = function (view) {
                 var _this = this
                 var update = payload.update
                 var selector = payload.selector
-
-
-                var dirty = {_dirty: (type === (upperLabel + '_UPDATE'))}
+                var dirty = {
+                    _dirty: (type === (upperLabel + '_UPDATE'))
+                }
                 
                 _.filter(_records, _.matcher(selector) ).map(function (rec) {
                     rec = _.extend(rec, update, dirty)
@@ -82,7 +86,7 @@ var createTabularStore = function (view) {
                 var endIndex = payload.endIndex
 
                 _records = payload[label]
-                _recordCount = payload.endIndex
+                _recordCount = payload.recordCount
                 _startIndex = payload.startIndex
                                
                 TabularStore.emitChange()

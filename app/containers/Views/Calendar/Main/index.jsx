@@ -5,14 +5,13 @@ import EventListener from 'react/lib/EventListener'
 import _ from 'underscore'
 import fieldTypes from "../../fields"
 
-import ViewUpdateMixin from '../../ViewUpdateMixin.jsx'
 import TableMixin from '../../TableMixin.jsx'
 
 import CalendarTHead from './CalendarTHead.jsx'
 
 var CalendarPane = React.createClass ({
 
-	mixins: [ViewUpdateMixin, TableMixin],
+	mixins: [TableMixin],
 
 	getInitialState: function () {
 		return {

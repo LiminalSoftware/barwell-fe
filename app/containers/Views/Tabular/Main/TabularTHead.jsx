@@ -13,6 +13,7 @@ var TabularTHead = React.createClass ({
 		var view = this.props.view
 		
 		return <thead 
+			className = "tabular-view-header"
 			id="tabular-view-header" 
 			ref="thead" style={style}
 			key={"tabular-thead-" + view.view_id}><tr>
@@ -35,8 +36,14 @@ var TabularTH = React.createClass ({
 	// },
 	render: function () {
 		var _this = this
+		var view = this.props.view
+		var geo = view.data.geometry
 		var col = this.props.column
-		var cellStyle = {minWidth: col.width, maxWidth: col.width}
+		var cellStyle = {
+			minWidth: col.width, 
+			maxWidth: col.width,
+			lineHeight: geo.headerHeight + 'px'
+		}
 		var sortArrow
 		var classes = []
 

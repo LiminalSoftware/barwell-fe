@@ -12,17 +12,44 @@ import ViewDataStores from "../../../../stores/ViewDataStores"
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 import util from '../../../../util/util'
+import constants from '../../../../constants/MetasheetConstants'
 
-var createCubeLevelStore = function (view, dimensions) {
+var DELIMITER = constants.delimiter
+
+var createCubeStore = function (view, dimensions) {
     var model = ModelStore.get (view.model_id)
-    var label = 'v' + view.view_id + '_' + dimension
+    var label = 'v' + view.view_id
     var upperLabel = label.toUpperCase ()
-
+    var _dimensions = {
+        rows: [],
+        columns: []
+    }
+    var _levels = {
+        rows: [],
+        columns: []
+    }
+    var _count = {
+        rows: null,
+        columns: null
+    }
+    var _startIndex = {
+        rows: null,
+        columns: null
+    }
+     var _requestedStartIndex = {
+        rows: null,
+        columns: null
+    }
+    var _isCurrent = {
+        rows: false,
+        columns: false
+    }
     var _values = {}
+    var _rowDimensions
+    var _colDimensions
+    
 
-    var CubeLevelStore = assign({}, EventEmitter.prototype, {
-
-        _levels: _levels,
+    var CubeStore = assign({}, EventEmitter.prototype, {
 
         emitChange: function () {
             this.emit('CHANGE_EVENT');
@@ -36,23 +63,87 @@ var createCubeLevelStore = function (view, dimensions) {
             this.removeListener('CHANGE_EVENT', callback);
         },
 
-        getValues: function (indices) {
-            return _.clone(_values[indices.join(',')])
+        getCount: function (dimension) {
+            return _count[dimension]
+        },
+
+        getLevels: function (dimension, from, to) {
+            return _.map(_levels[dimension].slice(from, to), _.clone)
+        },
+
+        getLevel: function (dimension, at) {
+            return _.clone(_levels[dimension][at])
+        },
+
+        getStart: function (dimension) {
+            return _startIndex[dimension]
+        }
+
+        isLevelCurrent: function () {
+            return _isCurrent.rows && _isCurrent.columns
+        },
+
+        getValues: function (row_indices, column_indices) {
+            var indices = _.extend(row_indices, column_indices)
+
+            var dimensions = _dimensions.rows.concat(_dimensions.columns).filter(_.identity)
+            var key = dimensions.map(function (dim) {
+                return indices['a' + dim]
+            }).join(DELIMITER)
+            
+            return _values[key]
         },
 
         dispatchToken: dispatcher.register(function (payload) {
             var type = payload.actionType
 
+            if (type === 'VIEW_CREATE' && payload.view.view_id === view.view_id) {
+                if (_.isEqual(_rowDimensions, payload.view['row_aggregates']) &&
+                    _.isEqual(_colDimensions, payload.view['row_aggregates'])) return
+
+                _dimensions.rows = payload.view.row_aggregates
+                _dimensions.columns = payload.view.column_aggregates
+                _values = {}
+                _isCurrent = false
+            }
+
             if (type === upperLabel + '_CREATE') {
                 var object = payload.object
                 var index = payload.index
-                CubeLevelStore.emitChange()
+                CubeStore.emitChange()
+            }
+
+            if (type === upperLabel + '_RECEIVELEVELS') {
+                var _this = this
+                var dimension  = payload.dimension
+
+                _levels[dimension] = payload.levels
+                _count[dimension] = payload.numberLevels
+                _isCurrent[dimension] = true
+                _isCurrent = true // hack for now -- we do eventually need to keep track of this
+                
+                CubeStore.emitChange()
+            }
+
+            if (type === upperLabel + '_REQUESTVALUES') {
+                _startIndex.rows = payload.startIndex.rows
+                _startIndex.columns = payload.startIndex.columns
             }
 
             if (type === upperLabel + '_RECEIVEVALUES') {
+                console.log('receivevalues')
                 var _this = this
-                _values = payload.values
-                
+                var values = payload.values
+                var dimensions = _dimensions.rows.concat(_dimensions.columns).filter(_.identity)
+
+                _values = _.indexBy(values, function (val) {
+                    var key = dimensions.map(function (dim) {
+                        return val['a' + dim]
+                    }).join(DELIMITER)
+                    return key
+                })
+
+                _isCurrent = true
                 CubeStore.emitChange()
             }
 

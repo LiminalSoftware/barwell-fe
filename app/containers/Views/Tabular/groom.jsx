@@ -27,7 +27,8 @@ var groomView = function (view) {
 	var relations = RelationStore.query({model_id: view.model_id})
 	var iter =  BIG_NUM;
 	var cols = {};
-	var sorting = enumerate((data.sorting || []).filter(function(item) {
+	if (!_.isArray(data.sorting)) data.sorting = []
+	var sorting = enumerate(data.sorting.filter(function(item) {
 		var attribute = AttributeStore.get(item.attribute_id)
 		return _.contains(['PRIMARY_KEY', 'INTEGER', 'TEXT', 'DATE', 'BOOLEAN', 'DECIMAL', 'DATE_TIME'], attribute.type)
 	}), 'attribute_id');
@@ -87,6 +88,15 @@ var groomView = function (view) {
 	data.anchor = _.extend({"left": 0, "top": 0}, data.anchor || {});
 	data.pointer = _.extend({"left": 0, "top": 0}, data.pointer || {});
 	data.scrollTop = data.scrollTop || 0;
+
+	data.geometry = _.extend({
+		headerHeight: 29,
+		rowHeight: 25,
+		rowPadding: 1,
+		topOffset: 13,
+		leftOffset: 3,
+		widthPadding: 9
+	}, data.geometry)
 	
 	view.data = data;
 	return view

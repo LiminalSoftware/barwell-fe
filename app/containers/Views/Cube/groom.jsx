@@ -5,9 +5,6 @@ import RelationStore from '../../../stores/RelationStore'
 import fieldTypes from '../fields'
 import viewTypes from '../viewTypes'
 
-
-
-
 var groomView = function (view) {
 	var model = ModelStore.get(view.model_id);
 	var columns = {}
@@ -20,10 +17,24 @@ var groomView = function (view) {
 		return  field.attribute_id
 	}
 
-	data.sorting = data.sorting || {}
-	data.columnWidth = data.columnWidth || '100'
-	data.rowHeight = data.rowHeight || '30'
-	data.padding = 1
+	if (!_.isObject(data.sorting)) data.sorting = {}
+
+	data.geometry = _.extend({
+		headerHeight: 29,
+		rowHeight: 30,
+		columnWidth: 100,
+		rowPadding: 1,
+		topOffset: 13,
+		leftOffset: 3,
+		widthPadding: 9,
+		renderBufferRows: 40,
+		renderBufferCols: 15,
+		screenRows: 30,
+		screenCols: 10,
+		leftGutter: 3
+	}
+	// , data.geometry
+	)
 
 	var fields = AttributeStore.query({model_id: view.model_id});
 	var relations = RelationStore.query({model_id: view.model_id});
@@ -33,6 +44,8 @@ var groomView = function (view) {
 
 	// view.value = view.value
 	// view.aggregator = view.aggregator
+
+
 
 	return view
 }

@@ -178,6 +178,10 @@ var ViewLink = React.createClass({
 			isnew: true
 		}
 	},
+
+	handleClick: function (e) {
+		modelActionCreators.setFocus('sidebar')
+	},
 	
 	handleNameUpdate: function (e) {
 		var name = e.target.value
@@ -197,7 +201,8 @@ var ViewLink = React.createClass({
 			(<input className="view-renamer" ref="renamer" value={this.state.name} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/>) : 
 			(<span>{view.view}</span>) ;
 		return <li className={"li-view " + (view._new ? "new" : "")} >
-			<Link to="view" params={{modelId: model.model_id, viewId: (view.view_id || view.cid)}} onDoubleClick={this.edit} >
+			<Link to="view" params={{modelId: model.model_id, viewId: (view.view_id || view.cid)}} 
+				onDoubleClick={this.edit} onClick={this.handleClick}>
 				<span className={"icon "+viewTypes[view.type].icon}></span>{viewDisplay}
 			</Link>
 			<span className="view-delete grayed icon icon-kub-trash" onClick={this.handleDelete}></span>

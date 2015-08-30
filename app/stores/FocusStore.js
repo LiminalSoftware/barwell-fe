@@ -15,7 +15,7 @@ var FocusStore = assign({}, EventEmitter.prototype, {
 	removeChangeListener: function(callback) {
 		this.removeListener('CHANGE_EVENT', callback);
 	},
-
+	
 	getFocus: function () {
 		return _focus
 	},

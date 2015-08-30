@@ -17,7 +17,8 @@ import ViewDataStores from "../../../../stores/ViewDataStores"
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 
-import TableMixin from '../../TableMixin.jsx'
+
+import ContextMenu from './ContextMenu'
 import createTabularStore from './TabularStore.jsx'
 
 global.$$ = $
@@ -30,25 +31,25 @@ var limit = function (min, max, value) {
 
 var TabularTBody = React.createClass ({
 
-	mixins: [TableMixin],
-
 	getInitialState: function () {
+		var view = this.props.view
+		var geo = view.data.geometry
 		return {
+			actRowHt: (geo.rowHeight + geo.rowPadding),
 			scrollTop: 0,
 			window: {
 				offset: 0,
 				limit: 100,
 				windowSize: 40
-			},
-			geometry: {
-				headerHeight: 29,
-				rowHeight: 25,
-				rowPadding: 1,
-				topOffset: 13,
-				leftOffset: 3,
-				widthPadding: 9
 			}
 		}
+	},
+
+	shouldComponentUpdate: function (updt) {
+		var old = this.props
+		return !(
+			_.isEqual(updt.columns == old.columns)
+		)
 	},
 
 	_onChange: function () {
@@ -56,54 +57,31 @@ var TabularTBody = React.createClass ({
 	},
 
 	componentWillMount: function () {
-		var view = this.props.view
-		var model = ModelStore.get(view.model_id)
-		
-		if (view.view_id && !this.store) {
-			this.initStore()
-		}
-		if (this.store) {
-			this.store.addChangeListener(this._onChange)
-			this.fetch(true)
-		}
+		this.props.store.addChangeListener(this._onChange)
+		this.fetch(true)
 	},
 
-	initStore: function () {
-		var view = this.props.view
-		this.store = ViewDataStores[view.view_id] = createTabularStore(view)
+	componentwillUnmount: function () {
+		this.props.store.removeChangeListener(this._onChange)
 	},
 
 	componentWillReceiveProps: function (newProps) {
 		var oldProps = this.props;
-		if (!oldProps.view_id && newProps.view_id) {
-			this.initStore()
-			this.store.addChangeListener(this._onChange)
-			this.fetch(true)
-		}
 		if (!_.isEqual(oldProps.sorting, newProps.sorting)) {
 			this.fetch(true)
 		}
 	},
 	
-	componentDidMount: function () {
-		$(this.refs.tbody)
-	},
-
-	componentWillUnmount: function () {
-		if (!this.store) return;
-		this.store.removeChangeListener(this._onChange)
-	},
-	
 	fetch: function (force) {
 		var window = this.state.window
-		var geometry = this.state.geometry
+		var view = this.props.view
+		var geometry = view.data.geometry
 		var rowOffset = Math.floor(this.props.scrollTop / geometry.rowHeight)
 		var tgtOffset = Math.floor(rowOffset - (window.cursorLimit / 2) + (window.windowSize / 2)) 
 		var boundedOffset = limit(0, this.props.nRows - window.cursorLimit, tgtOffset)
 		var currentOffset = this.state.window.offset
 		var mismatch = Math.abs(currentOffset - tgtOffset)
-		var view = this.props.view
-		
+				
 		if (!view.view_id) {
 			return;
 		}
@@ -120,12 +98,12 @@ var TabularTBody = React.createClass ({
 					offset: boundedOffset,
 					limit: this.state.window.limit
 				}
-			})	
+			})
 		}
 	},
 
 	getStyle: function () {
-		var geometry = this.state.geometry
+		var geometry = view.data.geometry
 		return {
 			top: (this.state.window.offset * (geometry.rowHeight + geometry.rowPadding) + 
 				geometry.headerHeight) + 'px',
@@ -134,79 +112,61 @@ var TabularTBody = React.createClass ({
 		}
 	},
 
-	getValueAt: function (idx) {
-		return this.store.getObjects()[idx]
+	getRowHeight: function () {
+		if (!this.isMounted()) return
+		var tbody = React.findDOMNode(this.refs.tabularTbody)
+		var actRowHt = (tbody.scrollHeight / tbody.children.length)
+		return actRowHt	
 	},
 
-	editCell: function (event, initialValue) {
-		var row = this.state.pointer.top
-		var col = this.state.pointer.left
-		var colId = this.props.columns[col].column_id
-		var obj = this.getValueAt(row);
-		var model = this.props.model
-		var pk = model._pk
-		var objId = (obj.cid || obj[pk]);
-		var rowKey = 'tr-' + objId
-		var cellKey = rowKey + '-' + colId
-		
-		this.setState({
-			editing: true, 
-			editObjId: objId, 
-			editColId: colId
-		})
-		var field = this.refs[rowKey].refs[cellKey]
-		field.handleEdit(event, initialValue);
+	
+
+	getNumberCols: function () {
+		return this.props.columns.length - 1
 	},
 
-	handleBlur: function () {
-		console.log('handleBlur')
-		this.setState({editing: false})
+	getNumberRows: function () {
+		return this.store.getRecordCount()
+	},
+	
+	getColumns: function () {
+		return this.props.columns
 	},
 
 	render: function () {
 		var _this = this
+		var view = this.props.view
 		var model = this.props.model
-		var clicker = this.props.clicker
-		var dblClicker = this.props.dblClicker
-		var handleBlur = this.handleBlur
 		var pk = model._pk
-		var editObjId = this.state.editObjId
-		var rows = _this.store ? 
-			_this.store.getObjects() :
-			[]
-			;
-		
-		var geometry = this.state.geometry
-		var height = (rows.length * (geometry.rowHeight + geometry.rowPadding)) + ' px'
-
-		return <tbody ref = "tbody" 
-			onClick = {_this.onClick}
-			onDoubleClick = {_this.editCell}>
-		{
-			rows.map(function (obj, i) {
-				var rowKey = 'tr-' + (obj.cid || obj[pk])
-				return <TabularTR  {..._this.props} 
-					obj={obj}
-					editing = {obj[pk] === editObjId}
-					rowKey = {rowKey}
-					ref = {rowKey}
-					key = {rowKey}
-					geometry = {_this.state.geometry}
-					handleBlur = {_this.handleBlur} />;
-			})	
+		var rows = _this.props.store ? _this.props.store.getObjects() : []
+		var geometry = view.data.geometry
+		var actRowHt = this.state.actRowHt
+		// var height = (rows.length * this.state.rowHt) + 'px'
+		var style = {
+			top: geometry.headerHeight + 'px'
 		}
-		<div 
-			className={"pointer" + (this.props.focused ? " focused" : "")} 
-			ref="anchor" 
-			onDoubleClick={this.startEdit}
-			style={this.getPointerStyle()}>
-		</div>
-		<div 
-			className={"selection" + (this.props.focused ? " focused" : "")} 
-			ref="selection" 
-			style={this.getSelectorStyle()}>
-		</div>
-		</tbody>;
+		// onContextMenu={_this.contextMenu}
+
+		return <tbody 
+			ref = "tabularTbody" 
+			style = {style}
+			onClick = {_this.props.clicker}
+			className = "tabular-tbody"
+			onDoubleClick = {_this.props.editCell}>
+			{
+				rows.map(function (obj, i) {
+					var rowKey = 'tr-' + (obj.cid || obj[pk])
+					return <TabularTR  {..._this.props} 
+						obj={obj}
+						editing = {obj[pk] === _this.state.editObjId}
+						rowKey = {rowKey}
+						ref = {rowKey}
+						key = {rowKey}
+						geometry = {geometry}
+						handleBlur = {_this.props.handleBlur} />;
+				})	
+			}
+			</tbody>;
 	}
 })
 
@@ -227,7 +187,9 @@ var TabularTR = React.createClass({
 		var geometry = this.props.geometry
 		var style = {
 			lineHeight: geometry.rowHeight + 'px',
-			height: (geometry.rowHeight) + 'px'
+			height: (geometry.rowHeight) + 'px',
+			maxHeight: geometry.rowHeight + 'px',
+			minHeight: geometry.rowHeight + 'px'
 			// lineHeight: '0px'
 		}
 		

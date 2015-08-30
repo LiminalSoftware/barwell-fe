@@ -21,17 +21,6 @@ var RelationDetailList = React.createClass({
 			type: 'Has one'
 		}
 		modelActionCreators.create('relation', false, relation);
-
-		// relation = modelActionCreators.genericAction(
-		// 	'relation',
-		// 	'create',
-		// 	{
-		// 		relation: 'New relation',
-		// 		model_id: model.model_id,
-		// 		type: 'Has one',
-		// 		_persist: false,
-		// 		_dirty: true
-		// 	})
 	},
 
 	render: function () {
@@ -134,7 +123,7 @@ var RelationDetail = React.createClass({
 	},
 
 	handleModelSelect: function (event) {
-		var model_id = event.target.value
+		var model_id = parseInt(event.target.value)
 		var relation = this.props.relation
 		var relatedModel = ModelStore.get(model_id)
 		relation.related_model_id = model_id
@@ -181,6 +170,7 @@ var RelationDetail = React.createClass({
 				<option value="HAS_ONE">Has one</option>
 				<option value="HAS_MANY">Has many</option>
 				<option value="ONE_TO_ONE">One to one</option>
+				{ (relation.related_model_id === relation.model_id) ? <option value="HIERARCHY">Hierarchy</option> : null}
 			</select>
 		} else {
 			relatedModel = ModelStore.get(relation.related_model_id)

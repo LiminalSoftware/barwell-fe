@@ -27,15 +27,8 @@ var TableMixin = {
 				left: 0, 
 				top: 0
 			},
-			
-			focused: false,
 			editing: false
 		}
-	},
-
-	calibrateRowHeight: function () {
-		var $tbody = $('#main-data-table tbody')
-		return $tbody.height() / $tbody.children().length
 	},
 
 	componentDidMount: function () {
@@ -57,13 +50,13 @@ var TableMixin = {
 		var keycodes = constants.keycodes
 		
 		var ptr = this.state.pointer
-		var numCols = this.props.columns.length - 1
-		var numRows = 10000 //TODO ... 
+		var numCols = this.getNumberCols()
+		var numRows = this.getNumberRows()
 		var left = ptr.left
 		var top = ptr.top
 		var outline
-
-		if (!this.props.focused || (
+		
+		if (!this.isFocused() || (
 			this.state.editing &&
 			e.keyCode !== keycodes.ENTER &&
 			e.keyCode !== keycodes.TAB
@@ -130,33 +123,6 @@ var TableMixin = {
 		if (e.keyCode >= 37 && e.keyCode <= 40) this.updateSelect(top, left, e.shiftKey)
 	},
 
-	// preventTextSelection: function (e) {
-	// 	e.stopPropagation()
-	// 	e.preventDefault()
-	// 	return false
-	// },
-
-	onClick: function (e) {
-		modelActionCreators.setFocus('view')
-		
-		var tableBody = React.findDOMNode(this.refs.tbody)
-		var geometry = this.state.geometry
-		var effHeight = geometry.rowPadding + geometry.rowHeight
-		var actHeight = this.calibrateRowHeight()
-		var columns = this.props.columns
-		var offset = $(tableBody).offset()
-		var y = event.pageY - offset.top
-		var x = event.pageX - offset.left
-		var r = Math.floor(y / actHeight, 1)
-		var c = 0
-
-		columns.forEach(function (col) {
-			x -= (col.width + geometry.widthPadding)
-			if (x > 0) c ++
-		})
-		this.updateSelect(r, c, event.shiftKey)
-	},
-
 	updateSelect: function (row, col, shift) {
 		var sel = this.state.selection
 		var anc = this.state.anchor
@@ -180,69 +146,17 @@ var TableMixin = {
 			selection: sel,
 			anchor: anc
 		})
-		// view.data.selection = sel
-		// view.data.pointer = ptr
-		// view.data.anchor = anchor
-		// modelActionCreators.createView(view, false, false)
+		view.data.selection = sel
+		view.data.pointer = ptr
+		view.data.anchor = anc
+		modelActionCreators.createView(view, false, false)
 	},
 
 	// ========================================================================
 	// rendering
 	// ========================================================================
 
-	getSelectorStyle: function () {
-		var geometry = this.state.geometry
-		var effectiveHeight = geometry.rowHeight 
-			+ geometry.rowPadding
-
-		var sel = this.state.selection
-		var columns = this.props.columns
-		var width = 0
-		var actHeight = this.calibrateRowHeight()
-		var height = (sel.bottom - sel.top + 1) * actHeight - geometry.rowPadding
-		var left = geometry.leftOffset
-		var top = geometry.headerHeight + sel.top * actHeight - geometry.rowPadding
-		
-		columns.forEach(function (col, idx) {
-			if (idx < sel.left)
-				left += col.width + geometry.widthPadding
-			else if (idx < sel.right + 1)
-				width += col.width + geometry.widthPadding
-		})
-		return {
-			top: top + 'px',
-			left: left + 'px',
-			minWidth: width + 'px',
-			minHeight: height + "px"
-		}
-	},
-
-	getPointerStyle: function () {
-		var geometry = this.state.geometry
-		var effectiveHeight = geometry.rowHeight 
-			+ geometry.rowPadding
-		var ptr = this.state.pointer
-		var columns = this.props.columns
-		var width = 0
-		var actHeight = this.calibrateRowHeight()
-		var height = actHeight - geometry.rowPadding
-		var left = geometry.leftOffset
-		var top = geometry.headerHeight + ptr.top * (actHeight) 
-			- geometry.rowPadding * 2
-		
-		columns.forEach(function (col, idx) {
-			if (idx < ptr.left)
-				left += (col.width + geometry.widthPadding)
-			else if (idx < ptr.left + 1)
-				width = (col.width + geometry.widthPadding - 1)
-		})
-		return {
-			top: top + 'px',
-			left: left + 'px',
-			minWidth: width + 'px',
-			minHeight: height + "px"
-		}
-	}
+	
 }
 
 export default TableMixin
