@@ -21,8 +21,13 @@ var createTabularStore = function (view) {
     var _records = []
     var _recordCount = null
     var _startIndex = 0
+    var _iterator = 0
 
     var TabularStore = assign({}, EventEmitter.prototype, {
+
+        getClientId: function () {
+          return 'c' + (_iterator++)
+        },
 
         emitChange: function () {
             this.emit('CHANGE_EVENT');
@@ -48,15 +53,16 @@ var createTabularStore = function (view) {
             var type = payload.actionType
 
             if (type === upperLabel + '_CREATE') {
-                var object = payload[label]
-                var index = payload.index
-                var rec = _records[index]
+                console.log('tabularstore create')
+                console.log(payload)
+                var object = payload.record
+                var index = payload.index || 0
+                _records =
+                  _records.slice(0, index)
+                  .concat(payload.record)
+                  .concat(_records.slice(index))
+                TabularStore.emitChange()
             }
-
-            // if (type === (upperLabel + '_INSERT')) {
-            //  var obj = payload[label]
-            //  this.create(obj)
-            // }
 
             if (type === upperLabel + '_DESTROY') {
                 _records = _.filter(_records, function (rec) {
@@ -65,32 +71,24 @@ var createTabularStore = function (view) {
                 TabularStore.emitChange()
             }
 
-            if (type === (upperLabel + '_INSERT')) {
-              var position = payload.position
-              _records =
-                _records.slice(0, position)
-                .concat(payload.record)
-                .concat(_records.slice(position))
-              TabularStore.emitChange()
-            }
-
             if (type === (upperLabel + '_UPDATE') || type === (upperLabel + '_RECEIVEUPDATE')) {
-                var _this = this
-                var update = payload.update
-                var selector = payload.selector
-                var dirty = {
-                    _dirty: (type === (upperLabel + '_UPDATE'))
-                }
-
-                _.filter(_records, _.matcher(selector) ).map(function (rec) {
-                    rec = _.extend(rec, update, dirty)
-                });
-                TabularStore.emitChange()
+              console.log('tabularstore receive')
+              console.log(payload)
+              var _this = this
+              var update = payload.update
+              var selector = payload.selector
+              var dirty = {
+                  _dirty: (type === (upperLabel + '_UPDATE'))
+              }
+              _.filter(_records, _.matcher(selector) ).map(function (rec) {
+                  rec = _.extend(rec, update, dirty)
+              });
+              TabularStore.emitChange()
             }
 
             if (type === (upperLabel + '_RECEIVE')) {
                 var _this = this
-                var objects = payload[label]
+                var objects = payload.records
                 var startIndex = payload.startIndex
                 var endIndex = payload.endIndex
 

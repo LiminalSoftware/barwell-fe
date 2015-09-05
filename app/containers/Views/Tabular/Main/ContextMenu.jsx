@@ -21,23 +21,28 @@ var TabularContextMenu = React.createClass ({
 		this.forceUpdate()
 	},
 
-	componentWillMount: function () {
+	componentDidMount: function () {
 		document.addEventListener('keyup', this.handleKeyPress)
-		document.addEventListener('click', this.props.handleContextBlur)
+		document.addEventListener('click', this.handleClick)
 	},
 
 	handleKeyPress: function (event) {
 		if (event.keyCode === constant.keycodes.ESC) this.props.handleContextBlur()
 	},
 
-	clickAddNewRow: function (e) {
+	handleClick: function (event) {
+		this.props.handleContextBlur()
+	},
 
+	clickAddNewRow: function (e) {
+		this.props.insertRecord()
 	},
 
 	render: function () {
 		return <ul className = "tabular-context-menu" style={{left: this.props.x, top: this.props.y}}>
-			<li><span className="white icon icon-sign-in"></span> Add new record (shift-plus)</li>
-			<li><span className="white icon icon-kub-trash"></span> Delete record (ctl-shift-minus)</li>
+			<li onClick={this.clickAddNewRow}><span className="white icon icon-sign-in"></span> Add new record [SHIFT-PLUS]</li>
+			<li><span className="white icon icon-bolt"></span> Copy selection  [CTL-C]</li>
+			<li><span className="white icon icon-kub-trash"></span> Delete record [CTL-SHIFT-MINUS]</li>
 		</ul>
 	}
 })

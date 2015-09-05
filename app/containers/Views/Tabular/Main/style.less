@@ -1,7 +1,7 @@
 @import "../../../../global.less";
 
 .model-pane {
-	
+
 }
 
 div.color-block {
@@ -12,9 +12,9 @@ div.color-block {
 .has-many-bubble {
 	cursor: grab;
 	display: inline;
-	
+
 	border: 2px solid @heavyCream;
-	
+
 	background-color: white;
 	z-index: 100;
 	border-radius: 8px;
@@ -60,7 +60,7 @@ div.color-block {
 }
 
 .cube-main-tbody tr, .cube-rowhead tr {
-	
+
 }
 
 
@@ -73,19 +73,19 @@ div.color-block {
 	// background: @green-trans;
 	position: relative;
 	border-right: 1px solid white;
-	
+
 
 	&.desc, &.asc {
-		// background: @green-tint-2;	
+		// background: @green-tint-2;
 		color: white;
 		&.focused {
-			
+
 		}
 	}
 
 	.table-resizer {
 		position: absolute;
-		z-index: 20;
+		z-index: 2000;
 		right: 0;
 		top: 0;
 		bottom: 0;
@@ -122,9 +122,9 @@ div.color-block {
 		z-index: 10;
 	}
 
-	tbody {	
+	tbody {
 		.noselect;
-		position: absolute;	
+		position: absolute;
 		left: 3px;
 	}
 
@@ -138,8 +138,8 @@ div.color-block {
 		text-overflow: ellipsis;
 		white-space: nowrap;
 
-		
-		
+
+
 		cursor: pointer;
 		padding: 0 4px;
 		input[type="checkbox"] {
@@ -167,9 +167,9 @@ div.color-block {
 		left: 3px;
 		z-index: 10;
 	}
-	tbody {	
+	tbody {
 		.noselect;
-		position: absolute;	
+		position: absolute;
 		left: 3px;
 	}
 
@@ -177,7 +177,7 @@ div.color-block {
 
 		&.dirty {
 			td:first-child {
-				border-left: 2px solid @green-tint-2;	
+				border-left: 2px solid @green-tint-2;
 			}
 		}
 
@@ -191,9 +191,9 @@ div.color-block {
 		td.droppable {
 			background: lighten(@green-tint-2, 42%) !important;
 		}
-		
-		
-		
+
+
+
 	}
 }
 
@@ -206,8 +206,8 @@ div.color-block {
 	left: 0;
 	border: 1.5px dashed @gray-0;
 	transition: all 50ms ease-in;
-	
-	pointer-events:none; 
+
+	pointer-events:none;
 
 	background: @gray-trans;
 	&.focused {

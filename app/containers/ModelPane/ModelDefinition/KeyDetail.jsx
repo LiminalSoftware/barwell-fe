@@ -43,11 +43,11 @@ var KeyDetailList = React.createClass({
 			<table key="keys-table" className="detail-table">
 				<thead>
 					<tr key="key-header-row">
-						<th className="width-10" key="key-header-expand"></th>
-						<th className="width-40" key="key-header-name">Name / Component</th>
-						<th className="width-10" key="key-header-icon"></th>
-						<th className="width-20" key="key-header-uniq">Unique?</th>
-						<th className="width-20" key="attr-header-actions"></th>
+						<th className="width-10"></th>
+						<th className="width-40">Name / Component</th>
+						<th className="width-10"></th>
+						<th className="width-20">Unique?</th>
+						<th className="width-20"></th>
 					</tr>
 				</thead>
 				{keyList}
@@ -61,7 +61,7 @@ var KeyDetailList = React.createClass({
 var KeyDetail = React.createClass({
 
 	getInitialState: function () {
-		var key = this.props._key; 
+		var key = this.props._key;
 		return {
 			open: (key._dirty === true),
 			renaming: false,
@@ -81,11 +81,11 @@ var KeyDetail = React.createClass({
 		this.revert()
 	},
 
-	
+
 	cancelChanges: function () {
 		this.revert()
 	},
-	
+
 	handleEdit: function () {
 		var key = this.props._key;
 		if (this.state.renaming) return
@@ -95,7 +95,7 @@ var KeyDetail = React.createClass({
 		})
 		document.addEventListener('keyup', this.handleKeyPress)
 	},
-	
+
 	revert: function () {
 		var key = this.props._key;
 		document.removeEventListener('keyup', this.handleKeyPress)
@@ -155,7 +155,7 @@ var KeyDetail = React.createClass({
 		var actions = []
 
 		var compTrs = components.map(function (keycomp, idx) {
-			return <KeycompDetail 
+			return <KeycompDetail
 				key = {'keycomp-' + (keycomp.keycomp_id || keycomp.cid)}
 				_key = {key}
 				idx = {idx}
@@ -163,55 +163,55 @@ var KeyDetail = React.createClass({
 		});
 
 		if (key._destroy) {
-			actions.push(<span className="showonhover clickable grayed icon icon-tl-undo" 
-				title="Restore" 
+			actions.push(<span className="showonhover clickable grayed icon icon-tl-undo"
+				title="Restore"
 				key="restore"
 				onClick={this.handleUndelete}>
 				</span> )
 		} else if (key.key_id) {
-			if(!key.is_primary) actions.push(<span className="showonhover clickable grayed icon icon-kub-trash" 
-				title="Delete key" 
+			if(!key.is_primary) actions.push(<span className="showonhover clickable grayed icon icon-kub-trash"
+				title="Delete key"
 				key="delete"
 				onClick={this.handleDelete}>
 				</span>)
-			actions.push(<span className="showonhover clickable grayed icon icon-tl-pencil" 
-				title="Edit key" 
+			actions.push(<span className="showonhover clickable grayed icon icon-tl-pencil"
+				title="Edit key"
 				key="edit"
 				onClick={this.handleEdit}>
 				</span>)
-			
+
 		} else {
-			actions.push(<span className="showonhover small clickable grayed icon icon-kub-remove" 
+			actions.push(<span className="showonhover small clickable grayed icon icon-kub-remove"
 				title="Cancel"
 				key="cancel"
 				onClick={this.handleDelete}>
 				</span>)
-			actions.push(<span className="showonhover clickable grayed icon icon-tl-pencil" 
-				title="Edit key" 
+			actions.push(<span className="showonhover clickable grayed icon icon-tl-pencil"
+				title="Edit key"
 				key="edit"
 				onClick={this.handleEdit}>
 				</span>)
 		}
 
-		if (key._dirty === true) 
-			compTrs.push(<KeycompDetail 
+		if (key._dirty === true)
+			compTrs.push(<KeycompDetail
 				key = {'keycomp-new'}
 				_key = {key}
 				idx = {compTrs.length}/>)
 
 
-		if (this.state.renaming) 
-			nameField = <input ref="renamer" 
+		if (this.state.renaming)
+			nameField = <input ref="renamer"
 				autoFocus
-				value={this.state.name} 
-				onChange={this.handleNameUpdate} 
-				onBlur={this.commitChanges}/> 
+				value={this.state.name}
+				onChange={this.handleNameUpdate}
+				onBlur={this.commitChanges}/>
 		else nameField = key.key;
 
 
 		return <tbody key={reactKey} className={this.state.open ? '' : 'singleton'}>
-					<tr 
-					key={reactKey + '-' + 'keyrow'} 
+					<tr
+					key={reactKey + '-' + 'keyrow'}
 					className={(key._dirty?'unsaved':'') + (key._destroy?'destroyed':'')}>
 			<td onClick={this.toggleDetails} className="no-line"><span className={wedgeClasses}></span></td>
 			<td onDoubleClick={this.handleEdit} title={key.key_id}>
@@ -256,7 +256,7 @@ var KeycompDetail = React.createClass({
 		var idx = this.props.idx
 		var existingComps = {}
 		var attrSelections = []
-		
+
 		if (key._dirty) {
 			// find existing selections so we can exclude them from the menu
 			KeycompStore.query({key_id: (key.key_id || key.cid)}).forEach(function (kc) {
@@ -274,34 +274,34 @@ var KeycompDetail = React.createClass({
   			})
   			if (!keycomp.keycomp_id) attrSelections.unshift(<option value={0}> ---- </option>);
 		}
-		
+
 
 		return <tr className={(key._dirty?'unsaved':'') + (key._destroy?'destroyed':'')}>
 			<td className="no-line">
-				<span className="num-circle">{idx + 1}</span> 
+				
 			</td>
 			<td>
-				
+
 				<span>
 					{key._dirty ?
-						<select 
-							ref="selector" 
-							name="type" 
+						<select
+							ref="selector"
+							name="type"
 							value = {keycomp.attribute_id || 0}
 							onChange = {this.handleAttrChoice}>
 							{attrSelections}
 						</select>
 						: attribute_name
 					}
-					
+
 				</span>
 			</td>
 			<td></td>
 			<td></td>
 			<td className="centered">
-			{!keycomp.keycomp_id && !keycomp.cid ? null : <span 
-				className="showonhover small clickable grayed icon icon-kub-remove" 
-				title="Delete component" 
+			{!keycomp.keycomp_id && !keycomp.cid ? null : <span
+				className="showonhover small clickable grayed icon icon-kub-remove"
+				title="Delete component"
 				onClick={this.handleDelete}>
 			</span>}</td>
 		</tr>

@@ -152,7 +152,12 @@ var TabularPane = React.createClass ({
 		}
 	},
 
-	onClick: function (e) {
+	onClick: function (event) {
+		var rc = this.getRCCoords(event)
+		this.updateSelect(rc.row, rc.col, event.shiftKey)
+	},
+
+	getRCCoords: function (event) {
 		var tbody = React.findDOMNode(this.refs.tbody)
 		var view = this.props.view
 		var geo = view.data.geometry
@@ -161,15 +166,17 @@ var TabularPane = React.createClass ({
 		var offset = $(tbody).offset()
 		var y = event.pageY - offset.top
 		var x = event.pageX - offset.left
+		var xx = x
 		var r = Math.floor(y / actHeight, 1)
 		var c = 0
 
 		modelActionCreators.setFocus('view')
 		columns.forEach(function (col) {
-			x -= (col.width + geo.widthPadding)
-			if (x > 0) c ++
+			xx -= (col.width + geo.widthPadding)
+			if (xx > 0) c ++
 		})
-		this.updateSelect(r, c, event.shiftKey)
+
+		return {row: r, col: c, x: x, y: y}
 	},
 
 	editCell: function (event, row, col) {
@@ -194,34 +201,29 @@ var TabularPane = React.createClass ({
 		field.handleEdit(event);
 	},
 
+	insertRecord: function () {
+		var cid = this.store.getClientId()
+		var obj = {cid: cid}
+		var position = this.state.selection.top;
+		modelActionCreators.insertRecord(this.props.model, obj, position)
+	},
+
 	openContextMenu: function (event) {
 		event.preventDefault();
-
-		var tbody = React.findDOMNode(this.refs.tbody)
-		var offset = $(tbody).offset()
-
+		var rc = this.getRCCoords(event)
 		var sel = this.state.selection
-		var geo = this.props.view.data.geometry
-		var actHeight = this.state.actRowHt
-		var columns = this.getColumns()
-
-		var y = event.pageY - offset.top
-		var x = event.pageX - offset.left
-		var r = Math.floor(y / actHeight, 1)
-		var c = 0
-		columns.forEach(function (col) {
-			x -= (col.width + geo.widthPadding)
-			if (x > 0) c ++
-		})
 
 		modelActionCreators.setFocus('view')
-		if (r > sel.bottom || r < sel.top || c > sel.right || c < sel.left)
-			this.updateSelect(r, c, false, false)
+		if (rc.row > sel.bottom || rc.row < sel.top ||
+			rc.col > sel.right || rc.col < sel.left)
+			this.updateSelect(rc.row, rc.col, false, false)
+
+		console.log('rc.x: ' + rc.x)
 
 		this.setState({
 			contextOpen: true,
-			contextX: x,
-			contextY: y + 20
+			contextX: rc.x,
+			contextY: rc.y + 20
 		})
 		console.log('context menu!')
 	},
@@ -256,6 +258,8 @@ var TabularPane = React.createClass ({
 		var columns = this.getVisibleColumns()
 		var focused = (FocusStore.getFocus() == 'view')
 
+		// console.log('contextOpen: ' + this.state.contextOpen)
+
 		return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">
 				<table id="main-data-table" className="header tabular-main-table data-table">
 					<TabularTHead
@@ -278,10 +282,13 @@ var TabularPane = React.createClass ({
 						scrollTop = {this.state.scrollTop}
 						/>
 				</table>
-				{_this.state.contextOpen ? <ContextMenu
-					x = {this.state.contextX} y = {this.state.contextY}
-					handleContextBlur = {this.handleContextBlur}
-					/> : null}
+				{_this.state.contextOpen ?
+					<ContextMenu
+						x = {this.state.contextX} y = {this.state.contextY}
+						handleContextBlur = {this.handleContextBlur}
+						insertRecord = {this.insertRecord}
+						/>
+					: null}
 				<div
 					className={"pointer" + (_this.isFocused() ? " focused" : "")}
 					ref="anchor"

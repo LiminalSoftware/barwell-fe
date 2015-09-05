@@ -35,10 +35,10 @@ var AttributeDetailList = React.createClass({
 
 		var colList = AttributeStore.query({model_id: (model.model_id || model.cid)}).map(function (col) {
 			var colId = (col.attribute_id || col.cid);
-			return <AttributeDetail 
-				key={colId} 
-				model={model} 
-				attribute = {col} 
+			return <AttributeDetail
+				key={colId}
+				model={model}
+				attribute = {col}
 				keyOrd = {keyOrd} />;
 		});
 
@@ -47,18 +47,19 @@ var AttributeDetailList = React.createClass({
 			<table key="attr-table" className="detail-table">
 				<thead>
 					<tr>
-						<th className="width-30" key="attr-header-name">Name</th>
-						<th className="width-30" key="attr-header-type">Type</th>
-						<th className="width-20" key="attr-header-key">Keys</th>
-						<th className="width-20" key="attr-header-actions"></th>
+						<th className="width-10"></th>
+						<th className="width-30">Name</th>
+						<th className="width-25">Type</th>
+						<th className="width-15">Keys</th>
+						<th className="width-20"></th>
 					</tr>
 				</thead>
 				<tbody>
 					{colList}
 				</tbody>
 			</table>
-			<div><a 
-				className="clickable new-adder new-attr" 
+			<div><a
+				className="clickable new-adder new-attr"
 				onClick={this.handleAddNewAttr}>
 				<span className="small addNew icon icon-plus"></span>
 				New attribute
@@ -81,18 +82,18 @@ var AttributeDetail = React.createClass({
 			type: attribute.type
 		};
 	},
-	
+
 	commitChanges: function () {
 		var attribute = _.clone(this.props.attribute);
 		attribute.attribute = this.state.attribute
 		modelActionCreators.create('attribute', false, attribute)
 		this.revert()
 	},
-	
+
 	cancelChanges: function () {
 		this.revert()
 	},
-	
+
 	handleEdit: function () {
 		var attribute = this.props.attribute;
 		if (this.state.renaming) return
@@ -102,7 +103,7 @@ var AttributeDetail = React.createClass({
 		})
 		document.addEventListener('keyup', this.handleKeyPress)
 	},
-	
+
 	revert: function () {
 		var attribute = this.props.attribute;
 		document.removeEventListener('keyup', this.handleKeyPress)
@@ -144,7 +145,11 @@ var AttributeDetail = React.createClass({
 		modelActionCreators.undestroy('attribute', attribute)
 		event.preventDefault()
 	},
-	
+
+	toggleDetails: function (event) {
+
+	},
+
 	render: function () {
 		var _this = this;
 		var col = this.props.attribute;
@@ -155,13 +160,13 @@ var AttributeDetail = React.createClass({
 		var wedgeClasses = "small grayed icon icon-geo-triangle wedge" +
 			(this.state.open ? " open" : "closed");
 
-		var nameField = (this.state.renaming) ? 
-			<input ref="renamer" 
+		var nameField = (this.state.renaming) ?
+			<input ref="renamer"
 				className="renamer"
 				autoFocus
-				value={this.state.attribute} 
-				onChange={this.handleNameUpdate} 
-				onBlur={this.commitChanges}/> 
+				value={this.state.attribute}
+				onChange={this.handleNameUpdate}
+				onBlur={this.commitChanges}/>
 			: {name};
 		var keyIcons = [];
 		var components = KeycompStore.query({attribute_id: col.attribute_id});
@@ -181,59 +186,59 @@ var AttributeDetail = React.createClass({
 			:
 			<span>{constants.fieldTypes[col.type]}</span>
 			;
-		
+
 		components.forEach(function (comp, idx) {
 			var key = KeyStore.get(comp.key_id)
 			if (!key) return;
 			var ord = keyOrd[key.key_id]
-			keyIcons.push(<span 
-				key = {'keycomp-' + comp.keycomp_id} 
+			keyIcons.push(<span
+				key = {'keycomp-' + comp.keycomp_id}
 				className={getIconClasses(ord, key)}
 				title={key.key}>
 				</span>
 			);
 		});
-		
+
 		var key = "attribute-" + (col.attribute_id || col.cid);
 
 		var actions = [];
 
 		if (col._destroy) {
-			actions.push(<span className="showonhover clickable grayed icon icon-tl-undo" 
-				title="Restore" 
+			actions.push(<span className="showonhover clickable grayed icon icon-tl-undo"
+				title="Restore"
 				key="restore"
 				onClick={this.handleUndelete}>
 				</span> )
 		} else if (col.attribute_id) {
 			if (col.type !== 'PRIMARY_KEY')
-				actions.push(<span className="showonhover clickable grayed icon icon-kub-trash" 
-					title="Delete attribute" 
+				actions.push(<span className="showonhover clickable grayed icon icon-kub-trash"
+					title="Delete attribute"
 					key="delete"
 					onClick={this.handleDelete}>
 					</span>)
-			actions.push(<span className="showonhover clickable grayed icon icon-tl-pencil" 
-				title="Edit attribute" 
+			actions.push(<span className="showonhover clickable grayed icon icon-tl-pencil"
+				title="Edit attribute"
 				key="edit"
 				onClick={this.handleEdit}>
 				</span>)
-			
+
 		} else {
-			actions.push(<span className="showonhover small clickable grayed icon icon-kub-remove" 
+			actions.push(<span className="showonhover small clickable grayed icon icon-kub-remove"
 				title="Cancel"
 				key="cancel"
 				onClick={this.handleDelete}>
 				</span>)
-			actions.push(<span className="showonhover clickable grayed icon icon-tl-pencil" 
-				title="Edit attribute" 
+			actions.push(<span className="showonhover clickable grayed icon icon-tl-pencil"
+				title="Edit attribute"
 				key="edit"
 				onClick={this.handleEdit}>
 				</span>)
 		}
 
-		return <tr 
-			key={key} 
+		return <tr
+			key={key}
 			className={(col._dirty?'unsaved':'') + (col._destroy?'destroyed':'')}>
-			
+			<td onClick={this.toggleDetails} className="no-line"><span className={wedgeClasses}></span></td>
 			<td onDoubleClick={this.handleEdit} key={key + '-name'} title={col.attribute_id}>
 				{nameField}
 			</td>
