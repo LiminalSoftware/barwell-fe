@@ -18,6 +18,11 @@ var CheckboxElement = React.createClass({
 
 	revert: _.noop,
 
+	handleEdit: function () {
+		this.toggle()
+		this.props.handleBlur()
+	},
+
 	validator: function (input) {
 		return (!!input)
 	},

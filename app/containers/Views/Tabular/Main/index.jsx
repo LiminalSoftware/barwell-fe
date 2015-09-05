@@ -111,7 +111,7 @@ var TabularPane = React.createClass ({
 
 		var height = (sel.bottom - sel.top + 1) * actHeight - 1
 		var left = geo.leftOffset
-		var top = geo.headerHeight + (sel.top * actHeight) - 1
+		var top = this.state.offset + (sel.top * actHeight) - 1
 		
 		columns.forEach(function (col, idx) {
 			if (idx < sel.left)
@@ -135,7 +135,7 @@ var TabularPane = React.createClass ({
 		var width = 0
 		var actHeight = this.state.actRowHt
 		var left = geo.leftOffset
-		var top = geo.headerHeight + (ptr.top * actHeight) - 1
+		var top = this.state.offset + (ptr.top * actHeight) - 2
 		
 		columns.forEach(function (col, idx) {
 			if (idx < ptr.left)
@@ -173,8 +173,8 @@ var TabularPane = React.createClass ({
 
 	editCell: function (event, row, col) {
 		var tbody = this.refs.tbody
-		var row = this.state.selection.top
-		var col = this.state.selection.left
+		var row = this.state.pointer.top
+		var col = this.state.pointer.left
 		var colId = this.getVisibleColumns()[col].column_id
 		var obj = this.getValueAt(row)
 		var model = this.props.model
@@ -212,7 +212,10 @@ var TabularPane = React.createClass ({
 		if (!(this.isMounted())) return
 		var geo = this.props.view.data.geometry
 		var tbody = this.refs.tbody
-		this.setState({actRowHt: tbody ? tbody.getRowHeight() : geo.rowHeight})
+		this.setState({
+			actRowHt: tbody ? tbody.getRowHeight() : geo.rowHeight,
+			offset: tbody ? tbody.getOffset() : geo.headerHeight
+		})
 		window.setTimeout(this.calibrateRowHeight, 500)
 	},
 

@@ -166,6 +166,7 @@ var modelActions = {
 			'Range': (offset + '-' + (offset + limit))
 		}
 
+		console.log('url: ' + url)
 		webUtils.ajax('GET', url, null, header).then(function (results) {
 			var message ={}
 			var range = results.xhr.getResponseHeader('Content-Range')

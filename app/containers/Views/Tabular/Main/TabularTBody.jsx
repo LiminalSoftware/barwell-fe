@@ -47,9 +47,7 @@ var TabularTBody = React.createClass ({
 
 	shouldComponentUpdate: function (updt) {
 		var old = this.props
-		return !(
-			_.isEqual(updt.columns == old.columns)
-		)
+		return !_.isEqual(updt.columns, old.columns)
 	},
 
 	_onChange: function () {
@@ -117,6 +115,14 @@ var TabularTBody = React.createClass ({
 		var tbody = React.findDOMNode(this.refs.tabularTbody)
 		var actRowHt = (tbody.scrollHeight / tbody.children.length)
 		return actRowHt	
+	},
+
+	getOffset: function () {
+		if (!this.isMounted()) return
+		var tbody = React.findDOMNode(this.refs.tabularTbody)
+		var offset = tbody.offsetTop
+
+		return offset
 	},
 
 	

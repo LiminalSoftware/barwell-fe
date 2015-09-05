@@ -4,6 +4,7 @@ import fieldTypes from "./fields.jsx"
 import FocusStore from '../../stores/FocusStore'
 import modelActionCreators from "../../actions/modelActionCreators.jsx"
 import constants from '../../constants/MetasheetConstants'
+import _ from 'underscore'
 
 var TableMixin = {
 
@@ -12,17 +13,18 @@ var TableMixin = {
 	// ========================================================================
 
 	getInitialState: function () {
+		var view = this.props.view
 		return {
-			selection: {
+			selection: _.extend({
 				left: 0, 
 				top: 0,
 				right: 0,
 				bottom: 0
-			},
-			pointer: {
+			}, view.data.selection),
+			pointer: _.extend({
 				left: 0,
 				top: 0
-			},
+			}, view.data.pointer),
 			anchor: {
 				left: 0, 
 				top: 0

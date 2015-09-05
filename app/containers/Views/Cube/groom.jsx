@@ -31,7 +31,8 @@ var groomView = function (view) {
 		renderBufferCols: 15,
 		screenRows: 30,
 		screenCols: 10,
-		leftGutter: 3
+		leftGutter: 3,
+		bfrTol: 10,
 	}
 	// , data.geometry
 	)
@@ -42,6 +43,17 @@ var groomView = function (view) {
 	view.row_aggregates = (view.row_aggregates || []).map(groupCleanser).filter(_.identity);
 	view.column_aggregates = (view.column_aggregates || []).map(groupCleanser).filter(_.identity);
 
+	view.aggregator = view.aggregator ? view.aggregator.toLowerCase() : null;
+
+	var sorting = data.sorting
+	var newSort = {}
+	_.each(sorting, function (value, key) {
+		key = parseInt(key)
+		if(_.contains(view.row_aggregates, key) 
+		|| _.contains(view.column_aggregates, key)) 
+			newSort[key] = !!value
+	})
+	data.sorting = newSort
 	// view.value = view.value
 	// view.aggregator = view.aggregator
 

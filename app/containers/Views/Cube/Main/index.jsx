@@ -82,6 +82,8 @@ var CubePane = React.createClass ({
 		var geometry = view.data.geometry
 		var calibration = this.refs.rowhead.getCalibration() || geometry.rowHeight
 
+		// console.log('calibration: ' + calibration)
+
 		this.setState({
 			rowHeight: calibration,
 			actRowHt: calibration
@@ -108,13 +110,16 @@ var CubePane = React.createClass ({
 	getSelectorStyle: function () {
 		var view = this.props.view
 		var geo = view.data.geometry
+		var headerRows = view.row_aggregates.length
+		var headerCols = view.column_aggregates.length
+
 		var actRowHt = this.state.actRowHt
 		var width = geo.columnWidth + geo.widthPadding
 		var sel = this.state.selection
 		
 		return {
-			top: (sel.top * actRowHt - 1) + 'px',
-			left: (sel.left * width + geo.leftGutter) + 'px',
+			top: ((sel.top + headerCols) * actRowHt - 1) + 'px',
+			left: ((sel.left + headerRows) * width + geo.leftGutter) + 'px',
 			minWidth: ((sel.right - sel.left + 1) * width) + 'px',
 			minHeight: ((sel.bottom - sel.top + 1) * actRowHt - 1) + 'px'
 		}
@@ -123,41 +128,40 @@ var CubePane = React.createClass ({
 	getPointerStyle: function () {
 		var view = this.props.view
 		var geo = view.data.geometry
+		var headerRows = view.row_aggregates.length
+		var headerCols = view.column_aggregates.length
+
 		var actRowHt = this.state.actRowHt
 		var width = geo.columnWidth + geo.widthPadding
 		var ptr = this.state.pointer
 
 		return {
-			top: (ptr.top * actRowHt - 2) + 'px',
-			left: ((ptr.left * width) + geo.leftGutter ) + 'px',
+			top: ((ptr.top + headerCols) * actRowHt - 2) + 'px',
+			left: (((ptr.left + headerRows) * width) + geo.leftGutter ) + 'px',
 			minWidth: (width - 1) + 'px',
 			minHeight: (actRowHt - geo.rowPadding) + 'px'
 		}
 	},
 
 	onClick: function (e) {
-		modelActionCreators.setFocus('view')
-
 		var tableBody = React.findDOMNode(this.refs.tbody)
 		var view = this.props.view
 		var geo = view.data.geometry
-		var columnWidth = geo.columnWidth
-		var actRowHt = this.props.actRowHt
+		var columnWidth = geo.columnWidth + geo.widthPadding
 
-		var offset = $(tableBody).offset()	
+		var offset = $(tableBody).offset()
 		var y = event.pageY - offset.top
 		var x = event.pageX - offset.left
-
-		var r = Math.floor(y / actRowHt, 1)
+		var r = Math.floor(y / this.state.actRowHt, 1)
 		var c = Math.floor(x / columnWidth, 1)
 
+		modelActionCreators.setFocus('view')
 		this.updateSelect(r, c, event.shiftKey)
 	},
 
 	editCell: function (event, initialValue) {
 		var row = this.state.pointer.top
 		var col = this.state.pointer.left
-		var colId = this.props.columns[col].column_id
 		var obj = this.getValueAt(row);
 		var model = this.props.model
 		var pk = model._pk
@@ -200,7 +204,6 @@ var CubePane = React.createClass ({
 		var _this = this
 		var model = this.props.model
 		var view = this.props.view
-		var focused = (FocusStore.getFocus() == 'view')
 		var geo = view.data.geometry
 		var scrollLeft = this.state.scrollLeft
 		var scrollTop = this.state.scrollTop
@@ -217,8 +220,6 @@ var CubePane = React.createClass ({
 				<table id="main-data-table" className="header data-table">
 					<CubeColTHead 
 						key = {"cube-col-thead-" + view.view_id}
-						config = {view.data}
-						focused = {focused}
 						dimension = 'column'
 						store = {this.store}
 						hStart = {hStart}
@@ -227,8 +228,6 @@ var CubePane = React.createClass ({
 					<CubeRowTHead 
 						ref = 'rowhead'
 						key = {"cube-row-thead-" + view.view_id}
-						config = {view.data}
-						focused = {focused}
 						dimension = 'row'
 						store = {this.store}
 						vStart = {vStart}
@@ -237,10 +236,10 @@ var CubePane = React.createClass ({
 						view = {view} />
 					<CubeTBody
 						key = {"cube-body-" + view.view_id}
-						config = {view.data}
+						ref = 'tbody'
+						clicker = {_this.onClick}
 						view = {view}
 						model = {model}
-						focused = {focused}
 						scrollLeft = {scrollLeft}
 						scrollTop = {scrollTop}
 						actRowHt = {height}
@@ -250,13 +249,13 @@ var CubePane = React.createClass ({
 						/>
 				</table>
 				<div
-					className={"pointer" + (this.props.focused ? " focused" : "")}
+					className={"pointer" + (_this.isFocused() ? " focused" : "")}
 					ref = "anchor" 
 					onDoubleClick = {this.startEdit}
 					style = {_this.getPointerStyle()}>
 				</div>
 				<div
-					className={"selection" + (this.props.focused ? " focused" : "")} 
+					className={"selection" + (_this.isFocused() ? " focused" : "")} 
 					ref="selection"
 					style={_this.getSelectorStyle()}>
 				</div>

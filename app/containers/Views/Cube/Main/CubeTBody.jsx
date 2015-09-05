@@ -17,6 +17,12 @@ import createCubeStore from './CubeStore.jsx'
 
 var CubeTBody = React.createClass ({
 
+	shouldComponentUpdate: function (props, state) {
+		var old = this.props
+		return props.vStart !== old.vStart || 
+			   props.hStart !== old.hStart
+	},
+
 	getInitialState: function () {
 		var view = this.props.view
 		var geo = view.data.geometry
@@ -41,10 +47,7 @@ var CubeTBody = React.createClass ({
 	componentWillMount: function () {
 		var view = this.props.view
 		var model = ModelStore.get(view.model_id)
-
-		if (this.cubeStore) {
-			this.cubeStore.addChangeListener(this._onChange)
-		}
+		this.props.store.addChangeListener(this._onChange)
 	},
 
 	componentDidMount: function () {
@@ -52,8 +55,7 @@ var CubeTBody = React.createClass ({
 	},
 
 	componentWillUnmount: function () {
-		if (!this.store) return;
-		this.store.removeChangeListener(this._onChange)
+		this.props.store.removeChangeListener(this._onChange)
 	},
 
 	render: function () {
@@ -73,7 +75,7 @@ var CubeTBody = React.createClass ({
 
 		return <tbody ref = "tbody"
 			className = "cube-main-tbody"
-			onClick = {_this.onClick}
+			onClick = {_this.props.clicker}
 			style = {style}
 			onDoubleClick = {_this.editCell}>
 			{
@@ -91,7 +93,9 @@ var CubeTBody = React.createClass ({
 	},
 
 	fetch: function (force) {
-		if (!store.isLevelCurrent()) return
+		console.log('A')
+		if (!this.props.store.isLevelCurrent()) return
+		console.log('B')
 
 		var view = this.props.view
 		var geo = view.data.geometry
@@ -102,29 +106,40 @@ var CubeTBody = React.createClass ({
 		var hEnd = hStart + geo.renderBufferCols
 		var filter = []
 
-		var curVStart = store.getStart
+		var curVStart = store.getStart('rows')
+		var curHStart = store.getStart('columns')
 
-		// if (!store.isCurrent()) return;
+		if (Math.abs(curVStart - vStart) < geo.bfrTol &&
+			Math.abs(curHStart - hStart) < geo.bfrTol &&
+			curVStart !== null && curHStart  !== null) {
+			console.log('dont fetch')
+			return; // if scroll is within tolerances, do nothing
+		}
+			
 
-		var makeFilterStr = function (agg, dimension, pos) {
+		var makeFilterStr = function (agg, dimension, pos, invert) {
 			var obj = store.getLevel(dimension, pos)
-			var val = obj ? obj['a' + agg] : null
+
+			var val = (obj !== null) ? obj['a' + agg] : null
 			var dir = !!(view.data.sorting[agg])
+			if (invert) dir = !dir
 			if (val) filter.push(
-				'a' + agg + '=' + (dir ? 'gt.' : 'lt.')  + val
+				'a' + agg + '=' + (dir ? 'gte.' : 'lte.')  + val
 			)
 		}
 
 		// the current filter only uses the highest-level aggregator
 		// going deeper would require "or" conditions in the request or multiple requests
-		makeFilterStr(view.column_aggregates[0], 'columns', hStart)
-		makeFilterStr(view.column_aggregates[0], 'columns', hEnd)
-		makeFilterStr(view.row_aggregates[0], 'rows', vStart)
-		makeFilterStr(view.row_aggregates[0], 'rows', vEnd)
+		makeFilterStr(view.column_aggregates[0], 'columns', hStart, false)
+		makeFilterStr(view.column_aggregates[0], 'columns', hEnd, true)
+		makeFilterStr(view.row_aggregates[0], 'rows', vStart, false)
+		makeFilterStr(view.row_aggregates[0], 'rows', vEnd, true)
 
-		// modelActionCreators.fetchCubeValues(view, filter, hStart, vStart)
 		console.log(filter)
 
+		modelActionCreators.fetchCubeValues(view, filter, hStart, vStart)
+		store.setStart('rows', vStart)
+		store.setStart('columns', hStart)
 	}
 })
 
@@ -151,19 +166,12 @@ var CubeTR = React.createClass({
 			maxWidth: width,
 			height: rowHeight
 		}
-		var trStyle = {
-			height: rowHeight
-			// height: rowHeight,
-		}
 
-
-		return <tr style = {trStyle}> {store.getLevels('columns', hStart, hLength + hStart).map(function (colLevel, j) {
+		return <tr> {store.getLevels('columns', hStart, hLength + hStart).map(function (colLevel, j) {
 			var key = _this.props.rowKey + '-' + (hStart + j)
 			var value = store.getValues(rowLevel, colLevel)
-			if (value) value = value[view.aggregator.toLowerCase()]
+			if (value) value = value[view.aggregator]
 
-
-			// {_this.props.rowKey + '-' +  (j + hStart)}
 			return <td 
 				key = {key}
 				className = {value == null ? "empty" : "present"}
@@ -173,4 +181,4 @@ var CubeTR = React.createClass({
 			</td>
 		})} </tr>	
 	}
-})
+}) 

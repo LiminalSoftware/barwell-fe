@@ -119,13 +119,19 @@ var CubeViewConfig = React.createClass({
 				<thead>
 					<tr className="top-line">
 						<th className="width-10"></th>
+						<th className="width-65">Value</th>
 						<th className="width-25">Aggregator</th>
-						<th className="width-65">Value / Label</th>
+						
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
 						<td className="width-10"><span className="icon grayed icon-Layer_6"></span></td>
+						<td>
+							<select value={view.value} onChange={this.handleSelectValue}>
+								{this.getOptions()}
+							</select>
+						</td>
 						<td className="width-75"><select value = {view.aggregator} onChange={this.handleSelectAggregator}>
 							{_.map(constants.aggregators, function (label, key) {
 								return <option value = {key} key = {key}>
@@ -133,11 +139,6 @@ var CubeViewConfig = React.createClass({
 								</option>
 							})}
 						</select></td>
-						<td>
-							<select value={view.value} onChange={this.handleSelectValue}>
-								{this.getOptions()}
-							</select>
-						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -157,7 +158,7 @@ var GroupingSelector = React.createClass({
 			{(view[dimension] || []).concat([null]).map(function (group, ord) {
 				var key = 'attr-' + (group || 'new');
 				return <GroupingDetail 
-					{... _this.props} 
+					{... _this.props}
 					group = {group}
 					order = {ord}
 					key = {key + '-row'}
@@ -207,8 +208,7 @@ var GroupingDetail = React.createClass({
 
 	},
 
-	handleFlipSort: function (event) {
-		console.log('handleFlipSort')
+	handleFlipSort: function (event) {	
 		var view = this.props.view
 		var group = this.props.group || null
 		var sorting = view.data.sorting [group]

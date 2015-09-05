@@ -47,7 +47,7 @@ var createCubeStore = function (view, dimensions) {
     var _values = {}
     var _rowDimensions
     var _colDimensions
-    
+
 
     var CubeStore = assign({}, EventEmitter.prototype, {
 
@@ -72,15 +72,20 @@ var createCubeStore = function (view, dimensions) {
         },
 
         getLevel: function (dimension, at) {
+            at = Math.min(at, _levels[dimension].length - 1)
             return _.clone(_levels[dimension][at])
+        },
+
+        setStart: function (dimension, offset) {
+            _startIndex[dimension] = offset
         },
 
         getStart: function (dimension) {
             return _startIndex[dimension]
-        }
+        },
 
         isLevelCurrent: function () {
-            return _isCurrent.rows && _isCurrent.columns
+            return (_isCurrent.rows && _isCurrent.columns)
         },
 
         getValues: function (row_indices, column_indices) {
@@ -90,7 +95,7 @@ var createCubeStore = function (view, dimensions) {
             var key = dimensions.map(function (dim) {
                 return indices['a' + dim]
             }).join(DELIMITER)
-            
+
             return _values[key]
         },
 
@@ -98,13 +103,15 @@ var createCubeStore = function (view, dimensions) {
             var type = payload.actionType
 
             if (type === 'VIEW_CREATE' && payload.view.view_id === view.view_id) {
-                if (_.isEqual(_rowDimensions, payload.view['row_aggregates']) &&
-                    _.isEqual(_colDimensions, payload.view['row_aggregates'])) return
-
+                if (!_.isEqual(payload.view.row_aggregates, _dimensions.rows) ||
+                    !_.isEqual(payload.view.column_aggregates, _dimensions.columns)) {
+                    _values = {}
+                }
                 _dimensions.rows = payload.view.row_aggregates
                 _dimensions.columns = payload.view.column_aggregates
-                _values = {}
-                _isCurrent = false
+
+                _isCurrent.rows = false
+                _isCurrent.columns = false
             }
 
             if (type === upperLabel + '_CREATE') {
@@ -120,8 +127,7 @@ var createCubeStore = function (view, dimensions) {
                 _levels[dimension] = payload.levels
                 _count[dimension] = payload.numberLevels
                 _isCurrent[dimension] = true
-                _isCurrent = true // hack for now -- we do eventually need to keep track of this
-                
+
                 CubeStore.emitChange()
             }
 
@@ -142,8 +148,6 @@ var createCubeStore = function (view, dimensions) {
                     }).join(DELIMITER)
                     return key
                 })
-
-                _isCurrent = true
                 CubeStore.emitChange()
             }
 

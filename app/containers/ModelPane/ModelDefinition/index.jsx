@@ -20,7 +20,7 @@ import _ from 'underscore'
 
 
 var ModelDefinition = React.createClass({
-	
+
 	componentWillUnmount: function () {
 		ModelStore.removeChangeListener(this._onChange)
 		AttributeStore.removeChangeListener(this._onChange)
@@ -42,7 +42,7 @@ var ModelDefinition = React.createClass({
 	_onChange: function () {
 		this.forceUpdate()
 	},
-	
+
 	getInitialState: function () {
 		return {
 			committing: false
@@ -67,7 +67,7 @@ var ModelDefinition = React.createClass({
 
 		modelActionCreators.create('model', true, model, false)
 		.then(function () {
-
+			
 			return Promise.all(
 				AttributeStore.query({model_id: (model.model_id || model.cid)}).map(function (attr) {
 					if (attr._dirty) return modelActionCreators.create('attribute', true, attr)
@@ -105,7 +105,7 @@ var ModelDefinition = React.createClass({
 		if (!model) return false
 
 		dirty = dirty || model._dirty
-		
+
 		dirty = dirty || _.any(AttributeStore.query({model_id: model.model_id}).map(function (attr) {
 			return attr._dirty || attr._destroy
 		}))
@@ -125,13 +125,13 @@ var ModelDefinition = React.createClass({
 		var _this = this;
 		var model = this.props.model;
 		var dirty = this.isDirty()
-		
+
 		if(!model) return <div key="model-detail-bar" className="model-details">
 			<h3 key="attr-header">No Model Selected</h3>
 		</div>
 
 		return <div key="model-detail-bar" className={"model-details " + (dirty ? 'dirty' : '')}>
-			
+
 			<ModelDetails model={model} key={'details-'+model.model_id} />
 			<AttributeDetailList model={model} />
 			<RelationDetailList model={model} />
@@ -149,8 +149,8 @@ var ModelDefinition = React.createClass({
 					Commit changes
 				</div>}
 			</div>
-			
-			
+
+
 		</div>;
 	}
 });
