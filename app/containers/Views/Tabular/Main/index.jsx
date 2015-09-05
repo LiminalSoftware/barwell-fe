@@ -24,11 +24,12 @@ import TabularTBody from "./TabularTBody"
 import TabularTHead from "./TabularTHead"
 import TableMixin from '../../TableMixin.jsx'
 
+import ContextMenu from './ContextMenu'
 
 var TabularPane = React.createClass ({
 
 	mixins: [TableMixin],
-	
+
 	getInitialState: function () {
 		return {
 			sorting: null,
@@ -67,7 +68,7 @@ var TabularPane = React.createClass ({
 			this.fetch(true)
 		}
 	},
-	
+
 	_onChange: function () {
 		this.forceUpdate()
 	},
@@ -101,7 +102,7 @@ var TabularPane = React.createClass ({
 	getSelectorStyle: function () {
 		var view = this.props.view
 		var geo = view.data.geometry
-		var effectiveHeight = geo.rowHeight 
+		var effectiveHeight = geo.rowHeight
 			+ geo.rowPadding
 
 		var sel = this.state.selection
@@ -112,7 +113,7 @@ var TabularPane = React.createClass ({
 		var height = (sel.bottom - sel.top + 1) * actHeight - 1
 		var left = geo.leftOffset
 		var top = this.state.offset + (sel.top * actHeight) - 1
-		
+
 		columns.forEach(function (col, idx) {
 			if (idx < sel.left)
 				left += col.width + geo.widthPadding
@@ -136,7 +137,7 @@ var TabularPane = React.createClass ({
 		var actHeight = this.state.actRowHt
 		var left = geo.leftOffset
 		var top = this.state.offset + (ptr.top * actHeight) - 2
-		
+
 		columns.forEach(function (col, idx) {
 			if (idx < ptr.left)
 				left += (col.width + geo.widthPadding)
@@ -182,30 +183,47 @@ var TabularPane = React.createClass ({
 		var objId = (obj.cid || obj[pk]);
 		var rowKey = 'tr-' + objId
 		var cellKey = rowKey + '-' + colId
-		
+
 		this.setState({editing: true})
 		tbody.setState({
-			editing: true, 
-			editObjId: objId, 
+			editing: true,
+			editObjId: objId,
 			editColId: colId
 		})
 		var field = this.refs.tbody.refs[rowKey].refs[cellKey]
 		field.handleEdit(event);
 	},
 
-	contextMenu: function (event) {
+	openContextMenu: function (event) {
 		event.preventDefault();
-		console.log('context menu!')
-		var tbody = React.findDOMNode(this.refs.tabularTbody)
+
+		var tbody = React.findDOMNode(this.refs.tbody)
 		var offset = $(tbody).offset()
+
+		var sel = this.state.selection
+		var geo = this.props.view.data.geometry
+		var actHeight = this.state.actRowHt
+		var columns = this.getColumns()
+
 		var y = event.pageY - offset.top
 		var x = event.pageX - offset.left
+		var r = Math.floor(y / actHeight, 1)
+		var c = 0
+		columns.forEach(function (col) {
+			x -= (col.width + geo.widthPadding)
+			if (x > 0) c ++
+		})
+
+		modelActionCreators.setFocus('view')
+		if (r > sel.bottom || r < sel.top || c > sel.right || c < sel.left)
+			this.updateSelect(r, c, false, false)
 
 		this.setState({
 			contextOpen: true,
 			contextX: x,
-			contextY: y
+			contextY: y + 20
 		})
+		console.log('context menu!')
 	},
 
 	calibrateRowHeight: function () {
@@ -227,22 +245,26 @@ var TabularPane = React.createClass ({
 		this.setState({editing: false})
 	},
 
+	handleContextBlur: function () {
+		this.setState({contextOpen: false})
+	},
+
 	render: function () {
 		var _this = this
 		var model = this.props.model
 		var view = this.props.view
 		var columns = this.getVisibleColumns()
 		var focused = (FocusStore.getFocus() == 'view')
-		
+
 		return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">
 				<table id="main-data-table" className="header tabular-main-table data-table">
-					<TabularTHead  
+					<TabularTHead
 						key = {"tabular-thead-" + view.view_id}
 						scrollTop = {this.state.scrollTop}
 						columns = {columns}
 						view = {view} />
-					<TabularTBody 
-						ref = "tbody" 
+					<TabularTBody
+						ref = "tbody"
 						handleBlur = {_this.handleBlur}
 						editCell = {_this.editCell}
 						key = {"tbody-" + view.view_id}
@@ -250,21 +272,25 @@ var TabularPane = React.createClass ({
 						view = {view}
 						store = {_this.store}
 						clicker = {_this.onClick}
+						openContextMenu = {_this.openContextMenu}
 						columns = {columns}
 						sorting = {view.data.sorting}
 						scrollTop = {this.state.scrollTop}
 						/>
 				</table>
-				{_this.state.contextOpen ? <ContextMenu x = {this.state.contextX} y = {this.state.contextY}/> : null}
-				<div 
-					className={"pointer" + (_this.isFocused() ? " focused" : "")} 
-					ref="anchor" 
+				{_this.state.contextOpen ? <ContextMenu
+					x = {this.state.contextX} y = {this.state.contextY}
+					handleContextBlur = {this.handleContextBlur}
+					/> : null}
+				<div
+					className={"pointer" + (_this.isFocused() ? " focused" : "")}
+					ref="anchor"
 					onDoubleClick={this.startEdit}
 					style={this.getPointerStyle()}>
 				</div>
-				<div 
-					className={"selection" + (_this.isFocused() ? " focused" : "")} 
-					ref="selection" 
+				<div
+					className={"selection" + (_this.isFocused() ? " focused" : "")}
+					ref="selection"
 					style={this.getSelectorStyle()}>
 				</div>
 		</div>

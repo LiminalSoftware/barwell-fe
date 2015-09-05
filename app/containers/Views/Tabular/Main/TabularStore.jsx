@@ -65,6 +65,15 @@ var createTabularStore = function (view) {
                 TabularStore.emitChange()
             }
 
+            if (type === (upperLabel + '_INSERT')) {
+              var position = payload.position
+              _records =
+                _records.slice(0, position)
+                .concat(payload.record)
+                .concat(_records.slice(position))
+              TabularStore.emitChange()
+            }
+
             if (type === (upperLabel + '_UPDATE') || type === (upperLabel + '_RECEIVEUPDATE')) {
                 var _this = this
                 var update = payload.update
@@ -72,13 +81,13 @@ var createTabularStore = function (view) {
                 var dirty = {
                     _dirty: (type === (upperLabel + '_UPDATE'))
                 }
-                
+
                 _.filter(_records, _.matcher(selector) ).map(function (rec) {
                     rec = _.extend(rec, update, dirty)
                 });
                 TabularStore.emitChange()
             }
-            
+
             if (type === (upperLabel + '_RECEIVE')) {
                 var _this = this
                 var objects = payload[label]
@@ -88,14 +97,14 @@ var createTabularStore = function (view) {
                 _records = payload[label]
                 _recordCount = payload.recordCount
                 _startIndex = payload.startIndex
-                               
+
                 TabularStore.emitChange()
             }
 
             relations.forEach(function (rel) {
                 var relLabel = 'm' + rel.related_model_id
                 var relUpperLabel = relLabel.toUpperCase()
-                
+
                 if (type === relUpperLabel + '_UPDATE') {
                     _records.forEach(function (rec) {
                         var relatedRecords = rec['r' + rel.relation_id]

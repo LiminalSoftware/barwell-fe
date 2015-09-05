@@ -16,7 +16,7 @@ var TableMixin = {
 		var view = this.props.view
 		return {
 			selection: _.extend({
-				left: 0, 
+				left: 0,
 				top: 0,
 				right: 0,
 				bottom: 0
@@ -26,7 +26,7 @@ var TableMixin = {
 				top: 0
 			}, view.data.pointer),
 			anchor: {
-				left: 0, 
+				left: 0,
 				top: 0
 			},
 			editing: false
@@ -50,14 +50,14 @@ var TableMixin = {
 		var view = this.props.view
 		var model = this.props.model
 		var keycodes = constants.keycodes
-		
+
 		var ptr = this.state.pointer
 		var numCols = this.getNumberCols()
 		var numRows = this.getNumberRows()
 		var left = ptr.left
 		var top = ptr.top
 		var outline
-		
+
 		if (!this.isFocused() || (
 			this.state.editing &&
 			e.keyCode !== keycodes.ENTER &&
@@ -69,7 +69,7 @@ var TableMixin = {
 		} else {
 			outline = sel
 		}
-		
+
 		if (e.keyCode == keycodes.TAB) {
 			if (left < outline.right) left++;
 			else {
@@ -79,7 +79,7 @@ var TableMixin = {
 					top = outline.top
 			}
 			this.setState({
-				pointer: {left: left, top: top}, 
+				pointer: {left: left, top: top},
 			})
 			if (sel.left == sel.right && sel.top == sel.bottom) this.setState({
 				selection: {left: left, right: left, top: top, bottom: top}
@@ -95,7 +95,7 @@ var TableMixin = {
 					left = outline.left
 			}
 			this.setState({
-				pointer: {left: left, top: top}, 
+				pointer: {left: left, top: top},
 			})
 			if (sel.left == sel.right && sel.top == sel.bottom) this.setState({
 				selection: {left: left, right: left, top: top, bottom: top}
@@ -108,8 +108,8 @@ var TableMixin = {
 		else if (e.keyCode == keycodes.ARROW_RIGHT && left < numCols) left ++;
 		else if (e.keyCode == keycodes.ARROW_DOWN && top < numRows) top ++;
 		else if (e.keyCode == keycodes.F2) return this.editCell(e);
-		else if (e.keyCode == keycodes.SPACE && e.shiftKey) { 
-			sel.left = 0; 
+		else if (e.keyCode == keycodes.SPACE && e.shiftKey) {
+			sel.left = 0;
 			sel.right = numCols;
 			this.setState({selection: sel})
 			return;
@@ -125,7 +125,16 @@ var TableMixin = {
 		if (e.keyCode >= 37 && e.keyCode <= 40) this.updateSelect(top, left, e.shiftKey)
 	},
 
-	updateSelect: function (row, col, shift) {
+	selectRow: function () {
+		var numCols = this.getNumberCols()
+		var sel = this.state.selection
+		sel.left = 0;
+		sel.right = numCols;
+		this.setState({selection: sel})
+	},
+
+	updateSelect: function (row, col, shift, fullRow) {
+		var numCols = this.getNumberCols()
 		var sel = this.state.selection
 		var anc = this.state.anchor
 		var ptr = {left: col, top: row}
@@ -141,7 +150,12 @@ var TableMixin = {
 			}
 		} else {
 			ptr = anc = {left: col, top: row}
-			sel = {left: col, right: col, top: row, bottom: row}
+			sel = {
+				left: fullRow ? 0 : col,
+				right: fullRow ? numCols : col,
+				top: row,
+				bottom: row
+			}
 		}
 		this.setState({
 			pointer: ptr,
@@ -158,7 +172,7 @@ var TableMixin = {
 	// rendering
 	// ========================================================================
 
-	
+
 }
 
 export default TableMixin

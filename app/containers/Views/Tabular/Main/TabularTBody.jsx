@@ -17,8 +17,6 @@ import ViewDataStores from "../../../../stores/ViewDataStores"
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 
-
-import ContextMenu from './ContextMenu'
 import createTabularStore from './TabularStore.jsx'
 
 global.$$ = $
@@ -69,17 +67,17 @@ var TabularTBody = React.createClass ({
 			this.fetch(true)
 		}
 	},
-	
+
 	fetch: function (force) {
 		var window = this.state.window
 		var view = this.props.view
 		var geometry = view.data.geometry
 		var rowOffset = Math.floor(this.props.scrollTop / geometry.rowHeight)
-		var tgtOffset = Math.floor(rowOffset - (window.cursorLimit / 2) + (window.windowSize / 2)) 
+		var tgtOffset = Math.floor(rowOffset - (window.cursorLimit / 2) + (window.windowSize / 2))
 		var boundedOffset = limit(0, this.props.nRows - window.cursorLimit, tgtOffset)
 		var currentOffset = this.state.window.offset
 		var mismatch = Math.abs(currentOffset - tgtOffset)
-				
+
 		if (!view.view_id) {
 			return;
 		}
@@ -88,7 +86,7 @@ var TabularTBody = React.createClass ({
 			|| !_.isEqual(oldSort, view.data.sorting)) {
 
 			modelActionCreators.fetchRecords(view, 0, 100, view.data.sorting)
-			
+
 			this.setState({
 				fetching: true,
 				sortSpec: view.data.sorting,
@@ -103,7 +101,7 @@ var TabularTBody = React.createClass ({
 	getStyle: function () {
 		var geometry = view.data.geometry
 		return {
-			top: (this.state.window.offset * (geometry.rowHeight + geometry.rowPadding) + 
+			top: (this.state.window.offset * (geometry.rowHeight + geometry.rowPadding) +
 				geometry.headerHeight) + 'px',
 			height: ((	(this.props.view.rows || 0) - this.state.window.offset) *
 				(geometry.rowHeight + geometry.rowPadding)) + 'px'
@@ -114,7 +112,7 @@ var TabularTBody = React.createClass ({
 		if (!this.isMounted()) return
 		var tbody = React.findDOMNode(this.refs.tabularTbody)
 		var actRowHt = (tbody.scrollHeight / tbody.children.length)
-		return actRowHt	
+		return actRowHt
 	},
 
 	getOffset: function () {
@@ -125,7 +123,7 @@ var TabularTBody = React.createClass ({
 		return offset
 	},
 
-	
+
 
 	getNumberCols: function () {
 		return this.props.columns.length - 1
@@ -134,7 +132,7 @@ var TabularTBody = React.createClass ({
 	getNumberRows: function () {
 		return this.store.getRecordCount()
 	},
-	
+
 	getColumns: function () {
 		return this.props.columns
 	},
@@ -151,18 +149,18 @@ var TabularTBody = React.createClass ({
 		var style = {
 			top: geometry.headerHeight + 'px'
 		}
-		// onContextMenu={_this.contextMenu}
 
-		return <tbody 
-			ref = "tabularTbody" 
+		return <tbody
+			ref = "tabularTbody"
 			style = {style}
 			onClick = {_this.props.clicker}
+			onContextMenu={_this.props.openContextMenu}
 			className = "tabular-tbody"
 			onDoubleClick = {_this.props.editCell}>
 			{
 				rows.map(function (obj, i) {
 					var rowKey = 'tr-' + (obj.cid || obj[pk])
-					return <TabularTR  {..._this.props} 
+					return <TabularTR  {..._this.props}
 						obj={obj}
 						editing = {obj[pk] === _this.state.editObjId}
 						rowKey = {rowKey}
@@ -170,7 +168,7 @@ var TabularTBody = React.createClass ({
 						key = {rowKey}
 						geometry = {geometry}
 						handleBlur = {_this.props.handleBlur} />;
-				})	
+				})
 			}
 			</tbody>;
 	}
@@ -198,7 +196,7 @@ var TabularTR = React.createClass({
 			minHeight: geometry.rowHeight + 'px'
 			// lineHeight: '0px'
 		}
-		
+
 		return <tr id={rowKey} style={style} className = {obj._dirty ? "dirty" : ""}>
 			{_this.props.columns.map(function (col) {
 				var element = (fieldTypes[col.type] || fieldTypes.TEXT).element
@@ -216,14 +214,14 @@ var TabularTR = React.createClass({
 					cellKey: cellKey,
 					ref: cellKey,
 					style: {
-						minWidth: col.width, 
-						maxWidth: col.width, 
+						minWidth: col.width,
+						maxWidth: col.width,
 						textAlign: col.align,
 						height: (geometry.rowHeight) + 'px',
 					}
 				})
 			})}
-		</tr>	
+		</tr>
 	}
 })
 

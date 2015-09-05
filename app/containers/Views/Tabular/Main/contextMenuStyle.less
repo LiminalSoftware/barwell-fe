@@ -1,16 +1,24 @@
 @import "../../../../global.less";
 
 .tabular-context-menu {
+	padding: 0;
 	position: absolute;
-	border: 1px solid @heavyCream;
-	border-radius: 10px;
+	background: @green-tint-2;
+	font-family: @headerFont;
+	color: white;
 	list-style: none;
 	z-index: 550;
 	display: block;
-	
+	font-size: 14px;
+
 	li {
-		padding: 10px;
+		padding: 5px 10px;
 		display: block;
+		cursor: pointer;
+		border-left: 3px solid @green-tint-2;
+		color: white;
+		&:hover {
+			border-left: 3px solid @green-tint-1;
+		}
 	}
 }
-
