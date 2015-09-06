@@ -1,0 +1,138 @@
+@import "../../global.less";
+
+div.detail-table {
+  width: 100%;
+  color: @darkText;
+  font-size: 13px;
+
+  span:first-child {
+    padding-left: 8px;
+    border-left: 2px solid transparent;
+    .transition(all 200ms ease-in);
+  }
+
+  span.destroy-td {
+    color: @red-tint-2;
+    font-weight: 500;
+  }
+
+  div.detail-row {
+    display: block;
+    clear: both;
+  }
+  div.detail-header {
+    display: block;
+    clear: both;
+  }
+
+  div.detail-row:hover > span:first-child {
+    border-left: 2px solid @heavyCream;
+  }
+
+  .unsaved span {
+    &:first-child {
+      border-left: 2px solid @green-tint-1 !important;
+    }
+  }
+
+  .destroyed span {
+    &:first-child {
+      border-left: 2px solid @red-tint-2 !important;
+    }
+    text-decoration: line-through;
+  }
+
+  div.detail-row > span {
+    float: left;
+  }
+
+  div.detail-row > span, div.detail-header > span {
+    padding: 4px 2px;
+    &.title {
+      font-family: @headerFont;
+    }
+    &.right-align {
+      text-align: right;
+    }
+    &.no-line {
+      border-bottom: none;
+    }
+    &.centered {
+      text-align: center;
+    }
+    &.grayed {
+      color: @gray-2;
+    }
+    &.padded {
+      padding: 4px 6px;
+    }
+    &.width-10 {
+      width: 10%;
+    }
+    &.width-15 {
+      width: 15%;
+    }
+    &.width-20 {
+      width: 20%;
+    }
+    &.width-22{
+      width: 22.5%
+    }
+    &.width-25 {
+      width: 25%;
+    }
+    &.width-30 {
+      width: 30%;
+    }
+    &.width-35 {
+      width: 35%;
+    }
+    &.width-40 {
+      width: 40%;
+    }
+    &.width-50 {
+      width: 50%;
+    }
+    &.width-60 {
+      width: 60%;
+    }
+    &.width-70 {
+      width: 70%;
+    }
+  }
+  input {
+    border: none;
+    border-bottom: 1px solid @darkText;
+    background: none;
+    font-size: 13px;
+    font-family: @bodyFont;
+    color: @darkText;
+    width: 100%;
+    outline: 0;
+    padding: 0;
+    margin: 0;
+    margin-bottom: -1px;
+
+    &.destroyer {
+      color: @red-tint-2;
+      border-bottom: 1px solid @red-tint-2;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+  }
+  input::selection {
+      background: @green-tint-2; /* WebKit/Blink Browsers */
+  }
+
+  div.detail-row {
+    border-bottom: 1px dashed @heavyCream;
+  }
+
+  div.detail-header {
+    border-bottom: 1px solid @heavyCream;
+    border-top: 1px solid @heavyCream;
+    font-weight: 400;
+    text-align: left;
+  }
+
+}

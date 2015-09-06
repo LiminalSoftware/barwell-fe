@@ -14,7 +14,7 @@ import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
 import groomView from '../../groomView'
 
 var TabularViewConfig = React.createClass({
-	
+
 	componentWillMount: function () {
 		ViewStore.addChangeListener(this._onChange);
 		ModelStore.addChangeListener(this._onChange)
@@ -34,7 +34,7 @@ var TabularViewConfig = React.createClass({
 		var view = ViewStore.get(this.props.view.view_id || this.props.view.cid)
 		this.setState(view.data)
 	},
-	
+
 	getInitialState: function () {
 		var view = this.props.view
 		return view.data
@@ -95,7 +95,7 @@ var TabularViewConfig = React.createClass({
 			</table>
 			</div>
 			<div className = "detail-block">
-			
+
 			</div>
 		</div>
 	}
@@ -109,7 +109,7 @@ var ColumnDetail = React.createClass({
 	getInitialState: function () {
 		return {editing: false}
 	},
-	
+
 	commitChanges: function (colProps) {
 		var view = this.props.view
 		var column_id = this.props.config.column_id
@@ -124,11 +124,11 @@ var ColumnDetail = React.createClass({
 		var width = e.target.value
 		this.setState({tempWidth: width})
 	},
-	
+
 	toggleDetails: function (event) {
 		this.commitChanges({expanded: (!this.props.config.expanded)})
 	},
-	
+
 	toggleVisibility: function (event) {
 		var config = this.props.config
 		this.commitChanges({visible: !config.visible})
@@ -148,7 +148,7 @@ var ColumnDetail = React.createClass({
 		var config = this.props.config
 		this.commitChanges({align: 'left'})
 	},
-	
+
 	render: function () {
 		var view = this.props.view
 		var config = this.props.config
@@ -164,7 +164,7 @@ var ColumnDetail = React.createClass({
 
 
 		if (!config.expanded) detailsStyle.display = "none"
-		if (!!fieldType && fieldType.configRows) 
+		if (!!fieldType && fieldType.configRows)
 			addlRows = React.createElement(fieldType.configRows, {
 				view: this.props.view,
 				config: this.props.config,
@@ -174,7 +174,7 @@ var ColumnDetail = React.createClass({
 
 		return <tbody>
 			<tr key={key + '-row'}>
-				<td 
+				<td
 					className="no-line"
 					onClick={this.toggleDetails}>
 					<span className={wedgeClasses}></span>
@@ -209,15 +209,15 @@ var ColumnDetail = React.createClass({
 				<td className=	"no-line"></td>
 				<td className="width-50">Alignment: </td>
 				<td colSpan="2" className="right-align">
-					<span className={"clickable icon icon-align-left " 
+					<span className={"clickable icon icon-align-left "
 						+ (config.align === 'left' ? '' : 'grayed')}
 						onClick={this.toggleLeftAlign}>
 					</span>
-					<span className={"clickable icon icon-align-center " 
+					<span className={"clickable icon icon-align-center "
 						+ (config.align === 'center' ? '' : 'grayed')}
 						onClick={this.toggleCenterAlign}>
 					</span>
-					<span className={"clickable icon icon-align-right " 
+					<span className={"clickable icon icon-align-right "
 						+ (config.align === 'right' ? '' : 'grayed')}
 						onClick={this.toggleRightAlign}>
 					</span>

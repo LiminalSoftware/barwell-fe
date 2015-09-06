@@ -4,6 +4,8 @@ import MetasheetDispatcher from "../dispatcher/MetasheetDispatcher"
 import $ from "jquery";
 import _ from 'underscore'
 
+var Promise = require('es6-promise').Promise;
+
 $.ajaxSetup({
     headers: {"Prefer": 'return=representation'}
 });
@@ -39,7 +41,7 @@ var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
       },
       error: function (xhr, error, status) {
         if (error === 'timeout') {
-          if (retry++ >= MAX_RETRIES) return 
+          if (retry++ >= MAX_RETRIES) return
           console.log('timeout, trying again: ' + retry)
           $.ajax(this);
         } else {
@@ -76,7 +78,7 @@ var persist = module.exports.persist = function (subject, action, data, update, 
   else if (action === 'CREATE' && data[identifier]) method = 'PATCH'
   else if (action === 'CREATE') method = 'POST'
   else return;
-  
+
   if (method === 'PATCH' || method === 'DELETE') url = url + '?' + identifier + '=eq.' + data[identifier];
 
   console.log(method + '->' + url)

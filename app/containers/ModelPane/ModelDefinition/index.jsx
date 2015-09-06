@@ -17,6 +17,8 @@ import ModelDetails from './ModelDetails'
 import getIconClasses from './getIconClasses'
 import _ from 'underscore'
 
+var Promise = require('es6-promise').Promise;
+
 
 
 var ModelDefinition = React.createClass({
@@ -65,9 +67,7 @@ var ModelDefinition = React.createClass({
 
 		this.setState({committing: true})
 
-		modelActionCreators.create('model', true, model, false)
-		.then(function () {
-			
+		modelActionCreators.create('model', true, model, false).then(function () {
 			return Promise.all(
 				AttributeStore.query({model_id: (model.model_id || model.cid)}).map(function (attr) {
 					if (attr._dirty) return modelActionCreators.create('attribute', true, attr)
@@ -76,14 +76,12 @@ var ModelDefinition = React.createClass({
 		}).then(function () {
 			return Promise.all(
 				KeyStore.query({model_id: model.model_id}).map(function (key) {
-					if (key._dirty)
-						return modelActionCreators.create('key', true, key).then(function () {
-							return Promise.all(KeycompStore.query({key_id: (key.key_id || key.cid)}).map(function (keycomp) {
-								keycomp.key_id = KeyStore.get(keycomp.key_id).key_id;
-								keycomp.attribute_id = AttributeStore.get(keycomp.attribute_id).attribute_id;
-								return modelActionCreators.create('keycomp', true, keycomp)
-							}))
-						});
+					if (key._dirty) {
+						var key_plus = _.clone(key)
+						key_plus.keycomps = KeycompStore.query({key_id: (key.key_id || key.cid)})
+						console.log('key_plus' + JSON.stringify(key_plus))
+						return modelActionCreators.create('key', true, key_plus)
+					}
 					if (key._destroy)
 						return modelActionCreators.destroy('key', true, key)
 				}))

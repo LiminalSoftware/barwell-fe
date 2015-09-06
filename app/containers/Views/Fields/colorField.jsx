@@ -16,14 +16,12 @@ var ColorElement = React.createClass({
 	mixins: [editableInputMixin, commitMixin],
 
 	validator: function (input) {
-		if ((/^#[0-9A-F]{3,6}$/).test(input)) return input			
-		else return '#FFF'	
-			
+		if ((/^#[0-9A-F]{3,6}$/).test(input)) return input
+		else return '#FFF'
 	},
 
 	format: function (value) {
 		var value = this.props.value
-
 		return <div style={{backgroundColor: value}} className="color-block"></div>
 	}
 });

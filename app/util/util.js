@@ -8,3 +8,7 @@ module.exports.choose = function (obj, keys) {
 		return obj[key]
 	})
 }
+
+module.exports.returnFalse  = function() {
+	return false;
+}

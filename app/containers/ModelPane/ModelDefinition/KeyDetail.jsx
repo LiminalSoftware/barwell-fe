@@ -278,7 +278,7 @@ var KeycompDetail = React.createClass({
 
 		return <tr className={(key._dirty?'unsaved':'') + (key._destroy?'destroyed':'')}>
 			<td className="no-line">
-				
+					
 			</td>
 			<td>
 

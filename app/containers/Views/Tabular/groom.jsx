@@ -18,7 +18,7 @@ var enumerate = function (things, identifier) {
 }
 
 var groomView = function (view) {
-	
+
 	var model = ModelStore.get(view.model_id);
 	var columns = {}
 	var data = view.data || {};
@@ -33,12 +33,12 @@ var groomView = function (view) {
 		return _.contains(['PRIMARY_KEY', 'INTEGER', 'TEXT', 'DATE', 'BOOLEAN', 'DECIMAL', 'DATE_TIME'], attribute.type)
 	}), 'attribute_id');
 
-	
+
 	data.columns = data.columns || {}
-	
+
 	fields.forEach(function (field) {
 		var col = data.columns['a' + field.attribute_id] || {};
-		
+
 		col.column_id = 'a' + field.attribute_id
 		col.attribute_id = field.attribute_id;
 		col.type = field.type
@@ -50,7 +50,7 @@ var groomView = function (view) {
 		}
 		col.visible = (col.visible === false) ? false : true
 		col.expanded = !!col.expanded
-		col.width = _.isNumber(col.width) ? col.width : 100
+		col.width = Math.round(_.isNumber(col.width) ? col.width : 100)
 		col.order = col.order || iter ++
 		col.sorting = sorting[field.attribute_id]
 
@@ -59,6 +59,8 @@ var groomView = function (view) {
 
 		columns[col.column_id] = col
 	})
+
+	enumerate(fields)
 
 	relations.forEach(function (relation) {
 		var col = data.columns['r' + relation.relation_id] || {};
@@ -97,7 +99,7 @@ var groomView = function (view) {
 		leftOffset: 3,
 		widthPadding: 9
 	}, data.geometry)
-	
+
 	view.data = data;
 	return view
 }
