@@ -16,9 +16,9 @@ var hasManyField = {
 		handleEdit: function () {
 
 		},
-		
+
 		getInitialState: function () {
-			var view = this.props.view 
+			var view = this.props.view
 			var config = this.props.config
 			return {label: config.label}
 		},
@@ -29,11 +29,11 @@ var hasManyField = {
 			var column_id = config.column_id
 			var view = this.props.view
 			var data = view.data
-			var col = data.columns[column_id] 
-			var value = event.target.value
+			var col = data.columns[column_id]
 
-			this.setState({'label': label})
 			col.label = label
+			this.setState({'label': label})
+			
 			modelActionCreators.create('view', true, view)
 		},
 
@@ -55,7 +55,7 @@ var hasManyField = {
 					</select>
 				</td>
 			</tr>
-		}	
+		}
 	}),
 
 	element: React.createClass({
@@ -87,15 +87,15 @@ var hasManyField = {
 			var rObj = JSON.parse(
 				event.dataTransfer.getData('application/json')
 			)
-			
+
 			var relatedKeyId = config.related_key_id
 			var localKeyId = config.key_id
-			
+
 			modelActionCreators.moveHasMany(localKeyId, relatedKeyId, obj, rObj)
 			event.dataTransfer.dropEffect = 'move'
 			this.setState({droppable: false})
 		},
-		
+
 		render: function () {
 			var model = this.props.model
 			var value = this.props.value
@@ -104,7 +104,7 @@ var hasManyField = {
 			var label = config.label
 			var parentObj = this.props.object
 			var relatedModel = ModelStore.get(config.related_model_id)
-			
+
 			return <td
 				className = {this.state.droppable ? "droppable" : ""}
 				style = {style}
@@ -115,7 +115,7 @@ var hasManyField = {
 				onDrop = {this.handleDrop}
 				>
 			{(value || []).map(function(obj) {
-				return <HasManyBubble 
+				return <HasManyBubble
 					key = {obj.cid || obj[relatedModel._pk]}
 					obj = {obj}
 					parentPk = {parentObj[model._pk]}
@@ -123,7 +123,7 @@ var hasManyField = {
 					label = {label} />
 			})}
 			</td>
-			
+
 		}
 	})
 
@@ -145,7 +145,7 @@ var HasManyBubble = React.createClass({
 		event.dataTransfer.effectAllowed = 'move'
 		event.dataTransfer.setData('application/json', JSON.stringify(obj));
 	},
-	
+
 	render: function () {
 		var obj = this.props.obj
 		var label = this.props.label
@@ -164,4 +164,3 @@ var HasManyBubble = React.createClass({
 	}
 
 })
-

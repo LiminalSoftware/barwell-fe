@@ -3,6 +3,7 @@ import { RouteHandler } from "react-router"
 import viewTypes from "containers/Views/viewTypes"
 import ViewSelector from "./ViewSelector"
 import styles from "./style.less"
+import detailStyles from "./detailTable.less"
 import ModelDefinition from "./ModelDefinition"
 import ModelStore from "../../stores/ModelStore"
 import ViewStore from "../../stores/ViewStore"
@@ -53,17 +54,17 @@ var ModelPane = React.createClass({
 		var view_id = this.props.params.viewId
 		var view = ViewStore.get(view_id)
 		var model = ModelStore.get(model_id)
-		
+
 		var viewDetailContent
 		var detailContent
 		var bodyContent
 
 		var activePane = this.state.activePane
-		
+
 
 		if (view && view.model_id != model_id) view = null
 		if (!view) activePane = 'model-def'
-		
+
 		if (!!view && (view.type in viewTypes)) {
 			var type = viewTypes[view.type]
 			var bodyElement = type.mainElement
@@ -81,7 +82,7 @@ var ModelPane = React.createClass({
 				key: "view-config-" + view_id
 			})
 		}
-		
+
 		else {
 			bodyContent = <div className="no-view-content view-body-wrapper" key="no-view">
 				<span className="icon icon-face-nomimic"></span>No view selected
@@ -94,13 +95,13 @@ var ModelPane = React.createClass({
 			detailContent = <ModelDefinition model={model} />
 		} else if (activePane === "view-config") {
 			detailContent = <div className="view-details">
-				<ViewSelector 
+				<ViewSelector
 					view={view}
 					key={"view-selector-" + view_id}/>
 				{viewDetailContent}
 			</div>
 		}
-		
+
 		return <div className="model-views">
 			<div className = "model-panes">
 				<div className="detail-bar" onClick={this.focus}>

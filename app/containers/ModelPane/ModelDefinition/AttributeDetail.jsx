@@ -54,9 +54,9 @@ var AttributeDetailList = React.createClass({
 						<th className="width-20"></th>
 					</tr>
 				</thead>
-				<tbody>
-					{colList}
-				</tbody>
+
+				{colList}
+
 			</table>
 			<div><a
 				className="clickable new-adder new-attr"
@@ -79,7 +79,9 @@ var AttributeDetail = React.createClass({
 		return {
 			renaming: false,
 			attribute: attribute.attribute,
-			type: attribute.type
+			type: attribute.type,
+			default_value: this.props.default_value,
+			open: false
 		};
 	},
 
@@ -147,7 +149,7 @@ var AttributeDetail = React.createClass({
 	},
 
 	toggleDetails: function (event) {
-
+		this.setState({open: !this.state.open});
 	},
 
 	render: function () {
@@ -170,6 +172,9 @@ var AttributeDetail = React.createClass({
 			: {name};
 		var keyIcons = [];
 		var components = KeycompStore.query({attribute_id: col.attribute_id});
+
+		var wedgeClasses = "small grayed icon wedge icon-geo-triangle " +
+			(this.state.open ? "open" : "closed");
 
 		var typeFieldChoices = Object.keys(constants.fieldTypes).filter(function (type) {
 			return type !== 'PRIMARY_KEY'
@@ -235,23 +240,60 @@ var AttributeDetail = React.createClass({
 				</span>)
 		}
 
-		return <tr
-			key={key}
-			className={(col._dirty?'unsaved':'') + (col._destroy?'destroyed':'')}>
-			<td onClick={this.toggleDetails} className="no-line"><span className={wedgeClasses}></span></td>
-			<td onDoubleClick={this.handleEdit} key={key + '-name'} title={col.attribute_id}>
-				{nameField}
-			</td>
-			<td>
-				{typeSelector}
-			</td>
-			<td className="centered">
-				{keyIcons}
-			</td>
-			<td className="centered">
-				{actions}
-			</td>
-		</tr>
+		return <tbody>
+			<tr
+				key={key}
+				className={(col._dirty?'unsaved':'') + (col._destroy?'destroyed':'')}>
+				<td onClick={this.toggleDetails} className="no-line">
+					<span className={wedgeClasses}></span>
+				</td>
+				<td onDoubleClick={this.handleEdit} key={key + '-name'} title={col.attribute_id}>
+					{nameField}
+				</td>
+				<td>
+					{typeSelector}
+				</td>
+				<td className="centered">
+					{keyIcons}
+				</td>
+				<td className="centered">
+					{actions}
+				</td>
+			</tr>
+			{this.state.open ?
+				<tr
+					key={key+'-type-detail'}
+					className={(col._dirty?'unsaved':'') + (col._destroy?'destroyed':'')}>
+					<td className="no-line">
+					</td>
+					<td>
+						Type:
+					</td>
+					<td className="right-align" colSpan="3">
+						{typeSelector}
+					</td>
+				</tr>
+				:
+				null
+			}
+			{this.state.open ?
+				<tr
+					key={key+'-default-detail'}
+					className={(col._dirty?'unsaved':'') + (col._destroy?'destroyed':'')}>
+					<td className="no-line">
+					</td>
+					<td >
+						Default Value:
+					</td>
+					<td className="right-align" colSpan="3">
+						{this.state.default_value}
+					</td>
+				</tr>
+				:
+				null
+			}
+
+		</tbody>
 	}
 });
 

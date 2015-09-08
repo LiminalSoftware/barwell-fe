@@ -14,6 +14,8 @@ import KeycompStore from "../../../../stores/KeycompStore"
 import AttributeStore from "../../../../stores/AttributeStore"
 import FocusStore from "../../../../stores/FocusStore"
 
+import util from "../../../../util/util"
+
 import ViewDataStores from "../../../../stores/ViewDataStores"
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
@@ -25,6 +27,8 @@ import TabularTHead from "./TabularTHead"
 import TableMixin from '../../TableMixin.jsx'
 
 import ContextMenu from './ContextMenu'
+
+
 
 var TabularPane = React.createClass ({
 
@@ -153,7 +157,13 @@ var TabularPane = React.createClass ({
 		}
 	},
 
+	ieMozPreventSelction: function () {
+		document.onselectstart = util.returnFalse
+		document.onmousedown = util.returnFalse
+	},
+
 	onClick: function (event) {
+		// this.ieMozPreventSelction()
 		var rc = this.getRCCoords(event)
 		this.updateSelect(rc.row, rc.col, event.shiftKey)
 	},
@@ -206,7 +216,33 @@ var TabularPane = React.createClass ({
 		var cid = this.store.getClientId()
 		var obj = {cid: cid}
 		var position = this.state.selection.top;
+		var model = this.props.model
+
+		AttributeStore.query({model_id: (model.model_id || model.cid)}).forEach(function(attr) {
+			if(('a' + attr.attribute_id) != model._pk) {
+				obj['a' + attr.attribute_id] = attr.default_value
+			}
+		})
 		modelActionCreators.insertRecord(this.props.model, obj, position)
+	},
+
+	deleteRecords: function () {
+		var model = this.props.model
+		var sel = this.state.selection
+		var pk = model._pk
+		var selectors = []
+
+		for (var row = sel.top; row <= sel.bottom; row++) {
+			var obj = this.getValueAt(row)
+			var selector = {}
+			if (!(pk in obj)) return
+			else selector[pk] = obj[pk]
+			selectors.push(selector)
+		}
+		selectors.forEach(function (selector) {
+				modelActionCreators.deleteRecord(model, selector)
+		})
+
 	},
 
 	openContextMenu: function (event) {
@@ -218,8 +254,6 @@ var TabularPane = React.createClass ({
 		if (rc.row > sel.bottom || rc.row < sel.top ||
 			rc.col > sel.right || rc.col < sel.left)
 			this.updateSelect(rc.row, rc.col, false, false)
-
-		console.log('rc.x: ' + rc.x)
 
 		this.setState({
 			contextOpen: true,
@@ -288,6 +322,7 @@ var TabularPane = React.createClass ({
 						x = {this.state.contextX} y = {this.state.contextY}
 						handleContextBlur = {this.handleContextBlur}
 						insertRecord = {this.insertRecord}
+						deleteRecords = {this.deleteRecords}
 						/>
 					: null}
 				<div

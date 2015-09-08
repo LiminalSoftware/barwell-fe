@@ -71,15 +71,12 @@ var createTabularStore = function (view) {
             }
 
             if (type === upperLabel + '_DESTROY') {
-                _records = _.filter(_records, function (rec) {
-                    rec[model._pk] !== payload[label][model._pk]
-                })
+                var selector = payload.selector
+                _records = _.reject(_records, _.matcher(selector) )
                 TabularStore.emitChange()
             }
 
             if (type === (upperLabel + '_UPDATE') || type === (upperLabel + '_RECEIVEUPDATE')) {
-              console.log('tabularstore receive')
-              console.log(payload)
               var _this = this
               var update = payload.update
               var selector = payload.selector

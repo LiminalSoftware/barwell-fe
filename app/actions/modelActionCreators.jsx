@@ -25,12 +25,33 @@ var modelActions = {
 		message.record = obj
 		message.selector = {cid: obj.cid}
 		MetasheetDispatcher.dispatch(message)
-		console.log('json: ' + json)
+
 
 		webUtils.ajax('POST', url, json, {"Prefer": 'return=representation'}).then(function (results) {
-			message.actionType = 'M' + model.model_id + '_RECEIVEUPDATE'
-			message.record = results.data || {}
-			MetasheetDispatcher.dispatch (message)
+			var updt_message = {}
+			updt_message.actionType = 'M' + model.model_id + '_RECEIVEUPDATE'
+			updt_message.update = results.data || {}
+			updt_message.selector = {cid: obj.cid}
+			MetasheetDispatcher.dispatch (updt_message)
+		})
+	},
+
+	deleteRecord: function (model, selector) {
+		console.log("deleteRecord B")
+		var model_id = model.model_id
+		var message = {}
+
+		var url = 'https://api.metasheet.io/m' + model.model_id;
+		if (!selector instanceof Object) throw new Error ('NOOOOOOOOOOOoOooooo!!!!!!!')
+		else url += '?' + _.map(selector, function (value, key) {
+			return key + '=eq.' + value;
+		}).join('&')
+
+		message.actionType = 'M' + model.model_id + '_DESTROY'
+		message.selector = selector
+		MetasheetDispatcher.dispatch(message)
+
+		webUtils.ajax('DELETE', url, null, {"Prefer": 'return=representation'}).then(function (results) {
 		})
 	},
 

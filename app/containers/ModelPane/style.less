@@ -20,7 +20,7 @@
 	max-height: 100vh;
 	flex-grow: 5;
 	position: relative;
-	
+
 	padding: 0;
 	overflow-x: auto;
 	background-color: white;
@@ -86,7 +86,7 @@ ul.view-tabs {
 	margin-top: -20px;
 	width: 25px;
 	right: 0;
-	
+
 	visibility: hidden;
 	opacity: 0;
 
@@ -109,13 +109,13 @@ ul.view-tabs {
 
 .detail-bar:hover .detail-hider {
 	margin-right: -27px;
-	opacity: 1;	
+	opacity: 1;
 	visibility: visible;
 }
 
 .hide-sidebar .detail-hider {
 	margin-right: -10px;
-	opacity: 1;	
+	opacity: 1;
 	visibility: visible;
 	span {
 		.rotate (180deg)
@@ -167,14 +167,14 @@ ul.detail-panels {
 			padding-left: 0;
 			margin: 0;
 			&:hover {
-				border-color: @gray-2;	
+				border-color: @gray-2;
 			}
 			&.active {
 				border-color: @green-tint-1;
 			}
 		}
 
-		
+
 	}
 }
 
@@ -207,7 +207,7 @@ ul.detail-panels {
 .detail-bar {
 	position: relative;
 	flex: 0 0 400px;
-	height: 100vh;	
+	height: 100vh;
 	display: flex;
 	flex-direction: column;
 	overflow: visible;
@@ -215,12 +215,12 @@ ul.detail-panels {
 	order: -1;
 	background: @cream;
 	border-right: 2px solid @gray-2;
-	
+
 	h2 {
 		font-size: 17px;
-		border-bottom: 1px solid @gray-2;	
+		border-bottom: 1px solid @gray-2;
 	}
-	
+
 	h3 {
 		font-size: 17px;
 	}
@@ -230,9 +230,9 @@ ul.detail-panels {
 		color: @darkText;
 		font-weight: 400;
 		padding: 5px;
-		
+
 		margin-bottom: 10px;
-		
+
 	}
 
 	.detail-table {
@@ -262,7 +262,7 @@ ul.detail-panels {
 				border-left: 2px solid @green-tint-1 !important;
 			}
 			&:last-child {
-				
+
 			}
 		}
 
@@ -271,13 +271,14 @@ ul.detail-panels {
 				border-left: 2px solid @red-tint-2 !important;
 			}
 			&:last-child {
-				
+
 			}
 			text-decoration: line-through;
 		}
 
 		td, th {
 			padding: 4px 2px;
+			overflow: hidden;
 			&.title {
 				font-family: @headerFont;
 			}
@@ -364,7 +365,7 @@ ul.detail-panels {
 		}
 
 		tbody:not(.singleton) tr:last-child > td {
-			border-bottom: 1px solid @heavyCream;	
+			border-bottom: 1px solid @heavyCream;
 		}
 
 		.top-line td {
@@ -390,7 +391,7 @@ ul.detail-panels {
 	width: 10px;
 	min-height: 14px;
 	height: 12px;
-	
+
 	color: @gray-2;
 	// background-color: @gray-2;
 	border: 1px solid @gray-2;
@@ -459,7 +460,7 @@ tr:hover .showonhover {
 }
 
 .save-button {
-	
+
 	color: @cream;
 	background: @green-tint-2;
 	// border: 1px solid @green-tint-1;
