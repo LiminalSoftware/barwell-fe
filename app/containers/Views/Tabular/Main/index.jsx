@@ -64,6 +64,7 @@ var TabularPane = React.createClass ({
 		FocusStore.removeChangeListener(this._onChange)
 
 		if (this.store) this.store.removeChangeListener(this._onChange)
+		this.store.unregister()
 	},
 
 	componentWillReceiveProps: function (newProps) {

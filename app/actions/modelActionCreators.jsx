@@ -64,27 +64,34 @@ var modelActions = {
 		var localModel = ModelStore.get(localKey.model_id)
 		var selector = _.pick(rObj, relatedModel._pk)
 		var patch = {}
-		var message = {}
+
+		var relatedKeyAttrs = []
+		var localKeyAttrs = []
 
 		keycomps.forEach(function (kc, i) {
 			var rkcId = 'a' + related_keycomps[i].attribute_id
 			var kcId =  'a' + kc.attribute_id
+			relatedKeyAttrs.push(rkcId)
+			localKeyAttrs.push(kcId)
 			patch[rkcId] = obj[kcId]
 		});
 
-		message.actionType = 'M' + relatedModel.model_id + '_UPDATE'
-		message.fromObjPk = obj._parentPk
-		message.toObjPk = obj[localModel._pk]
+		var extras = {
+			relatedObject: rObj,
+			relatedKeyAttrs: relatedKeyAttrs,
+			localKeyAttrs: localKeyAttrs
+		}
 
-		modelActions.patchRecords(relatedModel, patch, selector)
+		modelActions.patchRecords(relatedModel, patch, selector, extras)
 	},
 
-	patchRecords: function (model, patch, selector) {
+	patchRecords: function (model, patch, selector, extras) {
 		var model_id = model.model_id
 		var message = {}
 		message.actionType = 'M' + model.model_id + '_UPDATE'
 		message.update = patch
 		message.selector = selector
+		message = _.extend(message, extras)
 		MetasheetDispatcher.dispatch(message)
 
 		var url = 'https://api.metasheet.io/m' + model.model_id;

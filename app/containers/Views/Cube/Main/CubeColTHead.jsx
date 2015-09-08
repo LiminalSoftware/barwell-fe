@@ -14,7 +14,7 @@ var CubeColTHead = React.createClass ({
 		var _this = this
 		var view = this.props.view
 		var geo = view.data.geometry
-		
+
 		var width = geo.columnWidth + geo.widthPadding
 
 		var trStyle = {
@@ -22,9 +22,9 @@ var CubeColTHead = React.createClass ({
 		}
 
 		var hStart = this.props.hStart
-		
+
 		var levels = this.props.store.getLevels('columns', hStart, hStart  + geo.renderBufferCols)
-		levels = consolidate(levels, view.column_aggregates)
+		levels = _.nest(levels, view.column_aggregates)
 
 		var theadStyle = {
 			top: this.props.scrollTop + 'px',
@@ -32,8 +32,8 @@ var CubeColTHead = React.createClass ({
 		}
 
 		return <thead
-			id="cube-column-view-header" 
-			ref="thead" 
+			id="cube-column-view-header"
+			ref="thead"
 			className = "cube-colhead"
 			style = {theadStyle}
 			key={"cube-col-thead-" + view.view_id}>
@@ -47,8 +47,8 @@ var CubeColTHead = React.createClass ({
 							minWidth: width,
 							maxWidth: width
 						}
-						return <th 
-							style = {thStyle} 
+						return <th
+							style = {thStyle}
 							colSpan = {level.spans['a' + group]}
 							key={'cube-head-header-' + i}>
 						{level['a' + group]}
@@ -66,13 +66,13 @@ var CubeColTHead = React.createClass ({
 	},
 
 	shouldComponentUpdate: function () {
-		return true	
+
 	},
 
 	componentWillMount: function () {
 		// var view = this.props.view
 		var store = this.props.store
-		
+
 		if (store) {
 			store.addChangeListener(this._onChange)
 			this.fetch(true)

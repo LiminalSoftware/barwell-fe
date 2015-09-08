@@ -2,12 +2,14 @@ import _ from "underscore"
 import $ from 'jquery'
 import assign from 'object-assign'
 import EventEmitter from 'events'
+import util from "../../../../util/util"
 
 import ModelStore from "../../../../stores/ModelStore"
 import RelationStore from "../../../../stores/RelationStore"
 
-import modelActionCreators from "../../../../actions/modelActionCreators"
 
+import modelActionCreators from "../../../../actions/modelActionCreators"
+import choose from "../../../../util/util"
 import ViewDataStores from "../../../../stores/ViewDataStores"
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
@@ -47,6 +49,10 @@ var createTabularStore = function (view) {
 
         getRecordCount: function () {
             return _recordCount || 0;
+        },
+
+        unregister: function () {
+          dispatcher.unregister(this.dispatchToken)
         },
 
         dispatchToken: dispatcher.register(function (payload) {
@@ -101,10 +107,16 @@ var createTabularStore = function (view) {
                 var relUpperLabel = relLabel.toUpperCase()
 
                 if (type === relUpperLabel + '_UPDATE') {
+
                     _records.forEach(function (rec) {
-                        var relatedRecords = rec['r' + rel.relation_id]
+                        var pp = payload
+                        rec['r' + rel.relation_id] = _.reject(rec['r' + rel.relation_id], _.matcher(payload.selector))
+                        if (_.isEqual(util.choose(rec, payload.localKeyAttrs), util.choose(payload.update, payload.relatedKeyAttrs))) {
+                          rec['r' + rel.relation_id].push(_.extend(payload.relatedObject, payload.update))
+                        }
                     })
                 }
+                TabularStore.emitChange()
             })
 
         })

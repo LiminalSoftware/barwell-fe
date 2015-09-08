@@ -137,7 +137,7 @@ var KeyDetail = React.createClass({
 
 	handleUniqClick: function (event) {
 		var key = this.props._key
-		key.uniq = event.value
+		if (key._dirty) key.uniq = !key.uniq
 		modelActionCreators.create('key', false, key)
 	},
 
@@ -278,7 +278,7 @@ var KeycompDetail = React.createClass({
 
 		return <tr className={(key._dirty?'unsaved':'') + (key._destroy?'destroyed':'')}>
 			<td className="no-line">
-					
+
 			</td>
 			<td>
 

@@ -99,6 +99,10 @@ var createCubeStore = function (view, dimensions) {
             return _values[key]
         },
 
+        unregister: function () {
+          dispatcher.unregister(this.dispatchToken)
+        },
+
         dispatchToken: dispatcher.register(function (payload) {
             var type = payload.actionType
 

@@ -149,6 +149,36 @@ var ColumnDetail = React.createClass({
 		this.commitChanges({align: 'left'})
 	},
 
+	handleDragStart (event) {
+		var config = this.props.config
+		event.dataTransfer.effectAllowed = 'move'
+		event.dataTransfer.setData('application/json', JSON.stringify(config));
+	},
+
+	handleDragLeave: function () {
+		this.setState({droppable: false})
+	},
+
+	handleDragEnd: function () {
+		this.setState({droppable: false})
+	},
+
+	handleDrop: function (event) {
+		var model = this.props.model
+		var config = this.props.config
+		var obj = this.props.object
+		var rObj = JSON.parse(
+			event.dataTransfer.getData('application/json')
+		)
+
+		var relatedKeyId = config.related_key_id
+		var localKeyId = config.key_id
+
+		modelActionCreators.moveHasMany(localKeyId, relatedKeyId, obj, rObj)
+		event.dataTransfer.dropEffect = 'move'
+		this.setState({droppable: false})
+	},
+
 	render: function () {
 		var view = this.props.view
 		var config = this.props.config

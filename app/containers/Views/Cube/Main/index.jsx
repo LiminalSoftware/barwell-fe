@@ -62,6 +62,9 @@ var CubePane = React.createClass ({
 		AttributeStore.removeChangeListener(this._onChange)
 		ModelStore.removeChangeListener(this._onChange)
 		FocusStore.removeChangeListener(this._onChange)
+
+		if (this.store) this.store.removeChangeListener(this._onChange)
+		this.store.unregister()
 	},
 
 	_onChange: function () {
@@ -71,7 +74,7 @@ var CubePane = React.createClass ({
 	onScroll: function (event) {
 		var wrapper = React.findDOMNode(this.refs.wrapper)
 		this.setState({
-			scrollTop: wrapper.scrollTop, 
+			scrollTop: wrapper.scrollTop,
 			scrollLeft: wrapper.scrollLeft
 		})
 	},
@@ -116,7 +119,7 @@ var CubePane = React.createClass ({
 		var actRowHt = this.state.actRowHt
 		var width = geo.columnWidth + geo.widthPadding
 		var sel = this.state.selection
-		
+
 		return {
 			top: ((sel.top + headerCols) * actRowHt - 1) + 'px',
 			left: ((sel.left + headerRows) * width + geo.leftGutter) + 'px',
@@ -168,10 +171,10 @@ var CubePane = React.createClass ({
 		var objId = (obj.cid || obj[pk]);
 		var rowKey = 'tr-' + objId
 		var cellKey = rowKey + '-' + colId
-		
+
 		this.setState({
 			editing: true,
-			editObjId: objId, 
+			editObjId: objId,
 			editColId: colId
 		})
 		var field = this.refs[rowKey].refs[cellKey]
@@ -181,9 +184,13 @@ var CubePane = React.createClass ({
 	isFocused: function () {
 		return (FocusStore.getFocus() === 'view')
 	},
-
+	
 	handleBlur: function () {
 		this.setState({editing: false})
+	},
+
+	handleContextBlur: function () {
+		this.setState({contextOpen: false})
 	},
 
 	getVStart: function () {
@@ -210,22 +217,22 @@ var CubePane = React.createClass ({
 		var height = this.state.actRowHt
 		var hStart = this.getHStart()
 		var vStart = this.getVStart()
-		
+
 		var numAggregates = view.row_aggregates.length + view.column_aggregates.length
 
-		if (numAggregates === 0) 
+		if (numAggregates === 0)
 			return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper"></div>
 
 		return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">
 				<table id="main-data-table" className="header data-table">
-					<CubeColTHead 
+					<CubeColTHead
 						key = {"cube-col-thead-" + view.view_id}
 						dimension = 'column'
 						store = {this.store}
 						hStart = {hStart}
 						scrollTop = {scrollTop}
 						view = {view} />
-					<CubeRowTHead 
+					<CubeRowTHead
 						ref = 'rowhead'
 						key = {"cube-row-thead-" + view.view_id}
 						dimension = 'row'
@@ -250,12 +257,12 @@ var CubePane = React.createClass ({
 				</table>
 				<div
 					className={"pointer" + (_this.isFocused() ? " focused" : "")}
-					ref = "anchor" 
+					ref = "anchor"
 					onDoubleClick = {this.startEdit}
 					style = {_this.getPointerStyle()}>
 				</div>
 				<div
-					className={"selection" + (_this.isFocused() ? " focused" : "")} 
+					className={"selection" + (_this.isFocused() ? " focused" : "")}
 					ref="selection"
 					style={_this.getSelectorStyle()}>
 				</div>

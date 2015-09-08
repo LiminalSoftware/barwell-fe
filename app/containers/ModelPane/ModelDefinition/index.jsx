@@ -79,7 +79,7 @@ var ModelDefinition = React.createClass({
 					if (key._dirty) {
 						var key_plus = _.clone(key)
 						key_plus.keycomps = KeycompStore.query({key_id: (key.key_id || key.cid)})
-						console.log('key_plus' + JSON.stringify(key_plus))
+							.map(function(kc) {return _.pick(kc, 'attribute_id', 'ord')})
 						return modelActionCreators.create('key', true, key_plus)
 					}
 					if (key._destroy)
