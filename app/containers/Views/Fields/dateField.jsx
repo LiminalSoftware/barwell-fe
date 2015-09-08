@@ -13,42 +13,34 @@ import commitMixin from './commitMixin'
 import editableInputMixin from './editableInputMixin'
 
 var dateField = {
-
+	
 	configCleanser: function (config) {
 		config.dateFormat = config.dateFormat || "MM/DD/YYYY"
 		return config
 	},
 
 	configRows: React.createClass({
-
+		
 		getInitialState: function () {
 			var config = this.props.config;
 			return {dateFormat: (config.dateFormat || 'DD/MM/YYYY')}
 		},
-
+		
 		onFormatChange: function (event) {
 			var config = this.props.config
 			var column_id = config.column_id
 			var view = this.props.view
 			var data = view.data
-			var col = data.columns[column_id]
+			var col = data.columns[column_id] 
 			var value = event.target.value
 			col.dateFormat = value
 
 			this.setState({dateFormat: value})
+			// _.debounce(function () {
+			modelActionCreators.create('view', false, view, false)
+			// }, 200)
 		},
-
-		onBlur: function (event) {
-			var config = this.props.config
-			var view = this.props.view
-			var column_id = config.column_id
-			var data = view.data
-			var col = data.columns[column_id]
-
-			col.dateFormat = this.state.dateFormat
-			modelActionCreators.createView(view, false, true)
-		},
-
+		
 		render: function () {
 			var config = this.props.config
 			var key = "attr-" + config.id
@@ -58,16 +50,16 @@ var dateField = {
 				<td className="no-line"></td>
 				<td className="">Date Format: </td>
 				<td className="" colSpan="2">
-					<input type="text" value={this.state.dateFormat} onBlur={this.onBlur} onChange={this.onFormatChange}/>
+					<input type="text" value={this.state.dateFormat} onChange={this.onFormatChange}/>
 				</td>
-			</tr>
-		}
+			</tr>	
+		}	
 	}),
-
+	
 	element: React.createClass({
 
 		mixins: [commitMixin, editableInputMixin],
-
+		
 		format: function (value) {
 			var config = this.props.config || {}
 			var format = config.dateFormat || "DD MMMM YYYY";

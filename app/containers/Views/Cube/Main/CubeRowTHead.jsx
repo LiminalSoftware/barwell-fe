@@ -59,28 +59,6 @@ var CubeRowTHead = React.createClass ({
 			levels.map(function (level, i) {
 				return <tr key={'cube-rowhead-' + i} style = {trStyle}>
 				{
-					view.row_aggregates.map(function (group) {
-						var attribute = AttributeStore.get(group)
-						var element = (fieldTypes[attribute.type] || fieldTypes.TEXT).element
-						return React.createElement(element, {
-							config: col,
-							model: _this.props.model,
-							view: _this.props.view,
-							object: obj,
-							pk: _this.props.model.pk,
-							value: obj[col.column_id],
-							handleBlur: _this.props.handleBlur,
-							key: cellKey,
-							cellKey: cellKey,
-							ref: cellKey,
-							rowSpan:
-							style: {
-								minWidth: col.width,
-								maxWidth: col.width,
-								textAlign: col.align,
-								height: (geometry.rowHeight) + 'px',
-							}
-						})
 
 						<th
 							style = {thStyle}
