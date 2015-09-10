@@ -260,7 +260,6 @@ var TabularPane = React.createClass ({
 			contextX: rc.x,
 			contextY: rc.y + 20
 		})
-		console.log('context menu!')
 	},
 
 	calibrateRowHeight: function () {

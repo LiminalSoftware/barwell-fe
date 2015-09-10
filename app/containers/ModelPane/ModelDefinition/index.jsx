@@ -17,8 +17,6 @@ import ModelDetails from './ModelDetails'
 import getIconClasses from './getIconClasses'
 import _ from 'underscore'
 
-var Promise = require('es6-promise').Promise;
-
 
 
 var ModelDefinition = React.createClass({
@@ -67,7 +65,9 @@ var ModelDefinition = React.createClass({
 
 		this.setState({committing: true})
 
-		modelActionCreators.create('model', true, model, false).then(function () {
+		modelActionCreators.create('model', true, model, false)
+		.then(function () {
+
 			return Promise.all(
 				AttributeStore.query({model_id: (model.model_id || model.cid)}).map(function (attr) {
 					if (attr._dirty) return modelActionCreators.create('attribute', true, attr)

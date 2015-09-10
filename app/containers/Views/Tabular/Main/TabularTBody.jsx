@@ -119,7 +119,6 @@ var TabularTBody = React.createClass ({
 		if (!this.isMounted()) return
 		var tbody = React.findDOMNode(this.refs.tabularTbody)
 		var offset = tbody.offsetTop
-
 		return offset
 	},
 

@@ -14,15 +14,35 @@ import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 import util from '../../../../util/util'
 import constants from '../../../../constants/MetasheetConstants'
 
+import calcSpans from './calcSpans'
+
 var DELIMITER = constants.delimiter
+//
+// var calcSpans = function (levels, groups) {
+//   var spans = {}
+//   groups.forEach(g => spans['a' + g] = 1)
+//   return levels.map(function (level, idx) {
+//     var isBroken
+//     level.spans = {}
+//     groups.forEach(function (g) {
+//       g = 'a' + g
+//       spans[g]--
+//       if (spans[g] > 0) return level.spans[g] = 0
+//       else while (idx + spans[g] < levels.length
+//         && levels[idx][g] === levels[idx + spans[g] - 1] [g]) spans[g]++
+//       level.spans[g] = spans[g]
+//     })
+//     return level
+//   })
+// }
 
 var createCubeStore = function (view, dimensions) {
     var model = ModelStore.get (view.model_id)
     var label = 'v' + view.view_id
     var upperLabel = label.toUpperCase ()
     var _dimensions = {
-        rows: [],
-        columns: []
+        rows: view.row_aggregates,
+        columns: view.column_aggregates
     }
     var _levels = {
         rows: [],
@@ -65,6 +85,10 @@ var createCubeStore = function (view, dimensions) {
 
         getCount: function (dimension) {
             return _count[dimension]
+        },
+
+        getDimensions: function (dimension) {
+          return _dimensions[dimension]
         },
 
         getLevels: function (dimension, from, to) {
@@ -127,8 +151,8 @@ var createCubeStore = function (view, dimensions) {
             if (type === upperLabel + '_RECEIVELEVELS') {
                 var _this = this
                 var dimension  = payload.dimension
-
-                _levels[dimension] = payload.levels
+                var groups = _dimensions[dimension].map(g=>'a'+g)
+                _levels[dimension] = calcSpans(payload.levels, groups)
                 _count[dimension] = payload.numberLevels
                 _isCurrent[dimension] = true
 

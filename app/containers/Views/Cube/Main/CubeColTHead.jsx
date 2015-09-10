@@ -5,7 +5,7 @@ import _ from 'underscore'
 import fieldTypes from "../../fields"
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import FocusStore from "../../../../stores/FocusStore"
-import consolidate from './consolidate'
+import calcSpans from './calcSpans'
 
 
 var CubeColTHead = React.createClass ({
@@ -24,7 +24,6 @@ var CubeColTHead = React.createClass ({
 		var hStart = this.props.hStart
 
 		var levels = this.props.store.getLevels('columns', hStart, hStart  + geo.renderBufferCols)
-		levels = _.nest(levels, view.column_aggregates)
 
 		var theadStyle = {
 			top: this.props.scrollTop + 'px',
@@ -40,21 +39,6 @@ var CubeColTHead = React.createClass ({
 			{
 			view.column_aggregates.map(function (group) {
 				return <tr key={'cube-thead-' + group} style = {trStyle}>
-				{
-					levels.map(function (level, i) {
-						var width = (geo.columnWidth * level.spans['a' + group]) + 'px'
-						var thStyle = {
-							minWidth: width,
-							maxWidth: width
-						}
-						return <th
-							style = {thStyle}
-							colSpan = {level.spans['a' + group]}
-							key={'cube-head-header-' + i}>
-						{level['a' + group]}
-						</th>
-					})
-				}
 				</tr>
 			})
 			}
@@ -66,7 +50,7 @@ var CubeColTHead = React.createClass ({
 	},
 
 	shouldComponentUpdate: function () {
-
+		return true
 	},
 
 	componentWillMount: function () {

@@ -5,15 +5,17 @@ import _ from 'underscore'
 import fieldTypes from "../../fields"
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import FocusStore from "../../../../stores/FocusStore"
-import consolidate from './consolidate'
+import calcSpans from './calcSpans'
 
 import util from '../../../../util/util'
+
+
+
 
 var CubeRowTHead = React.createClass ({
 
 	getCalibration: function () {
 		if (!this.isMounted()) return;
-
 		return ($(React.findDOMNode(this.refs.rowhead)).get(0).scrollHeight /
 				$(React.findDOMNode(this.refs.rowhead)).children().length)
 	},
@@ -24,14 +26,8 @@ var CubeRowTHead = React.createClass ({
 		var geo = view.data.geometry
 		var rowHeight = geo.rowHeight + 'px'
 		var actRowHt = this.props.actRowHt + geo.rowPadding
-
 		var vStart = this.props.vStart
 		var hStart = this.props.hStart
-
-		var store = this.props.store
-		var levels = store.getLevels('rows', vStart, vStart + geo.renderBufferRows)
-		levels = util.nest(levels, view.row_aggregates.map(id => 'a' + id))
-
 		var rowHeadStyle = {
 			top: ((view.column_aggregates.length + vStart) * actRowHt ) + 'px',
 			left: ((this.props.scrollLeft || 0) + geo.leftGutter) + 'px'
@@ -41,60 +37,22 @@ var CubeRowTHead = React.createClass ({
 			minWidth: geo.columnWidth + 'px',
 			maxWidth: geo.columnWidth + 'px'
 		}
-
-		var spans = {}
-		view.row_aggregates.forEach(function (group) {
-			spans['a' + group] = 1
-		})
-
-		// console.log('vStart: ' + vStart)
+		var store = this.props.store
+		var groups = view.row_aggregates.map(g => 'a' + g)
+		var levels = store.getLevels('rows', vStart, vStart + geo.renderBufferRows)
 
 		return <tbody
 			id="cube-row-view-header"
 			ref="rowhead"
 			className = "cube-rowhead"
 			style = {rowHeadStyle}
-			key={"cube-row-thead-" + view.view_id}>
-			{
-			levels.map(function (level, i) {
-				return <tr key={'cube-rowhead-' + i} style = {trStyle}>
-				{
-					view.row_aggregates.map(function (group) {
-						var attribute = AttributeStore.get(group)
-						var element = (fieldTypes[attribute.type] || fieldTypes.TEXT).element
-						return React.createElement(element, {
-							config: col,
-							model: _this.props.model,
-							view: _this.props.view,
-							object: obj,
-							pk: _this.props.model.pk,
-							value: obj[col.column_id],
-							handleBlur: _this.props.handleBlur,
-							key: cellKey,
-							cellKey: cellKey,
-							ref: cellKey,
-							rowSpan:
-							style: {
-								minWidth: col.width,
-								maxWidth: col.width,
-								textAlign: col.align,
-								height: (geometry.rowHeight) + 'px',
-							}
-						})
-
-						<th
-							style = {thStyle}
-							rowSpan = {level.spans['a' + group]}
-							key={'cube-header-' + group}>
-						{level['a' + group]}
-						</th>
-
-
-					})
-				}
-				</tr>
-			})
-			}
+			key={"cube-row-thead-" + view.view_id} >
+			{levels.map(function (level) {
+				return <tr style={trStyle}> {groups.map(function (group) {
+					if (level.spans[group] === 0)	return null
+					else return <td rowSpan={level.spans[group]} style={thStyle}>{level[group]}</td>
+				}) } </tr>
+			})}
 		</tbody>;
 	},
 
@@ -104,7 +62,6 @@ var CubeRowTHead = React.createClass ({
 
 	componentWillMount: function () {
 		var store = this.props.store
-
 		if (store) {
 			store.addChangeListener(this._onChange)
 			this.fetch(true)
