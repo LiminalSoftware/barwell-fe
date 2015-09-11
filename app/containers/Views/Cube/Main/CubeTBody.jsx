@@ -19,7 +19,7 @@ var CubeTBody = React.createClass ({
 
 	shouldComponentUpdate: function (props, state) {
 		var old = this.props
-		return props.vStart !== old.vStart || 
+		return props.vStart !== old.vStart ||
 			   props.hStart !== old.hStart
 	},
 
@@ -68,6 +68,7 @@ var CubeTBody = React.createClass ({
 		var width = geo.columnWidth + geo.widthPadding
 		var vStart = this.props.vStart
 		var hStart = this.props.hStart
+
 		var style = {
 			top: ((view.column_aggregates.length + vStart) * actRowHt) + 'px',
 			left: (width * (view.row_aggregates.length + hStart) + geo.leftGutter) + 'px'
@@ -81,7 +82,7 @@ var CubeTBody = React.createClass ({
 			{
 				store.getLevels('rows', vStart, vStart + geo.renderBufferRows).map(function (rowLevel, i) {
 					var rowKey = 'cell-' + (vStart + i)
-					return <CubeTR  
+					return <CubeTR
 						{..._this.props}
 						hStart = {hStart}
 						rowLevel = {rowLevel}
@@ -115,7 +116,7 @@ var CubeTBody = React.createClass ({
 			console.log('dont fetch')
 			return; // if scroll is within tolerances, do nothing
 		}
-			
+
 
 		var makeFilterStr = function (agg, dimension, pos, invert) {
 			var obj = store.getLevel(dimension, pos)
@@ -150,7 +151,7 @@ var CubeTR = React.createClass({
 	render: function () {
 		var _this = this
 		var model = this.props.model
-		var view = this.props.view		
+		var view = this.props.view
 		var store = this.props.store
 		var geo = view.data.geometry
 		var width = geo.columnWidth + 'px'
@@ -169,16 +170,22 @@ var CubeTR = React.createClass({
 
 		return <tr> {store.getLevels('columns', hStart, hLength + hStart).map(function (colLevel, j) {
 			var key = _this.props.rowKey + '-' + (hStart + j)
-			var value = store.getValues(rowLevel, colLevel)
-			if (value) value = value[view.aggregator]
 
-			return <td 
+			var obj = store.getValues(rowLevel, colLevel)
+			var present = !!obj
+			var count = present ? obj._count : 0
+			var value = present ? obj[view.aggregator] : null
+
+			return <td
 				key = {key}
-				className = {value == null ? "empty" : "present"}
+				className = {
+					(present ? "present" : "empty") +
+					(count > 1 ? " uneditable" : "")
+				}
 				id = {key}
 				style = {tdStyle}>
 			 	{ value }
 			</td>
-		})} </tr>	
+		})} </tr>
 	}
-}) 
+})

@@ -42,10 +42,14 @@ var TabularContextMenu = React.createClass ({
 		this.props.deleteRecords()
 	},
 
+	clickCopySelection: function (e) {
+		this.props.copySelection()
+	},
+
 	render: function () {
 		return <ul className = "tabular-context-menu" style={{left: this.props.x, top: this.props.y}}>
 			<li onClick={this.clickAddNewRow}><span className="white icon icon-sign-in"></span> Add new record [SHIFT-PLUS]</li>
-			<li><span className="white icon icon-bolt"></span> Copy selection  [CTL-C]</li>
+			<li onClick={this.clickCopySelection}><span className="white icon icon-bolt"></span> Copy selection  [CTL-C]</li>
 			<li onClick={this.clickDeleteRow}><span className="white icon icon-kub-trash"></span> Delete record [CTL-SHIFT-MINUS]</li>
 		</ul>
 	}

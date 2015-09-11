@@ -15,6 +15,7 @@ import AttributeStore from "../../../../stores/AttributeStore"
 import FocusStore from "../../../../stores/FocusStore"
 
 import util from "../../../../util/util"
+import copyTextToClipboard from "../../../../util/copyTextToClipboard"
 
 import ViewDataStores from "../../../../stores/ViewDataStores"
 import storeFactory from 'flux-store-factory';
@@ -105,55 +106,68 @@ var TabularPane = React.createClass ({
 	},
 
 	getSelectorStyle: function () {
-		var view = this.props.view
-		var geo = view.data.geometry
-		var effectiveHeight = geo.rowHeight
-			+ geo.rowPadding
-
 		var sel = this.state.selection
-		var columns = this.getVisibleColumns()
-		var width = 0
-		var actHeight = this.state.actRowHt
-
-		var height = (sel.bottom - sel.top + 1) * actHeight - 1
-		var left = geo.leftOffset
-		var top = this.state.offset + (sel.top * actHeight) - 1
-
-		columns.forEach(function (col, idx) {
-			if (idx < sel.left)
-				left += col.width + geo.widthPadding
-			else if (idx < sel.right + 1)
-				width += col.width + geo.widthPadding
+		return this.getOverlayStyle({
+			left: sel.left,
+			right: sel.right,
+			top: sel.top,
+			bottom: sel.bottom
+		}, {
+			left: 1,
+			top: -0.75,
+			height: -1,
+			width: -1
 		})
-		return {
-			top: top + 'px',
-			left: left + 'px',
-			minWidth: width + 'px',
-			minHeight: height + "px"
-		}
+	},
+
+	getCopyareaStyle: function () {
+		var cpy = this.state.copyarea
+		var ptr = this.state.pointer
+		var coincide = _.isEqual(cpy, ptr)
+		return this.getOverlayStyle({
+			left: cpy.left,
+			right: cpy.right,
+			top: cpy.top,
+			bottom: cpy.bottom
+		}, {
+			left: 1,
+			top: -0.75,
+			height: 1,
+			width: 1
+		})
 	},
 
 	getPointerStyle: function () {
-		var view = this.props.view
-		var geo = view.data.geometry
 		var ptr = this.state.pointer
-		var columns = this.getVisibleColumns()
-		var width = 0
-		var actHeight = this.state.actRowHt
-		var left = geo.leftOffset
-		var top = this.state.offset + (ptr.top * actHeight) - 2
+		return this.getOverlayStyle({
+			left: ptr.left,
+			right: ptr.left,
+			top: ptr.top,
+			bottom: ptr.top
+		}, {
+			top: -2,
+			height: -1,
+			width: -1
+		})
+	},
 
-		columns.forEach(function (col, idx) {
-			if (idx < ptr.left)
+	getOverlayStyle (pos, fudge) {
+		var geo = this.props.view.data.geometry
+		var width = 0
+		var left = geo.leftOffset
+		fudge = fudge || {}
+
+		this.getVisibleColumns().forEach(function (col, idx) {
+			if (idx < pos.left)
 				left += (col.width + geo.widthPadding)
-			else if (idx < ptr.left + 1)
-				width = (col.width + geo.widthPadding - 1)
+			else if (idx <= pos.right)
+				width += col.width + geo.widthPadding
 		})
 		return {
-			top: top + 'px',
-			left: left + 'px',
-			minWidth: width + 'px',
-			minHeight: (actHeight - 2) + "px"
+			top: (pos.top * this.state.actRowHt + this.state.offset + (fudge.top || 0)) + 'px',
+			left: (left + (fudge.left || 0)) + 'px',
+			minHeight: ((pos.bottom - pos.top + 1) * this.state.actRowHt + (fudge.height || 0)) + 'px',
+			minWidth: (width + (fudge.width || 0)) + 'px'
 		}
 	},
 
@@ -190,26 +204,30 @@ var TabularPane = React.createClass ({
 		return {row: r, col: c, x: x, y: y}
 	},
 
-	editCell: function (event, row, col) {
+	getFieldAt: function (row, col) {
 		var tbody = this.refs.tbody
 		var row = this.state.pointer.top
 		var col = this.state.pointer.left
 		var colId = this.getVisibleColumns()[col].column_id
 		var obj = this.getValueAt(row)
 		var model = this.props.model
-		var pk = model._pk
-		var objId = (obj.cid || obj[pk]);
+		var objId = (obj.cid || obj[model._pk]);
 		var rowKey = 'tr-' + objId
 		var cellKey = rowKey + '-' + colId
+		return this.refs.tbody.refs[rowKey].refs[cellKey]
+	},
 
-		this.setState({editing: true})
-		tbody.setState({
+	editCell: function (event, row, col) {
+		var tbody = this.refs.tbody
+		this.setState({
 			editing: true,
-			editObjId: objId,
-			editColId: colId
+			copyarea: null
 		})
-		var field = this.refs.tbody.refs[rowKey].refs[cellKey]
-		field.handleEdit(event);
+		tbody.setState({
+			editing: true
+		})
+		// var field = this.refs.tbody.refs[rowKey].refs[cellKey]
+		this.getFieldAt(row, col).handleEdit(event);
 	},
 
 	insertRecord: function () {
@@ -218,12 +236,14 @@ var TabularPane = React.createClass ({
 		var position = this.state.selection.top;
 		var model = this.props.model
 
+		// initialize the new record with default values
 		AttributeStore.query({model_id: (model.model_id || model.cid)}).forEach(function(attr) {
 			if(('a' + attr.attribute_id) != model._pk) {
 				obj['a' + attr.attribute_id] = attr.default_value
 			}
 		})
 		modelActionCreators.insertRecord(this.props.model, obj, position)
+		this.setState({copyarea: null})
 	},
 
 	deleteRecords: function () {
@@ -242,7 +262,20 @@ var TabularPane = React.createClass ({
 		selectors.forEach(function (selector) {
 				modelActionCreators.deleteRecord(model, selector)
 		})
+		this.setState({copyarea: null})
+	},
 
+	copySelection: function () {
+		var clipboard = ""
+		var sel = this.state.selection
+		for (var r = sel.top; r <= sel.bottom; r++) {
+			for (var c = sel.left; c <= sel.right; c++) {
+				clipboard += this.getFieldAt(r, c).props.value + (c == sel.right ? "" : "\t")
+			}
+			clipboard += (r == sel.bottom ? "" : "\n")
+		}
+		copyTextToClipboard(clipboard)
+		this.setState({copyarea: _.clone(sel)})
 	},
 
 	openContextMenu: function (event) {
@@ -275,6 +308,10 @@ var TabularPane = React.createClass ({
 
 	isFocused: function () {
 		return (FocusStore.getFocus() === 'view')
+	},
+
+	isCopied: function () {
+		return !!(this.state.copyarea)
 	},
 
 	handleBlur: function () {
@@ -322,6 +359,7 @@ var TabularPane = React.createClass ({
 						handleContextBlur = {this.handleContextBlur}
 						insertRecord = {this.insertRecord}
 						deleteRecords = {this.deleteRecords}
+						copySelection = {this.copySelection}
 						/>
 					: null}
 				<div
@@ -330,8 +368,13 @@ var TabularPane = React.createClass ({
 					onDoubleClick={this.startEdit}
 					style={this.getPointerStyle()}>
 				</div>
+				{this.state.copyarea ? <div
+					className={"copyarea marching-ants " + (_this.isFocused() ? " focused" : "")}
+					ref="copyarea"
+					style={this.getCopyareaStyle()}>
+				</div> : null}
 				<div
-					className={"selection" + (_this.isFocused() ? " focused" : "")}
+					className={"selection " + (_this.isFocused() ? " focused" : "")}
 					ref="selection"
 					style={this.getSelectorStyle()}>
 				</div>

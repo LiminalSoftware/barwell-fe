@@ -161,7 +161,6 @@ var TabularTBody = React.createClass ({
 					var rowKey = 'tr-' + (obj.cid || obj[pk])
 					return <TabularTR  {..._this.props}
 						obj={obj}
-						editing = {obj[pk] === _this.state.editObjId}
 						rowKey = {rowKey}
 						ref = {rowKey}
 						key = {rowKey}

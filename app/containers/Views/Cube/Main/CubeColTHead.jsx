@@ -21,6 +21,7 @@ var CubeColTHead = React.createClass ({
 			lineHeight: geo.rowHeight + 'px'
 		}
 
+
 		var hStart = this.props.hStart
 
 		var levels = this.props.store.getLevels('columns', hStart, hStart  + geo.renderBufferCols)
@@ -30,7 +31,7 @@ var CubeColTHead = React.createClass ({
 			left: (width * (view.row_aggregates.length + hStart) + geo.leftGutter) + 'px'
 		}
 
-		return <thead
+		return <tbody
 			id="cube-column-view-header"
 			ref="thead"
 			className = "cube-colhead"
@@ -38,19 +39,35 @@ var CubeColTHead = React.createClass ({
 			key={"cube-col-thead-" + view.view_id}>
 			{
 			view.column_aggregates.map(function (group) {
-				return <tr key={'cube-thead-' + group} style = {trStyle}>
+				group = 'a' + group
+				return <tr key={'cube-col-thead-' + group} style = {trStyle}>
+					{levels.map(function (level) {
+						if (level.spans[group] === 0) return null;
+						var width = geo.columnWidth * level.spans[group]
+						console.log('width: ' + width)
+						var tdStyle = {
+							minWidth: width + 'px',
+							maxWidth: width + 'px'
+						}
+						return <td style = {tdStyle} colSpan = {level.spans[group]}>{level[group]}</td>
+					}) }
 				</tr>
 			})
 			}
-		</thead>;
+		</tbody>;
 	},
 
 	_onChange: function () {
 		this.forceUpdate()
 	},
 
-	shouldComponentUpdate: function () {
-		return true
+	shouldComponentUpdate: function (newProps, newState) {
+		var oldProps = this.props
+		return !(
+			_.isEqual(newProps.view, oldProps.view) &&
+			newProps.scrollTop === oldProps.scrollTop &&
+			newProps.scrollLeft === oldProps.scrollLeft
+		)
 	},
 
 	componentWillMount: function () {

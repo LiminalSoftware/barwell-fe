@@ -71,7 +71,16 @@ var CubeRowTHead = React.createClass ({
 	fetch: function (force) {
 		var view = this.props.view
 		modelActionCreators.fetchLevels(view, 'rows', 0, 1000)
-	}
+	},
+
+	shouldComponentUpdate: function (newProps, newState) {
+		var oldProps = this.props
+		return !(
+			_.isEqual(newProps.view, oldProps.view) &&
+			newProps.scrollTop === oldProps.scrollTop &&
+			newProps.scrollLeft === oldProps.scrollLeft
+		)
+	},
 })
 
 export default CubeRowTHead

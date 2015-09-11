@@ -1,1 +1,49 @@
 @import "../../../../global.less";
+
+
+.cube-colhead, .cube-rowhead {
+	z-index: 499;
+}
+
+.cube-colhead td {
+	height: 26px;
+	background: @cream;
+	font-weight: 400;
+	border-bottom: 1px solid white;
+	border-right: 1px solid white;
+	font: @headerFont;
+	z-index: 500;
+}
+
+.cube-rowhead td {
+	height: 26px;
+	border-top: 1px solid white;
+	border-bottom: 1px solid white;
+	background: @cream;
+	font-weight: 400;
+	border-right: 1px solid white;
+	font: @headerFont;
+	z-index: 500;
+}
+
+.cube-main-tbody td {
+	border: 1px solid @cream;
+}
+
+.cube-main-tbody td.present {
+	background: white;
+}
+
+.cube-main-tbody td.present.uneditable {
+	background: #FFE;
+}
+
+.cube-main-tbody td.empty {
+	// background-image: linear-gradient(-45deg, @heavyCream 25%, transparent 25%, transparent 50%, @heavyCream 50%, @heavyCream 75%, transparent 75%, transparent);
+	background: @cream;
+	border: 1px solid @cream;
+}
+
+.cube-main-tbody tr, .cube-rowhead tr {
+
+}

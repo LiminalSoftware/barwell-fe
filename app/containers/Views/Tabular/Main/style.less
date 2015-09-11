@@ -31,40 +31,6 @@ div.color-block {
 	}
 }
 
-.cube-colhead td {
-	height: 26px;
-	background: @cream;
-	font-weight: 400;
-	border-bottom: 1px solid white;
-	border-right: 1px solid white;
-	font: @headerFont;
-}
-
-.cube-rowhead td {
-	height: 26px;
-	border-top: 1px solid white;
-	border-bottom: 1px solid white;
-	background: @cream;
-	font-weight: 400;
-	border-right: 1px solid white;
-	font: @headerFont;
-}
-
-.cube-main-tbody td.present {
-	background: white;
-	border: 1px solid @heavyCream !important;
-}
-
-.cube-main-tbody td.empty {
-	// background-image: linear-gradient(-45deg, @heavyCream 25%, transparent 25%, transparent 50%, @heavyCream 50%, @heavyCream 75%, transparent 75%, transparent);
-	background: @cream;
-	border: 1px solid @white !important;
-}
-
-.cube-main-tbody tr, .cube-rowhead tr {
-
-}
-
 
 
 .tabular-main-table th {
@@ -80,9 +46,6 @@ div.color-block {
 	&.desc, &.asc {
 		// background: @green-tint-2;
 		color: white;
-		&.focused {
-
-		}
 	}
 
 	.table-resizer {
@@ -193,29 +156,109 @@ div.color-block {
 		td.droppable {
 			background: lighten(@green-tint-2, 42%) !important;
 		}
-
-
-
 	}
 }
 
 
 
-.selection {
+.selection, .copyarea {
 	z-index: 501;
 	position: absolute;
 	top: 0;
 	left: 0;
-	border: 1.5px dashed @gray-0;
-	transition: all 50ms ease-in;
-
+	.transition(all cubic-bezier(.16,.85,.5,1) .15s);
 	pointer-events:none;
+}
 
-	background: @gray-trans;
+.copyarea {
+	z-index: 503;
+}
+
+.selection {
+	border: 1.5px dashed @gray-0;
+	background-color: @gray-trans;
 	&.focused {
-		background: @green-trans;
-		border: 1px dashed @green-tint-1;
+		background-color: @green-trans;
+		border: 1.5px dashed @green-tint-1;
 	}
+}
+
+// .marching-ants.unfocused {
+// 	border: none;
+// 	background: @gray-trans;
+// 	background-image: -webkit-linear-gradient(left, #fff 50%, @gray-0 50%), -webkit-linear-gradient(left, #fff 50%, @gray-0 50%), -webkit-linear-gradient(top, #fff 50%, @gray-0 50%), -webkit-linear-gradient(top, #fff 50%, @gray-0 50%);
+//   background-image: linear-gradient(to right, #fff 50%, @gray-0 50%), linear-gradient(to right, #fff 50%, @gray-0 50%), linear-gradient(to bottom, #fff 50%, @gray-0 50%), linear-gradient(to bottom, #fff 50%, @gray-0 50%);
+// }
+
+.marching-ants {
+	border: none;
+	background-image: -webkit-linear-gradient(left, #fff 50%, @gray-0 50%), -webkit-linear-gradient(left, #fff 50%, @gray-0 50%), -webkit-linear-gradient(top, #fff 50%, @gray-0 50%), -webkit-linear-gradient(top, #fff 50%, @gray-0 50%);
+  background-image: linear-gradient(to right, #fff 50%, @gray-0 50%), linear-gradient(to right, #fff 50%, @gray-0 50%), linear-gradient(to bottom, #fff 50%, @gray-0 50%), linear-gradient(to bottom, #fff 50%, @gray-0 50%);
+}
+
+.marching-ants {
+  color: #fff;
+	background-size: 6px 1px, 6px 1px, 1px 6px, 1px 6px;
+	background-position: 0 0,  0 100%,  0 0,  100% 0;
+	background-repeat: repeat-x,  repeat-x,  repeat-y,  repeat-y;
+	-webkit-animation: marching-ants-1 2s;
+					animation: marching-ants-1 2s;
+	-webkit-animation-timing-function: linear;
+					animation-timing-function: linear;
+	-webkit-animation-iteration-count: infinite;
+					animation-iteration-count: infinite;
+	-webkit-animation-play-state: running;
+					animation-play-state: running;
+}
+
+@-webkit-keyframes marching-ants-1 {
+  0% {
+    background-position: 0 0,  0 100%,  0 0,  100% 0;
+  }
+  100% {
+    background-position: 40px 0, -40px 100%, 0 -40px, 100% 40px;
+  }
+}
+
+@keyframes marching-ants-1 {
+  0% {
+    background-position: 0 0,  0 100%,  0 0,  100% 0;
+  }
+  100% {
+    background-position: 40px 0, -40px 100%, 0 -40px, 100% 40px;
+  }
+}
+@-webkit-keyframes marching-ants-2 {
+  0% {
+    background-position: 0 0,  0 100%,  0 0,  100% 0;
+  }
+  100% {
+    background-position: 40px 0, -40px 100%, 0 -40px, 100% 40px;
+  }
+}
+@keyframes marching-ants-2 {
+  0% {
+    background-position: 0 0,  0 100%,  0 0,  100% 0;
+  }
+  100% {
+    background-position: 40px 0, -40px 100%, 0 -40px, 100% 40px;
+  }
+}
+@-webkit-keyframes marching-ants-3 {
+  0% {
+    background-position: 0 0,  0 100%,  0 0,  100% 0;
+  }
+  100% {
+    background-position: 40px 0, -40px 100%, 0 -40px, 100% 40px;
+  }
+}
+@keyframes marching-ants-3 {
+  0% {
+    background-position: 0 0,  0 100%,  0 0,  100% 0;
+  }
+  100% {
+    background-position: 40px 0, -40px 100%, 0 -40px, 100% 40px;
+  }
 }
 
 .pointer {
@@ -224,7 +267,7 @@ div.color-block {
 	top: 0;
 	left: 0;
 	padding: 0;
-	transition: all 50ms ease-in;
+	.transition(all cubic-bezier(.16,.85,.5,1) .15s);
 
 	pointer-events: none;
 
@@ -232,7 +275,7 @@ div.color-block {
 	&.focused {
 		border: 2px solid @green-tint-1;
 	}
-	// .box-shadow(0px 0px 10px hsla(255, 90%, 20%, 50%));
+
 }
 
 .input-editor {

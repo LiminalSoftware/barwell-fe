@@ -47,6 +47,10 @@ var createTabularStore = function (view) {
             return _.map(_records, _.clone);
         },
 
+        getObject: function (at) {
+            return _.map(_records[at - _startIndex], _.clone);
+        },
+
         getRecordCount: function () {
             return _recordCount || 0;
         },

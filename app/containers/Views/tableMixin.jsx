@@ -69,7 +69,19 @@ var TableMixin = {
 		} else {
 			outline = sel
 		}
-
+		if (e.keyCode == keycodes.ESC) {
+			this.setState({copyarea: null})
+		}
+		if (e.keyCode == keycodes.C && e.ctrlKey) {
+			this.copySelection()
+			e.preventDefault()
+			return;
+		}
+		if (e.keyCode == keycodes.PLUS && e.ctrlKey && e.shiftKey) {
+			this.insertRecord()
+			e.preventDefault()
+			return;
+		}
 		if (e.keyCode == keycodes.TAB) {
 			if (left < outline.right) left++;
 			else {

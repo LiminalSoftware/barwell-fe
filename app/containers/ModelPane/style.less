@@ -195,7 +195,7 @@ ul.detail-panels {
 	&.dirty {
 		margin-bottom: 50px;
 	}
-	.transition(all 200ms ease-in);
+	.transition(all .25s cubic-bezier(.16,.85,.5,1) .25s);
 
 	select {
 	  font-family: @bodyFont;
@@ -332,7 +332,7 @@ ul.detail-panels {
 			}
 		}
 		td {
-			border-bottom: 1px dashed @heavyCream;
+			border-bottom: 1px dotted @gray-2;
 			input {
 				border: none;
 				border-bottom: 1px solid @darkText;
@@ -359,13 +359,13 @@ ul.detail-panels {
 		}
 		th {
 			text-align: left;
-			border-bottom: 1px solid @heavyCream;
+			border-bottom: 1px solid @gray-2;
 			border-top: 1px solid @gray-2;
 			font-weight: 400;
 		}
 
 		tbody:not(.singleton) tr:last-child > td {
-			border-bottom: 1px solid @heavyCream;
+			border-bottom: 1px solid @gray-2;
 		}
 
 		.top-line td {

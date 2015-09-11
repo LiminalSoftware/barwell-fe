@@ -52,7 +52,7 @@ var CubeViewConfig = React.createClass({
 		return AttributeStore.query({model_id: model.model_id}).map(function (attr) {
 			if (_.contains(existingGroups, attr.attribute_id) && attr.attribute_id !== group)
 				return null
-			return <option value = {attr.attribute_id} key={'choice-' + attr.attribute_id}> 
+			return <option value = {attr.attribute_id} key={'choice-' + attr.attribute_id}>
 				{attr.attribute}
 			</option>
 		}).filter(_.identity);
@@ -67,17 +67,15 @@ var CubeViewConfig = React.createClass({
 	handleSelectValue: function (event) {
 		var view = this.props.view
 		view.value = event.target.value
-		modelActionCreators(view, true, false)
+		modelActionCreators.createView(view, true, false)
 	},
 
 	render: function() {
 		var model = this.props.model
 		var view = this.props.view
-
+		var uniqSet = false
+		
 		return <div className = "grouping">
-
-			
-
 			<div className = "detail-block">
 			<h3>Grouping</h3>
 			<table className="detail-table">
@@ -121,7 +119,7 @@ var CubeViewConfig = React.createClass({
 						<th className="width-10"></th>
 						<th className="width-65">Value</th>
 						<th className="width-25">Aggregator</th>
-						
+
 					</tr>
 				</thead>
 				<tbody>
@@ -157,7 +155,7 @@ var GroupingSelector = React.createClass({
 		return <tbody>
 			{(view[dimension] || []).concat([null]).map(function (group, ord) {
 				var key = 'attr-' + (group || 'new');
-				return <GroupingDetail 
+				return <GroupingDetail
 					{... _this.props}
 					group = {group}
 					order = {ord}
@@ -174,12 +172,12 @@ var GroupingDetail = React.createClass({
 	getInitialState: function () {
 		return {editing: false}
 	},
-	
+
 	handleDelete: function () {
 		var view = this.props.view
 		var dimension = this.props.dimension
 		var group = this.props.group || {}
-		
+
 		var groupings = (view[dimension] || [])
 		groupings = groupings.filter(function (existing) {
 			return existing !== group
@@ -208,7 +206,7 @@ var GroupingDetail = React.createClass({
 
 	},
 
-	handleFlipSort: function (event) {	
+	handleFlipSort: function (event) {
 		var view = this.props.view
 		var group = this.props.group || null
 		var sorting = view.data.sorting [group]
@@ -217,7 +215,7 @@ var GroupingDetail = React.createClass({
 
 		modelActionCreators.createView(view, true, false)
 	},
-	
+
 	render: function () {
 		var view = this.props.view
 		var model = this.props.model
@@ -225,18 +223,18 @@ var GroupingDetail = React.createClass({
 		var order = this.props.order
 		var attr = AttributeStore.get(group) || {}
 		var sorting = !!view.data.sorting [group]
-		var dimension = this.props.dimension 
+		var dimension = this.props.dimension
 
 		return <tr>
 			<td className="width-10">
 				<span className={"grayed icon " + (dimension === 'column_aggregates' ? "icon-Layer_1" : "icon-Layer_8")}></span>
 			</td>
 			<td className="width-60">
-				{group ? 
+				{group ?
 				attr.attribute
 				:
 				<select value = {attr.attribute_id || 0} onChange={this.handleAddGrouping}>
-					<option value={0} disabled> 
+					<option value={0} disabled>
 						-----
 					</option>
 					{this.props.getOptions()}
@@ -244,14 +242,14 @@ var GroupingDetail = React.createClass({
 				}
 			</td>
 			<td className="centered width-20">
-				{group ? <span 
+				{group ? <span
 					onClick = {this.handleFlipSort}
 					className={"small clickable grayed icon icon-arrow-" + (sorting ? 'down' : 'up')}>
 				</span> : null}
 			</td>
 			<td className="centered width-10">
-				{!!attr.attribute_id ? 
-				<span 
+				{!!attr.attribute_id ?
+				<span
 					onClick = {this.handleDelete}
 					className = "small showonhover grayed clickable icon icon-kub-remove">
 				</span>

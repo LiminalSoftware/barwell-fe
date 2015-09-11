@@ -1,7 +1,7 @@
 
 
 module.exports = {
-  
+
   fieldTypes: {
     'INTEGER': 'Integer',
     'BOOLEAN': 'Yes/No',
@@ -24,8 +24,13 @@ module.exports = {
     'MINIMUM': 'Minimum',
     'AVERAGE': 'Average'
   },
-  
+
   keycodes: {
+    C: 67,
+    V: 86,
+    X: 88,
+    Z: 90,
+    Y: 91,
   	ENTER: 13,
   	ESC: 27,
   	ARROW_UP: 38,
@@ -40,7 +45,7 @@ module.exports = {
   },
 
   calcFunctions: {
-    sum: ['@INTEGER|DECIMAL'], 
+    sum: ['@INTEGER|DECIMAL'],
     count: ['@*'],
     average: ['@INTEGER|DECIMAL'],
     heat: ['@DECIMAL'],

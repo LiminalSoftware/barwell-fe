@@ -85,8 +85,6 @@ var CubePane = React.createClass ({
 		var geometry = view.data.geometry
 		var calibration = this.refs.rowhead.getCalibration() || geometry.rowHeight
 
-		// console.log('calibration: ' + calibration)
-
 		this.setState({
 			rowHeight: calibration,
 			actRowHt: calibration
@@ -184,7 +182,7 @@ var CubePane = React.createClass ({
 	isFocused: function () {
 		return (FocusStore.getFocus() === 'view')
 	},
-	
+
 	handleBlur: function () {
 		this.setState({editing: false})
 	},
