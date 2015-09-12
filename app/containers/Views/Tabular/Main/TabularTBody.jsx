@@ -19,6 +19,8 @@ import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 
 import createTabularStore from './TabularStore.jsx'
 
+var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+
 global.$$ = $
 
 var limit = function (min, max, value) {
@@ -28,6 +30,7 @@ var limit = function (min, max, value) {
 }
 
 var TabularTBody = React.createClass ({
+	mixins: [PureRenderMixin],
 
 	getInitialState: function () {
 		var view = this.props.view
@@ -41,11 +44,6 @@ var TabularTBody = React.createClass ({
 				windowSize: 40
 			}
 		}
-	},
-
-	shouldComponentUpdate: function (updt) {
-		var old = this.props
-		return !_.isEqual(updt.columns, old.columns)
 	},
 
 	_onChange: function () {

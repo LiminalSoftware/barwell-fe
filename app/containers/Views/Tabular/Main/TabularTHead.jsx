@@ -5,16 +5,19 @@ import _ from 'underscore'
 import fieldTypes from "../../fields"
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import FocusStore from "../../../../stores/FocusStore"
+var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
 var TabularTHead = React.createClass ({
+	mixins: [PureRenderMixin],
+
 	render: function () {
 		var _this = this
 		var style = {top: (this.props.scrollTop || 0) + 'px'}
 		var view = this.props.view
-		
-		return <thead 
+
+		return <thead
 			className = "tabular-view-header"
-			id="tabular-view-header" 
+			id="tabular-view-header"
 			ref="thead" style={style}
 			key={"tabular-thead-" + view.view_id}><tr>
 		{
@@ -29,18 +32,15 @@ var TabularTHead = React.createClass ({
 export default TabularTHead
 
 var TabularTH = React.createClass ({
-	// shouldComponentUpdate: function (nextProps, nextState) {
-	// 	var old = this.props.column
-	// 	var nxt = nextProps.column 
-	// 	return !(old.width == nxt.width && old.sorting == nxt.sorting)
-	// },
+	mixins: [PureRenderMixin],
+
 	render: function () {
 		var _this = this
 		var view = this.props.view
 		var geo = view.data.geometry
 		var col = this.props.column
 		var cellStyle = {
-			minWidth: col.width, 
+			minWidth: col.width,
 			maxWidth: col.width,
 			lineHeight: geo.headerHeight + 'px'
 		}
@@ -51,13 +51,13 @@ var TabularTH = React.createClass ({
 		// if (!!col.sorting) classes.push(col.sorting.descending ? 'asc' : 'desc')
 		if (FocusStore.getFocus() === 'view') classes.push('focused')
 
-		return <th 
+		return <th
 				onClick={this.onClick}
-				style={cellStyle} 
+				style={cellStyle}
 				className={classes.join(' ')}>
 			{col.name}
 			{sortArrow}
-			<span 
+			<span
 				ref = "resizer"
 				className = {"table-resizer " + (this.state.dragging ? "dragging" : "")}
 				onMouseDown = {this.onResizerMouseDown}
@@ -93,7 +93,7 @@ var TabularTH = React.createClass ({
 	},
 
 	onMouseUp: function (e) {
-   	var view = this.props.view   
+   	var view = this.props.view
 		var viewData = view.data
 		var col = this.props.column
 
@@ -134,12 +134,12 @@ var TabularTH = React.createClass ({
 		var col = this.props.column
 
 		if(event.target == resizer) return
-		
+
 		var sortObj = {
-			'attribute_id': col.attribute_id, 
+			'attribute_id': col.attribute_id,
 			'descending': !!(col.sorting && !col.sorting.descending)
 		}
-		
+
 		if (!event.shiftKey || !view.data.sorting) view.data.sorting = []
 		view.data.sorting.push(sortObj)
 

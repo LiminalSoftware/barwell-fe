@@ -41,7 +41,8 @@ module.exports = {
   	SHIFT: 16,
     SPACE: 32,
     TAB: 9,
-    PLUS: 187
+    PLUS: 187,
+    MINUS: 189
   },
 
   calcFunctions: {

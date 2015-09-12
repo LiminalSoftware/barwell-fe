@@ -240,7 +240,7 @@ var AttributeDetail = React.createClass({
 				</span>)
 		}
 
-		return <tbody>
+		return <tbody className={this.state.open ? '' : 'singleton'}>
 			<tr
 				key={key}
 				className={(col._dirty?'unsaved':'') + (col._destroy?'destroyed':'')}>

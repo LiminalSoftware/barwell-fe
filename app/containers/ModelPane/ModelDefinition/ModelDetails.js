@@ -26,24 +26,24 @@ var ModelDetails = React.createClass({
 	componentWillUnmount: function () {
 		document.removeEventListener('keyup', this.handleKeyPress)
 	},
-	
+
 	commitChanges: function () {
 		var model = this.props.model
 		var name = this.state.name
 		var plural = this.state.plural
 
 		if (this.state.editingName) plural = pluralize.plural(name)
-		
+
 		this.setState({
 			plural: plural
 		});
-		
+
 		model.model = name
 		model.plural = plural
 		modelActionCreators.create('model', false, model)
 		this.revert()
 	},
-	
+
 	cancelChanges: function () {
 		this.revert()
 	},
@@ -52,21 +52,21 @@ var ModelDetails = React.createClass({
 		var model = this.props.model
 		var value = event.target.value
 		var key
-		var numComps = _.countBy(KeycompStore.query(), 'key_id')
+		var numComps = _.countBy(KeycompStore.query({model_id: model.model_id}), 'key_id')
 		var candidateKc = KeycompStore.query({attribute_id: value}).forEach(function (kc) {
 			if (numComps[kc.key_id] === 1) key = KeyStore.get(kc.key_id)
 		});
 		if (!key) {
 			modelActionCreators.create('key', false, {
-				_named: false, 
-				_label: true, 
+				_named: false,
+				_label: true,
 				model_id: model.model_id
 			}).then(function (key) {
 				modelActionCreators.create('keycomp', false, {key_id: key.cid, attribute_id: value})
 			})
 		}
 	},
-	
+
 	handleEditName: function () {
 		var model = this.props.model;
 		if (this.state.editingName) return
@@ -92,7 +92,7 @@ var ModelDetails = React.createClass({
 		})
 		document.addEventListener('keyup', this.handleKeyPress)
 	},
-	
+
 	revert: function () {
 		var model = this.props.model;
 		document.removeEventListener('keyup', this.handleKeyPress)
@@ -123,38 +123,38 @@ var ModelDetails = React.createClass({
 			<h3>Details</h3>
 			<table className="detail-table">
 				<tbody>
-					<tr 
+					<tr
 					className={'top-line ' + (model._dirty?'unsaved':'')}>
-					
+
 						<td className="width-30">
 							Name:
 						</td>
 						<td className="width-60"
 							onDoubleClick={this.handleEditName}>
-								{this.state.editingName ? 
-								<input 
-									value={this.state.name} 
-									onChange={this.handleNameUpdate} 
+								{this.state.editingName ?
+								<input
+									value={this.state.name}
+									onChange={this.handleNameUpdate}
 									ref="renamer"/>
-								: 
+								:
 								<span>
 									{this.state.name}
 								</span>
 								}
 						</td>
 						<td className="width-10">
-							
-								<span className="showonhover clickable grayed icon icon-tl-pencil" 
+
+								<span className="showonhover clickable grayed icon icon-tl-pencil"
 									title="Edit name" onClick={this.handleEditName}></span>
 						</td>
 					</tr>
 					<tr className={ (model._dirty?'unsaved':'')}>
 						<td className="width-30">Plural:</td>
 						<td className="width-60" onDoubleClick={this.handleEditPlural}>
-							{this.state.editingPlural ? 
-								<input 
-									value={this.state.plural} 
-									onChange={this.handlePluralUpdate} 
+							{this.state.editingPlural ?
+								<input
+									value={this.state.plural}
+									onChange={this.handlePluralUpdate}
 									ref="replural"/>
 								: <span>
 									{this.state.plural}
@@ -162,7 +162,7 @@ var ModelDetails = React.createClass({
 							}
 						</td>
 						<td>
-							<span className="showonhover clickable grayed icon icon-tl-pencil" 
+							<span className="showonhover clickable grayed icon icon-tl-pencil"
 									title="Edit plural" onClick={this.handleEditPlural}></span>
 						</td>
 					</tr>
@@ -170,11 +170,12 @@ var ModelDetails = React.createClass({
 						<td className="width-30">Label:</td>
 						<td className="width-60">
 							<select value = {model.label_attribute_id} onChange = {this.handlePickLabel}> {
+								[<option value={null}>---</option>].concat(
 								AttributeStore.query({model_id: model.model_id, type: 'TEXT'}).map(function (attr) {
 									return <option value={attr.attribute_id} key={attr.attribute_id}>
 				  						{attr.attribute}
 				  					</option>
-								})
+								}))
 							} </select>
 						</td>
 						<td>
@@ -190,7 +191,7 @@ var ModelDetails = React.createClass({
 var ModelDeleter = React.createClass({
 	getInitialState: function () {
 		return {
-			armed: false, 
+			armed: false,
 			input: ''
 		}
 	},
@@ -203,7 +204,7 @@ var ModelDeleter = React.createClass({
 		document.removeEventListener('keyup', this.handleKeyPress)
 	},
 	handleKeyPress: function (event) {
-		if (event.keyCode === constants.keycodes.ESC) 
+		if (event.keyCode === constants.keycodes.ESC)
 			this.disarm()
 	},
 	handleTyping: function (event) {
@@ -228,10 +229,10 @@ var ModelDeleter = React.createClass({
 				Type "destroy":
 			</td>
 			<td colSpan="2">
-				<input className="destroyer" 
+				<input className="destroyer"
 					onBlur = {this.disarm}
 					value = {this.state.input}
-					autoFocus onChange={this.handleTyping} 
+					autoFocus onChange={this.handleTyping}
 					ref="deleteInput"/>
 			</td>
 		</tr>
@@ -240,4 +241,3 @@ var ModelDeleter = React.createClass({
 })
 
 export default ModelDetails;
-

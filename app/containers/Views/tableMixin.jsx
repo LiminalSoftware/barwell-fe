@@ -82,6 +82,11 @@ var TableMixin = {
 			e.preventDefault()
 			return;
 		}
+		if (e.keyCode == keycodes.MINUS && e.ctrlKey && e.shiftKey) {
+			this.deleteRecords()
+			e.preventDefault()
+			return;
+		}
 		if (e.keyCode == keycodes.TAB) {
 			if (left < outline.right) left++;
 			else {
