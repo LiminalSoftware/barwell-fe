@@ -160,35 +160,26 @@ var CubePane = React.createClass ({
 		this.updateSelect(r, c, event.shiftKey)
 	},
 
-	editCell: function (event, initialValue) {
+	getFieldAt: function (row, col) {
+		var tbody = this.refs.tbody
 		var row = this.state.pointer.top
 		var col = this.state.pointer.left
-		var obj = this.getValueAt(row);
-		var model = this.props.model
-		var pk = model._pk
-		var objId = (obj.cid || obj[pk]);
-		var rowKey = 'tr-' + objId
-		var cellKey = rowKey + '-' + colId
+		var rowKey = 'cell-' + row
+		var cellKey = rowKey + '-' + col
+		return this.refs.tbody.refs[rowKey].refs[cellKey]
+	},
 
+	editCell: function (event, row, col) {
+		var tbody = this.refs.tbody
 		this.setState({
 			editing: true,
-			editObjId: objId,
-			editColId: colId
+			copyarea: null
 		})
-		var field = this.refs[rowKey].refs[cellKey]
-		field.handleEdit(event, initialValue);
-	},
-
-	isFocused: function () {
-		return (FocusStore.getFocus() === 'view')
-	},
-
-	handleBlur: function () {
-		this.setState({editing: false})
-	},
-
-	handleContextBlur: function () {
-		this.setState({contextOpen: false})
+		tbody.setState({
+			editing: true
+		})
+		// var field = this.refs.tbody.refs[rowKey].refs[cellKey]
+		this.getFieldAt(row, col).handleEdit(event);
 	},
 
 	getVStart: function () {
@@ -247,6 +238,8 @@ var CubePane = React.createClass ({
 						model = {model}
 						scrollLeft = {scrollLeft}
 						scrollTop = {scrollTop}
+						handleBlur = {_this.handleBlur}
+						openContextMenu = {_this.openContextMenu}
 						actRowHt = {height}
 						vStart = {vStart}
 						hStart = {hStart}

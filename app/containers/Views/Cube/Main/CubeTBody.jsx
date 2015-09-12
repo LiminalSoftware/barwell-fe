@@ -1,13 +1,14 @@
 import React from "react"
-import fieldTypes from "../../fields"
 import _ from "underscore"
 import $ from 'jquery'
 
+import fieldTypes from "../../fields"
 import modelActionCreators from "../../../../actions/modelActionCreators"
 
 import ModelStore from "../../../../stores/ModelStore"
 import ViewStore from "../../../../stores/ViewStore"
 import FocusStore from "../../../../stores/FocusStore"
+import AttributeStore from "../../../../stores/AttributeStore"
 
 import ViewDataStores from "../../../../stores/ViewDataStores"
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
@@ -87,7 +88,8 @@ var CubeTBody = React.createClass ({
 						hStart = {hStart}
 						rowLevel = {rowLevel}
 						key = {rowKey}
-						rowKey = {rowKey} />
+						rowKey = {rowKey}
+						ref = {rowKey} />
 				})
 			}
 		</tbody>;
@@ -157,7 +159,8 @@ var CubeTR = React.createClass({
 		var width = geo.columnWidth + 'px'
 		var rowHeight = geo.rowHeight + 'px'
 		var rowLevel = this.props.rowLevel
-		// this.props.actRowHt + 'px'
+		var attribute = AttributeStore.get(view.value)
+		var element = (fieldTypes[attribute.type] || fieldTypes.TEXT).element
 
 		var hLength = geo.renderBufferCols
 		var hStart = this.props.hStart
@@ -169,23 +172,28 @@ var CubeTR = React.createClass({
 		}
 
 		return <tr> {store.getLevels('columns', hStart, hLength + hStart).map(function (colLevel, j) {
-			var key = _this.props.rowKey + '-' + (hStart + j)
-
+			var cellKey = _this.props.rowKey + '-' + (hStart + j)
 			var obj = store.getValues(rowLevel, colLevel)
 			var present = !!obj
 			var count = present ? obj._count : 0
 			var value = present ? obj[view.aggregator] : null
+			var selector = _.omit(_.extend({}, rowLevel, colLevel),'spans')
 
-			return <td
-				key = {key}
-				className = {
-					(present ? "present" : "empty") +
-					(count > 1 ? " uneditable" : "")
-				}
-				id = {key}
-				style = {tdStyle}>
-			 	{ value }
-			</td>
+			return React.createElement(element, {
+				config: {},
+				model: _this.props.model,
+				view: _this.props.view,
+				selector: selector,
+				value: value,
+				column_id: ('a' + attribute.attribute_id),
+				handleBlur: _this.props.handleBlur,
+				key: cellKey,
+				cellKey: cellKey,
+				ref: cellKey,
+				className: (present ? "present" : "empty") +
+					(count > 1 ? " uneditable" : ""),
+				style: tdStyle
+			})
 		})} </tr>
 	}
 })

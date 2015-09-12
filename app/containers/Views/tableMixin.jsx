@@ -41,6 +41,23 @@ var TableMixin = {
 		$(document.body).off('keydown', this.onKey)
 	},
 
+
+	isFocused: function () {
+		return (FocusStore.getFocus() === 'view')
+	},
+
+	isCopied: function () {
+		return !!(this.state.copyarea)
+	},
+
+	handleBlur: function () {
+		this.setState({editing: false})
+	},
+
+	handleContextBlur: function () {
+		this.setState({contextOpen: false})
+	},
+
 	// ========================================================================
 	// selection control
 	// ========================================================================

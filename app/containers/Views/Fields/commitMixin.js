@@ -11,20 +11,14 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 var commitMixin = {
 
 	commitChanges: function () {
-
 		var config = this.props.config
-		var view = this.props.view
-		var pk = this.props.pk
+		var column_id = this.props.column_id
 		var model = this.props.model
-		var obj = this.props.object
+		var selector = this.props.selector
 		var patch = {}
-		var selector = {}
 
-		patch[config.column_id] = this.validator(this.state.value)
-		selector[model._pk] = obj[model._pk]
-
-		if (obj[model._pk]) modelActionCreators.patchRecords(model, patch, selector)
-		else modelActionCreators.insertRecord(model, _.extend(obj, patch))
+		patch[column_id] = this.validator(this.state.value)
+		modelActionCreators.patchRecords(model, patch, selector)
 		if (this.revert) this.revert();
 	},
 

@@ -17,7 +17,7 @@ var integerField = {
 		mixins: [editableInputMixin, commitMixin],
 
 		validator: function (input) {
-			if (_.isNumber(input) ) 
+			if (_.isNumber(input) )
 				return Math.floor(input)
 			if (!(/^\d+$/).test(input))
 				return null
@@ -25,6 +25,7 @@ var integerField = {
 		},
 
 		parser: function (input) {
+			input = '' + input
 			return input.match(/^(\d*)/)[0]
 		}
 	})

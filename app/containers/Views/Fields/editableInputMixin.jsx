@@ -13,7 +13,8 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 var editableInputMixin = {
 
 	setValue: function (value) {
-		var value = (this.parser) ? this.parser(value) : value;
+		value = value || ''
+		value = (this.parser) ? this.parser(value) : value;
 		this.setState({value: value})
 	},
 
@@ -26,17 +27,17 @@ var editableInputMixin = {
 	componentWillUnmount: function () {
 		$(document.body).off('keydown', this.onKey)
 	},
-	
+
 	handleKeyPress: function (event) {
 		if (event.keyCode === constant.keycodes.ESC) this.cancelChanges()
 		if (event.keyCode === constant.keycodes.ENTER) this.commitChanges()
 		if (event.keyCode === constant.keycodes.TAB) this.commitChanges()
 	},
-	
+
 	cancelChanges: function () {
 		this.revert()
 	},
-	
+
 	revert: function () {
 		document.removeEventListener('keyup', this.handleKeyPress)
 		this.setState({
@@ -47,14 +48,12 @@ var editableInputMixin = {
 	},
 
 	handleEdit: function (event) {
-		var pk = this.props.pk;
-		var column_id = this.props.config.column_id;
 		var prettyValue = this.format ? this.format(this.props.value) : this.props.value
-		
+		var ordinal = event.keyCode
 		document.addEventListener('keyup', this.handleKeyPress)
 		this.setState({editing: true})
-		
-		if (event.keyCode >= 48 && event.keyCode <= 90)
+
+		if (ordinal >= 48 && ordinal <= 90)
 			this.setValue('')
 		else this.setValue(prettyValue)
 	},
@@ -66,18 +65,19 @@ var editableInputMixin = {
 	render: function () {
 		var prettyValue = this.format ? this.format(this.props.value) : this.props.value
 		var style = this.props.style
+		var className = this.props.className
 
-		return <td style={style} >
+		return <td style={style} className={className}>
 			{this.state.editing ?
-			<input 
-				className = "input-editor" 
+			<input
+				className = "input-editor"
 				value = {this.state.value}
 				autoFocus
 				onBlur = {this.revert}
 				onChange = {this.handleChange} />
 			:
-			(this.format ? 
-				this.format(this.props.value) : 
+			(this.format ?
+				this.format(this.props.value) :
 				this.props.value
 			)}
 		</td>

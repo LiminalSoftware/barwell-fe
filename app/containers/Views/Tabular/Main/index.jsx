@@ -306,21 +306,6 @@ var TabularPane = React.createClass ({
 		window.setTimeout(this.calibrateRowHeight, 500)
 	},
 
-	isFocused: function () {
-		return (FocusStore.getFocus() === 'view')
-	},
-
-	isCopied: function () {
-		return !!(this.state.copyarea)
-	},
-
-	handleBlur: function () {
-		this.setState({editing: false})
-	},
-
-	handleContextBlur: function () {
-		this.setState({contextOpen: false})
-	},
 
 	render: function () {
 		var _this = this

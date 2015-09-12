@@ -22,6 +22,9 @@ var stripInternalVars = module.exports.stripInternalVars = function (obj) {
 }
 
 var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
+  console.log(method + '->' + url)
+  console.log(JSON.parse(json))
+
   retry = retry || 1;
   return new Promise(function (resolve, reject) {
     var params = {
@@ -80,9 +83,6 @@ var persist = module.exports.persist = function (subject, action, data, update, 
   else return;
 
   if (method === 'PATCH' || method === 'DELETE') url = url + '?' + identifier + '=eq.' + data[identifier];
-
-  console.log(method + '->' + url)
-  console.log(data)
 
   return ajax(method, url, json).then(function (results) {
     if (update === false || method=='DELETE') return;  // temporary hack until I refactor model push

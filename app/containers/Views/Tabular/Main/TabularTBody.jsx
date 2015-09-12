@@ -182,6 +182,7 @@ var TabularTR = React.createClass({
 
 	render: function () {
 		var _this = this
+		var model = _this.props.model
 		var rowKey = this.props.rowKey
 		var obj = this.props.obj
 		var geometry = this.props.geometry
@@ -192,19 +193,21 @@ var TabularTR = React.createClass({
 			minHeight: geometry.rowHeight + 'px'
 			// lineHeight: '0px'
 		}
+		var selector = {}
+		selector[model._pk] = obj[model._pk]
 
 		return <tr id={rowKey} style={style} className = {obj._dirty ? "dirty" : ""}>
 			{_this.props.columns.map(function (col) {
 				var element = (fieldTypes[col.type] || fieldTypes.TEXT).element
 				var cellKey = rowKey + '-' + col.column_id
-
+				
 				return React.createElement(element, {
 					config: col,
 					model: _this.props.model,
 					view: _this.props.view,
-					object: obj,
-					pk: _this.props.model.pk,
+					selector: selector,
 					value: obj[col.column_id],
+					column_id: col.column_id,
 					handleBlur: _this.props.handleBlur,
 					key: cellKey,
 					cellKey: cellKey,
