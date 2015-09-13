@@ -40,6 +40,9 @@ var createCubeStore = function (view, dimensions) {
     var model = ModelStore.get (view.model_id)
     var label = 'v' + view.view_id
     var upperLabel = label.toUpperCase ()
+    var modelLabel = 'm' + model.model_id
+    var modelUpperLabel = modelLabel.toUpperCase()
+
     var _dimensions = {
         rows: view.row_aggregates,
         columns: view.column_aggregates
@@ -140,6 +143,30 @@ var createCubeStore = function (view, dimensions) {
 
                 _isCurrent.rows = false
                 _isCurrent.columns = false
+            }
+
+            if (type === (modelUpperLabel + '_UPDATE') || type === (modelUpperLabel + '_RECEIVEUPDATE')) {
+              var dimensions = _dimensions.rows.concat(_dimensions.columns).filter(_.identity)
+              var _this = this
+              var update = payload.update
+              var selector = payload.selector
+              var dirty = {
+                  _dirty: (type === (upperLabel + '_UPDATE'))
+              }
+              var values = _.values(_values)
+
+              _.filter(values, _.matcher(selector) ).map(function (rec) {
+                  _.extend(rec, update, dirty)
+              });
+              
+              _values = _.indexBy(values, function (val) {
+                  var key = dimensions.map(function (dim) {
+                      return val['a' + dim]
+                  }).join(DELIMITER)
+                  return key
+              })
+
+              CubeStore.emitChange()
             }
 
             if (type === upperLabel + '_CREATE') {
