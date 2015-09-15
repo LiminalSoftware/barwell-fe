@@ -30,10 +30,7 @@ var limit = function (min, max, value) {
 }
 
 var TabularTBody = React.createClass ({
-	// mixins: [PureRenderMixin],
-	shouldComponentUpdate: function () {
-		return false
-	},
+	mixins: [PureRenderMixin],
 
 	getInitialState: function () {
 		var view = this.props.view
@@ -111,14 +108,14 @@ var TabularTBody = React.createClass ({
 
 	getRowHeight: function () {
 		if (!this.isMounted()) return
-		var tbody = React.findDOMNode(this.refs.tbody)
+		var tbody = React.findDOMNode(this.refs.tabularTbody)
 		var actRowHt = (tbody.scrollHeight / tbody.children.length)
 		return actRowHt
 	},
 
 	getOffset: function () {
 		if (!this.isMounted()) return
-		var tbody = React.findDOMNode(this.refs.tbody)
+		var tbody = React.findDOMNode(this.refs.tabularTbody)
 		var offset = tbody.offsetTop
 		return offset
 	},
@@ -151,7 +148,7 @@ var TabularTBody = React.createClass ({
 		}
 
 		return <tbody
-			ref = "tbody"
+			ref = "tabularTbody"
 			style = {style}
 			onClick = {_this.props.clicker}
 			onContextMenu={_this.props.openContextMenu}
@@ -203,13 +200,12 @@ var TabularTR = React.createClass({
 			{_this.props.columns.map(function (col) {
 				var element = (fieldTypes[col.type] || fieldTypes.TEXT).element
 				var cellKey = rowKey + '-' + col.column_id
-
+				
 				return React.createElement(element, {
 					config: col,
 					model: _this.props.model,
 					view: _this.props.view,
 					selector: selector,
-					object: obj,
 					value: obj[col.column_id],
 					column_id: col.column_id,
 					handleBlur: _this.props.handleBlur,

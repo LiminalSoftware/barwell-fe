@@ -33,7 +33,7 @@ var hasManyField = {
 
 			col.label = label
 			this.setState({'label': label})
-
+			
 			modelActionCreators.create('view', true, view)
 		},
 
