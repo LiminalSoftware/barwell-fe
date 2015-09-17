@@ -11,8 +11,12 @@ import getIconClasses from './getIconClasses'
 import _ from 'underscore'
 import pluralize from 'pluralize'
 
+var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+
 var ModelDetails = React.createClass({
 
+	mixins: [PureRenderMixin],
+	
 	getInitialState: function () {
 		var model = this.props.model;
 		return {
@@ -170,7 +174,7 @@ var ModelDetails = React.createClass({
 						<td className="width-30">Label:</td>
 						<td className="width-60">
 							<select value = {model.label_attribute_id} onChange = {this.handlePickLabel}> {
-								[<option value={null}>---</option>].concat(
+								[<option value={null} key="null-option">---</option>].concat(
 								AttributeStore.query({model_id: model.model_id, type: 'TEXT'}).map(function (attr) {
 									return <option value={attr.attribute_id} key={attr.attribute_id}>
 				  						{attr.attribute}

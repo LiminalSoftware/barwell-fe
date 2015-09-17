@@ -10,6 +10,8 @@ import constants from '../../../constants/MetasheetConstants'
 import getIconClasses from './getIconClasses'
 import _ from 'underscore'
 
+var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+
 var KeyDetailList = React.createClass({
 
 	handleAddNewKey: function (event) {
@@ -229,6 +231,8 @@ var KeyDetail = React.createClass({
 });
 
 var KeycompDetail = React.createClass({
+
+	mixins: [PureRenderMixin],
 
 	handleAttrChoice: function (event) {
 		var key = this.props._key;

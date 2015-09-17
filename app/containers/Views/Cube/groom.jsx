@@ -8,8 +8,8 @@ import viewTypes from '../viewTypes'
 var groomView = function (view) {
 	var model = ModelStore.get(view.model_id);
 	var columns = {}
-	var data = view.data || {};
-	if (!model) return view;
+	var data = view.data || {}
+	if (!model) return view
 
 	var groupCleanser = function (group) {
 		var field = AttributeStore.get(group)
@@ -49,8 +49,8 @@ var groomView = function (view) {
 	var newSort = {}
 	_.each(sorting, function (value, key) {
 		key = parseInt(key)
-		if(_.contains(view.row_aggregates, key) 
-		|| _.contains(view.column_aggregates, key)) 
+		if((_.contains(view.row_aggregates, key)
+		|| _.contains(view.column_aggregates, key)) && key)
 			newSort[key] = !!value
 	})
 	data.sorting = newSort

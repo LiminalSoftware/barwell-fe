@@ -113,10 +113,10 @@ var TabularPane = React.createClass ({
 			top: sel.top,
 			bottom: sel.bottom
 		}, {
-			left: -1,
-			top: -0.75,
-			height: -1,
-			width: -2.5
+			left: 0.25,
+			top: -0.6,
+			height: -0.5,
+			width: -0.25
 		})
 	},
 
@@ -130,10 +130,10 @@ var TabularPane = React.createClass ({
 			top: cpy.top,
 			bottom: cpy.bottom
 		}, {
-			left: -1,
+			left: 0,
 			top: -0.75,
-			height: 1,
-			width: 1.5
+			height: 1.0,
+			width: 2.0
 		})
 	},
 
@@ -145,10 +145,10 @@ var TabularPane = React.createClass ({
 			top: ptr.top,
 			bottom: ptr.top
 		}, {
-			left: -2,
-			top: -2,
+			left: -1,
+			top: -1.75,
 			height: -1,
-			width: -3
+			width: 0
 		})
 	},
 

@@ -10,6 +10,7 @@ import constants from '../../../constants/MetasheetConstants'
 import getIconClasses from './getIconClasses'
 import _ from 'underscore'
 
+var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
 var AttributeDetailList = React.createClass({
 
@@ -69,6 +70,8 @@ var AttributeDetailList = React.createClass({
 })
 
 var AttributeDetail = React.createClass({
+
+	mixins: [PureRenderMixin],
 
 	componentWillUnmount: function () {
 		document.removeEventListener('keyup', this.handleKeyPress)
@@ -136,7 +139,9 @@ var AttributeDetail = React.createClass({
 		var attribute = this.props.attribute
 		modelActionCreators.destroy('attribute', false, attribute)
 		KeycompStore.query({attribute_id: attribute.attribute_id}).forEach(function (keycomp) {
-			var key =KeyStore.get(keycomp.key_id)
+			var key = KeyStore.get(keycomp.key_id)
+			key._destroyerType = 'attribute'
+			key._destroyerId = attribute.attribute_id
 			modelActionCreators.destroy('key', false, key)
 		})
 		event.preventDefault()

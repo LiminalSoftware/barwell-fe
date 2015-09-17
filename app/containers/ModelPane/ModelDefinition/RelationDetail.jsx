@@ -11,8 +11,10 @@ import constants from '../../../constants/MetasheetConstants'
 import getIconClasses from './getIconClasses'
 import _ from 'underscore'
 
+var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+
 var RelationDetailList = React.createClass({
-	
+
 	handleNewRelation: function () {
 		var model = this.props.model;
 		var relation = {
@@ -26,8 +28,8 @@ var RelationDetailList = React.createClass({
 	render: function () {
 		var model = this.props.model
 		var relList = RelationStore.query({model_id: model.model_id}).map(function (relation) {
-			return <RelationDetail 
-				key = {relation.relation_id || relation.cid} 
+			return <RelationDetail
+				key = {relation.relation_id || relation.cid}
 				relation = {relation} />;
 		});
 		if (relList.length === 0) {
@@ -49,8 +51,8 @@ var RelationDetailList = React.createClass({
 					{relList}
 				</tbody>
 			</table>
-			<div><a 
-				className="new-adder new-attr" 
+			<div><a
+				className="new-adder new-attr"
 				onClick={this.handleNewRelation}>
 				<span className="small addNew icon icon-plus"></span>
 				New relation
@@ -66,6 +68,8 @@ var relationPrettyNames = {
 }
 
 var RelationDetail = React.createClass({
+
+	mixins: [PureRenderMixin],
 
 	getInitialState: function () {
 		var relation = this.props.relation;
@@ -87,11 +91,11 @@ var RelationDetail = React.createClass({
 		modelActionCreators.create('relation', false, relation)
 		this.revert()
 	},
-	
+
 	cancelChanges: function () {
 		this.revert()
 	},
-	
+
 	handleEdit: function () {
 		var relation = this.props.relation;
 		if (this.state.renaming) return
@@ -103,7 +107,7 @@ var RelationDetail = React.createClass({
 		})
 		document.addEventListener('keyup', this.handleKeyPress)
 	},
-	
+
 	revert: function () {
 		var relation = this.props.relation;
 		document.removeEventListener('keyup', this.handleKeyPress)
@@ -127,7 +131,7 @@ var RelationDetail = React.createClass({
 		var relation = this.props.relation
 		var relatedModel = ModelStore.get(model_id)
 		relation.related_model_id = model_id
-		if(!this.state.hasBeenRenamed) 
+		if(!this.state.hasBeenRenamed)
 			relation.relation = relation.type === 'Has one' ? relatedModel.model : relatedModel.plural
 		modelActionCreators.create('relation', false, relation)
 	},
@@ -136,7 +140,7 @@ var RelationDetail = React.createClass({
 		var relation = this.props.relation
 		var relatedModel = ModelStore.get(relation.related_model_id) || {}
 		relation.type = event.target.value
-		if(!this.state.hasBeenRenamed) 
+		if(!this.state.hasBeenRenamed)
 			relation.relation = relation.type === 'Has one' ? relatedModel.model : relatedModel.plural
 		modelActionCreators.create('relation', false, relation)
 	},
@@ -178,14 +182,14 @@ var RelationDetail = React.createClass({
 			typeField = <span>{relationPrettyNames[relation.type]}</span>
 		}
 
-		if (this.state.renaming) 
-			nameField = <input ref="renamer" 
-				value={this.state.name} 
-				onChange={this.handleNameUpdate} 
-				onBlur={this.commitChanges}/> 
+		if (this.state.renaming)
+			nameField = <input ref="renamer"
+				value={this.state.name}
+				onChange={this.handleNameUpdate}
+				onBlur={this.commitChanges}/>
 		else nameField = relation.relation;
 
-		return <tr 
+		return <tr
 			key={'relation-'+(relation.relation_id || relation.cid)}
 				className={(relation._dirty?'unsaved':'') + (relation._destroy?'destroyed':'')}>
 			<td  onDoubleClick={this.handleEdit}>
@@ -198,9 +202,9 @@ var RelationDetail = React.createClass({
 				{typeField}
 			</td>
 			<td className="centered">
-			{relation._dirty ? <span 
-				className="showonhover small clickable grayed icon icon-kub-remove" 
-				title="Delete component" 
+			{relation._dirty ? <span
+				className="showonhover small clickable grayed icon icon-kub-remove"
+				title="Delete component"
 				onClick={this.handleRelationCancel}>
 			</span> : null }</td>
 		</tr>;
