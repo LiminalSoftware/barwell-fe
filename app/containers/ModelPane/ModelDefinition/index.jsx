@@ -17,7 +17,7 @@ import ModelDetails from './ModelDetails'
 import getIconClasses from './getIconClasses'
 import _ from 'underscore'
 
-
+var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
 var ModelDefinition = React.createClass({
 

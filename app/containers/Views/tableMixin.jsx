@@ -62,6 +62,32 @@ var TableMixin = {
 	// selection control
 	// ========================================================================
 
+	onClick: function (event) {
+		// this.ieMozPreventSelction()
+		modelActionCreators.setFocus('view')
+		var rc = this.getRCCoords(event)
+		this.updateSelect(rc.row, rc.col, event.shiftKey)
+	},
+
+	onMouseDown: function (event) {
+		// this.ieMozPreventSelction()
+		modelActionCreators.setFocus('view')
+		var rc = this.getRCCoords(event)
+		this.updateSelect(rc.row, rc.col, event.shiftKey)
+		document.addEventListener('mousemove', this.onSelectMouseMove)
+		document.addEventListener('mouseup', this.onMouseUp)
+	},
+
+	onSelectMouseMove: function (event) {
+		var rc = this.getRCCoords(event)
+		this.updateSelect(rc.row, rc.col, true)
+	},
+
+	onMouseUp: function (event) {
+		document.removeEventListener('mousemove', this.onSelectMouseMove)
+		document.removeEventListener('mouseup', this.onMouseUp)
+	},
+
 	onKey: function (e) {
 		var sel = this.state.selection
 		var view = this.props.view

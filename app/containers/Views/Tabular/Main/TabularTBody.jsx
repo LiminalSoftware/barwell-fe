@@ -153,7 +153,7 @@ var TabularTBody = React.createClass ({
 		return <tbody
 			ref = "tbody"
 			style = {style}
-			onClick = {_this.props.clicker}
+			onMouseDown = {_this.props.clicker}
 			onContextMenu={_this.props.openContextMenu}
 			className = "tabular-tbody"
 			onDoubleClick = {_this.props.editCell}>

@@ -144,7 +144,7 @@ var CubePane = React.createClass ({
 		}
 	},
 
-	onClick: function (e) {
+	getRCCoords: function (event) {
 		var tableBody = React.findDOMNode(this.refs.tbody)
 		var view = this.props.view
 		var geo = view.data.geometry
@@ -156,8 +156,7 @@ var CubePane = React.createClass ({
 		var r = Math.floor(y / this.state.actRowHt, 1)
 		var c = Math.floor(x / columnWidth, 1)
 
-		modelActionCreators.setFocus('view')
-		this.updateSelect(r, c, event.shiftKey)
+		return {row: r, col: c, x: x, y: y}
 	},
 
 	getFieldAt: function (row, col) {
@@ -233,7 +232,7 @@ var CubePane = React.createClass ({
 					<CubeTBody
 						key = {"cube-body-" + view.view_id}
 						ref = 'tbody'
-						clicker = {_this.onClick}
+						clicker = {_this.onMouseDown}
 						view = {view}
 						model = {model}
 						scrollLeft = {scrollLeft}

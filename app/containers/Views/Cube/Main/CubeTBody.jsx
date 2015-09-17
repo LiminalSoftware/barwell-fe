@@ -77,7 +77,7 @@ var CubeTBody = React.createClass ({
 
 		return <tbody ref = "tbody"
 			className = "cube-main-tbody"
-			onClick = {_this.props.clicker}
+			onMouseDown = {_this.props.clicker}
 			style = {style}
 			onDoubleClick = {_this.editCell}>
 			{

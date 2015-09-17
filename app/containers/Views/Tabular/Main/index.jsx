@@ -177,12 +177,6 @@ var TabularPane = React.createClass ({
 		document.onmousedown = util.returnFalse
 	},
 
-	onClick: function (event) {
-		// this.ieMozPreventSelction()
-		var rc = this.getRCCoords(event)
-		this.updateSelect(rc.row, rc.col, event.shiftKey)
-	},
-
 	getRCCoords: function (event) {
 		var tbody = React.findDOMNode(this.refs.tbody)
 		var view = this.props.view
@@ -332,7 +326,9 @@ var TabularPane = React.createClass ({
 						model = {model}
 						view = {view}
 						store = {_this.store}
-						clicker = {_this.onClick}
+						clicker = {_this.onMouseDown}
+						onMouseMove = {_this.onSelectMouseMove}
+						onMouseUp = {_this.onMouseUp}
 						openContextMenu = {_this.openContextMenu}
 						columns = {columns}
 						sorting = {view.data.sorting}
