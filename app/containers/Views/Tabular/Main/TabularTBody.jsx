@@ -30,7 +30,6 @@ var limit = function (min, max, value) {
 }
 
 var TabularTBody = React.createClass ({
-	// mixins: [PureRenderMixin],
 	shouldComponentUpdate: function () {
 		return false
 	},
@@ -65,6 +64,7 @@ var TabularTBody = React.createClass ({
 	componentWillReceiveProps: function (newProps) {
 		var oldProps = this.props;
 		if (!_.isEqual(oldProps.sorting, newProps.sorting)) {
+			console.log('ZZZ')
 			this.fetch(true)
 		}
 	},
@@ -150,6 +150,8 @@ var TabularTBody = React.createClass ({
 			top: geometry.headerHeight + 'px'
 		}
 
+		console.log('render TabularTBody')
+
 		return <tbody
 			ref = "tbody"
 			style = {style}
@@ -173,15 +175,20 @@ var TabularTBody = React.createClass ({
 	}
 })
 
+var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+
 var TabularTR = React.createClass({
-	shouldComponentUpdate: function (updt) {
-		var old = this.props
-		return !(
-			_.isEqual(updt.obj, old.obj) &&
-			updt.view == old.view &&
-			updt.editing == old.editing
-		)
-	},
+
+	mixins: [PureRenderMixin],
+
+	// shouldComponentUpdate: function (updt) {
+	// 	var old = this.props
+	// 	return !(
+	// 		_.isEqual(updt.obj, old.obj) &&
+	// 		updt.view == old.view &&
+	// 		updt.editing == old.editing
+	// 	)
+	// },
 
 	render: function () {
 		var _this = this

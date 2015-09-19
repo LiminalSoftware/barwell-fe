@@ -93,11 +93,11 @@ var CubePane = React.createClass ({
 	},
 
 	getNumberCols: function () {
-		return this.store.getCount('columns')
+		return this.store.getCount('columns') - 1
 	},
 
 	getNumberRows: function () {
-		return this.store.getCount('rows')
+		return this.store.getCount('rows') - 1
 	},
 
 	getColumns: function () {
@@ -106,6 +106,33 @@ var CubePane = React.createClass ({
 		return this.store.getLevels('columns').map(function () {
 			return {width: view.data.columnWidth}
 		})
+	},
+
+	selectRow: function () {
+		var numCols = this.getNumberCols()
+		var view = this.props.view
+		var numGroupCols = view.row_aggregates.length
+		var sel = this.state.selection
+		var ptr = this.state.pointer
+		var top = null
+		var attribute
+		var row
+
+		sel.left = ((Math.min(sel.left, 0)) % numGroupCols) - 1
+		attribute = 'a' + view.row_aggregates[view.row_aggregates.length + sel.left]
+
+		for(; ptr.top > 0; ptr.top--) {
+			row = this.store.getLevel('rows', ptr.top)
+			if (row.spans[attribute] > 0) break;
+		}
+		ptr.bottom = ptr.top + row.spans[attribute] - 1
+
+		sel.top = ptr.top
+		sel.bottom = ptr.bottom
+
+		ptr.left = sel.left
+		sel.right = numCols
+		this.setState({selection: sel})
 	},
 
 	getSelectorStyle: function () {
@@ -140,11 +167,11 @@ var CubePane = React.createClass ({
 			top: ((ptr.top + headerCols) * actRowHt - 2) + 'px',
 			left: (((ptr.left + headerRows) * width) + geo.leftGutter ) + 'px',
 			minWidth: (width - 1) + 'px',
-			minHeight: (actRowHt - geo.rowPadding) + 'px'
+			minHeight: ((('bottom' in ptr) ? ptr.bottom : ptr.top) - ptr.top + 1) * (actRowHt - geo.rowPadding) + 'px'
 		}
 	},
 
-	getRCCoords: function (event) {
+	getRCCoords: function (event, isDrag) {
 		var tableBody = React.findDOMNode(this.refs.tbody)
 		var view = this.props.view
 		var geo = view.data.geometry
@@ -155,6 +182,14 @@ var CubePane = React.createClass ({
 		var x = event.pageX - offset.left
 		var r = Math.floor(y / this.state.actRowHt, 1)
 		var c = Math.floor(x / columnWidth, 1)
+		
+		if (isDrag) {
+			r = Math.max(0, r)
+			r = Math.min(r, this.store.getCount('rows') - 1)
+			c = Math.max(0, c)
+			c = Math.min(c, this.store.getCount('columns') - 1)
+		}
+
 
 		return {row: r, col: c, x: x, y: y}
 	},
@@ -215,6 +250,7 @@ var CubePane = React.createClass ({
 				<table id="main-data-table" className="header data-table">
 					<CubeColTHead
 						key = {"cube-col-thead-" + view.view_id}
+						clicker = {_this.onMouseDown}
 						dimension = 'column'
 						store = {this.store}
 						hStart = {hStart}
@@ -223,6 +259,7 @@ var CubePane = React.createClass ({
 					<CubeRowTHead
 						ref = 'rowhead'
 						key = {"cube-row-thead-" + view.view_id}
+						clicker = {_this.onMouseDown}
 						dimension = 'row'
 						store = {this.store}
 						vStart = {vStart}

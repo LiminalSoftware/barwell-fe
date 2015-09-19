@@ -29,11 +29,11 @@ import TableMixin from '../../TableMixin.jsx'
 
 import ContextMenu from './ContextMenu'
 
-
+var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
 var TabularPane = React.createClass ({
 
-	mixins: [TableMixin],
+	mixins: [TableMixin, PureRenderMixin],
 
 	getInitialState: function () {
 		return {
@@ -64,7 +64,7 @@ var TabularPane = React.createClass ({
 		ModelStore.removeChangeListener(this._onChange)
 		FocusStore.removeChangeListener(this._onChange)
 
-		if (this.store) this.store.removeChangeListener(this._onChange)
+		this.store.removeChangeListener(this._onChange)
 		this.store.unregister()
 	},
 
@@ -94,15 +94,24 @@ var TabularPane = React.createClass ({
 	},
 
 	getNumberCols: function () {
-		return this.getColumns().length
+		return this.getColumns().length - 1
 	},
 
 	getNumberRows: function () {
-		return this.store.getRecordCount()
+		return this.store.getRecordCount() - 1
 	},
 
 	getValueAt: function (idx) {
 		return this.store.getObjects()[idx]
+	},
+
+	selectRow: function () {
+		console.log('selectRow')
+		var numCols = this.getNumberCols()
+		var sel = this.state.selection
+		sel.left = 0;
+		sel.right = numCols;
+		this.setState({selection: sel})
 	},
 
 	getSelectorStyle: function () {
@@ -172,11 +181,6 @@ var TabularPane = React.createClass ({
 		}
 	},
 
-	ieMozPreventSelction: function () {
-		document.onselectstart = util.returnFalse
-		document.onmousedown = util.returnFalse
-	},
-
 	getRCCoords: function (event) {
 		var tbody = React.findDOMNode(this.refs.tbody)
 		var view = this.props.view
@@ -195,6 +199,8 @@ var TabularPane = React.createClass ({
 			xx -= (col.width + geo.widthPadding)
 			if (xx > 0) c ++
 		})
+		c = Math.min(columns.length - 1, c)
+		c = Math.max(0, c)
 
 		return {row: r, col: c, x: x, y: y}
 	},
@@ -298,7 +304,7 @@ var TabularPane = React.createClass ({
 			actRowHt: tbody ? tbody.getRowHeight() : geo.rowHeight,
 			offset: tbody ? tbody.getOffset() : geo.headerHeight
 		})
-		window.setTimeout(this.calibrateRowHeight, 500)
+		window.setTimeout(this.calibrateRowHeight, 1000)
 	},
 
 
@@ -327,8 +333,6 @@ var TabularPane = React.createClass ({
 						view = {view}
 						store = {_this.store}
 						clicker = {_this.onMouseDown}
-						onMouseMove = {_this.onSelectMouseMove}
-						onMouseUp = {_this.onMouseUp}
 						openContextMenu = {_this.openContextMenu}
 						columns = {columns}
 						sorting = {view.data.sorting}
@@ -351,7 +355,7 @@ var TabularPane = React.createClass ({
 					style={this.getPointerStyle()}>
 				</div>
 				{this.state.copyarea ? <div
-					className={"copyarea marching-ants " + (_this.isFocused() ? " focused" : "")}
+					className={"copyarea marching-ants " + (_this.isFocused() ? " focused" : "") + (_this.state.mousedown ? "" : " running")}
 					ref="copyarea"
 					style={this.getCopyareaStyle()}>
 				</div> : null}

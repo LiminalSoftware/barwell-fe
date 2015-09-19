@@ -67,7 +67,7 @@ var editableInputMixin = {
 		var style = this.props.style
 		var className = this.props.className
 
-		return <td style={style} className={className}>
+		return <td {...this.props}>
 			{this.state.editing ?
 			<input
 				className = "input-editor"

@@ -13,7 +13,7 @@ import commitMixin from './commitMixin'
 import editableInputMixin from './editableInputMixin'
 
 var CheckboxElement = React.createClass({
-	
+
 	mixins: [commitMixin],
 
 	revert: _.noop,
@@ -25,6 +25,10 @@ var CheckboxElement = React.createClass({
 
 	validator: function (input) {
 		return (!!input)
+	},
+
+	parser: function (input) {
+		return !!input
 	},
 
 	handleClick: function (event) {
@@ -40,9 +44,9 @@ var CheckboxElement = React.createClass({
 	render: function () {
 		var value = this.props.value
 		var style = this.props.style
-		
-		return <td style={style} className="checkbox">
-			<input type="checkbox" checked={value} onChange={this.handleClick}></input>
+
+		return <td {...this.props} className={this.props.className || '' + ' checkbox'}>
+			<input type="checkbox" checked={!!value} onChange={this.handleClick}></input>
 		</td>
 	}
 });

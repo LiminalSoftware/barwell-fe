@@ -15,8 +15,11 @@ import constants from '../../../../constants/MetasheetConstants'
 import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
 import _ from 'underscore'
 
+var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
 var CubeViewConfig = React.createClass({
+
+	mixins: [PureRenderMixin],
 
 	componentWillMount: function () {
 		ViewStore.addChangeListener(this._onChange)
@@ -74,7 +77,7 @@ var CubeViewConfig = React.createClass({
 		var model = this.props.model
 		var view = this.props.view
 		var uniqSet = false
-		
+
 		return <div className = "grouping">
 			<div className = "detail-block">
 			<h3>Grouping</h3>

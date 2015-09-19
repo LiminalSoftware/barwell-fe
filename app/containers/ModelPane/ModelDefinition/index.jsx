@@ -21,6 +21,8 @@ var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
 var ModelDefinition = React.createClass({
 
+	mixins: [PureRenderMixin],
+
 	componentWillUnmount: function () {
 		ModelStore.removeChangeListener(this._onChange)
 		AttributeStore.removeChangeListener(this._onChange)

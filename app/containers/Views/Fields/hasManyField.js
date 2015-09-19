@@ -6,7 +6,6 @@ import AttributeStore from "../../../stores/AttributeStore"
 import ModelStore from "../../../stores/ModelStore"
 import KeyStore from "../../../stores/KeyStore"
 import KeycompStore from "../../../stores/KeycompStore"
-
 import constant from "../../../constants/MetasheetConstants"
 import modelActionCreators from "../../../actions/modelActionCreators"
 
@@ -144,6 +143,11 @@ var HasManyBubble = React.createClass({
 
 		event.dataTransfer.effectAllowed = 'move'
 		event.dataTransfer.setData('application/json', JSON.stringify(obj));
+		event.stopPropagation()
+	},
+
+	handleMouedown: function (event) {
+		event.stopPropagation()
 	},
 
 	render: function () {
@@ -158,6 +162,7 @@ var HasManyBubble = React.createClass({
 			onDrop = {this.handleDrop}
 			draggable = "true"
 			onDragStart = {this.handleDragStart}
+			onMouseDown = {this.handleMouedown}
 			>
 			{obj[label]}
 		</span>

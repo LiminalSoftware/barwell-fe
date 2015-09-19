@@ -176,7 +176,7 @@ var CubeTR = React.createClass({
 			var obj = store.getValues(rowLevel, colLevel)
 			var present = !!obj
 			var count = present ? obj._count : 0
-			var value = present ? obj[view.aggregator] : null
+			var value = present ? obj['a' + attribute.attribute_id] : null
 			var selector = _.omit(_.extend({}, rowLevel, colLevel),'spans')
 
 			return React.createElement(element, {

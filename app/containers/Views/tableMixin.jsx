@@ -5,6 +5,7 @@ import FocusStore from '../../stores/FocusStore'
 import modelActionCreators from "../../actions/modelActionCreators.jsx"
 import constants from '../../constants/MetasheetConstants'
 import _ from 'underscore'
+import util from "../../util/util"
 
 var TableMixin = {
 
@@ -72,8 +73,10 @@ var TableMixin = {
 	onMouseDown: function (event) {
 		// this.ieMozPreventSelction()
 		modelActionCreators.setFocus('view')
+		this.setState({mousedown: true})
 		var rc = this.getRCCoords(event)
 		this.updateSelect(rc.row, rc.col, event.shiftKey)
+		document.addEventListener('selectstart', util.returnFalse)
 		document.addEventListener('mousemove', this.onSelectMouseMove)
 		document.addEventListener('mouseup', this.onMouseUp)
 	},
@@ -84,6 +87,8 @@ var TableMixin = {
 	},
 
 	onMouseUp: function (event) {
+		this.setState({mousedown: false})
+		document.removeEventListener('selectstart', util.returnFalse)
 		document.removeEventListener('mousemove', this.onSelectMouseMove)
 		document.removeEventListener('mouseup', this.onMouseUp)
 	},
@@ -169,9 +174,7 @@ var TableMixin = {
 		else if (e.keyCode == keycodes.ARROW_DOWN && top < numRows) top ++;
 		else if (e.keyCode == keycodes.F2) return this.editCell(e);
 		else if (e.keyCode == keycodes.SPACE && e.shiftKey) {
-			sel.left = 0;
-			sel.right = numCols;
-			this.setState({selection: sel})
+			this.selectRow()
 			return;
 		} else if (e.keyCode == keycodes.PLUS && e.shiftKey) {
 			modelActionCreators.createRecord(model, top)
@@ -185,15 +188,11 @@ var TableMixin = {
 		if (e.keyCode >= 37 && e.keyCode <= 40) this.updateSelect(top, left, e.shiftKey)
 	},
 
-	selectRow: function () {
-		var numCols = this.getNumberCols()
-		var sel = this.state.selection
-		sel.left = 0;
-		sel.right = numCols;
-		this.setState({selection: sel})
+	selectColumn: function () {
+
 	},
 
-	updateSelect: function (row, col, shift, fullRow) {
+	updateSelect: function (row, col, shift) {
 		var numCols = this.getNumberCols()
 		var sel = this.state.selection
 		var anc = this.state.anchor
@@ -209,10 +208,13 @@ var TableMixin = {
 				bottom: Math.max(anc.top, ptr.top)
 			}
 		} else {
-			ptr = anc = {left: col, top: row}
+			ptr = anc = {
+				left: col,
+				top: row
+			}
 			sel = {
-				left: fullRow ? 0 : col,
-				right: fullRow ? numCols : col,
+				left: col,
+				right: col,
 				top: row,
 				bottom: row
 			}
@@ -222,11 +224,14 @@ var TableMixin = {
 			selection: sel,
 			anchor: anc
 		})
-		view.data.selection = sel
-		view.data.pointer = ptr
-		view.data.anchor = anc
-		modelActionCreators.createView(view, false, false)
 	},
+
+	commitSelection: function () {
+		view.data.selection = this.state.selection
+		view.data.pointer = this.state.pointer
+		view.data.anchor = this.state.anchor
+		modelActionCreators.createView(view, false, false)
+	}
 
 	// ========================================================================
 	// rendering

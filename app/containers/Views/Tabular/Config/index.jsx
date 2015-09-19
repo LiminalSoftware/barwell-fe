@@ -13,7 +13,11 @@ import KeycompStore from "../../../../stores/KeycompStore"
 import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
 import groomView from '../../groomView'
 
+var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+
 var TabularViewConfig = React.createClass({
+
+	mixins: [PureRenderMixin],
 
 	componentWillMount: function () {
 		ViewStore.addChangeListener(this._onChange);

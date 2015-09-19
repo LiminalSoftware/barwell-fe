@@ -63,8 +63,6 @@ var createTabularStore = function (view) {
             var type = payload.actionType
 
             if (type === upperLabel + '_CREATE') {
-                console.log('tabularstore create')
-                console.log(payload)
                 var object = payload.record
                 var index = payload.index || 0
                 _records =
@@ -94,16 +92,16 @@ var createTabularStore = function (view) {
             }
 
             if (type === (upperLabel + '_RECEIVE')) {
-                var _this = this
-                var objects = payload.records
-                var startIndex = payload.startIndex
-                var endIndex = payload.endIndex
+              var _this = this
+              var objects = payload.records
+              var startIndex = payload.startIndex
+              var endIndex = payload.endIndex
 
-                _records = payload[label]
-                _recordCount = payload.recordCount
-                _startIndex = payload.startIndex
+              _records = payload[label]
+              _recordCount = payload.recordCount
+              _startIndex = payload.startIndex
 
-                TabularStore.emitChange()
+              TabularStore.emitChange()
             }
 
             relations.forEach(function (rel) {
@@ -111,7 +109,6 @@ var createTabularStore = function (view) {
                 var relUpperLabel = relLabel.toUpperCase()
 
                 if (type === relUpperLabel + '_UPDATE') {
-
                     _records.forEach(function (rec) {
                         var pp = payload
                         rec['r' + rel.relation_id] = _.reject(rec['r' + rel.relation_id], _.matcher(payload.selector))
@@ -119,8 +116,9 @@ var createTabularStore = function (view) {
                           rec['r' + rel.relation_id].push(_.extend(payload.relatedObject, payload.update))
                         }
                     })
+                    TabularStore.emitChange()
                 }
-                TabularStore.emitChange()
+
             })
 
         })
