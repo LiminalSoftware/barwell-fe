@@ -201,6 +201,8 @@ var TabularPane = React.createClass ({
 		})
 		c = Math.min(columns.length - 1, c)
 		c = Math.max(0, c)
+		r = Math.max(0, r)
+		r = Math.min(r, this.store.getRecordCount())
 
 		return {row: r, col: c, x: x, y: y}
 	},
@@ -307,6 +309,38 @@ var TabularPane = React.createClass ({
 		window.setTimeout(this.calibrateRowHeight, 1000)
 	},
 
+		var numCols = this.getNumberCols()
+		var sel = this.state.selection
+		var anc = this.state.anchor
+		var ptr = {left: col, top: row}
+		var view = this.props.view
+
+		if (shift) {
+			if (!anc) anc = {left: col, top: row}
+			sel = {
+				left: Math.min(anc.left, ptr.left),
+				right: Math.max(anc.left, ptr.left),
+				top: Math.min(anc.top, ptr.top),
+				bottom: Math.max(anc.top, ptr.top)
+			}
+		} else {
+			ptr = anc = {
+				left: col,
+				top: row
+			}
+			sel = {
+				left: col,
+				right: col,
+				top: row,
+				bottom: row
+			}
+		}
+		this.setState({
+			pointer: ptr,
+			selection: sel,
+			anchor: anc
+		})
+	},
 
 	render: function () {
 		var _this = this
