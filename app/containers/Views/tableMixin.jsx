@@ -63,15 +63,8 @@ var TableMixin = {
 	// selection control
 	// ========================================================================
 
-	onClick: function (event) {
-		// this.ieMozPreventSelction()
-		modelActionCreators.setFocus('view')
-		var rc = this.getRCCoords(event)
-		this.updateSelect(rc.row, rc.col, event.shiftKey)
-	},
 
 	onMouseDown: function (event) {
-		// this.ieMozPreventSelction()
 		modelActionCreators.setFocus('view')
 		this.setState({mousedown: true})
 		var rc = this.getRCCoords(event)
@@ -82,7 +75,7 @@ var TableMixin = {
 	},
 
 	onSelectMouseMove: function (event) {
-		var rc = this.getRCCoords(event)
+		var rc = this.getRCCoords(event, true)
 		this.updateSelect(rc.row, rc.col, true)
 	},
 
@@ -98,7 +91,7 @@ var TableMixin = {
 		var view = this.props.view
 		var model = this.props.model
 		var keycodes = constants.keycodes
-
+		var direction
 		var ptr = this.state.pointer
 		var numCols = this.getNumberCols()
 		var numRows = this.getNumberRows()
@@ -168,16 +161,27 @@ var TableMixin = {
 			e.preventDefault()
 			return;
 		}
-		else if (e.keyCode == keycodes.ARROW_LEFT && left > 0) left --;
-		else if (e.keyCode == keycodes.ARROW_UP && top > 0) top --;
-		else if (e.keyCode == keycodes.ARROW_RIGHT && left < numCols) left ++;
-		else if (e.keyCode == keycodes.ARROW_DOWN && top < numRows) top ++;
 		else if (e.keyCode == keycodes.F2) return this.editCell(e);
 		else if (e.keyCode == keycodes.SPACE && e.shiftKey) {
 			this.selectRow()
-			return;
+			return
 		} else if (e.keyCode == keycodes.PLUS && e.shiftKey) {
 			modelActionCreators.createRecord(model, top)
+		}
+		else if (e.keyCode >= 37 && e.keyCode <= 40) {
+			if (e.keyCode == keycodes.ARROW_LEFT) {
+				direction = 'left'
+				left --
+			} else if (e.keyCode == keycodes.ARROW_UP) {
+				direction ='up'
+				top --
+			} else if (e.keyCode == keycodes.ARROW_RIGHT) {
+				direction = 'right'
+				left ++
+			} else if (e.keyCode == keycodes.ARROW_DOWN) {
+				direction = 'down'
+				top ++
+			}
 		}
 		else if (e.keyCode >= 48 && e.keyCode <= 90) {
 			return this.editCell(e);
@@ -185,45 +189,11 @@ var TableMixin = {
 
 		e.stopPropagation()
   		e.preventDefault()
-		if (e.keyCode >= 37 && e.keyCode <= 40) this.updateSelect(top, left, e.shiftKey)
+		if (e.keyCode >= 37 && e.keyCode <= 40) this.updateSelect(top, left, e.shiftKey, direction)
 	},
 
 	selectColumn: function () {
 
-	},
-
-	updateSelect: function (row, col, shift) {
-		var numCols = this.getNumberCols()
-		var sel = this.state.selection
-		var anc = this.state.anchor
-		var ptr = {left: col, top: row}
-		var view = this.props.view
-
-		if (shift) {
-			if (!anc) anc = {left: col, top: row}
-			sel = {
-				left: Math.min(anc.left, ptr.left),
-				right: Math.max(anc.left, ptr.left),
-				top: Math.min(anc.top, ptr.top),
-				bottom: Math.max(anc.top, ptr.top)
-			}
-		} else {
-			ptr = anc = {
-				left: col,
-				top: row
-			}
-			sel = {
-				left: col,
-				right: col,
-				top: row,
-				bottom: row
-			}
-		}
-		this.setState({
-			pointer: ptr,
-			selection: sel,
-			anchor: anc
-		})
 	},
 
 	commitSelection: function () {

@@ -9,29 +9,27 @@
 	height: 26px;
 	background: @cream;
 	font-weight: 400;
-	border-bottom: 1px solid white;
-	border-right: 1px solid white;
+	border: 1px solid white;
 	font: @headerFont;
 	z-index: 500;
 }
 
 .cube-rowhead td {
 	height: 26px;
-	border-top: 1px solid white;
-	border-bottom: 1px solid white;
+	border: 1px solid white;
 	background: @cream;
 	font-weight: 400;
-	border-right: 1px solid white;
 	font: @headerFont;
 	z-index: 500;
 }
 
 .cube-main-tbody td {
-	border: 1px solid @cream;
+	
 }
 
 .cube-main-tbody td.present {
 	background: white;
+	border: 1px double @cream;
 }
 
 .cube-main-tbody td.present.uneditable {
@@ -40,8 +38,12 @@
 
 .cube-main-tbody td.empty {
 	// background-image: linear-gradient(-45deg, @heavyCream 25%, transparent 25%, transparent 50%, @heavyCream 50%, @heavyCream 75%, transparent 75%, transparent);
-	background: @cream;
-	border: 1px solid @cream;
+	// background: @cream;
+	border: 1px solid transparent;
+}
+
+.cube-main-tbody {
+	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAALElEQVQIW2NkwAK+fn34nxFdHCTIzS3PiCIBEwQphksgC8Il0AXBEtgEQRIA69sX0QZUcwMAAAAASUVORK5CYII=) repeat;
 }
 
 .cube-main-tbody tr, .cube-rowhead tr {

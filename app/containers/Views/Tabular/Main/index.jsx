@@ -106,7 +106,6 @@ var TabularPane = React.createClass ({
 	},
 
 	selectRow: function () {
-		console.log('selectRow')
 		var numCols = this.getNumberCols()
 		var sel = this.state.selection
 		sel.left = 0;
@@ -161,7 +160,7 @@ var TabularPane = React.createClass ({
 		})
 	},
 
-	getOverlayStyle (pos, fudge) {
+	getOverlayStyle: function (pos, fudge) {
 		var geo = this.props.view.data.geometry
 		var width = 0
 		var left = geo.leftOffset
@@ -309,6 +308,7 @@ var TabularPane = React.createClass ({
 		window.setTimeout(this.calibrateRowHeight, 1000)
 	},
 
+	updateSelect: function (row, col, shift, direction) {
 		var numCols = this.getNumberCols()
 		var sel = this.state.selection
 		var anc = this.state.anchor
@@ -348,8 +348,6 @@ var TabularPane = React.createClass ({
 		var view = this.props.view
 		var columns = this.getVisibleColumns()
 		var focused = (FocusStore.getFocus() == 'view')
-
-		// console.log('contextOpen: ' + this.state.contextOpen)
 
 		return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">
 				<table id="main-data-table" className="header tabular-main-table data-table">

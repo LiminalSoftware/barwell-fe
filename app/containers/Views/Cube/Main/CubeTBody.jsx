@@ -78,6 +78,7 @@ var CubeTBody = React.createClass ({
 		return <tbody ref = "tbody"
 			className = "cube-main-tbody"
 			onMouseDown = {_this.props.clicker}
+			onContextMenu={_this.props.openContextMenu}
 			style = {style}
 			onDoubleClick = {_this.editCell}>
 			{
@@ -96,9 +97,7 @@ var CubeTBody = React.createClass ({
 	},
 
 	fetch: function (force) {
-		console.log('A')
 		if (!this.props.store.isLevelCurrent()) return
-		console.log('B')
 
 		var view = this.props.view
 		var geo = view.data.geometry
@@ -115,10 +114,8 @@ var CubeTBody = React.createClass ({
 		if (Math.abs(curVStart - vStart) < geo.bfrTol &&
 			Math.abs(curHStart - hStart) < geo.bfrTol &&
 			curVStart !== null && curHStart  !== null) {
-			console.log('dont fetch')
 			return; // if scroll is within tolerances, do nothing
 		}
-
 
 		var makeFilterStr = function (agg, dimension, pos, invert) {
 			var obj = store.getLevel(dimension, pos)
@@ -137,8 +134,6 @@ var CubeTBody = React.createClass ({
 		makeFilterStr(view.column_aggregates[0], 'columns', hEnd, true)
 		makeFilterStr(view.row_aggregates[0], 'rows', vStart, false)
 		makeFilterStr(view.row_aggregates[0], 'rows', vEnd, true)
-
-		console.log(filter)
 
 		modelActionCreators.fetchCubeValues(view, filter, hStart, vStart)
 		store.setStart('rows', vStart)

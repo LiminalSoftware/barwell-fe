@@ -27,6 +27,8 @@ import CubeRowTHead from "./CubeRowTHead"
 import CubeTBody from "./CubeTBody"
 import OverflowHider from "./OverflowHider"
 
+import ContextMenu from './CubeContextMenu'
+
 import TableMixin from '../../TableMixin.jsx'
 
 var CubePane = React.createClass ({
@@ -108,66 +110,50 @@ var CubePane = React.createClass ({
 		})
 	},
 
-	selectRow: function () {
-		var numCols = this.getNumberCols()
-		var view = this.props.view
-		var numGroupCols = view.row_aggregates.length
-		var sel = this.state.selection
-		var ptr = this.state.pointer
-		var top = null
-		var attribute
-		var row
-
-		sel.left = ((Math.min(sel.left, 0)) % numGroupCols) - 1
-		attribute = 'a' + view.row_aggregates[view.row_aggregates.length + sel.left]
-
-		for(; ptr.top > 0; ptr.top--) {
-			row = this.store.getLevel('rows', ptr.top)
-			if (row.spans[attribute] > 0) break;
-		}
-		ptr.bottom = ptr.top + row.spans[attribute] - 1
-
-		sel.top = ptr.top
-		sel.bottom = ptr.bottom
-
-		ptr.left = sel.left
-		sel.right = numCols
-		this.setState({selection: sel})
-	},
-
 	getSelectorStyle: function () {
-		var view = this.props.view
-		var geo = view.data.geometry
-		var headerRows = view.row_aggregates.length
-		var headerCols = view.column_aggregates.length
-
-		var actRowHt = this.state.actRowHt
-		var width = geo.columnWidth + geo.widthPadding
 		var sel = this.state.selection
 
-		return {
-			top: ((sel.top + headerCols) * actRowHt - 1) + 'px',
-			left: ((sel.left + headerRows) * width + geo.leftGutter) + 'px',
-			minWidth: ((sel.right - sel.left + 1) * width) + 'px',
-			minHeight: ((sel.bottom - sel.top + 1) * actRowHt - 1) + 'px'
-		}
+		return this.getOverlayStyle({
+			left: sel.left,
+			right: sel.right,
+			top: sel.top,
+			bottom: sel.bottom
+		}, {
+			left: -1,
+			top: -0.75,
+			height: -1,
+			width: 0
+		})
 	},
 
 	getPointerStyle: function () {
+		var ptr = this.state.pointer
+		return this.getOverlayStyle({
+			left: ptr.left,
+			right: ptr.left,
+			top: ptr.top,
+			bottom: (('bottom' in ptr) ? ptr.bottom : ptr.top)
+		}, {
+			left: -2,
+			top: -1.75,
+			height: -1,
+			width: 0
+		})
+	},
+
+	getOverlayStyle: function (pos, fudge) {
 		var view = this.props.view
 		var geo = view.data.geometry
 		var headerRows = view.row_aggregates.length
 		var headerCols = view.column_aggregates.length
-
 		var actRowHt = this.state.actRowHt
 		var width = geo.columnWidth + geo.widthPadding
-		var ptr = this.state.pointer
 
 		return {
-			top: ((ptr.top + headerCols) * actRowHt - 2) + 'px',
-			left: (((ptr.left + headerRows) * width) + geo.leftGutter ) + 'px',
-			minWidth: (width - 1) + 'px',
-			minHeight: ((('bottom' in ptr) ? ptr.bottom : ptr.top) - ptr.top + 1) * (actRowHt - geo.rowPadding) + 'px'
+			top: ((pos.top + headerCols) * actRowHt + fudge.top || 0) + 'px',
+			left: (((pos.left + headerRows) * width) + geo.leftGutter + fudge.left || 0 ) + 'px',
+			minWidth: ((pos.right - pos.left + 1) * width + fudge.width || 0) + 'px',
+			minHeight: ((pos.bottom - pos.top + 1) * actRowHt - geo.rowPadding) + 'px'
 		}
 	},
 
@@ -182,25 +168,28 @@ var CubePane = React.createClass ({
 		var x = event.pageX - offset.left
 		var r = Math.floor(y / this.state.actRowHt, 1)
 		var c = Math.floor(x / columnWidth, 1)
-		
-		if (isDrag) {
-			r = Math.max(0, r)
-			r = Math.min(r, this.store.getCount('rows') - 1)
-			c = Math.max(0, c)
-			c = Math.min(c, this.store.getCount('columns') - 1)
-		}
 
-
-		return {row: r, col: c, x: x, y: y}
+		var coords = {row: r, col: c, x: x, y: y}
+		return coords
 	},
 
 	getFieldAt: function (row, col) {
 		var tbody = this.refs.tbody
+		var view = this.props.view
 		var row = this.state.pointer.top
 		var col = this.state.pointer.left
 		var rowKey = 'cell-' + row
-		var cellKey = rowKey + '-' + col
-		return this.refs.tbody.refs[rowKey].refs[cellKey]
+		var cellKey
+		var attribute
+
+		if (col >= 0 && row >= 0) {
+			cellKey = rowKey + '-' + col
+			return this.refs.tbody.refs[rowKey].refs[cellKey]
+		} else if (col < 0) {
+				attribute = 'a' + view.row_aggregates[view.row_aggregates.length + col]
+				cellKey = rowKey + '-' + attribute
+				return this.refs.rowhead.refs[cellKey]
+		}
 	},
 
 	editCell: function (event, row, col) {
@@ -214,6 +203,110 @@ var CubePane = React.createClass ({
 		})
 		// var field = this.refs.tbody.refs[rowKey].refs[cellKey]
 		this.getFieldAt(row, col).handleEdit(event);
+	},
+
+	updateSelect: function (row, col, shift, direction) {
+		var numCols = this.getNumberCols()
+		var numRows = this.getNumberRows()
+		var sel = this.state.selection
+		var anc = this.state.anchor
+		var ptr = {left: col, top: row}
+		var view = this.props.view
+
+		if (shift && anc.left >= 0 && anc.top >= 0 && row >= 0 && col >= 0) {
+			col = Math.min(col, numCols)
+			row = Math.min(row, numRows)
+			if (!anc) anc = {left: col, top: row}
+			sel = {
+				left: Math.max(Math.min(anc.left, ptr.left, numCols), 0),
+				right: Math.min(Math.max(anc.left, ptr.left, 0), numCols),
+				top: Math.max(Math.min(anc.top, ptr.top, numRows), 0),
+				bottom: Math.min(Math.max(anc.top, ptr.top, 0), numRows)
+			}
+			ptr.left = col
+			ptr.top = row
+		} else if (ptr.left < 0) {
+			ptr.left = Math.max(-1 * view.row_aggregates.length, ptr.left)
+			// TODO: functionalize this and harmonize rows/cols
+			var attribute = 'a' + view.row_aggregates[view.row_aggregates.length + ptr.left]
+			var row
+			for(; ptr.top >= 0 && ptr.top < numRows; ptr.top += (direction === 'down' ? 1 : -1) ) {
+				row = this.store.getLevel('rows', ptr.top)
+				if (row.spans[attribute] > 0) break;
+			}
+			ptr.bottom = ptr.top + row.spans[attribute] - 1
+			sel = ptr
+			sel.right = numCols
+		} else if (ptr.top < 0) {
+			ptr.top = Math.max(-1 * view.column_aggregates.length, ptr.top)
+			var attribute = 'a' + view.column_aggregates[view.column_aggregates.length + ptr.top]
+			var col
+			for(; ptr.left >= 0 && ptr.right < numCols; ptr.left += (direction === 'down' ? 1 : -1) ) {
+				col = this.store.getLevel('columns', ptr.left)
+				if (col.spans[attribute] > 0) break;
+			}
+			ptr.right = ptr.left + col.spans[attribute] - 1
+			sel = ptr
+			sel.bottom = numRows
+		} else {
+			col = Math.min(col, numCols)
+			row = Math.min(row, numRows)
+
+			ptr = anc = {
+				left: col,
+				top: row
+			}
+			sel = {
+				left: col,
+				right: col,
+				top: row,
+				bottom: row
+			}
+		}
+
+		this.setState({
+			pointer: ptr,
+			selection: sel,
+			anchor: anc
+		})
+	},
+
+	selectRow: function () {
+		var view = this.props.view
+		var numGroupCols = view.row_aggregates.length
+		var ptr = this.state.pointer
+		ptr.left = ((Math.min(ptr.left, 0)) % numGroupCols) - 1
+		this.updateSelect(ptr.top, ptr.left)
+	},
+
+	insertRecord: function () {
+
+	},
+
+	deleteRecord: function () {
+
+	},
+
+	copySelection: function () {
+
+	},
+
+	openContextMenu: function (event) {
+
+		event.preventDefault();
+		var rc = this.getRCCoords(event)
+		var sel = this.state.selection
+
+		modelActionCreators.setFocus('view')
+		if (rc.row > sel.bottom || rc.row < sel.top ||
+			rc.col > sel.right || rc.col < sel.left)
+			this.updateSelect(rc.row, rc.col, false, false)
+
+		this.setState({
+			contextOpen: true,
+			contextX: rc.x,
+			contextY: rc.y + 20
+		})
 	},
 
 	getVStart: function () {
@@ -255,6 +348,9 @@ var CubePane = React.createClass ({
 						store = {this.store}
 						hStart = {hStart}
 						scrollTop = {scrollTop}
+						handleBlur = {_this.handleBlur}
+						openContextMenu = {_this.openContextMenu}
+						model = {model}
 						view = {view} />
 					<CubeRowTHead
 						ref = 'rowhead'
@@ -264,7 +360,10 @@ var CubePane = React.createClass ({
 						store = {this.store}
 						vStart = {vStart}
 						scrollLeft = {scrollLeft}
+						handleBlur = {_this.handleBlur}
+						openContextMenu = {_this.openContextMenu}
 						actRowHt = {height}
+						model = {model}
 						view = {view} />
 					<CubeTBody
 						key = {"cube-body-" + view.view_id}
@@ -293,6 +392,15 @@ var CubePane = React.createClass ({
 					ref="selection"
 					style={_this.getSelectorStyle()}>
 				</div>
+				{_this.state.contextOpen ?
+					<ContextMenu
+						x = {this.state.contextX} y = {this.state.contextY}
+						handleContextBlur = {this.handleContextBlur}
+						insertRecord = {this.insertRecord}
+						deleteRecords = {this.deleteRecords}
+						copySelection = {this.copySelection}
+						/>
+					: null}
 		</div>
 	}
 })

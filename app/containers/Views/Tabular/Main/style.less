@@ -103,8 +103,6 @@ div.color-block {
 		text-overflow: ellipsis;
 		white-space: nowrap;
 
-
-
 		cursor: pointer;
 		padding: 0 4px;
 		input[type="checkbox"] {
@@ -154,7 +152,8 @@ div.color-block {
 		}
 
 		td.droppable {
-			background: lighten(@green-tint-2, 42%) !important;
+			// background: lighten(@green-tint-2, 42%) !important;
+			border: 1px double @green-tint-2;
 		}
 	}
 }

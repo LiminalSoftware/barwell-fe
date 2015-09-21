@@ -13,28 +13,11 @@ import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 import util from '../../../../util/util'
 import constants from '../../../../constants/MetasheetConstants'
+import reducers from './reducers'
 
 import calcSpans from './calcSpans'
 
 var DELIMITER = constants.delimiter
-//
-// var calcSpans = function (levels, groups) {
-//   var spans = {}
-//   groups.forEach(g => spans['a' + g] = 1)
-//   return levels.map(function (level, idx) {
-//     var isBroken
-//     level.spans = {}
-//     groups.forEach(function (g) {
-//       g = 'a' + g
-//       spans[g]--
-//       if (spans[g] > 0) return level.spans[g] = 0
-//       else while (idx + spans[g] < levels.length
-//         && levels[idx][g] === levels[idx + spans[g] - 1] [g]) spans[g]++
-//       level.spans[g] = spans[g]
-//     })
-//     return level
-//   })
-// }
 
 var createCubeStore = function (view, dimensions) {
     var model = ModelStore.get (view.model_id)
@@ -92,6 +75,10 @@ var createCubeStore = function (view, dimensions) {
 
         getDimensions: function (dimension) {
           return _dimensions[dimension]
+        },
+
+        getAllDimensions: function () {
+
         },
 
         getLevels: function (dimension, from, to) {
@@ -154,24 +141,47 @@ var createCubeStore = function (view, dimensions) {
                   _dirty: (type === (upperLabel + '_UPDATE'))
               }
               var values = _.values(_values)
+              var rows = _rowDimensions
+              var cols = _colDimensions
+              var matcher = _.matcher(selector)
+              var reducer = reducers[view.aggregator + 'ReducerFactory']('a' + view.value)
 
-              _.filter(values, _.matcher(selector) ).map(function (rec) {
+              _.filter(values, matcher).map(function (rec) {
                   _.extend(rec, update, dirty)
               });
+              _.filter(rows, matcher).map(function (rec) {
+                _.extend(rec, update, dirty)
+              })
+              _rowDimensions = rows
+
+              _.filter(cols, matcher).map(function (rec) {
+                _.extend(rec, update, dirty)
+              })
+              _colDimensions = cols
               
-              _values = _.indexBy(values, function (val) {
-                  var key = dimensions.map(function (dim) {
-                      return val['a' + dim]
-                  }).join(DELIMITER)
-                  return key
+              _values = {}
+              values.forEach(function (val) {
+                var key = dimensions.map(function (dim) {
+                    return val['a' + dim]
+                }).join(DELIMITER)
+                if (key in _values) _values[key] = reducer(_values[key], val)
+                else _values[key] = val
               })
 
               CubeStore.emitChange()
             }
 
             if (type === upperLabel + '_CREATE') {
+                var dimensions = _dimensions.rows.concat(_dimensions.columns).filter(_.identity)
                 var object = payload.object
                 var index = payload.index
+
+                var key = dimensions.map(function (dim) {
+                    return val['a' + dim]
+                }).join(DELIMITER)
+                if (key in _values) _values[key] = reducer(_values[key], val)
+                else _values[key] = val
+
                 CubeStore.emitChange()
             }
 

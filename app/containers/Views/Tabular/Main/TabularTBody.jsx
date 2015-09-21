@@ -56,7 +56,7 @@ var TabularTBody = React.createClass ({
 		ViewStore.addChangeListener(this._onChange)
 		AttributeStore.addChangeListener(this._onChange)
 		ModelStore.addChangeListener(this._onChange)
-		
+
 		this.props.store.addChangeListener(this._onChange)
 		this.fetch(true)
 	},
@@ -72,7 +72,6 @@ var TabularTBody = React.createClass ({
 	componentWillReceiveProps: function (newProps) {
 		var oldProps = this.props;
 		if (!_.isEqual(oldProps.sorting, newProps.sorting)) {
-			console.log('ZZZ')
 			this.fetch(true)
 		}
 	},
@@ -157,8 +156,6 @@ var TabularTBody = React.createClass ({
 		var style = {
 			top: geometry.headerHeight + 'px'
 		}
-
-		console.log('render TabularTBody')
 
 		return <tbody
 			ref = "tbody"

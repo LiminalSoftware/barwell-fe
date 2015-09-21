@@ -49,10 +49,11 @@ var CubeRowTHead = React.createClass ({
 			ref="rowhead"
 			className = "cube-rowhead"
 			style = {rowHeadStyle}
+			onMouseDown = {this.props.clicker}
 			key={"cube-row-thead-" + view.view_id} >
 			{levels.map(function (level, r) {
 				var selector = {}
-				return <tr style={trStyle} key={'row-' + r}> {groups.map(function (group, c) {
+				return <tr style={trStyle} key={'cell-' + r}> {groups.map(function (group, c) {
 					selector[group] = level[group]
 					var cellKey = 'cell-' + r + '-' + group
 					if (level.spans[group] === 0)	return null
@@ -61,7 +62,7 @@ var CubeRowTHead = React.createClass ({
 						config: {},
 						model: _this.props.model,
 						view: _this.props.view,
-						selector: selector,
+						selector: _.clone(selector),
 						value: level[group],
 						column_id: group,
 						handleBlur: _this.props.handleBlur,
