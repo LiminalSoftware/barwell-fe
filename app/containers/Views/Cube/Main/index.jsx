@@ -86,11 +86,14 @@ var CubePane = React.createClass ({
 		var view = this.props.view
 		var geometry = view.data.geometry
 		var calibration = this.refs.rowhead.getCalibration() || geometry.rowHeight
+		var tbodyRowHt = this.refs.tbody.getCalibration() || geometry.rowHeight
+
 
 		this.setState({
-			rowHeight: calibration,
-			actRowHt: calibration
+			actRowHt: tbodyRowHt,
+			tbodyRowHt: tbodyRowHt
 		})
+
 		window.setTimeout(this.calibrate, 500)
 	},
 
@@ -241,7 +244,7 @@ var CubePane = React.createClass ({
 			ptr.top = Math.max(-1 * view.column_aggregates.length, ptr.top)
 			var attribute = 'a' + view.column_aggregates[view.column_aggregates.length + ptr.top]
 			var col
-			for(; ptr.left >= 0 && ptr.right < numCols; ptr.left += (direction === 'down' ? 1 : -1) ) {
+			for(; ptr.left >= 0 && ptr.right < numCols; ptr.left += (direction === 'right' ? 1 : -1) ) {
 				col = this.store.getLevel('columns', ptr.left)
 				if (col.spans[attribute] > 0) break;
 			}
@@ -280,7 +283,22 @@ var CubePane = React.createClass ({
 	},
 
 	insertRecord: function () {
+		var obj = {}
+		var model = this.props.model
+		var rowLevel = this.store.getLevel('rows', this.state.pointer.top)
+		var colLevel = this.store.getLevel('columns', this.state.pointer.left)
 
+		// initialize the new record with default values
+		AttributeStore.query({model_id: (model.model_id || model.cid)}).forEach(function(attr) {
+			if(('a' + attr.attribute_id) != model._pk) {
+				obj['a' + attr.attribute_id] = attr.default_value
+			}
+		})
+		// override defaults based on the location in the cube
+		obj = _.omit(_.extend(obj, rowLevel, colLevel), 'spans')
+
+		modelActionCreators.insertRecord(this.props.model, obj)
+		this.setState({copyarea: null})
 	},
 
 	deleteRecord: function () {
@@ -394,11 +412,11 @@ var CubePane = React.createClass ({
 				</div>
 				{_this.state.contextOpen ?
 					<ContextMenu
-						x = {this.state.contextX} y = {this.state.contextY}
-						handleContextBlur = {this.handleContextBlur}
-						insertRecord = {this.insertRecord}
-						deleteRecords = {this.deleteRecords}
-						copySelection = {this.copySelection}
+						x = {_this.state.contextX} y = {_this.state.contextY}
+						handleContextBlur = {_this.handleContextBlur}
+						addNewRecord = {_this.insertRecord}
+						deleteRecords = {_this.deleteRecords}
+						copySelection = {_this.copySelection}
 						/>
 					: null}
 		</div>

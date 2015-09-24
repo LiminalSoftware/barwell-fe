@@ -5,6 +5,7 @@ import _ from 'underscore'
 import fieldTypes from "../../fields"
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import FocusStore from "../../../../stores/FocusStore"
+import AttributeStore from "../../../../stores/AttributeStore"
 import calcSpans from './calcSpans'
 
 
@@ -35,21 +36,42 @@ var CubeColTHead = React.createClass ({
 			id="cube-column-view-header"
 			ref="thead"
 			className = "cube-colhead"
+			onMouseDown = {this.props.clicker}
 			style = {theadStyle}
 			key={"cube-col-thead-" + view.view_id}>
 			{
-			view.column_aggregates.map(function (group) {
-				group = 'a' + group
+			view.column_aggregates.map(function (group, c) {
+				var attr = AttributeStore.get(group)
+				var element = (fieldTypes[attr.type] || fieldTypes.TEXT).element
+				var agroup = 'a' + group
+
 				return <tr key={'cube-col-thead-' + group} style = {trStyle}>
 					{levels.map(function (level) {
 						if (level.spans[group] === 0) return null;
-						var width = geo.columnWidth * level.spans[group]
-						console.log('width: ' + width)
+						var width = geo.columnWidth * level.spans[agroup]
 						var tdStyle = {
 							minWidth: width + 'px',
 							maxWidth: width + 'px'
 						}
-						return <td style = {tdStyle} colSpan = {level.spans[group]}>{level[group]}</td>
+						var selector = {}
+						selector[group] = level[group]
+						var cellKey = 'cell-' + c + '-' + level[agroup]
+						if (level.spans[agroup] === 0)	return null
+						// else return <td rowSpan={level.spans[group]} style={thStyle}>{level[group]}</td>
+						else return React.createElement(element, {
+							config: {},
+							model: _this.props.model,
+							view: _this.props.view,
+							selector: _.clone(selector),
+							value: level[agroup],
+							column_id: agroup,
+							handleBlur: _this.props.handleBlur,
+							key: cellKey,
+							cellKey: cellKey,
+							ref: cellKey,
+							colSpan: level.spans[agroup],
+							style: tdStyle
+						})
 					}) }
 				</tr>
 			})

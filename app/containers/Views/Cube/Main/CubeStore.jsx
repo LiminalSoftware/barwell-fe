@@ -50,6 +50,7 @@ var createCubeStore = function (view, dimensions) {
         rows: false,
         columns: false
     }
+    var _dirty = true
     var _values = {}
     var _rowDimensions
     var _colDimensions
@@ -98,6 +99,10 @@ var createCubeStore = function (view, dimensions) {
             return _startIndex[dimension]
         },
 
+        isViewCurrent: function () {
+          return !_dirty
+        },
+
         isLevelCurrent: function () {
             return (_isCurrent.rows && _isCurrent.columns)
         },
@@ -121,13 +126,10 @@ var createCubeStore = function (view, dimensions) {
             var type = payload.actionType
 
             if (type === 'VIEW_CREATE' && payload.view.view_id === view.view_id) {
-                if (!_.isEqual(payload.view.row_aggregates, _dimensions.rows) ||
-                    !_.isEqual(payload.view.column_aggregates, _dimensions.columns)) {
-                    _values = {}
-                }
+                _dirty = payload.view._dirty
+                _values = {}
                 _dimensions.rows = payload.view.row_aggregates
                 _dimensions.columns = payload.view.column_aggregates
-
                 _isCurrent.rows = false
                 _isCurrent.columns = false
             }
@@ -141,24 +143,21 @@ var createCubeStore = function (view, dimensions) {
                   _dirty: (type === (upperLabel + '_UPDATE'))
               }
               var values = _.values(_values)
-              var rows = _rowDimensions
-              var cols = _colDimensions
+              var rows = _levels.rows
+              var cols = _levels.columns
               var matcher = _.matcher(selector)
               var reducer = reducers[view.aggregator + 'ReducerFactory']('a' + view.value)
 
               _.filter(values, matcher).map(function (rec) {
                   _.extend(rec, update, dirty)
               });
-              _.filter(rows, matcher).map(function (rec) {
-                _.extend(rec, update, dirty)
-              })
-              _rowDimensions = rows
 
-              _.filter(cols, matcher).map(function (rec) {
-                _.extend(rec, update, dirty)
-              })
-              _colDimensions = cols
-              
+              _.filter(rows, matcher).map(rec => _.extend(rec, update, dirty))
+              _levels.rows = rows
+
+              _.filter(cols, matcher).map(rec => _.extend(rec, update, dirty))
+              _levels.columns = cols
+
               _values = {}
               values.forEach(function (val) {
                 var key = dimensions.map(function (dim) {
@@ -171,14 +170,17 @@ var createCubeStore = function (view, dimensions) {
               CubeStore.emitChange()
             }
 
-            if (type === upperLabel + '_CREATE') {
+            if (type === modelUpperLabel + '_CREATE') {
                 var dimensions = _dimensions.rows.concat(_dimensions.columns).filter(_.identity)
-                var object = payload.object
+                var val = payload.record
                 var index = payload.index
 
                 var key = dimensions.map(function (dim) {
                     return val['a' + dim]
                 }).join(DELIMITER)
+
+                console.log('key: ' + key)
+
                 if (key in _values) _values[key] = reducer(_values[key], val)
                 else _values[key] = val
 

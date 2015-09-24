@@ -18,6 +18,12 @@ import createCubeStore from './CubeStore.jsx'
 
 var CubeTBody = React.createClass ({
 
+	getCalibration: function () {
+		if (!this.isMounted()) return;
+		return ($(React.findDOMNode(this.refs.tbody)).get(0).scrollHeight /
+				$(React.findDOMNode(this.refs.tbody)).children().length)
+	},
+
 	shouldComponentUpdate: function (props, state) {
 		var old = this.props
 		return props.vStart !== old.vStart ||
@@ -66,13 +72,16 @@ var CubeTBody = React.createClass ({
 		var store = this.props.store
 		var geo = view.data.geometry
 		var actRowHt = this.props.actRowHt + geo.rowPadding
+		// var actRowHt = geo.rowHeight + 'px'
 		var width = geo.columnWidth + geo.widthPadding
 		var vStart = this.props.vStart
 		var hStart = this.props.hStart
-
+		var levels = store.getLevels('rows', vStart, vStart + geo.renderBufferRows)
 		var style = {
 			top: ((view.column_aggregates.length + vStart) * actRowHt) + 'px',
-			left: (width * (view.row_aggregates.length + hStart) + geo.leftGutter) + 'px'
+			left: (width * (view.row_aggregates.length + hStart) + geo.leftGutter) + 'px',
+			maxHeight: (geo.rowHeight * levels.length) + 'px',
+			minHeight: (geo.rowHeight * levels.length) + 'px'
 		}
 
 		return <tbody ref = "tbody"
@@ -82,7 +91,7 @@ var CubeTBody = React.createClass ({
 			style = {style}
 			onDoubleClick = {_this.editCell}>
 			{
-				store.getLevels('rows', vStart, vStart + geo.renderBufferRows).map(function (rowLevel, i) {
+				levels.map(function (rowLevel, i) {
 					var rowKey = 'cell-' + (vStart + i)
 					return <CubeTR
 						{..._this.props}
@@ -156,6 +165,7 @@ var CubeTR = React.createClass({
 		var rowLevel = this.props.rowLevel
 		var attribute = AttributeStore.get(view.value)
 		var element = (fieldTypes[attribute.type] || fieldTypes.TEXT).element
+		var actRowHt = this.props.actRowHt
 
 		var hLength = geo.renderBufferCols
 		var hStart = this.props.hStart
@@ -163,10 +173,17 @@ var CubeTR = React.createClass({
 		var tdStyle = {
 			minWidth: width,
 			maxWidth: width,
-			height: rowHeight
+			height: geo.rowHeight + 'px',
+			maxHeight: (geo.rowHeight) + 'px',
+			minHeight: (geo.rowHeight) + 'px'
+		}
+		var trStyle = {
+			lineHeight: (geo.rowHeight) + 'px',
+			maxHeight: (geo.rowHeight) + 'px',
+			minHeight: (geo.rowHeight) + 'px'
 		}
 
-		return <tr> {store.getLevels('columns', hStart, hLength + hStart).map(function (colLevel, j) {
+		return <tr style={trStyle}> {store.getLevels('columns', hStart, hLength + hStart).map(function (colLevel, j) {
 			var cellKey = _this.props.rowKey + '-' + (hStart + j)
 			var obj = store.getValues(rowLevel, colLevel)
 			var present = !!obj

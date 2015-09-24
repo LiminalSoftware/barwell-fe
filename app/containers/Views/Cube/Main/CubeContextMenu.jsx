@@ -31,8 +31,9 @@ var CubeContextMenu = React.createClass ({
 		this.props.handleContextBlur()
 	},
 
-	clickAddNewRow: function (e) {
-		this.props.insertRecord()
+	clickAddNewRecord: function (e) {
+		console.log('clickaddNewRecord')
+		this.props.addNewRecord()
 	},
 
 	clickDeleteRow: function (e) {

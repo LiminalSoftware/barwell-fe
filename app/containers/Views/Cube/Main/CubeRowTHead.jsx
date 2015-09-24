@@ -26,23 +26,33 @@ var CubeRowTHead = React.createClass ({
 		var view = this.props.view
 		var geo = view.data.geometry
 		var rowHeight = geo.rowHeight + 'px'
-		var actRowHt = this.props.actRowHt + geo.rowPadding
 		var vStart = this.props.vStart
+		var vEnd = vStart + geo.renderBufferRows
 		var hStart = this.props.hStart
-		var rowHeadStyle = {
-			top: ((view.column_aggregates.length + vStart) * actRowHt ) + 'px',
-			left: ((this.props.scrollLeft || 0) + geo.leftGutter) + 'px'
-		}
-		var trStyle = {lineHeight: rowHeight}
-		var thStyle = {
-			minWidth: geo.columnWidth + 'px',
-			maxWidth: geo.columnWidth + 'px'
-		}
 		var store = this.props.store
 		var groups = view.row_aggregates.map(g => 'a' + g)
 		var groupAttrs = view.row_aggregates.map(g => AttributeStore.get(g))
 		var elements = groupAttrs.map(attr => (fieldTypes[attr.type] || fieldTypes.TEXT).element)
-		var levels = store.getLevels('rows', vStart, vStart + geo.renderBufferRows)
+		var levels = store.getLevels('rows', vStart, vEnd)
+
+		var rowHeadStyle = {
+			top: ((view.column_aggregates.length + vStart) * this.props.actRowHt ) + 'px',
+			left: ((this.props.scrollLeft || 0) + geo.leftGutter) + 'px',
+			maxHeight: (geo.rowHeight * levels.length) + 'px',
+			minHeight: (geo.rowHeight * levels.length) + 'px'
+		}
+		var trStyle = {
+			maxHeight: (geo.rowHeight) + 'px',
+			minHeight: (geo.rowHeight) + 'px'
+		}
+		var thStyle = {
+			minWidth: geo.columnWidth + 'px',
+			maxWidth: geo.columnWidth + 'px',
+			height: (geo.rowHeight) + 'px',
+			maxHeight: (geo.rowHeight) + 'px',
+			minHeight: (geo.rowHeight) + 'px'
+		}
+
 
 		return <tbody
 			id="cube-row-view-header"
