@@ -6,6 +6,14 @@ import groomView from '../containers/Views/groomView'
 
 var modelActions = {
 
+	setWorkspace: function (workspaceId) {
+		var message = {
+			actionType: 'SET_WORKSPACE',
+			workspaceId: workspaceId
+		}
+		// MetasheetDispatcher.dispatch(message);
+	},
+
 	setFocus: function (focus) {
 		var message = {
 			actionType: 'SET_FOCUS',

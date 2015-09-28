@@ -3,11 +3,12 @@ import dispatcher from "../dispatcher/MetasheetDispatcher"
 // var EventEmitter = require('events').EventEmitter
 import EventEmitter from 'events'
 
-var focusStore = module.exports = {focus: 'view-config'};
+var AuthStore = module.exports = {
+  authorized: false,
+  loggedInAs: null
+};
 
-var _focus = null;
-
-var FocusStore = assign({}, EventEmitter.prototype, {
+var AuthStore = assign({}, EventEmitter.prototype, {
 	addChangeListener: function(callback) {
 		this.on('CHANGE_EVENT', callback);
 	},
@@ -22,11 +23,11 @@ var FocusStore = assign({}, EventEmitter.prototype, {
 
 	dispatchToken: dispatcher.register(function (payload) {
 		switch(payload.actionType) {
-			case 'SET_FOCUS':
-				_focus = payload.focus
-				FocusStore.emit('CHANGE_EVENT');
+			case 'SET_AUTH':
+
+				// FocusStore.emit('CHANGE_EVENT');
 		}
 	})
 })
 
-export default FocusStore
+export default AuthStore

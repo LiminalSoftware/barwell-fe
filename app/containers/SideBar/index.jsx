@@ -3,9 +3,8 @@ import { Link } from "react-router"
 import styles from "./style.less"
 import _ from "underscore"
 
-import modelActionCreators from '../../actions/modelActionCreators';
-
-import MetasheetDispatcher from '../../dispatcher/MetasheetDispatcher';
+import modelActionCreators from '../../actions/modelActionCreators'
+import MetasheetDispatcher from '../../dispatcher/MetasheetDispatcher'
 
 import ModelStore from "../../stores/ModelStore"
 import ViewStore from "../../stores/ViewStore"
@@ -50,7 +49,7 @@ var SideBar = React.createClass({
 		var curModelId = this.props.params.modelId
 
 		var modelLinks = ModelStore.query(null, ['model']).map(function (model, idx) {
-			if (!model) return <li key={"loader-" + idx}><a>Loading</a></li>
+			console.log('model: ' + model.model)
 			var modelId = model.cid || model.model_id;
 			return <ModelLink
 				key = {'model-link-' + modelId}
@@ -129,6 +128,8 @@ var ModelLink = React.createClass ({
 		var views
 		var lock_icon
 
+		console.log('modelLink: ' + model.model)
+
 		var modelDisplay = (!!this.state.renaming) ?
 			(<input className="model-renamer" ref="renamer" value={this.state.name} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/>) :
 			(<span>{model.model}</span>) ;
@@ -149,11 +150,12 @@ var ModelLink = React.createClass ({
 			lock_icon = <span className="icon grayed icon-lock-close"
 							title={'locked by ' + model.lock_user}></span>
 
+		console.log('B')
 
 		return <li>
 			<ul key={"model-views-ul-" + model_id}>
 				<li className={"li-model" + (this.props.active ? " li-hilite" : "")}>
-					<Link to="model" params={{modelId: model_id}} key={"model-link-" + model_id} onDoubleClick={this.edit}>
+					<Link to="model" params={{modelId: model_id, workspaceId: 123	}} key={"model-link-" + model_id} onDoubleClick={this.edit}>
 					{lock_icon}
 					{modelDisplay}
 					</Link>
@@ -197,14 +199,18 @@ var ViewLink = React.createClass({
 		event.preventDefault();
 	},
 
+
+
 	render: function () {
+		console.log('C')
 		var view = this.props.view;
 		var model = this.props.model;
 		var viewDisplay = (!!this.state.renaming) ?
 			(<input className="view-renamer" ref="renamer" value={this.state.name} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/>) :
 			(<span>{view.view}</span>) ;
+		console.log('D')
 		return <li className={"li-view " + (view._new ? "new" : "")} >
-			<Link to="view" params={{modelId: model.model_id, viewId: (view.view_id || view.cid)}}
+			<Link to="view" params={{modelId: model.model_id, viewId: (view.view_id || view.cid), workspaceId: 123}}
 				onDoubleClick={this.edit} onClick={this.handleClick}>
 				<span className={"icon "+viewTypes[view.type].icon}></span>{viewDisplay}
 			</Link>

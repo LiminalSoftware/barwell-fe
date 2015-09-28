@@ -15,18 +15,10 @@ var CubeColTHead = React.createClass ({
 		var _this = this
 		var view = this.props.view
 		var geo = view.data.geometry
-
 		var width = geo.columnWidth + geo.widthPadding
-
-		var trStyle = {
-			lineHeight: geo.rowHeight + 'px'
-		}
-
-
+		var trStyle = {lineHeight: geo.rowHeight + 'px'}
 		var hStart = this.props.hStart
-
 		var levels = this.props.store.getLevels('columns', hStart, hStart  + geo.renderBufferCols)
-
 		var theadStyle = {
 			top: this.props.scrollTop + 'px',
 			left: (width * (view.row_aggregates.length + hStart) + geo.leftGutter) + 'px'

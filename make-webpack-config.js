@@ -3,6 +3,7 @@ var webpack = require("webpack");
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var StatsPlugin = require("stats-webpack-plugin");
 var loadersByExtension = require("./config/loadersByExtension");
+// var UglifyJsPlugin = require("uglify-loader")
 
 module.exports = function(options) {
 	var entry = {
@@ -89,6 +90,9 @@ module.exports = function(options) {
 			exclude: excludeFromStats
 		}));
 	}
+	// if(options.uglify) {
+	// 	plugins.push(new webpack.optimize.UglifyJsPlugin({ compress: {warnings: false}, mangle: true }));
+	// }
 	if(options.commonsChunk) {
 		plugins.push(new webpack.optimize.CommonsChunkPlugin("commons", "commons.js" + (options.longTermCaching && !options.prerender ? "?[chunkhash]" : "")));
 	}
