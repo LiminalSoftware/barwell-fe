@@ -1,31 +1,33 @@
-import assign from 'object-assign'
-import dispatcher from "../dispatcher/MetasheetDispatcher"
-// var EventEmitter = require('events').EventEmitter
-import EventEmitter from 'events'
-
-var WorkspaceStore = module.exports = {focus: 'view-config'};
+import storeFactory from 'flux-store-factory';
+import dispatcher from '../dispatcher/MetasheetDispatcher'
+import _ from 'underscore'
 
 
-// var WorkspaceStore = assign({}, EventEmitter.prototype, {
-// 	addChangeListener: function(callback) {
-// 		this.on('CHANGE_EVENT', callback);
-// 	},
-//
-// 	removeChangeListener: function(callback) {
-// 		this.removeListener('CHANGE_EVENT', callback);
-// 	},
-//
-// 	getWorkspaceId: function () {
-// 		return _workspaceId
-// 	},
-//
-// 	dispatchToken: dispatcher.register(function (payload) {
-// 		switch(payload.actionType) {
-// 			case 'SET_WORKSPACE':
-// 				_focus = payload.focus
-// 				FocusStore.emit('CHANGE_EVENT');
-// 		}
-// 	})
-// })
+var _activeWorkspace = null;
 
-export default WorkspaceStore
+var WorkspaceStore = storeFactory({
+  identifier: 'workspace_id',
+  dispatcher: dispatcher,
+  pivot: function(payload) {
+    switch (payload.actionType) {
+      case 'WORKSPACE_CREATE':
+        this.create(payload.workspace)
+        this.emitChange()
+        break;
+
+      case 'WORKSPACE_DESTROY':
+        this.destroy(payload.workspace)
+        this.emitChange()
+        break;
+
+      case 'WORKSPACE_RECEIVE':
+				console.log('payload: ' + JSON.stringify(payload))
+        var workspace = payload.workspace
+        this.create(workspace)
+        this.emitChange()
+        break;
+    }
+  }
+})
+
+export default WorkspaceStore;

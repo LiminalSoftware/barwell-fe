@@ -17,6 +17,9 @@ import ModelDetails from './ModelDetails'
 import getIconClasses from './getIconClasses'
 import _ from 'underscore'
 
+
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
 var ModelDefinition = React.createClass({
@@ -130,7 +133,8 @@ var ModelDefinition = React.createClass({
 			<h3 key="attr-header">No Model Selected</h3>
 		</div>
 
-		return <div key="model-detail-bar" className={"model-details " + (dirty ? 'dirty' : '')}>
+		return <ReactCSSTransitionGroup transitionName="detail-bar">
+		<div key="model-detail-bar" className={"model-details " + (dirty ? 'dirty' : '')}>
 
 			<ModelDetails model={model} key={'details-'+model.model_id} />
 			<AttributeDetailList model={model} />
@@ -149,9 +153,7 @@ var ModelDefinition = React.createClass({
 					Commit changes
 				</div>}
 			</div>
-
-
-		</div>;
+		</div></ReactCSSTransitionGroup>;
 	}
 });
 

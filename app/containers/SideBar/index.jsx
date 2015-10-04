@@ -3,6 +3,8 @@ import { Link } from "react-router"
 import styles from "./style.less"
 import _ from "underscore"
 
+import Header from "../Header";
+
 import modelActionCreators from '../../actions/modelActionCreators'
 import MetasheetDispatcher from '../../dispatcher/MetasheetDispatcher'
 
@@ -11,7 +13,10 @@ import ViewStore from "../../stores/ViewStore"
 import MetasheetConst from '../../constants/MetasheetConstants'
 
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+var sortable = require('react-sortable-mixin');
+
 import viewTypes from '../Views/viewTypes'
+import Notifier from '../Notifier'
 
 var SideBar = React.createClass({
 
@@ -32,7 +37,10 @@ var SideBar = React.createClass({
 	},
 
 	getInitialState: function () {
-		return {keyControl: false}
+		return {
+			keyControl: false,
+			editing: false
+		}
 	},
 
 	handleAddModel: function (event) {
@@ -44,29 +52,47 @@ var SideBar = React.createClass({
 		event.preventDefault();
 	},
 
+	handleEdit: function (event) {
+		this.setState({editing: true});
+	},
+
+	handleRevertEdit: function (event) {
+		this.setState({editing: false});
+	},
+
 	render: function () {
 		var _this = this;
 		var curModelId = this.props.params.modelId
-
-		var modelLinks = ModelStore.query(null, ['model']).map(function (model, idx) {
-			console.log('model: ' + model.model)
-			var modelId = model.cid || model.model_id;
-			return <ModelLink
-				key = {'model-link-' + modelId}
-				keyCtl = {idx + 1}
-				model = {model}
-				active = {curModelId == modelId}/>;
-		});
 		return <div className="left-side-bar">
-			<ul>
-				{modelLinks}
-				<li className = "li-model ">
-					<a className="clickable addNew" href="#" onClick={this.handleAddModel}>
-						<span className="small addNew icon icon-plus"></span>
-						Create new model
-					</a>
+			<Header />
+			<div className="sidebar-sub-header">
+				<h2>Databases</h2>
+				<ul className="dark mb-buttons">
+					<li onClick={this.handleEdit}>Edit</li>
+					<li onClick={this.handleAddModel}>+</li>
+				</ul>
+			</div>
+			<ul className="sidebar-model-list">{
+				ModelStore.query(null, ['model']).map(function (model, idx) {
+					var modelId = model.cid || model.model_id;
+					return <ModelLink
+						key = {'model-link-' + modelId}
+						model = {model}
+						editing = {_this.state.editing}
+						active = {curModelId == modelId}/>;
+				})
+			}
+			{
+				this.state.editing ?
+				<li className="padded">
+				<ul className="dark mb-buttons">
+				<li onClick={this.handleRevertEdit}>Done editing</li>
+				</ul>
 				</li>
+				: null
+			}
 			</ul>
+			<Notifier/>
 		</div>
 	}
 
@@ -74,6 +100,8 @@ var SideBar = React.createClass({
 export default SideBar
 
 var ModelLink = React.createClass ({
+
+	mixins: [sortable.ListMixin],
 
 	getInitialState: function () {
 		return {renaming: false}
@@ -128,40 +156,24 @@ var ModelLink = React.createClass ({
 		var views
 		var lock_icon
 
-		console.log('modelLink: ' + model.model)
-
 		var modelDisplay = (!!this.state.renaming) ?
 			(<input className="model-renamer" ref="renamer" value={this.state.name} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/>) :
 			(<span>{model.model}</span>) ;
-
-		if (this.props.active) {
-			views = ViewStore.query({model_id: model_id}, ['view']).map(function (view) {
-				if (!view) return;
-
-				return <ViewLink
-					key={'view-link-' + (view.cid || view.view_id)}
-					view={view}
-					model={model}/>
-			})
-			views.push(<ViewAdder key={"model-view-adder-" + model_id} model={model} />)
-		} else views = ""
 
 		if (model.lock_user)
 			lock_icon = <span className="icon grayed icon-lock-close"
 							title={'locked by ' + model.lock_user}></span>
 
-		console.log('B')
+		return <li className={(this.props.active ? "active " : "") + (this.props.editing ? " editmode" : "")}>
+			{this.props.editing ? <span className="draggable icon icon-Layer_2 model-reorder"></span> : null}
 
-		return <li>
-			<ul key={"model-views-ul-" + model_id}>
-				<li className={"li-model" + (this.props.active ? " li-hilite" : "")}>
-					<Link to="model" params={{modelId: model_id, workspaceId: 123	}} key={"model-link-" + model_id} onDoubleClick={this.edit}>
-					{lock_icon}
-					{modelDisplay}
-					</Link>
-				</li>
-				{views}
-			</ul>
+			<Link to="model" params={{modelId: model_id, workspaceId: 123}} key={"model-link-" + model_id} onDoubleClick={this.edit}>
+			{lock_icon}
+			{modelDisplay}
+			{this.props.editing && !this.props.renaming ? <span className="grayed right-align icon icon-trash"></span> : null}
+			{this.props.editing && !this.props.renaming ? <span className="grayed right-align icon icon-tl-pencil" onClick={this.edit}></span> : null}
+			{this.props.active && !this.props.editing ? <span className="icon right-align icon-chevron-right"></span> : null}
+			</Link>
 		</li>
 	}
 })
@@ -202,13 +214,12 @@ var ViewLink = React.createClass({
 
 
 	render: function () {
-		console.log('C')
 		var view = this.props.view;
 		var model = this.props.model;
 		var viewDisplay = (!!this.state.renaming) ?
 			(<input className="view-renamer" ref="renamer" value={this.state.name} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/>) :
 			(<span>{view.view}</span>) ;
-		console.log('D')
+
 		return <li className={"li-view " + (view._new ? "new" : "")} >
 			<Link to="view" params={{modelId: model.model_id, viewId: (view.view_id || view.cid), workspaceId: 123}}
 				onDoubleClick={this.edit} onClick={this.handleClick}>

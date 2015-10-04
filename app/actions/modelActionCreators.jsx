@@ -6,6 +6,15 @@ import groomView from '../containers/Views/groomView'
 
 var modelActions = {
 
+	createNotification: function (header, copy, type) {
+		MetasheetDispatcher.dispatch({
+			actionType: 'NOTIFY',
+			header: header,
+			copy: copy,
+			type: type
+		});
+	},
+
 	setWorkspace: function (workspaceId) {
 		var message = {
 			actionType: 'SET_WORKSPACE',
@@ -45,7 +54,6 @@ var modelActions = {
 	},
 
 	deleteRecord: function (model, selector) {
-		console.log("deleteRecord B")
 		var model_id = model.model_id
 		var message = {}
 
@@ -141,6 +149,8 @@ var modelActions = {
 			message['m' + model_id] = results.data
 
 			MetasheetDispatcher.dispatch(message)
+		}).catch(function () {
+
 		});
 	},
 
@@ -207,7 +217,6 @@ var modelActions = {
 	fetch: function (subject, selector) {
 		var message = {}
 		message.selector = selector
-		return webUtils.persist(subject, 'FETCH', selector)
 	},
 
 	create: function (subject, persist, obj, update) {
@@ -282,6 +291,10 @@ var modelActions = {
 	// models
 	fetchModels: function() {
 		webUtils.persist('model', 'FETCH', null);
+	},
+
+	fetchWorkspaces: function () {
+		webUtils.persist('workspace', 'FETCH', null);
 	},
 
 	createModel: function(model) {

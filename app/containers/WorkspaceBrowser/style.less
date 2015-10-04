@@ -1,0 +1,48 @@
+@import "../../global.less";
+
+.workspace-browser-container {
+  background: @pureGray3;
+  color: white;
+  display: flex;
+
+  min-height: 100vh;
+  padding: 50px;
+  flex-direction: column;
+}
+
+ul.workspaces-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+
+  li {
+    margin: 15px;
+    padding: 10px;
+    border: 3px solid transparent;
+    border-radius: 8px;
+
+    .transition(all .1s cubic-bezier(.16,.85,.5,1) .3s);
+
+    &:hover {
+      border: 3px solid @green-tint-1;
+    }
+
+    a {
+
+      color: white;
+      text-decoration: none;
+
+      .workspace-box {
+
+        width: 180px;
+        height: 80px;
+        color: white;
+        font-size: 45px;
+      }
+
+    }
+
+
+
+  }
+}

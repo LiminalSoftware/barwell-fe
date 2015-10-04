@@ -1,5 +1,31 @@
 @import "../../global.less";
 
+
+.rh-sidebar-accordian {
+	padding: 0;
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+
+	& > li {
+		display: flex;
+		flex-direction: row;
+		& > .accordian-icon {
+			padding: 20px;
+			flex: 1;
+			& > .icon {
+				font-size: 50px;
+			}
+		}
+		.accordian-label {
+			flex: 3;
+		}
+		&:hover {
+			background: @gray4;
+		}
+	}
+}
+
 .model-views {
 	display: flex;
 	min-height: 100vh;
@@ -8,11 +34,15 @@
 }
 
 .model-panes {
+	z-index: 8;
 	display: flex;
 	flex: 1;
+	flex-grow: 1;
+	background: white;
 }
 
 .view-body-wrapper {
+	z-index: 10;
 	display: flex;
 	flex-direction: column;
 	height: 100vh;
@@ -27,58 +57,17 @@
 }
 
 .no-view-content {
+	z-index: 10;
 	background: white;
 	font-size: 18px;
 	font-family: @headerFont;
 	color: @darkText;
 	text-align: center;
 	padding-top: 200px;
+	background-color: white;
 }
 
 
-ul.view-tabs {
-	background: @pureGray4;
-	list-style: none;
-	padding: 0;
-	padding-top: 3px;
-	padding-left: 3px;
-	border-bottom: 1px solid @pureGray2;
-	margin: 0;
-	display: inline-flex;
-	flex-direction: column;
-	li {
-		position: relative;
-		background: @pureGray3;
-		color: @pureGray1;
-		padding: 5px;
-		padding-left: 10px;
-		width: 150px;
-		height: 20px;
-		border-top-left-radius: 5px;
-		border-top-right-radius: 5px;
-		border-top: 1px solid @pureGray2;
-		border-left: 1px solid @pureGray2;
-		border-right: 1px solid @pureGray2;
-
-		// span.edge {
-		// 	z-index: 10;
-		// 	position: absolute;
-		// 	right: 0;
-		// 	top: 0;
-		// 	margin: 0;
-		// 	padding: 0;
-		// 	margin-right: -20px;
-		// 	width: 20px;
-		// 	height: 10px;
-		// 	border-style: solid;
-		// 	border-width: 10px;
-		// 	border-color: @pureGray2;
-		// 	border-top-color: transparent;
-		// 	border-right-color: transparent;
-		// 	background: none;
-		// }
-	}
-}
 
 .detail-hider {
 	position: absolute;
@@ -215,7 +204,6 @@ ul.detail-panels {
 	position: relative;
 	order: -1;
 	background: @cream;
-	border-right: 2px solid @gray-3;
 
 	h2 {
 		font-size: 17px;
@@ -474,4 +462,12 @@ tr:hover .showonhover {
 
 	// color: @gray-2;
 	// border: 1px solid @gray-2;
+}
+
+
+.current-user-label {
+	font-family: @subheaderFont !important;
+	font-size: 16px !important;
+	float: right !important;
+	margin-right: 20px;
 }

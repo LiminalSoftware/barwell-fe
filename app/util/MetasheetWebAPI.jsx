@@ -89,5 +89,7 @@ var persist = module.exports.persist = function (subject, action, data, update, 
     (results.data instanceof Array ? results.data : [results.data]).forEach(function (obj) {
       issueReceipt(subject, obj)
     })
-  });
+  }).catch(function (error) {
+    modelActionCreators.createNotification('Connection problem!', 'There may be a problem with your internet connection', 'error')
+  })
 }

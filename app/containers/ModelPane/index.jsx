@@ -7,8 +7,10 @@ import detailStyles from "./detailTable.less"
 import ModelDefinition from "./ModelDefinition"
 import ModelStore from "../../stores/ModelStore"
 import ViewStore from "../../stores/ViewStore"
+import sortable from 'react-sortable-mixin'
 
 import modelActionCreators from "../../actions/modelActionCreators"
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 var ModelPane = React.createClass({
 
@@ -108,16 +110,46 @@ var ModelPane = React.createClass({
 					<div className="detail-hider" onClick={this.toggleSidebar}>
 						<span className="clickable grayed right-align icon icon-cl-chevron-left" title="Hide sidebar">
 					</span></div>
-					<ul className="detail-panels">
-						<li><h2 className={activePane == "model-def" ? "active" : ""} onClick={this.showModelDef}>Model</h2></li>
-						{ (!!view) ? <li><h2>Details</h2></li> : "" }
-						{ (!!view) ? <li><h2 className={activePane == "view-config" ? "active" : ""} onClick={this.showViewConfig}>View</h2></li> : ""}
+					<div className="right-header header-container">
+						<h1>{model ? model.model : null}</h1>
+						{view ? <h1> /  {view.view}</h1> : null}
+
+						<ul className="dark mb-buttons"><li>Create view</li></ul>
+						<ul className="dark mb-buttons"><li><span className="small icon icon-chevron-down"></span></li></ul>
+					</div>
+					<ul className="rh-sidebar-accordian">
+						<li>
+							<span className="accordian-icon">
+								<span className="large icon icon-db-database-02"></span>
+							</span>
+							<span className="accordian-label">
+								<h3>Database Design</h3>
+								<p>Use this section to define the attributes of this database and its relation to other databases</p>
+							</span>
+						</li>
+						<li>
+							<span className="accordian-icon">
+								<span className="large icon icon-glasses"></span>
+							</span>
+							<span className="accordian-label">
+								<h3>View Configuration</h3>
+								<p>Use this section to control how you want to view and interact with the data in this database</p>
+							</span>
+						</li>
 					</ul>
-					{detailContent}
+
 				</div>
+
+
 				<div className = "model-panes">
+				<div className="view-body-wrapper">
+				<div className="right-header header-container">
+					<h3 className="current-user-label">Signed in as</h3>
+				</div>
 				{bodyContent}
 				</div>
+				</div>
+
 			</div>
 		</div>
 	}

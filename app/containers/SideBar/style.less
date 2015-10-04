@@ -1,143 +1,111 @@
 @import "../../global.less";
 
-.view-delete {
-	.clickable;
-	position: absolute;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	width: 20px;
-	padding: 10px;
-	background: @cream;
-
-	visibility: hidden;
-	// &:hover {
-	color: @darkText;
-	// }
+.right-header {
+	background-color: @purple1 !important;
 }
 
-.li-view:hover .view-delete {
-	visibility: visible;
+.sidebar-sub-header {
+	h2 {
+		padding: 10px;
+		font-size: 16px;
+		color: @gray3;
+		font-family: @headerFont;
+		display: inline;
+	}
+	border-bottom: 1px solid @gray2;
+	padding: 20px;
+}
+
+.mb-buttons {
+	margin: 0;
+	float: right;
+	list-style: none;
+	padding: 0;
+	&.dark {
+		color: @gray4;
+	}
+	& > li {
+		// margin: -1px;
+		float: left;
+		padding: 1px 8px;
+		border: 1px solid @gray-3;
+		border-left: none;
+		&:first-child {
+			border-left: 1px solid @gray3;
+			border-radius-top-left: 4px;
+			border-radius-bottom-left: 4px;
+		}
+		&:last-child {
+			border-radius-top-right: 4px;
+			border-radius-bottom-right: 4px;
+		}
+		&:hover {
+			background: @newgreen1;
+			border-color: @newgreen1;
+		}
+		cursor: pointer;
+		font-size: 14px;
+		font-family: @subheaderFont;
+		font-weight: 600;
+	}
+}
+
+ul.sidebar-model-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+
+	& > li {
+		padding: 3px 20px;
+	}
+
+	& > li > a {
+		padding: 15px;
+		display: block;
+		text-decoration: none;
+		position: relative;
+		color: @gray4;
+		font-size: 14px;
+		font-weight: 600;
+		font-family: @subheaderFont;
+	}
+	& > li.active {
+
+	}
+	& > li.active:not(.editmode) {
+		background: @gray2;
+	}
+
+	& > li.editmode > a {
+		background: @gray2;
+		border-radius: 4px;
+		padding-right: 5px;
+	}
+	.model-reorder {
+		display: block;
+		position: absolute;
+		left: -3px;
+		color: @gray2;
+		padding: 5px;
+		padding-top: 15px;
+		cursor: drag;
+	}
+
+	input {
+		display: block;
+		background: white;
+		border-radius: 4px;
+		padding: 10px;
+		border: none;
+		margin: 0;
+	}
 }
 
 .left-side-bar {
-	display: relative;
-	flex: 0 0 180px;
+	position: relative;
+	flex: 0 0 250px;
 	order: -2;
 	background: @pureGray3;
 	padding: 0;
 	overflow: visible;
-	border-right: 2px solid @gray-2;
-
-	ul {
-		overflow: visible;
-		list-style: none;
-		padding: 0;
-		margin: 0;
-
-		li {
-			position: relative;
-			overflow: visible;
-			color: @pureGray1;
-			font-size: 14px;
-			border-bottom: 1px solid @pureGray3;
-
-			&.li-view {
-				background-color: @cream;
-
-				.transition(all 200ms ease-in);
-
-				border-right: 1px solid @pureGray3;
-				a {
-					border-left: 4px solid @heavyCream;
-					color: @darkText;
-				}
-
-				&.new {
-					margin-left: 150px;
-					margin-right: -150px;
-
-				}
-			}
-
-			&.li-hilite {
-				background-color: @cream;
-				&.li-view {
-					border-right: 1px solid @gray-4;
-				}
-				&.li-model {
-					border-right: 1px solid @gray-4;
-					a {
-						border-left: 4px solid @heavyCream;
-						color: @darkText;
-					}
-				}
-			}
-
-
-			a {
-				position: relative;
-
-				font-size: 13px;
-				display: block;
-				padding: 10px;
-				text-decoration: none;
-
-
-				color: @pureGray1;
-				border-left: 4px solid @pureGray3;
-
-				&.active {
-					background-color: @cream;
-					border-left: 4px solid @green-tint-1;
-					margin-right: -5px;
-					z-index: 300;
-				}
-
-				&:not(.active):hover {
-					border-left: 4px solid @green-tint-2;
-				}
-			}
-		}
-	}
-}
-
-.icon.key-ctl {
-	font-size: 24px;
-	position: absolute;
-	right: 5px;
-	top: 5px;
-	color: @heavyCream;
-}
-
-ul.view-type-options {
-	border: 1px solid @green-tint-1;
-}
-
-.new-view-choice {
-	display: block;
-	list-style: none;
-	a {
-		background-color: @cream;
-	}
-}
-
-
-
-.view-renamer, .model-renamer {
-	border: none;
-	border-bottom: 1px solid @darkText;
-	background: none;
-	font-size: 13px;
-	font-family: "Neue Haas Unica Thin", "Helvetica", sans-serif;
-	color: @darkText;
-	width: 130px;
-	outline: 0;
-	padding: 0;
-	margin: 0;
-	margin-bottom: -1px;
-}
-
-.view-renamer::selection, .model-renamer::selection {
-  background: @green-tint-2; /* WebKit/Blink Browsers */
 }
