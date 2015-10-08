@@ -133,27 +133,13 @@ var ModelDefinition = React.createClass({
 			<h3 key="attr-header">No Model Selected</h3>
 		</div>
 
-		return <ReactCSSTransitionGroup transitionName="detail-bar">
-		<div key="model-detail-bar" className={"model-details " + (dirty ? 'dirty' : '')}>
-
+		return <div key="model-detail-bar" className={"model-details " + (dirty ? 'dirty' : '')}>
 			<ModelDetails model={model} key={'details-'+model.model_id} />
 			<AttributeDetailList model={model} />
 			<RelationDetailList model={model} />
 			<KeyDetailList model={model} />
 			<CalculationDetailList model={model} />
-
-			<div className = {(dirty || this.state.committing ? 'active' : 'inactive') + ' decision-row'}>
-				{(this.state.committing) ? <Spinner/> : null}
-				{(this.state.committing) ? null : <div className="cancel-button" onClick={this.fetchModel}>
-					<span className="gray large icon icon-cld-delete"></span>
-					Cancel changes
-				</div>}
-				{(this.state.committing) ? null : <div className="save-button" onClick={this.commitModel}>
-					<span className="gray large icon icon-cld-upload"></span>
-					Commit changes
-				</div>}
-			</div>
-		</div></ReactCSSTransitionGroup>;
+		</div>;
 	}
 });
 

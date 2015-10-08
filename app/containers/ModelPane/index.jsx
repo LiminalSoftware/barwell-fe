@@ -3,7 +3,8 @@ import { RouteHandler } from "react-router"
 import viewTypes from "containers/Views/viewTypes"
 import ViewSelector from "./ViewSelector"
 import styles from "./style.less"
-import detailStyles from "./detailTable.less"
+import detailStyles from "./detail.less"
+// import detailStyles from "./detailTable.less"
 import ModelDefinition from "./ModelDefinition"
 import ModelStore from "../../stores/ModelStore"
 import ViewStore from "../../stores/ViewStore"
@@ -17,6 +18,7 @@ var ModelPane = React.createClass({
 	getInitialState: function () {
 		return {
 			activePane: "model-def",
+			viewListOpen: false,
 			miniaturized: false
 		}
 	},
@@ -51,7 +53,13 @@ var ModelPane = React.createClass({
    	modelActionCreators.setFocus('model-config')
    },
 
+	 toggleViewList: function () {
+		 var toggle = !(this.state.viewListOpen)
+		 this.setState({viewListOpen: toggle})
+	 },
+
 	render: function() {
+		var _this = this
 		var model_id = this.props.params.modelId
 		var view_id = this.props.params.viewId
 		var view = ViewStore.get(view_id)
@@ -106,26 +114,50 @@ var ModelPane = React.createClass({
 
 		return <div className="model-views">
 			<div className = "model-panes">
-				<div className="detail-bar" onClick={this.focus}>
-					<div className="detail-hider" onClick={this.toggleSidebar}>
-						<span className="clickable grayed right-align icon icon-cl-chevron-left" title="Hide sidebar">
-					</span></div>
-					<div className="right-header header-container">
-						<h1>{model ? model.model : null}</h1>
-						{view ? <h1> /  {view.view}</h1> : null}
+				<ReactCSSTransitionGroup component="div" className="detail-bar" transitionName="detail-bar" onClick={this.focus}>
 
-						<ul className="dark mb-buttons"><li>Create view</li></ul>
-						<ul className="dark mb-buttons"><li><span className="small icon icon-chevron-down"></span></li></ul>
+				<div className="right-header header-container" >
+					<h1>{model ? model.model : null}</h1>
+					{view ? <h1> /  {view.view}</h1> : null}
+
+
+					<ul className="dark mb-buttons right-margin"><li onClick={this.toggleViewList}>
+						<span className={"small icon tight icon-chevron-down"}></span>
+					</li></ul>
+				</div>
+
+				<div className={"views-list-container " + (this.state.viewListOpen ? " open" : " closed")}>
+
+					<div className="sidebar-sub-header">
+						<h2>Views</h2>
+						<ul className="dark mb-buttons">
+							<li onClick={this.handleEdit}>Edit</li>
+							<li onClick={this.handleAddModel}>+</li>
+						</ul>
 					</div>
+
+					<ul className="views-list"> {
+						ViewStore.query({model_id: model ? (model.cid || model.modelId) : 0}).map(function(view) {
+							return <li>{view.view}</li>
+						})
+					}</ul>
+				</div>
+
+
 					<ul className="rh-sidebar-accordian">
 						<li>
-							<span className="accordian-icon">
-								<span className="large icon icon-db-database-02"></span>
-							</span>
-							<span className="accordian-label">
-								<h3>Database Design</h3>
-								<p>Use this section to define the attributes of this database and its relation to other databases</p>
-							</span>
+							<div className="accordian-item-head">
+								<span className="accordian-icon">
+									<span className="large icon icon-db-database-02"></span>
+								</span>
+								<span className="accordian-label">
+									<h3>Database Design</h3>
+									<p>Use this section to define the attributes of this database and its relation to other databases</p>
+								</span>
+							</div>
+							<div className="accordian-content">
+								<ModelDefinition model = {model} />
+							</div>
 						</li>
 						<li>
 							<span className="accordian-icon">
@@ -138,7 +170,7 @@ var ModelPane = React.createClass({
 						</li>
 					</ul>
 
-				</div>
+				</ReactCSSTransitionGroup>
 
 
 				<div className = "model-panes">

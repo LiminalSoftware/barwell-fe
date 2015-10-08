@@ -289,8 +289,16 @@ var modelActions = {
 	},
 
 	// models
-	fetchModels: function() {
-		webUtils.persist('model', 'FETCH', null);
+	fetchModels: function (workspace_id) {
+		var url = 'https://api.metasheet.io/model?workspace_id=eq.' + workspace_id;
+		return webUtils.ajax('GET', url, null, {"Prefer": 'return=representation'}).then(function (models) {
+			return models.data.map(function (model) {
+				var message = {}
+				message.actionType = 'MODEL_RECEIVE'
+				message.model = model
+				return MetasheetDispatcher.dispatch(message)
+			})
+		});
 	},
 
 	fetchWorkspaces: function () {
@@ -302,7 +310,7 @@ var modelActions = {
 			actionType: 'MODEL_CREATE',
 			model: model
 		});
-		webUtils.persist('model', 'CREATE', _.pick(model, 'model_id', 'model', 'plural'));
+		webUtils.persist('model', 'CREATE', _.pick(model, 'model_id', 'model', 'plural', 'workspace_id'));
 	},
 
 	dropModel: function (model) {

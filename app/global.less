@@ -244,50 +244,14 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 	font-size: 17px;
 	min-width: 25 px;
 	margin-right: 8px;
-	&.after {
-		margin-left: 8px;
-		margin-right: 2px;
-	}
-	&.clear {
-		display: block;
-	}
-	&.white {
-		color: white;
-	}
+  .transition(all 100ms ease-in);
 
-	&.gold {
-		color: gold;
-	}
-
-	&.grayed {
-		.transition(all 100ms ease-in);
-		color: @gray-2;
-	}
-
-	&.blued {
-		color: @blue4;
-	}
+  &.upside-down {
+    .rotate(180deg);
+  }
 
 	&.right-align {
 		float: right;
-	}
-
-	&.abs-position-right {
-		position: absolute;
-		right: 5px;
-		width: 15px;
-		height: 15px;
-		top: 50%;
-		margin-top: -8px;
-	}
-
-	&.greened {
-		.transition(all 100ms ease-in);
-		color: @green-tint-2;
-	}
-
-	&.reddened {
-		color: @red-tint-2;
 	}
 
 	&.small {

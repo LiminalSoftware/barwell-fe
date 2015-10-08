@@ -45,20 +45,18 @@ var AttributeDetailList = React.createClass({
 
 		return <div className = "detail-block">
 			<h3 key="attr-header">Attributes</h3>
-			<table key="attr-table" className="detail-table">
-				<thead>
-					<tr>
-						<th className="width-10"></th>
-						<th className="width-30">Name</th>
-						<th className="width-25">Type</th>
-						<th className="width-15">Keys</th>
-						<th className="width-20"></th>
-					</tr>
-				</thead>
+			<div key="attr-table" className="detail-table">
+
+					<div className="detailer-header">
+						<span className="width-40">Name</span>
+						<span className="width-25">Type</span>
+						<span className="width-15">Keys</span>
+						<span className="width-20"></span>
+					</div>
 
 				{colList}
 
-			</table>
+			</div>
 			<div><a
 				className="clickable new-adder new-attr"
 				onClick={this.handleAddNewAttr}>
@@ -246,54 +244,50 @@ var AttributeDetail = React.createClass({
 		}
 
 		return <tbody className={this.state.open ? '' : 'singleton'}>
-			<tr
-				key={key}
-				className={(col._dirty?'unsaved':'') + (col._destroy?'destroyed':'')}>
-				<td onClick={this.toggleDetails} className="no-line">
-					<span className={wedgeClasses}></span>
-				</td>
-				<td onDoubleClick={this.handleEdit} key={key + '-name'} title={col.attribute_id}>
+			<div key={key}
+				className={("detail-row ") + (col._dirty?'unsaved':'') + (col._destroy?'destroyed':'')}>
+				<span  key={key + '-name'} title={col.attribute_id}>
 					{nameField}
-				</td>
-				<td>
+				</span>
+				<span>
 					{typeSelector}
-				</td>
-				<td className="centered">
+				</span>
+				<span  className="centered">
 					{keyIcons}
-				</td>
-				<td className="centered">
+				</span>
+				<span  className="centered">
 					{actions}
-				</td>
-			</tr>
+				</span>
+			</div>
 			{this.state.open ?
-				<tr
+				<div
 					key={key+'-type-detail'}
 					className={(col._dirty?'unsaved':'') + (col._destroy?'destroyed':'')}>
-					<td className="no-line">
-					</td>
-					<td>
+					<span  className="no-line">
+					</span>
+					<span>
 						Type:
-					</td>
-					<td className="right-align" colSpan="3">
+					</span>
+					<span  className="right-align" colSpan="3">
 						{typeSelector}
-					</td>
-				</tr>
+					</span>
+				</div>
 				:
 				null
 			}
 			{this.state.open ?
-				<tr
+				<div
 					key={key+'-default-detail'}
 					className={(col._dirty?'unsaved':'') + (col._destroy?'destroyed':'')}>
-					<td className="no-line">
-					</td>
-					<td >
+					<span  className="no-line">
+					</span>
+					<span  >
 						Default Value:
-					</td>
-					<td className="right-align" colSpan="3">
+					</span>
+					<span  className="right-align" colSpan="3">
 						{this.state.default_value}
-					</td>
-				</tr>
+					</span>
+				</div>
 				:
 				null
 			}

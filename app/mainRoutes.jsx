@@ -12,14 +12,12 @@ if(!Object.assign)
 // export routes
 module.exports = (
 	<Route path="/">
-
 			<Route name="default" path="/" handler={WorkspaceBrowser}></Route>
-			<Route name="workspaceBrowser" path="/workspaces?" handler={WorkspaceBrowser}></Route>
-			<Route handler={Application}>
-				<Route name="workspace" path="/workspace/:workspaceId" handler={ModelPane}></Route>
-				<Route name="model" path="/workspace/:workspaceId/model/:modelId" handler={ModelPane}></Route>
-				<Route name="view" path="/workspace/:workspaceId/model/:modelId/view/:viewId" handler={ModelPane}></Route>
+			<Route name="workspace" path="workspace/:workspaceId" handler={Application}>
+				<Route name="model" path="model/:modelId" handler={ModelPane}></Route>
+				<Route name="view" path="	model/:modelId/view/:viewId" handler={ModelPane}></Route>
+				<DefaultRoute handler={ModelPane}></DefaultRoute>
 			</Route>
-		
+			<Route name="workspaceBrowser" path="workspaces?" handler={WorkspaceBrowser}></Route>
 	</Route>
 );

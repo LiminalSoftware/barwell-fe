@@ -11,13 +11,8 @@ var Application = React.createClass({
 	},
 
 	render: function() {
-
-		// var { loading } = this.props;
-		this.props.toggleSidebar = this.toggleSidebar
 		return <div className="application ">
-
 			<div className={"app-container " + (this.state.hiddenSidebar ? "hide-sidebar" : "")}>
-
 				<SideBar {...this.props} />
 				<RouteHandler {...this.props} />
 			</div>
@@ -25,12 +20,11 @@ var Application = React.createClass({
 	},
 
 	componentWillMount: function () {
-		// modelActionCreators.setWorkspace(this.props.workspaceId)
-		modelActionCreators.fetchModels()
+		modelActionCreators.fetchModels(this.props.params.workspaceId)
 	},
 
 	componentWillReceiveProps: function (newProps) {
-		console.log('newProps: ' + JSON.stringify(newProps))
+		var workspace
 	},
 
 	toggleSidebar: function() {

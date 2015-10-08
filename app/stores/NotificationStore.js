@@ -25,9 +25,7 @@ var NotificationStore = assign({}, EventEmitter.prototype, {
 	},
 
   setTimer: function () {
-    console.log('setTimer')
     setTimeout(function() {
-      console.log('ring ring')
       NotificationStore.emit('CHANGE');
     }, this.notifyTime)
   },

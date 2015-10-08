@@ -72,26 +72,17 @@ var SideBar = React.createClass({
 					<li onClick={this.handleAddModel}>+</li>
 				</ul>
 			</div>
-			<ul className="sidebar-model-list">{
-				ModelStore.query(null, ['model']).map(function (model, idx) {
-					var modelId = model.cid || model.model_id;
-					return <ModelLink
-						key = {'model-link-' + modelId}
-						model = {model}
-						editing = {_this.state.editing}
-						active = {curModelId == modelId}/>;
-				})
-			}
+			<ModelList editing = {this.state.editing} curModelId = {curModelId} />
 			{
 				this.state.editing ?
-				<li className="padded">
-				<ul className="dark mb-buttons">
-				<li onClick={this.handleRevertEdit}>Done editing</li>
-				</ul>
-				</li>
+				<div className="padded">
+					<ul className="dark mb-buttons">
+						<li onClick={this.handleRevertEdit}>Done editing</li>
+					</ul>
+				</div>
 				: null
 			}
-			</ul>
+
 			<Notifier/>
 		</div>
 	}
@@ -99,9 +90,29 @@ var SideBar = React.createClass({
 })
 export default SideBar
 
+var ModelList = React.createClass ({
+	mixins: [sortable.ListMixin],
+
+	render: function () {
+		var _this = this
+		return <ul className="sidebar-model-list">{
+			ModelStore.query(null, ['model']).map(function (model, idx) {
+				var modelId = model.cid || model.model_id;
+				return <ModelLink
+					index = {idx}
+					key = {'model-link-' + modelId}
+					model = {model}
+					editing = {_this.props.editing}
+					active = {_this.props.curModelId == modelId}
+					{..._this.movableProps} />;
+			})
+		}</ul>
+	}
+})
+
 var ModelLink = React.createClass ({
 
-	mixins: [sortable.ListMixin],
+	mixins: [sortable.ItemMixin],
 
 	getInitialState: function () {
 		return {renaming: false}
@@ -149,12 +160,19 @@ var ModelLink = React.createClass ({
 		this.setState({name: name})
 	},
 
+	handleDelete: function (event) {
+
+	},
+
 	render: function() {
 		var _this = this
 		var model = this.props.model
 		var model_id = model.cid || model.model_id
+		var workspace_id = model.workspace_id
 		var views
 		var lock_icon
+
+		console.log('workspace_id: ' + workspace_id)
 
 		var modelDisplay = (!!this.state.renaming) ?
 			(<input className="model-renamer" ref="renamer" value={this.state.name} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/>) :
@@ -167,7 +185,7 @@ var ModelLink = React.createClass ({
 		return <li className={(this.props.active ? "active " : "") + (this.props.editing ? " editmode" : "")}>
 			{this.props.editing ? <span className="draggable icon icon-Layer_2 model-reorder"></span> : null}
 
-			<Link to="model" params={{modelId: model_id, workspaceId: 123}} key={"model-link-" + model_id} onDoubleClick={this.edit}>
+			<Link to="model" params={{modelId: model_id, workspaceId: workspace_id}} key={"model-link-" + model_id} onDoubleClick={this.edit}>
 			{lock_icon}
 			{modelDisplay}
 			{this.props.editing && !this.props.renaming ? <span className="grayed right-align icon icon-trash"></span> : null}

@@ -16,7 +16,6 @@ var Notifier = React.createClass({
 	},
 
 	_onChange: function () {
-		console.log('notify error')
 		this.forceUpdate()
 	},
 
@@ -32,7 +31,7 @@ var Notifier = React.createClass({
 							break;
 					}
 
-					return <li className={note.type} key={note.notificationId}>
+					return <li className={note.type} key={note.notificationId} style={{zIndex: note.notificationId}}>
 						<h3><span className={'icon ' + iconName}></span> {note.header}</h3>
 						<p>{note.copy}</p>
 					</li>
