@@ -1,4 +1,6 @@
 @import "./assets/less/pictonic.less";
+@import "./loader";
+
 
 @font-face{
 font-family:"Helvetica Neue Medium";
@@ -25,6 +27,22 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
   src:url("assets/fonts/Slabo13px-Regular.ttf");
 }
 
+@font-face{
+  font-family: "Open Sans";
+  src:url("assets/fonts/OpenSans-Regular.ttf");
+}
+
+@font-face{
+  font-family: "Open Sans - Extra Bold";
+  src:url("assets/fonts/OpenSans-ExtraBold.ttf");
+}
+
+// ==============================
+
+@bodyFont: "Open Sans", "Helvetica", sans-serif;
+@subheaderFont: "Open Sans - Extra Bold", "Helvetica", sans-serif;
+@headerFont: "Slab", "Serif";
+
 //=================================
 
 @gray1: #524A50;
@@ -32,8 +50,8 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 @gray3: #CBC3B7;
 @gray4: #FAFAF8;
 
-@purple1: #654B6D;
-@purple2: #755682;
+@purple1: darken(#079538, 5%);
+@purple2: #079538;
 
 @newgreen1: #079538;
 
@@ -99,11 +117,7 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 @editor-color-1: @sunflower;
 @editor-color-2: @carrot;
 
-// ==============================
 
-@bodyFont: "Neue Haas Unica Thin", "Helvetica", sans-serif;
-@subheaderFont: "Helvetica", sans-serif;
-@headerFont: "Slab", "Serif";
 
 //=================================
 // COLORS
@@ -268,6 +282,10 @@ url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b3
 		margin-left: 2px;
 	}
 
+  &.tighter {
+		margin-right: 0;
+		margin-left: 0;
+	}
 }
 
 .wedge{

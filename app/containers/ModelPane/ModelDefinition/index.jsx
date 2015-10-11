@@ -17,7 +17,6 @@ import ModelDetails from './ModelDetails'
 import getIconClasses from './getIconClasses'
 import _ from 'underscore'
 
-
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
@@ -144,29 +143,3 @@ var ModelDefinition = React.createClass({
 });
 
 export default ModelDefinition;
-
-var Spinner = React.createClass({
-	componentDidMount: function () {
-		setTimeout(this.increment, 100);
-	},
-
-	increment: function () {
-		var spin = ((this.state.spin + 1) % 9);
-		if(!this.isMounted()) return;
-		this.setState({spin: spin})
-		setTimeout(this.increment, 100);
-	},
-
-	getInitialState: function () {
-		return {
-			spin: 0
-		}
-	},
-
-	render: function () {
-		return <span className="cancel-button">
-				<span className={"gray large icon icon-loadingcr-" + (this.state.spin + 1)}></span>
-				Committing changes...
-			</span>
-	}
-});

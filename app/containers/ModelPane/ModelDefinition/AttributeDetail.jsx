@@ -9,10 +9,29 @@ import modelActionCreators from '../../../actions/modelActionCreators'
 import constants from '../../../constants/MetasheetConstants'
 import getIconClasses from './getIconClasses'
 import _ from 'underscore'
+import util from '../../../util/util'
 
+var sortable = require('react-sortable-mixin');
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 var AttributeDetailList = React.createClass({
+
+	// mixins: [sortable.ListMixin],
+
+	getInitialState: function () {
+		return {
+			editing: false
+		}
+	},
+
+	handleEdit: function () {
+		this.setState({editing: true})
+	},
+
+	handleRevertEdit: function () {
+		this.setState({editing: false})
+	},
 
 	handleAddNewAttr: function (event) {
 		var model = this.props.model;
@@ -22,10 +41,68 @@ var AttributeDetailList = React.createClass({
 			model_id: (model.model_id || model.cid)
 		}
 		modelActionCreators.create('attribute', false, obj)
+		this.setState({editing: true})
 		event.preventDefault()
 	},
 
+	commitChanges: function () {
+		var _this = this
+		var model = this.props.model;
+		model.lock_user = 'me'
+		this.setState({committing: true})
+
+		modelActionCreators.create('model', true, model, false).then(function () {
+			return Promise.all(
+			AttributeStore.query({model_id: (model.model_id || model.cid)}).map(function (attr) {
+				if (attr._dirty) return modelActionCreators.create('attribute', true, attr)
+				if (attr._destroy) return modelActionCreators.destroy('attribute', true, attr)
+			}))
+		}).then(function () {
+				model.lock_user = null
+				modelActionCreators.create('model', true, model, false)
+		}).then(function () {
+			_this.cancelChanges()
+			_this.setState({editing: false, committing: false})
+			modelActionCreators.createNotification('Attribute udpate complete!', 'Your changes have been committed to the server', 'info')
+		})
+	},
+
+	cancelChanges: function () {
+		var model = this.props.model;
+		AttributeStore.query({model_id: (model.model_id || model.cid)}).map(function (attr) {
+			if (!attr.attribute_id) return modelActionCreators.destroy('attribute', false, attr)
+			else {
+				_.extend(attr, attr._server, {_destroy: false, _clean: true})
+				modelActionCreators.create('attribute', false, attr)
+			}
+		})
+		this.setState({editing: false})
+	},
+
+	isDirty: function () {
+		var model = this.props.model;
+		return !_.all(AttributeStore.query({model_id: model.model_id}).map(util.isClean))
+	},
+
+	getConfirmationButtons: function () {
+		if (this.state.committing) return <ul className="light mb-buttons" key="confirmations">
+			<li key='save-changes' className="hilight">
+				<div className="three-quarters-loader"></div>Saving ...
+			</li>
+		</ul>;
+		else if (this.state.editing ) return <ul className="light mb-buttons" key="confirmations">
+			<li onClick={this.cancelChanges}>
+				Cancel
+			</li>
+			<li onClick={this.commitChanges} key='save-changes'>
+				Save changes
+			</li>
+		</ul>
+		
+	},
+
 	render: function () {
+		var _this = this
 		var keyOrd = {}
 		var model = this.props.model
 		var iter = 0
@@ -34,35 +111,42 @@ var AttributeDetailList = React.createClass({
 			return keyOrd[key.key_id] = iter++;
 		})
 
-		var colList = AttributeStore.query({model_id: (model.model_id || model.cid)}).map(function (col) {
-			var colId = (col.attribute_id || col.cid);
-			return <AttributeDetail
-				key={colId}
-				model={model}
-				attribute = {col}
-				keyOrd = {keyOrd} />;
-		});
-
 		return <div className = "detail-block">
-			<h3 key="attr-header">Attributes</h3>
-			<div key="attr-table" className="detail-table">
-
-					<div className="detailer-header">
-						<span className="width-40">Name</span>
-						<span className="width-25">Type</span>
-						<span className="width-15">Keys</span>
-						<span className="width-20"></span>
-					</div>
-
-				{colList}
-
+			<div className="detail-section-header">
+				<h3>Attributes</h3>
+				<ul className="light mb-buttons">
+					<li onClick={this.handleEdit}>Edit</li>
+					<li onClick={this.handleAddNewAttr}>+</li>
+				</ul>
 			</div>
-			<div><a
-				className="clickable new-adder new-attr"
-				onClick={this.handleAddNewAttr}>
-				<span className="small addNew icon icon-plus"></span>
-				New attribute
-			</a></div>
+
+			<p className="explainer">
+				Attributes are properties that you might use to describe items in this database.
+			</p>
+			<div key="attr-table" className={"detail-table " + (this.state.editing ? "editing" : "")}>
+
+					<div className="detail-header">
+						<span className="width-40" key="name-cell">Name</span>
+						<span className="width-30" key="type-cell">Type</span>
+						<span className="width-10" key="keys-cell">Keys</span>
+						<span clasName="width-8" key="action-cell"></span>
+					</div>
+					{
+						AttributeStore.query({model_id: (model.model_id || model.cid)}, ['ordering']).map(function (col) {
+							var colId = (col.attribute_id || col.cid);
+							if (col._destroy) return null
+							return <AttributeDetail
+								key = {colId}
+								editing = {_this.state.editing}
+								model = {model}
+								attribute = {col}
+								keyOrd = {keyOrd} />;
+						})
+					}
+			</div>
+			<div className="confirm-div">
+				{this.getConfirmationButtons()}
+			</div>
 		</div>
 	}
 })
@@ -70,10 +154,6 @@ var AttributeDetailList = React.createClass({
 var AttributeDetail = React.createClass({
 
 	mixins: [PureRenderMixin],
-
-	componentWillUnmount: function () {
-		document.removeEventListener('keyup', this.handleKeyPress)
-	},
 
 	getInitialState: function () {
 		var attribute = this.props.attribute;
@@ -86,40 +166,11 @@ var AttributeDetail = React.createClass({
 		};
 	},
 
-	commitChanges: function () {
-		var attribute = _.clone(this.props.attribute);
+	commitUpdate: function () {
+		var attribute = this.props.attribute
 		attribute.attribute = this.state.attribute
+		attribute.type = this.state.type
 		modelActionCreators.create('attribute', false, attribute)
-		this.revert()
-	},
-
-	cancelChanges: function () {
-		this.revert()
-	},
-
-	handleEdit: function () {
-		var attribute = this.props.attribute;
-		if (this.state.renaming) return
-		this.setState({
-			renaming: true,
-			attribute: attribute.attribute
-		})
-		document.addEventListener('keyup', this.handleKeyPress)
-	},
-
-	revert: function () {
-		var attribute = this.props.attribute;
-		document.removeEventListener('keyup', this.handleKeyPress)
-		this.setState({
-			renaming: false,
-			attribute: attribute.attribute,
-			type: attribute.type
-		})
-	},
-
-	handleKeyPress: function (event) {
-		if (event.keyCode === 27) this.cancelChanges()
-		if (event.keyCode === 13) this.commitChanges()
 	},
 
 	handleNameUpdate: function (event) {
@@ -127,10 +178,8 @@ var AttributeDetail = React.createClass({
 	},
 
 	handleTypeChange: function (event) {
-		var attribute = this.props.attribute
-		attribute.type = event.target.value
-		modelActionCreators.createAttribute(attribute)
-		this.revert()
+		this.setState({type: event.target.value})
+		this.commitUpdate()
 	},
 
 	handleDelete: function (event) {
@@ -145,40 +194,14 @@ var AttributeDetail = React.createClass({
 		event.preventDefault()
 	},
 
-	handleUndelete: function (event) {
-		var attribute = this.props.attribute
-		modelActionCreators.undestroy('attribute', attribute)
-		event.preventDefault()
-	},
-
-	toggleDetails: function (event) {
-		this.setState({open: !this.state.open});
-	},
-
 	render: function () {
 		var _this = this;
 		var col = this.props.attribute;
 		var model = this.props.model;
 		var keyOrd = this.props.keyOrd;
 		var name = col.attribute;
-
-		var wedgeClasses = "small grayed icon icon-geo-triangle wedge" +
-			(this.state.open ? " open" : "closed");
-
-		var nameField = (this.state.renaming) ?
-			<input ref="renamer"
-				className="renamer"
-				autoFocus
-				value={this.state.attribute}
-				onChange={this.handleNameUpdate}
-				onBlur={this.commitChanges}/>
-			: {name};
 		var keyIcons = [];
 		var components = KeycompStore.query({attribute_id: col.attribute_id});
-
-		var wedgeClasses = "small grayed icon wedge icon-geo-triangle " +
-			(this.state.open ? "open" : "closed");
-
 		var typeFieldChoices = Object.keys(constants.fieldTypes).filter(function (type) {
 			return type !== 'PRIMARY_KEY'
 		}).map(function (type) {
@@ -186,14 +209,6 @@ var AttributeDetail = React.createClass({
   				{constants.fieldTypes[type]}
   			</option>;
 		});
-
-		var typeSelector = (!col.attribute_id) ?
-			<select name="type" value={col.type} onChange={this.handleTypeChange}>
-				{typeFieldChoices}
-			</select>
-			:
-			<span>{constants.fieldTypes[col.type]}</span>
-			;
 
 		components.forEach(function (comp, idx) {
 			var key = KeyStore.get(comp.key_id)
@@ -211,88 +226,50 @@ var AttributeDetail = React.createClass({
 
 		var actions = [];
 
-		if (col._destroy) {
-			actions.push(<span className="showonhover clickable grayed icon icon-tl-undo"
-				title="Restore"
-				key="restore"
-				onClick={this.handleUndelete}>
-				</span> )
-		} else if (col.attribute_id) {
-			if (col.type !== 'PRIMARY_KEY')
-				actions.push(<span className="showonhover clickable grayed icon icon-kub-trash"
-					title="Delete attribute"
-					key="delete"
-					onClick={this.handleDelete}>
-					</span>)
-			actions.push(<span className="showonhover clickable grayed icon icon-tl-pencil"
-				title="Edit attribute"
-				key="edit"
-				onClick={this.handleEdit}>
-				</span>)
-
-		} else {
-			actions.push(<span className="showonhover small clickable grayed icon icon-kub-remove"
-				title="Cancel"
-				key="cancel"
-				onClick={this.handleDelete}>
-				</span>)
-			actions.push(<span className="showonhover clickable grayed icon icon-tl-pencil"
-				title="Edit attribute"
-				key="edit"
-				onClick={this.handleEdit}>
-				</span>)
-		}
-
-		return <tbody className={this.state.open ? '' : 'singleton'}>
-			<div key={key}
-				className={("detail-row ") + (col._dirty?'unsaved':'') + (col._destroy?'destroyed':'')}>
-				<span  key={key + '-name'} title={col.attribute_id}>
-					{nameField}
+		return <ReactCSSTransitionGroup key={key} transitionName="detail-row" component = "div"
+				className={("detail-row ") + (col._dirty?'unsaved':'') + (col._destroy?'destroyed':'') +
+				 (this.props.editing ? ' editing ' : null) + (this.state.new ? ' new' : null)}>
+				{this.props.editing ?
+					<span className="draggable" key="drag-cell">
+						<span className="tighter icon icon-Layer_2 model-reorder"></span>
+					</span>
+					: null
+				}
+				<span  key={key + '-name'} title={col.attribute_id} className={"width-40 " + (this.props.editing ? " tight" : "")}>
+					{this.props.editing ?
+					<input ref="renamer"
+						className="renamer"
+						value = {this.state.attribute}
+						onChange = {this.handleNameUpdate}
+						onBlur = {this.commitUpdate}
+						/>
+					: col.attribute
+					}
 				</span>
-				<span>
-					{typeSelector}
-				</span>
-				<span  className="centered">
+				{
+					!col.attribute_id ?
+					<span className="width-30 tight">
+						<select name="type" value={col.type} onChange={this.handleTypeChange}>
+							{typeFieldChoices}
+						</select>
+					</span>
+					:
+					<span className="width-30">
+						{constants.fieldTypes[col.type]}
+					</span>
+				}
+				<span  className="centered width-10 tight">
 					{keyIcons}
 				</span>
-				<span  className="centered">
-					{actions}
+				<span className="width-8 grayed">
+					{this.props.editing ? <span className="clickable grayed icon icon-kub-trash"
+						title="Delete attribute" onClick={this.handleDelete}>
+						</span> : null}
 				</span>
-			</div>
-			{this.state.open ?
-				<div
-					key={key+'-type-detail'}
-					className={(col._dirty?'unsaved':'') + (col._destroy?'destroyed':'')}>
-					<span  className="no-line">
-					</span>
-					<span>
-						Type:
-					</span>
-					<span  className="right-align" colSpan="3">
-						{typeSelector}
-					</span>
-				</div>
-				:
-				null
-			}
-			{this.state.open ?
-				<div
-					key={key+'-default-detail'}
-					className={(col._dirty?'unsaved':'') + (col._destroy?'destroyed':'')}>
-					<span  className="no-line">
-					</span>
-					<span  >
-						Default Value:
-					</span>
-					<span  className="right-align" colSpan="3">
-						{this.state.default_value}
-					</span>
-				</div>
-				:
-				null
-			}
 
-		</tbody>
+			</ReactCSSTransitionGroup>
+
+
 	}
 });
 

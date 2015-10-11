@@ -3,10 +3,9 @@ import dispatcher from "../dispatcher/MetasheetDispatcher"
 // var EventEmitter = require('events').EventEmitter
 import EventEmitter from 'events'
 
-var AuthStore = module.exports = {
-  authorized: false,
-  loggedInAs: null
-};
+_username = 'me'
+
+var AuthStore = module.exports = {};
 
 var AuthStore = assign({}, EventEmitter.prototype, {
 	addChangeListener: function(callback) {
@@ -17,8 +16,8 @@ var AuthStore = assign({}, EventEmitter.prototype, {
 		this.removeListener('CHANGE_EVENT', callback);
 	},
 
-	getFocus: function () {
-		return _focus
+	getUsername: function () {
+		return _username
 	},
 
 	dispatchToken: dispatcher.register(function (payload) {

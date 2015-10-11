@@ -1,6 +1,21 @@
+var _ = require('underscore')
+
+var stripInternalVars = module.exports.stripInternalVars = function (obj) {
+  var newObj = {}
+  Object.keys(obj || {}).forEach(function (key) {
+    if (key.slice(0,1) !== '_') newObj[key] = obj[key];
+  });
+  return newObj;
+}
+
 module.exports.clean = function (obj) {
 	obj._dirty = false
+	obj._server = stripInternalVars(obj)
 	return obj
+}
+
+module.exports.isClean = function (obj) {
+  return _.isEqual(stripInternalVars(obj), stripInternalVars(obj._server))
 }
 
 module.exports.choose = function (obj, keys) {

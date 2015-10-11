@@ -16,7 +16,7 @@ var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 var ModelDetails = React.createClass({
 
 	mixins: [PureRenderMixin],
-	
+
 	getInitialState: function () {
 		var model = this.props.model;
 		return {
@@ -124,17 +124,19 @@ var ModelDetails = React.createClass({
 	render: function () {
 		var model = this.props.model;
 		return <div className="detail-block">
-			<h3>Details</h3>
-			<table className="detail-table">
-				<tbody>
-					<tr
-					className={'top-line ' + (model._dirty?'unsaved':'')}>
+		<div className="detail-section-header">
+			<h3>Database Details</h3>
+			<ul className="light mb-buttons">
+				<li onClick={this.handleEdit}>Edit</li>
+			</ul>
+		</div>
 
-						<td className="width-30">
+			<div className="detail-table">
+					<div className={'detail-row'}>
+						<span className="width-30 title">
 							Name:
-						</td>
-						<td className="width-60"
-							onDoubleClick={this.handleEditName}>
+						</span>
+						<span className="width-70">
 								{this.state.editingName ?
 								<input
 									value={this.state.name}
@@ -145,16 +147,11 @@ var ModelDetails = React.createClass({
 									{this.state.name}
 								</span>
 								}
-						</td>
-						<td className="width-10">
-
-								<span className="showonhover clickable grayed icon icon-tl-pencil"
-									title="Edit name" onClick={this.handleEditName}></span>
-						</td>
-					</tr>
-					<tr className={ (model._dirty?'unsaved':'')}>
-						<td className="width-30">Plural:</td>
-						<td className="width-60" onDoubleClick={this.handleEditPlural}>
+						</span>
+					</div>
+					<div className='detail-row'>
+						<span className="width-30 title">Plural:</span>
+						<span className="width-70">
 							{this.state.editingPlural ?
 								<input
 									value={this.state.plural}
@@ -164,30 +161,22 @@ var ModelDetails = React.createClass({
 									{this.state.plural}
 								</span>
 							}
-						</td>
-						<td>
-							<span className="showonhover clickable grayed icon icon-tl-pencil"
-									title="Edit plural" onClick={this.handleEditPlural}></span>
-						</td>
-					</tr>
-					<tr className={ (model._dirty?'unsaved':'')}>
-						<td className="width-30">Label:</td>
-						<td className="width-60">
+						</span>
+					</div>
+					<div className="detail-row">
+						<span className="width-30 title">Label:</span>
+						<span className="width-70">
 							<select value = {model.label_attribute_id} onChange = {this.handlePickLabel}> {
-								[<option value={null} key="null-option">---</option>].concat(
+								[<option value={null} key="null-option">-Select from dropdown-</option>].concat(
 								AttributeStore.query({model_id: model.model_id, type: 'TEXT'}).map(function (attr) {
 									return <option value={attr.attribute_id} key={attr.attribute_id}>
 				  						{attr.attribute}
 				  					</option>
 								}))
 							} </select>
-						</td>
-						<td>
-						</td>
-					</tr>
-					<ModelDeleter model={model} />
-				</tbody>
-			</table>
+						</span>
+					</div>
+			</div>
 		</div>
 	}
 });

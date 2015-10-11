@@ -26,9 +26,12 @@ var Notifier = React.createClass({
 				notifications.map(function (note) {
 					var iconName;
 					switch(note.type) {
-					case "error":
-							iconName = 'icon-warning';
-							break;
+						case "error":
+								iconName = 'icon-kub-warning';
+								break;
+						case "info":
+								iconName = 'icon-kub-info';
+								break;
 					}
 
 					return <li className={note.type} key={note.notificationId} style={{zIndex: note.notificationId}}>

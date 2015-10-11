@@ -1,10 +1,9 @@
 import React from "react"
-import { RouteHandler } from "react-router"
+import { RouteHandler, Link } from "react-router"
 import viewTypes from "containers/Views/viewTypes"
 import ViewSelector from "./ViewSelector"
 import styles from "./style.less"
 import detailStyles from "./detail.less"
-// import detailStyles from "./detailTable.less"
 import ModelDefinition from "./ModelDefinition"
 import ModelStore from "../../stores/ModelStore"
 import ViewStore from "../../stores/ViewStore"
@@ -60,6 +59,7 @@ var ModelPane = React.createClass({
 
 	render: function() {
 		var _this = this
+		var workspace_id = this.props.params.workspaceId
 		var model_id = this.props.params.modelId
 		var view_id = this.props.params.viewId
 		var view = ViewStore.get(view_id)
@@ -70,7 +70,6 @@ var ModelPane = React.createClass({
 		var bodyContent
 
 		var activePane = this.state.activePane
-
 
 		if (view && view.model_id != model_id) view = null
 		if (!view) activePane = 'model-def'
@@ -112,23 +111,27 @@ var ModelPane = React.createClass({
 			</div>
 		}
 
+		var views = ViewStore.query({model_id: model_id})
+
 		return <div className="model-views">
 			<div className = "model-panes">
 				<ReactCSSTransitionGroup component="div" className="detail-bar" transitionName="detail-bar" onClick={this.focus}>
 
 				<div className="right-header header-container" >
 					<h1>{model ? model.model : null}</h1>
-					{view ? <h1> /  {view.view}</h1> : null}
+					{view ? <h1>/</h1> : null}
+					{view ? <h1>{view.view}</h1> : null}
 
 
 					<ul className="dark mb-buttons right-margin"><li onClick={this.toggleViewList}>
-						<span className={"small icon tight icon-chevron-down"}></span>
+						<span className={"small icon tight icon-chevron-" + (this.state.viewListOpen ? "up" : "down")}></span>
 					</li></ul>
 				</div>
 
-				<div className={"views-list-container " + (this.state.viewListOpen ? " open" : " closed")}>
+				<div className = {"views-list-container " + (this.state.viewListOpen ? " open" : " closed")}
+					style = {{maxHeight: this.state.viewListOpen ? ((80 + views.length * 60) + 'px') : 0}}>
 
-					<div className="sidebar-sub-header">
+					<div className="sidebar-sub-header rh-sidebar-subheader">
 						<h2>Views</h2>
 						<ul className="dark mb-buttons">
 							<li onClick={this.handleEdit}>Edit</li>
@@ -137,8 +140,10 @@ var ModelPane = React.createClass({
 					</div>
 
 					<ul className="views-list"> {
-						ViewStore.query({model_id: model ? (model.cid || model.modelId) : 0}).map(function(view) {
-							return <li>{view.view}</li>
+						views.map(function (view) {
+							return <li key={'view-link-' + view.view_id}>
+								<Link to="view" params={{modelId: model_id, workspaceId: workspace_id, viewId: view.view_id}}>{view.view}</Link>
+							</li>
 						})
 					}</ul>
 				</div>
@@ -147,12 +152,10 @@ var ModelPane = React.createClass({
 					<ul className="rh-sidebar-accordian">
 						<li>
 							<div className="accordian-item-head">
-								<span className="accordian-icon">
-									<span className="large icon icon-db-database-02"></span>
-								</span>
+
 								<span className="accordian-label">
 									<h3>Database Design</h3>
-									<p>Use this section to define the attributes of this database and its relation to other databases</p>
+									<p className="explainer">Use this section to define the attributes of this database and its relation to other databases</p>
 								</span>
 							</div>
 							<div className="accordian-content">

@@ -1,11 +1,12 @@
 @import "../../global.less";
 
 .rh-sidebar-subheader {
-
+	border-bottom: 1px solid @gray3;
+	z-index: 1000;
 }
 
 .right-header {
-	background-color: @purple1 !important;
+	background-color: @pureGray3 !important;
 }
 
 .views-list-container {
@@ -22,9 +23,32 @@
 
 	/* Set our transitions up. */
 	transition: max-height cubic-bezier(.16,.85,.5,1) 0.1s;
+}
 
-	&.open {
-		max-height: 100px !important;
+.views-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: block;
+
+	& > li {
+		padding: none;
+		margin: none;
+		display: block;
+	}
+	& > li > a {
+		display: block;
+		padding: 20px;
+		margin-bottom: 5px;
+		color: white;
+		text-decoration: none;
+		cursor: pointer;
+		font-size: 14px;
+		font-family: @subheaderFont;
+		font-weight: 600;
+		& :hover {
+			background-color: @purple1 !important;
+		}
 	}
 }
 

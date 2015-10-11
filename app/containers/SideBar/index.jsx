@@ -95,7 +95,8 @@ var ModelList = React.createClass ({
 
 	render: function () {
 		var _this = this
-		return <ul className="sidebar-model-list">{
+
+		return <ul className="sidebar-model-list"> {
 			ModelStore.query(null, ['model']).map(function (model, idx) {
 				var modelId = model.cid || model.model_id;
 				return <ModelLink
@@ -172,8 +173,6 @@ var ModelLink = React.createClass ({
 		var views
 		var lock_icon
 
-		console.log('workspace_id: ' + workspace_id)
-
 		var modelDisplay = (!!this.state.renaming) ?
 			(<input className="model-renamer" ref="renamer" value={this.state.name} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/>) :
 			(<span>{model.model}</span>) ;
@@ -183,7 +182,7 @@ var ModelLink = React.createClass ({
 							title={'locked by ' + model.lock_user}></span>
 
 		return <li className={(this.props.active ? "active " : "") + (this.props.editing ? " editmode" : "")}>
-			{this.props.editing ? <span className="draggable icon icon-Layer_2 model-reorder"></span> : null}
+			{this.props.editing ? <span className="tight draggable icon icon-Layer_2 model-reorder"></span> : null}
 
 			<Link to="model" params={{modelId: model_id, workspaceId: workspace_id}} key={"model-link-" + model_id} onDoubleClick={this.edit}>
 			{lock_icon}

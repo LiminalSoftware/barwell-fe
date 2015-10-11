@@ -24,7 +24,8 @@ var Application = React.createClass({
 	},
 
 	componentWillReceiveProps: function (newProps) {
-		var workspace
+		if (newProps.params.workspaceId != this.props.params.workspaceId)
+			modelActionCreators.fetchModels(newProps.params.workspaceId)
 	},
 
 	toggleSidebar: function() {

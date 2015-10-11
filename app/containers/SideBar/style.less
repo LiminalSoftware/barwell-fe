@@ -21,8 +21,16 @@
 	list-style: none;
 	padding: 0;
 
+	&.light {
+		color: @newgreen1;
+	}
+
 	&.dark {
 		color: @gray4;
+	}
+
+	&.light {
+		margin-right: 0;
 	}
 	& > li {
 		transition: all cubic-bezier(.16,.85,.5,1) 100ms;
@@ -41,9 +49,10 @@
 			border-top-right-radius: 3px;
 			border-bottom-right-radius: 3px;
 		}
-		&:hover {
+		&:hover, &.hilight {
 			background: @newgreen1;
 			border-color: @newgreen1;
+			color: white;
 		}
 		cursor: pointer;
 		font-size: 14px;

@@ -11,6 +11,7 @@ import constants from '../../../constants/MetasheetConstants'
 import getIconClasses from './getIconClasses'
 import _ from 'underscore'
 
+var sortable = require('react-sortable-mixin');
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
 var RelationDetailList = React.createClass({
@@ -27,6 +28,7 @@ var RelationDetailList = React.createClass({
 
 	render: function () {
 		var model = this.props.model
+
 		var relList = RelationStore.query({model_id: model.model_id}).map(function (relation) {
 			return <RelationDetail
 				key = {relation.relation_id || relation.cid}
@@ -37,26 +39,27 @@ var RelationDetailList = React.createClass({
 		}
 
 		return <div className = "detail-block">
-			<h3>Relations</h3>
-			<table className="detail-table">
-				<thead>
-					<tr key="rel-header-row">
-						<th className="width-30">Name</th>
-						<th className="width-30">Related Model</th>
-						<th className="width-30">Type</th>
-						<th className="width-10"></th>
-					</tr>
-				</thead>
-				<tbody>
-					{relList}
-				</tbody>
-			</table>
-			<div><a
-				className="new-adder new-attr"
-				onClick={this.handleNewRelation}>
-				<span className="small addNew icon icon-plus"></span>
-				New relation
-			</a></div>
+			<div className="detail-section-header">
+				<h3>Relations</h3>
+				<ul className="light mb-buttons">
+					<li onClick={this.handleEdit}>Edit</li>
+					<li onClick={this.handleAddNewRelation}>+</li>
+				</ul>
+			</div>
+
+			<p className="explainer">
+			Relations describe relationships between your databases.  The relationship type describes the number of related
+			objects you could expect to have for each object in this database.  For more information on relationship types, click here.
+			</p>
+			<div className="detail-table">
+				<div className="detail-header">
+					<span className="width-30">Name</span>
+					<span className="width-40">Related Model</span>
+					<span className="width-20">Type</span>
+					<span className="width-10"></span>
+				</div>
+				{relList}
+			</div>
 		</div>
 	}
 })
@@ -189,25 +192,26 @@ var RelationDetail = React.createClass({
 				onBlur={this.commitChanges}/>
 		else nameField = relation.relation;
 
-		return <tr
-			key={'relation-'+(relation.relation_id || relation.cid)}
-				className={(relation._dirty?'unsaved':'') + (relation._destroy?'destroyed':'')}>
-			<td  onDoubleClick={this.handleEdit}>
+		return <div
+				key={'relation-'+(relation.relation_id || relation.cid)}
+				className={"detail-row " + (relation._dirty?'unsaved':'') + (relation._destroy?'destroyed':'')}>
+			<span className="width-30">
 				{nameField}
-			</td>
-			<td>
+			</span>
+			<span className="width-40">
 				{relatedModelField}
-			</td>
-			<td>
+			</span>
+			<span className="width-20">
 				{typeField}
-			</td>
-			<td className="centered">
-			{relation._dirty ? <span
-				className="showonhover small clickable grayed icon icon-kub-remove"
-				title="Delete component"
-				onClick={this.handleRelationCancel}>
-			</span> : null }</td>
-		</tr>;
+			</span>
+			<span className="centered width-10">
+				{relation._dirty ? <span
+					className="showonhover small clickable grayed icon icon-kub-remove"
+					title="Delete component"
+					onClick={this.handleRelationCancel}>
+				</span> : null }
+			</span>
+		</div>;
 	}
 });
 
