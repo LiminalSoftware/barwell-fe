@@ -7,6 +7,20 @@
 	border-top: 1px solid @gray1;
 }
 
+.detail-grouping {
+	display: block;
+	padding: 0;
+	padding-bottom: 5px;
+	margin-bottom: 5px;
+	&.editing {
+		background: @gray4;
+	}
+}
+
+.detail-row.sub-row {
+	padding-left: 10px;
+}
+
 .detail-bar {
 	position: relative;
 	flex: 0 0 450px;
@@ -43,7 +57,7 @@ div.detail-block {
 	margin: 20px;
 
 	p.explainer {
-		font-size: 14px;
+		font-size: 13px;
 		padding-top: 0;
 		margin-top: 0;
 		display: block;
@@ -57,7 +71,7 @@ div.detail-block {
 	padding: 10px 0;
 	h3 {
 		display: inline;
-		font-size: 16px;
+		font-size: 14px;
 		font-family: @subheaderFont;
 		font-weight: 800;
 	}
@@ -67,7 +81,7 @@ div.detail-block {
 	display: block;
 	clear: all;
 	padding: 10px 0;
-	min-height: 20px;
+	min-height: 15px;
 }
 
 
@@ -75,7 +89,7 @@ div.detail-table {
 	padding: 0;
 	display: block;
   width: 100%;
-  font-size: 14px;
+  font-size: 13px;
 
   div.detail-row, div.detail-header {
     display: block;
@@ -118,9 +132,7 @@ div.detail-table {
 		margin: 0;
 
 		&.tight {
-			padding: 2px 7px;
-			padding-left: 2px;
-			padding-right: 12px;
+			// padding: 2px 7px;
 		}
 		&.draggable {
 			color: @gray3;
@@ -191,25 +203,45 @@ div.detail-table {
     &.width-70 {
       width: 70%;
     }
+		&.width-80 {
+      width: 80%;
+    }
+		&.width-90 {
+      width: 90%;
+    }
+		&.width-100 {
+      width: 100%;
+    }
   }
-  input, select {
+
+  input:not([type]), input[type=text], select {
 		-webkit-appearance: none;
 		-firefox-appearance: none;
 
 		box-sizing: border-box;
 		width: 100%;
 		padding: 4px 4px;
+		margin-left: -5px;
+		margin-top: -5px;
+		margin-bottom: -5px;
+		margin-right: -5px;
 
 		border-radius: 4px;
     border: 1px solid @gray3;
     background: white;
 
-    font-size: 14px;
+    font-size: 13px;
     font-family: @bodyFont;
 
     outline: 0;
 		transition: all cubic-bezier(.16,.85,.5,1) 100ms;
   }
+
+	input[type=checkbox] {
+		border-radius: 4px;
+		outline: 0;
+		border: 1px solid @gray3;
+	}
 
 	select {
 		padding: 3px 3px !important;

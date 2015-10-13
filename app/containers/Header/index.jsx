@@ -9,7 +9,10 @@ var Header = React.createClass({
 	render: function() {
 		return <div className="header-container">
       <div className="app-header-bar">
-        <h1>metasheet.io</h1>
+        <h1>
+					<span className="large icon icon-db-datacube-02"></span>
+					metasheet.io
+				</h1>
       </div>
 		</div>;
 	}

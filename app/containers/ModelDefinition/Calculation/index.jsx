@@ -1,13 +1,12 @@
 import React from "react"
 import { Link } from "react-router"
-import styles from "./style.less"
+
 import ModelStore from "../../../stores/ModelStore"
 import AttributeStore from "../../../stores/AttributeStore"
 import CalcStore from "../../../stores/CalcStore"
 
 import modelActionCreators from '../../../actions/modelActionCreators'
 import constants from '../../../constants/MetasheetConstants'
-import getIconClasses from './getIconClasses'
 import _ from 'underscore'
 
 var CalculationDetailList = React.createClass({

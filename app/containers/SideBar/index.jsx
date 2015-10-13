@@ -67,16 +67,16 @@ var SideBar = React.createClass({
 			<Header />
 			<div className="sidebar-sub-header">
 				<h2>Databases</h2>
-				<ul className="dark mb-buttons">
+				<ul className="light padded mb-buttons">
 					<li onClick={this.handleEdit}>Edit</li>
-					<li onClick={this.handleAddModel}>+</li>
+					<li onClick={this.handleAddModel} className="plus">+</li>
 				</ul>
 			</div>
 			<ModelList editing = {this.state.editing} curModelId = {curModelId} />
 			{
 				this.state.editing ?
 				<div className="padded">
-					<ul className="dark mb-buttons">
+					<ul className="light padded mb-buttons">
 						<li onClick={this.handleRevertEdit}>Done editing</li>
 					</ul>
 				</div>

@@ -1,20 +1,23 @@
 import React from "react"
 import { Link } from "react-router"
 import styles from "./style.less"
-import ModelStore from "../../../stores/ModelStore"
-import AttributeStore from "../../../stores/AttributeStore"
-import KeyStore from "../../../stores/KeyStore"
-import KeycompStore from "../../../stores/KeycompStore"
-import RelationStore from "../../../stores/RelationStore"
-import CalcStore from "../../../stores/CalcStore"
-import modelActionCreators from '../../../actions/modelActionCreators'
-import constants from '../../../constants/MetasheetConstants'
-import AttributeDetailList from './AttributeDetail'
-import CalculationDetailList from './CalculationDetail'
-import RelationDetailList from './RelationDetail'
-import KeyDetailList from './KeyDetail'
-import ModelDetails from './ModelDetails'
+import ModelStore from "../../stores/ModelStore"
+import AttributeStore from "../../stores/AttributeStore"
+import KeyStore from "../../stores/KeyStore"
+import KeycompStore from "../../stores/KeycompStore"
+import RelationStore from "../../stores/RelationStore"
+import CalcStore from "../../stores/CalcStore"
+import modelActionCreators from '../../actions/modelActionCreators'
+import constants from '../../constants/MetasheetConstants'
+
+import AttributeDetailList from './Attribute'
+import CalculationDetailList from './Calculation'
+import RelationDetailList from './Relation'
+import KeyDetailList from './Key'
+import ModelDetails from './Model'
+
 import getIconClasses from './getIconClasses'
+
 import _ from 'underscore'
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
@@ -90,54 +93,29 @@ var ModelDefinition = React.createClass({
 						return modelActionCreators.destroy('key', true, key)
 				}))
 		}).then(function () {
-			_this.setState({committing: false})
-			model.lock_user = null
-			return modelActionCreators.create('model', true, model, true)
+			_this.setState({committing: false});
+			model.lock_user = null;
+			return modelActionCreators.create('model', true, model, true);
 		}).catch(function () {
-			_this.setState({committing: false})
-			model.lock_user = null
-			return modelActionCreators.create('model', true, model, true)
+			_this.setState({committing: false});
+			model.lock_user = null;
+			return modelActionCreators.create('model', true, model, true);
 		})
-
-	},
-
-	isDirty: function () {
-		var model = this.props.model;
-		var dirty = false;
-		if (!model) return false
-
-		dirty = dirty || model._dirty
-
-		dirty = dirty || _.any(AttributeStore.query({model_id: model.model_id}).map(function (attr) {
-			return attr._dirty || attr._destroy
-		}))
-
-		dirty = dirty || _.any(KeyStore.query({model_id: model.model_id}).map(function (key) {
-			return key._dirty || key._destroy
-		}))
-
-		dirty = dirty || _.any(RelationStore.query({model_id: model.model_id}).map(function (rel) {
-			return rel._dirty || rel._destroy
-		}))
-
-		return dirty;
 	},
 
 	render: function () {
 		var _this = this;
 		var model = this.props.model;
-		var dirty = this.isDirty()
 
 		if(!model) return <div key="model-detail-bar" className="model-details">
 			<h3 key="attr-header">No Model Selected</h3>
-		</div>
+		</div>;
 
-		return <div key="model-detail-bar" className={"model-details " + (dirty ? 'dirty' : '')}>
-			<ModelDetails model={model} key={'details-'+model.model_id} />
-			<AttributeDetailList model={model} />
-			<RelationDetailList model={model} />
-			<KeyDetailList model={model} />
-			<CalculationDetailList model={model} />
+		else return <div key = "model-detail-bar" className = "model-details">
+			<ModelDetails model = {model} key = {'details-'+model.model_id} />
+			<AttributeDetailList model = {model} />
+			<RelationDetailList model = {model} />
+			<KeyDetailList model = {model} />
 		</div>;
 	}
 });

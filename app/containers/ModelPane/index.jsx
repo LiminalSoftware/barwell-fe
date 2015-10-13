@@ -4,7 +4,7 @@ import viewTypes from "containers/Views/viewTypes"
 import ViewSelector from "./ViewSelector"
 import styles from "./style.less"
 import detailStyles from "./detail.less"
-import ModelDefinition from "./ModelDefinition"
+import ModelDefinition from "../ModelDefinition"
 import ModelStore from "../../stores/ModelStore"
 import ViewStore from "../../stores/ViewStore"
 import sortable from 'react-sortable-mixin'
@@ -123,26 +123,29 @@ var ModelPane = React.createClass({
 					{view ? <h1>{view.view}</h1> : null}
 
 
-					<ul className="dark mb-buttons right-margin"><li onClick={this.toggleViewList}>
+					<ul className="dark padded mb-buttons right-margin"><li onClick={this.toggleViewList}>
 						<span className={"small icon tight icon-chevron-" + (this.state.viewListOpen ? "up" : "down")}></span>
 					</li></ul>
 				</div>
 
 				<div className = {"views-list-container " + (this.state.viewListOpen ? " open" : " closed")}
-					style = {{maxHeight: this.state.viewListOpen ? ((80 + views.length * 60) + 'px') : 0}}>
+					style = {{maxHeight: this.state.viewListOpen ? ((80 + views.length * 70) + 'px') : 0}}>
 
 					<div className="sidebar-sub-header rh-sidebar-subheader">
 						<h2>Views</h2>
-						<ul className="dark mb-buttons">
+						<ul className="light padded mb-buttons">
 							<li onClick={this.handleEdit}>Edit</li>
-							<li onClick={this.handleAddModel}>+</li>
+							<li onClick={this.handleAddModel} className="plus">+</li>
 						</ul>
 					</div>
 
 					<ul className="views-list"> {
 						views.map(function (view) {
 							return <li key={'view-link-' + view.view_id}>
-								<Link to="view" params={{modelId: model_id, workspaceId: workspace_id, viewId: view.view_id}}>{view.view}</Link>
+								<Link to="view" params={{modelId: model_id, workspaceId: workspace_id, viewId: view.view_id}}>
+									<span className={"large icon " + viewTypes[view.type].icon}></span>
+									{view.view}
+								</Link>
 							</li>
 						})
 					}</ul>
@@ -151,26 +154,11 @@ var ModelPane = React.createClass({
 
 					<ul className="rh-sidebar-accordian">
 						<li>
-							<div className="accordian-item-head">
-
-								<span className="accordian-label">
-									<h3>Database Design</h3>
-									<p className="explainer">Use this section to define the attributes of this database and its relation to other databases</p>
-								</span>
-							</div>
 							<div className="accordian-content">
 								<ModelDefinition model = {model} />
 							</div>
 						</li>
-						<li>
-							<span className="accordian-icon">
-								<span className="large icon icon-glasses"></span>
-							</span>
-							<span className="accordian-label">
-								<h3>View Configuration</h3>
-								<p>Use this section to control how you want to view and interact with the data in this database</p>
-							</span>
-						</li>
+
 					</ul>
 
 				</ReactCSSTransitionGroup>

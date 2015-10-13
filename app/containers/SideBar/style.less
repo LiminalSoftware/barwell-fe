@@ -5,18 +5,19 @@
 	h2 {
 		padding: 10px 20px;
 		font-size: 16px;
-		color: @gray3;
+		color: @gray1;
 		font-family: @headerFont;
 		display: inline;
 	}
-	border-bottom: 1px solid @gray2;
+	background: @gray4;
+	border-bottom: 1px solid @gray3;
 	padding: 20px 0;
 }
 
 .mb-buttons {
 	margin: 0;
 	margin-left: 10px;
-	margin-right: 20px;
+	margin-right: 0;
 	float: right;
 	list-style: none;
 	padding: 0;
@@ -29,8 +30,8 @@
 		color: @gray4;
 	}
 
-	&.light {
-		margin-right: 0;
+	&.padded {
+		margin-right: 20px !important;
 	}
 	& > li {
 		transition: all cubic-bezier(.16,.85,.5,1) 100ms;
@@ -54,8 +55,11 @@
 			border-color: @newgreen1;
 			color: white;
 		}
+		&.plus {
+			
+		}
 		cursor: pointer;
-		font-size: 14px;
+		font-size: 12px;
 		font-family: @subheaderFont;
 		font-weight: 600;
 	}
@@ -69,8 +73,12 @@ ul.sidebar-model-list {
 	margin-top: 10px;
 
 	& > li {
+		border-top: 1px solid transparent;
+		border-bottom: 1px solid transparent;
+
 		transition: background-color cubic-bezier(.16,.85,.5,1) 0.1s;
 		min-width: 210px;
+		padding: 5px 0;
 	}
 
 	& > li > a {
@@ -78,26 +86,31 @@ ul.sidebar-model-list {
 
 		margin-right: 20px;
 		margin-left: 20px;
-		margin-bottom: 10px;
+
 		padding: 15px;
 		display: block;
 		text-decoration: none;
 		position: relative;
-		color: @gray4;
+		color: @gray1;
 		font-size: 14px;
 		font-weight: 600;
 		font-family: @subheaderFont;
 	}
+
 	& > li.active {
 
 	}
 	& > li.active:not(.editmode) {
-		background: @gray2;
+		border-top: 1px solid @gray3;
+		border-bottom: 1px solid @gray3;
+		border-right: 1px solid white;
+		margin-right: -1px;
+		background: white;
 	}
 
 	& > li.editmode > a {
 
-		background: @gray2;
+		background: @gray4;
 		border-radius: 4px;
 		padding-right: 5px;
 	}
@@ -125,7 +138,8 @@ ul.sidebar-model-list {
 	position: relative;
 	flex: 0 0 250px;
 	order: -2;
-	background: @pureGray3;
+	background: white;
+	border-right: 1px solid @gray3;
 	padding: 0;
 	overflow: visible;
 }

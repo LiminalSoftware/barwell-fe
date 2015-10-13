@@ -1,6 +1,6 @@
 import React from "react"
 import { Link } from "react-router"
-import styles from "./style.less"
+
 import ModelStore from "../../../stores/ModelStore"
 import AttributeStore from "../../../stores/AttributeStore"
 import KeyStore from "../../../stores/KeyStore"
@@ -8,61 +8,11 @@ import RelationStore from "../../../stores/RelationStore"
 import KeycompStore from "../../../stores/KeycompStore"
 import modelActionCreators from '../../../actions/modelActionCreators'
 import constants from '../../../constants/MetasheetConstants'
-import getIconClasses from './getIconClasses'
+import getIconClasses from '../getIconClasses'
 import _ from 'underscore'
 
 var sortable = require('react-sortable-mixin');
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
-
-var RelationDetailList = React.createClass({
-
-	handleNewRelation: function () {
-		var model = this.props.model;
-		var relation = {
-			relation: 'New relation',
-			model_id: model.model_id,
-			type: 'Has one'
-		}
-		modelActionCreators.create('relation', false, relation);
-	},
-
-	render: function () {
-		var model = this.props.model
-
-		var relList = RelationStore.query({model_id: model.model_id}).map(function (relation) {
-			return <RelationDetail
-				key = {relation.relation_id || relation.cid}
-				relation = {relation} />;
-		});
-		if (relList.length === 0) {
-			relList = <tr><td className="grayed centered" colSpan="4">No relations defined</td></tr>;
-		}
-
-		return <div className = "detail-block">
-			<div className="detail-section-header">
-				<h3>Relations</h3>
-				<ul className="light mb-buttons">
-					<li onClick={this.handleEdit}>Edit</li>
-					<li onClick={this.handleAddNewRelation}>+</li>
-				</ul>
-			</div>
-
-			<p className="explainer">
-			Relations describe relationships between your databases.  The relationship type describes the number of related
-			objects you could expect to have for each object in this database.  For more information on relationship types, click here.
-			</p>
-			<div className="detail-table">
-				<div className="detail-header">
-					<span className="width-30">Name</span>
-					<span className="width-40">Related Model</span>
-					<span className="width-20">Type</span>
-					<span className="width-10"></span>
-				</div>
-				{relList}
-			</div>
-		</div>
-	}
-})
 
 var relationPrettyNames = {
 	HAS_MANY: 'Has many',
@@ -77,7 +27,6 @@ var RelationDetail = React.createClass({
 	getInitialState: function () {
 		var relation = this.props.relation;
 		return {
-			renaming: false,
 			name: relation.relation,
 			hasBeenRenamed: false
 		}
@@ -90,43 +39,17 @@ var RelationDetail = React.createClass({
 	commitChanges: function () {
 		var relation = this.props.relation
 		relation.relation = this.state.name
-		this.setState({hasBeenRenamed: true})
+		relation.type = this.state.type
+		relation.related_model_id = this.related_model_id
 		modelActionCreators.create('relation', false, relation)
-		this.revert()
 	},
 
 	cancelChanges: function () {
-		this.revert()
-	},
 
-	handleEdit: function () {
-		var relation = this.props.relation;
-		if (this.state.renaming) return
-		this.setState({
-			renaming: true,
-			name: relation.relation
-		}, function () {
-			React.findDOMNode(this.refs.renamer).focus();
-		})
-		document.addEventListener('keyup', this.handleKeyPress)
-	},
-
-	revert: function () {
-		var relation = this.props.relation;
-		document.removeEventListener('keyup', this.handleKeyPress)
-		this.setState({
-			renaming: false,
-			name: relation.relation
-		})
-	},
-
-	handleKeyPress: function (event) {
-		if (event.keyCode === 27) this.cancelChanges()
-		if (event.keyCode === 13) this.commitChanges()
 	},
 
 	handleNameUpdate: function (event) {
-		this.setState({name: event.target.value})
+		this.setState({name: event.target.value, hasBeenRenamed: true})
 	},
 
 	handleModelSelect: function (event) {
@@ -134,17 +57,25 @@ var RelationDetail = React.createClass({
 		var relation = this.props.relation
 		var relatedModel = ModelStore.get(model_id)
 		relation.related_model_id = model_id
-		if(!this.state.hasBeenRenamed)
-			relation.relation = relation.type === 'Has one' ? relatedModel.model : relatedModel.plural
-		modelActionCreators.create('relation', false, relation)
+		relation.relation = this.getUpdatedName(relation)
+		this.commit(relation)
 	},
 
 	handleTypeSelect: function (event) {
 		var relation = this.props.relation
 		var relatedModel = ModelStore.get(relation.related_model_id) || {}
 		relation.type = event.target.value
-		if(!this.state.hasBeenRenamed)
-			relation.relation = relation.type === 'Has one' ? relatedModel.model : relatedModel.plural
+		relation.relation = this.getUpdatedName(relation)
+		this.commit(relation)
+	},
+
+	getUpdatedName: function (relation) {
+		var relatedModel = ModelStore.get(relation.related_model_id) || {}
+		return (relation.type === 'Has one' ? relatedModel.model : relatedModel.plural)
+	},
+
+	commit: function (relation) {
+		this.setState({name: relation.relation})
 		modelActionCreators.create('relation', false, relation)
 	},
 
@@ -167,7 +98,7 @@ var RelationDetail = React.createClass({
   				{model.model}
   			</option>;
 		})
-		relatedModelChoices.unshift(<option value="0"> ---- </option>)
+		relatedModelChoices.unshift(<option value="0"> - Select - </option>)
 
 		if(!relation.relation_id){
 			relatedModelField = <select value={relation.related_model_id || 0} onChange={this.handleModelSelect}>
@@ -194,25 +125,39 @@ var RelationDetail = React.createClass({
 
 		return <div
 				key={'relation-'+(relation.relation_id || relation.cid)}
-				className={"detail-row " + (relation._dirty?'unsaved':'') + (relation._destroy?'destroyed':'')}>
+				className={"detail-row " + (relation._dirty?'unsaved':'') + (relation._destroy?'destroyed':'') + (this.props.editing ? ' editing ' : null)}>
+			{this.props.editing ?
+				<span className="draggable" key="drag-cell">
+					<span className="tighter icon icon-Layer_2 model-reorder"></span>
+				</span>
+				: null
+			}
 			<span className="width-30">
-				{nameField}
+				{this.props.editing ?
+					<input ref="renamer"
+					value={this.state.name}
+					onChange={this.handleNameUpdate}
+					onBlur={this.commitChanges}/>
+					:
+					relation.relation
+				}
 			</span>
-			<span className="width-40">
+			<span className="width-30">
 				{relatedModelField}
 			</span>
-			<span className="width-20">
+			<span className="width-25">
 				{typeField}
 			</span>
-			<span className="centered width-10">
-				{relation._dirty ? <span
-					className="showonhover small clickable grayed icon icon-kub-remove"
-					title="Delete component"
-					onClick={this.handleRelationCancel}>
-				</span> : null }
+			{this.props.editing ?
+			<span className="centered width-15 tight grayed">
+			<span className="clickable  icon icon-cog-thick"
+			title="Advanced options" onClick={this.handleNaturalKey}></span>
+				<span className="clickable grayed icon icon-kub-trash"
+				title="Delete attribute" onClick={this.handleDelete}></span>
 			</span>
+			: null}
 		</div>;
 	}
 });
 
-export default RelationDetailList
+export default RelationDetail

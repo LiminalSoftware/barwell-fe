@@ -1,29 +1,28 @@
 import React from "react"
 import { Link } from "react-router"
-import styles from "./style.less"
+
 import ModelStore from "../../../stores/ModelStore"
 import AttributeStore from "../../../stores/AttributeStore"
 import KeyStore from "../../../stores/KeyStore"
 import KeycompStore from "../../../stores/KeycompStore"
 import modelActionCreators from '../../../actions/modelActionCreators'
 import constants from '../../../constants/MetasheetConstants'
-import getIconClasses from './getIconClasses'
+import getIconClasses from '../getIconClasses'
 import _ from 'underscore'
 import pluralize from 'pluralize'
 
+import ConfirmationMixin from '../ConfirmationMixin'
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
 var ModelDetails = React.createClass({
 
-	mixins: [PureRenderMixin],
+	mixins: [PureRenderMixin, ConfirmationMixin],
 
 	getInitialState: function () {
 		var model = this.props.model;
 		return {
 			name: model.model,
 			plural: model.plural,
-			editingName: false,
-			editingPlural: false
 		}
 	},
 
@@ -71,46 +70,13 @@ var ModelDetails = React.createClass({
 		}
 	},
 
-	handleEditName: function () {
-		var model = this.props.model;
-		if (this.state.editingName) return
-		this.setState({
-			editingName: true,
-			editingPlural: false,
-			name: model.model
-		}, function () {
-			React.findDOMNode(this.refs.renamer).focus();
-		})
-		document.addEventListener('keyup', this.handleKeyPress)
-	},
-
-	handleEditPlural: function () {
-		var model = this.props.model;
-		if (this.state.editingPlural) return
-		this.setState({
-			enditingName: false,
-			editingPlural: true,
-			plural: model.plural
-		}, function () {
-			React.findDOMNode(this.refs.replural).focus();
-		})
-		document.addEventListener('keyup', this.handleKeyPress)
-	},
-
 	revert: function () {
 		var model = this.props.model;
-		document.removeEventListener('keyup', this.handleKeyPress)
 		this.setState({
-			editingPlural: false,
-			editingName: false,
+			editing: false,
 			name: model.model,
 			plural: model.plural
 		})
-	},
-
-	handleKeyPress: function (event) {
-		if (event.keyCode === 27) this.cancelChanges()
-		if (event.keyCode === 13) this.commitChanges()
 	},
 
 	handleNameUpdate: function (event) {
@@ -134,10 +100,10 @@ var ModelDetails = React.createClass({
 			<div className="detail-table">
 					<div className={'detail-row'}>
 						<span className="width-30 title">
-							Name:
+							Name
 						</span>
-						<span className="width-70">
-								{this.state.editingName ?
+						<span className={"width-70 " + (this.state.editing ? " tight" : "")}>
+								{this.state.editing ?
 								<input
 									value={this.state.name}
 									onChange={this.handleNameUpdate}
@@ -150,9 +116,9 @@ var ModelDetails = React.createClass({
 						</span>
 					</div>
 					<div className='detail-row'>
-						<span className="width-30 title">Plural:</span>
-						<span className="width-70">
-							{this.state.editingPlural ?
+						<span className="width-30 title">Plural</span>
+						<span className={"width-70 " + (this.state.editing ? " tight" : "")}>
+							{this.state.editing ?
 								<input
 									value={this.state.plural}
 									onChange={this.handlePluralUpdate}
@@ -164,73 +130,29 @@ var ModelDetails = React.createClass({
 						</span>
 					</div>
 					<div className="detail-row">
-						<span className="width-30 title">Label:</span>
-						<span className="width-70">
-							<select value = {model.label_attribute_id} onChange = {this.handlePickLabel}> {
-								[<option value={null} key="null-option">-Select from dropdown-</option>].concat(
-								AttributeStore.query({model_id: model.model_id, type: 'TEXT'}).map(function (attr) {
-									return <option value={attr.attribute_id} key={attr.attribute_id}>
-				  						{attr.attribute}
-				  					</option>
-								}))
-							} </select>
+						<span className="width-30 title">Label</span>
+						<span className={"width-70 " + (this.state.editing ? " tight" : "")}>
+							{this.state.editing ?
+								<select value = {model.label_attribute_id} onChange = {this.handlePickLabel}> {
+									[<option value={null} key="null-option">-Select from dropdown-</option>].concat(
+									AttributeStore.query({model_id: model.model_id, type: 'TEXT'}).map(function (attr) {
+										return <option value={attr.attribute_id} key={attr.attribute_id}>
+					  						{attr.attribute}
+					  					</option>
+									}))
+								} </select>
+								:
+								model.label_attribute_id
+							}
+
 						</span>
 					</div>
+			</div>
+			<div className="confirm-div">
+				{this.getConfirmationButtons()}
 			</div>
 		</div>
 	}
 });
-
-var ModelDeleter = React.createClass({
-	getInitialState: function () {
-		return {
-			armed: false,
-			input: ''
-		}
-	},
-	arm: function () {
-		this.setState({armed: true})
-		document.addEventListener('keyup', this.handleKeyPress)
-	},
-	disarm: function () {
-		this.setState({armed: false, input: ''})
-		document.removeEventListener('keyup', this.handleKeyPress)
-	},
-	handleKeyPress: function (event) {
-		if (event.keyCode === constants.keycodes.ESC)
-			this.disarm()
-	},
-	handleTyping: function (event) {
-		var val = event.target.value
-		this.setState({input: val})
-		if (val.toUpperCase() == 'DESTROY') {
-			console.log('launch code complete')
-			modelActionCreators.dropModel(this.props.model)
-		}
-	},
-	render: function () {
-		return !this.state.armed ?
-		<tr>
-			<td colSpan="3" className="clickable" onClick = {this.arm}>
-				Delete this model
-			</td>
-		</tr>
-		:
-		<tr>
-			<td className="destroy-td">
-				<span className="large icon redened icon-skull-bones"></span>
-				Type "destroy":
-			</td>
-			<td colSpan="2">
-				<input className="destroyer"
-					onBlur = {this.disarm}
-					value = {this.state.input}
-					autoFocus onChange={this.handleTyping}
-					ref="deleteInput"/>
-			</td>
-		</tr>
-		;
-	}
-})
 
 export default ModelDetails;

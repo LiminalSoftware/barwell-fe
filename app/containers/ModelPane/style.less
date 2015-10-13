@@ -1,5 +1,12 @@
 @import "../../global.less";
 
+
+.current-user-label {
+	font-family: @subheaderFont !important;
+	font-size: 14px !important;
+	float: right !important;
+}
+
 .rh-sidebar-subheader {
 	border-bottom: 1px solid @gray3;
 	z-index: 1000;
@@ -17,9 +24,18 @@
 	display: block;
 	padding: none;
 	margin: none;
-	background: @purple1;
+	background: @gray4;
+
 	max-height: 0;
 	overflow: hidden;
+	margin-left: -1px;
+	margin-right: -1px;
+
+	border-bottom: 1px solid @gray3;
+	border-right: 1px solid @gray3;
+	border-left: 1px solid @gray3;
+
+	z-index: 2000;
 
 	/* Set our transitions up. */
 	transition: max-height cubic-bezier(.16,.85,.5,1) 0.1s;
@@ -35,20 +51,21 @@
 		padding: none;
 		margin: none;
 		display: block;
+		& :hover {
+			background-color: lighten(@gray4, 1%);
+		}
 	}
 	& > li > a {
 		display: block;
 		padding: 20px;
 		margin-bottom: 5px;
-		color: white;
+		color: @gray1;
 		text-decoration: none;
 		cursor: pointer;
 		font-size: 14px;
 		font-family: @subheaderFont;
 		font-weight: 600;
-		& :hover {
-			background-color: @purple1 !important;
-		}
+
 	}
 }
 
@@ -59,6 +76,7 @@
 	flex-direction: column;
 	background: white;
 	overflow-y: scroll;
+	border-right: 1px solid @gray3;
 
 	.accordian-item-head {
 		display: flex;
