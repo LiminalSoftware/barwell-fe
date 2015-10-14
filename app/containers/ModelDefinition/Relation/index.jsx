@@ -32,6 +32,41 @@ var RelationDetailList = React.createClass({
 		this.setState({editing: true})
 	},
 
+	cancelChanges: function () {
+		var model = this.props.model;
+		RelationStore.query({model_id: (model.model_id || model.cid)}).map(function (rel) {
+			if (!rel.relation_id)
+				modelActionCreators.destroy('relation', false, rel);
+			else {
+				_.extend(rel, rel._server, {_destroy: false, _clean: true});
+				modelActionCreators.create('rel', false, rel);
+			}
+		})
+		this.setState({editing: false});
+	},
+
+	commitChanges: function () {
+		var _this = this
+		var model = this.props.model;
+		model.lock_user = 'me'
+		this.setState({committing: true})
+
+		modelActionCreators.create('model', true, model, false).then(function () {
+			return Promise.all(
+			RelationStore.query({model_id: (model.model_id || model.cid)}).map(function (rel) {
+				if (rel._dirty) return modelActionCreators.create('relation', true, rel)
+				if (rel._destroy) return modelActionCreators.destroy('relation', true, rel)
+			}))
+		}).then(function () {
+				model.lock_user = null
+				modelActionCreators.create('model', true, model, false)
+		}).then(function () {
+			_this.setState({editing: false, committing: false})
+			_this.cancelChanges()
+			modelActionCreators.createNotification('Relation udpate complete!', 'Your changes have been committed to the server', 'info')
+		})
+	},
+
 	render: function () {
 		var model = this.props.model
 		var _this = this
@@ -62,9 +97,9 @@ var RelationDetailList = React.createClass({
 			<div className={"detail-table " + (this.state.editing ? "editing" : "")}>
 				<div className="detail-header">
 					<span className="width-30">Name</span>
-					<span className="width-40">Related Model</span>
+					<span className="width-30">Related Model</span>
 					<span className="width-20">Type</span>
-					<span className="width-10"></span>
+					<span className="width-20"></span>
 				</div>
 				{relList}
 			</div>

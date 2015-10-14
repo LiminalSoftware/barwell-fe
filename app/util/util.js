@@ -14,8 +14,12 @@ module.exports.clean = function (obj) {
 	return obj
 }
 
-module.exports.isClean = function (obj) {
+var isClean = module.exports.isClean = function (obj) {
   return _.isEqual(stripInternalVars(obj), stripInternalVars(obj._server))
+}
+
+var isDirty = module.exports.isDirty = function (obj) {
+  return !isClean(obj)
 }
 
 module.exports.choose = function (obj, keys) {

@@ -29,16 +29,33 @@
 	max-height: 0;
 	overflow: hidden;
 	margin-left: -1px;
-	margin-right: -1px;
-
-	border-bottom: 1px solid @gray3;
+	margin-right: 0;
+	&.open {
+		border-bottom: 1px solid @gray3;
+	}
 	border-right: 1px solid @gray3;
 	border-left: 1px solid @gray3;
+
 
 	z-index: 2000;
 
 	/* Set our transitions up. */
 	transition: max-height cubic-bezier(.16,.85,.5,1) 0.1s;
+
+}
+
+.detail-bar {
+	padding: 0;
+	margin: 0;
+
+	position: relative;
+	flex: 0 0 450px;
+	height: 100vh;
+
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	order: -1;
 }
 
 .views-list {
@@ -70,30 +87,49 @@
 }
 
 .rh-sidebar-accordian {
+	height: 100vh;
 	padding: 0;
+	margin: 0;
 	list-style: none;
 	display: flex;
 	flex-direction: column;
 	background: white;
-	overflow-y: scroll;
+	overflow-y: hidden;
 	border-right: 1px solid @gray3;
+	// transition: max-height cubic-bezier(.16,.85,.5,1) 0.1s;
 
-	.accordian-item-head {
-		display: flex;
-		flex-direction: row;
-		& > .accordian-icon {
-			padding: 20px;
-			flex: 1;
-			& > .icon {
-				font-size: 50px;
-			}
+	.accordian-content {
+		margin: 0;
+		overflow: hidden;
+		transition: max-height cubic-bezier(.16,.85,.5,1) 0.2s;
+		margin: 0 10px;
+		padding: 0;
+	}
+	.accordian-content.closed {
+		max-height: 0;
+	}
+	.accordian-content.open {
+		flex-gow: 1;
+		max-height: 1000px;
+		overflow-y: scroll;
+		border-bottom: 1px solid @gray3;
+
+	}
+	.accordian-header {
+		margin: 0 10px;
+		padding: 20px 0;
+		h2, h3 {
+			padding: 10px 20px;
+			font-size: 16px;
+			color: @gray1;
+			font-family: @headerFont;
+			display: inline;
 		}
-		.accordian-label {
-			flex: 3;
-		}
-		&:hover {
-			background: @gray4;
-		}
+		border-bottom: 1px solid @gray3;
+		cursor: pointer;
+	}
+	.wedge {
+		font-size: 16px;
 	}
 }
 

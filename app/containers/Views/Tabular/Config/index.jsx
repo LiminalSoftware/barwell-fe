@@ -10,14 +10,17 @@ import AttributeStore from "../../../../stores/AttributeStore"
 import KeyStore from "../../../../stores/KeyStore"
 import KeycompStore from "../../../../stores/KeycompStore"
 
+import ColumnList from './ColumnList'
+import ColumnDetail from './ColumnDetail'
 import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
 import groomView from '../../groomView'
 
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+var sortable = require('react-sortable-mixin');
 
 var TabularViewConfig = React.createClass({
 
-	mixins: [PureRenderMixin],
+	mixins: [PureRenderMixin, sortable.ListMixin],
 
 	componentWillMount: function () {
 		ViewStore.addChangeListener(this._onChange);
@@ -62,209 +65,54 @@ var TabularViewConfig = React.createClass({
 			var sortOrderLabel = sort.descending ? "Ascending" : "Descending"
 			var attribute = AttributeStore.get(sort.attribute_id);
 
-			return <tr>
-				<td>{(attribute || {}).attribute}</td>
-				<td><span className = {sortOrderClass}></span>{sortOrderLabel}</td>
-				<td><span className = "small showonhover grayed clickable icon icon-kub-remove"></span></td>
-			</tr>
+			return <div className="detail-row">
+				<span className="width-40">{(attribute || {}).attribute}</span>
+				<span className="width-40">
+					{sortOrderLabel}
+					<span className = {sortOrderClass}></span>
+				</span>
+				<span className="width-20 grayed">
+					<span className = "small clickable icon icon-kub-remove"></span>
+				</span>
+			</div>
 		})
 		if (sortList.length === 0) {
-			sortList = <tr><td className="grayed centered" colSpan="3">No sort order defined</td></tr>;
+			sortList = <div className="detail-row">
+				<span className="grayed centered" colSpan="3">No sort order defined</span>
+			</div>;
 		}
 
 		return <div className = "grouping" onClick={this.focus}>
 			<div className = "detail-block">
-			<h3>Columns</h3>
-			<table className="detail-table">
-				<thead><tr key="attr-header-row">
-					<th className="width-10"></th>
-					<th className="width-30">Name</th>
-					<th className="width-30">Viz</th>
-					<th className="width-30">Width</th>
-				</tr></thead>
-				{colList}
-			</table>
+				<div className="detail-section-header">
+					<h3>Columns</h3>
+				</div>
+				<div className="detail-table">
+					{colList}
+				</div>
 			</div>
 			<div className = "detail-block">
-			<h3>Sorting</h3>
-			<table key="sort-table" className="detail-table">
-				<thead>
-				<tr key="sort-header-row">
-					<th className="width-60">Column</th>
-					<th className="width-30">Sort Order</th>
-					<th className="width-10"></th>
-				</tr>
-			</thead>
-				<tbody>{sortList}</tbody>
-			</table>
-			</div>
-			<div className = "detail-block">
-
+				<div className="detail-section-header">
+					<h3>Sorting</h3>
+				</div>
+				<div key="sort-table" className="detail-table">
+					<div className="detail-header" key="sort-header-row">
+						<span className="width-40">
+							Column
+						</span>
+						<span className="width-40">
+							Sort Order
+						</span>
+						<span className="width-20">
+						</span>
+					</div>
+					{sortList}
+				</div>
+				<div className = "detail-block">
+				</div>
 			</div>
 		</div>
 	}
 });
 
 export default TabularViewConfig;
-
-
-var ColumnDetail = React.createClass({
-
-	getInitialState: function () {
-		return {editing: false}
-	},
-
-	commitChanges: function (colProps) {
-		var view = this.props.view
-		var column_id = this.props.config.column_id
-		var col = view.data.columns[column_id]
-		col = _.extend(col, colProps)
-		view.data.columns[column_id] = col;
-
-		modelActionCreators.createView(view, true, false)
-	},
-
-	updateWidth: function (e) {
-		var width = e.target.value
-		this.setState({tempWidth: width})
-	},
-
-	toggleDetails: function (event) {
-		this.commitChanges({expanded: (!this.props.config.expanded)})
-	},
-
-	toggleVisibility: function (event) {
-		var config = this.props.config
-		this.commitChanges({visible: !config.visible})
-	},
-
-	toggleRightAlign: function (event) {
-		var config = this.props.config
-		this.commitChanges({align: 'right'})
-	},
-
-	toggleCenterAlign: function (event) {
-		var config = this.props.config
-		this.commitChanges({align: 'center'})
-	},
-
-	toggleLeftAlign: function (event) {
-		var config = this.props.config
-		this.commitChanges({align: 'left'})
-	},
-
-	handleDragStart (event) {
-		var config = this.props.config
-		event.dataTransfer.effectAllowed = 'move'
-		event.dataTransfer.setData('application/json', JSON.stringify(config));
-	},
-
-	handleDragLeave: function () {
-		this.setState({droppable: false})
-	},
-
-	handleDragEnd: function () {
-		this.setState({droppable: false})
-	},
-
-	handleDrop: function (event) {
-		var model = this.props.model
-		var config = this.props.config
-		var obj = this.props.object
-		var rObj = JSON.parse(
-			event.dataTransfer.getData('application/json')
-		)
-
-		var relatedKeyId = config.related_key_id
-		var localKeyId = config.key_id
-
-		modelActionCreators.moveHasMany(localKeyId, relatedKeyId, obj, rObj)
-		event.dataTransfer.dropEffect = 'move'
-		this.setState({droppable: false})
-	},
-
-	render: function () {
-		var view = this.props.view
-		var config = this.props.config
-		var wedgeClasses = "small grayed icon icon-geo-triangle " +
-			(config.expanded ? " wedge open" : "wedge closed")
-		var name = config.name
-		var nameField = (this.state.editing ? <input type="textbox" value={name} /> : name)
-		var key = "attr-" + config.column_id
-		var detailsStyle = {}
-		var eyeClasses = "clickable icon icon-eye-" + (config.visible ? "3 ":"4 grayed")
-		var fieldType = fieldTypes[config.type]
-		var addlRows
-
-
-		if (!config.expanded) detailsStyle.display = "none"
-		if (!!fieldType && fieldType.configRows)
-			addlRows = React.createElement(fieldType.configRows, {
-				view: this.props.view,
-				config: this.props.config,
-				style: detailsStyle
-			})
-		else addlRows = null
-
-		return <tbody>
-			<tr key={key + '-row'}>
-				<td
-					className="no-line"
-					onClick={this.toggleDetails}>
-					<span className={wedgeClasses}></span>
-				</td>
-				<td onDoubleClick={this.handleClick}>
-					{nameField}
-				</td>
-				<td>
-					{ config.expanded ? void(0) :
-					<span className={eyeClasses} onClick={this.toggleVisibility}></span> }
-				</td>
-				<td>
-					{config.expanded ? void(0) : (config.width + 'px') }
-				</td>
-			</tr>
-			<tr key={key + '-row-visibility'} style = {detailsStyle}>
-				<td className="no-line"></td>
-				<td>Visibility: </td>
-				<td colSpan="2" className="right-align">
-					<span className={eyeClasses} onClick={this.toggleVisibility}></span>
-					{config.visible ? "Visible" : "Hidden"}
-				</td>
-			</tr>
-			<tr key={key + '-row-background'} style = {detailsStyle}>
-				<td className=	"no-line"></td>
-				<td>Background: </td>
-				<td colSpan="2" className="right-align">
-					<span className="icon grayed icon-tl-paint"></span>Default
-				</td>
-			</tr>
-			<tr key={key + '-row-alignment'} style = {detailsStyle}>
-				<td className=	"no-line"></td>
-				<td className="width-50">Alignment: </td>
-				<td colSpan="2" className="right-align">
-					<span className={"clickable icon icon-align-left "
-						+ (config.align === 'left' ? '' : 'grayed')}
-						onClick={this.toggleLeftAlign}>
-					</span>
-					<span className={"clickable icon icon-align-center "
-						+ (config.align === 'center' ? '' : 'grayed')}
-						onClick={this.toggleCenterAlign}>
-					</span>
-					<span className={"clickable icon icon-align-right "
-						+ (config.align === 'right' ? '' : 'grayed')}
-						onClick={this.toggleRightAlign}>
-					</span>
-				</td>
-			</tr>
-			<tr key={key + '-row-width'} style = {detailsStyle}>
-				<td></ td>
-				<td> Column width: </td>
-				<td colSpan="2" className="right-align">
-					<input value={this.state.width} style={{width: "30px"}} onBlur={this.commitChanges} onChange={this.updateWidth}/>px
-				</td>
-			</tr>
-			{addlRows}
-		</tbody>
-	}
-});

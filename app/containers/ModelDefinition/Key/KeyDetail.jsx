@@ -105,7 +105,7 @@ var KeyDetail = React.createClass({
 							onChange={this.handleUniqClick}/>
 					</span>
 					<span className="width-10 grayed">
-						{this.props.editing ? <span className="clickable grayed icon icon-kub-trash"
+						{this.props.editing ? <span className="clickable icon icon-kub-trash"
 							title="Delete key" onClick={this.handleDelete}>
 							</span> : null}
 					</span>
@@ -114,20 +114,30 @@ var KeyDetail = React.createClass({
 					this.props.editing ?
 					components.map(function (comp) {
 						return <div className="detail-row sub-row">
-						<span className="width-70">
-							<select value = {comp.attribute_id}
-											onChange = {_this.handleCompChoice}>
-								{selections}
-							</select>
-						</span>
-						<span className="width-20"></span>
-						<span className="width-10 grayed">
-						<span className="clickable grayed icon icon-kub-trash"
-							title="Delete component" onClick={_this.handleDelete}>
-						</span>
-						</span>
+							<span className="width-70">
+								<select value = {comp.attribute_id}
+												onChange = {_this.handleCompChoice}>
+									{selections}
+								</select>
+							</span>
+							<span className="width-10"></span>
+							<span className="width-10"></span>
+							<span className="width-10 grayed">
+								<span className="clickable icon icon-kub-trash"
+									title="Delete component" onClick={_this.handleDelete}>
+								</span>
+							</span>
 						</div>;
-					})
+					}).concat(<div className="detail-row sub-row">
+						<span className="width-70">
+						<ul className="light mb-buttons">
+							<li onClick={this.handleEdit}>Add component</li>
+						</ul>
+						</span>
+						<span className="width-10"></span>
+						<span className="width-10"></span>
+						<span className="width-10"></span>
+					</div>)
 					:
 					null
 				}

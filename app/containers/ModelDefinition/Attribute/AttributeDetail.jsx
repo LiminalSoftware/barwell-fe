@@ -130,7 +130,7 @@ var AttributeDetail = React.createClass({
 					{keyIcons}
 				</span>
 				<span className="width-10 grayed">
-					{this.props.editing ? <span className="clickable grayed icon icon-kub-trash"
+					{this.props.editing ? <span className="clickable icon icon-kub-trash"
 						title="Delete attribute" onClick={this.handleDelete}>
 						</span> : null}
 				</span>

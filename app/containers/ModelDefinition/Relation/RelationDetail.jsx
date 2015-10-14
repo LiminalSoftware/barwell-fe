@@ -32,18 +32,6 @@ var RelationDetail = React.createClass({
 		}
 	},
 
-	componentWillUnmount: function () {
-		document.removeEventListener('keyup', this.handleKeyPress)
-	},
-
-	commitChanges: function () {
-		var relation = this.props.relation
-		relation.relation = this.state.name
-		relation.type = this.state.type
-		relation.related_model_id = this.related_model_id
-		modelActionCreators.create('relation', false, relation)
-	},
-
 	cancelChanges: function () {
 
 	},
@@ -56,6 +44,7 @@ var RelationDetail = React.createClass({
 		var model_id = parseInt(event.target.value)
 		var relation = this.props.relation
 		var relatedModel = ModelStore.get(model_id)
+
 		relation.related_model_id = model_id
 		relation.relation = this.getUpdatedName(relation)
 		this.commit(relation)
@@ -79,10 +68,9 @@ var RelationDetail = React.createClass({
 		modelActionCreators.create('relation', false, relation)
 	},
 
-	handleRelationCancel: function () {
-		var relation = this.props.relation;
-		if (!relation) return
-		modelActionCreators.destroy('relation', false, {cid: relation.cid})
+	handleDelete: function (event) {
+		var relation = this.props.relation
+		modelActionCreators.destroy('relation', false, relation)
 	},
 
 	render: function () {
@@ -91,7 +79,7 @@ var RelationDetail = React.createClass({
 		var relatedModelField
 		var nameField
 		var typeField
-		// var relatedModel = ModelStore.get(relation.related_model_id)
+
 		var relatedModelChoices = ModelStore.query(null, 'model').map(function (model) {
 			var model_id = (model.model_id || model.cid)
 			return <option value={model_id} key={model_id}>
@@ -105,10 +93,10 @@ var RelationDetail = React.createClass({
 				{relatedModelChoices}
 			</select>
 			typeField = <select value={relation.type} onChange={this.handleTypeSelect}>
+				{ (relation.related_model_id === relation.model_id) ? <option value="HIERARCHY">Hierarchy</option> : null}
 				<option value="HAS_ONE">Has one</option>
 				<option value="HAS_MANY">Has many</option>
 				<option value="ONE_TO_ONE">One to one</option>
-				{ (relation.related_model_id === relation.model_id) ? <option value="HIERARCHY">Hierarchy</option> : null}
 			</select>
 		} else {
 			relatedModel = ModelStore.get(relation.related_model_id)
@@ -150,12 +138,14 @@ var RelationDetail = React.createClass({
 			</span>
 			{this.props.editing ?
 			<span className="centered width-15 tight grayed">
-			<span className="clickable  icon icon-cog-thick"
-			title="Advanced options" onClick={this.handleNaturalKey}></span>
-				<span className="clickable grayed icon icon-kub-trash"
+				<span className="clickable  icon icon-cog-thick"
+				title="Advanced options" onClick={this.handleNaturalKey}></span>
+				<span className="clickable icon icon-kub-trash"
 				title="Delete attribute" onClick={this.handleDelete}></span>
 			</span>
-			: null}
+			:
+			<span className="width-15 tight"></span>
+			}
 		</div>;
 	}
 });

@@ -50,59 +50,6 @@ var ModelDefinition = React.createClass({
 		this.forceUpdate()
 	},
 
-	getInitialState: function () {
-		return {
-			committing: false
-		}
-	},
-
-	fetchModel: function () {
-		var model = this.props.model
-		var _this = this;
-		_this.setState({committing: true})
-		modelActionCreators.fetch('model', {model_id: model.model_id}).then(function () {
-			_this.setState({committing: false})
-		})
-	},
-
-	commitModel: function () {
-		var _this = this;
-		var model = this.props.model
-		model.lock_user = 'me'
-
-		this.setState({committing: true})
-
-		modelActionCreators.create('model', true, model, false)
-		.then(function () {
-
-			return Promise.all(
-				AttributeStore.query({model_id: (model.model_id || model.cid)}).map(function (attr) {
-					if (attr._dirty) return modelActionCreators.create('attribute', true, attr)
-					if (attr._destroy) return modelActionCreators.destroy('attribute', true, attr)
-				}))
-		}).then(function () {
-			return Promise.all(
-				KeyStore.query({model_id: model.model_id}).map(function (key) {
-					if (key._dirty) {
-						var key_plus = _.clone(key)
-						key_plus.keycomps = KeycompStore.query({key_id: (key.key_id || key.cid)})
-							.map(function(kc) {return _.pick(kc, 'attribute_id', 'ord')})
-						return modelActionCreators.create('key', true, key_plus)
-					}
-					if (key._destroy)
-						return modelActionCreators.destroy('key', true, key)
-				}))
-		}).then(function () {
-			_this.setState({committing: false});
-			model.lock_user = null;
-			return modelActionCreators.create('model', true, model, true);
-		}).catch(function () {
-			_this.setState({committing: false});
-			model.lock_user = null;
-			return modelActionCreators.create('model', true, model, true);
-		})
-	},
-
 	render: function () {
 		var _this = this;
 		var model = this.props.model;

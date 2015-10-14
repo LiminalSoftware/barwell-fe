@@ -50,8 +50,8 @@ var AttributeDetailList = React.createClass({
 				model.lock_user = null
 				modelActionCreators.create('model', true, model, false)
 		}).then(function () {
-			_this.cancelChanges()
 			_this.setState({editing: false, committing: false})
+			_this.cancelChanges()
 			modelActionCreators.createNotification('Attribute udpate complete!', 'Your changes have been committed to the server', 'info')
 		})
 	},

@@ -16,18 +16,18 @@ var ModelPane = React.createClass({
 
 	getInitialState: function () {
 		return {
-			activePane: "model-def",
+			selection: "model",
 			viewListOpen: false,
 			miniaturized: false
 		}
 	},
 
-	showModelDef: function () {
-		this.setState({activePane: "model-def"})
+	selectModel: function () {
+		this.setState({selection: "model"})
 	},
 
-	showViewConfig: function () {
-		this.setState({activePane: "view-config"})
+	selectView: function () {
+		this.setState({selection: "view"})
 	},
 
 	componentWillUnmount: function () {
@@ -139,7 +139,7 @@ var ModelPane = React.createClass({
 						</ul>
 					</div>
 
-					<ul className="views-list"> {
+					<ul className="views-list" onClick={this.toggleViewList}> {
 						views.map(function (view) {
 							return <li key={'view-link-' + view.view_id}>
 								<Link to="view" params={{modelId: model_id, workspaceId: workspace_id, viewId: view.view_id}}>
@@ -151,15 +151,26 @@ var ModelPane = React.createClass({
 					}</ul>
 				</div>
 
-
-					<ul className="rh-sidebar-accordian">
-						<li>
-							<div className="accordian-content">
-								<ModelDefinition model = {model} />
-							</div>
-						</li>
-
-					</ul>
+				<ul className="rh-sidebar-accordian">
+					<li className="accordian-header" onClick={this.selectModel}>
+						<h3>Database Definition</h3>
+						<span className={"small icon tight icon-chevron-" + (this.state.selection === 'model' ? "up" : "down")}></span>
+					</li>
+					<li className={"accordian-content " + (this.state.selection === 'model' ? ' open' : ' closed')}>
+						<ModelDefinition model = {model} />
+					</li>
+					<li className="accordian-header" onClick={this.selectView}>
+						<h3>View Configuration</h3>
+						<span className={"small icon tight icon-chevron-" + (this.state.selection === 'view' ? "up" : "down")}></span>
+					</li>
+					<li className={"accordian-content " + (this.state.selection === 'view' ? ' open' : ' closed')}>
+						{viewDetailContent}
+					</li>
+					<li className="accordian-header">
+						<h3>Selection Details</h3>
+						<span className={"small icon tight icon-chevron-" + (this.state.selection === 'details' ? "up" : "down")}></span>
+					</li>
+				</ul>
 
 				</ReactCSSTransitionGroup>
 
