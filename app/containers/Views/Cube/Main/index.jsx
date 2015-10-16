@@ -123,8 +123,8 @@ var CubePane = React.createClass ({
 			bottom: sel.bottom
 		}, {
 			left: -1,
-			top: -0.75,
-			height: -1,
+			top: -2,
+			height: 0,
 			width: 0
 		})
 	},
@@ -137,10 +137,10 @@ var CubePane = React.createClass ({
 			top: ptr.top,
 			bottom: (('bottom' in ptr) ? ptr.bottom : ptr.top)
 		}, {
-			left: -2,
-			top: -1.75,
-			height: -1,
-			width: 0
+			left: 0,
+			top: -1,
+			height: 0,
+			width: -1
 		})
 	},
 

@@ -12,6 +12,7 @@ import KeycompStore from "../../../../stores/KeycompStore"
 
 import ColumnList from './ColumnList'
 import ColumnDetail from './ColumnDetail'
+
 import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
 import groomView from '../../groomView'
 
@@ -57,9 +58,7 @@ var TabularViewConfig = React.createClass({
 		var data = this.state
 		var columns = data.columns
 
-		var colList = (data.columnList || []).map(function (col) {
-			return <ColumnDetail key = {"detail-" + col.attribute_id} config = {col} view= {view} />
-		})
+
 		var sortList = (data.sorting || []).map(function (sort) {
 			var sortOrderClass = "small grayed icon icon-arrow-" + (sort.descending ? "up" : "down")
 			var sortOrderLabel = sort.descending ? "Ascending" : "Descending"
@@ -87,9 +86,7 @@ var TabularViewConfig = React.createClass({
 				<div className="detail-section-header">
 					<h3>Columns</h3>
 				</div>
-				<div className="detail-table">
-					{colList}
-				</div>
+				<ColumnList view = {view} data = {data}/>
 			</div>
 			<div className = "detail-block">
 				<div className="detail-section-header">

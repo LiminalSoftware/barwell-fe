@@ -182,14 +182,17 @@ var ModelLink = React.createClass ({
 							title={'locked by ' + model.lock_user}></span>
 
 		return <li className={(this.props.active ? "active " : "") + (this.props.editing ? " editmode" : "")}>
-			{this.props.editing ? <span className="tight draggable icon icon-Layer_2 model-reorder"></span> : null}
+			{this.props.editing ? <span className="tight grayed draggable icon icon-Layer_2 model-reorder"></span> : null}
 
 			<Link to="model" params={{modelId: model_id, workspaceId: workspace_id}} key={"model-link-" + model_id} onDoubleClick={this.edit}>
 			{lock_icon}
 			{modelDisplay}
-			{this.props.editing && !this.props.renaming ? <span className="grayed right-align icon icon-trash"></span> : null}
-			{this.props.editing && !this.props.renaming ? <span className="grayed right-align icon icon-tl-pencil" onClick={this.edit}></span> : null}
-			{this.props.active && !this.props.editing ? <span className="icon right-align icon-chevron-right"></span> : null}
+			{this.props.editing && !this.props.renaming ?
+				<span className="grayed right-align icon icon-kub-trash"></span> : null}
+			{this.props.editing && !this.props.renaming ?
+				<span className="grayed right-align icon icon-tl-pencil" onClick={this.edit}></span> : null}
+			{this.props.active && !this.props.editing ?
+				<span className="icon right-align icon-chevron-right"></span> : null}
 			</Link>
 		</li>
 	}

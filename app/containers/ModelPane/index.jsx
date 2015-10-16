@@ -170,6 +170,10 @@ var ModelPane = React.createClass({
 						<h3>Selection Details</h3>
 						<span className={"small icon tight icon-chevron-" + (this.state.selection === 'details' ? "up" : "down")}></span>
 					</li>
+					<li className="accordian-header">
+						<h3>Change History</h3>
+						<span className={"small icon tight icon-chevron-" + (this.state.selection === 'details' ? "up" : "down")}></span>
+					</li>
 				</ul>
 
 				</ReactCSSTransitionGroup>

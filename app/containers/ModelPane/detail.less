@@ -39,19 +39,19 @@
 }
 
 
-div.detail-block {
+.detail-block {
 
   border-top: 1px solid @gray3;
 	display: block;
-	margin: 20px;
+	margin: 20px;	
+}
 
-	p.explainer {
-		font-size: 13px;
-		padding-top: 0;
-		margin-top: 0;
-		display: block;
-		font-family: @bodyFont;
-	}
+p.explainer {
+	font-size: 13px;
+	padding-top: 0;
+	margin-top: 0;
+	display: block;
+	font-family: @bodyFont;
 }
 
 .detail-section-header {
@@ -74,20 +74,21 @@ div.detail-block {
 }
 
 
-div.detail-table {
+.detail-table {
 	padding: 0;
 	display: block;
   width: 100%;
   font-size: 13px;
+	list-style: none;
 
-  div.detail-row, div.detail-header {
+  .detail-row, .detail-header {
     display: block;
 		display: flex;
     clear: both;
 		margin-bottom: 3px;
   }
 
-  div.detail-header {
+  .detail-header {
 		font-family: @subheaderFont;
 		color: @gray2;
 		font-weight: 800;
@@ -95,7 +96,7 @@ div.detail-table {
 		border-top: 1px solid @gray3;
   }
 
-	div.detail-row {
+	.detail-row {
 		border-radius: 4px;
 		position: relative;
 		transition: all cubic-bezier(.16,.85,.5,1) 1000ms;
@@ -105,12 +106,12 @@ div.detail-table {
 		}
 	}
 
-	div.detail-row.editing > span:not(.draggable) {
+	.detail-row.editing > span:not(.draggable) {
 		background: @gray4;
 	}
 
 
-  div.detail-row > span, div.detail-header > span {
+  .detail-row > span, .detail-header > span {
 
 		flex-direction: column;
 		transition: background cubic-bezier(.16,.85,.5,1) 100ms;

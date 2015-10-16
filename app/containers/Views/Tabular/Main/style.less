@@ -103,7 +103,7 @@ div.color-block {
 		text-overflow: ellipsis;
 		white-space: nowrap;
 
-		cursor: pointer;
+		cursor: cell;
 		padding: 0 4px;
 		input[type="checkbox"] {
 			margin: 2px;
@@ -137,7 +137,9 @@ div.color-block {
 	}
 
 	tr {
-
+		&:hover {
+			background: #FFE;
+		}
 		&.dirty {
 			td:first-child {
 				border-left: 1px solid @green-tint-2;
