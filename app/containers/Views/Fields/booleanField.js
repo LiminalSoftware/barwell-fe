@@ -45,9 +45,9 @@ var CheckboxElement = React.createClass({
 		var value = this.props.value
 		var style = this.props.style
 
-		return <td {...this.props} className={this.props.className || '' + ' checkbox'}>
+		return <span {...this.props} className={this.props.className || '' + ' checkbox'}>
 			<input type="checkbox" checked={!!value} onChange={this.handleClick}></input>
-		</td>
+		</span>
 	}
 });
 

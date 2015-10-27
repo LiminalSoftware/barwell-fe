@@ -23,6 +23,8 @@ var ModelDetails = React.createClass({
 		return {
 			name: model.model,
 			plural: model.plural,
+			pluralUpdated: false,
+			label: null
 		}
 	},
 
@@ -31,32 +33,16 @@ var ModelDetails = React.createClass({
 	},
 
 	commitChanges: function () {
-		var model = this.props.model
+		this.setState({committing: true, editing: false});
+		var _this = this
+		var key
+		var model = _.clone(this.props.model)
 		var name = this.state.name
 		var plural = this.state.plural
-
-		if (this.state.editingName) plural = pluralize.plural(name)
-
-		this.setState({
-			plural: plural
-		});
-
-		model.model = name
-		model.plural = plural
-		modelActionCreators.create('model', false, model)
-		this.revert()
-	},
-
-	cancelChanges: function () {
-		this.revert()
-	},
-
-	handlePickLabel:function (event) {
-		var model = this.props.model
-		var value = event.target.value
-		var key
+		var label = this.state.label
 		var numComps = _.countBy(KeycompStore.query({model_id: model.model_id}), 'key_id')
-		var candidateKc = KeycompStore.query({attribute_id: value}).forEach(function (kc) {
+
+		var candidateKc = KeycompStore.query({attribute_id: label}).forEach(function (kc) {
 			if (numComps[kc.key_id] === 1) key = KeyStore.get(kc.key_id)
 		});
 		if (!key) {
@@ -64,10 +50,47 @@ var ModelDetails = React.createClass({
 				_named: false,
 				_label: true,
 				model_id: model.model_id
-			}).then(function (key) {
-				modelActionCreators.create('keycomp', false, {key_id: key.cid, attribute_id: value})
+			}).then(function (k) {
+				key = k
+				modelActionCreators.create('keycomp', false, {key_id: key.cid, attribute_id: label})
 			})
 		}
+
+		model.model = name
+		model.plural = plural
+		model.lock_user = 'me'
+
+		modelActionCreators.create('model', true, model).then(function () {
+			key.keycomps = KeycompStore.query({key_id: (key.key_id || key.cid)})
+				.map(function(kc) {return _.pick(kc, 'attribute_id', 'ord')})
+			console.log('key: ')
+			console.log(key);
+			// if (!key.key_id) return modelActionCreators.create('key', true, key, false)
+		}).then(function (key) {
+				// model.label = key.key_id
+				model.lock_user = null
+				modelActionCreators.create('model', true, model)
+		}).then(function () {
+			_this.setState({editing: false, committing: false})
+			// modelActionCreators.createNotification('Model udpate complete!', 'Your changes have been committed to the server', 'info')
+		})
+	},
+
+
+	cancelChanges: function () {
+		var model = this.props.model;
+		this.setState({
+			editing: false,
+			name: model._server.model,
+			plural: model._server.plural,
+			label: model._server.label
+		})
+	},
+
+	handlePickLabel:function (event) {
+		var model = this.props.model
+		var value = event.target.value
+		this.setState({label: value});
 	},
 
 	revert: function () {
@@ -80,11 +103,18 @@ var ModelDetails = React.createClass({
 	},
 
 	handleNameUpdate: function (event) {
-		this.setState({name: event.target.value})
+		var name = event.target.value
+		this.setState({
+			name: name,
+			plural: (this.state.pluralUpdated ? this.state.plural : pluralize.plural(name))
+		})
 	},
 
 	handlePluralUpdate: function (event) {
-		this.setState({plural: event.target.value})
+		this.setState({
+			plural: event.target.value,
+			pluralUpdated: true
+		})
 	},
 
 	render: function () {
@@ -133,7 +163,7 @@ var ModelDetails = React.createClass({
 						<span className="width-30 title">Label</span>
 						<span className={"width-70 " + (this.state.editing ? " tight" : "")}>
 							{this.state.editing ?
-								<select value = {model.label_attribute_id} onChange = {this.handlePickLabel}> {
+								<select value = {model.label} onChange = {this.handlePickLabel}> {
 									[<option value={null} key="null-option">-Select from dropdown-</option>].concat(
 									AttributeStore.query({model_id: model.model_id, type: 'TEXT'}).map(function (attr) {
 										return <option value={attr.attribute_id} key={attr.attribute_id}>
@@ -142,7 +172,7 @@ var ModelDetails = React.createClass({
 									}))
 								} </select>
 								:
-								model.label_attribute_id
+								model.label
 							}
 
 						</span>

@@ -1,7 +1,7 @@
 import React from "react"
 import { RouteHandler, Link } from "react-router"
 import viewTypes from "containers/Views/viewTypes"
-import ViewSelector from "./ViewSelector"
+import ViewDetails from "./ViewDetails"
 import styles from "./style.less"
 import detailStyles from "./detail.less"
 import ModelDefinition from "../ModelDefinition"
@@ -85,30 +85,23 @@ var ModelPane = React.createClass({
 				key: "view-pane-" + (view.cid || view.view_id)
 			})
 
-			viewDetailContent = React.createElement(configElement, {
+			configElement = React.createElement(configElement, {
 				model: model,
 				view: view,
 				key: "view-config-" + view_id
 			})
+
+			viewDetailContent = <div>
+				<ViewDetails view = {view}/>
+				{configElement}
+			</div>
 		}
 
 		else {
 			bodyContent = <div className="no-view-content view-body-wrapper" key="no-view">
 				<span className="icon icon-face-nomimic"></span>No view selected
 			</div>
-
-			viewDetailContent = <div>Placeholder</div>
-		}
-
-		if (activePane === "model-def") {
-			detailContent = <ModelDefinition model={model} />
-		} else if (activePane === "view-config") {
-			detailContent = <div className="view-details">
-				<ViewSelector
-					view={view}
-					key={"view-selector-" + view_id}/>
-				{viewDetailContent}
-			</div>
+			viewDetailContent = null
 		}
 
 		var views = ViewStore.query({model_id: model_id})
@@ -120,7 +113,7 @@ var ModelPane = React.createClass({
 				<div className="right-header header-container" >
 					<h1>{model ? model.model : null}</h1>
 					{view ? <h1>/</h1> : null}
-					{view ? <h1>{view.view}</h1> : null}
+					{view ? <span><span className={"large header-icon white icon " + viewTypes[view.type].icon}></span><h1>{view.view}</h1></span> : null}
 
 
 					<ul className="dark padded mb-buttons right-margin"><li onClick={this.toggleViewList}>
@@ -164,7 +157,7 @@ var ModelPane = React.createClass({
 						<span className={"small icon tight icon-chevron-" + (this.state.selection === 'view' ? "up" : "down")}></span>
 					</li>
 					<li className={"accordian-content " + (this.state.selection === 'view' ? ' open' : ' closed')}>
-						{viewDetailContent}
+							{viewDetailContent}
 					</li>
 					<li className="accordian-header">
 						<h3>Selection Details</h3>

@@ -120,9 +120,7 @@ var TabularPane = React.createClass ({
 			right: sel.right,
 			top: sel.top,
 			bottom: sel.bottom
-		}, {
-			left: -1,
-			top: -1,
+		},{
 			height: -1,
 			width: -1
 		})
@@ -153,10 +151,8 @@ var TabularPane = React.createClass ({
 			top: ptr.top,
 			bottom: ptr.top
 		}, {
-			left: 0,
-			top: 0,
-			height: 0,
-			width: 0
+			height: -1,
+			width: -1
 		})
 	},
 
@@ -168,14 +164,14 @@ var TabularPane = React.createClass ({
 
 		this.getVisibleColumns().forEach(function (col, idx) {
 			if (idx < pos.left)
-				left += (col.width + geo.widthPadding)
+				left += col.width
 			else if (idx <= pos.right)
-				width += col.width + geo.widthPadding
+				width += col.width
 		})
 		return {
-			top: (pos.top * this.state.actRowHt + this.state.offset + (fudge.top || 0)) + 'px',
-			left: (left + (fudge.left || 0)) + 'px',
-			minHeight: ((pos.bottom - pos.top + 1) * this.state.actRowHt + (fudge.height || 0)) + 'px',
+			top: (pos.top * geo.rowHeight + geo.headerHeight + (fudge.top || 0)) + 'px',
+			left: (left + (fudge.left || 0))+ 'px',
+			minHeight: (geo.rowHeight * (pos.bottom - pos.top + 1) + (fudge.height || 0)) + 'px',
 			minWidth: (width + (fudge.width || 0)) + 'px'
 		}
 	},
@@ -190,12 +186,12 @@ var TabularPane = React.createClass ({
 		var y = event.pageY - offset.top
 		var x = event.pageX - offset.left
 		var xx = x
-		var r = Math.floor(y / actHeight, 1)
+		var r = Math.floor((y) / geo.rowHeight, 1)
 		var c = 0
 
 		modelActionCreators.setFocus('view')
 		columns.forEach(function (col) {
-			xx -= (col.width + geo.widthPadding)
+			xx -= (col.width)
 			if (xx > 0) c ++
 		})
 		c = Math.min(columns.length - 1, c)
@@ -350,12 +346,13 @@ var TabularPane = React.createClass ({
 		var focused = (FocusStore.getFocus() == 'view')
 
 		return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">
-				<table id="main-data-table" className="header tabular-main-table data-table">
+
 					<TabularTHead
 						key = {"tabular-thead-" + view.view_id}
 						scrollTop = {this.state.scrollTop}
 						columns = {columns}
 						view = {view} />
+
 					<TabularTBody
 						ref = "tbody"
 						handleBlur = {_this.handleBlur}
@@ -368,18 +365,17 @@ var TabularPane = React.createClass ({
 						openContextMenu = {_this.openContextMenu}
 						columns = {columns}
 						sorting = {view.data.sorting}
-						scrollTop = {this.state.scrollTop}
-						/>
-				</table>
+						scrollTop = {this.state.scrollTop} />
+
 				{_this.state.contextOpen ?
 					<ContextMenu
 						x = {this.state.contextX} y = {this.state.contextY}
 						handleContextBlur = {this.handleContextBlur}
 						insertRecord = {this.insertRecord}
 						deleteRecords = {this.deleteRecords}
-						copySelection = {this.copySelection}
-						/>
+						copySelection = {this.copySelection} />
 					: null}
+
 				<div
 					className={"pointer" + (_this.isFocused() ? " focused" : "")}
 					ref="anchor"

@@ -1,18 +1,22 @@
 @import "../../global.less";
 
 
-.sidebar-sub-header, {
+.sidebar-sub-header, .accordian-header{
 	h2, h3 {
 		padding: 10px 20px;
-		font-size: 17px;
+		font-size: 14px;
 		color: @gray1;
-		font-family: @headerFont;
+		// font-family: @headerFont;
+		font-family: @subheaderFont;
 		display: inline;
-		font-weight: 800;
+		font-weight: 400;
 	}
 	background: @gray4;
-	border-bottom: 1px solid @gray3;
-	padding: 20px 0;
+	border-bottom: 1px solid @steelblue;
+	border-top: 1px solid white;
+	padding: 10px 0;
+	min-height: 22px;
+	max-height: 22px;
 }
 
 .mb-buttons {
@@ -24,22 +28,36 @@
 	padding: 0;
 
 	&.light {
+		background: white;
 		color: @newgreen1;
 	}
 
 	&.dark {
 		color: @gray4;
+
+		& > li {
+			background: @newgreen2;
+			border: none !important;
+
+			&:hover {
+				background: white;
+				color: @newgreen1;
+			}
+		}
+
 	}
 
 	&.padded {
+		margin: 3px;
 		margin-right: 20px !important;
 	}
 	& > li {
+		min-height: 14px;
 		transition: all cubic-bezier(.16,.85,.5,1) 100ms;
 
 		// margin: -1px;
 		float: left;
-		padding: 1px 8px;
+		padding: 2px 8px;
 		border: 1px solid @gray-3;
 		border-left: none;
 		&:first-child {
@@ -61,8 +79,12 @@
 		}
 		cursor: pointer;
 		font-size: 13px;
+
+
 		font-family: @subheaderFont;
 		font-weight: 800;
+
+
 	}
 }
 
@@ -104,8 +126,8 @@ ul.sidebar-model-list {
 	& > li.active:not(.editmode) {
 		border-top: 1px solid @gray3;
 		border-bottom: 1px solid @gray3;
-		border-right: 1px solid white;
-		margin-right: -1px;
+		// border-right: 1px solid white;
+		// margin-right: -1px;
 		background: white;
 	}
 
@@ -140,7 +162,7 @@ ul.sidebar-model-list {
 	flex: 0 0 250px;
 	order: -2;
 	background: white;
-	border-right: 1px solid @gray3;
+	border-right: 1px solid @steelblue;
 	padding: 0;
 	overflow: visible;
 }

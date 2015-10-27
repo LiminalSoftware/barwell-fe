@@ -4,7 +4,7 @@ import viewTypes from "../../Views/viewTypes"
 import modelActionCreators from "../../../actions/modelActionCreators"
 import ViewStore from "../../../stores/ViewStore"
 
-var ViewSelector = React.createClass({
+var ViewDetails = React.createClass({
 
 	getInitialState: function () {
 		var view = this.props.view
@@ -23,7 +23,7 @@ var ViewSelector = React.createClass({
 			type: view.type
 		})
 	},
-	
+
 	componentWillMount: function () {
 		ViewStore.addChangeListener(this._onChange);
 		this.update()
@@ -43,7 +43,7 @@ var ViewSelector = React.createClass({
 		var _this = this
 		var view = this.props.view
 		// var data = view.data
-		
+
 		return function () {
 			view.type = type
 			_this.revert()
@@ -61,48 +61,47 @@ var ViewSelector = React.createClass({
 		var typeSelector
 		var _this = this
 
-		if (this.state.selectingType) {
-			var typeEls = _.map(viewTypes, function (details, type) {
-				return <tr 
-					key = {"view-type-selector-" + type} 
-					onClick = {_this.viewClickerFactory(type)}>
-					<td className="width-25 centered clickable padded">
-						<span className={"clear icon "+ details.icon}></span>{type}
-					</td>
-					<td className="width-75 hoverable clickable">
-						{details.description}
-					</td>
-				</tr>
-			})
-			typeSelector = <tbody>
-				{typeEls}
-			</tbody>
-		} else {
-			typeSelector = void(0)
-		}
+		// if (this.state.selectingType) {
+		// 	var typeEls = _.map(viewTypes, function (details, type) {
+		// 		return <div cl
+		// 			key = {"view-type-selector-" + type}
+		// 			onClick = {_this.viewClickerFactory(type)}>
+		// 			<td className="width-25 centered clickable padded">
+		// 				<span className={"clear icon "+ details.icon}></span>{type}
+		// 			</td>
+		// 			<td className="width-75 hoverable clickable">
+		// 				{details.description}
+		// 			</td>
+		// 		</tr>
+		// 	})
+		// 	typeSelector = <tbody>
+		// 		{typeEls}
+		// 	</tbody>
+		// } else {
+		// 	typeSelector = void(0)
+		// }
 
 		// <WarningBox text="by changing the view type, you may lose your existing configurations"/>
 
 		return <div className="detail-block">
-			<h3>View Details</h3>
-			<table className="detail-table">
-				<tbody>
-					<tr className = "top-line">
-						<td className="width-25">Name:</td>
-						<td className="width-75">{this.state.name}</td>
-					</tr>
-					<tr>
-						<td className="width-25">Type:</td>
-						<td className="width-75 clickable" 
+			<div className="detail-section-header">
+				<h3>View Details</h3>
+			</div>
+			<div className="detail-table">
+					<div className = "header-row">
+						<span className="width-25">Name:</span>
+						<span className="width-75">{this.state.name}</span>
+					</div>
+					<div>
+						<span className="width-25">Type:</span>
+						<span className="width-75 clickable"
 						   onClick={this.chgType}>
 								<span className={"icon " + icon}></span>
 								{this.state.type}
 								<span className="small right-align grayed icon icon-geo-triangle wedge open"></span>
-						</td>
-					</tr>
-				</tbody>
-				{typeSelector}
-			</table>
+						</span>
+					</div>
+			</div>
 	</div>
 	},
 	chgType: function () {
@@ -119,4 +118,4 @@ var WarningBox = React.createClass({
 	}
 })
 
-export default ViewSelector
+export default ViewDetails

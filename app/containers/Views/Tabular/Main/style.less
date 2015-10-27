@@ -4,18 +4,79 @@
 
 }
 
-div.color-block {
-	height: 12px;
+.tabular-tbody {
+	.noselect;
+}
+
+.table-cell {
+	.noselect;
 	display: block;
+	position: absolute;
+	padding: 0;
+	margin: 0;
+	border-bottom: 1px dotted @steelblue;
+	border-left: 1px solid @gray4;
+	cursor: cell;
+}
+
+.table-cell:first-child {
+	border-left: 1px solid @steelblue;
+}
+.table-cell:last-child {
+	border-right: 1px solid @gray4;
+}
+
+.table-cell-inner {
+	.noselect;
+}
+
+.table-header-cell.table-cell {
+	background: @gray4;
+	font-style: @headerFont;
+	font-weight: 700;
+	text-align: center;
+	border-left: 1px solid @gray3;
+	border-bottom: 1px double @steelblue;
+}
+
+.table-header-cell.table-cell:first-child {
+	border-left: 1px double @steelblue;
+}
+.table-header-cell.table-cell:last-child {
+	border-right: 1px double @steelblue;
+}
+
+.table-cell-inner, .input-editor {
+	padding: 3px 5px;
+	font-size: 12px;
+	font-family: @bodyFont;
+	box-sizing: border-box;
+}
+
+.input-editor {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	z-index: 700;
+	width: 100%;
+	background: white !important;
+	outline: 0;
+	border: none;
+}
+
+
+.color-block {
+	min-height: 10px;
 }
 
 .has-many-bubble {
 	cursor: grab;
 	display: inline;
 
-	border: 2px solid @gray3;
+	background-color: @gray4;
+	border: 1px solid @gray3;
 
-	background-color: white;
+
 	z-index: 100;
 	border-radius: 4px;
 	padding: 0 5px;
@@ -23,142 +84,16 @@ div.color-block {
 	margin-left: 0;
 
 	&:hover {
-		border: 2px solid @gray2;
+
 	}
 
 	&.selected {
-		border: 2px solid @newgreen1;
-	}
-}
-
-
-
-.tabular-main-table th {
-	z-index: 5001;
-	overflow: visible;
-	font-weight: 400;
-	background: @gray4;
-	position: relative;
-	border: 1px solid @gray3;
-
-	&.desc, &.asc, .sort-icon {
-		// background: @green-tint-2;
+		background: @newgreen1;
 		color: white;
 	}
-
-	.table-resizer {
-		position: absolute;
-		z-index: 2000;
-		right: 0;
-		top: 0;
-		bottom: 0;
-		height: 30px;
-		width: 5px;
-		cursor: col-resize;
-		overflow: visible;
-		&:hover {
-			background: rgba(20,100,255,0.1);
-		}
-		&.dragging {
-			background: rgba(255,0,0,0.3);
-			height: 5000px;
-			width: 2px;
-			z-index: 4000;
-		}
-	}
 }
 
-.tabular-main-table td {
-	border: 1px solid @gray3;
-	// border-right: 1px solid transparent;
-}
 
-.data-table {
-	zoom: 100%;
-	table-layout: fixed;
-	border-collapse: collapse;
-	.noselect;
-
-	thead {
-		.noselect;
-		position: absolute;
-		top: 0px;
-		left: 3px;
-		z-index: 5000;
-	}
-
-	tbody {
-		.noselect;
-		position: absolute;
-		left: 3px;
-	}
-
-	td, th {
-		.noselect;
-		.transition(all 100ms ease-in);
-		position: relative;
-		font-size: 12px;
-		color: @gray5;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-
-		cursor: cell;
-		padding: 0 4px;
-		input[type="checkbox"] {
-			margin: 2px;
-			padding: 0;
-		}
-	}
-
-	td {
-
-		&.uneditable {
-			background: #FFE;
-			font-style: italic;
-		}
-	}
-
-}
-
-.tabular-main-table {
-
-	thead {
-		.noselect;
-		position: absolute;
-		top: 0px;
-		left: 3px;
-		z-index: 10;
-	}
-	tbody {
-		.noselect;
-		position: absolute;
-		left: 3px;
-	}
-
-	tr {
-		&:hover {
-			background: #FFE;
-		}
-		&.dirty {
-			td:first-child {
-				border-left: 1px solid @green-tint-2;
-			}
-		}
-
-		td:first-child {
-
-		}
-		th:first-child {
-
-		}
-
-		td.droppable {
-			// background: lighten(@green-tint-2, 42%) !important;
-			border: 1px double @green-tint-2;
-		}
-	}
-}
 
 
 
@@ -176,11 +111,11 @@ div.color-block {
 }
 
 .selection {
-	border: 2.5px solid @gray3;
+	border: 1px solid @gray3;
 	background-color: @gray-trans;
 	&.focused {
 		background-color: @green-trans;
-		border: 2.5px solid @newgreen1;
+		border: 1px solid @newgreen1;
 	}
 }
 
@@ -284,39 +219,4 @@ div.color-block {
   100% {
     background-position: 40px 0, -40px 100%, 0 -40px, 100% 40px;
   }
-}
-
-.input-editor {
-	z-index: 700;
-	position: absolute;
-	left: 1px;
-	right: 0;
-	top: 0;
-	bottom: 1px;
-	min-width: 10px;
-	width: 100%;
-	background: white;
-	margin: 0;
-	border: none;
-	font-size: 12px;
-	font-family: @bodyFont;
-	outline: 0;
-}
-
-input {
-	outline: 0;
-}
-
-div.loading-banner {
-	z-index: 30;
-	position: absolute;
-	bottom: 0;
-	right: 0;
-	width: 100%;
-	text-align: right;
-	opacity: 50%;
-	padding: 3px;
-	padding-left: 20px;
-	background: @green-bright;
-	color: white;
 }

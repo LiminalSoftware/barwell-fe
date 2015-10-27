@@ -104,8 +104,8 @@ var hasManyField = {
 			var parentObj = this.props.object
 			var relatedModel = ModelStore.get(config.related_model_id)
 
-			return <td
-				className = {this.state.droppable ? "droppable" : ""}
+			return <span
+				className = {'table-cell ' + (this.state.droppable ? "droppable" : "")}
 				style = {style}
 				onDragEnter = {this.handleDragEnter}
 				onDragLeave = {this.handleDragLeave}
@@ -113,15 +113,17 @@ var hasManyField = {
 				onDragOver = {this.preventDefault}
 				onDrop = {this.handleDrop}
 				>
-			{(value || []).map(function(obj) {
-				return <HasManyBubble
-					key = {obj.cid || obj[relatedModel._pk]}
-					obj = {obj}
-					parentPk = {parentObj[model._pk]}
-					model = {relatedModel}
-					label = {label} />
-			})}
-			</td>
+				<span className="table-cell-inner">
+					{(value || []).map(function(obj) {
+						return <HasManyBubble
+							key = {obj.cid || obj[relatedModel._pk]}
+							obj = {obj}
+							parentPk = {parentObj[model._pk]}
+							model = {relatedModel}
+							label = {label} />
+					})}
+				</span>
+			</span>
 
 		}
 	})

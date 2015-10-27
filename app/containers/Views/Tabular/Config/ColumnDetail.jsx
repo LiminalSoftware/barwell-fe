@@ -15,7 +15,7 @@ var sortable = require('react-sortable-mixin');
 
 var ColumnDetail = React.createClass({
 
-	mixins: [PureRenderMixin, sortable.ItemMixin],
+	mixins: [PureRenderMixin],
 
 	getInitialState: function () {
 		return {editing: false}

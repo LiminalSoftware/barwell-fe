@@ -17,15 +17,15 @@ var PrimaryKeyElement = React.createClass({
 		var value = this.props.value
 		var style = this.props.style
 
-		return <td style={style} className="uneditable">
+		return <span style={style} className="table-cell uneditable">
 			{this.props.value}
-		</td>
+		</span>
 	}
 })
 
 var PrimaryKeyField = {
 	element: PrimaryKeyElement,
-	uneditable: true	
+	uneditable: true
 }
 
 export default PrimaryKeyField

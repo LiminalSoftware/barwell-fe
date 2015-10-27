@@ -154,10 +154,12 @@ var TabularTBody = React.createClass ({
 		var actRowHt = this.state.actRowHt
 		// var height = (rows.length * this.state.rowHt) + 'px'
 		var style = {
-			top: geometry.headerHeight + 'px'
+			top: geometry.headerHeight + 'px',
+			left: geometry.leftGutter + 'px',
+			position: 'absolute'
 		}
 
-		return <tbody
+		return <div
 			ref = "tbody"
 			style = {style}
 			onMouseDown = {_this.props.clicker}
@@ -170,13 +172,14 @@ var TabularTBody = React.createClass ({
 					return <TabularTR  {..._this.props}
 						obj={obj}
 						rowKey = {rowKey}
+						row = {i}
 						ref = {rowKey}
 						key = {rowKey}
 						geometry = {geometry}
 						handleBlur = {_this.props.handleBlur} />;
 				})
 			}
-			</tbody>;
+			</div>;
 	}
 })
 
@@ -199,29 +202,31 @@ var TabularTR = React.createClass({
 		var _this = this
 		var model = _this.props.model
 		var rowKey = this.props.rowKey
+		var row = this.props.row
 		var obj = this.props.obj
 		var geometry = this.props.geometry
 		var style = {
-			lineHeight: geometry.rowHeight + 'px',
-			height: (geometry.rowHeight) + 'px',
+			top: (geometry.rowHeight * row) + 'px',
 			maxHeight: geometry.rowHeight + 'px',
 			minHeight: geometry.rowHeight + 'px'
 			// lineHeight: '0px'
 		}
 		var selector = {}
 		selector[model._pk] = obj[model._pk]
+		var left = 0;
 
-		return <tr id={rowKey} style={style} className = {obj._dirty ? "dirty" : ""}>
+		return <div id={rowKey} style={style} className = {obj._dirty ? "dirty" : ""}>
 			{_this.props.columns.map(function (col) {
 				var element = (fieldTypes[col.type] || fieldTypes.TEXT).element
 				var cellKey = rowKey + '-' + col.column_id
 
-				return React.createElement(element, {
+				var el = React.createElement(element, {
 					config: col,
 					model: _this.props.model,
 					view: _this.props.view,
 					selector: selector,
 					object: obj,
+					className: 'table-cell',
 					value: obj[col.column_id],
 					column_id: col.column_id,
 					handleBlur: _this.props.handleBlur,
@@ -229,14 +234,17 @@ var TabularTR = React.createClass({
 					cellKey: cellKey,
 					ref: cellKey,
 					style: {
-						minWidth: col.width,
-						maxWidth: col.width,
+						left: left + geometry.leftOffset + 'px',
+						minWidth: col.width + 'px',
+						maxWidth: col.width  + 'px',
 						textAlign: col.align,
 						height: (geometry.rowHeight) + 'px',
 					}
 				})
+				left += col.width
+				return el
 			})}
-		</tr>
+		</div>
 	}
 })
 

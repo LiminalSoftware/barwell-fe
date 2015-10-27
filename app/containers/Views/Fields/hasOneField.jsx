@@ -12,7 +12,7 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 
 var hasOneField = {
 	configRows: React.createClass({
-		
+
 		getInitialState: function () {
 			var config = this.props.config
 			return {label: config.label}
@@ -24,7 +24,7 @@ var hasOneField = {
 			var column_id = config.column_id
 			var view = this.props.view
 			var data = view.data
-			var col = data.columns[column_id] 
+			var col = data.columns[column_id]
 			var value = event.target.value
 
 			this.setState({'label': label})
@@ -50,7 +50,7 @@ var hasOneField = {
 					</select>
 				</td>
 			</tr>
-		}	
+		}
 	}),
 
 	element: React.createClass({
@@ -60,10 +60,11 @@ var hasOneField = {
 			var style = this.props.style || {}
 			var object = this.props.object
 
-			return <td style={style}>
-				<span key="value">{value}</span>
+			return <span className="table-cell" style={style}>
+				<span className="table-cell-inner">{value}
 				<span key="expander" class="small grayed icon icon-geo-triangle wedge open"></span>
-			</td>
+				</span>
+			</span>
 		},
 		uneditable: false
 	})

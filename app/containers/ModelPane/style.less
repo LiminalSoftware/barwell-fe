@@ -8,17 +8,24 @@
 }
 
 .rh-sidebar-subheader {
-	border-bottom: 1px solid @gray3;
+	border-bottom: 1px solid @steelblue;
 	z-index: 1000;
 }
 
 .right-header {
-	background-color: @pureGray3 !important;
+	vertical-align: middle;
+	// background-color: @pureGray3 !important;
+}
+
+.icon.header-icon {
+	padding: 0;
+	margin: 0;
+	margin-bottom: -4px;
 }
 
 .views-list-container {
 	position: absolute;
-	top: 40px;
+	top: 45px;
 	right: 0;
 	left: 0;
 	display: block;
@@ -31,10 +38,10 @@
 	margin-left: -1px;
 	margin-right: 0;
 	&.open {
-		border-bottom: 1px solid @gray3;
+		border-bottom: 1px solid @steelblue;
 	}
-	border-right: 1px solid @gray3;
-	border-left: 1px solid @gray3;
+	border-right: 1px solid @steelblue;
+	border-left: 1px solid @steelblue;
 
 
 	z-index: 2000;
@@ -81,7 +88,7 @@
 		cursor: pointer;
 		font-size: 14px;
 		font-family: @subheaderFont;
-		font-weight: 600;
+		font-weight: 400;
 
 	}
 }
@@ -95,15 +102,13 @@
 	flex-direction: column;
 	background: white;
 	overflow-y: hidden;
-	border-right: 1px solid @gray3;
+	border-right: 1px solid @steelblue;
 	// transition: max-height cubic-bezier(.16,.85,.5,1) 0.1s;
 
 	.accordian-content {
 		margin: 0;
 		overflow: hidden;
 		transition: max-height cubic-bezier(.16,.85,.5,1) 0.2s;
-		margin: 0 10px;
-		padding: 0;
 	}
 	.accordian-content.closed {
 		max-height: 0;
@@ -112,20 +117,9 @@
 		flex-gow: 1;
 		max-height: 1000px;
 		overflow-y: scroll;
-		border-bottom: 1px solid @gray3;
-
+		border-bottom: 1px solid @steelblue;
 	}
 	.accordian-header {
-		margin: 0 10px;
-		padding: 15px 0;
-		h2, h3 {
-			padding: 10px 20px;
-			font-size: 16px;
-			color: @gray1;
-			font-family: @headerFont;
-			display: inline;
-		}
-		border-bottom: 1px solid @gray3;
 		cursor: pointer;
 	}
 	.wedge {
@@ -157,7 +151,6 @@
 	max-height: 100vh;
 	flex-grow: 5;
 	position: relative;
-
 	padding: 0;
 	overflow-x: auto;
 	background-color: white;

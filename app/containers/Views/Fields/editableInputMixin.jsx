@@ -65,9 +65,9 @@ var editableInputMixin = {
 	render: function () {
 		var prettyValue = this.format ? this.format(this.props.value) : this.props.value
 		var style = this.props.style
-		var className = this.props.className
+		var className = (this.props.className || '') + ' table-cell'
 
-		return <td {...this.props}>
+		return <span {...this.props}>
 			{this.state.editing ?
 			<input
 				className = "input-editor"
@@ -76,11 +76,14 @@ var editableInputMixin = {
 				onBlur = {this.revert}
 				onChange = {this.handleChange} />
 			:
-			(this.format ?
+			<span className = "table-cell-inner">
+			{this.format ?
 				this.format(this.props.value) :
 				this.props.value
-			)}
-		</td>
+			}
+			</span>
+		}
+		</span>
 	}
 }
 

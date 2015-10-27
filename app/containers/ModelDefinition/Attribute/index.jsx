@@ -52,7 +52,7 @@ var AttributeDetailList = React.createClass({
 		}).then(function () {
 			_this.setState({editing: false, committing: false})
 			_this.cancelChanges()
-			modelActionCreators.createNotification('Attribute udpate complete!', 'Your changes have been committed to the server', 'info')
+			// modelActionCreators.createNotification('Attribute udpate complete!', 'Your changes have been committed to the server', 'info')
 		})
 	},
 

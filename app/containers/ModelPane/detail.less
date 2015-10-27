@@ -3,8 +3,7 @@
 .detail-grouping {
 	display: block;
 	padding: 0;
-	padding-bottom: 5px;
-	margin-bottom: 5px;
+	margin: 0;
 	&.editing {
 		background: @gray4;
 	}
@@ -40,10 +39,10 @@
 
 
 .detail-block {
-
   border-top: 1px solid @gray3;
+	padding: 10px;
+	margin: 10px;
 	display: block;
-	margin: 20px;	
 }
 
 p.explainer {
@@ -62,7 +61,7 @@ p.explainer {
 		display: inline;
 		font-size: 14px;
 		font-family: @subheaderFont;
-		font-weight: 800;
+		font-weight: 400;
 	}
 }
 
@@ -76,6 +75,7 @@ p.explainer {
 
 .detail-table {
 	padding: 0;
+	margin: 0;
 	display: block;
   width: 100%;
   font-size: 13px;
@@ -91,7 +91,7 @@ p.explainer {
   .detail-header {
 		font-family: @subheaderFont;
 		color: @gray2;
-		font-weight: 800;
+		font-weight: 400;
 		border-bottom: 1px solid @gray3;
 		border-top: 1px solid @gray3;
   }
@@ -137,7 +137,7 @@ p.explainer {
     &.title {
 			font-family: @subheaderFont;
 			color: @gray2;
-			font-weight: 800;
+			font-weight: 400;
     }
     &.right-align {
       text-align: right;
@@ -242,7 +242,7 @@ p.explainer {
 	}
 
   input::selection {
-      background: @green-tint-2; /* WebKit/Blink Browsers */
+      background: @newgreen1; /* WebKit/Blink Browsers */
   }
 
 }

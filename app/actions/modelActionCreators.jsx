@@ -325,16 +325,13 @@ var modelActions = {
 
 	createKey: function(key) {
 		if (!key) return;
-
-      	key.key = key.key,
-      	key.model_id = ModelStore.get(key.model_id).model_id
-    	key.indexed = false
-
+		key.key = key.key,
+		key.model_id = ModelStore.get(key.model_id).model_id
+		key.indexed = false
 		MetasheetDispatcher.dispatch({
 			actionType: 'KEY_CREATE',
 			key: key
 		});
-
 		webUtils.persist('key', 'CREATE', key);
 	},
 

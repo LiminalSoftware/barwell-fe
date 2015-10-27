@@ -12,20 +12,28 @@ var TabularTHead = React.createClass ({
 
 	render: function () {
 		var _this = this
-		var style = {top: (this.props.scrollTop || 0) + 'px'}
 		var view = this.props.view
+		var geo = view.data.geometry
+		var style = {
+			top: '0px',
+			left: (geo.leftGutter + 'px')
+		}
+		var left = 0
 
-		return <thead
+		return <div
 			className = "tabular-view-header"
-			id="tabular-view-header"
-			ref="thead" style={style}
-			key={"tabular-thead-" + view.view_id}><tr>
+			id = "tabular-view-header"
+			ref = "thead"
+			style = {style}
+			key={"tabular-thead-" + view.view_id}>
 		{
 			_this.props.columns.map(function (col, idx) {
-				return <TabularTH key={"th-" + col.attribute_id} column={col} view={view} idx={idx}/>;
+				var el = <TabularTH key={"th-" + col.attribute_id} column={col} view={view} idx={idx} left={left + geo.leftOffset}/>;
+				left += col.width
+				return el
 			})
 		}
-		</tr></thead>
+		</div>
 	}
 })
 
@@ -39,31 +47,38 @@ var TabularTH = React.createClass ({
 		var view = this.props.view
 		var geo = view.data.geometry
 		var col = this.props.column
+		var left = this.props.left
 		var cellStyle = {
 			minWidth: col.width,
 			maxWidth: col.width,
-			lineHeight: geo.headerHeight + 'px'
+			top: 0,
+			left: left + 'px',
+			height: geo.headerHeight + 'px'
 		}
 		var sortArrow
 		var classes = []
-
+		classes.push('table-cell')
+		classes.push('table-header-cell')
+		if (!!col.sorting) classes.push(col.sorting.descending ? 'desc' : 'asc')
 		if (!!col.sorting) sortArrow = <span className={"small sort-icon white after icon icon-arrow-" + (col.sorting.descending ? "up" : "down")}></span>
 		// if (!!col.sorting) classes.push(col.sorting.descending ? 'asc' : 'desc')
 		if (FocusStore.getFocus() === 'view') classes.push('focused')
 
-		return <th
+		return <span
 				onClick={this.onClick}
 				style={cellStyle}
 				className={classes.join(' ')}>
+			<span className="table-cell-inner">
 			{col.name}
 			{sortArrow}
+			</span>
 			<span
 				ref = "resizer"
 				className = {"table-resizer " + (this.state.dragging ? "dragging" : "")}
 				onMouseDown = {this.onResizerMouseDown}
 				style = {{right: (-1 * this.state.pos) + 'px', top: 0}}
 			></span>
-		</th>
+		</span>
 	},
 
 	getInitialState: function () {

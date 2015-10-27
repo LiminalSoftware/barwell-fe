@@ -1,6 +1,7 @@
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../dispatcher/MetasheetDispatcher'
 import _ from 'underscore'
+import util from '../util/util'
 
 var ModelStore = storeFactory({
   identifier: 'model_id',
@@ -24,7 +25,7 @@ var ModelStore = storeFactory({
           'a' + model.attributes.filter(attr => attr.type === 'PRIMARY_KEY')[0].attribute_id
         model = _.pick(model, '_pk', 'model', 'model_id', 'cid', 'workspace_id',
             'plural', 'lock_user', '_dirty', '_destroy')
-        this.create(model)
+        this.create(util.clean(model))
         this.emitChange()
         break;
     }
