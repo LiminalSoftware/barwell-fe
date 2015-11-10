@@ -62,7 +62,7 @@ var hasOneField = {
 
 			return <span className="table-cell" style={style}>
 				<span className="table-cell-inner">{value}
-				<span key="expander" class="small grayed icon icon-geo-triangle wedge open"></span>
+				<span key="expander" className="small grayed icon icon-geo-triangle wedge open"></span>
 				</span>
 			</span>
 		},

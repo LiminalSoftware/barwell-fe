@@ -21,13 +21,12 @@ h1, h2, h3, h4, h5 {
 .app {
 	display: flex;
   min-height: 100vh;
-  flex-direction: column;
 }
-
 
 .app-container {
 	display: flex;
 	flex: 1;
+	flex-direction: column;
 	.transition(all 50ms ease-in);
 	&.hide-sidebar {
 		margin-left: -630px;

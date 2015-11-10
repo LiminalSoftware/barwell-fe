@@ -22,8 +22,14 @@ var commitMixin = {
 		if (this.revert) this.revert();
 	},
 
+	toggleSelect: function (selected) {
+		console.log('selected: ' + selected)
+		this.setState({selected: selected})
+	},
+
 	getInitialState: function () {
 		return {
+			selected: false,
 			value: this.validator(this.props.value)
 		}
 	},

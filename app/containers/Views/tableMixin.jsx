@@ -68,7 +68,7 @@ var TableMixin = {
 		modelActionCreators.setFocus('view')
 		this.setState({mousedown: true})
 		var rc = this.getRCCoords(event)
-		this.updateSelect(rc.row, rc.col, event.shiftKey)
+		this.updateSelect(rc.row, rc.col, event.shiftKey ? 'SHIFT' : 'MOVE')
 		document.addEventListener('selectstart', util.returnFalse)
 		document.addEventListener('mousemove', this.onSelectMouseMove)
 		document.addEventListener('mouseup', this.onMouseUp)
@@ -76,7 +76,7 @@ var TableMixin = {
 
 	onSelectMouseMove: function (event) {
 		var rc = this.getRCCoords(event, true)
-		this.updateSelect(rc.row, rc.col, true)
+		this.updateSelect(rc.row, rc.col, 'SHIFT')
 	},
 
 	onMouseUp: function (event) {
@@ -93,11 +93,10 @@ var TableMixin = {
 		var keycodes = constants.keycodes
 		var direction
 		var ptr = this.state.pointer
-		var numCols = this.getNumberCols()
-		var numRows = this.getNumberRows()
+		var mode = e.shiftKey ? 'SHIFT' : 'MOVE';
+
 		var left = ptr.left
 		var top = ptr.top
-		var outline
 
 		if (!this.isFocused() || (
 			this.state.editing &&
@@ -105,13 +104,9 @@ var TableMixin = {
 			e.keyCode !== keycodes.TAB
 		)) return;
 
-		if (sel.left == sel.right && sel.top == sel.bottom) {
-			outline = {left: 0, right: numCols, top: 0, bottom: numRows}
-		} else {
-			outline = sel
-		}
 		if (e.keyCode == keycodes.ESC) {
 			this.setState({copyarea: null})
+			return;
 		}
 		if (e.keyCode == keycodes.C && e.ctrlKey) {
 			this.copySelection()
@@ -129,67 +124,38 @@ var TableMixin = {
 			return;
 		}
 		if (e.keyCode == keycodes.TAB) {
-			if (left < outline.right) left++;
-			else {
-				left = outline.left;
-				top++;
-				if (top > outline.bottom)
-					top = outline.top
-			}
-			this.setState({
-				pointer: {left: left, top: top},
-			})
-			if (sel.left == sel.right && sel.top == sel.bottom) this.setState({
-				selection: {left: left, right: left, top: top, bottom: top}
-			})
+			this.updateSelect(top, left++, 'TAB')
 			e.preventDefault()
 			return;
 		} else if (e.keyCode == keycodes.ENTER) {
-			if (top < outline.bottom) top++;
-			else {
-				top = outline.top;
-				left++;
-				if (left > outline.right)
-					left = outline.left
-			}
-			this.setState({
-				pointer: {left: left, top: top},
-			})
-			if (sel.left == sel.right && sel.top == sel.bottom) this.setState({
-				selection: {left: left, right: left, top: top, bottom: top}
-			})
+			this.updateSelect(top, left, 'TAB')
 			e.preventDefault()
 			return;
 		}
 		else if (e.keyCode == keycodes.F2) return this.editCell(e);
 		else if (e.keyCode == keycodes.SPACE && e.shiftKey) {
 			this.selectRow()
-			return
+			return;
 		} else if (e.keyCode == keycodes.PLUS && e.shiftKey) {
 			modelActionCreators.createRecord(model, top)
 		}
-		else if (e.keyCode >= 37 && e.keyCode <= 40) {
-			if (e.keyCode == keycodes.ARROW_LEFT) {
-				direction = 'left'
-				left --
-			} else if (e.keyCode == keycodes.ARROW_UP) {
-				direction ='up'
-				top --
-			} else if (e.keyCode == keycodes.ARROW_RIGHT) {
-				direction = 'right'
-				left ++
-			} else if (e.keyCode == keycodes.ARROW_DOWN) {
-				direction = 'down'
-				top ++
-			}
+		else if (e.keyCode == keycodes.ARROW_LEFT) {
+				this.updateSelect(top, left--, mode, 'left');
+				return;
+		} else if (e.keyCode == keycodes.ARROW_UP) {
+			this.updateSelect(top--, left, mode, 'up');
+			return;
+		} else if (e.keyCode == keycodes.ARROW_RIGHT) {
+			this.updateSelect(top, left++, mode, 'right');
+			return;
+		} else if (e.keyCode == keycodes.ARROW_DOWN) {
+			this.updateSelect(top++, left, mode, 'down');
+			return;
 		}
 		else if (e.keyCode >= 48 && e.keyCode <= 90) {
 			return this.editCell(e);
 		} else return;
 
-		e.stopPropagation()
-  		e.preventDefault()
-		if (e.keyCode >= 37 && e.keyCode <= 40) this.updateSelect(top, left, e.shiftKey, direction)
 	},
 
 	selectColumn: function () {

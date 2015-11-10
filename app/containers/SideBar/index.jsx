@@ -1,6 +1,9 @@
 import React from "react"
 import { Link } from "react-router"
 import styles from "./style.less"
+import buttonStyle from "./mbButtons.less"
+import subHeader from "./subHeader.less"
+
 import _ from "underscore"
 
 import Header from "../Header";
@@ -64,14 +67,6 @@ var SideBar = React.createClass({
 		var _this = this;
 		var curModelId = this.props.params.modelId
 		return <div className="left-side-bar">
-			<Header />
-			<div className="sidebar-sub-header">
-				<h2>Databases</h2>
-				<ul className="light padded mb-buttons">
-					<li onClick={this.handleEdit}>Edit</li>
-					<li onClick={this.handleAddModel} className="plus">+</li>
-				</ul>
-			</div>
 			<ModelList editing = {this.state.editing} curModelId = {curModelId} />
 			{
 				this.state.editing ?
@@ -82,8 +77,6 @@ var SideBar = React.createClass({
 				</div>
 				: null
 			}
-
-			<Notifier/>
 		</div>
 	}
 
@@ -91,7 +84,7 @@ var SideBar = React.createClass({
 export default SideBar
 
 var ModelList = React.createClass ({
-	mixins: [sortable.ListMixin],
+	// mixins: [sortable.ListMixin],
 
 	render: function () {
 		var _this = this
@@ -107,7 +100,9 @@ var ModelList = React.createClass ({
 					active = {_this.props.curModelId == modelId}
 					{..._this.movableProps} />;
 			})
-		}</ul>
+		}
+		<li className="add-new"><a href="#">+</a></li>
+		</ul>
 	}
 })
 
@@ -191,8 +186,6 @@ var ModelLink = React.createClass ({
 				<span className="grayed right-align icon icon-kub-trash"></span> : null}
 			{this.props.editing && !this.props.renaming ?
 				<span className="grayed right-align icon icon-tl-pencil" onClick={this.edit}></span> : null}
-			{this.props.active && !this.props.editing ?
-				<span className="icon right-align icon-chevron-right"></span> : null}
 			</Link>
 		</li>
 	}

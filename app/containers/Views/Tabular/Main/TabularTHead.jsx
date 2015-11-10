@@ -15,10 +15,9 @@ var TabularTHead = React.createClass ({
 		var view = this.props.view
 		var geo = view.data.geometry
 		var style = {
-			top: '0px',
-			left: (geo.leftGutter + 'px')
+			top: (geo.topGutter + 'px'),
 		}
-		var left = 0
+		var left = geo.leftGutter
 
 		return <div
 			className = "tabular-view-header"
@@ -28,7 +27,7 @@ var TabularTHead = React.createClass ({
 			key={"tabular-thead-" + view.view_id}>
 		{
 			_this.props.columns.map(function (col, idx) {
-				var el = <TabularTH key={"th-" + col.attribute_id} column={col} view={view} idx={idx} left={left + geo.leftOffset}/>;
+				var el = <TabularTH key={"th-" + col.attribute_id} column={col} view={view} idx={idx} left={left}/>;
 				left += col.width
 				return el
 			})
@@ -51,7 +50,7 @@ var TabularTH = React.createClass ({
 		var cellStyle = {
 			minWidth: col.width,
 			maxWidth: col.width,
-			top: 0,
+			top: geo.topGutter + 'px',
 			left: left + 'px',
 			height: geo.headerHeight + 'px'
 		}

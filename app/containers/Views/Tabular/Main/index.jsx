@@ -54,10 +54,6 @@ var TabularPane = React.createClass ({
 		this.store.addChangeListener(this._onChange)
 	},
 
-	componentDidMount: function () {
-		this.calibrateRowHeight()
-	},
-
 	componentWillUnmount: function () {
 		ViewStore.removeChangeListener(this._onChange)
 		AttributeStore.removeChangeListener(this._onChange)
@@ -70,6 +66,7 @@ var TabularPane = React.createClass ({
 
 	componentWillReceiveProps: function (newProps) {
 		var oldProps = this.props;
+		var oldState = this.state;
 		if (!_.isEqual(oldProps.sorting, newProps.sorting)) {
 			this.fetch(true)
 		}
@@ -121,8 +118,25 @@ var TabularPane = React.createClass ({
 			top: sel.top,
 			bottom: sel.bottom
 		},{
-			height: -1,
-			width: -1
+			left: -0.75,
+			top: -0.75,
+			height: -1.5,
+			width: -1.5
+		})
+	},
+
+	getInnerSelectorStyle: function () {
+		var sel = this.state.selection
+		return this.getOverlayStyle({
+			left: sel.left,
+			right: sel.right,
+			top: sel.top,
+			bottom: sel.bottom
+		},{
+			left: -2,
+			top: -2,
+			height: -5,
+			width: -5
 		})
 	},
 
@@ -159,7 +173,7 @@ var TabularPane = React.createClass ({
 	getOverlayStyle: function (pos, fudge) {
 		var geo = this.props.view.data.geometry
 		var width = 0
-		var left = geo.leftOffset
+		var left = geo.leftGutter
 		fudge = fudge || {}
 
 		this.getVisibleColumns().forEach(function (col, idx) {
@@ -169,7 +183,7 @@ var TabularPane = React.createClass ({
 				width += col.width
 		})
 		return {
-			top: (pos.top * geo.rowHeight + geo.headerHeight + (fudge.top || 0)) + 'px',
+			top: (pos.top * geo.rowHeight + geo.headerHeight + geo.topGutter + (fudge.top || 0)) + 'px',
 			left: (left + (fudge.left || 0))+ 'px',
 			minHeight: (geo.rowHeight * (pos.bottom - pos.top + 1) + (fudge.height || 0)) + 'px',
 			minWidth: (width + (fudge.width || 0)) + 'px'
@@ -226,6 +240,11 @@ var TabularPane = React.createClass ({
 		})
 		// var field = this.refs.tbody.refs[rowKey].refs[cellKey]
 		this.getFieldAt(row, col).handleEdit(event);
+	},
+
+	toggleCell: function (row, col, toggle) {
+		var cell = this.getFieldAt(row, col);
+		cell.toggleSelect(toggle)
 	},
 
 	insertRecord: function () {
@@ -293,25 +312,23 @@ var TabularPane = React.createClass ({
 		})
 	},
 
-	calibrateRowHeight: function () {
-		if (!(this.isMounted())) return
-		var geo = this.props.view.data.geometry
-		var tbody = this.refs.tbody
-		this.setState({
-			actRowHt: tbody ? tbody.getRowHeight() : geo.rowHeight,
-			offset: tbody ? tbody.getOffset() : geo.headerHeight
-		})
-		window.setTimeout(this.calibrateRowHeight, 1000)
-	},
-
-	updateSelect: function (row, col, shift, direction) {
+	updateSelect: function (row, col, mode, direction) {
 		var numCols = this.getNumberCols()
 		var sel = this.state.selection
 		var anc = this.state.anchor
+		var oldPtr = {left: this.state.pointer.left, top: this.state.pointer.top}
 		var ptr = {left: col, top: row}
 		var view = this.props.view
+		var numCols = this.getNumberCols()
+		var numRows = this.getNumberRows()
+		var outline = (sel.left == sel.right && sel.top == sel.bottom) ?
+			{left: 0, right: numCols, top: 0, bottom: numRows} : null ;
 
-		if (shift) {
+		// this.toggleCell(oldPtr.top, oldPtr.left, false)
+		// this.toggleCell(ptr.top, ptr.left, true)
+
+
+		if (mode === 'SHIFT') {
 			if (!anc) anc = {left: col, top: row}
 			sel = {
 				left: Math.min(anc.left, ptr.left),
@@ -319,7 +336,7 @@ var TabularPane = React.createClass ({
 				top: Math.min(anc.top, ptr.top),
 				bottom: Math.max(anc.top, ptr.top)
 			}
-		} else {
+		} else if (mode == 'MOVE'){
 			ptr = anc = {
 				left: col,
 				top: row
@@ -357,6 +374,7 @@ var TabularPane = React.createClass ({
 						ref = "tbody"
 						handleBlur = {_this.handleBlur}
 						editCell = {_this.editCell}
+						selection = {this.selection}
 						key = {"tbody-" + view.view_id}
 						model = {model}
 						view = {view}
@@ -380,7 +398,7 @@ var TabularPane = React.createClass ({
 					className={"pointer" + (_this.isFocused() ? " focused" : "")}
 					ref="anchor"
 					onDoubleClick={this.startEdit}
-					style={this.getPointerStyle()}>
+					style={this.getSelectorStyle()}>
 				</div>
 				{this.state.copyarea ? <div
 					className={"copyarea marching-ants " + (_this.isFocused() ? " focused" : "") + (_this.state.mousedown ? "" : " running")}
@@ -390,8 +408,9 @@ var TabularPane = React.createClass ({
 				<div
 					className={"selection " + (_this.isFocused() ? " focused" : "")}
 					ref="selection"
-					style={this.getSelectorStyle()}>
+					style={this.getInnerSelectorStyle()}>
 				</div>
+
 		</div>
 	}
 })

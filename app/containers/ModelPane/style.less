@@ -1,6 +1,17 @@
 @import "../../global.less";
 
 
+.view-pulldown {
+	float: left;
+	padding: 4px 8px;
+	box-sizing: border-box;
+	height: 100%;
+	color: white;
+	&.open {
+
+	}
+}
+
 .current-user-label {
 	font-family: @subheaderFont !important;
 	font-size: 14px !important;
@@ -14,6 +25,7 @@
 
 .right-header {
 	vertical-align: middle;
+	overflow: visible;
 	// background-color: @pureGray3 !important;
 }
 
@@ -26,8 +38,8 @@
 .views-list-container {
 	position: absolute;
 	top: 45px;
-	right: 0;
-	left: 0;
+	right: 5px;
+	left: 5px;
 	display: block;
 	padding: none;
 	margin: none;
@@ -129,16 +141,14 @@
 
 .model-views {
 	display: flex;
-	min-height: 100vh;
 	flex-direction: column;
 	flex: 1;
 }
 
 .model-panes {
-	z-index: 8;
-	display: flex;
-	flex: 1;
-	flex-grow: 1;
+	clear: all;
+	display: block;
+	width: 100%;
 	background: white;
 }
 
@@ -154,6 +164,7 @@
 	padding: 0;
 	overflow-x: auto;
 	background-color: white;
+	box-sizing: border-box;
 }
 
 .no-view-content {

@@ -1,133 +1,52 @@
 @import "../../global.less";
 
-
-.sidebar-sub-header, .accordian-header{
-	h2, h3 {
-		padding: 10px 20px;
-		font-size: 14px;
-		color: @gray1;
-		// font-family: @headerFont;
-		font-family: @subheaderFont;
-		display: inline;
-		font-weight: 400;
-	}
-	background: @gray4;
-	border-bottom: 1px solid @steelblue;
-	border-top: 1px solid white;
-	padding: 10px 0;
-	min-height: 22px;
-	max-height: 22px;
-}
-
-.mb-buttons {
-	margin: 0;
-	margin-left: 10px;
-	margin-right: 0;
-	float: right;
-	list-style: none;
-	padding: 0;
-
-	&.light {
-		background: white;
-		color: @newgreen1;
-	}
-
-	&.dark {
-		color: @gray4;
-
-		& > li {
-			background: @newgreen2;
-			border: none !important;
-
-			&:hover {
-				background: white;
-				color: @newgreen1;
-			}
-		}
-
-	}
-
-	&.padded {
-		margin: 3px;
-		margin-right: 20px !important;
-	}
-	& > li {
-		min-height: 14px;
-		transition: all cubic-bezier(.16,.85,.5,1) 100ms;
-
-		// margin: -1px;
-		float: left;
-		padding: 2px 8px;
-		border: 1px solid @gray-3;
-		border-left: none;
-		&:first-child {
-			border-left: 1px solid @gray3;
-			border-top-left-radius: 3px;
-			border-bottom-left-radius: 3px;
-		}
-		&:last-child {
-			border-top-right-radius: 3px;
-			border-bottom-right-radius: 3px;
-		}
-		&:hover, &.hilight {
-			background: @newgreen1;
-			border-color: @newgreen1;
-			color: white;
-		}
-		&.plus {
-
-		}
-		cursor: pointer;
-		font-size: 13px;
-
-
-		font-family: @subheaderFont;
-		font-weight: 800;
-
-
-	}
-}
-
-
 ul.sidebar-model-list {
+	display: flex;
 	list-style: none;
 	padding: 0;
 	margin: 0;
-	margin-top: 10px;
+	padding-top: 10px;
+	background: @steelblue4;
+
+	& > li.add-new {
+		a {
+			color: white;
+			font-weight: 800;
+			// font-family: @headerFont;
+		}
+	}
 
 	& > li {
-		border-top: 1px solid transparent;
-		border-bottom: 1px solid transparent;
-
-		transition: background-color cubic-bezier(.16,.85,.5,1) 0.1s;
-		min-width: 210px;
-		padding: 5px 0;
+		flex-direction: row;
+		padding: 0;
+		margin-left: 1px;
 	}
 
 	& > li > a {
-		transition: background-color cubic-bezier(.16,.85,.5,1) 0.1s;
-
-		margin-right: 20px;
-		margin-left: 20px;
-
-		padding: 15px;
+		margin: 0;
+		padding: 5px 10px;
 		display: block;
 		text-decoration: none;
 		position: relative;
-		color: @gray1;
-		font-size: 14px;
-		font-weight: 600;
-		font-family: @subheaderFont;
+		color: white;
+
+		background: @steelblue;
+
+		font-size: 16px;
+		font-weight: 400;
+		font-family: @bodyFont;
 	}
 
 	& > li.active {
-
+		border-bottom: 1px solid @steelblue;
+		margin-bottom: -1px;
 	}
+
+	& > li:not(.active) > a {
+		background: @steelblue2;
+	}
+
 	& > li.active:not(.editmode) {
-		border-top: 1px solid @gray3;
-		border-bottom: 1px solid @gray3;
-		// border-right: 1px solid white;
-		// margin-right: -1px;
 		background: white;
 	}
 
@@ -159,7 +78,7 @@ ul.sidebar-model-list {
 
 .left-side-bar {
 	position: relative;
-	flex: 0 0 250px;
+
 	order: -2;
 	background: white;
 	border-right: 1px solid @steelblue;

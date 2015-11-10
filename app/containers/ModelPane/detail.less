@@ -37,8 +37,15 @@
 	border-radius: 4px;
 }
 
+.model-details {
+    display: flex;
+		background: white;
+}
+
 
 .detail-block {
+	flex-direction: column;
+	flex: 1 0;
   border-top: 1px solid @gray3;
 	padding: 10px;
 	margin: 10px;
@@ -58,10 +65,13 @@ p.explainer {
 	clear: all;
 	padding: 10px 0;
 	h3 {
+		padding: 0;
+		margin: 0;
 		display: inline;
 		font-size: 14px;
 		font-family: @subheaderFont;
 		font-weight: 400;
+		color: black;
 	}
 }
 

@@ -116,21 +116,12 @@ var TabularTBody = React.createClass ({
 		}
 	},
 
-	getRowHeight: function () {
-		if (!this.isMounted()) return
-		var tbody = React.findDOMNode(this.refs.tbody)
-		var actRowHt = (tbody.scrollHeight / tbody.children.length)
-		return actRowHt
-	},
-
 	getOffset: function () {
 		if (!this.isMounted()) return
 		var tbody = React.findDOMNode(this.refs.tbody)
 		var offset = tbody.offsetTop
 		return offset
 	},
-
-
 
 	getNumberCols: function () {
 		return this.props.columns.length - 1
@@ -154,7 +145,7 @@ var TabularTBody = React.createClass ({
 		var actRowHt = this.state.actRowHt
 		// var height = (rows.length * this.state.rowHt) + 'px'
 		var style = {
-			top: geometry.headerHeight + 'px',
+			top: (geometry.headerHeight + geometry.topGutter) + 'px',
 			left: geometry.leftGutter + 'px',
 			position: 'absolute'
 		}
@@ -163,13 +154,14 @@ var TabularTBody = React.createClass ({
 			ref = "tbody"
 			style = {style}
 			onMouseDown = {_this.props.clicker}
-			onContextMenu={_this.props.openContextMenu}
+			// onContextMenu={_this.props.openContextMenu}
 			className = "tabular-tbody"
 			onDoubleClick = {_this.props.editCell}>
 			{
 				rows.map(function (obj, i) {
 					var rowKey = 'tr-' + (obj.cid || obj[pk])
 					return <TabularTR  {..._this.props}
+						selection = {_this.selection}
 						obj={obj}
 						rowKey = {rowKey}
 						row = {i}
@@ -209,7 +201,6 @@ var TabularTR = React.createClass({
 			top: (geometry.rowHeight * row) + 'px',
 			maxHeight: geometry.rowHeight + 'px',
 			minHeight: geometry.rowHeight + 'px'
-			// lineHeight: '0px'
 		}
 		var selector = {}
 		selector[model._pk] = obj[model._pk]
@@ -234,7 +225,7 @@ var TabularTR = React.createClass({
 					cellKey: cellKey,
 					ref: cellKey,
 					style: {
-						left: left + geometry.leftOffset + 'px',
+						left: left + 'px',
 						minWidth: col.width + 'px',
 						maxWidth: col.width  + 'px',
 						textAlign: col.align,

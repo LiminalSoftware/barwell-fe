@@ -98,8 +98,8 @@ var ModelPane = React.createClass({
 		}
 
 		else {
-			bodyContent = <div className="no-view-content view-body-wrapper" key="no-view">
-				<span className="icon icon-face-nomimic"></span>No view selected
+			bodyContent = <div className=" view-body-wrapper" key="no-view">
+				<ModelDefinition model={model}/>
 			</div>
 			viewDetailContent = null
 		}
@@ -107,81 +107,45 @@ var ModelPane = React.createClass({
 		var views = ViewStore.query({model_id: model_id})
 
 		return <div className="model-views">
-			<div className = "model-panes">
-				<ReactCSSTransitionGroup component="div" className="detail-bar" transitionName="detail-bar" onClick={this.focus}>
 
 				<div className="right-header header-container" >
-					<h1>{model ? model.model : null}</h1>
-					{view ? <h1>/</h1> : null}
 					{view ? <span><span className={"large header-icon white icon " + viewTypes[view.type].icon}></span><h1>{view.view}</h1></span> : null}
+					<span className={"view-pulldown " + (this.state.viewListOpen ? "open" : "closed")} onClick={this.toggleViewList}>
+						<span className={" icon tight icon-chevron-" + (this.state.viewListOpen ? "up" : "down")}></span>
+					</span>
 
+					<div className = {"views-list-container " + (this.state.viewListOpen ? " open" : " closed")}
+						style = {{maxHeight: this.state.viewListOpen ? ((80 + views.length * 70) + 'px') : 0}}>
 
-					<ul className="dark padded mb-buttons right-margin"><li onClick={this.toggleViewList}>
-						<span className={"small icon tight icon-chevron-" + (this.state.viewListOpen ? "up" : "down")}></span>
-					</li></ul>
-				</div>
+						<div className="sidebar-sub-header rh-sidebar-subheader">
+							<h2>Views</h2>
+							<ul className="light padded mb-buttons">
+								<li onClick={this.handleEdit}>Edit</li>
+								<li onClick={this.handleAddModel} className="plus">+</li>
+							</ul>
+						</div>
 
-				<div className = {"views-list-container " + (this.state.viewListOpen ? " open" : " closed")}
-					style = {{maxHeight: this.state.viewListOpen ? ((80 + views.length * 70) + 'px') : 0}}>
-
-					<div className="sidebar-sub-header rh-sidebar-subheader">
-						<h2>Views</h2>
-						<ul className="light padded mb-buttons">
-							<li onClick={this.handleEdit}>Edit</li>
-							<li onClick={this.handleAddModel} className="plus">+</li>
-						</ul>
+						<ul className="views-list" onClick={this.toggleViewList}> {
+							views.map(function (view) {
+								return <li key={'view-link-' + view.view_id}>
+									<Link to="view" params={{modelId: model_id, workspaceId: workspace_id, viewId: view.view_id}}>
+										<span className={"large icon " + viewTypes[view.type].icon}></span>
+										{view.view}
+									</Link>
+								</li>
+							})
+						}</ul>
 					</div>
-
-					<ul className="views-list" onClick={this.toggleViewList}> {
-						views.map(function (view) {
-							return <li key={'view-link-' + view.view_id}>
-								<Link to="view" params={{modelId: model_id, workspaceId: workspace_id, viewId: view.view_id}}>
-									<span className={"large icon " + viewTypes[view.type].icon}></span>
-									{view.view}
-								</Link>
-							</li>
-						})
-					}</ul>
 				</div>
 
-				<ul className="rh-sidebar-accordian">
-					<li className="accordian-header" onClick={this.selectModel}>
-						<h3>Database Definition</h3>
-						<span className={"small icon tight icon-chevron-" + (this.state.selection === 'model' ? "up" : "down")}></span>
-					</li>
-					<li className={"accordian-content " + (this.state.selection === 'model' ? ' open' : ' closed')}>
-						<ModelDefinition model = {model} />
-					</li>
-					<li className="accordian-header" onClick={this.selectView}>
-						<h3>View Configuration</h3>
-						<span className={"small icon tight icon-chevron-" + (this.state.selection === 'view' ? "up" : "down")}></span>
-					</li>
-					<li className={"accordian-content " + (this.state.selection === 'view' ? ' open' : ' closed')}>
-							{viewDetailContent}
-					</li>
-					<li className="accordian-header">
-						<h3>Selection Details</h3>
-						<span className={"small icon tight icon-chevron-" + (this.state.selection === 'details' ? "up" : "down")}></span>
-					</li>
-					<li className="accordian-header">
-						<h3>Change History</h3>
-						<span className={"small icon tight icon-chevron-" + (this.state.selection === 'details' ? "up" : "down")}></span>
-					</li>
-				</ul>
-
-				</ReactCSSTransitionGroup>
 
 
 				<div className = "model-panes">
-				<div className="view-body-wrapper">
-				<div className="right-header header-container">
-					<h3 className="current-user-label">Signed in as</h3>
-				</div>
-				{bodyContent}
-				</div>
+					<div className="view-body-wrapper">
+						{bodyContent}
+					</div>
 				</div>
 
-			</div>
 		</div>
 	}
 });
