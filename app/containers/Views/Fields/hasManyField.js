@@ -9,6 +9,8 @@ import KeycompStore from "../../../stores/KeycompStore"
 import constant from "../../../constants/MetasheetConstants"
 import modelActionCreators from "../../../actions/modelActionCreators"
 
+import selectableMixin from './selectableMixin'
+
 var hasManyField = {
 	configRows: React.createClass({
 
@@ -58,6 +60,8 @@ var hasManyField = {
 	}),
 
 	element: React.createClass({
+		mixins: [selectableMixin],
+
 		getInitialState: function () {
 			return {droppable: false}
 		},

@@ -14,6 +14,13 @@ module.exports.clean = function (obj) {
 	return obj
 }
 
+var limit = module.exports.limit = function (min, max, value) {
+	if (value < min) return min
+	if (value > max) return max
+	else return value
+}
+
+
 var isClean = module.exports.isClean = function (obj) {
   return _.isEqual(stripInternalVars(obj), stripInternalVars(obj._server))
 }

@@ -19,17 +19,12 @@ var CubeColTHead = React.createClass ({
 		var trStyle = {lineHeight: geo.rowHeight + 'px'}
 		var hStart = this.props.hStart
 		var levels = this.props.store.getLevels('columns', hStart, hStart  + geo.renderBufferCols)
-		var theadStyle = {
-			top: this.props.scrollTop + 'px',
-			left: (width * (view.row_aggregates.length + hStart) + geo.leftGutter) + 'px'
-		}
 
-		return <tbody
+		return <div
 			id="cube-column-view-header"
 			ref="thead"
 			className = "cube-colhead"
 			onMouseDown = {this.props.clicker}
-			style = {theadStyle}
 			key={"cube-col-thead-" + view.view_id}>
 			{
 			view.column_aggregates.map(function (group, c) {
@@ -37,13 +32,18 @@ var CubeColTHead = React.createClass ({
 				var element = (fieldTypes[attr.type] || fieldTypes.TEXT).element
 				var agroup = 'a' + group
 
-				return <tr key={'cube-col-thead-' + group} style = {trStyle}>
-					{levels.map(function (level) {
+				return <div key={'cube-col-thead-' + group} style = {trStyle}>
+
+					{levels.map(function (level, cc) {
 						if (level.spans[group] === 0) return null;
 						var width = geo.columnWidth * level.spans[agroup]
 						var tdStyle = {
+							top: _this.props.scrollTop + 'px',
+							left: (width * (view.row_aggregates.length + hStart + cc) + geo.leftGutter) + 'px',
 							minWidth: width + 'px',
-							maxWidth: width + 'px'
+							maxWidth: width + 'px',
+							maxHeight: geo.rowHeight + 'px',
+							minHeight: geo.rowHeight + 'px'
 						}
 						var selector = {}
 						selector[group] = level[group]
@@ -62,13 +62,14 @@ var CubeColTHead = React.createClass ({
 							cellKey: cellKey,
 							ref: cellKey,
 							colSpan: level.spans[agroup],
-							style: tdStyle
+							style: tdStyle,
+							className: "table-cell"
 						})
 					}) }
-				</tr>
+				</div>
 			})
 			}
-		</tbody>;
+		</div>;
 	},
 
 	_onChange: function () {

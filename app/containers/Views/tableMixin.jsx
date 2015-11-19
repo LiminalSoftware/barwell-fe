@@ -64,22 +64,21 @@ var TableMixin = {
 	// ========================================================================
 
 
-	onMouseDown: function (event) {
+	onMouseDown: function (e) {
 		modelActionCreators.setFocus('view')
 		this.setState({mousedown: true})
-		var rc = this.getRCCoords(event)
-		this.updateSelect(rc.row, rc.col, event.shiftKey ? 'SHIFT' : 'MOVE')
+		this.updateSelect(this.getRCCoords(e), e.shiftKey)
 		document.addEventListener('selectstart', util.returnFalse)
 		document.addEventListener('mousemove', this.onSelectMouseMove)
 		document.addEventListener('mouseup', this.onMouseUp)
 	},
 
-	onSelectMouseMove: function (event) {
-		var rc = this.getRCCoords(event, true)
-		this.updateSelect(rc.row, rc.col, 'SHIFT')
+	onSelectMouseMove: function (e) {
+		this.updateSelect(this.getRCCoords(e), true)
 	},
 
-	onMouseUp: function (event) {
+	onMouseUp: function (e) {
+		modelActionCreators.setFocus('view')
 		this.setState({mousedown: false})
 		document.removeEventListener('selectstart', util.returnFalse)
 		document.removeEventListener('mousemove', this.onSelectMouseMove)
@@ -124,38 +123,43 @@ var TableMixin = {
 			return;
 		}
 		if (e.keyCode == keycodes.TAB) {
-			this.updateSelect(top, left++, 'TAB')
+			this.move('TAB', e.shiftKey)
 			e.preventDefault()
 			return;
 		} else if (e.keyCode == keycodes.ENTER) {
-			this.updateSelect(top, left, 'TAB')
+			this.move('ENTER', e.shiftKey)
 			e.preventDefault()
 			return;
 		}
 		else if (e.keyCode == keycodes.F2) return this.editCell(e);
 		else if (e.keyCode == keycodes.SPACE && e.shiftKey) {
 			this.selectRow()
+			e.preventDefault()
 			return;
 		} else if (e.keyCode == keycodes.PLUS && e.shiftKey) {
 			modelActionCreators.createRecord(model, top)
+			e.preventDefault()
 		}
 		else if (e.keyCode == keycodes.ARROW_LEFT) {
-				this.updateSelect(top, left--, mode, 'left');
-				return;
+			this.move('LEFT', e.shiftKey);
+			e.preventDefault()
+			return;
 		} else if (e.keyCode == keycodes.ARROW_UP) {
-			this.updateSelect(top--, left, mode, 'up');
+			this.move('UP', e.shiftKey);
+			e.preventDefault()
 			return;
 		} else if (e.keyCode == keycodes.ARROW_RIGHT) {
-			this.updateSelect(top, left++, mode, 'right');
+			this.move('RIGHT', e.shiftKey);
+			e.preventDefault()
 			return;
 		} else if (e.keyCode == keycodes.ARROW_DOWN) {
-			this.updateSelect(top++, left, mode, 'down');
+			this.move('DOWN', e.shiftKey);
+			e.preventDefault()
 			return;
 		}
 		else if (e.keyCode >= 48 && e.keyCode <= 90) {
 			return this.editCell(e);
-		} else return;
-
+		}
 	},
 
 	selectColumn: function () {

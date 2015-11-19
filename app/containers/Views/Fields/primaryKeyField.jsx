@@ -11,8 +11,11 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 
 import commitMixin from './commitMixin'
 import editableInputMixin from './editableInputMixin'
+import selectableMixin from './selectableMixin'
 
 var PrimaryKeyElement = React.createClass({
+	mixins: [selectableMixin],
+	
 	render: function () {
 		var value = this.props.value
 		var style = this.props.style

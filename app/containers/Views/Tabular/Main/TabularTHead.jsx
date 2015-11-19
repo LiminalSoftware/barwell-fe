@@ -14,24 +14,32 @@ var TabularTHead = React.createClass ({
 		var _this = this
 		var view = this.props.view
 		var geo = view.data.geometry
-		var style = {
-			top: (geo.topGutter + 'px'),
-		}
 		var left = geo.leftGutter
+
+		var style = {
+			top: 0,
+			left: 0,
+			height: (geo.headerHeight + 1) + 'px',
+			width: this.props.totalWidth + 'px'
+		}
 
 		return <div
 			className = "tabular-view-header"
+			style = {style}
 			id = "tabular-view-header"
 			ref = "thead"
-			style = {style}
 			key={"tabular-thead-" + view.view_id}>
 		{
 			_this.props.columns.map(function (col, idx) {
-				var el = <TabularTH key={"th-" + col.attribute_id} column={col} view={view} idx={idx} left={left}/>;
+				var el = <TabularTH key={"th-" + col.attribute_id}
+					scrollTop = {_this.props.scrollTop} column={col} view={view} idx={idx} left={left}/>;
 				left += col.width
 				return el
 			})
 		}
+		<span style={{left: (left + 5) + 'px', width: geo.rowHeight,
+			height: geo.headerHeight}} className="table-cell columnAdder">
+			<span className="table-cell-inner"> + </span></span>
 		</div>
 	}
 })
@@ -48,9 +56,9 @@ var TabularTH = React.createClass ({
 		var col = this.props.column
 		var left = this.props.left
 		var cellStyle = {
-			minWidth: col.width,
-			maxWidth: col.width,
-			top: geo.topGutter + 'px',
+			minWidth: (col.width - 1) + 'px',
+			maxWidth: (col.width - 1) + 'px',
+			top: 0,
 			left: left + 'px',
 			height: geo.headerHeight + 'px'
 		}
@@ -121,6 +129,8 @@ var TabularTH = React.createClass ({
 
 		// modelActionCreators.create('view', true, view, false)
 		modelActionCreators.createView(view, true, false)
+		e.stopPropagation()
+		e.preventDefault()
 	},
 
 	onMouseMove: function (e) {

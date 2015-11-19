@@ -9,6 +9,7 @@ import KeycompStore from "../../../stores/KeycompStore"
 
 import constant from "../../../constants/MetasheetConstants"
 import modelActionCreators from "../../../actions/modelActionCreators"
+import selectableMixin from './selectableMixin'
 
 var hasOneField = {
 	configRows: React.createClass({
@@ -54,6 +55,8 @@ var hasOneField = {
 	}),
 
 	element: React.createClass({
+		mixins: [selectableMixin],
+		
 		render: function () {
 			var value = this.props.value
 			var config = this.props.config || {}

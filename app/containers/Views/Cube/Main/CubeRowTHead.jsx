@@ -26,6 +26,7 @@ var CubeRowTHead = React.createClass ({
 		var view = this.props.view
 		var geo = view.data.geometry
 		var rowHeight = geo.rowHeight + 'px'
+		var width = geo.columnWidth
 		var vStart = this.props.vStart
 		var vEnd = vStart + geo.renderBufferRows
 		var hStart = this.props.hStart
@@ -35,39 +36,44 @@ var CubeRowTHead = React.createClass ({
 		var elements = groupAttrs.map(attr => (fieldTypes[attr.type] || fieldTypes.TEXT).element)
 		var levels = store.getLevels('rows', vStart, vEnd)
 
-		var rowHeadStyle = {
-			top: ((view.column_aggregates.length + vStart) * this.props.actRowHt ) + 'px',
-			left: ((this.props.scrollLeft || 0) + geo.leftGutter) + 'px',
-			maxHeight: (geo.rowHeight * levels.length) + 'px',
-			minHeight: (geo.rowHeight * levels.length) + 'px'
-		}
-		var trStyle = {
-			maxHeight: (geo.rowHeight) + 'px',
-			minHeight: (geo.rowHeight) + 'px'
-		}
-		var thStyle = {
-			minWidth: geo.columnWidth + 'px',
-			maxWidth: geo.columnWidth + 'px',
-			height: (geo.rowHeight) + 'px',
-			maxHeight: (geo.rowHeight) + 'px',
-			minHeight: (geo.rowHeight) + 'px'
-		}
 
 
-		return <tbody
+
+
+		return <div
 			id="cube-row-view-header"
 			ref="rowhead"
 			className = "cube-rowhead"
-			style = {rowHeadStyle}
 			onMouseDown = {this.props.clicker}
 			key={"cube-row-thead-" + view.view_id} >
+
+			{groups.map(function (group, c) {
+				return <span className="table-cell table-header-cell"
+					style={{left: (c * width) + 'px', width: width + 'px', height: geo.rowHeight}}>
+					<span className="table-cell-inner">{group}</span>
+				</span>
+			})}
+
 			{levels.map(function (level, r) {
 				var selector = {}
-				return <tr style={trStyle} key={'cell-' + r}> {groups.map(function (group, c) {
+				return <div key={'cell-' + r}>
+
+
+
+				{ groups.map(function (group, c) {
+					var thStyle = {
+						minWidth: width + 'px',
+						maxWidth: width + 'px',
+						minHeight: (geo.rowHeight * level.spans[group]) + 'px',
+						maxHeight: (geo.rowHeight * level.spans[group]) + 'px',
+						left: (c * width) + 'px',
+						top: ((r + view.column_aggregates.length) * (geo.rowHeight)) + 'px'
+					}
+
 					selector[group] = level[group]
 					var cellKey = 'cell-' + r + '-' + group
 					if (level.spans[group] === 0)	return null
-					// else return <td rowSpan={level.spans[group]} style={thStyle}>{level[group]}</td>
+
 					else return React.createElement(elements[c], {
 						config: {},
 						model: _this.props.model,
@@ -79,12 +85,12 @@ var CubeRowTHead = React.createClass ({
 						key: cellKey,
 						cellKey: cellKey,
 						ref: cellKey,
-						rowSpan: level.spans[group],
-						style: thStyle
+						style: thStyle,
+						className: 'table-cell'
 					})
-				}) } </tr>
+				}) } </div>
 			})}
-		</tbody>;
+		</div>;
 	},
 
 	_onChange: function () {

@@ -11,10 +11,11 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 
 import commitMixin from './commitMixin'
 import editableInputMixin from './editableInputMixin'
+import selectableMixin from './selectableMixin'
 
 var integerField = {
 	element: React.createClass({
-		mixins: [editableInputMixin, commitMixin],
+		mixins: [editableInputMixin, commitMixin, selectableMixin],
 
 		validator: function (input) {
 			if (_.isNumber(input) )

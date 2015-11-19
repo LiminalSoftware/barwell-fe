@@ -11,6 +11,7 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 
 import commitMixin from './commitMixin'
 import editableInputMixin from './editableInputMixin'
+import selectableMixin from './selectableMixin'
 
 var dateField = {
 
@@ -66,7 +67,7 @@ var dateField = {
 
 	element: React.createClass({
 
-		mixins: [commitMixin, editableInputMixin],
+		mixins: [commitMixin, editableInputMixin, selectableMixin],
 
 		format: function (value) {
 			var config = this.props.config || {}

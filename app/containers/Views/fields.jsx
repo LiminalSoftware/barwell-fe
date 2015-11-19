@@ -21,12 +21,13 @@ import booleanField from './Fields/booleanField'
 import primaryKeyField from './Fields/primaryKeyField'
 import commitMixin from './Fields/commitMixin'
 import editableInputMixin from './Fields/editableInputMixin'
+import selectableMixin from './Fields/selectableMixin'
 
 
 
 
 var VanillaElement = React.createClass({
-	mixins: [commitMixin, editableInputMixin],
+	mixins: [commitMixin, editableInputMixin, selectableMixin],
 	validator: _.identity
 });
 

@@ -6,11 +6,11 @@ ul.sidebar-model-list {
 	padding: 0;
 	margin: 0;
 	padding-top: 10px;
-	background: @steelblue4;
+	background: @gray3;
 
 	& > li.add-new {
 		a {
-			color: white;
+			color: @gray4;
 			font-weight: 800;
 			// font-family: @headerFont;
 		}
@@ -28,9 +28,9 @@ ul.sidebar-model-list {
 		display: block;
 		text-decoration: none;
 		position: relative;
-		color: white;
+		color: @gray4;
 
-		background: @steelblue;
+		background-color: @darkgreen0;
 
 		font-size: 16px;
 		font-weight: 400;
@@ -38,12 +38,13 @@ ul.sidebar-model-list {
 	}
 
 	& > li.active {
-		border-bottom: 1px solid @steelblue;
+		border-bottom: 1px solid @darkgreen0;
 		margin-bottom: -1px;
 	}
 
 	& > li:not(.active) > a {
-		background: @steelblue2;
+		background: @darkgreen1;
+		// lighten(@gray2, 10%);
 	}
 
 	& > li.active:not(.editmode) {

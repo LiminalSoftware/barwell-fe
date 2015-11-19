@@ -11,10 +11,11 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 
 import commitMixin from './commitMixin'
 import editableInputMixin from './editableInputMixin'
+import selectableMixin from './selectableMixin'
 
 var CheckboxElement = React.createClass({
 
-	mixins: [commitMixin],
+	mixins: [commitMixin, selectableMixin],
 
 	revert: _.noop,
 
@@ -34,6 +35,7 @@ var CheckboxElement = React.createClass({
 	handleClick: function (event) {
 		this.toggle()
 		event.preventDefault()
+		event.preventPropogation()
 	},
 
 	toggle: function () {
@@ -45,9 +47,14 @@ var CheckboxElement = React.createClass({
 		var value = this.props.value
 		var style = this.props.style
 
-		return <span {...this.props} className={this.props.className || '' +
-			' checkbox' + (this.state.selected ? ' selected ' : '')}>
-			<input type="checkbox" checked={!!value} onChange={this.handleClick}></input>
+		// return <span {...this.props} className={this.props.className || '' +
+		// 	' checkbox' + (this.state.selected ? ' selected ' : '')}>
+		// 	<input type="checkbox" checked={!!value} onChange={this.handleClick}></input>
+		// </span>
+		return <span {...this.props} className={this.props.className || ''}>
+				<span className="checkbox-surround" onClick={this.handleClick}>
+				<span className={"neg-margin greened icon " + (this.props.value ? "" : "icon-kub-approve")}></span>
+				</span>
 		</span>
 	}
 });

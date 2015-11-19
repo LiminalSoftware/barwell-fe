@@ -42,7 +42,7 @@ var createCubeStore = function (view, dimensions) {
         rows: null,
         columns: null
     }
-     var _requestedStartIndex = {
+    var _requestedStartIndex = {
         rows: null,
         columns: null
     }

@@ -8,8 +8,6 @@ import ModelStore from "../../../stores/ModelStore"
 import constant from "../../../constants/MetasheetConstants"
 import modelActionCreators from "../../../actions/modelActionCreators"
 
-
-
 var editableInputMixin = {
 
 	setValue: function (value) {
@@ -63,8 +61,6 @@ var editableInputMixin = {
 	},
 
 	render: function () {
-		console.log('render')
-		console.log(this.state)
 		var prettyValue = this.format ? this.format(this.props.value) : this.props.value
 		var style = this.props.style
 		var className = (this.props.className || '') + ' table-cell '

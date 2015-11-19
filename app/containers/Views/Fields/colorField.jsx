@@ -11,9 +11,10 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 
 import commitMixin from './commitMixin'
 import editableInputMixin from './editableInputMixin'
+import selectableMixin from './selectableMixin'
 
 var ColorElement = React.createClass({
-	mixins: [editableInputMixin, commitMixin],
+	mixins: [editableInputMixin, commitMixin, selectableMixin],
 
 	validator: function (input) {
 		if ((/^#[0-9A-F]{3,6}$/).test(input)) return input

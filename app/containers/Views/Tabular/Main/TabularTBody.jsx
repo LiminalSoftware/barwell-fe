@@ -1,33 +1,21 @@
 import React from "react"
 import fieldTypes from "../../fields"
 import _ from "underscore"
-import $ from 'jquery'
-
 import modelActionCreators from "../../../../actions/modelActionCreators"
-
 import ModelStore from "../../../../stores/ModelStore"
 import ViewStore from "../../../../stores/ViewStore"
-import KeyStore from "../../../../stores/KeyStore"
-import KeycompStore from "../../../../stores/KeycompStore"
 import AttributeStore from "../../../../stores/AttributeStore"
-import RelationStore from "../../../../stores/RelationStore"
 import FocusStore from "../../../../stores/FocusStore"
-
 import ViewDataStores from "../../../../stores/ViewDataStores"
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
-
 import createTabularStore from './TabularStore.jsx'
-
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
-global.$$ = $
+import TabularTR from './TabularTR'
 
-var limit = function (min, max, value) {
-	if (value < min) return min
-	if (value > max) return max
-	else return value
-}
+import util from '../../../../util/util'
 
 var TabularTBody = React.createClass ({
 	shouldComponentUpdate: function () {
@@ -38,7 +26,6 @@ var TabularTBody = React.createClass ({
 		var view = this.props.view
 		var geo = view.data.geometry
 		return {
-			actRowHt: (geo.rowHeight + geo.rowPadding),
 			scrollTop: 0,
 			window: {
 				offset: 0,
@@ -56,7 +43,6 @@ var TabularTBody = React.createClass ({
 		ViewStore.addChangeListener(this._onChange)
 		AttributeStore.addChangeListener(this._onChange)
 		ModelStore.addChangeListener(this._onChange)
-
 		this.props.store.addChangeListener(this._onChange)
 		this.fetch(true)
 	},
@@ -65,7 +51,6 @@ var TabularTBody = React.createClass ({
 		ViewStore.removeChangeListener(this._onChange)
 		AttributeStore.removeChangeListener(this._onChange)
 		ModelStore.removeChangeListener(this._onChange)
-
 		this.props.store.removeChangeListener(this._onChange)
 	},
 
@@ -82,7 +67,7 @@ var TabularTBody = React.createClass ({
 		var geometry = view.data.geometry
 		var rowOffset = Math.floor(this.props.scrollTop / geometry.rowHeight)
 		var tgtOffset = Math.floor(rowOffset - (window.cursorLimit / 2) + (window.windowSize / 2))
-		var boundedOffset = limit(0, this.props.nRows - window.cursorLimit, tgtOffset)
+		var boundedOffset = util.limit(0, this.props.nRows - window.cursorLimit, tgtOffset)
 		var currentOffset = this.state.window.offset
 		var mismatch = Math.abs(currentOffset - tgtOffset)
 
@@ -141,102 +126,40 @@ var TabularTBody = React.createClass ({
 		var model = this.props.model
 		var pk = model._pk
 		var rows = _this.props.store ? _this.props.store.getObjects() : []
+		var rowCount = _this.props.store ? _this.props.store.getRecordCount() : 0
 		var geometry = view.data.geometry
-		var actRowHt = this.state.actRowHt
-		// var height = (rows.length * this.state.rowHt) + 'px'
+
 		var style = {
-			top: (geometry.headerHeight + geometry.topGutter) + 'px',
-			left: geometry.leftGutter + 'px',
+			top: 0,
+			left: 0,
+			height: (rowCount * geometry.rowHeight) + 'px',
+			width: this.props.totalWidth + 'px',
 			position: 'absolute'
 		}
 
-		return <div
-			ref = "tbody"
-			style = {style}
-			onMouseDown = {_this.props.clicker}
-			// onContextMenu={_this.props.openContextMenu}
-			className = "tabular-tbody"
-			onDoubleClick = {_this.props.editCell}>
-			{
-				rows.map(function (obj, i) {
-					var rowKey = 'tr-' + (obj.cid || obj[pk])
-					return <TabularTR  {..._this.props}
-						selection = {_this.selection}
-						obj={obj}
-						rowKey = {rowKey}
-						row = {i}
-						ref = {rowKey}
-						key = {rowKey}
-						geometry = {geometry}
-						handleBlur = {_this.props.handleBlur} />;
-				})
-			}
-			</div>;
+		return <div className = "tabular-tbody"
+				ref = "tbody"
+				style = {style}
+				onMouseDown = {_this.props.clicker}
+				// onContextMenu={_this.props.openContextMenu}
+				onDoubleClick = {_this.props.editCell}>
+				{
+					rows.map(function (obj, i) {
+						var rowKey = 'tr-' + (obj.cid || obj[pk])
+						return <TabularTR  {..._this.props}
+							selection = {_this.selection}
+							obj={obj}
+							rowKey = {rowKey}
+							row = {i}
+							ref = {rowKey}
+							key = {rowKey}
+							geometry = {geometry}
+							handleBlur = {_this.props.handleBlur} />;
+					})
+				}
+			</div>
 	}
 })
 
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
-
-var TabularTR = React.createClass({
-
-	mixins: [PureRenderMixin],
-
-	// shouldComponentUpdate: function (updt) {
-	// 	var old = this.props
-	// 	return !(
-	// 		_.isEqual(updt.obj, old.obj) &&
-	// 		updt.view == old.view &&
-	// 		updt.editing == old.editing
-	// 	)
-	// },
-
-	render: function () {
-		var _this = this
-		var model = _this.props.model
-		var rowKey = this.props.rowKey
-		var row = this.props.row
-		var obj = this.props.obj
-		var geometry = this.props.geometry
-		var style = {
-			top: (geometry.rowHeight * row) + 'px',
-			maxHeight: geometry.rowHeight + 'px',
-			minHeight: geometry.rowHeight + 'px'
-		}
-		var selector = {}
-		selector[model._pk] = obj[model._pk]
-		var left = 0;
-
-		return <div id={rowKey} style={style} className = {obj._dirty ? "dirty" : ""}>
-			{_this.props.columns.map(function (col) {
-				var element = (fieldTypes[col.type] || fieldTypes.TEXT).element
-				var cellKey = rowKey + '-' + col.column_id
-
-				var el = React.createElement(element, {
-					config: col,
-					model: _this.props.model,
-					view: _this.props.view,
-					selector: selector,
-					object: obj,
-					className: 'table-cell',
-					value: obj[col.column_id],
-					column_id: col.column_id,
-					handleBlur: _this.props.handleBlur,
-					key: cellKey,
-					cellKey: cellKey,
-					ref: cellKey,
-					style: {
-						left: left + 'px',
-						minWidth: col.width + 'px',
-						maxWidth: col.width  + 'px',
-						textAlign: col.align,
-						height: (geometry.rowHeight) + 'px',
-					}
-				})
-				left += col.width
-				return el
-			})}
-		</div>
-	}
-})
 
 export default TabularTBody

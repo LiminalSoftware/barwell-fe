@@ -137,13 +137,9 @@ var ModelPane = React.createClass({
 						}</ul>
 					</div>
 				</div>
-
-
-
+				
 				<div className = "model-panes">
-					<div className="view-body-wrapper">
 						{bodyContent}
-					</div>
 				</div>
 
 		</div>

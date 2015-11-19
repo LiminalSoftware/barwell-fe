@@ -55,10 +55,6 @@ var CubePane = React.createClass ({
 		this.store.addChangeListener(this._onChange)
 	},
 
-	componentDidMount: function () {
-		this.calibrate()
-	},
-
 	componentWillUnmount: function () {
 		ViewStore.removeChangeListener(this._onChange)
 		AttributeStore.removeChangeListener(this._onChange)
@@ -79,22 +75,6 @@ var CubePane = React.createClass ({
 			scrollTop: wrapper.scrollTop,
 			scrollLeft: wrapper.scrollLeft
 		})
-	},
-
-	calibrate: function () {
-		if (!(this.isMounted())) return
-		var view = this.props.view
-		var geometry = view.data.geometry
-		var calibration = this.refs.rowhead.getCalibration() || geometry.rowHeight
-		var tbodyRowHt = this.refs.tbody.getCalibration() || geometry.rowHeight
-
-
-		this.setState({
-			actRowHt: tbodyRowHt,
-			tbodyRowHt: tbodyRowHt
-		})
-
-		window.setTimeout(this.calibrate, 500)
 	},
 
 	getNumberCols: function () {
@@ -165,37 +145,34 @@ var CubePane = React.createClass ({
 		var view = this.props.view
 		var geo = view.data.geometry
 		var columnWidth = geo.columnWidth + geo.widthPadding
-
 		var offset = $(tableBody).offset()
 		var y = event.pageY - offset.top
 		var x = event.pageX - offset.left
 		var r = Math.floor(y / this.state.actRowHt, 1)
 		var c = Math.floor(x / columnWidth, 1)
 
-		var coords = {row: r, col: c, x: x, y: y}
+		var coords = {top: r, left: c, x: x, y: y}
 		return coords
 	},
 
-	getFieldAt: function (row, col) {
+	getFieldAt: function (pos) {
 		var tbody = this.refs.tbody
 		var view = this.props.view
-		var row = this.state.pointer.top
-		var col = this.state.pointer.left
 		var rowKey = 'cell-' + row
 		var cellKey
 		var attribute
 
-		if (col >= 0 && row >= 0) {
+		if (pos.left >= 0 && pos.top >= 0) {
 			cellKey = rowKey + '-' + col
 			return this.refs.tbody.refs[rowKey].refs[cellKey]
 		} else if (col < 0) {
-				attribute = 'a' + view.row_aggregates[view.row_aggregates.length + col]
-				cellKey = rowKey + '-' + attribute
-				return this.refs.rowhead.refs[cellKey]
+			attribute = 'a' + view.row_aggregates[view.row_aggregates.length + left]
+			cellKey = rowKey + '-' + attribute
+			return this.refs.rowhead.refs[cellKey]
 		}
 	},
 
-	editCell: function (event, row, col) {
+	editCell: function (event) {
 		var tbody = this.refs.tbody
 		this.setState({
 			editing: true,
@@ -205,7 +182,7 @@ var CubePane = React.createClass ({
 			editing: true
 		})
 		// var field = this.refs.tbody.refs[rowKey].refs[cellKey]
-		this.getFieldAt(row, col).handleEdit(event);
+		this.getFieldAt(this.state.pointer).handleEdit(event);
 	},
 
 	updateSelect: function (row, col, shift, direction) {
@@ -314,7 +291,7 @@ var CubePane = React.createClass ({
 		event.preventDefault();
 		var rc = this.getRCCoords(event)
 		var sel = this.state.selection
-
+		var geo = this.props.view.data.geometry
 		modelActionCreators.setFocus('view')
 		if (rc.row > sel.bottom || rc.row < sel.top ||
 			rc.col > sel.right || rc.col < sel.left)
@@ -322,8 +299,8 @@ var CubePane = React.createClass ({
 
 		this.setState({
 			contextOpen: true,
-			contextX: rc.x,
-			contextY: rc.y + 20
+			contextX: 20,
+			contextY: rc.top * geo.rowHeight
 		})
 	},
 
@@ -358,7 +335,7 @@ var CubePane = React.createClass ({
 			return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper"></div>
 
 		return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">
-				<table id="main-data-table" className="header data-table">
+				<div id="main-data-table" className="header data-table">
 					<CubeColTHead
 						key = {"cube-col-thead-" + view.view_id}
 						clicker = {_this.onMouseDown}
@@ -398,7 +375,7 @@ var CubePane = React.createClass ({
 						hStart = {hStart}
 						store = {this.store}
 						/>
-				</table>
+				</div>
 				<div
 					className={"pointer" + (_this.isFocused() ? " focused" : "")}
 					ref = "anchor"

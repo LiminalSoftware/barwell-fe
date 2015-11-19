@@ -71,38 +71,20 @@ var CubeTBody = React.createClass ({
 		var view = this.props.view
 		var store = this.props.store
 		var geo = view.data.geometry
-		var actRowHt = this.props.actRowHt + geo.rowPadding
-		// var actRowHt = geo.rowHeight + 'px'
+		var actRowHt = geo.rowHeight + 'px'
 		var width = geo.columnWidth + geo.widthPadding
 		var vStart = this.props.vStart
 		var hStart = this.props.hStart
 		var levels = store.getLevels('rows', vStart, vStart + geo.renderBufferRows)
-		var style = {
-			top: ((view.column_aggregates.length + vStart) * actRowHt) + 'px',
-			left: (width * (view.row_aggregates.length + hStart) + geo.leftGutter) + 'px',
-			maxHeight: (geo.rowHeight * levels.length) + 'px',
-			minHeight: (geo.rowHeight * levels.length) + 'px'
-		}
+		var element = (fieldTypes[attribute.type] || fieldTypes.TEXT).element
 
-		return <tbody ref = "tbody"
+		return <div ref = "cube-tbody"
 			className = "cube-main-tbody"
 			onMouseDown = {_this.props.clicker}
 			onContextMenu={_this.props.openContextMenu}
-			style = {style}
 			onDoubleClick = {_this.editCell}>
-			{
-				levels.map(function (rowLevel, i) {
-					var rowKey = 'cell-' + (vStart + i)
-					return <CubeTR
-						{..._this.props}
-						hStart = {hStart}
-						rowLevel = {rowLevel}
-						key = {rowKey}
-						rowKey = {rowKey}
-						ref = {rowKey} />
-				})
-			}
-		</tbody>;
+
+		} </div>;
 	},
 
 	fetch: function (force) {
@@ -149,63 +131,64 @@ var CubeTBody = React.createClass ({
 		store.setStart('columns', hStart)
 	}
 })
-
-export default CubeTBody
-
-var CubeTR = React.createClass({
-
-	render: function () {
-		var _this = this
-		var model = this.props.model
-		var view = this.props.view
-		var store = this.props.store
-		var geo = view.data.geometry
-		var width = geo.columnWidth + 'px'
-		var rowHeight = geo.rowHeight + 'px'
-		var rowLevel = this.props.rowLevel
-		var attribute = AttributeStore.get(view.value)
-		var element = (fieldTypes[attribute.type] || fieldTypes.TEXT).element
-		var actRowHt = this.props.actRowHt
-
-		var hLength = geo.renderBufferCols
-		var hStart = this.props.hStart
-
-		var tdStyle = {
-			minWidth: width,
-			maxWidth: width,
-			height: geo.rowHeight + 'px',
-			maxHeight: (geo.rowHeight) + 'px',
-			minHeight: (geo.rowHeight) + 'px'
-		}
-		var trStyle = {
-			lineHeight: (geo.rowHeight) + 'px',
-			maxHeight: (geo.rowHeight) + 'px',
-			minHeight: (geo.rowHeight) + 'px'
-		}
-
-		return <tr style={trStyle}> {store.getLevels('columns', hStart, hLength + hStart).map(function (colLevel, j) {
-			var cellKey = _this.props.rowKey + '-' + (hStart + j)
-			var obj = store.getValues(rowLevel, colLevel)
-			var present = !!obj
-			var count = present ? obj._count : 0
-			var value = present ? obj['a' + attribute.attribute_id] : null
-			var selector = _.omit(_.extend({}, rowLevel, colLevel),'spans')
-
-			return React.createElement(element, {
-				config: {},
-				model: _this.props.model,
-				view: _this.props.view,
-				selector: selector,
-				value: value,
-				column_id: ('a' + attribute.attribute_id),
-				handleBlur: _this.props.handleBlur,
-				key: cellKey,
-				cellKey: cellKey,
-				ref: cellKey,
-				className: (present ? "present" : "empty") +
-					(count > 1 ? " uneditable" : ""),
-				style: tdStyle
-			})
-		})} </tr>
-	}
-})
+//
+// export default CubeTBody
+//
+// var CubeTR = React.createClass({
+//
+// 	render: function () {
+// 		var _this = this
+// 		var model = this.props.model
+// 		var view = this.props.view
+// 		var store = this.props.store
+// 		var geo = view.data.geometry
+// 		var width = geo.columnWidth
+// 		var rowHeight = geo.rowHeight + 'px'
+// 		var rowLevel = this.props.rowLevel
+// 		var attribute = AttributeStore.get(view.value)
+// 		var element = (fieldTypes[attribute.type] || fieldTypes.TEXT).element
+// 		var actRowHt = this.props.actRowHt
+//
+// 		var hLength = geo.renderBufferCols
+// 		var hStart = this.props.hStart
+//
+//
+// 		return <div> { store.getLevels('rows', vStart, vLength + vStart).map(function (rowLevel, i) {
+// 			store.getLevels('columns', hStart, hLength + hStart).map(function (colLevel, j) {
+//
+// 				var cellKey = 'cell-' + i + '-' + j
+// 				var obj = store.getValues(rowLevel, colLevel)
+// 				if (!obj) return null
+// 				var count = present ? obj._count : 0
+// 				var value = present ? obj['a' + attribute.attribute_id] : null
+// 				var selector = _.omit(_.extend({}, rowLevel, colLevel),'spans')
+//
+// 				var tdStyle = {
+// 					minWidth: width + 'px',
+// 					maxWidth: width + 'px',
+// 					height: geo.rowHeight + 'px',
+// 					maxHeight: (geo.rowHeight) + 'px',
+// 					minHeight: (geo.rowHeight) + 'px',
+// 					left: ((j + view.row_aggregates.length + hStart) * width) + 'px',
+// 					top: ((view.column_aggregates.length + vStart + i) * geo.rowHeight) + 'px'
+// 				}
+//
+// 				return React.createElement(element, {
+// 					config: {},
+// 					model: _this.props.model,
+// 					view: _this.props.view,
+// 					selector: selector,
+// 					value: value,
+// 					column_id: ('a' + attribute.attribute_id),
+// 					handleBlur: _this.props.handleBlur,
+// 					key: cellKey,
+// 					cellKey: cellKey,
+// 					ref: cellKey,
+// 					className: "table-cell " + (present ? "present" : "empty") +
+// 						(count > 1 ? " uneditable " : ""),
+// 					style: tdStyle
+// 				})
+// 			})}
+// 				</div>
+// 	}
+// })

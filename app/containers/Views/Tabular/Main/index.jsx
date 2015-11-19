@@ -24,11 +24,13 @@ import createTabularStore from './TabularStore.jsx'
 
 import fieldTypes from "../../fields"
 import TabularTBody from "./TabularTBody"
+import TabularBodyWrapper from "./TabularBodyWrapper"
 import TabularTHead from "./TabularTHead"
-import TableMixin from '../../TableMixin.jsx'
-
+import TableMixin from '../../TableMixin'
+import Overlay from './Overlay'
 import ContextMenu from './ContextMenu'
 
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
 var TabularPane = React.createClass ({
@@ -81,6 +83,10 @@ var TabularPane = React.createClass ({
 		return _.filter(view.data.columnList, 'visible');
 	},
 
+	getTotalWidth: function () {
+		return _.pluck(this.getVisibleColumns(), 'width').reduce((a,b) => a + b, 0)
+	},
+
 	onScroll: function (event) {
 		var wrapper = React.findDOMNode(this.refs.wrapper)
 		this.setState({scrollTop: wrapper.scrollTop})
@@ -110,88 +116,8 @@ var TabularPane = React.createClass ({
 		this.setState({selection: sel})
 	},
 
-	getSelectorStyle: function () {
-		var sel = this.state.selection
-		return this.getOverlayStyle({
-			left: sel.left,
-			right: sel.right,
-			top: sel.top,
-			bottom: sel.bottom
-		},{
-			left: -0.75,
-			top: -0.75,
-			height: -1.5,
-			width: -1.5
-		})
-	},
-
-	getInnerSelectorStyle: function () {
-		var sel = this.state.selection
-		return this.getOverlayStyle({
-			left: sel.left,
-			right: sel.right,
-			top: sel.top,
-			bottom: sel.bottom
-		},{
-			left: -2,
-			top: -2,
-			height: -5,
-			width: -5
-		})
-	},
-
-	getCopyareaStyle: function () {
-		var cpy = this.state.copyarea
-		var ptr = this.state.pointer
-		var coincide = _.isEqual(cpy, ptr)
-		return this.getOverlayStyle({
-			left: cpy.left,
-			right: cpy.right,
-			top: cpy.top,
-			bottom: cpy.bottom
-		}, {
-			left: 1,
-			top: 1,
-			height: -1.5,
-			width: -1.5
-		})
-	},
-
-	getPointerStyle: function () {
-		var ptr = this.state.pointer
-		return this.getOverlayStyle({
-			left: ptr.left,
-			right: ptr.left,
-			top: ptr.top,
-			bottom: ptr.top
-		}, {
-			height: -1,
-			width: -1
-		})
-	},
-
-	getOverlayStyle: function (pos, fudge) {
-		var geo = this.props.view.data.geometry
-		var width = 0
-		var left = geo.leftGutter
-		fudge = fudge || {}
-
-		this.getVisibleColumns().forEach(function (col, idx) {
-			if (idx < pos.left)
-				left += col.width
-			else if (idx <= pos.right)
-				width += col.width
-		})
-		return {
-			top: (pos.top * geo.rowHeight + geo.headerHeight + geo.topGutter + (fudge.top || 0)) + 'px',
-			left: (left + (fudge.left || 0))+ 'px',
-			minHeight: (geo.rowHeight * (pos.bottom - pos.top + 1) + (fudge.height || 0)) + 'px',
-			minWidth: (width + (fudge.width || 0)) + 'px'
-		}
-	},
-
 	getRCCoords: function (event) {
-		var tbody = React.findDOMNode(this.refs.tbody)
+		var tbody = React.findDOMNode(this.refs.tbodyWrapper.refs.tbody)
 		var view = this.props.view
 		var geo = view.data.geometry
 		var actHeight = this.state.actRowHt
@@ -203,7 +129,6 @@ var TabularPane = React.createClass ({
 		var r = Math.floor((y) / geo.rowHeight, 1)
 		var c = 0
 
-		modelActionCreators.setFocus('view')
 		columns.forEach(function (col) {
 			xx -= (col.width)
 			if (xx > 0) c ++
@@ -213,24 +138,22 @@ var TabularPane = React.createClass ({
 		r = Math.max(0, r)
 		r = Math.min(r, this.store.getRecordCount())
 
-		return {row: r, col: c, x: x, y: y}
+		return {top: r, left: c}
 	},
 
-	getFieldAt: function (row, col) {
-		var tbody = this.refs.tbody
-		var row = this.state.pointer.top
-		var col = this.state.pointer.left
-		var colId = this.getVisibleColumns()[col].column_id
-		var obj = this.getValueAt(row)
+	getFieldAt: function (pos) {
+		var tbody = this.refs.tbodyWrapper.refs.tbody
+		var colId = this.getVisibleColumns()[pos.left].column_id
+		var obj = this.getValueAt(pos.top)
 		var model = this.props.model
 		var objId = (obj.cid || obj[model._pk]);
 		var rowKey = 'tr-' + objId
 		var cellKey = rowKey + '-' + colId
-		return this.refs.tbody.refs[rowKey].refs[cellKey]
+		return tbody.refs[rowKey].refs[cellKey]
 	},
 
-	editCell: function (event, row, col) {
-		var tbody = this.refs.tbody
+	editCell: function (event) {
+		var tbody = this.refs.tbodyWrapper.refs.tbody
 		this.setState({
 			editing: true,
 			copyarea: null
@@ -238,12 +161,12 @@ var TabularPane = React.createClass ({
 		tbody.setState({
 			editing: true
 		})
-		// var field = this.refs.tbody.refs[rowKey].refs[cellKey]
-		this.getFieldAt(row, col).handleEdit(event);
+		this.getFieldAt(this.state.pointer).handleEdit(event);
 	},
 
-	toggleCell: function (row, col, toggle) {
-		var cell = this.getFieldAt(row, col);
+	toggleCell: function (pos, toggle) {
+		// console.log('toggle: ' + pos.top + ', ' + pos.left + ' -> ' + toggle)
+		var cell = this.getFieldAt(pos);
 		cell.toggleSelect(toggle)
 	},
 
@@ -287,12 +210,12 @@ var TabularPane = React.createClass ({
 		var sel = this.state.selection
 		for (var r = sel.top; r <= sel.bottom; r++) {
 			for (var c = sel.left; c <= sel.right; c++) {
-				clipboard += this.getFieldAt(r, c).props.value + (c == sel.right ? "" : "\t")
+				clipboard += this.getFieldAt({top: r, left: c}).props.value + (c == sel.right ? "" : "\t")
 			}
 			clipboard += (r == sel.bottom ? "" : "\n")
 		}
 		copyTextToClipboard(clipboard)
-		this.setState({copyarea: _.clone(sel)})
+		this.setState({copyarea: sel})
 	},
 
 	openContextMenu: function (event) {
@@ -312,44 +235,88 @@ var TabularPane = React.createClass ({
 		})
 	},
 
-	updateSelect: function (row, col, mode, direction) {
-		var numCols = this.getNumberCols()
+	move: function (direction, shift) {
 		var sel = this.state.selection
-		var anc = this.state.anchor
-		var oldPtr = {left: this.state.pointer.left, top: this.state.pointer.top}
-		var ptr = {left: col, top: row}
-		var view = this.props.view
 		var numCols = this.getNumberCols()
 		var numRows = this.getNumberRows()
-		var outline = (sel.left == sel.right && sel.top == sel.bottom) ?
-			{left: 0, right: numCols, top: 0, bottom: numRows} : null ;
+		var singleCell = (sel.left === sel.right && sel.top === sel.bottom)
+		var outline = singleCell ? {left: 0, right: numCols, top: 0, bottom: numRows} : sel ;
+		var ptr = _.clone(this.state.pointer)
 
-		// this.toggleCell(oldPtr.top, oldPtr.left, false)
-		// this.toggleCell(ptr.top, ptr.left, true)
+		if (direction === 'TAB') {
+			var mod = (outline.right - outline.left + 1)
+			var bigMod = mod * (outline.bottom - outline.top + 1)
+			var index = (ptr.top - outline.top) * mod + ptr.left - outline.left
+			index += (shift ? -1 : 1)
+			index = index % bigMod
+			ptr.left = (index % mod) + outline.left
+			ptr.top = Math.floor(index / mod) + outline.top
+			if (singleCell) this.updateSelect(ptr)
+			else this.updatePointer(ptr)
+		} else if (direction === 'ENTER') {
+			var mod = (outline.bottom - outline.top + 1)
+			var bigMod = mod * (outline.right - outline.left + 1)
+			var index = (ptr.left - outline.right) * mod + ptr.top - outline.top
+			index += (shift ? -1 : 1)
+			index = index % bigMod
+			ptr.left = Math.floor(index / mod) + outline.left
+			ptr.top = (index % mod) + outline.top
+			if (singleCell) this.updateSelect(ptr)
+			else this.updatePointer(ptr)
+		} else if (direction === 'RIGHT') {
+			ptr.left = Math.min(ptr.left + 1, numCols)
+			this.updateSelect(ptr, shift)
+		} else if (direction === 'LEFT') {
+			ptr.left = Math.max(ptr.left - 1, 0)
+			this.updateSelect(ptr, shift)
+		} else if (direction === 'DOWN') {
+			ptr.top = Math.min(ptr.top + 1, numRows - 1)
+			this.updateSelect(ptr, shift)
+		} else if (direction === 'UP') {
+			ptr.top = Math.max(ptr.top - 1, 0)
+			this.updateSelect(ptr, shift)
+		}
+	},
 
+	updatePointer: function (pos) {
+		if (!_.isEqual(pos, this.state.pointer)) {
+			console.log('----')
+			console.log(pos)
+			console.log(this.state.pointer)
+			console.log('----')
 
-		if (mode === 'SHIFT') {
-			if (!anc) anc = {left: col, top: row}
+			this.toggleCell(this.state.pointer, false)
+			this.toggleCell(pos, true)
+		}
+		this.setState({pointer: pos})
+	},
+
+	updateSelect: function (pos, shift) {
+		var sel = this.state.selection
+		var anc = this.state.anchor
+		var ptr = this.state.pointer
+		var view = this.props.view
+
+		if (shift) {
+			if (!anc) anc = pos
+			ptr = pos
 			sel = {
-				left: Math.min(anc.left, ptr.left),
-				right: Math.max(anc.left, ptr.left),
-				top: Math.min(anc.top, ptr.top),
-				bottom: Math.max(anc.top, ptr.top)
+				left: Math.min(anc.left, pos.left),
+				right: Math.max(anc.left, pos.left),
+				top: Math.min(anc.top, pos.top),
+				bottom: Math.max(anc.top, pos.top)
 			}
-		} else if (mode == 'MOVE'){
-			ptr = anc = {
-				left: col,
-				top: row
-			}
+		} else {
+			ptr = anc = pos
 			sel = {
-				left: col,
-				right: col,
-				top: row,
-				bottom: row
+				left: pos.left,
+				right: pos.left,
+				top: pos.top,
+				bottom: pos.top
 			}
 		}
+		this.updatePointer(ptr)
 		this.setState({
-			pointer: ptr,
 			selection: sel,
 			anchor: anc
 		})
@@ -361,18 +328,24 @@ var TabularPane = React.createClass ({
 		var view = this.props.view
 		var columns = this.getVisibleColumns()
 		var focused = (FocusStore.getFocus() == 'view')
+		var totalWidth = this.getTotalWidth()
+		var ptr = this.state.pointer
+		var sel = this.state.selection
+		var cpy = this.state.copyarea
 
 		return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">
 
 					<TabularTHead
 						key = {"tabular-thead-" + view.view_id}
-						scrollTop = {this.state.scrollTop}
+							scrollTop = {this.state.scrollTop}
+						totalWidth = {totalWidth}
 						columns = {columns}
 						view = {view} />
 
-					<TabularTBody
-						ref = "tbody"
+					<TabularBodyWrapper
+						ref = "tbodyWrapper"
 						handleBlur = {_this.handleBlur}
+						totalWidth = {totalWidth}
 						editCell = {_this.editCell}
 						selection = {this.selection}
 						key = {"tbody-" + view.view_id}
@@ -383,7 +356,36 @@ var TabularPane = React.createClass ({
 						openContextMenu = {_this.openContextMenu}
 						columns = {columns}
 						sorting = {view.data.sorting}
-						scrollTop = {this.state.scrollTop} />
+						scrollTop = {this.state.scrollTop}>
+
+						<Overlay
+							columns = {columns}
+							className={"pointer" + (_this.isFocused() ? " focused" : "")}
+							ref="pointer"
+							{...this.props}
+							onDoubleClick={this.startEdit}
+							position = {sel}
+							fudge = {{left: -1.25, top: 0.25, height: -0.5, width: -0.5}} />
+
+							<Overlay
+								columns = {columns}
+								className={"selection " + (_this.isFocused() ? " focused" : "")}
+								ref="selection"
+								{...this.props}
+								onDoubleClick={this.startEdit}
+								position = {sel}
+								fudge = {{left: -2.25, top: -1.25, width: -4.25, height: -4.25}} />
+
+						<Overlay
+							columns = {columns}
+							className={"copyarea marching-ants " + (_this.isFocused() ? " focused" : "") + (_this.state.mousedown ? "" : " running")}
+							ref="copyarea"
+							{...this.props}
+							{...this.props}
+							position = {cpy}
+							fudge = {{left: 1, top: 1}}/>
+
+					</TabularBodyWrapper>
 
 				{_this.state.contextOpen ?
 					<ContextMenu
@@ -394,22 +396,7 @@ var TabularPane = React.createClass ({
 						copySelection = {this.copySelection} />
 					: null}
 
-				<div
-					className={"pointer" + (_this.isFocused() ? " focused" : "")}
-					ref="anchor"
-					onDoubleClick={this.startEdit}
-					style={this.getSelectorStyle()}>
-				</div>
-				{this.state.copyarea ? <div
-					className={"copyarea marching-ants " + (_this.isFocused() ? " focused" : "") + (_this.state.mousedown ? "" : " running")}
-					ref="copyarea"
-					style={this.getCopyareaStyle()}>
-				</div> : null}
-				<div
-					className={"selection " + (_this.isFocused() ? " focused" : "")}
-					ref="selection"
-					style={this.getInnerSelectorStyle()}>
-				</div>
+
 
 		</div>
 	}
