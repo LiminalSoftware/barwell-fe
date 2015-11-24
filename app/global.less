@@ -69,6 +69,8 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
 @newgreen2: lighten(@newgreen1, 5%);
 
 @darkgreen0: #7BA66D;
+@darkgreen0-trans: rgba(72, 156, 77, 0.5);
+// @darkgreen0: @newgreen2;
 @darkgreen1: #92A88A;
 
 @red-bright-trans: hsla(346, 100%, 40%, 50%);
@@ -226,6 +228,12 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
     user-select: none;
 }
 
+.ellipsis {
+  white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .transition (@transition) {
 	-webkit-transition: @transition;
 	-moz-transition:    @transition;
@@ -349,6 +357,8 @@ input[type="checkbox"] +  {
 body.hidden-sidebar {
 	margin-left: -300px;
 }
+
+
 
 
 

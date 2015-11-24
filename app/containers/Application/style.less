@@ -12,30 +12,47 @@ h1, h2, h3, h4, h5 {
 	font-family: @headerFont;
 }
 
-#content {
+.application {
 	display: flex;
-	height: 100vh;
 	flex-direction: column;
-}
-
-.app {
-	display: flex;
   min-height: 100vh;
 }
 
-.app-container {
+.model-views {
 	display: flex;
-	flex: 1;
 	flex-direction: column;
-	.transition(all 50ms ease-in);
-	&.hide-sidebar {
-		margin-left: -630px;
-	}
+	flex: 1;
+	flex-grow: 1;
+	order: 1;
+	padding: 0;
+	overflow: hidden;
 }
 
-.session-header {
-	background-color: @pureGray4;
-	padding: 2px 5px;
-	color: white;
-	text-align: right;
+.model-panes {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	flex-grow: 1;
+}
+
+.view-bar {
+	display: block;
+
+	padding: 0;
+	background: @gray4;
+	border-bottom: 1px solid @gray3;
+}
+
+.view-config {
+	display: flex;
+	flex-direction: row;
+	padding: 10px;
+	min-height: 40px;
+}
+
+.view-body-wrapper {
+	position: relative;
+	flex: 1;
+	flex-grow: 1;
 }

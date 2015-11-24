@@ -25,6 +25,7 @@ var TabularTR = React.createClass({
 		var row = this.props.row
 		var obj = this.props.obj
 		var geometry = this.props.geometry
+		var ptr = this.props.pointer
 		var selector = {}
 		var trStyle = {
 			height: (geometry.rowHeight + 2) + 'px',
@@ -32,13 +33,16 @@ var TabularTR = React.createClass({
 		}
 		selector[model._pk] = obj[model._pk]
 		var left = 0;
+		var prevSort = false;
 
 		return <div id={rowKey}
 			className = {"table-row " +  (obj._dirty ? "dirty" : "")}
 			style = {trStyle}>
-			{_this.props.columns.map(function (col) {
+			{_this.props.columns.map(function (col, j) {
 				var element = (fieldTypes[col.type] || fieldTypes.TEXT).element
 				var cellKey = rowKey + '-' + col.column_id
+				var isCurrent = (ptr.left === j && ptr.top === row)
+
 
 				var el = React.createElement(element, {
 					config: col,
@@ -46,7 +50,7 @@ var TabularTR = React.createClass({
 					view: _this.props.view,
 					selector: selector,
 					object: obj,
-					className: 'table-cell',
+					className: ('table-cell ' + ((col.sorting || prevSort) ? ' sorted ' : '')),
 					value: obj[col.column_id],
 					column_id: col.column_id,
 					handleBlur: _this.props.handleBlur,
@@ -62,6 +66,7 @@ var TabularTR = React.createClass({
 						textAlign: col.align
 					}
 				})
+				prevSort = !!col.sorting
 				left += col.width
 				return el
 			})}

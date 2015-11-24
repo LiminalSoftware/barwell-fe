@@ -1,5 +1,10 @@
 var _ = require('underscore')
 
+// fix javascript modulo bug
+Number.prototype.mod = function(n) {
+    return ((this%n)+n)%n;
+};
+
 var stripInternalVars = module.exports.stripInternalVars = function (obj) {
   var newObj = {}
   Object.keys(obj || {}).forEach(function (key) {

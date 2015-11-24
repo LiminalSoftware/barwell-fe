@@ -1,4 +1,5 @@
 import TabularConfig from "./Tabular/Config/index.jsx"
+import TabularInlineConfig from "./Tabular/InlineConfig/index.jsx"
 import TabularMain from "./Tabular/Main/index.jsx"
 import TabularGroomer from "./Tabular/groom"
 
@@ -18,6 +19,7 @@ var viewTypes = {
 		groomer: TabularGroomer,
 		mainElement: TabularMain,
 		configElement: TabularConfig,
+		inlineConfigElement: TabularInlineConfig,
 		category: "Tables",
 		description: "Just a plain old table of data.  Each object is one row in the table."
 	},

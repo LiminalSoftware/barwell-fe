@@ -248,6 +248,7 @@ var TabularPane = React.createClass ({
 			var bigMod = mod * (outline.bottom - outline.top + 1)
 			var index = (ptr.top - outline.top) * mod + ptr.left - outline.left
 			index += (shift ? -1 : 1)
+			if (index < 0) index += bigMod
 			index = index % bigMod
 			ptr.left = (index % mod) + outline.left
 			ptr.top = Math.floor(index / mod) + outline.top
@@ -258,6 +259,7 @@ var TabularPane = React.createClass ({
 			var bigMod = mod * (outline.right - outline.left + 1)
 			var index = (ptr.left - outline.right) * mod + ptr.top - outline.top
 			index += (shift ? -1 : 1)
+			if (index < 0) index += bigMod
 			index = index % bigMod
 			ptr.left = Math.floor(index / mod) + outline.left
 			ptr.top = (index % mod) + outline.top
@@ -280,11 +282,6 @@ var TabularPane = React.createClass ({
 
 	updatePointer: function (pos) {
 		if (!_.isEqual(pos, this.state.pointer)) {
-			console.log('----')
-			console.log(pos)
-			console.log(this.state.pointer)
-			console.log('----')
-
 			this.toggleCell(this.state.pointer, false)
 			this.toggleCell(pos, true)
 		}
@@ -337,7 +334,7 @@ var TabularPane = React.createClass ({
 
 					<TabularTHead
 						key = {"tabular-thead-" + view.view_id}
-							scrollTop = {this.state.scrollTop}
+						scrollTop = {this.state.scrollTop}
 						totalWidth = {totalWidth}
 						columns = {columns}
 						view = {view} />
@@ -350,6 +347,7 @@ var TabularPane = React.createClass ({
 						selection = {this.selection}
 						key = {"tbody-" + view.view_id}
 						model = {model}
+						pointer = {ptr}
 						view = {view}
 						store = {_this.store}
 						clicker = {_this.onMouseDown}
@@ -367,14 +365,14 @@ var TabularPane = React.createClass ({
 							position = {sel}
 							fudge = {{left: -1.25, top: 0.25, height: -0.5, width: -0.5}} />
 
-							<Overlay
-								columns = {columns}
-								className={"selection " + (_this.isFocused() ? " focused" : "")}
-								ref="selection"
-								{...this.props}
-								onDoubleClick={this.startEdit}
-								position = {sel}
-								fudge = {{left: -2.25, top: -1.25, width: -4.25, height: -4.25}} />
+						<Overlay
+							columns = {columns}
+							className={"selection " + (_this.isFocused() ? " focused" : "")}
+							ref="selection"
+							{...this.props}
+							onDoubleClick={this.startEdit}
+							position = {sel}
+							fudge = {{left: -2.25, top: -1.25, width: -4.25, height: -4.25}} />
 
 						<Overlay
 							columns = {columns}

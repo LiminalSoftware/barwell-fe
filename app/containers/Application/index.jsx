@@ -12,10 +12,8 @@ var Application = React.createClass({
 
 	render: function() {
 		return <div className="application ">
-			<div className={"app-container " + (this.state.hiddenSidebar ? "hide-sidebar" : "")}>
 				<SideBar {...this.props} />
 				<RouteHandler {...this.props} />
-			</div>
 		</div>;
 	},
 

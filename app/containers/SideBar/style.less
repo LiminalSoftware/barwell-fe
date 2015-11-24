@@ -1,25 +1,33 @@
 @import "../../global.less";
 
+@borderColor: @gray3;
+@bgColor: @gray4;
+@fontColor: @gray1;
+
 ul.sidebar-model-list {
 	display: flex;
 	list-style: none;
 	padding: 0;
 	margin: 0;
-	padding-top: 10px;
-	background: @gray3;
+	padding-left: 5px;
+	padding-top: 5px;
+	background: @gray4;
 
 	& > li.add-new {
+		border-right: 1px solid @borderColor;
+
 		a {
-			color: @gray4;
+			color: white;
 			font-weight: 800;
 			// font-family: @headerFont;
 		}
 	}
 
 	& > li {
+		border-left: 1px solid @borderColor;
+		border-top: 1px solid @borderColor;
 		flex-direction: row;
 		padding: 0;
-		margin-left: 1px;
 	}
 
 	& > li > a {
@@ -28,9 +36,9 @@ ul.sidebar-model-list {
 		display: block;
 		text-decoration: none;
 		position: relative;
-		color: @gray4;
+		color: @fontColor;
 
-		background-color: @darkgreen0;
+		background: @bgColor;
 
 		font-size: 16px;
 		font-weight: 400;
@@ -38,12 +46,13 @@ ul.sidebar-model-list {
 	}
 
 	& > li.active {
-		border-bottom: 1px solid @darkgreen0;
+		background: @gray4;
 		margin-bottom: -1px;
+		border-bottom: 1px solid @bgColor;
 	}
 
 	& > li:not(.active) > a {
-		background: @darkgreen1;
+		background: @gray4;
 		// lighten(@gray2, 10%);
 	}
 
@@ -53,36 +62,33 @@ ul.sidebar-model-list {
 
 	& > li.editmode > a {
 
-		background: @gray4;
+		background: @bgColor;
 		border-radius: 4px;
 		padding-right: 5px;
-	}
-	.model-reorder {
-		display: block;
-		position: absolute;
-		left: -3px;
-		color: @gray3;
-		padding: 5px;
-		padding-top: 15px;
-		cursor: drag;
 	}
 
 	input {
 		display: block;
-		background: white;
 		border-radius: 4px;
-		padding: 10px;
+		padding: 0px;
 		border: none;
+		outline: none;
+		background: none;
+		border-bottom: 1px solid @borderColor;
+		color: @fontColor;
+		font-family: @bodyFont;
+		font-size: 16px;
+		min-width: 50px;
 		margin: 0;
+		margin-bottom: -1px;
+		border-radius: 0;
 	}
 }
 
 .left-side-bar {
 	position: relative;
-
 	order: -2;
-	background: white;
-	border-right: 1px solid @steelblue;
 	padding: 0;
 	overflow: visible;
+	border-bottom: 1px solid @borderColor;
 }

@@ -84,7 +84,6 @@ var SideBar = React.createClass({
 export default SideBar
 
 var ModelList = React.createClass ({
-	// mixins: [sortable.ListMixin],
 
 	render: function () {
 		var _this = this
@@ -107,8 +106,6 @@ var ModelList = React.createClass ({
 })
 
 var ModelLink = React.createClass ({
-
-	mixins: [sortable.ItemMixin],
 
 	getInitialState: function () {
 		return {renaming: false}

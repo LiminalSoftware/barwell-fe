@@ -1,7 +1,5 @@
 import React from "react"
 import { RouteHandler, Link } from "react-router"
-import viewTypes from "containers/Views/viewTypes"
-import ViewDetails from "./ViewDetails"
 import styles from "./style.less"
 import detailStyles from "./detail.less"
 import ModelDefinition from "../ModelDefinition"
@@ -9,6 +7,7 @@ import ModelStore from "../../stores/ModelStore"
 import ViewStore from "../../stores/ViewStore"
 import sortable from 'react-sortable-mixin'
 
+import viewTypes from "../Views/viewTypes"
 import modelActionCreators from "../../actions/modelActionCreators"
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
@@ -77,7 +76,7 @@ var ModelPane = React.createClass({
 		if (!!view && (view.type in viewTypes)) {
 			var type = viewTypes[view.type]
 			var bodyElement = type.mainElement
-			var configElement = type.configElement
+			var configElement = type.inlineConfigElement
 
 			bodyContent = React.createElement(bodyElement, {
 				model: model,
@@ -87,14 +86,8 @@ var ModelPane = React.createClass({
 
 			configElement = React.createElement(configElement, {
 				model: model,
-				view: view,
-				key: "view-config-" + view_id
+				view: view
 			})
-
-			viewDetailContent = <div>
-				<ViewDetails view = {view}/>
-				{configElement}
-			</div>
 		}
 
 		else {
@@ -104,44 +97,13 @@ var ModelPane = React.createClass({
 			viewDetailContent = null
 		}
 
-		var views = ViewStore.query({model_id: model_id})
-
 		return <div className="model-views">
-
-				<div className="right-header header-container" >
-					{view ? <span><span className={"large header-icon white icon " + viewTypes[view.type].icon}></span><h1>{view.view}</h1></span> : null}
-					<span className={"view-pulldown " + (this.state.viewListOpen ? "open" : "closed")} onClick={this.toggleViewList}>
-						<span className={" icon tight icon-chevron-" + (this.state.viewListOpen ? "up" : "down")}></span>
-					</span>
-
-					<div className = {"views-list-container " + (this.state.viewListOpen ? " open" : " closed")}
-						style = {{maxHeight: this.state.viewListOpen ? ((80 + views.length * 70) + 'px') : 0}}>
-
-						<div className="sidebar-sub-header rh-sidebar-subheader">
-							<h2>Views</h2>
-							<ul className="light padded mb-buttons">
-								<li onClick={this.handleEdit}>Edit</li>
-								<li onClick={this.handleAddModel} className="plus">+</li>
-							</ul>
-						</div>
-
-						<ul className="views-list" onClick={this.toggleViewList}> {
-							views.map(function (view) {
-								return <li key={'view-link-' + view.view_id}>
-									<Link to="view" params={{modelId: model_id, workspaceId: workspace_id, viewId: view.view_id}}>
-										<span className={"large icon " + viewTypes[view.type].icon}></span>
-										{view.view}
-									</Link>
-								</li>
-							})
-						}</ul>
-					</div>
-				</div>
-				
-				<div className = "model-panes">
-						{bodyContent}
-				</div>
-
+			<div className="view-bar" >
+				{configElement}
+			</div>
+			<div className = "model-panes">
+				{bodyContent}
+			</div>
 		</div>
 	}
 });
