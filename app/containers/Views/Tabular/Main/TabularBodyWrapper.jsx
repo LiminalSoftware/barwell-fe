@@ -28,7 +28,7 @@ var TabularBodyWrapper = React.createClass ({
 			top: (geo.headerHeight + geo.topGutter + 1) + 'px',
 			bottom: 0,
 			left: geo.leftGutter + 'px',
-			right: 0,
+			width: this.props.totalWidth + 'px',
 			position: 'absolute',
 		}
 

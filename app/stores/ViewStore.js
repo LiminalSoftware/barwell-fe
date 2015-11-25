@@ -11,6 +11,8 @@ var ViewStore = storeFactory({
 
     switch (payload.actionType) {
       case 'VIEW_CREATE':
+        var view = payload.view
+        if (!payload.safe) view = groomView(view)
         this.create(payload.view)
         this.emitChange()
         break;
@@ -21,14 +23,14 @@ var ViewStore = storeFactory({
         break;
 
       case 'VIEW_RECEIVE':
-        var _this = this
         var view = payload.view
         if (!(view instanceof Object)) return;
         view = view
         view._dirty = false
-        this.create(view)
+        this.create(groomView(view))
         this.emitChange()
         break;
+
 
       case 'MODEL_RECEIVE':
         var model = payload.model

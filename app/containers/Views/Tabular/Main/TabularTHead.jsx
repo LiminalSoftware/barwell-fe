@@ -20,7 +20,7 @@ var TabularTHead = React.createClass ({
 			top: 0,
 			left: 0,
 			height: (geo.headerHeight + 1) + 'px',
-			width: this.props.totalWidth + 'px'
+			width: (this.props.totalWidth + 5) + 'px'
 		}
 
 		return <div

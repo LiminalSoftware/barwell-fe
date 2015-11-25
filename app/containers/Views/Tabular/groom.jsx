@@ -101,6 +101,10 @@ var groomView = function (view) {
 	}, data.geometry)
 
 	view.data = data;
+	// view.getVisibleColumns = function () {
+	// 	var view = this.props.view
+	// 	return _.filter(view.data.columnList, 'visible');
+	// }
 	return view
 }
 

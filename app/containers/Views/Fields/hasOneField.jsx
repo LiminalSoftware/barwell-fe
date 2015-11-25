@@ -30,7 +30,7 @@ var hasOneField = {
 
 			this.setState({'label': label})
 			col.label = label
-			modelActionCreators.create('view', true, view)
+			modelActionCreators.createView(view, false, true)
 		},
 
 		render: function () {
@@ -40,23 +40,19 @@ var hasOneField = {
 			var key = "attr-" + config.id
 			var model_id = config.related_model_id
 
-			return <tr key = {key + '-label-attribute'} style={style}>
-				<td className="no-line"></td>
-				<td>Label: </td>
-				<td className="right-align" colSpan="2">
+			return <span className="column-config">
 					<select onChange={this.onLabelChange} value={this.state.label}>
 						{AttributeStore.query({model_id: model_id}).map(function (attr) {
 							return <option value={'a' + attr.attribute_id}>{attr.attribute}</option>
 						})}
 					</select>
-				</td>
-			</tr>
+			</span>
 		}
 	}),
 
 	element: React.createClass({
 		mixins: [selectableMixin],
-		
+
 		render: function () {
 			var value = this.props.value
 			var config = this.props.config || {}
@@ -64,9 +60,8 @@ var hasOneField = {
 			var object = this.props.object
 
 			return <span className="table-cell" style={style}>
-				<span className="table-cell-inner">{value}
+				<span className="pick-one table-cell-inner">{(config.label) ? (value[config.label] || "...") : "..." }</span>
 				<span key="expander" className="small grayed icon icon-geo-triangle wedge open"></span>
-				</span>
 			</span>
 		},
 		uneditable: false

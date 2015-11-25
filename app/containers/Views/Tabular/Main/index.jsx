@@ -33,6 +33,11 @@ import ContextMenu from './ContextMenu'
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
+
+var debouncedCreateView = _.debounce(function (view) {
+	modelActionCreators.createView(view, false, false, true)
+}, 500)
+
 var TabularPane = React.createClass ({
 
 	mixins: [TableMixin, PureRenderMixin],
@@ -281,11 +286,14 @@ var TabularPane = React.createClass ({
 	},
 
 	updatePointer: function (pos) {
+		var view = this.props.view
 		if (!_.isEqual(pos, this.state.pointer)) {
 			this.toggleCell(this.state.pointer, false)
 			this.toggleCell(pos, true)
 		}
 		this.setState({pointer: pos})
+		view.data.pointer = pos
+		debouncedCreateView(view, false, false, true)
 	},
 
 	updateSelect: function (pos, shift) {

@@ -12,7 +12,6 @@ var ViewSelector = React.createClass({
 	},
 
 	onClick: function () {
-		console.log('click!')
 		return this.setState({open: !this.state.open})
 	},
 

@@ -133,7 +133,7 @@ var TabularTBody = React.createClass ({
 			top: 0,
 			left: 0,
 			height: (rowCount * geometry.rowHeight) + 'px',
-			width: this.props.totalWidth + 'px',
+			width: (this.props.totalWidth + 10) + 'px',
 			position: 'absolute'
 		}
 

@@ -7,6 +7,8 @@ import ModelStore from "../../stores/ModelStore"
 import ViewStore from "../../stores/ViewStore"
 import sortable from 'react-sortable-mixin'
 
+import ViewSelector from '../ViewSelector'
+
 import viewTypes from "../Views/viewTypes"
 import modelActionCreators from "../../actions/modelActionCreators"
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
@@ -94,6 +96,9 @@ var ModelPane = React.createClass({
 			bodyContent = <div className=" view-body-wrapper" key="no-view">
 				<ModelDefinition model={model}/>
 			</div>
+			configElement = <div className = "view-config">
+				<ViewSelector view = {view} model = {model}/>
+			</div>;
 			viewDetailContent = null
 		}
 

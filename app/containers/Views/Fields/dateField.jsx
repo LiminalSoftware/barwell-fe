@@ -55,13 +55,9 @@ var dateField = {
 			var key = "attr-" + config.id
 			var style = this.props.style
 
-			return <tr key = {key + '-dateformat'} style={style}>
-				<td className="no-line"></td>
-				<td className="">Date Format: </td>
-				<td className="" colSpan="2">
+			return <span className="column-config">
 					<input type="text" value={this.state.dateFormat} onBlur={this.onBlur} onChange={this.onFormatChange}/>
-				</td>
-			</tr>
+			</span>
 		}
 	}),
 

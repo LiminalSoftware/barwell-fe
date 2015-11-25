@@ -10,9 +10,6 @@ import AttributeStore from "../../../../stores/AttributeStore"
 import KeyStore from "../../../../stores/KeyStore"
 import KeycompStore from "../../../../stores/KeycompStore"
 
-import ColumnList from '../Config/ColumnList'
-import ColumnDetail from '../Config/ColumnDetail'
-
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import groomView from '../../groomView'
 
@@ -21,6 +18,7 @@ var sortable = require('react-sortable-mixin');
 
 import ViewSelector from '../../../ViewSelector'
 import ColumnMenu from './ColumnMenu'
+import SortMenu from './SortMenu'
 
 var TabularViewInlineConfig = React.createClass({
 
@@ -60,10 +58,11 @@ var TabularViewInlineConfig = React.createClass({
 		var view = this.props.view
 		var model = this.props.model
 		var data = this.state
-		var columns = data.columns
-    return <div className = "view-config">
+
+    return <div className = "view-config" onClick={this.focus}>
 			<ViewSelector view = {view} model = {model}/>
-			<ColumnMenu columns = {columns}/>
+			<ColumnMenu view = {view} model = {model}/>
+			<SortMenu view = {view} model = {model}/>
 		</div>
 	}
 });

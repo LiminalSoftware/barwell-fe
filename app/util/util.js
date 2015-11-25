@@ -13,6 +13,12 @@ var stripInternalVars = module.exports.stripInternalVars = function (obj) {
   return newObj;
 }
 
+module.exports.encode = function (str) {
+  return str.split('').map(function (char) {
+    return char.charCodeAt(0)
+  }).join('.')
+}
+
 module.exports.clean = function (obj) {
 	obj._dirty = false
 	obj._server = stripInternalVars(obj)

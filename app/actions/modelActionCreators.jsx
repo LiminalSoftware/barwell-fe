@@ -43,7 +43,6 @@ var modelActions = {
 		message.selector = {cid: obj.cid}
 		MetasheetDispatcher.dispatch(message)
 
-
 		webUtils.ajax('POST', url, json, {"Prefer": 'return=representation'}).then(function (results) {
 			var updt_message = {}
 			updt_message.actionType = 'M' + model.model_id + '_RECEIVEUPDATE'
@@ -219,13 +218,14 @@ var modelActions = {
 		message.selector = selector
 	},
 
-	create: function (subject, persist, obj, update) {
+	create: function (subject, persist, obj, update, safe) {
 		var message = {}
 		if (update !== false) update = true
 		obj._dirty = true
 		obj._destroy = false
 		message[subject] = obj
 		message.actionType = subject.toUpperCase() + '_CREATE'
+		message.safe = !!safe
 		MetasheetDispatcher.dispatch(message)
 
 		if (persist) return webUtils.persist(subject, 'CREATE', obj, update);
@@ -336,8 +336,15 @@ var modelActions = {
 	},
 
 	// views
-	createView: function(view, persist, update) {
-		modelActions.create('view', persist, groomView(view), update)
+	createView: function(view, persist, update, safe) {
+		modelActions.create('view', persist, view, update, safe)
+	},
+
+	updatePointer: function(view, pointer) {
+		var message = {}
+		message.actionType = 'POINTER_UPDATE'
+		message.pointer = pointer
+		return MetasheetDispatcher.dispatch(message)
 	},
 
 	destroyView: function(view) {
