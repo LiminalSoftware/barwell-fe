@@ -56,4 +56,9 @@ h1, h2, h3, h4, h5 {
 	flex: 1;
 	flex-grow: 1;
 	overflow-x: scroll;
+	margin: -2px;
+	.transition(all 0.1s);
+	&.blurred {
+		-webkit-filter: saturate(0.3) brightness(0.9);
+	}
 }

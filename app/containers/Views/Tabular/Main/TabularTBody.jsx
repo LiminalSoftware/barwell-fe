@@ -137,7 +137,8 @@ var TabularTBody = React.createClass ({
 			position: 'absolute'
 		}
 
-		return <div className = "tabular-tbody"
+		return <div
+				className = {"tabular-tbody "}
 				ref = "tbody"
 				style = {style}
 				onMouseDown = {_this.props.clicker}

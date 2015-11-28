@@ -45,8 +45,7 @@ var SortMenu = React.createClass({
 		var view = this.props.view
 		var data = view.data
 		var sortList = data.sorting
-
-
+		
     return <div className = "header-section">
 			<div className="header-label">Sort Order</div>
 			<div className="model-views-menu" onClick = {this.onClick}>

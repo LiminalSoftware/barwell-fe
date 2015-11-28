@@ -6,9 +6,19 @@ import viewTypes from "../Views/viewTypes"
 import { Link } from "react-router"
 // var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
+var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+var blurOnClickMixin = require('../../blurOnClickMixin')
+
 var ViewSelector = React.createClass({
+
+	mixins: [PureRenderMixin],
+
 	getInitialState: function () {
 		return {open: false}
+	},
+
+	blur: function () {
+		this.setState({open: false})
 	},
 
 	onClick: function () {
@@ -26,7 +36,7 @@ var ViewSelector = React.createClass({
 				<div className="model-views-menu-inner">
 					<ViewItem {...this.props} className="inline"/>
 				</div>
-
+				<div className="dropdown small grayed icon icon-geo-arrw-down"></div>
 				{this.state.open ? <ViewsList {...this.props}/> : null}
 			</div>
 		</div>
@@ -50,7 +60,7 @@ var ViewsList = React.createClass({
 					Edit
 				</span>
 				<span className="menu-sub-item">
-					<span className="large view-icon icon icon-cr-add"/>
+					<span className="view-icon icon icon-plus"/>
 					Add new
 				</span>
 			</div>

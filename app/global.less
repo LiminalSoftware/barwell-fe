@@ -19,32 +19,6 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
     format("svg");
 }
 
-//
-// @font-face{
-// font-family:"Neue Haas Unica Thin";
-// src:url("assets/fonts/fcdce581-b79f-4e16-8f98-2bae765fe602.eot?#iefix") format('embedded-opentype');
-// src:url("assets/fonts/fcdce581-b79f-4e16-8f98-2bae765fe602.eot?#iefix") format('embedded-opentype'),
-// url("assets/fonts/62fbb167-a51a-498e-959e-0eaccfd3f1bc.woff2") format("woff2"),
-// url("assets/fonts/914e851e-cdbd-41d8-b82d-744ce5d6d30d.woff") format("woff"),
-// url("assets/fonts/41a46789-4631-4e39-8d8c-5ca20e68195b.ttf") format("truetype"),
-// url("assets/fonts/3c909de3-5588-4dab-b31b-8f900cf2750b.svg#3c909de3-5588-4dab-b31b-8f900cf2750b") format("svg");
-// }
-
-// @font-face{
-//   font-family: "Slab";
-//   src:url("assets/fonts/Slabo13px-Regular.ttf");
-// }
-
-@font-face{
-  font-family: "Open Sans";
-  src:url("assets/fonts/OpenSans-Regular.ttf");
-}
-
-// @font-face{
-//   font-family: "Open Sans - Extra Bold";
-//   src:url("assets/fonts/OpenSans-ExtraBold.ttf");
-// }
-
 // ==============================
 
 @bodyFont: "Helvetica Neue LT W04_45", "Helvetica", sans-serif;
@@ -58,20 +32,16 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
 @gray3: #CBC3B7;
 @gray4: #FAFAF4;
 
-@purple1: darken(#079538, 5%);
-@purple2: #079538;
-
-@steelblue: steelblue;
-@steelblue2: lighten(steelblue, 10%);
-@steelblue4: lighten(steelblue, 30%);
+@gray-trans: rgba(102, 81, 81, 0.1);
 
 @newgreen1: #079538;
 @newgreen2: lighten(@newgreen1, 5%);
-
+@green5: #F2FDF5;
 @darkgreen0: #7BA66D;
 @darkgreen0-trans: rgba(72, 156, 77, 0.5);
-// @darkgreen0: @newgreen2;
 @darkgreen1: #92A88A;
+
+@green-trans: hsla(134,  50%, 70%, 0.1);
 
 @red-bright-trans: hsla(346, 100%, 40%, 50%);
 
@@ -97,118 +67,13 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
 	margin: 1px;
    -webkit-border-radius: 8px;
    border-radius: 10px;
-   background: @heavyCream;
 }
 ::-webkit-scrollbar-thumb:window-inactive {
-	background: @pureGray2;
+	background: @gray3;
 }
 //=================================
 
 
-
-@turquoise: #1abc9c;
-@emerland: #2ecc71;
-@peterriver: #3498db;
-@amethyst: #9b59b6;
-
-@greensea: #16a085;
-@nephritis: #27ae60;
-@belizehole: #2980b9;
-@wisteria: #8e44ad;
-
-@midnightblue: #2c3e50;
-@wetasphalt: #34495e;
-
-@sunflower: #f1c40f;
-@carrot: #e67e22;
-@alizarin: #e74c3c;
-@coulds:  #ecf0f1;
-// .clouds { background: #ecf0f1; color: #999; }
-@concrete: #95a5a6;
-@orange: #f39c12;
-@pumpkin: #d35400;
-@pomegranate: #c0392b;
-@silver: #bdc3c7;
-@asbestos: #7f8c8d;
-
-
-
-
-@editor-color-1: @sunflower;
-@editor-color-2: @carrot;
-
-
-
-//=================================
-// COLORS
-//=================================
-
-@red-base:   hsla(346,  90%, 20%, 1);
-@red-dark:   hsla(346, 100%, 10%, 1);
-@red-bright: hsla(346, 100%, 40%, 1);
-@red-tint-1: hsla(346,  70%, 40%, 1);
-@red-tint-2: hsla(346,  55%, 55%, 1);
-
-
-@blue-base:    hsla(207,  90%, 20%, 1);
-@blue-dark:    hsla(207, 100%, 10%, 1);
-@blue-bright:  hsla(207, 100%, 40%, 1);
-@blue-tint-1:  hsla(207,  80%, 85%, 1);
-@blue-tint-2:  hsla(207,  55%, 70%, 1);
-
-
-@green-bright: hsla(134, 100%, 40%, 1);
-@green-tint-1: hsla(134,  70%, 40%, 1);
-@green-tint-2: hsla(134,  55%, 55%, 1);
-@green-tint-3: hsla(134,  30%, 80%, 1);
-
-@green-trans: hsla(134,  50%, 70%, 0.1);
-
-@darkText: @wetasphalt;
-@lightTextNew: rgba(255,255,255,0.4);
-@cream: white;
-@creamm: rgb(245,245,225);
-@heavyCream: @coulds;
-
-// rgb(239,233,211);
-@white: rgb(245,236,227);
-@bluegray-dark: darken(rgb(54,57,74), 10%);
-
-@gray-0: #e9e6ee;	/* Main Primary color */
-@gray-2: @coulds;
-@gray-3: @silver;
-// @gray-3: rgba(102, 81, 81,1);
-
-// hsla(1, 5%, 45%, 100%);
-@gray-4: rgb(54,57,74);;
-// @gray-4: rgba( 69, 57, 57,1);
-@gray-trans: rgba(102, 81, 81, 0.1);
-
-
-
-
-@green3: #46b980;
-// @green3: gold;
-@green4: lighten(@green3,30%);
-
-@blue3: steelblue;
-@blue4: lighten(steelblue, 20%);
-
-@pureGray1: #F5F5F5;
-@pureGray2: #A5A5A5;
-@pureGray3: #504a5a;
-@pureGray4: #504a5a;
-
-
-@gray5: @wetasphalt;
-
-@red3:  lighten(red, 40%);
-
-
-@lighttext: white;
-@lightaccent: lighten(green, 70%);
-@textcolor: #333;
-@texthover: darkred;
 
 
 // mixins
@@ -259,23 +124,6 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
 	-o-transform: 		 rotate(@deg);
 }
 
-.info-box {
-
-	float: right;
-	color: @green3;
-}
-
-.armKill:hover {
-	color: @red-tint-2;
-}
-
-.addNew:hover {
-	color: @green-tint-3;
-}
-
-.addNew.icon {
-	color: @green-tint-2;
-}
 
 .icon {
 	font-weight: 400;
@@ -341,23 +189,6 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
 		.rotate(180deg);
 	}
 }
-
-
-
-
-input[type="checkbox"] +  {
-	appearance: none;
-   display:inline-block;
-   width:14px;
-   height:14px;
-   background-color: @pureGray3;
-   border: 1px solid @pureGray1;
-}
-
-body.hidden-sidebar {
-	margin-left: -300px;
-}
-
 
 
 
@@ -501,4 +332,29 @@ body.hidden-sidebar {
 	-moz-transform-origin:    @x @y;
 	-ms-transform-origin:     @x @y;
 	-o-transform-origin:      @x @y;
+}
+
+@headerBorderColor: @gray3;
+@headerBorderRadius: 2px;
+@headerOuterBorderWidth: 3px;
+@headerOuterBorderColor: @green-trans;
+@headerBgColor: @gray4;
+@headerFontColor: @gray1;
+@headerFontSize: 16px;
+
+
+
+.msInput {
+  padding: 0px;
+  border: none;
+  outline: none;
+  background: none;
+  border-bottom: 1px solid @headerBorderColor;
+  color: @headerFontColor;
+  font-family: @bodyFont;
+  font-size: @headerFontSize;
+  min-width: 50px;
+  margin: 0;
+  margin-bottom: -1px;
+  border-radius: 0;
 }

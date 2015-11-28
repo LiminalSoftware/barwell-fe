@@ -19,7 +19,6 @@ var commitMixin = {
 
 	getInitialState: function () {
 		return {
-			selected: false,
 			value: this.validator(this.props.value)
 		}
 	},

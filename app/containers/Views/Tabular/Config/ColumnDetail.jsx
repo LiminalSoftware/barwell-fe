@@ -93,8 +93,6 @@ var ColumnDetail = React.createClass({
 	render: function () {
 		var view = this.props.view
 		var config = this.props.config
-		var wedgeClasses = "small grayed icon icon-geo-triangle " +
-			(config.expanded ? " wedge open" : "wedge closed")
 		var name = config.name
 		var nameField = (this.state.editing ? <input type="textbox" value={name} /> : name)
 		var key = "attr-" + config.column_id

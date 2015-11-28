@@ -262,7 +262,7 @@ var TabularPane = React.createClass ({
 		} else if (direction === 'ENTER') {
 			var mod = (outline.bottom - outline.top + 1)
 			var bigMod = mod * (outline.right - outline.left + 1)
-			var index = (ptr.left - outline.right) * mod + ptr.top - outline.top
+			var index = (ptr.left - outline.left) * mod + ptr.top - outline.top
 			index += (shift ? -1 : 1)
 			if (index < 0) index += bigMod
 			index = index % bigMod
@@ -338,7 +338,10 @@ var TabularPane = React.createClass ({
 		var sel = this.state.selection
 		var cpy = this.state.copyarea
 
-		return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">
+		return <div
+			onScroll={this.onScroll}
+			ref="wrapper"
+			className = {"view-body-wrapper " + (focused ? "focused" : "blurred")}>
 
 					<TabularTHead
 						key = {"tabular-thead-" + view.view_id}
@@ -362,12 +365,13 @@ var TabularPane = React.createClass ({
 						openContextMenu = {_this.openContextMenu}
 						columns = {columns}
 						sorting = {view.data.sorting}
+						focused = {focused}
 						scrollTop = {this.state.scrollTop}>
 
 						<Overlay
 							columns = {columns}
-							className={"pointer" + (_this.isFocused() ? " focused" : "")}
-							ref="pointer"
+							className = {"pointer" + (focused ? " focused" : "")}
+							ref = "pointer"
 							{...this.props}
 							onDoubleClick={this.startEdit}
 							position = {sel}
@@ -375,10 +379,10 @@ var TabularPane = React.createClass ({
 
 						<Overlay
 							columns = {columns}
-							className={"selection " + (_this.isFocused() ? " focused" : "")}
-							ref="selection"
+							className = {"selection " + (_this.isFocused() ? " focused" : "")}
+							ref = "selection"
 							{...this.props}
-							onDoubleClick={this.startEdit}
+							onDoubleClick = {this.startEdit}
 							position = {sel}
 							fudge = {{left: -2.25, top: -1.25, width: -4.25, height: -4.25}} />
 
@@ -389,7 +393,7 @@ var TabularPane = React.createClass ({
 							{...this.props}
 							{...this.props}
 							position = {cpy}
-							fudge = {{left: 1, top: 1}}/>
+							fudge = {{left: 0, top: 1, height: 1, width: 1}}/>
 
 					</TabularBodyWrapper>
 

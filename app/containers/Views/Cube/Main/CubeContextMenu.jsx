@@ -31,6 +31,11 @@ var CubeContextMenu = React.createClass ({
 		this.props.handleContextBlur()
 	},
 
+	componentDidUnmount: function () {
+		document.removeEventListener('keyup', this.handleKeyPress)
+		document.removeEventListener('click', this.handleClick)
+	},
+
 	clickAddNewRecord: function (e) {
 		console.log('clickaddNewRecord')
 		this.props.addNewRecord()

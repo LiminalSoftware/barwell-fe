@@ -25,10 +25,10 @@ var TabularBodyWrapper = React.createClass ({
 		var geo = view.data.geometry
 
 		var wrapperStyle = {
-			top: (geo.headerHeight + geo.topGutter + 1) + 'px',
+			top: (geo.headerHeight + geo.topGutter) + 'px',
 			bottom: 0,
 			left: geo.leftGutter + 'px',
-			width: this.props.totalWidth + 'px',
+			width: (this.props.totalWidth + 10) + 'px',
 			position: 'absolute',
 		}
 

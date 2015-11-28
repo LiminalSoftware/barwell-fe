@@ -17,6 +17,14 @@ var ColumnDetail = React.createClass({
 
 	mixins: [PureRenderMixin],
 
+	getInitialState: function () {
+		return {open: false}
+	},
+
+	toggleOpenMenu: function () {
+		this.setState({open: !this.state.open})
+	},
+
 	toggleVisibility: function (event) {
 		var config = this.props.config
 		this.commitChanges({visible: !config.visible})
@@ -57,34 +65,29 @@ var ColumnDetail = React.createClass({
 				view: view,
 				config: config
 			})
-		else typeSpecificConfig = null
+		else typeSpecificConfig = <span className="double-column-config"/>
 
     return <div
       className="menu-item menu-sub-item column-item">
-      <span className="double-column-config">{config.name}</span>
-			<span className="column-config" onClick={this.toggleVisibility}>
-				{
-				config.visible ?
-				<span><span className="clickable icon icon-eye-3"></span> Visible </span>
-				:
-				<span><span className="clickable icon icon-eye-4 grayed"></span>Hidden </span>
-				}
-			</span>
-			<span className="column-config">
-				<span className={"clickable icon icon-align-left "
-					+ (config.align === 'left' ? '' : 'grayed')}
-					onClick={this.toggleLeftAlign}>
+				{this.props.open ? <span className="icon grayed icon-Layer_2"></span> : null}
+	      <span className="double-column-config">
+					{config.name}
 				</span>
-				<span className={"clickable icon icon-align-center "
-					+ (config.align === 'center' ? '' : 'grayed')}
-					onClick={this.toggleCenterAlign}>
+				<span className="column-config">
+					<span className={"clickable icon icon-align-left "
+						+ (config.align === 'left' ? '' : 'grayed')}
+						onClick={this.toggleLeftAlign}>
+					</span>
+					<span className={"clickable icon icon-align-center "
+						+ (config.align === 'center' ? '' : 'grayed')}
+						onClick={this.toggleCenterAlign}>
+					</span>
+					<span className={"clickable icon icon-align-right "
+						+ (config.align === 'right' ? '' : ' grayed')}
+						onClick={this.toggleRightAlign}>
+					</span>
 				</span>
-				<span className={"clickable icon icon-align-right "
-					+ (config.align === 'right' ? '' : ' grayed')}
-					onClick={this.toggleRightAlign}>
-				</span>
-			</span>
-			{typeSpecificConfig}
+				{typeSpecificConfig}
 		</div>
 	}
 });

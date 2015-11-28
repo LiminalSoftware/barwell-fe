@@ -1,9 +1,5 @@
 @import "../../global.less";
 
-@borderColor: @gray3;
-@bgColor: @gray4;
-@fontColor: @gray1;
-
 ul.sidebar-model-list {
 	display: flex;
 	list-style: none;
@@ -14,7 +10,7 @@ ul.sidebar-model-list {
 	background: @gray4;
 
 	& > li.add-new {
-		border-right: 1px solid @borderColor;
+		border-right: 1px solid @headerBorderColor;
 
 		a {
 			color: white;
@@ -24,8 +20,8 @@ ul.sidebar-model-list {
 	}
 
 	& > li {
-		border-left: 1px solid @borderColor;
-		border-top: 1px solid @borderColor;
+		border-left: 1px solid @headerBorderColor;
+		border-top: 1px solid @headerBorderColor;
 		flex-direction: row;
 		padding: 0;
 	}
@@ -36,9 +32,9 @@ ul.sidebar-model-list {
 		display: block;
 		text-decoration: none;
 		position: relative;
-		color: @fontColor;
+		color: @headerFontColor;
 
-		background: @bgColor;
+		background: @headerBgColor;
 
 		font-size: 16px;
 		font-weight: 400;
@@ -46,13 +42,13 @@ ul.sidebar-model-list {
 	}
 
 	& > li.active {
-		background: @gray4;
+		background: @headerBgColor;
 		margin-bottom: -1px;
-		border-bottom: 1px solid @bgColor;
+		border-bottom: 1px solid @headerBgColor;
 	}
 
 	& > li:not(.active) > a {
-		background: @gray4;
+		background: @headerBgColor;
 		// lighten(@gray2, 10%);
 	}
 
@@ -60,28 +56,9 @@ ul.sidebar-model-list {
 		background: white;
 	}
 
-	& > li.editmode > a {
-
-		background: @bgColor;
-		border-radius: 4px;
-		padding-right: 5px;
-	}
-
 	input {
 		display: block;
-		border-radius: 4px;
-		padding: 0px;
-		border: none;
-		outline: none;
-		background: none;
-		border-bottom: 1px solid @borderColor;
-		color: @fontColor;
-		font-family: @bodyFont;
-		font-size: 16px;
-		min-width: 50px;
-		margin: 0;
-		margin-bottom: -1px;
-		border-radius: 0;
+		.msInput;
 	}
 }
 
@@ -90,5 +67,5 @@ ul.sidebar-model-list {
 	order: -2;
 	padding: 0;
 	overflow: visible;
-	border-bottom: 1px solid @borderColor;
+	border-bottom: 1px solid @headerBorderColor;
 }

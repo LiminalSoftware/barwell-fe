@@ -17,6 +17,13 @@ var enumerate = function (things, identifier) {
 	return _.indexBy(list, identifier);
 }
 
+var limit = function (thing, view) {
+	var columns = view.data.columnList.filter(col => col.visible).length
+	thing.left = Math.min(thing.left, columns - 1)
+	if (thing.right) thing.right = Math.min(thing.right, columns)
+	return thing
+}
+
 var groomView = function (view) {
 
 	var model = ModelStore.get(view.model_id);
@@ -87,13 +94,16 @@ var groomView = function (view) {
 	data.columns = enumerate(columns, 'column_id');
 	data.columnList = _.sortBy(_.values(data.columns), 'order');
 	data.selection = _.extend({'left': 0, 'top': 0, 'right': 0, 'bottom': 0}, (data.selection || {}) );
+	data.selection = limit(data.selection, view)
 	data.anchor = _.extend({"left": 0, "top": 0}, data.anchor || {});
+	data.anchor = limit(data.anchor, view)
 	data.pointer = _.extend({"left": 0, "top": 0}, data.pointer || {});
+	data.pointer = limit(data.pointer, view)
 	data.scrollTop = data.scrollTop || 0;
 
 	data.geometry = _.extend({
 		// leftGutter: 1,
-		leftOffset: 1,
+		leftOffset: 0,
 		topGutter: 0,
 		headerHeight: 28.5,
 		rowHeight: 25,

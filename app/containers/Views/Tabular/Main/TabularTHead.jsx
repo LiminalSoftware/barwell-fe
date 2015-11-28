@@ -37,7 +37,8 @@ var TabularTHead = React.createClass ({
 				return el
 			})
 		}
-		<span style={{left: (left + 5) + 'px', width: geo.rowHeight,
+		<span style={{left: (left) + 'px',
+			width: (geo.rowHeight * 2) + 'px',
 			height: geo.headerHeight}} className="table-cell columnAdder">
 			<span className="table-cell-inner"> + </span></span>
 		</div>

@@ -49,11 +49,7 @@ var CheckboxElement = React.createClass({
 		var style = this.props.style
 		var className = (this.props.className || '') + ' table-cell '
 			+ (this.state.selected ? ' selected ' : '');
-
-		// return <span {...this.props} className={this.props.className || '' +
-		// 	' checkbox' + (this.state.selected ? ' selected ' : '')}>
-		// 	<input type="checkbox" checked={!!value} onChange={this.handleClick}></input>
-		// </span>
+		
 		return <span {...this.props} className={className}>
 				<span className = "table-cell-inner checkbox-inner">
 					<span className="checkbox-surround" onClick={this.handleClick}>

@@ -40,13 +40,14 @@ var hasOneField = {
 			var key = "attr-" + config.id
 			var model_id = config.related_model_id
 
-			return <span className="column-config">
+			return <span className="double-column-config">
 					<select onChange={this.onLabelChange} value={this.state.label}>
 						{AttributeStore.query({model_id: model_id}).map(function (attr) {
 							return <option value={'a' + attr.attribute_id}>{attr.attribute}</option>
 						})}
 					</select>
-			</span>
+			</span>;
+			// {(config.label) ? (value[config.label] || "...") : "..." }
 		}
 	}),
 
@@ -60,7 +61,7 @@ var hasOneField = {
 			var object = this.props.object
 
 			return <span className="table-cell" style={style}>
-				<span className="pick-one table-cell-inner">{(config.label) ? (value[config.label] || "...") : "..." }</span>
+				<span className="pick-one table-cell-inner">...</span>
 				<span key="expander" className="small grayed icon icon-geo-triangle wedge open"></span>
 			</span>
 		},

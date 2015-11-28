@@ -55,8 +55,8 @@ var dateField = {
 			var key = "attr-" + config.id
 			var style = this.props.style
 
-			return <span className="column-config">
-					<input type="text" value={this.state.dateFormat} onBlur={this.onBlur} onChange={this.onFormatChange}/>
+			return <span className="double-column-config">
+					<input type="text" spellcheck="false" value={this.state.dateFormat} onBlur={this.onBlur} onChange={this.onFormatChange}/>
 			</span>
 		}
 	}),

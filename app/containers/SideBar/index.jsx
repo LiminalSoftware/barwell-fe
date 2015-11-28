@@ -1,7 +1,6 @@
 import React from "react"
 import { Link } from "react-router"
 import styles from "./style.less"
-import buttonStyle from "./mbButtons.less"
 import subHeader from "./subHeader.less"
 
 import _ from "underscore"
