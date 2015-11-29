@@ -12,6 +12,7 @@ import KeycompStore from "../../../../stores/KeycompStore"
 
 import ColumnDetail from "./ColumnDetail"
 import constant from '../../../../constants/MetasheetConstants'
+import util from "../../../../util/util"
 
 import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
 
@@ -19,6 +20,8 @@ var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 var blurOnClickMixin = require('../../../../blurOnClickMixin')
 
 var ColumnMenu = React.createClass({
+
+	itemHeight: 30,
 
 	mixins: [PureRenderMixin],
 
@@ -31,30 +34,75 @@ var ColumnMenu = React.createClass({
 	},
 
 	_onChange: function () {
-		var view = ViewStore.get(this.props.view.view_id || this.props.view.cid)
-		this.setState(view.data)
+		this.forceUpdate()
 	},
 
+	onMouseMove: function (e) {
+    if (!this.state.dragItem) return
+		var item = this.state.dragItem
+		var order =  this.state.dragItemOrder
+		var hiddenCols = this.state.hiddenCols
+		var visibleCols = this.state.visibleCols
+		var dragOffset = e.pageY - this.state.dragInitOffset
+		var delta = Math.floor(Math.abs(dragOffset) / this.itemHeight)
+			* Math.sign(dragOffset)
+
+		if (Math.abs(delta) < 0) this.setState({
+      dragOffset: dragOffset
+    })
+
+
+
+    e.stopPropagation()
+    e.preventDefault()
+  },
+
 	getInitialState: function () {
-		return {open: false}
+		var view = this.props.view
+		var columns = view.data.columnList
+		var hiddenCols = columns.filter(col => !col.visible)
+		var visibleCols = columns.filter(col => col.visible)
+
+		return {
+			open: false,
+			hiddenCols: hiddenCols,
+			numHidden: hiddenCols.length,
+			visibleCols: visibleCols,
+			dragItem: null,
+			dragItemOrder: null,
+			dragOffset: null,
+			dragInitOffset: null
+		}
 	},
 
 	handleBlur: function () {
-		console.log('blurrrrrr')
-		this.setState({open: false})
+		this.setState({
+			open: false,
+			editing: false
+		})
 		document.removeEventListener('keyup', this.handleKeyPress)
-    document.removeEventListener('click', this.handleBlur)
+    document.removeEventListener('click', this.handleClick)
 	},
 
 	handleOpen: function () {
 		this.setState({open: true})
 		document.addEventListener('keyup', this.handleKeyPress)
-    document.addEventListener('click', this.handleBlur)
+    document.addEventListener('click', this.handleClick)
+	},
+
+	handleClick: function (event) {
+		if (!event.__cancelBubble) this.handleBlur()
 	},
 
 	handleKeyPress: function (event) {
     if (event.keyCode === constant.keycodes.ESC) this.handleBlur()
   },
+
+	clickTrap: function (event) {
+		event.stopPropagation()
+		event.preventDefault()
+		event.nativeEvent.stopImmediatePropagation();
+	},
 
 	render: function() {
 		var _this = this
@@ -68,33 +116,38 @@ var ColumnMenu = React.createClass({
 			if (column) columns = [column]
 			else columns = []
 		}
-		var hiddenAttr = columns.filter(col => !col.visible)
-		var visibleAttr = columns.filter(col => col.visible)
+		var hiddenCols = this.state.hiddenCols
+		var visibleCols = this.state.visibleCols
+
 		var makeAttrDivs = function (columns) {
-			return columns.map(function (col) {
+			return columns.map(function (col, idx) {
 				return <ColumnDetail
-					key = {"detail-" + (col.attribute_id || col.relationship_id)}
+					key = {"detail-" + col.column_id}
 					config = {col} view= {view}
-					open = {_this.state.open}/>
+					open = {_this.state.open}
+					index = {idx}/>
 			})
 		}
 
-    return <div className = "double header-section">
+    return <div className = "double header-section" >
 			<div className="header-label">Table Columns</div>
-			<div className="model-views-menu" >
-				<div className="model-views-menu-inner">
+			<div className="model-views-menu">
+				<div className="model-views-menu-inner" onClick={this.clickTrap}>
 				{
 					this.state.open ?
 					<div className = "dropdown-menu">
 						<div className="menu-item menu-sub-item menu-divider">
-							<div className="menu-divider-label">Hidden Atributes</div>
+							<div className="menu-divider-label">Hidden Attributes</div>
 						</div>
-						{makeAttrDivs(hiddenAttr)}
+						{makeAttrDivs(hiddenCols)}
 						<div className="menu-item menu-sub-item menu-divider">
-							<div className="menu-divider-label">Visible Atributes</div>
+							<div className="menu-divider-label">Visible Attributes</div>
 						</div>
-						{makeAttrDivs(visibleAttr)}
-						<div className="menu-item menu-sub-item column-item">Add new attribute</div>
+						{makeAttrDivs(visibleCols)}
+						<div className="menu-item column-item">
+							<div className="menu-sub-item">Add new attribute</div>
+							<div className="menu-sub-item">Edit attributes</div>
+						</div>
 					</div>
 					:
 					makeAttrDivs(columns)

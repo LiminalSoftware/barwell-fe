@@ -56,7 +56,13 @@ var dateField = {
 			var style = this.props.style
 
 			return <span className="double-column-config">
-					<input type="text" spellcheck="false" value={this.state.dateFormat} onBlur={this.onBlur} onChange={this.onFormatChange}/>
+					Format:
+					<input type = "text"
+						className = "renamer"
+						spellCheck = "false"
+						value = {this.state.dateFormat}
+						onBlur = {this.onBlur}
+						onChange = {this.onFormatChange}/>
 			</span>
 		}
 	}),

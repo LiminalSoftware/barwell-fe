@@ -37,26 +37,29 @@ var SortMenu = React.createClass({
 		return {open: false}
 	},
 
-	onClick: function () {
-		return this.setState({open: !this.state.open})
+	handleOpen: function () {
+		return this.setState({open: true})
 	},
 
 	render: function() {
 		var view = this.props.view
 		var data = view.data
 		var sortList = data.sorting
-		
+		var sortPreview
+
+		if (sortList.length === 1) sortPreview = <SortDetail config = {sortList[0]} view = {view}/>
+		else if (sortList.length > 1) sortPreview = <div className="menu-item menu-sub-item">Multiple sort levels</div>
+		else if (sortList.length === 0) sortPreview = <div className="menu-item menu-sub-item">Default sort order</div>
+
     return <div className = "header-section">
 			<div className="header-label">Sort Order</div>
 			<div className="model-views-menu" onClick = {this.onClick}>
 				<div className="model-views-menu-inner">
-					{
-					sortList.map(function(config) {
-						return <SortDetail config = {config} view = {view}/>
-					})
-					}
+					{sortPreview}
 				</div>
+				<div className="dropdown small grayed icon icon-geo-arrw-down" onClick = {this.handleOpen}></div>
 			</div>
+
 		</div>
 	}
 });

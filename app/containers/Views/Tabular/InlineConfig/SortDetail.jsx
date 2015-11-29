@@ -40,14 +40,14 @@ var SortDetail = React.createClass({
     var view = this.props.view
     var config = this.props.config
 		var attr = AttributeStore.get(config.attribute_id)
-    return <span className="menu-token">
+    return <div className="menu-item menu-sub-item">
       {attr.attribute}
 
 			<span onClick={this.switch}
 				className={"icon grayed left-pad icon-sort-az-" + (config.descending ? 'high' : 'low')}>
 			</span>
 			<span onClick={this.remove} className="icon small grayed icon-kub-remove"></span>
-		</span>
+		</div>
 	}
 });
 

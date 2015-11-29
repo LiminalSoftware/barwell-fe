@@ -57,7 +57,7 @@ var groomView = function (view) {
 		}
 		col.visible = (col.visible === false) ? false : true
 		col.expanded = !!col.expanded
-		col.width = Math.round(_.isNumber(col.width) ? col.width : 100)
+		col.width = (col.width > 50 ? col.width : 50)
 		col.order = col.order || iter ++
 		col.sorting = sorting[field.attribute_id]
 

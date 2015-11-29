@@ -106,7 +106,7 @@ var AttributeDetail = React.createClass({
 				<span  key={key + '-name'} title={col.attribute_id} className={"width-40 " + (this.props.editing ? " tight" : "")}>
 					{this.props.editing ?
 					<input ref="renamer"
-						className="renamer"
+						className="renamer header-renamer"
 						value = {this.state.attribute}
 						onChange = {this.handleNameUpdate}
 						onBlur = {this.commitUpdate}

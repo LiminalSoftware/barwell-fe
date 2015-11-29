@@ -56,12 +56,12 @@ var ViewsList = React.createClass({
 			{views.map(view => <ViewItem {...this.props} view={view} />)}
 			<div className="menu-item">
 				<span className="menu-sub-item">
-					<span className="large view-icon icon icon-pencil-2"/>
-					Edit
+
+					Edit views
 				</span>
 				<span className="menu-sub-item">
-					<span className="view-icon icon icon-plus"/>
-					Add new
+
+					Add new view
 				</span>
 			</div>
 		</div>

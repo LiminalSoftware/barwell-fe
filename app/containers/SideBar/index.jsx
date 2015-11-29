@@ -165,7 +165,7 @@ var ModelLink = React.createClass ({
 		var lock_icon
 
 		var modelDisplay = (!!this.state.renaming) ?
-			(<input className="model-renamer" ref="renamer" value={this.state.name} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/>) :
+			(<input className="renamer header-renamer" ref="renamer" value={this.state.name} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/>) :
 			(<span>{model.model}</span>) ;
 
 		if (model.lock_user)

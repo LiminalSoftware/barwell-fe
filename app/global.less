@@ -42,7 +42,7 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
 @darkgreen1: #92A88A;
 
 @green-trans: hsla(134,  50%, 70%, 0.1);
-
+@purple-trans: hsla(301, 44%, 70%, 0.3);
 @red-bright-trans: hsla(346, 100%, 40%, 50%);
 
 //=================================
@@ -138,6 +138,13 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
     .rotate(180deg);
   }
 
+  &.draggable {
+    cursor: move;
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+  }
+
 	&.right-align {
 		float: right;
 	}
@@ -176,6 +183,24 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
 
   &.left-pad {
     margin-left: 10px;
+  }
+
+  &.boxed {
+    display: inline-block;
+    border: 1px solid @newgreen1;
+    vertical-align: middle;
+    text-align: center;
+    padding: 4px;
+    min-width: 15px;
+  }
+
+  &.gray-boxed {
+    display: inline-block;
+    background: @gray4;
+    vertical-align: middle;
+    text-align: center;
+    padding: 4px;
+    min-width: 15px;
   }
 }
 
@@ -341,10 +366,11 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
 @headerBgColor: @gray4;
 @headerFontColor: @gray1;
 @headerFontSize: 16px;
-
+@headerOuterHilite: @purple-trans;
 
 
 .msInput {
+  display: inline-block;
   padding: 0px;
   border: none;
   outline: none;
@@ -352,8 +378,8 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
   border-bottom: 1px solid @headerBorderColor;
   color: @headerFontColor;
   font-family: @bodyFont;
-  font-size: @headerFontSize;
   min-width: 50px;
+  width: 100px;
   margin: 0;
   margin-bottom: -1px;
   border-radius: 0;
