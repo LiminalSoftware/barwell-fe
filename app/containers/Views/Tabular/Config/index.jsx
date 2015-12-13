@@ -17,11 +17,10 @@ import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
 import groomView from '../../groomView'
 
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
-var sortable = require('react-sortable-mixin');
 
 var TabularViewConfig = React.createClass({
 
-	mixins: [PureRenderMixin, sortable.ListMixin],
+	mixins: [PureRenderMixin],
 
 	componentWillMount: function () {
 		ViewStore.addChangeListener(this._onChange);

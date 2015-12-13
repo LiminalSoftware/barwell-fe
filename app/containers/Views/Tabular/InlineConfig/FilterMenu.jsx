@@ -16,7 +16,7 @@ import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
 
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
-var SortMenu = React.createClass({
+var FilterMenu = React.createClass({
 
 	mixins: [PureRenderMixin],
 
@@ -36,18 +36,14 @@ var SortMenu = React.createClass({
 	render: function() {
 		var view = this.props.view
 		var data = view.data
-		var sortList = data.sorting
-		var sortPreview
-
-		if (sortList.length === 1) sortPreview = <SortDetail config = {sortList[0]} view = {view}/>
-		else if (sortList.length > 1) sortPreview = <div className="menu-item closed menu-sub-item">Multiple sort levels</div>
-		else if (sortList.length === 0) sortPreview = <div className="menu-item closed menu-sub-item">Default sort order</div>
 
     return <div className = "header-section">
-			<div className="header-label">Sort Order</div>
+			<div className="header-label">
+        Filter
+      </div>
 			<div className="model-views-menu" onClick = {this.onClick}>
 				<div className="model-views-menu-inner">
-					{sortPreview}
+
 				</div>
 				<div className="dropdown small grayed icon icon-geo-arrw-down" onClick = {this.handleOpen}></div>
 			</div>
@@ -56,4 +52,4 @@ var SortMenu = React.createClass({
 	}
 });
 
-export default SortMenu;
+export default FilterMenu;

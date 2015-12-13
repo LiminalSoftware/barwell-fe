@@ -31,6 +31,7 @@ module.exports = {
     X: 88,
     Z: 90,
     Y: 91,
+    DELETE: 46,
   	ENTER: 13,
   	ESC: 27,
   	ARROW_UP: 38,
@@ -49,7 +50,7 @@ module.exports = {
     sum: ['@INTEGER|DECIMAL'],
     count: ['@*'],
     average: ['@INTEGER|DECIMAL'],
-    heat: ['@DECIMAL'],
+    heat: ['@DECIMAL|PERCENTAGE'],
     concatenate: ['@TEXT|INTEGER'],
     month: ['DATE|DATE_TIME'],
     day: ['DATE|DATE_TIME']

@@ -5,16 +5,24 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 
 var commitMixin = {
 
-	commitChanges: function () {
+	commitValue: function (value) {
+		console.log('value: ' + value)
+		console.log('this.validator(value): ' + this.validator(value))
 		var config = this.props.config
 		var column_id = this.props.column_id
 		var model = this.props.model
 		var selector = this.props.selector
 		var patch = {}
 
-		patch[column_id] = this.validator(this.state.value)
+		this.setState({value: value})
+		patch[column_id] = this.validator(value)
+
 		modelActionCreators.patchRecords(model, patch, selector)
 		if (this.revert) this.revert();
+	},
+
+	commitChanges: function () {
+		this.commitValue(this.state.value)
 	},
 
 	getInitialState: function () {

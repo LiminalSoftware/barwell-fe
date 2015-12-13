@@ -10,6 +10,7 @@ import ModelStore from "../../../../stores/ModelStore"
 import AttributeStore from "../../../../stores/AttributeStore"
 import KeyStore from "../../../../stores/KeyStore"
 import KeycompStore from "../../../../stores/KeycompStore"
+import constant from '../../../../constants/MetasheetConstants'
 
 import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
@@ -25,35 +26,6 @@ var ColumnDetail = React.createClass({
 		}
 	},
 
-	componentDidUpdate: function (props, state) {
-    if (this.state.dragging && !state.dragging) {
-      document.addEventListener('mousemove', this.onMouseMove)
-      document.addEventListener('mouseup', this.onMouseUp)
-    } else if (!this.state.dragging && state.dragging) {
-      document.removeEventListener('mousemove', this.onMouseMove)
-      document.removeEventListener('mouseup', this.onMouseUp)
-    }
-  },
-
-	onDrag: function (e) {
-    // only left mouse button
-    if (e.button !== 0) return
-    var pos = $(this.getDOMNode()).offset()
-    this.setState({
-      dragging: true,
-			yOffset: 0,
-      rel: e.pageY
-    })
-    e.stopPropagation()
-    e.preventDefault()
-  },
-
-  onMouseUp: function (e) {
-    this.setState({dragging: false})
-    e.stopPropagation()
-    e.preventDefault()
-  },
-
 	toggleOpenMenu: function () {
 		this.setState({open: !this.state.open})
 	},
@@ -63,28 +35,29 @@ var ColumnDetail = React.createClass({
 		this.commitChanges({visible: !config.visible})
 	},
 
-	toggleRightAlign: function (event) {
-		var config = this.props.config
-		this.commitChanges({align: 'right'})
+	componentWillReceiveProps: function (nextProps) {
 	},
 
-	toggleCenterAlign: function (event) {
-		var config = this.props.config
-		this.commitChanges({align: 'center'})
-	},
-
-	toggleLeftAlign: function (event) {
-		var config = this.props.config
-		this.commitChanges({align: 'left'})
+	toggleAlign: function (event) {
+		var align = this.props.config.align
+		if (align === 'left') align = 'center'
+		else if (align === 'center') align = 'right'
+		else align = 'left'
+		this.commitChanges({align: align})
 	},
 
 	commitChanges: function (colProps) {
 		var view = this.props.view
 		var column_id = this.props.config.column_id
 		var col = view.data.columns[column_id]
+
 		col = _.extend(col, colProps)
 		view.data.columns[column_id] = col;
-		modelActionCreators.createView(view, true, false)
+		modelActionCreators.createView(view, true, true)
+	},
+
+	handleDrag: function (event) {
+		this.props._onDrag(event, this.props.config)
 	},
 
 	render: function() {
@@ -101,14 +74,15 @@ var ColumnDetail = React.createClass({
 		else typeSpecificConfig = <span className="double-column-config"/>
 
     return <div
-			style = {{marginTop: ((this.state.yOffset) + 'px'),
-							marginBottom: (-1 * (this.state.yOffset) + 'px')}}
-      className={"menu-item menu-sub-item column-item " +
+			style = {{marginTop: ((this.props.dragOffset) + 'px'),
+							marginBottom: (-1 * (this.props.dragOffset) + 'px')}}
+			className={"menu-item menu-sub-item column-item " +
 			(this.state.dragging ? " dragging " : "")}>
 
 				{this.props.open ? <span
 						className="draggable icon grayed icon-Layer_2"
-						onMouseDown = {this.onDrag}></span>
+						onMouseDown = {this.handleDrag}
+						></span>
 					: null}
 
 	      <span className="double-column-config">
@@ -116,22 +90,15 @@ var ColumnDetail = React.createClass({
 				</span>
 
 				<span className="column-config">
-					<span className={" clickable icon icon-align-left "
-						+ (config.align === 'left' ? ' ' : ' grayed')}
-						onClick={this.toggleLeftAlign}>
-					</span>
-					<span className={"clickable icon icon-align-center "
-						+ (config.align === 'center' ? ' ' : ' grayed')}
-						onClick={this.toggleCenterAlign}>
-					</span>
-					<span className={" clickable icon icon-align-right "
-						+ (config.align === 'right' ? '  ' : ' grayed')}
-						onClick={this.toggleRightAlign}>
+					<span className={" clickable icon icon-align-" + config.align}
+						onClick={this.toggleAlign}>
 					</span>
 				</span>
-
 				{typeSpecificConfig}
+				{this.props.open ? null :
+					<div className="dropdown small grayed icon icon-geo-arrw-down" onClick = {this.props._onOpen}></div>
 
+				}
 		</div>
 	}
 });

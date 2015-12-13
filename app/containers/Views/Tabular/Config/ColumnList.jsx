@@ -15,11 +15,10 @@ import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
 import groomView from '../../groomView'
 
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
-var sortable = require('react-sortable-mixin');
 
 var ColumnList = React.createClass({
 
-	mixins: [PureRenderMixin, sortable.ListMixin],
+	mixins: [PureRenderMixin],
 
 	render: function() {
 		var _this = this

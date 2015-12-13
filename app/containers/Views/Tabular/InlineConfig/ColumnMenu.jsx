@@ -21,88 +21,81 @@ var blurOnClickMixin = require('../../../../blurOnClickMixin')
 
 var ColumnMenu = React.createClass({
 
-	itemHeight: 30,
+	itemHeight: 32,
 
-	mixins: [PureRenderMixin],
-
-	componentWillMount: function () {
-		ViewStore.addChangeListener(this._onChange);
-	},
-
-	componentWillUnmount: function () {
-		ViewStore.removeChangeListener(this._onChange)
-	},
+	mixins: [blurOnClickMixin],
 
 	_onChange: function () {
 		this.forceUpdate()
 	},
 
+	getInitialState: function () {
+		var view = this.props.view
+		var columns = view.data.columnList
+
+		return {
+			open: false,
+			dragItem: null,
+			dragOffset: null,
+			initOffset: null,
+			hiddenCols: columns.filter(col => !col.visible).sort(util.numSort),
+			visibleCols: columns.filter(col => col.visible).sort(util.numSort)
+		}
+	},
+
+	componentWillReceiveProps: function (nextProps) {
+		var view = this.props.view
+		var columns = view.data.columnList
+
+		this.setState({
+			hiddenCols: columns.filter(col => !col.visible).sort(util.numSort),
+			visibleCols: columns.filter(col => col.visible).sort(util.numSort)
+		})
+	},
+
+	componentDidUpdate: function (props, state) {
+    if (this.state.dragItem && !state.dragItem) {
+      document.addEventListener('mousemove', this.onMouseMove)
+      document.addEventListener('mouseup', this.onMouseUp)
+    } else if (!this.state.dragItem && state.dragItem) {
+      document.removeEventListener('mousemove', this.onMouseMove)
+      document.removeEventListener('mouseup', this.onMouseUp)
+    }
+  },
+
 	onMouseMove: function (e) {
     if (!this.state.dragItem) return
+		var view = this.props.view
 		var item = this.state.dragItem
-		var order =  this.state.dragItemOrder
-		var hiddenCols = this.state.hiddenCols
-		var visibleCols = this.state.visibleCols
-		var dragOffset = e.pageY - this.state.dragInitOffset
-		var delta = Math.floor(Math.abs(dragOffset) / this.itemHeight)
-			* Math.sign(dragOffset)
-
-		if (Math.abs(delta) < 0) this.setState({
-      dragOffset: dragOffset
-    })
-
-
-
+		var dragOffset = e.pageY - this.state.initOffset
+		console.log('dragOffset: ' + dragOffset)
+		item.order = this.state.dragOrder + dragOffset / this.itemHeight
+		console.log('order: ' + item.order)
+		this.setState({
+			visibleCols: util.enumerate(this.state.visibleCols),
+			hiddenCols: util.enumerate(this.state.hiddenCols)
+		})
     e.stopPropagation()
     e.preventDefault()
   },
 
-	getInitialState: function () {
-		var view = this.props.view
-		var columns = view.data.columnList
-		var hiddenCols = columns.filter(col => !col.visible)
-		var visibleCols = columns.filter(col => col.visible)
-
-		return {
-			open: false,
-			hiddenCols: hiddenCols,
-			numHidden: hiddenCols.length,
-			visibleCols: visibleCols,
-			dragItem: null,
-			dragItemOrder: null,
-			dragOffset: null,
-			dragInitOffset: null
-		}
-	},
-
-	handleBlur: function () {
+	onMouseDown: function (event, config) {
 		this.setState({
-			open: false,
-			editing: false
+			dragItem: config,
+			dragOrder: config.order,
+			initOffset: event.pageY
 		})
-		document.removeEventListener('keyup', this.handleKeyPress)
-    document.removeEventListener('click', this.handleClick)
 	},
 
-	handleOpen: function () {
-		this.setState({open: true})
-		document.addEventListener('keyup', this.handleKeyPress)
-    document.addEventListener('click', this.handleClick)
-	},
-
-	handleClick: function (event) {
-		if (!event.__cancelBubble) this.handleBlur()
-	},
-
-	handleKeyPress: function (event) {
-    if (event.keyCode === constant.keycodes.ESC) this.handleBlur()
+	onMouseUp: function (event) {
+		var view = this.props.view
+		var columns = this.state.hiddenCols.concat(this.state.visibleCols)
+		view.data.columns = _.indexBy(columns, 'column_id')
+		modelActionCreators.createView(view, true, true);
+		this.setState({dragItem: null})
+    event.stopPropagation()
+    event.preventDefault()
   },
-
-	clickTrap: function (event) {
-		event.stopPropagation()
-		event.preventDefault()
-		event.nativeEvent.stopImmediatePropagation();
-	},
 
 	render: function() {
 		var _this = this
@@ -116,44 +109,48 @@ var ColumnMenu = React.createClass({
 			if (column) columns = [column]
 			else columns = []
 		}
-		var hiddenCols = this.state.hiddenCols
-		var visibleCols = this.state.visibleCols
 
 		var makeAttrDivs = function (columns) {
 			return columns.map(function (col, idx) {
 				return <ColumnDetail
 					key = {"detail-" + col.column_id}
+					_onDrag = {_this.onMouseDown}
+					_onOpen = {_this.handleOpen}
+					dragOffset = {col === _this.state.dragItem ? _this.state.dragOffset : 0}
 					config = {col} view= {view}
-					open = {_this.state.open}
-					index = {idx}/>
+					open = {_this.state.open}/>
 			})
 		}
 
     return <div className = "double header-section" >
 			<div className="header-label">Table Columns</div>
 			<div className="model-views-menu">
-				<div className="model-views-menu-inner" onClick={this.clickTrap}>
+
+
 				{
 					this.state.open ?
+					<div className="model-views-menu-inner" onClick={this.clickTrap}>
 					<div className = "dropdown-menu">
 						<div className="menu-item menu-sub-item menu-divider">
 							<div className="menu-divider-label">Hidden Attributes</div>
 						</div>
-						{makeAttrDivs(hiddenCols)}
+						{makeAttrDivs(this.state.hiddenCols)}
 						<div className="menu-item menu-sub-item menu-divider">
 							<div className="menu-divider-label">Visible Attributes</div>
 						</div>
-						{makeAttrDivs(visibleCols)}
+						{makeAttrDivs(this.state.visibleCols)}
 						<div className="menu-item column-item">
 							<div className="menu-sub-item">Add new attribute</div>
 							<div className="menu-sub-item">Edit attributes</div>
 						</div>
 					</div>
+					</div>
 					:
-					makeAttrDivs(columns)
+					<div className="model-views-menu-inner" onClick={this.clickTrap}>
+					{makeAttrDivs(columns)}
+					</div>
 				}
-				<div className="dropdown small grayed icon icon-geo-arrw-down" onClick = {this.handleOpen}></div>
-				</div>
+
 			</div>
 		</div>
 	}

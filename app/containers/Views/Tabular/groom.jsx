@@ -7,14 +7,13 @@ import viewTypes from '../viewTypes'
 
 var BIG_NUM = 10000000;
 
-var enumerate = function (things, identifier) {
-	var iter = 1;
-	var list = _.values(things);
-	list = _.sortBy(list, 'order');
-	list = _.map(list, function(thing) {
-		thing.order = iter++; return thing;
-	});
-	return _.indexBy(list, identifier);
+var enumerate = function (list) {
+	_.sortBy(list, 'order')
+	_.sortBy(list, 'hidden')
+	return list.map(function(item, i) {
+		item.order = i
+		return item
+	})
 }
 
 var limit = function (thing, view) {
@@ -33,66 +32,58 @@ var groomView = function (view) {
 	var fields = AttributeStore.query({model_id: view.model_id});
 	var relations = RelationStore.query({model_id: view.model_id})
 	var iter =  BIG_NUM;
-	var cols = {};
-	if (!_.isArray(data.sorting)) data.sorting = []
-	var sorting = enumerate(data.sorting.filter(function(item) {
-		var attribute = AttributeStore.get(item.attribute_id)
-		return _.contains(['PRIMARY_KEY', 'INTEGER', 'TEXT', 'DATE', 'BOOLEAN', 'DECIMAL', 'DATE_TIME'], attribute.type)
-	}), 'attribute_id');
-
-
+	data.sorting = []
+	var sorting = {}
 	data.columns = data.columns || {}
 
 	fields.forEach(function (field) {
-		var col = data.columns['a' + field.attribute_id] || {};
-
+		var prev = data.columns['a' + field.attribute_id] || {};
+		var col = {}
 		col.column_id = 'a' + field.attribute_id
 		col.attribute_id = field.attribute_id;
 		col.type = field.type
 		col.name = field.attribute
+		col.sorting = null
+		if (col.type in fieldTypes && !!fieldTypes[col.type].configCleanser)
+			col = fieldTypes[col.type].configCleanser(col)
+
+		col.align = prev.align
 		if (!col.align) {
 			if(col.type === 'INTEGER' || col.type === 'DECIMAL' || col.type === 'DATE') col.align = 'right'
 			else if (col.type === 'BOOLEAN') col.align = 'center'
 			else col.align = 'left'
 		}
-		col.visible = (col.visible === false) ? false : true
-		col.expanded = !!col.expanded
-		col.width = (col.width > 50 ? col.width : 50)
-		col.order = col.order || iter ++
-		col.sorting = sorting[field.attribute_id]
-
-		if (col.type in fieldTypes && !!fieldTypes[col.type].configCleanser)
-			col = fieldTypes[col.type].configCleanser(col)
-
+		col.visible = (prev.visible === false) ? false : true
+		col.width = (prev.width > 50 ? prev.width : 50)
 		columns[col.column_id] = col
 	})
-
-	enumerate(fields)
 
 	relations.forEach(function (relation) {
 		var col = data.columns['r' + relation.relation_id] || {};
 		var attrs = AttributeStore.query({model_id: relation.related_model_id});
 		var relatedModel = ModelStore.get(relation.related_model_id)
 		var pk =  (relatedModel || {}).pk;
-
 		col.column_id = 'r' + relation.relation_id
 		col.related_model_id = relation.related_model_id
 		col.related_key_id = relation.related_key_id
 		col.key_id = relation.key_id
 		col.label = col.label || ('a' + attrs[0].attribute_id)
 		col.relation_id = relation.relation_id;
-
 		col.type = relation.type
 		col.name = relation.relation
-		col.visible = (col.visible === false) ? false : true
-		col.expanded = !!col.expanded
-		col.width = _.isNumber(col.width) ? col.width : 100
-		col.order = col.order || iter ++
 		columns[col.column_id] = col
 	})
 
-	data.columns = enumerate(columns, 'column_id');
-	data.columnList = _.sortBy(_.values(data.columns), 'order');
+	var columnList = enumerate(_.values(columns))
+	columnList.map(function (col) {
+
+		col.expanded = !!col.expanded
+
+	})
+
+	data.columnList = columnList
+	data.columns = _.indexBy(data.columnList, 'column_id');
+
 	data.selection = _.extend({'left': 0, 'top': 0, 'right': 0, 'bottom': 0}, (data.selection || {}) );
 	data.selection = limit(data.selection, view)
 	data.anchor = _.extend({"left": 0, "top": 0}, data.anchor || {});
@@ -102,7 +93,6 @@ var groomView = function (view) {
 	data.scrollTop = data.scrollTop || 0;
 
 	data.geometry = _.extend({
-		// leftGutter: 1,
 		leftOffset: 0,
 		topGutter: 0,
 		headerHeight: 28.5,
@@ -111,10 +101,6 @@ var groomView = function (view) {
 	}, data.geometry)
 
 	view.data = data;
-	// view.getVisibleColumns = function () {
-	// 	var view = this.props.view
-	// 	return _.filter(view.data.columnList, 'visible');
-	// }
 	return view
 }
 

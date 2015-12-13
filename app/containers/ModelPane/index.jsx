@@ -5,7 +5,6 @@ import detailStyles from "./detail.less"
 import ModelDefinition from "../ModelDefinition"
 import ModelStore from "../../stores/ModelStore"
 import ViewStore from "../../stores/ViewStore"
-import sortable from 'react-sortable-mixin'
 
 import ViewSelector from '../ViewSelector'
 
@@ -59,6 +58,7 @@ var ModelPane = React.createClass({
 	 },
 
 	render: function() {
+		console.log('model-views render')
 		var _this = this
 		var workspace_id = this.props.params.workspaceId
 		var model_id = this.props.params.modelId

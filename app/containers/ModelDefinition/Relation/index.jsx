@@ -14,12 +14,11 @@ import _ from 'underscore'
 import ConfirmationMixin from '../ConfirmationMixin'
 import RelationDetail from './RelationDetail'
 
-var sortable = require('react-sortable-mixin');
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
 var RelationDetailList = React.createClass({
 
-	mixins: [sortable.ListMixin, ConfirmationMixin],
+	mixins: [ConfirmationMixin],
 
 	handleAddNewRelation: function () {
 		var model = this.props.model;

@@ -17,6 +17,7 @@ var TabularTHead = React.createClass ({
 		var view = this.props.view
 		var geo = view.data.geometry
 		var left = geo.leftGutter
+		var focused = this.props.focused
 
 		var style = {
 			top: 0,
@@ -34,7 +35,12 @@ var TabularTHead = React.createClass ({
 		{
 			_this.props.columns.map(function (col, idx) {
 				var el = <TabularTH key={"th-" + col.attribute_id}
-					scrollTop = {_this.props.scrollTop} column={col} view={view} idx={idx} left={left}/>;
+					scrollTop = {_this.props.scrollTop}
+					focused = {focused}
+					column={col}
+					view={view}
+					idx={idx}
+					left={left}/>;
 				left += col.width
 				return el
 			})

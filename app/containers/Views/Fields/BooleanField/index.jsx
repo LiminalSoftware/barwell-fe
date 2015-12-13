@@ -4,15 +4,15 @@ import $ from "jquery"
 import moment from "moment"
 
 import styles from "./booleanStyles.less"
-import AttributeStore from "../../../stores/AttributeStore"
-import ModelStore from "../../../stores/ModelStore"
+import AttributeStore from "../../../../stores/AttributeStore"
+import ModelStore from "../../../../stores/ModelStore"
 
-import constant from "../../../constants/MetasheetConstants"
-import modelActionCreators from "../../../actions/modelActionCreators"
+import constant from "../../../../constants/MetasheetConstants"
+import modelActionCreators from "../../../../actions/modelActionCreators"
 
-import commitMixin from './commitMixin'
-import editableInputMixin from './editableInputMixin'
-import selectableMixin from './selectableMixin'
+import commitMixin from '../commitMixin'
+import editableInputMixin from '../editableInputMixin'
+import selectableMixin from '../selectableMixin'
 
 var CheckboxElement = React.createClass({
 
@@ -49,7 +49,7 @@ var CheckboxElement = React.createClass({
 		var style = this.props.style
 		var className = (this.props.className || '') + ' table-cell '
 			+ (this.state.selected ? ' selected ' : '');
-		
+
 		return <span {...this.props} className={className}>
 				<span className = "table-cell-inner checkbox-inner">
 					<span className="checkbox-surround" onClick={this.handleClick}>

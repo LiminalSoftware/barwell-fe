@@ -1,0 +1,16 @@
+@import "../../global.less";
+
+.detail-bar {
+  position: absolute;
+  right: 10px;
+  width: 250px;
+  padding: 10px;
+  top: 10px;
+  bottom: 10px;
+  background: @headerBgColor;
+  border: 1px solid @menuBorderColor;
+  border-radius: @headerBorderRadius;
+  .box-shadow(0 0 0 @headerOuterBorderWidth @headerOuterBorderColor);
+  z-index: 500;
+  overflow-y: scroll;
+}

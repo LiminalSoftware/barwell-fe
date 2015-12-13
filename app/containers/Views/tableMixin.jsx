@@ -42,7 +42,6 @@ var TableMixin = {
 		$(document.body).off('keydown', this.onKey)
 	},
 
-
 	isFocused: function () {
 		return (FocusStore.getFocus() === 'view')
 	},
@@ -78,7 +77,6 @@ var TableMixin = {
 	},
 
 	onMouseUp: function (e) {
-		modelActionCreators.setFocus('view')
 		this.setState({mousedown: false})
 		document.removeEventListener('selectstart', util.returnFalse)
 		document.removeEventListener('mousemove', this.onSelectMouseMove)
@@ -103,6 +101,10 @@ var TableMixin = {
 			e.keyCode !== keycodes.TAB
 		)) return;
 
+		if (e.keyCode == keycodes.DELETE) {
+			this.clearSelection();
+			return;
+		}
 		if (e.keyCode == keycodes.ESC) {
 			this.setState({copyarea: null})
 			return;

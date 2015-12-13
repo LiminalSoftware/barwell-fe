@@ -13,14 +13,13 @@ import util from '../../../util/util'
 
 import AttributeDetail from './AttributeDetail'
 import ConfirmationMixin from '../ConfirmationMixin'
-var sortable = require('react-sortable-mixin');
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 var AttributeDetailList = React.createClass({
 
-	mixins: [sortable.ListMixin, ConfirmationMixin],
+	mixins: [ConfirmationMixin],
 
 	handleAddNewAttr: function (event) {
 		var model = this.props.model;

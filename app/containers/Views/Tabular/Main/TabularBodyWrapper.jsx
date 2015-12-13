@@ -23,6 +23,7 @@ var TabularBodyWrapper = React.createClass ({
 		var rows = store ? store.getObjects() : []
 		var rowCount = store ? store.getRecordCount() : 0
 		var geo = view.data.geometry
+		var focused = this.props.focused
 
 		var wrapperStyle = {
 			top: (geo.headerHeight + geo.topGutter) + 'px',
@@ -32,7 +33,8 @@ var TabularBodyWrapper = React.createClass ({
 			position: 'absolute',
 		}
 
-		return <div className="tabular-tbody-wrapper"
+		return <div 
+			className = {"tabular-body-wrapper " + (focused ? "focused" : "blurred")}
 			ref="tbodyWrapper"
 			style={wrapperStyle}>
 				<TabularTBody ref="tbody" {...this.props}/>

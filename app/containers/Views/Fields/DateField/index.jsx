@@ -3,17 +3,21 @@ import _ from "underscore"
 import $ from "jquery"
 import moment from "moment"
 
-import AttributeStore from "../../../stores/AttributeStore"
-import ModelStore from "../../../stores/ModelStore"
+import AttributeStore from "../../../../stores/AttributeStore"
+import ModelStore from "../../../../stores/ModelStore"
 
-import constant from "../../../constants/MetasheetConstants"
-import modelActionCreators from "../../../actions/modelActionCreators"
+import constant from "../../../../constants/MetasheetConstants"
+import modelActionCreators from "../../../../actions/modelActionCreators"
 
-import commitMixin from './commitMixin'
-import editableInputMixin from './editableInputMixin'
-import selectableMixin from './selectableMixin'
+import commitMixin from '../commitMixin'
+import editableInputMixin from '../editableInputMixin'
+import selectableMixin from '../selectableMixin'
+
+import DateDetail from "./detail"
 
 var dateField = {
+
+	detail: DateDetail,
 
 	configCleanser: function (config) {
 		config.dateFormat = config.dateFormat || "MM/DD/YYYY"
@@ -58,7 +62,7 @@ var dateField = {
 			return <span className="double-column-config">
 					Format:
 					<input type = "text"
-						className = "renamer"
+						className = "menu-input renamer"
 						spellCheck = "false"
 						value = {this.state.dateFormat}
 						onBlur = {this.onBlur}
@@ -75,15 +79,16 @@ var dateField = {
 			var config = this.props.config || {}
 			var format = config.dateFormat || "DD MMMM YYYY";
 			var prettyDate = value ? moment(value).format(format) : ''
-
+			
 			return prettyDate
 		},
 
 		validator: function (input) {
 			var config = this.props.config || {}
-			var format = config.dateFormat || "DD MMMM YYYY";
-
-			return moment(input, format)
+			var format = config.dateFormat || "YYYY-MM-DD";
+			var date = moment(input, format)
+			if (!date.isValid()) date = moment(input, "YYYY-MM-DD")
+			return date.isValid() ? date : null
 		}
 
 	})

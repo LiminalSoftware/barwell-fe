@@ -19,10 +19,21 @@ module.exports.encode = function (str) {
   }).join('.')
 }
 
+module.exports.numSort = function (a, b) {
+  return a - b
+}
+
 module.exports.clean = function (obj) {
 	obj._dirty = false
 	obj._server = stripInternalVars(obj)
 	return obj
+}
+
+module.exports.enumerate = function (list) {
+	return _.sortBy(list, 'order').map(function(item, i) {
+		item.order = i
+		return item
+	})
 }
 
 var limit = module.exports.limit = function (min, max, value) {

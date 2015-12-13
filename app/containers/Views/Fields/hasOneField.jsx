@@ -39,7 +39,7 @@ var hasOneField = {
 
 			return <span className="double-column-config">
 					Label:
-					<select onChange={this.onLabelChange} value={this.state.label}>
+					<select className="menu-input selector" onChange={this.onLabelChange} value={this.state.label}>
 						{AttributeStore.query({model_id: model_id}).map(function (attr) {
 							return <option value={'a' + attr.attribute_id}>{attr.attribute}</option>
 						})}

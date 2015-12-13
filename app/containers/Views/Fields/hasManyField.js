@@ -45,17 +45,17 @@ var hasManyField = {
 			var key = "attr-" + config.id
 			var model_id = config.related_model_id
 
-			return <tr key = {key + '-label-attribute'} style={style}>
-				<td className="no-line"></td>
-				<td>Label attribute: </td>
-				<td className="right-align" colSpan="2">
-					<select onChange={this.onLabelChange} value={this.state.label}>
-						{AttributeStore.query({model_id: model_id}).map(function (attr) {
-							return <option value={'a' + attr.attribute_id}>{attr.attribute}</option>
-						})}
-					</select>
-				</td>
-			</tr>
+			return <span className="double-column-config"
+				key = {key + '-label-attribute'} >
+				Label:
+				<select onChange={this.onLabelChange}
+					className = "menu-input selector"
+					value={this.state.label}>
+					{AttributeStore.query({model_id: model_id}).map(function (attr) {
+						return <option value={'a' + attr.attribute_id}>{attr.attribute}</option>
+					})}
+				</select>
+			</span>
 		}
 	}),
 

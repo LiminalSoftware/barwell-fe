@@ -32,18 +32,24 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
 @gray3: #CBC3B7;
 @gray4: #FAFAF4;
 
+@purple1: #54365E;
+@purple2: #7F5E8A;
+@purple3: #AF86BD;
+
 @gray-trans: rgba(102, 81, 81, 0.1);
 
 @newgreen1: #079538;
 @newgreen2: lighten(@newgreen1, 5%);
 @green5: #F2FDF5;
 @darkgreen0: #7BA66D;
-@darkgreen0-trans: rgba(72, 156, 77, 0.5);
+@darkgreen00: darken(@darkgreen0, 10%);
+@darkgreen0-trans: rgba(72, 156, 77, 0.1);
+@darkgreen1-trans: rgba(72, 156, 77, 0.2);
 @darkgreen1: #92A88A;
 
 @green-trans: hsla(134,  50%, 70%, 0.1);
 @purple-trans: hsla(301, 44%, 70%, 0.3);
-@red-bright-trans: hsla(346, 100%, 40%, 50%);
+@red-bright-trans: hsla(346, 100%, 40%, 20%);
 
 //=================================
 // scrollbar
@@ -67,6 +73,7 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
 	margin: 1px;
    -webkit-border-radius: 8px;
    border-radius: 10px;
+  background: @gray3;
 }
 ::-webkit-scrollbar-thumb:window-inactive {
 	background: @gray3;
@@ -360,13 +367,15 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
 }
 
 @headerBorderColor: @gray3;
+@menuBorderColor: @gray3;
 @headerBorderRadius: 2px;
 @headerOuterBorderWidth: 3px;
-@headerOuterBorderColor: @green-trans;
-@headerBgColor: @gray4;
+@headerOuterBorderColor: @darkgreen0-trans;
+@headerBgColor: darken(@gray4, 1%);
+@headerMenuBgColor: white;
 @headerFontColor: @gray1;
 @headerFontSize: 16px;
-@headerOuterHilite: @purple-trans;
+@headerOuterHilite: @newgreen1;
 
 
 .msInput {
@@ -383,4 +392,8 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
   margin: 0;
   margin-bottom: -1px;
   border-radius: 0;
+}
+
+.gray-out {
+  -webkit-filter: saturate(0.3) contrast(0.5) brightness(1.3);
 }

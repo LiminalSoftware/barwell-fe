@@ -3,15 +3,15 @@ import _ from "underscore"
 import $ from "jquery"
 import moment from "moment"
 
-import AttributeStore from "../../../stores/AttributeStore"
-import ModelStore from "../../../stores/ModelStore"
+import AttributeStore from "../../../../stores/AttributeStore"
+import ModelStore from "../../../../stores/ModelStore"
 
-import constant from "../../../constants/MetasheetConstants"
-import modelActionCreators from "../../../actions/modelActionCreators"
+import constant from "../../../../constants/MetasheetConstants"
+import modelActionCreators from "../../../../actions/modelActionCreators"
 
-import commitMixin from './commitMixin'
-import editableInputMixin from './editableInputMixin'
-import selectableMixin from './selectableMixin'
+import commitMixin from '../commitMixin'
+import editableInputMixin from '../editableInputMixin'
+import selectableMixin from '../selectableMixin'
 
 var decimalField = {
 	element: React.createClass({

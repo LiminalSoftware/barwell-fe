@@ -2,26 +2,40 @@ import React from "react"
 import _ from "underscore"
 
 import constant from './constants/MetasheetConstants'
+import modelActionCreators from "./actions/modelActionCreators.jsx"
 
 var blurOnClickMixin = {
 
-  componentDidMount: function () {
-    document.addEventListener('keyup', this.handleKeyPress)
-    document.addEventListener('click', this.handleClick)
+  handleBlur: function () {
+    this.setState({
+      open: false,
+      editing: false
+    })
+    modelActionCreators.setFocus('view')
+    document.removeEventListener('keyup', this.handleKeyPress)
+    document.removeEventListener('click', this.handleBlur)
   },
 
-  handleBlurKeyPress: function (event) {
+  handleOpen: function () {
+    this.setState({open: true})
+    modelActionCreators.setFocus('view-config')
+    document.addEventListener('keyup', this.handleKeyPress)
+    document.addEventListener('click', this.handleBlur)
+  },
+
+  componentWillUnmount: function () {
+    document.removeEventListener('keyup', this.handleKeyPress)
+    document.removeEventListener('click', this.handleBlur)
+  },
+
+  handleKeyPress: function (event) {
     if (event.keyCode === constant.keycodes.ESC) this.handleBlur()
   },
 
-  handleBlurClick: function (event) {
-    this.handleBlur()
+  clickTrap: function (event) {
+    event.stopPropagation()
+    event.nativeEvent.stopImmediatePropagation();
   },
-
-  componentDidUnmount: function () {
-    document.removeEventListener('keyup', this.handleKeyPress)
-    document.removeEventListener('click', this.handleClick)
-  }
 
 }
 

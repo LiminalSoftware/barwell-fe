@@ -15,7 +15,6 @@ import ViewStore from "../../stores/ViewStore"
 import MetasheetConst from '../../constants/MetasheetConstants'
 
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
-var sortable = require('react-sortable-mixin');
 
 import viewTypes from '../Views/viewTypes'
 import Notifier from '../Notifier'
@@ -26,12 +25,10 @@ var SideBar = React.createClass({
 
 	componentWillUnmount: function () {
 		ModelStore.removeChangeListener(this._onChange)
-		ViewStore.removeChangeListener(this._onChange)
 	},
 
 	componentWillMount: function () {
 		ModelStore.addChangeListener(this._onChange)
-		ViewStore.addChangeListener(this._onChange)
 	},
 
 	_onChange: function () {

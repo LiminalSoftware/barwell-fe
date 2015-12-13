@@ -11,7 +11,6 @@ import constants from '../../../constants/MetasheetConstants'
 import getIconClasses from '../getIconClasses'
 import _ from 'underscore'
 
-var sortable = require('react-sortable-mixin');
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
 var relationPrettyNames = {

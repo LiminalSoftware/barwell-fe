@@ -14,30 +14,16 @@ import modelActionCreators from "../../../../actions/modelActionCreators"
 import groomView from '../../groomView'
 
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
-var sortable = require('react-sortable-mixin');
+
 
 import ViewSelector from '../../../ViewSelector'
 import ColumnMenu from './ColumnMenu'
 import SortMenu from './SortMenu'
+import FilterMenu from './FilterMenu'
 
 var TabularViewInlineConfig = React.createClass({
 
 	mixins: [PureRenderMixin],
-
-	componentWillMount: function () {
-		ViewStore.addChangeListener(this._onChange);
-		ModelStore.addChangeListener(this._onChange)
-		AttributeStore.addChangeListener(this._onChange)
-		KeyStore.addChangeListener(this._onChange)
-	},
-
-	componentWillUnmount: function () {
-		var view = this.props.view
-		ViewStore.removeChangeListener(this._onChange)
-		ModelStore.removeChangeListener(this._onChange)
-		AttributeStore.removeChangeListener(this._onChange)
-		KeyStore.removeChangeListener(this._onChange)
-	},
 
 	_onChange: function () {
 		var view = ViewStore.get(this.props.view.view_id || this.props.view.cid)
@@ -50,7 +36,7 @@ var TabularViewInlineConfig = React.createClass({
 	},
 
 	focus: function () {
-		modelActionCreators.setFocus('view-config')
+
 	},
 
 	render: function() {
@@ -63,6 +49,7 @@ var TabularViewInlineConfig = React.createClass({
 			<ViewSelector view = {view} model = {model}/>
 			<ColumnMenu view = {view} model = {model}/>
 			<SortMenu view = {view} model = {model}/>
+			<FilterMenu view = {view} model = {model}/>
 		</div>
 	}
 });

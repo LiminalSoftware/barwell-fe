@@ -1,12 +1,17 @@
 import React from "react"
 import _ from "underscore"
 
-import constant from "../../../constants/MetasheetConstants"
-import modelActionCreators from "../../../actions/modelActionCreators"
 
-import commitMixin from './commitMixin'
-import editableInputMixin from './editableInputMixin'
-import selectableMixin from './selectableMixin'
+import styles from "./style.less";
+
+import constant from "../../../../constants/MetasheetConstants"
+import modelActionCreators from "../../../../actions/modelActionCreators"
+
+import ColorDetail from "./detail"
+
+import commitMixin from '../commitMixin'
+import editableInputMixin from '../editableInputMixin'
+import selectableMixin from '../selectableMixin'
 
 var ColorElement = React.createClass({
 
@@ -22,7 +27,6 @@ var ColorElement = React.createClass({
 	},
 
 	parser: function (input) {
-		console.log('x')
 		return input
 	},
 
@@ -49,7 +53,9 @@ var ColorElement = React.createClass({
 });
 
 var colorField = {
-	element: ColorElement
+	element: ColorElement,
+
+	detail: ColorDetail
 }
 
 export default colorField;

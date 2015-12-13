@@ -12,7 +12,6 @@ import _ from 'underscore'
 import util from '../../../util/util'
 
 import ConfirmationMixin from '../ConfirmationMixin'
-var sortable = require('react-sortable-mixin');
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;

@@ -3,6 +3,7 @@ import { RouteHandler } from "react-router";
 import SideBar from "containers/SideBar";
 import styles from "./style.less";
 import modelActionCreators from "../../actions/modelActionCreators"
+import util from '../../util/util'
 
 var Application = React.createClass({
 
@@ -14,6 +15,7 @@ var Application = React.createClass({
 		return <div className="application ">
 				<SideBar {...this.props} />
 				<RouteHandler {...this.props} />
+				<textarea id = "copy-paste-dummy" value="" onPaste = {util.handlePaste}></textarea>
 		</div>;
 	},
 

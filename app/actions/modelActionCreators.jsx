@@ -337,6 +337,7 @@ var modelActions = {
 
 	// views
 	createView: function(view, persist, update, safe) {
+		// console.log('createView')
 		modelActions.create('view', persist, view, update, safe)
 	},
 

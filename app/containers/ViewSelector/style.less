@@ -1,14 +1,5 @@
 @import "../../global.less";
 
-@borderWidth: 1px;
-@borderRadius: 2px;
-@borderColor: @gray3;
-@headerMenuBgColor: white;
-@altBorderColor: @gray3;
-@outerBorderColor: @green-trans;
-@outerBorderWidth: 3px;
-
-
 .header-section {
 	flex-direction: column;
 	display: flex;
@@ -16,7 +7,7 @@
 	flex-grow: 1;
 	max-width: 300px;
 	padding: 0 10px;
-	border-right: 1px solid @headerBorderColor;
+	border-right: 1px solid @menuBorderColor;
 }
 .double.header-section {
 	flex: 2;
@@ -33,18 +24,20 @@
 	text-align: center;
 }
 
+.header-option {
+	text-transform: none;
+	font-size: 12px;
+	margin-left: 10px;
+}
+
 .model-views-menu {
 	flex-direction: column;
 	position: relative;
 	display: block;
 	cursor: pointer;
-	border: @headerOuterBorderWidth solid transparent;
-	border-radius: @headerBorderRadius;
 
-	border-color: @headerOuterBorderColor;
-	&:hover {
-		// border-color: @headerOuterHilite;
-	}
+	// border-radius: @headerBorderRadius;
+	// border: @headerOuterBorderWidth solid @headerOuterBorderColor;
 }
 
 .model-views-menu-inner {
@@ -53,7 +46,7 @@
 	background: @headerMenuBgColor;
 	padding: 0;
 	margin-right: 30px;
-	border: 1px solid @headerBorderColor;
+
 	border-radius: @headerBorderRadius;
 
 	.view-label {
@@ -66,8 +59,6 @@
 .dropdown {
 	background: @headerMenuBgColor;
 	color: @headerFontColor;
-	border: 1px solid @borderColor;
-
 
 	position: absolute;
 	display: block;
@@ -77,11 +68,8 @@
 	width: 30px;
 	padding: 14px 0px;
 	margin: 0 !important;
-
 	text-align: center;
 	vertical-align: middle;
-	border-bottom-right-radius: @borderRadius;
-	border-top-right-radius: @borderRadius;
 }
 
 .dropdown-menu {
@@ -92,9 +80,12 @@
 	right: 0;
 	min-height: 100;
 	z-index: 300;
-	border: @borderWidth solid @borderColor;
+
 	background: @headerMenuBgColor;
-	// .drop-shadow(3px 3px -5px @gray2);
+	// border-radius: @headerBorderRadius;
+	.box-shadow(0 0 0 @headerOuterBorderWidth @headerOuterBorderColor);
+	border: 1px solid @headerBorderColor;
+	margin: -1px;
 }
 
 .view-icon {
@@ -104,36 +95,19 @@
 .menu-item {
 	display: flex;
 	flex-direction: row;
-	&:last-child {
-		border-bottom-left-radius: @borderRadius;
-		border-bottom-right-radius: @borderRadius;
-	}
-	border-top: 1px solid @gray3;
-	&:first-child {
-		border-top: none;
-	}
-
+	// border-bottom: 1px solid @menuBorderColor;
+	background: none;
 }
 
 .menu-sub-item {
 	display: flex;
 	text-decoration: none;
 	padding: 10px 15px;
-	background: @headerMenuBgColor;
+	background: none;
 	flex-direction: row;
 	flex: 1 1;
 	color: @headerFontColor;
-
-	&:not(.menu-item) {
-		border-right: 1px solid @headerBorderColor;
-	}
-	&:last-child {
-		border-right: none;
-	}
-	
-	&:hover {
-
-	}
+	cursor: pointer;
 }
 
 .dragging {
@@ -142,8 +116,6 @@
 }
 
 .menu-divider {
-	// font-family: @headerFont;
-	// font-weight: 600;
 	text-transform: uppercase;
 }
 .menu-divider-label {

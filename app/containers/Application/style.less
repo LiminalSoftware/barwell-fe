@@ -1,7 +1,18 @@
 @import "../../global.less";
 
+#copy-paste-dummy {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	width: 1px;
+	height: 1px;
+	background: none;
+	border: none;
+	outline: none;
+}
+
 body {
-	background-color: #F5F5F5;
+	background-color: white;
 	font-family: @bodyFont;
 	padding: 0;
 	margin: 0;
@@ -40,7 +51,7 @@ h1, h2, h3, h4, h5 {
 	display: block;
 
 	padding: 0;
-	background: @gray4;
+	background: @headerBgColor;
 	border-bottom: 1px solid @gray3;
 }
 
@@ -49,6 +60,7 @@ h1, h2, h3, h4, h5 {
 	flex-direction: row;
 	padding: 10px;
 	min-height: 40px;
+	border-bottom: 1px solid @headerBgColor;
 }
 
 .view-body-wrapper {
@@ -57,8 +69,5 @@ h1, h2, h3, h4, h5 {
 	flex-grow: 1;
 	overflow-x: scroll;
 	margin: -2px;
-	.transition(all 0.1s);
-	&.blurred {
-		-webkit-filter: saturate(0.3) brightness(0.9);
-	}
+	border-top: 1px solid @headerBgColor;
 }

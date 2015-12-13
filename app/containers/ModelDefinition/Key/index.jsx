@@ -16,12 +16,11 @@ import KeyDetail from './KeyDetail'
 
 import ConfirmationMixin from '../ConfirmationMixin'
 
-var sortable = require('react-sortable-mixin');
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
 var KeyDetailList = React.createClass({
 
-	mixins: [sortable.ListMixin, ConfirmationMixin],
+	mixins: [ConfirmationMixin],
 
 	handleAddNewKey: function (event) {
 		var model = this.props.model;

@@ -6,15 +6,12 @@
 
 .th-context {
   font-style: @bodyFont !important;
-  font-size: 13px !important;
+  font-size: 15px !important;
   font-weight: 400 !important;
   position: absolute;
   left: 0;
   top: 0;
-	min-width: 200px;
-  background: white;
-	margin-left: -1px;
-	margin-top: -1px;
+	min-width: 250px;
 }
 
 
@@ -25,6 +22,15 @@
 	border-bottom: 1px solid @newgreen1;
 	border-top: 1px solid @newgreen1;
 	z-index: 200;
+
+	.context {
+		z-index: 300;
+	}
+
+	.transition(all 0.1s);
+	&.blurred {
+		.gray-out;
+	}
 
 	&.asc, &.desc {
 		border: 1px solid @newgreen1;
@@ -61,5 +67,20 @@
 			width: 2px;
 			background: @red-bright-trans;
 		}
+	}
+}
+
+.explainer-box {
+	font-family: @bodyFont;
+	font-size: 13px;
+	border-radius: 3px;
+	position: fixed;
+	background: black;
+	color: white;
+	.bottom {
+		top: 0;
+	}
+	.right {
+		right: 0;
 	}
 }

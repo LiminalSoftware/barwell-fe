@@ -10,9 +10,6 @@ var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 var TabularTHContext = require('./TabularTHContext')
 
 var TabularTH = React.createClass ({
-	shouldComponentUpdate: function () {
-		return false
-	},
 
   columnMinWidth: 50,
 
@@ -27,14 +24,16 @@ var TabularTH = React.createClass ({
 			maxWidth: (col.width - 1) + 'px',
 			top: 0,
 			left: left + 'px',
-			height: geo.headerHeight + 'px'
+			height: geo.headerHeight + 'px',
 		}
 		var sortArrow
 		var classes = []
 		classes.push('table-cell')
 		classes.push('table-header-cell')
 		if (!!col.sorting) classes.push(col.sorting.descending ? 'desc' : 'asc')
-		if (FocusStore.getFocus() === 'view') classes.push('focused')
+    if (this.state.context) classes.push('context')
+    if (FocusStore.getFocus() === 'view') classes.push('focused')
+		else if (!this.state.context) classes.push('blurred')
 
 		return <span
 				onContextMenu = {this.onContextMenu}
@@ -44,13 +43,15 @@ var TabularTH = React.createClass ({
 			   {col.name}
 			</span>
       {this.state.context ? <TabularTHContext
+        headerHeight = {geo.headerHeight}
         config = {col}
         handleBlur = {this.handleBlur}/> : null}
 			<span
 				ref = "resizer"
 				className = {"table-resizer " + (this.state.dragging ? "dragging" : "")}
 				onMouseDown = {this.onResizerMouseDown}
-				style = {{right: (-1 * this.state.pos) + 'px', top: 0}}></span>
+				style = {{right: (-1 * this.state.pos) + 'px', top: 0}}>
+			</span>
 		</span>
 	},
 
@@ -70,7 +71,6 @@ var TabularTH = React.createClass ({
 	},
 
 	onResizerMouseDown: function (e) {
-		console.log('AAA')
 		var pos = $(this.getDOMNode()).offset()
 		this.setState({
 			dragging: true,
@@ -95,7 +95,6 @@ var TabularTH = React.createClass ({
 	},
 
 	onMouseMove: function (e) {
-		console.log('BBB')
 	   if (!this.state.dragging) return
 	   this.setState({
 	      pos: Math.max(e.pageX - this.state.rel, this.columnMinWidth - this.state.rel - this.props.column.width)
@@ -115,12 +114,14 @@ var TabularTH = React.createClass ({
 	},
 
   onContextMenu: function (e) {
+    modelActionCreators.setFocus('view-config')
     this.setState({context: true})
     e.stopPropagation()
 		e.preventDefault()
   },
 
   handleBlur: function () {
+    modelActionCreators.setFocus('view')
     this.setState({context: false})
   },
 

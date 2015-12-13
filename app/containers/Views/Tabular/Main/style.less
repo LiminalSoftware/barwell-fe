@@ -1,9 +1,13 @@
 @import "../../../../global.less";
 
 
-.tabular-tbody-wrapper {
+.tabular-body-wrapper {
 	position: absolute;
 	overflow-x: hidden;
+	.transition(all 0.1s);
+	&.blurred {
+		.gray-out;
+	}
 }
 
 .tabular-tbody {
@@ -33,6 +37,18 @@
 	}
 	.transition(max-width cubic-bezier(.16,.85,.5,1) .3s);
 	.transition(left cubic-bezier(.16,.85,.5,1) .3s);
+}
+
+.add-new-row {
+	cursor: pointer;
+	text-align: center;
+	border: 1px solid @gray3;
+	text-transform: uppercase;
+	&:hover {
+		z-index: 205;
+		color: @newgreen1;
+		border: 1px solid @newgreen1;
+	}
 }
 
 .table-row {
@@ -132,6 +148,7 @@
 	top: 3px;
 	bottom: 3px;
 	border: 1px solid white;
+	border-radius: 3px;
 }
 
 .table-cell:hover .color-block {
@@ -187,6 +204,10 @@
 
 .checkbox-surround:hover, .selected .checkbox-surround {
 	border: 1px solid @newgreen1;
+}
+
+.view-body-wrapper {
+	background: white;
 }
 
 

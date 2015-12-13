@@ -29,8 +29,9 @@ var TabularTHContext = React.createClass ({
     if (event.keyCode === constant.keycodes.ESC) this.props.handleBlur()
   },
 
-	trapClick: function () {
-
+	clickTrap: function (event) {
+		event.stopPropagation()
+		event.nativeEvent.stopImmediatePropagation();
 	},
 
 	onClick: function (event) {
@@ -49,20 +50,44 @@ var TabularTHContext = React.createClass ({
 		view.data.sorting.push(sortObj)
 
 		modelActionCreators.createView(view, true, false)
-	}
+	},
 
   render: function () {
+		console.log('this.props.headerHeight: ' + this.props.headerHeight)
     var config = this.props.config
-    return <div className="th-context dropdown-menu" onClick = {this.trapClick}>
-      <div className = "menu-item menu-sub-item">
+    return <div className="th-context dropdown-menu"
+			onClick = {this.clickTrap}
+			style = {{top: (this.props.headerHeight + 'px')}}
+			>
+      <div
+				className = "menu-item menu-sub-item">
       <input className="renamer" value={config.name}></input>
       </div>
       <div className = "menu-item">
-        <div className = "menu-sub-item">Sort asc</div>
-        <div className = "menu-sub-item">Sort desc</div>
+        <div className = "menu-sub-item">
+					<span className="icon icon-sort-az-low"></span>
+					Sort asc
+				</div>
+        <div className = "menu-sub-item">
+					<span className="icon icon-sort-az-high"></span>
+					Sort desc
+				</div>
+      </div>
+			<div className = "menu-item menu-sub-item">
+				<span className="icon icon-kub-cog"></span>
+        Configure this attribute
       </div>
       <div className = "menu-item menu-sub-item">
-        Hide column
+				<span className="icon icon-eye-4"></span>
+        Hide this column
+      </div>
+			<div className = "menu-item menu-sub-item">
+				<span className="icon icon-arrow-right"></span>
+        Add new attribute
+      </div>
+			<div className = "menu-item menu-sub-item">
+				<span className="icon icon-kub-trash"></span>
+        Delete this attribute
       </div>
     </div>
   }

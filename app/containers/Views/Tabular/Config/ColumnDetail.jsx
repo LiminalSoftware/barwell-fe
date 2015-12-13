@@ -11,7 +11,6 @@ import KeycompStore from "../../../../stores/KeycompStore"
 import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
 
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
-var sortable = require('react-sortable-mixin');
 
 var ColumnDetail = React.createClass({
 

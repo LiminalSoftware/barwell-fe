@@ -29,6 +29,7 @@ import TabularTHead from "./TabularTHead"
 import TableMixin from '../../TableMixin'
 import Overlay from './Overlay'
 import ContextMenu from './ContextMenu'
+import DetailBar from '../../../DetailBar'
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
@@ -46,27 +47,20 @@ var TabularPane = React.createClass ({
 		return {
 			sorting: null,
 			contextOpen: false,
+			detailOpen: false,
 			contextX: null,
 			contextY: null,
 		}
 	},
 
 	componentWillMount: function () {
-		ViewStore.addChangeListener(this._onChange)
-		AttributeStore.addChangeListener(this._onChange)
-		ModelStore.addChangeListener(this._onChange)
 		FocusStore.addChangeListener(this._onChange)
-
 		this.store = createTabularStore(this.props.view)
 		this.store.addChangeListener(this._onChange)
 	},
 
 	componentWillUnmount: function () {
-		ViewStore.removeChangeListener(this._onChange)
-		AttributeStore.removeChangeListener(this._onChange)
-		ModelStore.removeChangeListener(this._onChange)
 		FocusStore.removeChangeListener(this._onChange)
-
 		this.store.removeChangeListener(this._onChange)
 		this.store.unregister()
 	},
@@ -170,7 +164,6 @@ var TabularPane = React.createClass ({
 	},
 
 	toggleCell: function (pos, toggle) {
-		// console.log('toggle: ' + pos.top + ', ' + pos.left + ' -> ' + toggle)
 		var cell = this.getFieldAt(pos);
 		cell.toggleSelect(toggle)
 	},
@@ -189,6 +182,15 @@ var TabularPane = React.createClass ({
 		})
 		modelActionCreators.insertRecord(this.props.model, obj, position)
 		this.setState({copyarea: null})
+	},
+
+	clearSelection: function () {
+		var sel = this.state.selection
+		for (var r = sel.top; r <= sel.bottom; r++) {
+			for (var c = sel.left; c <= sel.right; c++) {
+				this.getFieldAt({top: r, left: c}).commitValue(null);
+			}
+		}
 	},
 
 	deleteRecords: function () {
@@ -221,6 +223,26 @@ var TabularPane = React.createClass ({
 		}
 		copyTextToClipboard(clipboard)
 		this.setState({copyarea: sel})
+	},
+
+	pasteSelection: function (event) {
+		var text = event.clipboardData.getData('text')
+		var data = text.split('\n').map(r => r.split('\t'))
+		var cbr = 0
+		var cbc = 0
+		var sel = this.state.selection
+		for (var r = sel.top; r <= sel.bottom; r++) {
+			cbr = (r - sel.top) % data.length
+			for (var c = sel.left; c <= sel.right; c++) {
+				cbc = (c - sel.left) % data[cbr].length
+				console.log(cbr + ', ' + cbc)
+				var value = data[cbr][cbc]
+				console.log('value: ' + value)
+				this.getFieldAt({top: r, left: c}).commitValue(value);
+			}
+		}
+		event.preventDefault();
+		event.stopPropagation();
 	},
 
 	openContextMenu: function (event) {
@@ -337,22 +359,28 @@ var TabularPane = React.createClass ({
 		var ptr = this.state.pointer
 		var sel = this.state.selection
 		var cpy = this.state.copyarea
+		// var object = this.getFieldAt(ptr)
 
 		return <div
 			onScroll={this.onScroll}
 			ref="wrapper"
-			className = {"view-body-wrapper " + (focused ? "focused" : "blurred")}>
+			className = "view-body-wrapper"
+			onPaste = {this.pasteSelection}
+			beforePaste = {this.beforePaste}
+			>
 
 					<TabularTHead
 						key = {"tabular-thead-" + view.view_id}
 						scrollTop = {this.state.scrollTop}
 						totalWidth = {totalWidth}
 						columns = {columns}
+						focused = {focused}
 						view = {view} />
 
 					<TabularBodyWrapper
 						ref = "tbodyWrapper"
 						handleBlur = {_this.handleBlur}
+						handlePaste = {_this.pasteSelection}
 						totalWidth = {totalWidth}
 						editCell = {_this.editCell}
 						selection = {this.selection}
@@ -375,7 +403,7 @@ var TabularPane = React.createClass ({
 							{...this.props}
 							onDoubleClick={this.startEdit}
 							position = {sel}
-							fudge = {{left: -1.25, top: 0.25, height: -0.5, width: -0.5}} />
+							fudge = {{left: -1.25, top: -0.25, height: -0.5, width: -0.5}} />
 
 						<Overlay
 							columns = {columns}
@@ -393,9 +421,13 @@ var TabularPane = React.createClass ({
 							{...this.props}
 							{...this.props}
 							position = {cpy}
-							fudge = {{left: 0, top: 1, height: 1, width: 1}}/>
+							fudge = {{left: 0, top: 0.75, height: 1.5, width: 1.25}}/>
 
 					</TabularBodyWrapper>
+
+					<DetailBar
+						model = {model}
+						view = {view}/>
 
 				{_this.state.contextOpen ?
 					<ContextMenu
