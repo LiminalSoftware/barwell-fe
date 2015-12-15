@@ -19,6 +19,14 @@ module.exports.encode = function (str) {
   }).join('.')
 }
 
+module.exports.sequence = function (start, stop, howMany) {
+  var a = []
+  for (var i = start; i < stop; i += ((stop - start)/(howMany + 0.0000000000001))) {
+      a.push(i);
+  }
+  return a;
+}
+
 module.exports.numSort = function (a, b) {
   return a - b
 }

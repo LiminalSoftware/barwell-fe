@@ -93,8 +93,8 @@ var groomView = function (view) {
 	data.scrollTop = data.scrollTop || 0;
 
 	data.geometry = _.extend({
-		leftOffset: 0,
-		topGutter: 0,
+		leftOffset: -4,
+		topGutter: -2,
 		headerHeight: 28.5,
 		rowHeight: 25,
 		rowPadding: 1,

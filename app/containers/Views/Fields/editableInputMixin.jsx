@@ -60,6 +60,12 @@ var editableInputMixin = {
 		this.setValue(event.target.value)
 	},
 
+	handleDetail: function (event) {
+		this.props.handleDetail()
+		event.preventDefault()
+		event.stopPropagation()
+	},
+
 	render: function () {
 		var prettyValue = this.format ? this.format(this.props.value) : this.props.value
 		var style = this.props.style
@@ -79,6 +85,13 @@ var editableInputMixin = {
 			{this.format ?
 				this.format(this.props.value) :
 				this.props.value
+			}
+			{this.detailIcon && this.state.selected ?
+				<span
+					className = {"editor-icon icon " + this.detailIcon}
+					onClick = {this.handleDetail}
+					></span>
+				: null
 			}
 			</span>
 		}

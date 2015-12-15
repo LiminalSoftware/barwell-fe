@@ -9,26 +9,18 @@ import modelActionCreators from "../../../../actions/modelActionCreators"
 
 import ColorDetail from "./detail"
 
-import commitMixin from '../commitMixin'
+import CommitMixin from '../commitMixin'
 import editableInputMixin from '../editableInputMixin'
 import selectableMixin from '../selectableMixin'
+import ColorValidationMixin from './ColorValidationMixin'
 
 var ColorElement = React.createClass({
 
-	mixins: [commitMixin, selectableMixin],
+	mixins: [CommitMixin, selectableMixin, ColorValidationMixin],
 
 	revert: _.noop,
 
 	handleEdit: _.noop,
-
-	validator: function (input) {
-		if ((/^#[0-9A-F]{3,6}$/).test(input || ''))	return input
-		return null
-	},
-
-	parser: function (input) {
-		return input
-	},
 
 	handleClick: function () {
 
@@ -46,7 +38,11 @@ var ColorElement = React.createClass({
 		return <span {...this.props} className={className}>
 				<span className = "table-cell-inner color-picker">
 					<span className = "color-block" style = {{background: this.state.value}}></span>
-					<span className = "editor-icon grayed icon icon-tl-paint"></span>
+					{this.state.selected ?
+						 <span
+							className = "editor-icon icon icon-tl-paint"
+							onClick = {this.props.handleDetail}></span>
+						: null}
 				</span>
 		</span>
 	}

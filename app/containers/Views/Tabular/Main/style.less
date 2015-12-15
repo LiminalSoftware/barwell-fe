@@ -60,6 +60,7 @@
 // .table-cell:first-child {
 // 	border-left: 2px solid white;
 // }
+
 .table-cell:last-child {
 	border-right: 1px solid @gray3;
 }
@@ -75,11 +76,6 @@
 		color: @newgreen1;
 		background: white;
 	}
-
-	&:hover {
-
-	}
-
 }
 
 .sort-icon {
@@ -97,6 +93,44 @@
 		padding: 0;
 	}
 }
+
+.editor-icon {
+	position: absolute;
+	top: 3px;
+	cursor: pointer;
+	opacity: 0;
+	// background: white;
+	border-radius: 3px;
+	padding-left: 1px !important;
+	padding-right: 1px !important;
+	margin: 0 !important;
+	width: 24px;
+	z-index: 500;
+	display: none;
+}
+
+
+.align-left .table-cell-inner {
+	align: left;
+	.editor-icon {
+		right: 0px;
+	}
+}
+
+.align-center .table-cell-inner {
+	text-align: center;
+	.editor-icon {
+		left: 0;
+	}
+}
+
+.align-right .table-cell-inner {
+	text-align: right;
+	.editor-icon {
+		left: 0;
+	}
+}
+
 
 .table-cell-inner, .input-editor {
 	display: block;
@@ -151,27 +185,23 @@
 	border-radius: 3px;
 }
 
-.table-cell:hover .color-block {
-	right: 30px;
-}
+
 
 .table-cell:hover .table-cell-inner.has-editor {
 	padding-right: 20px;
 }
 
-.table-cell:hover {
+.table-cell.selected {
 	.editor-icon {
+		display: block;
 		opacity: 1;
+	}
+	.color-block {
+		right: 25px;
 	}
 }
 
-.editor-icon {
-	position: absolute;
-	right: 0px;
-	top: 3px;
-	cursor: pointer;
-	opacity: 0;
-}
+
 
 .has-many-bubble {
 	cursor: grab;

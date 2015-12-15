@@ -125,8 +125,6 @@ var ColumnMenu = React.createClass({
     return <div className = "double header-section" >
 			<div className="header-label">Table Columns</div>
 			<div className="model-views-menu">
-
-
 				{
 					this.state.open ?
 					<div className="model-views-menu-inner" onClick={this.clickTrap}>
@@ -150,7 +148,7 @@ var ColumnMenu = React.createClass({
 					{makeAttrDivs(columns)}
 					</div>
 				}
-
+				<div className="dropdown small grayed icon icon-geo-arrw-down" onClick = {this.handleOpen}></div>
 			</div>
 		</div>
 	}

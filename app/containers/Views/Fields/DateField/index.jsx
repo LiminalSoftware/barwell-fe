@@ -12,7 +12,7 @@ import modelActionCreators from "../../../../actions/modelActionCreators"
 import commitMixin from '../commitMixin'
 import editableInputMixin from '../editableInputMixin'
 import selectableMixin from '../selectableMixin'
-
+import DateValidatorMixin from './dateValidatorMixin'
 import DateDetail from "./detail"
 
 var dateField = {
@@ -71,25 +71,20 @@ var dateField = {
 		}
 	}),
 
+
+
 	element: React.createClass({
 
-		mixins: [commitMixin, editableInputMixin, selectableMixin],
+		mixins: [editableInputMixin, DateValidatorMixin, commitMixin, selectableMixin],
 
 		format: function (value) {
 			var config = this.props.config || {}
 			var format = config.dateFormat || "DD MMMM YYYY";
 			var prettyDate = value ? moment(value).format(format) : ''
-			
 			return prettyDate
 		},
 
-		validator: function (input) {
-			var config = this.props.config || {}
-			var format = config.dateFormat || "YYYY-MM-DD";
-			var date = moment(input, format)
-			if (!date.isValid()) date = moment(input, "YYYY-MM-DD")
-			return date.isValid() ? date : null
-		}
+		detailIcon: 'icon-calendar-selected',
 
 	})
 

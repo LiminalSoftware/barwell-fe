@@ -42,7 +42,13 @@ var TabularTR = React.createClass({
 				var element = (fieldTypes[col.type] || fieldTypes.TEXT).element
 				var cellKey = rowKey + '-' + col.column_id
 				var isCurrent = (ptr.left === j && ptr.top === row)
+				var classes = []
 
+				classes.push('table-cell')
+				if (col.sorting || prevSort) classes.push('sorted')
+				if (col.align === 'center') classes.push('align-center')
+				if (col.align === 'right') classes.push('align-right')
+				else classes.push('align-left')
 
 				var el = React.createElement(element, {
 					config: col,
@@ -50,10 +56,11 @@ var TabularTR = React.createClass({
 					view: _this.props.view,
 					selector: selector,
 					object: obj,
-					className: ('table-cell ' + ((col.sorting || prevSort) ? ' sorted ' : '')),
+					className: classes.join(' '),
 					value: obj[col.column_id],
 					column_id: col.column_id,
 					handleBlur: _this.props.handleBlur,
+					handleDetail: _this.props.handleDetail,
 					key: cellKey,
 					cellKey: cellKey,
 					ref: cellKey,
@@ -62,8 +69,7 @@ var TabularTR = React.createClass({
 						bottom: 0,
 						left: left + 'px',
 						minWidth: (col.width - 1) + 'px',
-						maxWidth: (col.width - 1)  + 'px',
-						textAlign: col.align
+						maxWidth: (col.width - 1)  + 'px'
 					}
 				})
 				prevSort = !!col.sorting

@@ -245,6 +245,18 @@ var TabularPane = React.createClass ({
 		event.stopPropagation();
 	},
 
+	showDetailBar: function () {
+		this.setState({detailOpen: true})
+	},
+
+	handleDetail: function () {
+		this.showDetailBar()
+	},
+
+	hideDetailBar: function () {
+		this.setState({detailOpen: false})
+	},
+
 	openContextMenu: function (event) {
 		event.preventDefault();
 		var rc = this.getRCCoords(event)
@@ -313,7 +325,10 @@ var TabularPane = React.createClass ({
 			this.toggleCell(this.state.pointer, false)
 			this.toggleCell(pos, true)
 		}
-		this.setState({pointer: pos})
+		this.setState({
+			pointer: pos,
+			detailOpen: false
+		})
 		view.data.pointer = pos
 		debouncedCreateView(view, false, false, true)
 	},
@@ -359,7 +374,8 @@ var TabularPane = React.createClass ({
 		var ptr = this.state.pointer
 		var sel = this.state.selection
 		var cpy = this.state.copyarea
-		// var object = this.getFieldAt(ptr)
+		var object = this.store.getObject(ptr.top)
+		var detailColumn = columns[ptr.left]
 
 		return <div
 			onScroll={this.onScroll}
@@ -380,6 +396,7 @@ var TabularPane = React.createClass ({
 					<TabularBodyWrapper
 						ref = "tbodyWrapper"
 						handleBlur = {_this.handleBlur}
+						handleDetail = {_this.handleDetail}
 						handlePaste = {_this.pasteSelection}
 						totalWidth = {totalWidth}
 						editCell = {_this.editCell}
@@ -424,10 +441,15 @@ var TabularPane = React.createClass ({
 							fudge = {{left: 0, top: 0.75, height: 1.5, width: 1.25}}/>
 
 					</TabularBodyWrapper>
+					{_this.state.detailOpen ?
+						<DetailBar
+							model = {model}
+							view = {view}
+							config = {detailColumn}
+							object = {object}/>
+						: null
+					}
 
-					<DetailBar
-						model = {model}
-						view = {view}/>
 
 				{_this.state.contextOpen ?
 					<ContextMenu

@@ -5,29 +5,30 @@ ul.sidebar-model-list {
 	list-style: none;
 	padding: 0;
 	margin: 0;
-	padding-left: 5px;
-	padding-top: 5px;
+	margin-left: 5px;
+	margin-top: 5px;
 	background: white;
 
 	& > li.add-new {
-		border-right: 1px solid @headerBorderColor;
+
 
 		a {
-			color: white;
 			font-weight: 800;
 			// font-family: @headerFont;
 		}
 	}
 
 	& > li {
-		border-left: 1px solid @headerBorderColor;
-		border-top: 1px solid @headerBorderColor;
 		flex-direction: row;
 		padding: 0;
+		border-left: 2px solid @headerBorderColor;
+		border-top: 2px solid @headerBorderColor;
 	}
 
 	& > li > a {
 		margin: 0;
+
+
 		padding: 3px 10px;
 		display: block;
 		text-decoration: none;
@@ -41,14 +42,21 @@ ul.sidebar-model-list {
 		font-family: @bodyFont;
 	}
 
+	& > li:last-child {
+		border-right: 2px solid @headerBorderColor;
+	}
+
 	& > li.active {
 		background: @headerBgColor;
-		margin-bottom: -1px;
-		border-bottom: 1px solid @headerBgColor;
+		margin-bottom: -2px;
+		border-bottom: 2px solid @headerBgColor;
 	}
+
+	& > li:not(.active) {}
 
 	& > li:not(.active) > a {
 		background: @headerBgColor;
+
 		// lighten(@gray2, 10%);
 	}
 
@@ -73,5 +81,5 @@ ul.sidebar-model-list {
 	order: -2;
 	padding: 0;
 	overflow: visible;
-	border-bottom: 1px solid @headerBorderColor;
+	border-bottom: 2px solid @headerBorderColor;
 }

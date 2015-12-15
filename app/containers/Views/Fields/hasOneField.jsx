@@ -63,7 +63,9 @@ var hasOneField = {
 			return <span
 				className = {className}
 				style={style} >
-				<span className="pick-one table-cell-inner">{value}</span>
+				<span className="pick-one table-cell-inner">
+						<span className="has-many-bubble">{value}</span>
+				</span>
 				<span key="expander" className="clickable expander small grayed icon icon-geo-arrw-down"></span>
 			</span>
 		},

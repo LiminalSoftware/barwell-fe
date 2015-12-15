@@ -15,6 +15,21 @@ module.exports = {
     'PRIMARY_KEY': 'Primary id'
   },
 
+  dates: [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ],
+
   delimiter: String.prototype.charCodeAt(31),
 
   aggregators: {

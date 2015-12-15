@@ -1,6 +1,8 @@
 @import "../../global.less";
 
 .detail-bar {
+  display: flex;
+  flex-direction: column;
   position: absolute;
   right: 10px;
   width: 250px;
@@ -12,5 +14,4 @@
   border-radius: @headerBorderRadius;
   .box-shadow(0 0 0 @headerOuterBorderWidth @headerOuterBorderColor);
   z-index: 500;
-  overflow-y: scroll;
 }

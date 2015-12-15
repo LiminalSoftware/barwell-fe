@@ -58,7 +58,6 @@ var ModelPane = React.createClass({
 	 },
 
 	render: function() {
-		console.log('model-views render')
 		var _this = this
 		var workspace_id = this.props.params.workspaceId
 		var model_id = this.props.params.modelId

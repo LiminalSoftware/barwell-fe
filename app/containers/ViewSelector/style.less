@@ -19,8 +19,7 @@
 	text-transform: uppercase;
 	font-size: 12px;
 	flex-direction: column;
-	padding: 8px;
-	padding-top: 0;
+	padding: 0;
 	text-align: center;
 }
 
@@ -31,9 +30,10 @@
 }
 
 .model-views-menu {
-	flex-direction: column;
+	margin-top: 8px;
 	position: relative;
-	display: block;
+	display: flex;
+	flex-direction: row;
 	cursor: pointer;
 
 	// border-radius: @headerBorderRadius;
@@ -41,13 +41,15 @@
 }
 
 .model-views-menu-inner {
+	display: flex;
+	flex: 1 1;
 	height: 40px;
 	.ellipsis;
 	background: @headerMenuBgColor;
-	padding: 0;
-	margin-right: 30px;
+	margin: 0 !important;
 
-	border-radius: @headerBorderRadius;
+	// border-radius: @headerBorderRadius;
+	border: 1px solid @headerBorderColor;
 
 	.view-label {
 		float: left;
@@ -56,17 +58,20 @@
 	}
 }
 
+.dropdown, .model-views-menu-inner {
+	border: 1px solid @headerBorderColor;
+	border-left: none;
+	&:first-child {
+		border-left: 1px solid @headerBorderColor;
+	}
+}
+
 .dropdown {
 	background: @headerMenuBgColor;
 	color: @headerFontColor;
 
-	position: absolute;
-	display: block;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	width: 30px;
-	padding: 14px 0px;
+	display: flex;
+	padding: 14px 8px;
 	margin: 0 !important;
 	text-align: center;
 	vertical-align: middle;
@@ -117,6 +122,9 @@
 
 .menu-divider {
 	text-transform: uppercase;
+	// font-family: @headerFont;
+	// font-weight: 500;
+	border-bottom: 1px solid @menuBorderColor;
 }
 .menu-divider-label {
 

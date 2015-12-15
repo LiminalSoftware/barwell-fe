@@ -27,9 +27,11 @@ var ViewSelector = React.createClass({
 				<div className="model-views-menu-inner" onClick = {this.handleOpen}>
 					<ViewItem {...this.props} className="inline"/>
 				</div>
-				<div className="dropdown small grayed icon icon-geo-arrw-down" onClick = {this.handleOpen}></div>
 				{this.state.open ? <ViewsList {...this.props}/> : null}
+				<div className="dropdown small grayed icon icon-geo-arrw-down"
+					onClick = {this.handleOpen}></div>
 			</div>
+
 		</div>
 	}
 });
@@ -63,14 +65,15 @@ var ViewItem = React.createClass({
 	render: function () {
 		var view = this.props.view
 		var model = this.props.model
-		if (view) return <Link to="view" params={{
+		if (view) return <div className = "menu-item">
+		<Link to="view" params={{
 			modelId: view.model_id,
 			workspaceId: model.workspace_id,
 			viewId: view.view_id}}
 			className= {"menu-item menu-sub-item "}>
 			<span className={"large view-icon icon " + (viewTypes[view.type].icon)}/>
 			{view.view}
-		</Link>
+		</Link></div>
 		else return <div className = "menu-item menu-sub-item ">
 			No view selected
 		</div>

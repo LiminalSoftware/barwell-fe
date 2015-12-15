@@ -95,10 +95,6 @@ var ColumnDetail = React.createClass({
 					</span>
 				</span>
 				{typeSpecificConfig}
-				{this.props.open ? null :
-					<div className="dropdown small grayed icon icon-geo-arrw-down" onClick = {this.props._onOpen}></div>
-
-				}
 		</div>
 	}
 });

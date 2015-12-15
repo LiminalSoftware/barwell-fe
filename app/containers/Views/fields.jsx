@@ -16,6 +16,7 @@ import hasOneField from './Fields/hasOneField'
 import colorField from './Fields/ColorField'
 import integerField from './Fields/integerField'
 import decimalField from './Fields/DecimalField'
+import textField from './Fields/TextField'
 import dateField from './Fields/DateField'
 import booleanField from './Fields/BooleanField'
 import primaryKeyField from './Fields/primaryKeyField'
@@ -45,15 +46,9 @@ function rgbToHex(r, g, b) {
 
 var fieldTypes = {
 	PRIMARY_KEY: primaryKeyField,
-	TEXT: {
-		element: VanillaElement,
-		validator: _.identity,
-		parser: _.identity
-	},
+	TEXT: textField,
 	BOOLEAN: booleanField,
-
 	HAS_ONE: hasOneField,
-
 	HAS_MANY: hasManyField,
 	COLOR: colorField,
 	INTEGER: integerField,

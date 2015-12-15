@@ -122,7 +122,7 @@ var TabularTBody = React.createClass ({
 	},
 
 	render: function () {
-		console.log('tbody render')
+		// console.log('tbody render')
 		var _this = this
 		var view = this.props.view
 		var model = this.props.model

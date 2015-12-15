@@ -27,14 +27,25 @@ var DetailBar = React.createClass({
 		var _this = this
 		var view = this.props.view
 		var model = this.props.model
+		var config = this.props.config
+		var object = this.props.object
+		var value = object[config.column_id]
+		var pk = model._pk
+		var selector = {}
 		var data = view.data
-		var column = view.data.columnList.filter(col => col.visible)[data.pointer.left]
-		var fieldType = fieldTypes[column.type]
+		var fieldType = fieldTypes[config.type]
+
+		if (!(pk in object)) selector = null
+		else selector[pk] = object[pk]
+
 		var detail = fieldType.detail ?
 			React.createElement(fieldType.detail, {
 				view: view,
 				model: model,
-				column: column
+				object: object,
+				config: config,
+				value: value,
+				selector: selector
 			}) : null;
 
     return <div className = "detail-bar" onClick={this.focus}>
