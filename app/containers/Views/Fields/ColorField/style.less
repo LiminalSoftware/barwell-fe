@@ -1,3 +1,5 @@
+@import "../../../../global.less";
+
 .color-row {
   flex-direction: column;
 }
@@ -34,4 +36,36 @@
   flex-wrap: wrap;
   overflow-x: hidden;
   overflow-y: scroll;
+}
+
+.week-box {
+  display: flex;
+  flex-direction: row;
+  flex: 1 1;
+}
+
+.day-box {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1;
+  border-right: 1px solid @gray4;
+  border-bottom: 1px solid @gray4;
+  margin: 0;
+  padding: 5px;
+  text-align: center;
+  background: white;
+
+  &.last-week {
+    border-bottom: 1px double @headerBorderColor;
+  }
+  &.last-day {
+    border-right: 1px double @headerBorderColor;
+  }
+  &.first-day {
+    border-left: 1px solid @headerBorderColor;
+  }
+  &.selected {
+    background: @newgreen1;
+    color: white;
+  }
 }
