@@ -18,18 +18,7 @@ var ColorElement = React.createClass({
 
 	mixins: [CommitMixin, selectableMixin, ColorValidationMixin],
 
-	revert: _.noop,
-
 	handleEdit: _.noop,
-
-	handleClick: function () {
-
-	},
-
-	setValue: function (value) {
-		value = (this.parser) ? this.parser(value) : value;
-		this.setState({value: value})
-	},
 
 	render: function () {
 		var value = this.props.value

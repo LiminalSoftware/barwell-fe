@@ -19,14 +19,15 @@
     "hot"
   ],
   "devDependencies": {
-    "uglify-loader": "*",
-    "stats-webpack-plugin": "^0.1.2",
-    "webpack": "^1.8.5",
-    "superagent": "^1.1.0",
     "css-loader": "^0.14.0",
+    "express": "^4.13.3",
     "extract-text-webpack-plugin": "^0.8.0",
     "react-hot-loader": "^1.0.0",
     "react-proxy-loader": "^0.3.1",
+    "stats-webpack-plugin": "^0.1.2",
+    "superagent": "^1.1.0",
+    "uglify-loader": "*",
+    "webpack": "^1.8.5",
     "webpack-dev-server": "^1.4.7"
   },
   "dependencies": {

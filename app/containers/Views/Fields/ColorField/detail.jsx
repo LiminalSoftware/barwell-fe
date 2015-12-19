@@ -19,8 +19,9 @@ var ColorDetail = React.createClass({
 	},
 
 	clickChoice: function (event) {
-		var colorChoice = event.target.style.background
-		this.commitValue(colorChoice)
+		var color = event.target.style.background
+		this.setState({value: color})
+		this.commitValue(color)
 	},
 
 	render: function() {

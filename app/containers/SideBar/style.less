@@ -21,8 +21,8 @@ ul.sidebar-model-list {
 	& > li {
 		flex-direction: row;
 		padding: 0;
-		border-left: 2px solid @headerBorderColor;
-		border-top: 2px solid @headerBorderColor;
+		border-left: @headerBorderWidth solid @headerBorderColor;
+		border-top: @headerBorderWidth solid @headerBorderColor;
 	}
 
 	& > li > a {
@@ -43,13 +43,13 @@ ul.sidebar-model-list {
 	}
 
 	& > li:last-child {
-		border-right: 2px solid @headerBorderColor;
+		border-right: @headerBorderWidth solid @headerBorderColor;
 	}
 
 	& > li.active {
 		background: @headerBgColor;
-		margin-bottom: -2px;
-		border-bottom: 2px solid @headerBgColor;
+		margin-bottom: -1 * @headerBorderWidth;
+		border-bottom: @headerBorderWidth solid @headerBgColor;
 	}
 
 	& > li:not(.active) {}
@@ -81,5 +81,5 @@ ul.sidebar-model-list {
 	order: -2;
 	padding: 0;
 	overflow: visible;
-	border-bottom: 2px solid @headerBorderColor;
+	border-bottom: @headerBorderWidth solid @headerBorderColor;
 }

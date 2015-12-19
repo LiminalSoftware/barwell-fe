@@ -62,7 +62,7 @@ var dateField = {
 			return <span className="double-column-config">
 					Format:
 					<input type = "text"
-						className = "menu-input renamer"
+						className = "menu-input text-input"
 						spellCheck = "false"
 						value = {this.state.dateFormat}
 						onBlur = {this.onBlur}

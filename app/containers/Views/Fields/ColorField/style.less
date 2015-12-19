@@ -31,29 +31,44 @@
 
 .color-detail-scroll {
   display: flex;
+  margin-top: 8px;
   flex: 1 1;
   flex-direction: row;
   flex-wrap: wrap;
   overflow-x: hidden;
   overflow-y: scroll;
+  background: white;
+}
+
+.calendar-table {
+  border-collapse: collapse;
+}
+
+.month-label {
+  background: white;
+  border: 1px double @headerBorderColor;
+  &.different-year {
+    background: @gray4;
+  }
 }
 
 .week-box {
-  display: flex;
-  flex-direction: row;
-  flex: 1 1;
+  // display: flex;
+  // flex-direction: row;
+  // flex: 1 1;
 }
 
 .day-box {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1;
+  // display: flex;
+  // flex-direction: column;
+  // flex: 1 1;
   border-right: 1px solid @gray4;
   border-bottom: 1px solid @gray4;
-  margin: 0;
+
   padding: 5px;
   text-align: center;
   background: white;
+  cursor: pointer;
 
   &.last-week {
     border-bottom: 1px double @headerBorderColor;
@@ -66,6 +81,10 @@
   }
   &.selected {
     background: @newgreen1;
+    border: 1px double @newgreen1;
     color: white;
+  }
+  &.different-year {
+    background: @gray4;
   }
 }
