@@ -107,9 +107,11 @@ var hasManyField = {
 			var label = config.label
 			var parentObj = this.props.object
 			var relatedModel = ModelStore.get(config.related_model_id)
+			var className = (this.props.className || '') + ' table-cell '
+				+ (this.state.selected ? ' selected ' : '');
 
 			return <span
-				className = {'table-cell ' + (this.state.droppable ? "droppable" : "")}
+				className = {className}
 				style = {style}
 				onDragEnter = {this.handleDragEnter}
 				onDragLeave = {this.handleDragLeave}
@@ -118,6 +120,8 @@ var hasManyField = {
 				onDrop = {this.handleDrop}
 				>
 				<span className="table-cell-inner">
+					{this.state.droppable ?
+						<span className = "has-many-bubble placeholder"/> :null}
 					{(value || []).map(function(obj) {
 						return <HasManyBubble
 							key = {obj.cid || obj[relatedModel._pk]}
@@ -152,7 +156,7 @@ var HasManyBubble = React.createClass({
 		event.stopPropagation()
 	},
 
-	handleMouedown: function (event) {
+	handleMousedown: function (event) {
 		event.stopPropagation()
 	},
 
@@ -168,7 +172,7 @@ var HasManyBubble = React.createClass({
 			onDrop = {this.handleDrop}
 			draggable = "true"
 			onDragStart = {this.handleDragStart}
-			onMouseDown = {this.handleMouedown}
+			onMouseDown = {this.handleMousedown}
 			>
 			{obj[label]}
 		</span>

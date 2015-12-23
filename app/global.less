@@ -35,6 +35,9 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
 @purple1: #54365E;
 @purple2: #7F5E8A;
 @purple3: #AF86BD;
+@purple4: #A041BF;
+
+@orange3: #FF5845;
 
 @gray-trans: rgba(102, 81, 81, 0.1);
 
@@ -50,6 +53,8 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
 @green-trans: hsla(134,  50%, 70%, 0.1);
 @purple-trans: hsla(301, 44%, 70%, 0.3);
 @red-bright-trans: hsla(346, 100%, 40%, 20%);
+@red-bright: hsl(346, 100%, 40%);
+
 
 //=================================
 // scrollbar
@@ -131,6 +136,12 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
 	-o-transform: 		 rotate(@deg);
 }
 
+.draggable {
+  cursor: move;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
+}
 
 .icon {
 	font-weight: 400;
@@ -143,13 +154,6 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
 
   &.upside-down {
     .rotate(180deg);
-  }
-
-  &.draggable {
-    cursor: move;
-    cursor: grab;
-    cursor: -moz-grab;
-    cursor: -webkit-grab;
   }
 
 	&.right-align {
@@ -186,6 +190,10 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
 
   &.greened {
     color: @newgreen1;
+  }
+
+  &.red {
+    color: @red-bright;
   }
 
   &.left-pad {
@@ -235,6 +243,17 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
 	-moz-box-shadow:    @string;
 	box-shadow:         @string;
 }
+.box-shadow-transitioned (@string) {
+	-webkit-box-shadow: @string;
+	-moz-box-shadow:    @string;
+	box-shadow:         @string;
+  -webkit-transition: all 200ms linear;
+  -o-transition: all 200ms linear;
+  -moz-transition: all 200ms linear;
+  -ms-transition: all 200ms linear;
+  -kthtml-transition: all 200ms linear;
+}
+
 .drop-shadow (@x: 0, @y: 1px, @blur: 2px, @spread: 0, @alpha: 0.25) {
 	-webkit-box-shadow:	@x @y @blur @spread rgba(0, 0, 0, @alpha);
 	-moz-box-shadow:	@x @y @blur @spread rgba(0, 0, 0, @alpha);
@@ -366,10 +385,11 @@ src:url("assets/fonts/55f60419-09c3-42bd-b81f-1983ff093852.eot?#iefix") format("
 	-o-transform-origin:      @x @y;
 }
 
-@headerBorderColor: #9B8D9E;
+@headerBorderColor: @gray3;
+@headerBorderHilite: @purple4;
 @menuBorderColor: @gray3;
 @headerBorderRadius: 2px;
-@headerOuterBorderWidth: 3px;
+@headerOuterBorderWidth: 5px;
 @headerOuterBorderColor: @darkgreen0-trans;
 @headerBgColor: darken(@gray4, 1%);
 @headerBorderWidth: 1px;

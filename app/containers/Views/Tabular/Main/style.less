@@ -1,5 +1,18 @@
 @import "../../../../global.less";
 
+.loader-box {
+	z-index: 500;
+	dispaly: block;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 20px;
+	padding: 10px;
+	text-align: center;
+	color: white;
+	background: @newgreen1;
+}
 
 .tabular-body-wrapper {
 	position: absolute;
@@ -65,18 +78,7 @@
 	border-right: 1px solid @gray3;
 }
 
-.columnAdder {
-	border: 1px solid @newgreen1 !important;
-	cursor: pointer;
-	.table-cell-inner {
-		text-align: center;
-		font-family: @headerFont !important;
-		font-weight: 100 !important;
-		font-size: 16px !important;
-		color: @newgreen1;
-		background: white;
-	}
-}
+
 
 .sort-icon {
 	margin-left: 5px;
@@ -107,6 +109,12 @@
 	width: 24px;
 	z-index: 500;
 	display: none;
+
+	-webkit-animation: fadein 1s; /* Safari, Chrome and Opera > 12.1 */
+       -moz-animation: fadein 1s; /* Firefox < 16 */
+        -ms-animation: fadein 1s; /* Internet Explorer */
+         -o-animation: fadein 1s; /* Opera < 12.1 */
+            animation: fadein 1s;
 }
 
 
@@ -204,7 +212,8 @@
 
 
 .has-many-bubble {
-	cursor: grab;
+	.draggable;
+	position: relative;
 	display: inline;
 
 	padding: 0px 5px;
@@ -213,14 +222,16 @@
 	margin-top: 2px;
 	margin-bottom: 2px;
 
-	&:hover {
-
-	}
-
 	&.selected {
 		background: @newgreen1;
 		color: white;
 	}
+}
+
+.has-many-bubble.placeholder {
+	border: 1px dashed @newgreen1;
+	min-width: 50px;
+	width: 50px;
 }
 
 

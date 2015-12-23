@@ -11,6 +11,7 @@ import KeyStore from "../../../../stores/KeyStore"
 import KeycompStore from "../../../../stores/KeycompStore"
 
 import ColumnDetail from "./ColumnDetail"
+import ColumnMenuSection from "./ColumnMenuSection"
 import constant from '../../../../constants/MetasheetConstants'
 import util from "../../../../util/util"
 
@@ -21,7 +22,7 @@ var blurOnClickMixin = require('../../../../blurOnClickMixin')
 
 var ColumnMenu = React.createClass({
 
-	itemHeight: 32,
+	itemHeight: 35,
 
 	mixins: [blurOnClickMixin],
 
@@ -32,120 +33,138 @@ var ColumnMenu = React.createClass({
 	getInitialState: function () {
 		var view = this.props.view
 		var columns = view.data.columnList
-
 		return {
 			open: false,
-			dragItem: null,
-			dragOffset: null,
-			initOffset: null,
-			hiddenCols: columns.filter(col => !col.visible).sort(util.numSort),
-			visibleCols: columns.filter(col => col.visible).sort(util.numSort)
+			editing: false,
+			columns: view.data.columnList
 		}
 	},
 
-	componentWillReceiveProps: function (nextProps) {
+	commitChanges: function (column) {
 		var view = this.props.view
-		var columns = view.data.columnList
-
-		this.setState({
-			hiddenCols: columns.filter(col => !col.visible).sort(util.numSort),
-			visibleCols: columns.filter(col => col.visible).sort(util.numSort)
-		})
-	},
-
-	componentDidUpdate: function (props, state) {
-    if (this.state.dragItem && !state.dragItem) {
-      document.addEventListener('mousemove', this.onMouseMove)
-      document.addEventListener('mouseup', this.onMouseUp)
-    } else if (!this.state.dragItem && state.dragItem) {
-      document.removeEventListener('mousemove', this.onMouseMove)
-      document.removeEventListener('mouseup', this.onMouseUp)
-    }
-  },
-
-	onMouseMove: function (e) {
-    if (!this.state.dragItem) return
-		var view = this.props.view
-		var item = this.state.dragItem
-		var dragOffset = e.pageY - this.state.initOffset
-		console.log('dragOffset: ' + dragOffset)
-		item.order = this.state.dragOrder + dragOffset / this.itemHeight
-		console.log('order: ' + item.order)
-		this.setState({
-			visibleCols: util.enumerate(this.state.visibleCols),
-			hiddenCols: util.enumerate(this.state.hiddenCols)
-		})
-    e.stopPropagation()
-    e.preventDefault()
-  },
-
-	onMouseDown: function (event, config) {
-		this.setState({
-			dragItem: config,
-			dragOrder: config.order,
-			initOffset: event.pageY
-		})
-	},
-
-	onMouseUp: function (event) {
-		var view = this.props.view
-		var columns = this.state.hiddenCols.concat(this.state.visibleCols)
+		var columns = this.state.columns
 		view.data.columns = _.indexBy(columns, 'column_id')
+		view.data.columns[column.column_id] = column
+
 		modelActionCreators.createView(view, true, true);
 		this.setState({dragItem: null})
-    event.stopPropagation()
-    event.preventDefault()
-  },
+	},
+
+	handleEdit: function () {
+		this.setState({editing: true})
+	},
+
+	handleDoneEdit: function () {
+		this.setState({editing: false})
+	},
+
+	getCurrentCol: function () {
+		var view = this.props.view
+		var data = view.data
+		var columns = view.data.columnList
+		columns = columns.filter(col => col.visible)
+		return columns[data.pointer.left]
+	},
+
+	sections : [
+		{
+			label: "Hidden Attributes",
+			emptyText: "No hidden attributes...",
+			icon: "icon-eye-4",
+			selector: function (columns) {
+				return columns.filter(c => !c.visible).sort(util.orderSort)
+			},
+			enterTransform: function (col) {
+				col.visible = false
+				col.fixed = false
+				return col
+			}
+		},
+		{
+			label: "Fixed Attributes",
+			emptyText: "No fixed attributes...",
+			icon: "icon-pin-3",
+			selector: function (columns) {
+				return columns.filter(c => c.visible && c.fixed).sort(util.orderSort)
+			},
+			enterTransform: function (col) {
+				col.visible = true
+				col.fixed = true
+				return col
+			}
+		},
+		{
+			label: "Visible Attributes",
+			emptyText: "No visible attributes...",
+			icon: "icon-eye-3",
+			selector: function (columns) {
+				return columns.filter(c => c.visible).sort(util.orderSort)
+			},
+			enterTransform: function (col) {
+				col.visible = true
+				col.fixed = false
+				return col
+			}
+		}
+	],
+
+	addItemToPrevSection: function (item, sectionIdx) {
+		var section = this.sections[sectionIdx - 1]
+		var el = this.refs["section-" + (sectionIdx - 1)]
+		section.enterTransform(item)
+	},
 
 	render: function() {
 		var _this = this
 		var view = this.props.view
 		var data = view.data
 		var columns = view.data.columnList
-		var column
-		if (!this.state.open) {
-			columns = columns.filter(col => col.visible)
-			column = columns[data.pointer.left]
-			if (column) columns = [column]
-			else columns = []
-		}
-
-		var makeAttrDivs = function (columns) {
-			return columns.map(function (col, idx) {
-				return <ColumnDetail
-					key = {"detail-" + col.column_id}
-					_onDrag = {_this.onMouseDown}
-					_onOpen = {_this.handleOpen}
-					dragOffset = {col === _this.state.dragItem ? _this.state.dragOffset : 0}
-					config = {col} view= {view}
-					open = {_this.state.open}/>
-			})
-		}
+		var sections = this.sections.map(function (section, idx) {
+			return <ColumnMenuSection
+				label = {section.label}
+				ref = {"section-" + idx}
+				icon = {section.icon}
+				view = {view}
+				index = {idx}
+				emptyText = {section.emptyText}
+				editing = {_this.state.editing}
+				_startDrag = {_this.handleDragStart}
+				_commitChanges = {_this.commitChanges}
+				columns = {section.selector(columns)}/>
+		})
 
     return <div className = "double header-section" >
 			<div className="header-label">Table Columns</div>
 			<div className="model-views-menu">
 				{
 					this.state.open ?
+					// full dropdown menu with all columns
 					<div className="model-views-menu-inner" onClick={this.clickTrap}>
-					<div className = "dropdown-menu">
-						<div className="menu-item menu-sub-item menu-divider">
-							<div className="menu-divider-label">Hidden Attributes</div>
-						</div>
-						{makeAttrDivs(this.state.hiddenCols)}
-						<div className="menu-item menu-sub-item menu-divider">
-							<div className="menu-divider-label">Visible Attributes</div>
-						</div>
-						{makeAttrDivs(this.state.visibleCols)}
-						<div className="menu-item column-item">
-							<div className="menu-sub-item">Add new attribute</div>
-							<div className="menu-sub-item">Edit attributes</div>
+					<div className = "dropdown-menu" style = {{minWidth: '500px'}}>
+						{sections}
+						<div className="menu-item column-item menu-config-row" key="detail-menu-items">
+							{
+								this.state.editing ?
+								<div className = "menu-sub-item"
+									onClick = {this.handleDoneEdit}>
+									Save changes
+								</div>
+								:
+								<div className = "menu-sub-item"
+									onClick = {this.handleEdit}>
+									Edit attributes
+								</div>
+							}
+							<div className="menu-sub-item">
+								Add new attribute
+							</div>
 						</div>
 					</div>
 					</div>
 					:
+					// detail for currently selected column
 					<div className="model-views-menu-inner" onClick={this.clickTrap}>
-					{makeAttrDivs(columns)}
+						<ColumnDetail config = {this.getCurrentCol()} view= {view}/>
 					</div>
 				}
 				<div className="dropdown small grayed icon icon-geo-arrw-down" onClick = {this.handleOpen}></div>

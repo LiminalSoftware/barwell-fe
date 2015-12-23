@@ -41,7 +41,11 @@ var hasOneField = {
 					Label:
 					<select className="menu-input selector" onChange={this.onLabelChange} value={this.state.label}>
 						{AttributeStore.query({model_id: model_id}).map(function (attr) {
-							return <option value={'a' + attr.attribute_id}>{attr.attribute}</option>
+							return <option
+								value = {'a' + attr.attribute_id}
+								key = {attr.attribute_id}>
+									{attr.attribute}
+								</option>
 						})}
 					</select>
 			</span>;
@@ -64,9 +68,16 @@ var hasOneField = {
 				className = {className}
 				style={style} >
 				<span className="pick-one table-cell-inner">
-						<span className="has-many-bubble">{value}</span>
+				{this.props.value ?
+					<span className="has-many-bubble">{value}</span>
+					: null
+				}
+				{this.state.selected ?
+					 <span
+						className = "editor-icon icon icon-search"
+						onClick = {this.props.handleDetail}></span>
+					: null}
 				</span>
-				<span key="expander" className="clickable expander small grayed icon icon-geo-arrw-down"></span>
 			</span>
 		},
 		uneditable: false

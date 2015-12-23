@@ -15,12 +15,28 @@
 }
 
 
+.columnAdder {
+	cursor: pointer;
+	border: 1px solid @headerBorderColor;
+	&:hover {
+		border: 1px solid @newgreen1;
+		color: @newgreen1;
+	}
+	.table-cell-inner {
+		text-align: center;
+		font-family: @headerFont !important;
+		font-weight: 100 !important;
+		font-size: 16px !important;
+		background: white;
+	}
+}
+
 .table-header-cell.table-cell {
 	font-style: @headerFont;
 	font-weight: 700;
 	border: 1px solid @gray3;
-	border-bottom: 1px solid @newgreen1;
-	border-top: 1px solid @newgreen1;
+	border-bottom: 1px solid @headerBorderColor;
+	border-top: 1px solid @headerBorderColor;
 	z-index: 200;
 
 	.context {

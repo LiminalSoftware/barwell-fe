@@ -38,15 +38,18 @@
   overflow-x: hidden;
   overflow-y: scroll;
   background: white;
+  border: 1px solid @headerBorderColor;
 }
 
 .calendar-table {
+  border-top: 1px solid white;
   border-collapse: collapse;
 }
 
 .month-label {
   background: white;
   border: 1px double @headerBorderColor;
+  border-left: none;
   &.different-year {
     background: @gray4;
   }
@@ -56,6 +59,9 @@
   // display: flex;
   // flex-direction: row;
   // flex: 1 1;
+  &:first-child {
+    border-top: none;
+  }
 }
 
 .day-box {

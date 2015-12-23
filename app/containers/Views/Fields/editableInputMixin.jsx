@@ -69,7 +69,7 @@ var editableInputMixin = {
 	render: function () {
 		var prettyValue = this.format ? this.format(this.props.value) : this.props.value
 		var style = this.props.style
-		var className = (this.props.className || '') + ' table-cell '
+		var className = (this.props.className || '')
 			+ (this.state.selected ? ' selected ' : '');
 
 		return <span {...this.props} className = {className}>

@@ -37,25 +37,53 @@ var ViewSelector = React.createClass({
 });
 
 var ViewsList = React.createClass({
-	edit: function () {
-
+	getInitialState: function () {
+			return {
+				editing: false
+			}
 	},
+
 	addNew: function () {
 
 	},
+
+	handleEdit: function () {
+		this.setState({editing: true})
+	},
+
+	handleDoneEdit: function () {
+		this.setState({editing: false})
+	},
+
 	render: function () {
+		var _this = this
 		var views = ViewStore.query({model_id: this.props.model.model_id})
-		return <div className = "dropdown-menu ">
-			{views.map(view => <ViewItem {...this.props} view={view}/>)}
-			<div className="menu-item">
-				<span className="menu-sub-item">
-
-					Edit views
-				</span>
-				<span className="menu-sub-item">
-
+		var editing = this.state.editing
+		return <div className = "dropdown-menu "
+					style = {{minWidth: "250px"}}>
+			{views.map( view =>
+				<ViewItem {...this.props}
+					key = {view.view_id}
+					selected = {_this.view === view}
+					view = {view}
+					editing = {editing}/>
+			)}
+			<div className="menu-item column-item menu-config-row" key="detail-menu-items">
+				{
+					this.state.editing ?
+					<div className = "menu-sub-item"
+						onClick = {this.handleDoneEdit}>
+						Save changes
+					</div>
+					:
+					<div className = "menu-sub-item"
+						onClick = {this.handleEdit}>
+						Edit views
+					</div>
+				}
+				<div className="menu-sub-item">
 					Add view
-				</span>
+				</div>
 			</div>
 		</div>
 	}
@@ -65,15 +93,25 @@ var ViewItem = React.createClass({
 	render: function () {
 		var view = this.props.view
 		var model = this.props.model
-		if (view) return <div className = "menu-item">
-		<Link to="view" params={{
-			modelId: view.model_id,
-			workspaceId: model.workspace_id,
-			viewId: view.view_id}}
-			className= {"menu-item menu-sub-item "}>
-			<span className={"large view-icon icon " + (viewTypes[view.type].icon)}/>
-			{view.view}
-		</Link></div>
+
+		if (view) return <Link to="view"
+				className= {"menu-item tight menu-sub-item " +
+					(this.props.selected ? " selected" : "")}
+				params={{
+					modelId: view.model_id,
+					workspaceId: model.workspace_id,
+					viewId: view.view_id
+				}}>
+				{this.props.editing ?
+						<span className = "half-column-config">
+							<span className="draggable icon grayed icon-Layer_2"/>
+						</span>
+						: null}
+				<span className = "half-column-config">
+					<span className={"large view-icon icon " + (viewTypes[view.type].icon)}/>
+				</span>
+				<span className = "double-column-config">{view.view}</span>
+			</Link>
 		else return <div className = "menu-item menu-sub-item ">
 			No view selected
 		</div>

@@ -147,6 +147,7 @@ var TabularTBody = React.createClass ({
 				onMouseDown = {_this.props.clicker}
 				// onContextMenu={_this.props.openContextMenu}
 				onDoubleClick = {_this.props.editCell}>
+				
 				{
 					rows.map(function (obj, i) {
 						var rowKey = 'tr-' + (obj.cid || obj[pk])
@@ -162,17 +163,6 @@ var TabularTBody = React.createClass ({
 							handleBlur = {_this.props.handleBlur} />;
 					})
 				}
-				<div style = {{
-					top: (rowCount * geometry.rowHeight + 'px'),
-					left: 0,
-					height: (geometry.rowHeight  + 'px'),
-					width: (this.props.totalWidth - 1) + 'px'
-					}}
-					className = "table-cell add-new-row">
-					<div className = "table-cell-inner">
-						+ Add a new row of data
-					</div>
-				</div>
 			</div>
 	}
 })

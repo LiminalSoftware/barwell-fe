@@ -31,6 +31,10 @@ module.exports.numSort = function (a, b) {
   return a - b
 }
 
+module.exports.sortByOrder = function (a, b) {
+  return a.order - b.order
+}
+
 module.exports.clean = function (obj) {
 	obj._dirty = false
 	obj._server = stripInternalVars(obj)

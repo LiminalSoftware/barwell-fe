@@ -16,12 +16,20 @@ var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 import TabularTBody from "./TabularTBody"
 
 var TabularBodyWrapper = React.createClass ({
+
+	handleAddRecord: function (event) {
+		console.log('handleAddRecord')
+		this.props._addRecord()
+		event.nativeEvent.stopPropagation();
+		event.stopPropagation()
+	},
+
 	render: function () {
 		var view = this.props.view
 		var model = this.props.model
 		var store = this.props.store
 		var rows = store ? store.getObjects() : []
-		var rowCount = store ? store.getRecordCount() : 0
+		var rowCount = store.getRecordCount()
 		var geo = view.data.geometry
 		var focused = this.props.focused
 
@@ -33,12 +41,28 @@ var TabularBodyWrapper = React.createClass ({
 			position: 'absolute',
 		}
 
-		return <div 
+		var newRowBarStyle = {
+			top: rowCount * geo.rowHeight + 'px',
+			left: 0,
+			height: (geo.rowHeight  + 'px'),
+			width: (this.props.totalWidth - 1) + 'px'
+		}
+
+		return <div
 			className = {"tabular-body-wrapper " + (focused ? "focused" : "blurred")}
 			ref="tbodyWrapper"
 			style={wrapperStyle}>
 				<TabularTBody ref="tbody" {...this.props}/>
 				{this.props.children}
+
+				<div style = {newRowBarStyle}
+					className = "table-cell add-new-row">
+					<div className = "table-cell-inner"
+						onMouseDown = {this.handleAddRecord}>
+						+ Add a new row of data
+					</div>
+				</div>
+
 			</div>;
 	}
 });

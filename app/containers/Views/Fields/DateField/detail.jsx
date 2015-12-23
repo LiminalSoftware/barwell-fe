@@ -45,7 +45,7 @@ var DateDetail = React.createClass({
 
 	getDaysInYear: function (center) {
 		var weeks = []
-		var start = moment(this.state.year + '-1-1').startOf('year').startOf('week')
+		var start = moment(this.state.year + ' 01 01', "YYYY MM DD").startOf('year').startOf('week')
 		for (var w = 0; w < 52; w++) {
 			var days = []
 			for (var d = 0; d < 7; d++) {
@@ -86,8 +86,14 @@ var DateDetail = React.createClass({
 							(day.clone().subtract(1, 'week').month() !== day.month())
 						var numWeeks = Math.ceil((day.clone().endOf('month').date() - day.date() + 1) / 7)
 						// console.log('numWeeks: ' + numWeeks)
-						return <tr className = "week-box" style = {{height: _this.state.rowHeight + 'px'}}>
-							{isFirstWeek ? <td rowSpan = {numWeeks} className = {"month-label " }>
+						return <tr
+							className = "week-box"
+							key = {"week-" + weekIdx}
+							style = {{height: _this.state.rowHeight + 'px'}}>
+							{isFirstWeek ?
+								<td rowSpan = {numWeeks}
+									key = {'label-' + weekIdx}
+									className = {"month-label " }>
 								{day.format('MMM')}</td> : null}
 							{days.map(function (day, idx) {
 								var classes = []
@@ -100,6 +106,7 @@ var DateDetail = React.createClass({
 								if (day.isSame(value)) classes.push('selected')
 								if (day.year() !== _this.state.year) classes.push('different-year')
 								return <td
+									key = {'day-' + weekIdx + '-' + idx}
 									className = {classes.join(' ')}
 									onClick = {_this.handleClickDay.bind(null, day)}>
 									{day.date()}

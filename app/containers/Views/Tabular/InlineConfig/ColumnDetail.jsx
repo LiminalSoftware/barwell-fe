@@ -35,15 +35,17 @@ var ColumnDetail = React.createClass({
 		this.commitChanges({visible: !config.visible})
 	},
 
-	componentWillReceiveProps: function (nextProps) {
-	},
-
 	toggleAlign: function (event) {
 		var align = this.props.config.align
 		if (align === 'left') align = 'center'
 		else if (align === 'center') align = 'right'
 		else align = 'left'
 		this.commitChanges({align: align})
+	},
+
+	toggleBold: function (event) {
+		var config = this.props.config
+		this.commitChanges({bold: !config.bold})
 	},
 
 	commitChanges: function (colProps) {
@@ -57,44 +59,73 @@ var ColumnDetail = React.createClass({
 	},
 
 	handleDrag: function (event) {
-		this.props._onDrag(event, this.props.config)
+		this.props._startDrag(event, this.props.config)
+		event.preventDefault()
+	},
+
+	handleDelete: function (event) {
+
 	},
 
 	render: function() {
+		var _this = this
     var view = this.props.view
     var config = this.props.config
 		var fieldType = fieldTypes[config.type]
+		var editing = this.props.editing
 		var typeSpecificConfig
 
 		if (!!fieldType && fieldType.configRows)
 			typeSpecificConfig = React.createElement(fieldType.configRows, {
 				view: view,
-				config: config
+				config: config,
+				classes: editing ? " col-editing " : ""
 			})
-		else typeSpecificConfig = <span className="double-column-config"/>
+		else typeSpecificConfig = <span
+			className= "double-column-config"
+			key="type-specific"/>
 
     return <div
-			style = {{marginTop: ((this.props.dragOffset) + 'px'),
-							marginBottom: (-1 * (this.props.dragOffset) + 'px')}}
-			className={"menu-item menu-sub-item column-item " +
-			(this.state.dragging ? " dragging " : "")}>
+			className={"menu-item tight menu-sub-item column-item " +
+			(this.props.dragging ? " dragging " : "")}>
 
-				{this.props.open ? <span
+	      <span
+					className = {"column-config " + (editing ? " " : "")}
+					key = "name">
+					{this.props.open ? <span
+						onMouseDown = {_this.handleDrag}
 						className="draggable icon grayed icon-Layer_2"
-						onMouseDown = {this.handleDrag}
 						></span>
 					: null}
-
-	      <span className="double-column-config">
 					{config.name}
 				</span>
 
-				<span className="column-config">
-					<span className={" clickable icon icon-align-" + config.align}
-						onClick={this.toggleAlign}>
+				{editing ? null :
+					<span className = {"column-config " + (editing ? "  " : "")} key = "column">
+						<span className={" clickable icon icon-align-" + config.align}
+							onClick={this.toggleAlign}>
+						</span>
+						<span className={" clickable icon icon-tl-bold " + (config.bold ? "" : " grayed")}
+							onClick={this.toggleBold}>
+						</span>
+						<span className={" clickable icon icon-tl-italic " + (config.italic ? "" : " grayed")}
+							onClick={this.toggleBold}>
+						</span>
+						<span className={" clickable icon icon-tl-brush " + (config.italic ? "" : " grayed")}
+							onClick={this.toggleBold}>
+						</span>
 					</span>
-				</span>
-				{typeSpecificConfig}
+				}
+				{
+				editing ? null : typeSpecificConfig
+				}
+
+				{editing ? <span
+						className="half-column-config "
+						onMouseDown = {this.handleDelete}>
+							<span className = "icon red icon-cr-delete"></span>
+						</span>
+					: null}
 		</div>
 	}
 });

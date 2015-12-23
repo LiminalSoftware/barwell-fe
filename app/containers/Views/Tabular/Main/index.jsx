@@ -41,7 +41,7 @@ var debouncedCreateView = _.debounce(function (view) {
 
 var TabularPane = React.createClass ({
 
-	mixins: [TableMixin, PureRenderMixin],
+	mixins: [TableMixin],
 
 	getInitialState: function () {
 		return {
@@ -74,6 +74,8 @@ var TabularPane = React.createClass ({
 	},
 
 	_onChange: function () {
+		var focused = (FocusStore.getFocus() == 'view')
+		if (!focused) this.blurPointer()
 		this.forceUpdate()
 	},
 
@@ -166,22 +168,35 @@ var TabularPane = React.createClass ({
 	toggleCell: function (pos, toggle) {
 		var cell = this.getFieldAt(pos);
 		cell.toggleSelect(toggle)
+		return cell
 	},
 
-	insertRecord: function () {
+	addRecord: function () {
 		var cid = this.store.getClientId()
 		var obj = {cid: cid}
-		var position = this.state.selection.top;
+		this.blurPointer()
+		modelActionCreators.insertRecord(this.props.model, obj, this.store.getRecordCount())
+		this.setState({copyarea: null})
+		this.forceUpdate()
+	},
+
+	insertRecord: function (pos) {
+		var cid = this.store.getClientId()
+		var obj = {cid: cid}
+		var position = pos || this.state.selection.top;
 		var model = this.props.model
 
 		// initialize the new record with default values
-		AttributeStore.query({model_id: (model.model_id || model.cid)}).forEach(function(attr) {
-			if(('a' + attr.attribute_id) != model._pk) {
-				obj['a' + attr.attribute_id] = attr.default_value
-			}
-		})
+		// AttributeStore.query({model_id: (model.model_id || model.cid)}).forEach(function(attr) {
+		// 	if(('a' + attr.attribute_id) != model._pk) {
+		// 		obj['a' + attr.attribute_id] = attr.default_value
+		// 	}
+		// })
+
+		this.blurPointer()
 		modelActionCreators.insertRecord(this.props.model, obj, position)
 		this.setState({copyarea: null})
+		this.forceUpdate()
 	},
 
 	clearSelection: function () {
@@ -217,7 +232,8 @@ var TabularPane = React.createClass ({
 		var sel = this.state.selection
 		for (var r = sel.top; r <= sel.bottom; r++) {
 			for (var c = sel.left; c <= sel.right; c++) {
-				clipboard += this.getFieldAt({top: r, left: c}).props.value + (c == sel.right ? "" : "\t")
+				var value = this.getFieldAt({top: r, left: c}).props.value
+				clipboard += (value === null ? "" : value) + (c == sel.right ? "" : "\t")
 			}
 			clipboard += (r == sel.bottom ? "" : "\n")
 		}
@@ -225,8 +241,8 @@ var TabularPane = React.createClass ({
 		this.setState({copyarea: sel})
 	},
 
-	pasteSelection: function (event) {
-		var text = event.clipboardData.getData('text')
+	pasteSelection: function (e) {
+		var text = e.clipboardData.getData('text')
 		var data = text.split('\n').map(r => r.split('\t'))
 		var cbr = 0
 		var cbc = 0
@@ -235,14 +251,12 @@ var TabularPane = React.createClass ({
 			cbr = (r - sel.top) % data.length
 			for (var c = sel.left; c <= sel.right; c++) {
 				cbc = (c - sel.left) % data[cbr].length
-				console.log(cbr + ', ' + cbc)
 				var value = data[cbr][cbc]
-				console.log('value: ' + value)
 				this.getFieldAt({top: r, left: c}).commitValue(value);
 			}
 		}
-		event.preventDefault();
-		event.stopPropagation();
+		e.preventDefault();
+		e.stopPropagation();
 	},
 
 	showDetailBar: function () {
@@ -257,9 +271,9 @@ var TabularPane = React.createClass ({
 		this.setState({detailOpen: false})
 	},
 
-	openContextMenu: function (event) {
-		event.preventDefault();
-		var rc = this.getRCCoords(event)
+	openContextMenu: function (e) {
+		e.preventDefault();
+		var rc = this.getRCCoords(e)
 		var sel = this.state.selection
 
 		modelActionCreators.setFocus('view')
@@ -321,16 +335,29 @@ var TabularPane = React.createClass ({
 
 	updatePointer: function (pos) {
 		var view = this.props.view
+		var current = this.state.selected
+		var cell
+		// if pointer has moved, then unselect the old position and select the new
 		if (!_.isEqual(pos, this.state.pointer)) {
-			this.toggleCell(this.state.pointer, false)
-			this.toggleCell(pos, true)
+			if(current) current.toggleSelect(false)
+			cell = this.getFieldAt(pos)
+			cell.toggleSelect(true)
 		}
+		// save the new values to state
 		this.setState({
 			pointer: pos,
-			detailOpen: false
+			detailOpen: false,
+			selected: (cell || this.state.selected)
 		})
+		// commit the pointer position to the view object, but not immediately
 		view.data.pointer = pos
 		debouncedCreateView(view, false, false, true)
+	},
+
+	blurPointer: function () {
+		var current = this.state.selected
+		if (current) current.toggleSelect(false)
+		this.setState({copyarea: null})
 	},
 
 	updateSelect: function (pos, shift) {
@@ -377,7 +404,15 @@ var TabularPane = React.createClass ({
 		var object = this.store.getObject(ptr.top)
 		var detailColumn = columns[ptr.left]
 
-		return <div
+		// <div className = "loader-box">
+		// 	<span className = "three-quarters-loader"></span>
+		// 	Loading data from server...
+		// </div>
+
+
+
+		return <div className = "model-panes">
+		<div
 			onScroll={this.onScroll}
 			ref="wrapper"
 			className = "view-body-wrapper"
@@ -407,6 +442,7 @@ var TabularPane = React.createClass ({
 						view = {view}
 						store = {_this.store}
 						clicker = {_this.onMouseDown}
+						_addRecord = {_this.addRecord}
 						openContextMenu = {_this.openContextMenu}
 						columns = {columns}
 						sorting = {view.data.sorting}
@@ -441,15 +477,6 @@ var TabularPane = React.createClass ({
 							fudge = {{left: 0, top: 0.75, height: 1.5, width: 1.25}}/>
 
 					</TabularBodyWrapper>
-					{_this.state.detailOpen ?
-						<DetailBar
-							model = {model}
-							view = {view}
-							config = {detailColumn}
-							object = {object}/>
-						: null
-					}
-
 
 				{_this.state.contextOpen ?
 					<ContextMenu
@@ -460,8 +487,15 @@ var TabularPane = React.createClass ({
 						copySelection = {this.copySelection} />
 					: null}
 
-
-
+		</div>
+		{_this.state.detailOpen ?
+			<DetailBar
+				model = {model}
+				view = {view}
+				config = {detailColumn}
+				object = {object}/>
+			: null
+		}
 		</div>
 	}
 })

@@ -12,20 +12,44 @@
   flex-direction: row;
 }
 
+.column-config, .half-column-config, .double-column-config {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .column-config {
+  padding: 8px;
   flex: 1;
   flex-grow: 1;
 }
 
+.half-column-config {
+  padding: 8px 3px;
+  flex: 1;
+  flex-grow: 0.2;
+  min-width: 22px;
+  &:first-child {
+    margin-left: 5px;
+  }
+}
+
 .double-column-config {
+  padding: 8px;
   flex: 2;
   flex-grow: 2;
+}
+
+.col-editing {
+  background: @gray4;
 }
 
 .menu-input {
   margin-left: 10px;
   max-width: 100px;
 }
+
+
 
 .menu-input.text-input {
   background: @gray4;
@@ -37,7 +61,7 @@
 }
 
 .menu-input.selector {
-  padding: 2px 0;
+  padding: 0;
   border-radius: 3px;
   border: 1px solid @menuBorderColor;
   font-family: @bodyFont;

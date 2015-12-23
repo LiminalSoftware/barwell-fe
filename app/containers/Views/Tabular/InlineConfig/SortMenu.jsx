@@ -41,7 +41,7 @@ var SortMenu = React.createClass({
 
 		if (sortList.length === 1) sortPreview = <SortDetail config = {sortList[0]} view = {view}/>
 		else if (sortList.length > 1) sortPreview = <div className="menu-item closed menu-sub-item">Multiple sort levels</div>
-		else if (sortList.length === 0) sortPreview = <div className="menu-item closed menu-sub-item">Default sort order</div>
+		else if (sortList.length === 0) sortPreview = <div className="menu-item closed menu-sub-item empty-item">Default sort order</div>
 
     return <div className = "header-section">
 			<div className="header-label">Sort Order</div>

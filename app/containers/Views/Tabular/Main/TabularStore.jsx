@@ -69,6 +69,7 @@ var createTabularStore = function (view) {
                   _records.slice(0, index)
                   .concat(payload.record)
                   .concat(_records.slice(index))
+                _recordCount++
                 TabularStore.emitChange()
             }
 

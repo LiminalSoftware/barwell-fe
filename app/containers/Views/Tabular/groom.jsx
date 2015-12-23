@@ -4,12 +4,12 @@ import ModelStore from '../../../stores/ModelStore'
 import RelationStore from '../../../stores/RelationStore'
 import fieldTypes from '../fields'
 import viewTypes from '../viewTypes'
+import util from "../../../util/util"
 
 var BIG_NUM = 10000000;
 
 var enumerate = function (list) {
-	_.sortBy(list, 'order')
-	_.sortBy(list, 'hidden')
+	list.sort(util.sortByOrder)
 	return list.map(function(item, i) {
 		item.order = i
 		return item
@@ -24,7 +24,6 @@ var limit = function (thing, view) {
 }
 
 var groomView = function (view) {
-
 	var model = ModelStore.get(view.model_id);
 	var columns = {}
 	var data = view.data || {};
@@ -38,7 +37,7 @@ var groomView = function (view) {
 
 	fields.forEach(function (field) {
 		var prev = data.columns['a' + field.attribute_id] || {};
-		var col = {}
+		var col = prev
 		col.column_id = 'a' + field.attribute_id
 		col.attribute_id = field.attribute_id;
 		col.type = field.type

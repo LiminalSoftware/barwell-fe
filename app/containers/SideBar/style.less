@@ -40,11 +40,30 @@ ul.sidebar-model-list {
 		font-size: 16px;
 		font-weight: 400;
 		font-family: @bodyFont;
+
+		white-space: nowrap;
+	  overflow: hidden;
+	  text-overflow: ellipsis;
+
+		max-width: 100px;
 	}
 
 	& > li:last-child {
 		border-right: @headerBorderWidth solid @headerBorderColor;
+		border-top-right-radius: @headerBorderRadius;
+		& > a {
+			border-top-right-radius: @headerBorderRadius;
+		}
 	}
+
+	& > li:first-child {
+		border-top-left-radius: @headerBorderRadius;
+		& > a {
+			border-top-left-radius: @headerBorderRadius;
+		}
+	}
+
+
 
 	& > li.active {
 		background: @headerBgColor;

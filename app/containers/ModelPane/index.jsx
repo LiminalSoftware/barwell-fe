@@ -105,9 +105,7 @@ var ModelPane = React.createClass({
 			<div className="view-bar" >
 				{configElement}
 			</div>
-			<div className = "model-panes">
-				{bodyContent}
-			</div>
+			{bodyContent}
 		</div>
 	}
 });
