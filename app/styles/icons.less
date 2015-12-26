@@ -1,0 +1,77 @@
+@import "./colors.less";
+
+.icon {
+	font-weight: 400;
+	text-align: center;
+	.noselect;
+	font-size: 17px;
+	min-width: 25 px;
+	margin-right: 8px;
+  .transition(all 100ms ease-in);
+
+  &.upside-down {
+    .rotate(180deg);
+  }
+
+	&.right-align {
+		float: right;
+	}
+
+	&.small {
+		font-size: 11px;
+		margin-right: 6px;
+	}
+
+	&.large {
+		font-size: 24px;
+    margin-right: 12px;
+	}
+
+	&.tight {
+		margin-right: 2px;
+		margin-left: 2px;
+	}
+
+  &.white {
+    color: white;
+  }
+
+  &.tighter {
+		margin-right: 0;
+		margin-left: 0;
+	}
+
+  &.grayed {
+    color: @gray3;
+  }
+
+  &.greened {
+    color: @newgreen1;
+  }
+
+  &.red {
+    color: @red-bright;
+  }
+
+  &.left-pad {
+    margin-left: 10px;
+  }
+
+  &.boxed {
+    display: inline-block;
+    border: 1px solid @newgreen1;
+    vertical-align: middle;
+    text-align: center;
+    padding: 4px;
+    min-width: 15px;
+  }
+
+  &.gray-boxed {
+    display: inline-block;
+    background: @gray4;
+    vertical-align: middle;
+    text-align: center;
+    padding: 4px;
+    min-width: 15px;
+  }
+}

@@ -8,8 +8,12 @@ import util from "../../../util/util"
 
 var BIG_NUM = 10000000;
 
+var comparator = function (a, b) {
+	return ((b.fixed || 0) - (a.fixed || 0)) + (a.order - b.order) / 1000
+}
+
 var enumerate = function (list) {
-	list.sort(util.sortByOrder)
+	list.sort(comparator)
 	return list.map(function(item, i) {
 		item.order = i
 		return item
@@ -53,7 +57,7 @@ var groomView = function (view) {
 			else col.align = 'left'
 		}
 		col.visible = (prev.visible === false) ? false : true
-		col.width = (prev.width > 50 ? prev.width : 50)
+		col.width = Math.max(_.isNumber(col.width) ? col.width : 0, 50)
 		columns[col.column_id] = col
 	})
 
@@ -70,13 +74,14 @@ var groomView = function (view) {
 		col.relation_id = relation.relation_id;
 		col.type = relation.type
 		col.name = relation.relation
+		col.width = Math.max(_.isNumber(col.width) ? col.width : 0, 50)
+
 		columns[col.column_id] = col
 	})
 
 	var columnList = enumerate(_.values(columns))
 	columnList.map(function (col) {
-
-		col.expanded = !!col.expanded
+		
 
 	})
 
@@ -92,8 +97,8 @@ var groomView = function (view) {
 	data.scrollTop = data.scrollTop || 0;
 
 	data.geometry = _.extend({
-		leftOffset: -4,
-		topGutter: -2,
+		leftGutter: 0,
+		topGutter: 0,
 		headerHeight: 28.5,
 		rowHeight: 25,
 		rowPadding: 1,

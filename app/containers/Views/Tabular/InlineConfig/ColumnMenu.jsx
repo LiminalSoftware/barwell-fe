@@ -40,6 +40,10 @@ var ColumnMenu = React.createClass({
 		}
 	},
 
+	componentWillReceiveProps: function (nextProps) {
+		this.setState({columns: nextProps.view.data.columnList})
+	},
+
 	commitChanges: function (column) {
 		var view = this.props.view
 		var columns = this.state.columns
@@ -98,7 +102,7 @@ var ColumnMenu = React.createClass({
 			emptyText: "No visible attributes...",
 			icon: "icon-eye-3",
 			selector: function (columns) {
-				return columns.filter(c => c.visible).sort(util.orderSort)
+				return columns.filter(c => c.visible && !c.fixed).sort(util.orderSort)
 			},
 			enterTransform: function (col) {
 				col.visible = true
@@ -108,10 +112,36 @@ var ColumnMenu = React.createClass({
 		}
 	],
 
-	addItemToPrevSection: function (item, sectionIdx) {
-		var section = this.sections[sectionIdx - 1]
-		var el = this.refs["section-" + (sectionIdx - 1)]
-		section.enterTransform(item)
+	moveToSection: function (e, item, sectionIdx, direction) {
+		var section = this.sections[sectionIdx]
+		var el = this.refs["section-" + (sectionIdx)]
+		if (!el) return false
+
+		item = section.enterTransform(item)
+		el.dragInto(e, item, direction)
+		return true
+	},
+
+	renderButtonBar: function () {
+		return <div 
+			className="menu-item column-item menu-config-row" 
+			key="detail-menu-items">
+			{
+				this.state.editing ?
+				<div className = "menu-sub-item"
+					onClick = {this.handleDoneEdit}>
+					Save changes
+				</div>
+				:
+				<div className = "menu-sub-item"
+					onClick = {this.handleEdit}>
+					Edit attributes
+				</div>
+			}
+			<div className="menu-sub-item">
+				Add new attribute
+			</div>
+		</div>
 	},
 
 	render: function() {
@@ -121,19 +151,20 @@ var ColumnMenu = React.createClass({
 		var columns = view.data.columnList
 		var sections = this.sections.map(function (section, idx) {
 			return <ColumnMenuSection
+				view = {view}
 				label = {section.label}
 				ref = {"section-" + idx}
 				icon = {section.icon}
-				view = {view}
 				index = {idx}
 				emptyText = {section.emptyText}
+				columns = {section.selector(columns)}
 				editing = {_this.state.editing}
 				_startDrag = {_this.handleDragStart}
 				_commitChanges = {_this.commitChanges}
-				columns = {section.selector(columns)}/>
+				_moveToSection = {_this.moveToSection}/>
 		})
 
-    return <div className = "double header-section" >
+    	return <div className = "double header-section" >
 			<div className="header-label">Table Columns</div>
 			<div className="model-views-menu">
 				{
@@ -142,23 +173,7 @@ var ColumnMenu = React.createClass({
 					<div className="model-views-menu-inner" onClick={this.clickTrap}>
 					<div className = "dropdown-menu" style = {{minWidth: '500px'}}>
 						{sections}
-						<div className="menu-item column-item menu-config-row" key="detail-menu-items">
-							{
-								this.state.editing ?
-								<div className = "menu-sub-item"
-									onClick = {this.handleDoneEdit}>
-									Save changes
-								</div>
-								:
-								<div className = "menu-sub-item"
-									onClick = {this.handleEdit}>
-									Edit attributes
-								</div>
-							}
-							<div className="menu-sub-item">
-								Add new attribute
-							</div>
-						</div>
+						{this.renderButtonBar()}
 					</div>
 					</div>
 					:

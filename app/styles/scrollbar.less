@@ -1,0 +1,26 @@
+@import "./colors.less";
+
+::-webkit-scrollbar {
+   width: 8px;
+   height: 8px;
+   margin: 2px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+   -webkit-border-radius: 10px;
+   background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+	width: 6px;
+	height: 6px;
+	margin: 1px;
+	-webkit-border-radius: 8px;
+	border-radius: 10px;
+	background: @gray3;
+}
+::-webkit-scrollbar-thumb:window-inactive {
+	background: @gray3;
+}

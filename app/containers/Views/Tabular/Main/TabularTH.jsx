@@ -11,7 +11,7 @@ var TabularTHContext = require('./TabularTHContext')
 
 var TabularTH = React.createClass ({
 
-  columnMinWidth: 50,
+	columnMinWidth: 50,
 
 	render: function () {
 		var _this = this
@@ -31,8 +31,8 @@ var TabularTH = React.createClass ({
 		classes.push('table-cell')
 		classes.push('table-header-cell')
 		if (!!col.sorting) classes.push(col.sorting.descending ? 'desc' : 'asc')
-    if (this.state.context) classes.push('context')
-    if (FocusStore.getFocus() === 'view') classes.push('focused')
+	    if (this.state.context) classes.push('context')
+	    if (FocusStore.getFocus() === 'view') classes.push('focused')
 		else if (!this.state.context) classes.push('blurred')
 
 		return <span
@@ -42,12 +42,15 @@ var TabularTH = React.createClass ({
 			<span className="table-cell-inner">
 			   {col.name}
 			</span>
-      {this.state.context ? <TabularTHContext
-        headerHeight = {geo.headerHeight}
-        config = {col}
-        handleBlur = {this.handleBlur}/> : null}
-			<span
-				ref = "resizer"
+			{
+				this.state.context ? 
+				<TabularTHContext
+	        		headerHeight = {geo.headerHeight}
+	        		config = {col}
+	        		handleBlur = {this.handleBlur}/> 
+	        	: null
+	        }
+			<span ref = "resizer"
 				className = {"table-resizer " + (this.state.dragging ? "dragging" : "")}
 				onMouseDown = {this.onResizerMouseDown}
 				style = {{right: (-1 * this.state.pos) + 'px', top: 0}}>
@@ -60,9 +63,8 @@ var TabularTH = React.createClass ({
 			dragging: false,
 			rel: null,
 			pos: 0,
-      context: false
+      		context: false
 		}
-
 	},
 
 	componentDidMount: function () {
@@ -81,10 +83,10 @@ var TabularTH = React.createClass ({
 	},
 
 	onMouseUp: function (e) {
-   	var view = this.props.view
+   		var view = this.props.view
 		var col = this.props.column
 
-   	view.data.columns[col.column_id].width = (col.width + this.state.pos)
+   		view.data.columns[col.column_id].width = (col.width + this.state.pos)
 		modelActionCreators.createView(view, true, false)
 		this.setState({
 			dragging: false,
@@ -97,7 +99,10 @@ var TabularTH = React.createClass ({
 	onMouseMove: function (e) {
 	   if (!this.state.dragging) return
 	   this.setState({
-	      pos: Math.max(e.pageX - this.state.rel, this.columnMinWidth - this.state.rel - this.props.column.width)
+	      pos: Math.max(
+	      	e.pageX - this.state.rel, 
+	      	this.columnMinWidth - this.state.rel - this.props.column.width
+	      )
 	   })
 	   e.stopPropagation()
 	   e.preventDefault()
@@ -113,23 +118,22 @@ var TabularTH = React.createClass ({
 		}
 	},
 
-  onContextMenu: function (e) {
-    modelActionCreators.setFocus('view-config')
-    this.setState({context: true})
-    e.stopPropagation()
+  	onContextMenu: function (e) {
+    	modelActionCreators.setFocus('view-config')
+    	this.setState({context: true})
+    	e.stopPropagation()
 		e.preventDefault()
-  },
+  	},
 
-  handleBlur: function () {
-    modelActionCreators.setFocus('view')
-    this.setState({context: false})
-  },
+  	handleBlur: function () {
+    	modelActionCreators.setFocus('view')
+    	this.setState({context: false})
+  	},
 
-  handleKeyPress: function (event) {
-    if (event.keyCode === constant.keycodes.ESC) this.handleBlur()
-  },
-
-
+	handleKeyPress: function (event) {
+		if (event.keyCode === constant.keycodes.ESC) 
+			this.handleBlur()
+	},
 
 })
 

@@ -17,10 +17,13 @@ import TabularTBody from "./TabularTBody"
 
 var TabularBodyWrapper = React.createClass ({
 
+	// shouldComponentUpdate: function (nextProps, nextState) {
+	// 	return nextState.rowOffset !== this.state.rowOffset
+	// },
+
 	handleAddRecord: function (event) {
-		console.log('handleAddRecord')
 		this.props._addRecord()
-		event.nativeEvent.stopPropagation();
+		event.nativeEvent.stopPropagation()
 		event.stopPropagation()
 	},
 
@@ -34,6 +37,7 @@ var TabularBodyWrapper = React.createClass ({
 		var focused = this.props.focused
 
 		var wrapperStyle = {
+			marginTop: (-1* this.props.rowOffset * geo.rowHeight) + 'px',
 			top: (geo.headerHeight + geo.topGutter) + 'px',
 			bottom: 0,
 			left: geo.leftGutter + 'px',
@@ -52,18 +56,16 @@ var TabularBodyWrapper = React.createClass ({
 			className = {"tabular-body-wrapper " + (focused ? "focused" : "blurred")}
 			ref="tbodyWrapper"
 			style={wrapperStyle}>
-				<TabularTBody ref="tbody" {...this.props}/>
-				{this.props.children}
-
-				<div style = {newRowBarStyle}
-					className = "table-cell add-new-row">
-					<div className = "table-cell-inner"
-						onMouseDown = {this.handleAddRecord}>
-						+ Add a new row of data
-					</div>
+			<TabularTBody ref="tbody" {...this.props}/>
+			{this.props.children}
+			<div style = {newRowBarStyle}
+				className = "table-cell add-new-row">
+				<div className = "table-cell-inner"
+					onMouseDown = {this.handleAddRecord}>
+					+ Add a new row of data
 				</div>
-
-			</div>;
+			</div>
+		</div>;
 	}
 });
 

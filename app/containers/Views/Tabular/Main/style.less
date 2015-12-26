@@ -1,7 +1,29 @@
 @import "../../../../global.less";
 
+// z-index
+// table-cell
+// .selection: 112
+// .scroll-overlay: 120
+// .table-cell.selected > .table-cell-inner: 125
+// .input-editor: 150
+// .add-new-row: 200
+
+.scroll-overlay {
+	position: absolute;
+	z-index: 130;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	top: 0;
+	background: none;
+	overflow-x: scroll;
+	overflow-y: scroll;
+	-webkit-user-drag: none;
+}
+
+
 .loader-box {
-	z-index: 500;
+	z-index: 120;
 	dispaly: block;
 	position: absolute;
 	bottom: 0;
@@ -17,6 +39,7 @@
 .tabular-body-wrapper {
 	position: absolute;
 	overflow-x: hidden;
+	overflow-y: hidden;
 	.transition(all 0.1s);
 	&.blurred {
 		.gray-out;
@@ -33,7 +56,7 @@
 	display: block;
 	position: absolute;
 	padding: 0;
-	margin: 1px;
+	margin: 0;
 	border: 1px solid @gray3;
 	border-bottom: none;
 	border-right: none;
@@ -43,6 +66,9 @@
 	&.sorted	 {
 		border-right: 1px solid @newgreen1;
 		border-left: 1px solid @newgreen1;
+	}
+	&.floating {
+		border-left: 1px solid @purple4;
 	}
 	cursor: cell;
 	&.selected {
@@ -70,15 +96,9 @@
 	.transition(top cubic-bezier(.16,.85,.5,1) .3s);
 }
 
-// .table-cell:first-child {
-// 	border-left: 2px solid white;
-// }
-
 .table-cell:last-child {
 	border-right: 1px solid @gray3;
 }
-
-
 
 .sort-icon {
 	margin-left: 5px;
@@ -107,7 +127,7 @@
 	padding-right: 1px !important;
 	margin: 0 !important;
 	width: 24px;
-	z-index: 500;
+	z-index: 200;
 	display: none;
 
 	-webkit-animation: fadein 1s; /* Safari, Chrome and Opera > 12.1 */
@@ -149,7 +169,7 @@
 	left: 0px;
 	right: 0px;
 	top: 0px;
-	bottom: 0px;
+	bottom: 2px;
 
 	padding: 2px 5px;
 
@@ -162,8 +182,8 @@
 }
 
 .input-editor {
-
 }
+
 
 .table-cell.selected > .table-cell-inner {
 	z-index: 125;
@@ -182,7 +202,7 @@
 
 
 .color-block {
-	z-index: 150;
+	z-index: 110;
 	display: block;
 	position: absolute;
 	left: 5px;
@@ -258,7 +278,7 @@
 	top: 0;
 	left: 0;
 	padding: 0;
-	pointer-events:none;
+	pointer-events: none;
 }
 
 .selection, .pointer {

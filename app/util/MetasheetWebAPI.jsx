@@ -70,11 +70,16 @@ var issueReceipt = function (subject, obj) {
 
 var persist = module.exports.persist = function (subject, action, data, update, split) {
   action = action.toUpperCase()
-
   var identifier = (subject + '_id')
   var url = 'https://api.metasheet.io/' + subject;
   var json = (action === 'CREATE') ? JSON.stringify(stripInternalVars(data)) : null;
   var method;
+
+  if (action === 'CREATE' && JSON.stringify(data._server) ===
+    JSON.stringify(stripInternalVars(data))) {
+    console.log('object unchanged -- cancel persist')
+    return;
+  }
 
   if (action == 'FETCH') method = 'GET';
   else if (action == 'DESTROY') method = 'DELETE';

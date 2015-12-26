@@ -23,7 +23,7 @@ var TabularTHead = React.createClass ({
 			top: 0,
 			left: 0,
 			height: (geo.headerHeight + 1) + 'px',
-			width: (this.props.totalWidth + 5) + 'px'
+			width: (this.props.totalWidth + 6) + 'px'
 		}
 
 		return <div
@@ -32,7 +32,7 @@ var TabularTHead = React.createClass ({
 			id = "tabular-view-header"
 			ref = "thead"
 			key={"tabular-thead-" + view.view_id}>
-		{
+			{
 			_this.props.columns.map(function (col, idx) {
 				var el = <TabularTH key={"th-" + col.attribute_id}
 					scrollTop = {_this.props.scrollTop}
@@ -44,11 +44,14 @@ var TabularTHead = React.createClass ({
 				left += col.width
 				return el
 			})
-		}
-		<span style={{left: (left) + 'px',
-			width: (geo.rowHeight * 2) + 'px',
-			height: geo.headerHeight}} className="table-cell columnAdder">
-			<span className="table-cell-inner"> + </span></span>
+			}
+			<span style={{left: (left) + 'px',
+				width: (geo.rowHeight * 2) + 'px',
+				height: geo.headerHeight}} 
+				className= {"table-cell table-header-cell columnAdder " + 
+					(focused ? " focused " : " blurred ")}>
+				<span className="table-cell-inner"> + </span>
+			</span>
 		</div>
 	}
 })

@@ -32,26 +32,39 @@ var ColumnMenuSection = React.createClass({
 		this.setState({columns: nextProps.columns})
 	},
 
-	handleDragStart: function (event, config) {
+	handleDragStart: function (e, item) {
 		this.setState({
-			dragItem: config,
-			dragOrder: config.order,
-			initOffset: event.pageY
+			dragItem: item,
+			initOffset: e.pageY
 		})
-		event.stopPropagation()
-		event.preventDefault()
+		e.stopPropagation()
+		e.preventDefault()
 	},
 
-	handleDragEnd: function (event) {
+	handleDragEnd: function (e) {
 		var view = this.props.view
 		this.props._commitChanges(this.state.dragItem)
 		this.setState({dragItem: null})
-		event.stopPropagation()
-		event.preventDefault()
+		e.stopPropagation()
+		e.preventDefault()
+	},
+
+	dragInto: function (e, item, direction) {
+		var columns = this.state.columns
+		if (direction === 'up') item.order = _.last(columns).order + 0.5
+		else item.order = _.first(columns).order - 0.5
+		columns.push(item)
+		
+		this.setState({
+			dragItem: item,
+			initOffset: e.pageY,
+			columns: columns
+		})
+		e.stopPropagation()
+		e.preventDefault()
 	},
 
 	handleMouseMove: function (e) {
-    if (!this.state.dragItem) return
 		var view = this.props.view
 		var columns = this.state.columns
 		var temp
@@ -60,6 +73,7 @@ var ColumnMenuSection = React.createClass({
 		var dragOffset = e.pageY - this.state.initOffset
 		var ROW_HEIGHT = 35
 
+		if (!this.state.dragItem) return
 		if (dragOffset < (-1 * ROW_HEIGHT) && index > 0) {
 			temp = item.order
 			item.order = columns[index - 1].order - 0.5
@@ -67,6 +81,13 @@ var ColumnMenuSection = React.createClass({
 				initOffset: e.pageY,
 				columns: columns
 			})
+		} else if (dragOffset < (-2 * ROW_HEIGHT) && index === 0) {
+			if (this.props._moveToSection(e, item, this.props.index - 1, "up")) {
+				this.setState({
+					dragItem: null,
+					columns: _.without(columns, item)
+				})
+			}
 		} else if (dragOffset > ROW_HEIGHT && index < columns.length - 1) {
 			temp = item.order
 			item.order = columns[index + 1].order + 0.5
@@ -75,52 +96,62 @@ var ColumnMenuSection = React.createClass({
 				initOffset: e.pageY,
 				columns: columns
 			})
+		} else if (dragOffset > (2 * ROW_HEIGHT) && index === (columns.length - 1)) {
+			if (this.props._moveToSection(e, item, this.props.index + 1, "down")) {
+				this.setState({
+					dragItem: null,
+					columns: _.without(columns, item)
+				})
+			}
 		}
-    e.stopPropagation()
-    e.preventDefault()
-  },
+
+		e.stopPropagation()
+		e.preventDefault()
+	},
 
 	componentDidUpdate: function (props, state) {
-    if (this.state.dragItem && !state.dragItem) {
-      document.addEventListener('mouseup', this.handleDragEnd)
+		if (this.state.dragItem && !state.dragItem) {
+			document.addEventListener('mouseup', this.handleDragEnd)
 			document.addEventListener('mousemove', this.handleMouseMove)
-    } else if (!this.state.dragItem && state.dragItem) {
-      document.removeEventListener('mouseup', this.handleDragEnd)
+		} else if (!this.state.dragItem && state.dragItem) {
+			document.removeEventListener('mouseup', this.handleDragEnd)
 			document.removeEventListener('mousemove', this.handleMouseMove)
-    }
-  },
+		}
+	},
 
 	render: function() {
 		var _this = this
 		var view = this.props.view
-    var editing = this.props.editing
-    var columns = this.state.columns.sort(util.sortByOrder)
+		var editing = this.props.editing
+		var columns = this.state.columns.sort(util.sortByOrder)
 
-    return <div>
+		return <div>
 			<div className="menu-item menu-sub-item menu-divider">
-				<div className="menu-divider-label">
-					{this.props.label}
-				</div>
-      </div>
-      {
-			(columns.length === 0) ?
-			<div className="menu-item menu-sub-item empty-item">
-				{this.props.emptyText}
+			<div className="menu-divider-label">
+			{this.props.label}
 			</div>
-			:
-      columns.map(function (col, idx) {
-        return <ColumnDetail
-          _startDrag = {_this.handleDragStart}
+			</div>
+			{
+				(columns.length === 0) ?
+				// if there's no content then show the emptyText message
+				<div className="menu-item menu-sub-item empty-item">
+					{this.props.emptyText}
+				</div>
+				:
+				// otherwise iterate through all the content items
+				columns.map(function (col, idx) {
+					return <ColumnDetail
+					_startDrag = {_this.handleDragStart}
 					key = {"detail-" + col.column_id}
 					config = {col}
-          open = {true}
-          editing = {editing}
+					open = {true}
+					editing = {editing}
 					dragging = {col === _this.state.dragItem}
 					view= {view}/>
-      })
-      }
+				})
+			}
 		</div>
-  }
+	}
 });
 
 export default ColumnMenuSection;

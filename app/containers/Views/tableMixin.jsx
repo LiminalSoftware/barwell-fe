@@ -63,14 +63,7 @@ var TableMixin = {
 	// ========================================================================
 
 
-	onMouseDown: function (e) {
-		modelActionCreators.setFocus('view')
-		this.setState({mousedown: true})
-		this.updateSelect(this.getRCCoords(e), e.shiftKey)
-		document.addEventListener('selectstart', util.returnFalse)
-		document.addEventListener('mousemove', this.onSelectMouseMove)
-		document.addEventListener('mouseup', this.onMouseUp)
-	},
+	
 
 	onSelectMouseMove: function (e) {
 		this.updateSelect(this.getRCCoords(e), true)

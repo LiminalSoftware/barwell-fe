@@ -8,18 +8,18 @@ var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 import TabularTBody from "./TabularTBody"
 
 var Overlay = React.createClass ({
-  mixins: [PureRenderMixin],
+  	mixins: [PureRenderMixin],
 
-  getStyle: function () {
-    var cols = this.props.columns
-    var view = this.props.view
+  	getStyle: function () {
+	    var cols = this.props.columns
+	    var view = this.props.view
 		var geo = view.data.geometry
-    var pos = this.props.position
-    var fudge = this.props.fudge || {}
+	    var pos = this.props.position
+	    var fudge = this.props.fudge || {}
 		var width = 0
 		var left = geo.leftGutter
 
-    if (!pos) return null
+	    if (!pos) return null
 
 		cols.forEach(function (col, idx) {
 			if (idx < pos.left)

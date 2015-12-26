@@ -110,7 +110,14 @@ var ViewItem = React.createClass({
 				<span className = "half-column-config">
 					<span className={"large view-icon icon " + (viewTypes[view.type].icon)}/>
 				</span>
-				<span className = "double-column-config">{view.view}</span>
+				<span className = "double-column-config">
+					{view.view}
+				</span>
+				{this.props.editing ?
+						<span className = "half-column-config">
+							<span className = "icon red icon-cr-delete"></span>
+						</span>
+						: null}
 			</Link>
 		else return <div className = "menu-item menu-sub-item ">
 			No view selected

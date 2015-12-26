@@ -30,6 +30,7 @@ import TableMixin from '../../TableMixin'
 import Overlay from './Overlay'
 import ContextMenu from './ContextMenu'
 import DetailBar from '../../../DetailBar'
+import ScrollOverlay from "./ScrollOverlay"
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
@@ -50,6 +51,8 @@ var TabularPane = React.createClass ({
 			detailOpen: false,
 			contextX: null,
 			contextY: null,
+			rowOffset: 0,
+			colOffset: 0
 		}
 	},
 
@@ -173,6 +176,7 @@ var TabularPane = React.createClass ({
 
 	addRecord: function () {
 		var cid = this.store.getClientId()
+		console.log('cid: '  + cid)
 		var obj = {cid: cid}
 		this.blurPointer()
 		modelActionCreators.insertRecord(this.props.model, obj, this.store.getRecordCount())
@@ -182,16 +186,10 @@ var TabularPane = React.createClass ({
 
 	insertRecord: function (pos) {
 		var cid = this.store.getClientId()
+		console.log('cid: '  + cid)
 		var obj = {cid: cid}
 		var position = pos || this.state.selection.top;
 		var model = this.props.model
-
-		// initialize the new record with default values
-		// AttributeStore.query({model_id: (model.model_id || model.cid)}).forEach(function(attr) {
-		// 	if(('a' + attr.attribute_id) != model._pk) {
-		// 		obj['a' + attr.attribute_id] = attr.default_value
-		// 	}
-		// })
 
 		this.blurPointer()
 		modelActionCreators.insertRecord(this.props.model, obj, position)
@@ -213,6 +211,8 @@ var TabularPane = React.createClass ({
 		var sel = this.state.selection
 		var pk = model._pk
 		var selectors = []
+
+		this.blurPointer()
 
 		for (var row = sel.top; row <= sel.bottom; row++) {
 			var obj = this.getValueAt(row)
@@ -391,11 +391,33 @@ var TabularPane = React.createClass ({
 		})
 	},
 
+	onMouseDown: function (e) {
+		modelActionCreators.setFocus('view')
+		this.setState({mousedown: true})
+		this.updateSelect(this.getRCCoords(e), e.shiftKey)
+		document.addEventListener('selectstart', util.returnFalse)
+		document.addEventListener('mousemove', this.onSelectMouseMove)
+		document.addEventListener('mouseup', this.onMouseUp)
+		e.preventDefault()
+	},
+
+	setScrollOffset: function (vOffset, hOffset) {
+		var view = this.props.view
+		var geo = this.props.view.data.geometry
+		var rows = Math.floor(vOffset / geo.rowHeight)
+		this.setState({rowOffset: rows, hiddenCols: 0})
+	},
+
 	render: function () {
 		var _this = this
 		var model = this.props.model
 		var view = this.props.view
+		var geo = this.props.view.data.geometry
 		var columns = this.getVisibleColumns()
+		
+		var fixedColumns = columns.filter(c => c.fixed && c.visible)
+		var visibleColumns = columns.filter(c => !c.fixed && c.visible )
+
 		var focused = (FocusStore.getFocus() == 'view')
 		var totalWidth = this.getTotalWidth()
 		var ptr = this.state.pointer
@@ -413,12 +435,19 @@ var TabularPane = React.createClass ({
 
 		return <div className = "model-panes">
 		<div
-			onScroll={this.onScroll}
+			
 			ref="wrapper"
 			className = "view-body-wrapper"
 			onPaste = {this.pasteSelection}
-			beforePaste = {this.beforePaste}
-			>
+			beforePaste = {this.beforePaste}>
+
+					<ScrollOverlay 
+						store = {_this.store}
+						totalWidth = {totalWidth}
+						_handleClick = {_this.onMouseDown}
+						_setScrollOffset = {_this.setScrollOffset}
+						onScroll = {this.onScroll}
+						view = {view}/>
 
 					<TabularTHead
 						key = {"tabular-thead-" + view.view_id}
@@ -428,26 +457,26 @@ var TabularPane = React.createClass ({
 						focused = {focused}
 						view = {view} />
 
+					// fixed columns
 					<TabularBodyWrapper
 						ref = "tbodyWrapper"
-						handleBlur = {_this.handleBlur}
-						handleDetail = {_this.handleDetail}
-						handlePaste = {_this.pasteSelection}
-						totalWidth = {totalWidth}
-						editCell = {_this.editCell}
-						selection = {this.selection}
-						key = {"tbody-" + view.view_id}
-						model = {model}
-						pointer = {ptr}
-						view = {view}
-						store = {_this.store}
-						clicker = {_this.onMouseDown}
+						_handleBlur = {_this.handleBlur}
+						_handleDetail = {_this.handleDetail}
+						_handlePaste = {_this.pasteSelection}
 						_addRecord = {_this.addRecord}
+						editCell = {_this.editCell}
 						openContextMenu = {_this.openContextMenu}
+
+						totalWidth = {totalWidth}
+						rowOffset = {this.state.rowOffset}
+						
+						model = {model}
+						view = {view}
+						pointer = {ptr}
+						store = {_this.store}
 						columns = {columns}
 						sorting = {view.data.sorting}
-						focused = {focused}
-						scrollTop = {this.state.scrollTop}>
+						focused = {focused}>
 
 						<Overlay
 							columns = {columns}
@@ -456,7 +485,7 @@ var TabularPane = React.createClass ({
 							{...this.props}
 							onDoubleClick={this.startEdit}
 							position = {sel}
-							fudge = {{left: -1.25, top: -0.25, height: -0.5, width: -0.5}} />
+							fudge = {{left: -5.25 + geo.leftOffset, top: -0.25, height: -0.5, width: -0.5}} />
 
 						<Overlay
 							columns = {columns}
@@ -465,16 +494,16 @@ var TabularPane = React.createClass ({
 							{...this.props}
 							onDoubleClick = {this.startEdit}
 							position = {sel}
-							fudge = {{left: -2.25, top: -1.25, width: -4.25, height: -4.25}} />
+							fudge = {{left: -6.25  + geo.leftOffset, top: -1.25, width: -4.25, height: -4.25}} />
 
 						<Overlay
 							columns = {columns}
-							className={"copyarea marching-ants " + (_this.isFocused() ? " focused" : "") + (_this.state.mousedown ? "" : " running")}
+							className = {"copyarea marching-ants " + (_this.isFocused() ? " focused" : "") + (_this.state.mousedown ? "" : " running")}
 							ref="copyarea"
 							{...this.props}
 							{...this.props}
 							position = {cpy}
-							fudge = {{left: 0, top: 0.75, height: 1.5, width: 1.25}}/>
+							fudge = {{left: -4  + geo.leftOffset, top: 0.75, height: 1.25, width: 1.25}}/>
 
 					</TabularBodyWrapper>
 

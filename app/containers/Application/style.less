@@ -24,50 +24,54 @@ h1, h2, h3, h4, h5 {
 }
 
 .application {
-	display: flex;
-	flex-direction: column;
-  min-height: 100vh;
+	.flex-display;
+	.flex-direction(column);
+	min-height: 100vh;
+	height: 100%;
 }
 
 .model-views {
-	display: flex;
-	flex-direction: column;
-	flex: 1;
-	flex-grow: 1;
+	.flex-display;
+	.flex-direction(column);
+	.flex(1);
+	.flex-grow(1);
 	order: 1;
 	padding: 0;
 	overflow: hidden;
+	top: 32px;
+	bottom: 0;
+	left: 0;
+	right: 0;
 }
 
 .model-panes {
 	position: relative;
-	display: flex;
-	flex-direction: column;
-	flex: 1;
-	flex-grow: 1;
+	.flex-display;
+	.flex-direction(column);
+	.flex(1);
+	.flex-grow(1);
 	background: #F8F8F8;
+	margin: 0;
+	overflow: hidden;
 }
 
 .view-bar {
 	display: block;
 	padding: 0;
 	background: @headerBgColor;
-	border-bottom: 2px solid @headerBorderColor;
+	border-bottom: 1px solid @headerBorderColor;
 	// .box-shadow(0 0 0 @headerOuterBorderWidth @headerOuterBorderColor);
 }
 
 .view-config {
-	display: flex;
-	flex-direction: row;
+	.flex-display;
+	.flex-direction(row);
 	padding: 10px;
 	min-height: 40px;
 }
 
 .view-body-wrapper {
-	position: relative;
-	flex: 1;
-	flex-grow: 1;
-	overflow-x: scroll;
-	margin: -2px;
-	border-top: 1px solid @headerBgColor;
+	margin-top: -1px;
+	margin: 0;
+	padding: 0;
 }

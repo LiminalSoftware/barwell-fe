@@ -1,4 +1,4 @@
-import React from "react"
+	import React from "react"
 import fieldTypes from "../../fields"
 import _ from "underscore"
 import modelActionCreators from "../../../../actions/modelActionCreators"
@@ -122,7 +122,6 @@ var TabularTBody = React.createClass ({
 	},
 
 	render: function () {
-		// console.log('tbody render')
 		var _this = this
 		var view = this.props.view
 		var model = this.props.model
@@ -143,24 +142,22 @@ var TabularTBody = React.createClass ({
 				className = {"tabular-tbody "}
 				onPaste = {this.props.handlePaste}
 				ref = "tbody"
-				style = {style}
-				onMouseDown = {_this.props.clicker}
-				// onContextMenu={_this.props.openContextMenu}
-				onDoubleClick = {_this.props.editCell}>
+				style = {style}>
+				// onContextMenu={_this.props.openContextMenu}>
 				
 				{
 					rows.map(function (obj, i) {
 						var rowKey = 'tr-' + (obj.cid || obj[pk])
 						return <TabularTR  {..._this.props}
 							selection = {_this.selection}
-							obj={obj}
+							obj = {obj}
 							rowKey = {rowKey}
 							row = {i}
 							ref = {rowKey}
 							key = {rowKey}
 							geometry = {geometry}
-							handlePaste = {_this.props.handlePaste}
-							handleBlur = {_this.props.handleBlur} />;
+							handlePaste = {_this.props._handlePaste}
+							handleBlur = {_this.props._handleBlur} />;
 					})
 				}
 			</div>
