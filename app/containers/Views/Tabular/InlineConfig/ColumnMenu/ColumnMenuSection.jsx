@@ -2,21 +2,15 @@ import React from "react";
 import { Link } from "react-router";
 import styles from "./style.less";
 import _ from 'underscore';
-import fieldTypes from "../../fields"
-
-import ViewStore from "../../../../stores/ViewStore"
-import ModelStore from "../../../../stores/ModelStore"
-import AttributeStore from "../../../../stores/AttributeStore"
-import KeyStore from "../../../../stores/KeyStore"
-import KeycompStore from "../../../../stores/KeycompStore"
+import fieldTypes from "../../../fields"
 
 import ColumnDetail from "./ColumnDetail"
-import constant from '../../../../constants/MetasheetConstants'
-import util from "../../../../util/util"
+import constant from '../../../../../constants/MetasheetConstants'
+import util from "../../../../../util/util"
 
-import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
+import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
-var blurOnClickMixin = require('../../../../blurOnClickMixin')
+var blurOnClickMixin = require('../../../../../blurOnClickMixin')
 
 var ColumnMenuSection = React.createClass({
 
@@ -54,7 +48,7 @@ var ColumnMenuSection = React.createClass({
 		if (direction === 'up') item.order = _.last(columns).order + 0.5
 		else item.order = _.first(columns).order - 0.5
 		columns.push(item)
-		
+
 		this.setState({
 			dragItem: item,
 			initOffset: e.pageY,

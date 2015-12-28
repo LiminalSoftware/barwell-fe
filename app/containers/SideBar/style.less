@@ -9,6 +9,8 @@ ul.sidebar-model-list {
 	margin-left: 5px;
 	margin-top: 5px;
 	background: white;
+	height: 30px;
+	z-index: 100;
 
 	& > li.add-new {
 
@@ -81,7 +83,7 @@ ul.sidebar-model-list {
 	& > li:not(.active) > a:hover {
 		// background: @headerBgColor;
 		background: lighten(@headerBgColor, 1%);
-		color: @purple4;
+		color: @headerFontColor;
 	}
 
 	& > li.active:not(.editmode) {

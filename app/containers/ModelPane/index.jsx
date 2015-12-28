@@ -49,13 +49,13 @@ var ModelPane = React.createClass({
 	},
 
 	focus: function () {
-   	modelActionCreators.setFocus('model-config')
-   },
+		modelActionCreators.setFocus('model-config')
+	},
 
-	 toggleViewList: function () {
-		 var toggle = !(this.state.viewListOpen)
-		 this.setState({viewListOpen: toggle})
-	 },
+	toggleViewList: function () {
+		var toggle = !(this.state.viewListOpen)
+		this.setState({viewListOpen: toggle})
+	},
 
 	render: function() {
 		var _this = this
@@ -72,42 +72,41 @@ var ModelPane = React.createClass({
 		var activePane = this.state.activePane
 
 		if (view && view.model_id != model_id) view = null
-		if (!view) activePane = 'model-def'
+			if (!view) activePane = 'model-def'
+				if (!!view && (view.type in viewTypes)) {
+					var type = viewTypes[view.type]
+					var bodyElement = type.mainElement
+					var configElement = type.inlineConfigElement
 
-		if (!!view && (view.type in viewTypes)) {
-			var type = viewTypes[view.type]
-			var bodyElement = type.mainElement
-			var configElement = type.inlineConfigElement
+					bodyContent = React.createElement(bodyElement, {
+						model: model,
+						view: view,
+						key: "view-pane-" + (view.cid || view.view_id)
+					})
 
-			bodyContent = React.createElement(bodyElement, {
-				model: model,
-				view: view,
-				key: "view-pane-" + (view.cid || view.view_id)
-			})
+					configElement = React.createElement(configElement, {
+						model: model,
+						view: view
+					})
+				}
 
-			configElement = React.createElement(configElement, {
-				model: model,
-				view: view
-			})
-		}
+				else {
+					bodyContent = <div className=" view-body-wrapper" key="no-view">
+					<ModelDefinition model={model}/>
+					</div>
+					configElement = <div className = "view-config">
+					<ViewSelector view = {view} model = {model}/>
+					</div>;
+					viewDetailContent = null
+				}
 
-		else {
-			bodyContent = <div className=" view-body-wrapper" key="no-view">
-				<ModelDefinition model={model}/>
-			</div>
-			configElement = <div className = "view-config">
-				<ViewSelector view = {view} model = {model}/>
-			</div>;
-			viewDetailContent = null
-		}
-
-		return <div className="model-views">
-			<div className="view-bar" >
-				{configElement}
-			</div>
-			{bodyContent}
-		</div>
-	}
-});
+				return <div className="model-views">
+					<div className="view-bar" >
+						{configElement}
+					</div>
+					{bodyContent}
+				</div>
+			}
+		});
 
 export default ModelPane

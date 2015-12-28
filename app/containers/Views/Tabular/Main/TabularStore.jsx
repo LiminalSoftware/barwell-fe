@@ -44,7 +44,10 @@ var createTabularStore = function (view) {
         },
 
         getObjects: function (from, to) {
-            return _.map(_records, _.clone);
+          // console.log('from: ' + from + ', to: ' + to)
+            if (from !== null && to !== null)
+              return _.map(_records.slice(from, to), _.clone);
+            // return _.map(_records, _.clone);
         },
 
         getObject: function (at) {

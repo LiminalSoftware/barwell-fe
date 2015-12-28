@@ -2,23 +2,17 @@ import React from "react";
 import { Link } from "react-router";
 import styles from "./style.less";
 import _ from 'underscore';
-import fieldTypes from "../../fields"
-
-import ViewStore from "../../../../stores/ViewStore"
-import ModelStore from "../../../../stores/ModelStore"
-import AttributeStore from "../../../../stores/AttributeStore"
-import KeyStore from "../../../../stores/KeyStore"
-import KeycompStore from "../../../../stores/KeycompStore"
+import fieldTypes from "../../../fields"
 
 import ColumnDetail from "./ColumnDetail"
 import ColumnMenuSection from "./ColumnMenuSection"
-import constant from '../../../../constants/MetasheetConstants'
-import util from "../../../../util/util"
+import constant from '../../../../../constants/MetasheetConstants'
+import util from "../../../../../util/util"
 
-import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
+import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
-var blurOnClickMixin = require('../../../../blurOnClickMixin')
+var blurOnClickMixin = require('../../../../../blurOnClickMixin')
 
 var ColumnMenu = React.createClass({
 
@@ -123,8 +117,8 @@ var ColumnMenu = React.createClass({
 	},
 
 	renderButtonBar: function () {
-		return <div 
-			className="menu-item column-item menu-config-row" 
+		return <div
+			className="menu-item column-item menu-config-row"
 			key="detail-menu-items">
 			{
 				this.state.editing ?
@@ -173,6 +167,11 @@ var ColumnMenu = React.createClass({
 					<div className="model-views-menu-inner" onClick={this.clickTrap}>
 					<div className = "dropdown-menu" style = {{minWidth: '500px'}}>
 						{sections}
+						{this.state.editing ?
+							<div className="menu-item menu-sub-item warning-item">
+								<span className = "icon icon-kub-warning"></span>Warning: making changes here will affect all views for this model
+							</div> : null
+						}
 						{this.renderButtonBar()}
 					</div>
 					</div>
@@ -182,7 +181,7 @@ var ColumnMenu = React.createClass({
 						<ColumnDetail config = {this.getCurrentCol()} view= {view}/>
 					</div>
 				}
-				<div className="dropdown small grayed icon icon-geo-arrw-down" onClick = {this.handleOpen}></div>
+				<div className="dropdown small grayed icon icon-chevron-down" onClick = {this.handleOpen}></div>
 			</div>
 		</div>
 	}

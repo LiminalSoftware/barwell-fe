@@ -19,6 +19,6 @@ module.exports = (
 				</Route>
 				<DefaultRoute name="noSelection" handler={ModelPane}></DefaultRoute>
 			</Route>
-			<DefaultRoute name="workspaceBrowser" path="workspace" handler={WorkspaceBrowser}></DefaultRoute>
+			<DefaultRoute name="workspaceBrowser" handler={WorkspaceBrowser}></DefaultRoute>
 	</Route>
 );

@@ -26,10 +26,6 @@ var TableMixin = {
 				left: 0,
 				top: 0
 			}, view.data.pointer),
-			anchor: {
-				left: 0,
-				top: 0
-			},
 			editing: false
 		}
 	},
@@ -63,7 +59,7 @@ var TableMixin = {
 	// ========================================================================
 
 
-	
+
 
 	onSelectMouseMove: function (e) {
 		this.updateSelect(this.getRCCoords(e), true)
@@ -164,7 +160,6 @@ var TableMixin = {
 	commitSelection: function () {
 		view.data.selection = this.state.selection
 		view.data.pointer = this.state.pointer
-		view.data.anchor = this.state.anchor
 		modelActionCreators.createView(view, false, false)
 	}
 

@@ -31,10 +31,15 @@ import Overlay from './Overlay'
 import ContextMenu from './ContextMenu'
 import DetailBar from '../../../DetailBar'
 import ScrollOverlay from "./ScrollOverlay"
+import FakeLines from './FakeLines'
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
+
+var _lastCall = 0
+
+var THROTTLE_DELAY = 40
 
 var debouncedCreateView = _.debounce(function (view) {
 	modelActionCreators.createView(view, false, false, true)
@@ -43,6 +48,30 @@ var debouncedCreateView = _.debounce(function (view) {
 var TabularPane = React.createClass ({
 
 	mixins: [TableMixin],
+
+	nextState: {
+		sorting: null,
+		contextOpen: false,
+		detailOpen: false,
+		contextX: null,
+		contextY: null,
+		rowOffset: 0,
+		colOffset: 0,
+		selection: {
+			left: 0,
+			top: 0,
+			right: 0,
+			bottom: 0
+		},
+		pointer: {
+			left: 0,
+			top: 0
+		},
+		anchor: {
+			left: 0,
+			top: 0
+		}
+	},
 
 	getInitialState: function () {
 		return {
@@ -91,11 +120,6 @@ var TabularPane = React.createClass ({
 		return _.pluck(this.getVisibleColumns(), 'width').reduce((a,b) => a + b, 0)
 	},
 
-	onScroll: function (event) {
-		var wrapper = React.findDOMNode(this.refs.wrapper)
-		this.setState({scrollTop: wrapper.scrollTop})
-	},
-
 	getColumns: function () {
 		return this.getVisibleColumns()
 	},
@@ -114,17 +138,16 @@ var TabularPane = React.createClass ({
 
 	selectRow: function () {
 		var numCols = this.getNumberCols()
-		var sel = this.state.selection
+		var sel = this.nextState.selection
 		sel.left = 0;
 		sel.right = numCols;
-		this.setState({selection: sel})
+		this.throttleSetState({selection: sel})
 	},
 
 	getRCCoords: function (event) {
-		var tbody = React.findDOMNode(this.refs.tbodyWrapper.refs.tbody)
+		var tbody = React.findDOMNode(this.refs.tableWrapper.refs.tbody)
 		var view = this.props.view
 		var geo = view.data.geometry
-		var actHeight = this.state.actRowHt
 		var columns = this.getColumns()
 		var offset = $(tbody).offset()
 		var y = event.pageY - offset.top
@@ -146,7 +169,7 @@ var TabularPane = React.createClass ({
 	},
 
 	getFieldAt: function (pos) {
-		var tbody = this.refs.tbodyWrapper.refs.tbody
+		var tbody = this.refs.tableWrapper.refs.tbody
 		var colId = this.getVisibleColumns()[pos.left].column_id
 		var obj = this.getValueAt(pos.top)
 		var model = this.props.model
@@ -157,15 +180,15 @@ var TabularPane = React.createClass ({
 	},
 
 	editCell: function (event) {
-		var tbody = this.refs.tbodyWrapper.refs.tbody
-		this.setState({
+		var tbody = this.refs.tableWrapper.refs.tbody
+		this.throttleSetState({
 			editing: true,
 			copyarea: null
 		})
 		tbody.setState({
 			editing: true
 		})
-		this.getFieldAt(this.state.pointer).handleEdit(event);
+		this.getFieldAt(this.nextState.pointer).handleEdit(event);
 	},
 
 	toggleCell: function (pos, toggle) {
@@ -178,6 +201,7 @@ var TabularPane = React.createClass ({
 		var cid = this.store.getClientId()
 		console.log('cid: '  + cid)
 		var obj = {cid: cid}
+		console.log('obj: ' + JSON.stringify(obj))
 		this.blurPointer()
 		modelActionCreators.insertRecord(this.props.model, obj, this.store.getRecordCount())
 		this.setState({copyarea: null})
@@ -188,12 +212,12 @@ var TabularPane = React.createClass ({
 		var cid = this.store.getClientId()
 		console.log('cid: '  + cid)
 		var obj = {cid: cid}
-		var position = pos || this.state.selection.top;
+		var position = pos || this.nextState.selection.top;
 		var model = this.props.model
 
 		this.blurPointer()
 		modelActionCreators.insertRecord(this.props.model, obj, position)
-		this.setState({copyarea: null})
+		this.throttleSetState({copyarea: null})
 		this.forceUpdate()
 	},
 
@@ -224,7 +248,7 @@ var TabularPane = React.createClass ({
 		selectors.forEach(function (selector) {
 				modelActionCreators.deleteRecord(model, selector)
 		})
-		this.setState({copyarea: null})
+		this.throttleSetState({copyarea: null})
 	},
 
 	copySelection: function () {
@@ -238,7 +262,7 @@ var TabularPane = React.createClass ({
 			clipboard += (r == sel.bottom ? "" : "\n")
 		}
 		copyTextToClipboard(clipboard)
-		this.setState({copyarea: sel})
+		this.throttleSetState({copyarea: sel})
 	},
 
 	pasteSelection: function (e) {
@@ -260,7 +284,7 @@ var TabularPane = React.createClass ({
 	},
 
 	showDetailBar: function () {
-		this.setState({detailOpen: true})
+		this.throttleSetState({detailOpen: true})
 	},
 
 	handleDetail: function () {
@@ -268,7 +292,7 @@ var TabularPane = React.createClass ({
 	},
 
 	hideDetailBar: function () {
-		this.setState({detailOpen: false})
+		this.throttleSetState({detailOpen: false})
 	},
 
 	openContextMenu: function (e) {
@@ -289,12 +313,12 @@ var TabularPane = React.createClass ({
 	},
 
 	move: function (direction, shift) {
-		var sel = this.state.selection
+		var sel = _.clone(this.nextState.selection)
+		var ptr = _.clone(this.nextState.pointer)
 		var numCols = this.getNumberCols()
 		var numRows = this.getNumberRows()
 		var singleCell = (sel.left === sel.right && sel.top === sel.bottom)
 		var outline = singleCell ? {left: 0, right: numCols, top: 0, bottom: numRows} : sel ;
-		var ptr = _.clone(this.state.pointer)
 
 		if (direction === 'TAB') {
 			var mod = (outline.right - outline.left + 1)
@@ -305,7 +329,7 @@ var TabularPane = React.createClass ({
 			index = index % bigMod
 			ptr.left = (index % mod) + outline.left
 			ptr.top = Math.floor(index / mod) + outline.top
-			if (singleCell) this.updateSelect(ptr)
+			if (singleCell) this.throttleSetState({selection: ptr})
 			else this.updatePointer(ptr)
 		} else if (direction === 'ENTER') {
 			var mod = (outline.bottom - outline.top + 1)
@@ -316,67 +340,98 @@ var TabularPane = React.createClass ({
 			index = index % bigMod
 			ptr.left = Math.floor(index / mod) + outline.left
 			ptr.top = (index % mod) + outline.top
-			if (singleCell) this.updateSelect(ptr)
+			if (singleCell) this.throttleSetState({selection: ptr})
 			else this.updatePointer(ptr)
+		}
+		// Right
+		else if (direction === 'RIGHT' && shift) {
+			if (sel.left >= ptr.left) sel.right += 1
+			else sel.left += 1
+			this.throttleSetState({selection: sel})
 		} else if (direction === 'RIGHT') {
-			ptr.left = Math.min(ptr.left + 1, numCols)
+			ptr.left = ptr.right = (ptr.left + 1)
 			this.updateSelect(ptr, shift)
+		}
+		// Left
+		else if (direction === 'LEFT' && shift) {
+			if (sel.right > ptr.left) sel.right -= 1
+			else sel.left -= 1
+			this.throttleSetState({selection: sel})
 		} else if (direction === 'LEFT') {
-			ptr.left = Math.max(ptr.left - 1, 0)
-			this.updateSelect(ptr, shift)
+			ptr.left -= 1
+			this.updateSelect(ptr, false)
+		}
+
+		// down
+		else if (direction === 'DOWN' && shift) {
+			if (sel.top < ptr.top) sel.top += 1
+			else sel.bottom += 1
+			this.throttleSetState({selection: sel})
 		} else if (direction === 'DOWN') {
-			ptr.top = Math.min(ptr.top + 1, numRows - 1)
+			ptr.top = ptr.bottom = (ptr.top + 1)
 			this.updateSelect(ptr, shift)
+		}
+		// up
+		else if (direction === 'UP' && shift) {
+			if (sel.bottom > ptr.top) sel. bottom -= 1
+			else sel.top -= 1
+			this.throttleSetState({selection: sel})
 		} else if (direction === 'UP') {
-			ptr.top = Math.max(ptr.top - 1, 0)
-			this.updateSelect(ptr, shift)
+			ptr.top -= 1
+			this.updateSelect(ptr, false)
 		}
 	},
 
 	updatePointer: function (pos) {
+		var oldPos = this.nextState.pointer
 		var view = this.props.view
-		var current = this.state.selected
+		var current = this.nextState.selected
 		var cell
+		var numCols = this.getNumberCols()
+		var numRows = this.getNumberRows()
+
+		pos.left = Math.max(Math.min(pos.left, numCols), 0)
+		pos.top = Math.max(Math.min(pos.top, numRows), 0)
 		// if pointer has moved, then unselect the old position and select the new
-		if (!_.isEqual(pos, this.state.pointer)) {
-			if(current) current.toggleSelect(false)
+		if (pos.left !== oldPos.left || pos.top !== oldPos.top) {
+			if (current) current.toggleSelect(false)
 			cell = this.getFieldAt(pos)
 			cell.toggleSelect(true)
 		}
 		// save the new values to state
-		this.setState({
+		this.throttleSetState({
 			pointer: pos,
 			detailOpen: false,
-			selected: (cell || this.state.selected)
+			selected: (cell || this.nextState.selected)
 		})
+
 		// commit the pointer position to the view object, but not immediately
-		view.data.pointer = pos
-		debouncedCreateView(view, false, false, true)
+		// view.data.pointer = pos
+		// debouncedCreateView(view, false, false, true)
 	},
 
 	blurPointer: function () {
-		var current = this.state.selected
+		var current = this.nextState.selected
 		if (current) current.toggleSelect(false)
-		this.setState({copyarea: null})
+		this.throttleSetState({copyarea: null})
 	},
 
 	updateSelect: function (pos, shift) {
-		var sel = this.state.selection
-		var anc = this.state.anchor
-		var ptr = this.state.pointer
+		var sel = this.nextState.selection
+		var ptr = this.nextState.pointer
 		var view = this.props.view
+		var numCols = this.getNumberCols()
+		var numRows = this.getNumberRows()
 
 		if (shift) {
-			if (!anc) anc = pos
-			ptr = pos
 			sel = {
-				left: Math.min(anc.left, pos.left),
-				right: Math.max(anc.left, pos.left),
-				top: Math.min(anc.top, pos.top),
-				bottom: Math.max(anc.top, pos.top)
+				left: Math.min(ptr.left, pos.left, numCols),
+				right: Math.max(ptr.left, pos.left, pos.right || 0, 0),
+				top: Math.min(ptr.top, pos.top, pos.bottom || numRows, numRows),
+				bottom: Math.max(ptr.top, pos.top, 0)
 			}
 		} else {
-			ptr = anc = pos
+			ptr = pos
 			sel = {
 				left: pos.left,
 				right: pos.left,
@@ -385,15 +440,14 @@ var TabularPane = React.createClass ({
 			}
 		}
 		this.updatePointer(ptr)
-		this.setState({
-			selection: sel,
-			anchor: anc
+		this.throttleSetState({
+			selection: sel
 		})
 	},
 
 	onMouseDown: function (e) {
 		modelActionCreators.setFocus('view')
-		this.setState({mousedown: true})
+		this.throttleSetState({mousedown: true})
 		this.updateSelect(this.getRCCoords(e), e.shiftKey)
 		document.addEventListener('selectstart', util.returnFalse)
 		document.addEventListener('mousemove', this.onSelectMouseMove)
@@ -405,7 +459,41 @@ var TabularPane = React.createClass ({
 		var view = this.props.view
 		var geo = this.props.view.data.geometry
 		var rows = Math.floor(vOffset / geo.rowHeight)
-		this.setState({rowOffset: rows, hiddenCols: 0})
+		var columns = view.data.columnList
+		var visibleColumns = columns.filter(c => !c.fixed && c.visible )
+		var hiddenColumnWidth = 0
+		var hiddenCols = 0
+
+		visibleColumns.forEach(function (col) {
+			if (col.width + hiddenColumnWidth < hOffset){
+				hiddenColumnWidth += col.width
+				hiddenCols + 1
+			}
+		})
+
+		this.throttleSetState({
+			rowOffset: rows,
+			hiddenCols: hiddenCols,
+			hiddenColumnWidth: hiddenColumnWidth
+		})
+	},
+
+	throttleSetState: function (state) {
+		var now = new Date().getTime()
+		var timeSinceUpdt = (now - _lastCall)
+		if (state) Object.assign(this.nextState, state)
+		if (timeSinceUpdt >= THROTTLE_DELAY) {
+			// if enough time has passed, set the state
+			this.setState(this.nextState)
+			_lastCall = now
+		} else {
+			// otherwise come back when time's up
+			window.setTimeout(
+				this.throttleSetState,
+				THROTTLE_DELAY - timeSinceUpdt,
+				{}
+			)
+		}
 	},
 
 	render: function () {
@@ -414,9 +502,6 @@ var TabularPane = React.createClass ({
 		var view = this.props.view
 		var geo = this.props.view.data.geometry
 		var columns = this.getVisibleColumns()
-		
-		var fixedColumns = columns.filter(c => c.fixed && c.visible)
-		var visibleColumns = columns.filter(c => !c.fixed && c.visible )
 
 		var focused = (FocusStore.getFocus() == 'view')
 		var totalWidth = this.getTotalWidth()
@@ -426,105 +511,120 @@ var TabularPane = React.createClass ({
 		var object = this.store.getObject(ptr.top)
 		var detailColumn = columns[ptr.left]
 
+		var fixedColumns = columns.filter(c => c.fixed && c.visible)
+		var visibleColumns = columns.filter(c => !c.fixed && c.visible )
+		var floatOffset = fixedColumns.map(c => c.width).reduce( (a,b) => (a + b), 0);
+
 		// <div className = "loader-box">
 		// 	<span className = "three-quarters-loader"></span>
 		// 	Loading data from server...
 		// </div>
 
 
-
 		return <div className = "model-panes">
-		<div
-			
-			ref="wrapper"
-			className = "view-body-wrapper"
-			onPaste = {this.pasteSelection}
-			beforePaste = {this.beforePaste}>
+			<div ref="wrapper"
+				className = "view-body-wrapper"
+				onPaste = {this.pasteSelection}
+				beforePaste = {this.beforePaste}>
 
-					<ScrollOverlay 
-						store = {_this.store}
-						totalWidth = {totalWidth}
-						_handleClick = {_this.onMouseDown}
-						_setScrollOffset = {_this.setScrollOffset}
-						onScroll = {this.onScroll}
-						view = {view}/>
+			<ScrollOverlay
+				store = {_this.store}
+				totalWidth = {totalWidth}
+				_handleClick = {_this.onMouseDown}
+				_setScrollOffset = {_this.setScrollOffset}
+				onScroll = {this.onScroll}
+				view = {view}/>
 
-					<TabularTHead
-						key = {"tabular-thead-" + view.view_id}
-						scrollTop = {this.state.scrollTop}
-						totalWidth = {totalWidth}
-						columns = {columns}
-						focused = {focused}
-						view = {view} />
+			<TabularTHead
+				key = {"lhsThead-" + view.view_id}
+				scrollTop = {this.state.scrollTop}
+				totalWidth = {totalWidth}
+				columns = {columns}
+				focused = {focused}
+				view = {view} />
 
-					// fixed columns
-					<TabularBodyWrapper
-						ref = "tbodyWrapper"
-						_handleBlur = {_this.handleBlur}
-						_handleDetail = {_this.handleDetail}
-						_handlePaste = {_this.pasteSelection}
-						_addRecord = {_this.addRecord}
-						editCell = {_this.editCell}
-						openContextMenu = {_this.openContextMenu}
+			<TabularTHead
+				key = {"rhsThead-" + view.view_id}
+				scrollTop = {this.state.scrollTop}
+				totalWidth = {totalWidth}
+				columns = {columns}
+				focused = {focused}
+				view = {view} />
 
-						totalWidth = {totalWidth}
-						rowOffset = {this.state.rowOffset}
-						
-						model = {model}
-						view = {view}
-						pointer = {ptr}
-						store = {_this.store}
-						columns = {columns}
-						sorting = {view.data.sorting}
-						focused = {focused}>
+			// fixed columns
+			<TabularBodyWrapper
+				ref = "tableWrapper"
+				_handleBlur = {_this.handleBlur}
+				_handleDetail = {_this.handleDetail}
+				_handlePaste = {_this.pasteSelection}
+				_addRecord = {_this.addRecord}
+				_handleContextMenu = {_this.openContextMenu}
+				_editCell = {_this.editCell}
 
-						<Overlay
-							columns = {columns}
-							className = {"pointer" + (focused ? " focused" : "")}
-							ref = "pointer"
-							{...this.props}
-							onDoubleClick={this.startEdit}
-							position = {sel}
-							fudge = {{left: -5.25 + geo.leftOffset, top: -0.25, height: -0.5, width: -0.5}} />
+				totalWidth = {totalWidth}
+				rowOffset = {this.state.rowOffset}
 
-						<Overlay
-							columns = {columns}
-							className = {"selection " + (_this.isFocused() ? " focused" : "")}
-							ref = "selection"
-							{...this.props}
-							onDoubleClick = {this.startEdit}
-							position = {sel}
-							fudge = {{left: -6.25  + geo.leftOffset, top: -1.25, width: -4.25, height: -4.25}} />
+				model = {model}
+				view = {view}
+				pointer = {ptr}
+				store = {_this.store}
+				fixedColumns = {fixedColumns}
+				visibleColumns = {visibleColumns}
+				floatOffset = {floatOffset}
+				sorting = {view.data.sorting}
+				focused = {focused}>
 
-						<Overlay
-							columns = {columns}
-							className = {"copyarea marching-ants " + (_this.isFocused() ? " focused" : "") + (_this.state.mousedown ? "" : " running")}
-							ref="copyarea"
-							{...this.props}
-							{...this.props}
-							position = {cpy}
-							fudge = {{left: -4  + geo.leftOffset, top: 0.75, height: 1.25, width: 1.25}}/>
+			<Overlay
+				columns = {columns}
+				className = {"pointer" + (focused ? " focused" : "")}
+				ref = "pointer"
+				{...this.props}
+				onDoubleClick={this.startEdit}
+				position = {sel}
+				fudge = {{left: -5.25 + geo.leftOffset, top: -0.25, height: -0.5, width: -0.5}} />
 
-					</TabularBodyWrapper>
+			<Overlay
+				columns = {columns}
+				className = {"selection " + (_this.isFocused() ? " focused" : "")}
+				ref = "selection"
+				{...this.props}
+				onDoubleClick = {this.startEdit}
+				position = {sel}
+				fudge = {{left: -6.25  + geo.leftOffset, top: -1.25, width: -4.25, height: -4.25}} />
 
-				{_this.state.contextOpen ?
-					<ContextMenu
-						x = {this.state.contextX} y = {this.state.contextY}
-						handleContextBlur = {this.handleContextBlur}
-						insertRecord = {this.insertRecord}
-						deleteRecords = {this.deleteRecords}
-						copySelection = {this.copySelection} />
-					: null}
+			<Overlay
+				columns = {columns}
+				className = {"copyarea marching-ants " + (_this.isFocused() ? " focused" : "") + (_this.state.mousedown ? "" : " running")}
+				ref="copyarea"
+				{...this.props}
+				{...this.props}
+				position = {cpy}
+				fudge = {{left: -4  + geo.leftOffset, top: 0.75, height: 1.25, width: 1.25}}/>
+
+		</TabularBodyWrapper>
+
+		<FakeLines
+			totalWidth = {totalWidth}
+			{...this.props}/>
+
+		{_this.state.contextOpen ?
+			<ContextMenu
+				x = {this.state.contextX} y = {this.state.contextY}
+				handleContextBlur = {this.handleContextBlur}
+				insertRecord = {this.insertRecord}
+				deleteRecords = {this.deleteRecords}
+				copySelection = {this.copySelection} />
+			: null}
 
 		</div>
+
 		{_this.state.detailOpen ?
 			<DetailBar
 				model = {model}
 				view = {view}
 				config = {detailColumn}
 				object = {object}/>
-			: null
-		}
+			: null}
 		</div>
 	}
 })

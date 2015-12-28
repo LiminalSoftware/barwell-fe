@@ -17,8 +17,8 @@ var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
 
 import ViewSelector from '../../../ViewSelector'
-import ColumnMenu from './ColumnMenu'
-import SortMenu from './SortMenu'
+import ColumnMenu from './ColumnMenu/index'
+import SortMenu from './SortMenu/index'
 import FilterMenu from './FilterMenu'
 
 var TabularViewInlineConfig = React.createClass({

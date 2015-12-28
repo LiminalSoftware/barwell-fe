@@ -13,31 +13,37 @@ var Overlay = React.createClass ({
   	getStyle: function () {
 	    var cols = this.props.columns
 	    var view = this.props.view
-		var geo = view.data.geometry
+		  var geo = view.data.geometry
 	    var pos = this.props.position
 	    var fudge = this.props.fudge || {}
-		var width = 0
-		var left = geo.leftGutter
+		  var width = 0
+		  var left = geo.leftGutter
 
 	    if (!pos) return null
 
-		cols.forEach(function (col, idx) {
-			if (idx < pos.left)
-				left += col.width
-			else if (idx <= (pos.right || pos.left))
-				width += col.width
-		})
-		return {
-			top: (pos.top * geo.rowHeight + (fudge.top || 0)) + 'px',
-			left: (left + (fudge.left || 0))+ 'px',
-			minHeight: (geo.rowHeight * ((pos.bottom || pos.top) - pos.top + 1) + (fudge.height || 0)) + 'px',
-			minWidth: (width + (fudge.width || 0)) + 'px'
-		}
+  		cols.forEach(function (col, idx) {
+  			if (idx < pos.left)
+  				left += col.width
+  			else if (idx <= (pos.right || pos.left))
+  				width += col.width
+  		})
+  		return {
+  			top: (pos.top * geo.rowHeight + (fudge.top || 0)) + 'px',
+  			left: (left + (fudge.left || 0))+ 'px',
+  			minHeight: (geo.rowHeight * ((pos.bottom || pos.top) - pos.top + 1) + (fudge.height || 0)) + 'px',
+  			minWidth: (width + (fudge.width || 0)) + 'px'
+  		}
 	},
 
 	render: function () {
+    var pos = this.props.position
+    var classes = this.props.className || ""
+
+    if (pos && (pos.left === pos.right) && (pos.top === pos.bottom))
+      classes = classes +  ' singleton';
+
 		return <div
-      className={this.props.className}
+      className={classes}
       style={this.getStyle()}> </div>;
 	}
 });

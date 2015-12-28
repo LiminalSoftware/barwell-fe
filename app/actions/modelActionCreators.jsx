@@ -34,7 +34,7 @@ var modelActions = {
 	insertRecord: function (model, obj, position) {
 		var model_id = model.model_id
 		var message = {}
-		var json = JSON.stringify(_.omit(obj,'cid'))
+		var json = JSON.stringify(obj)
 		var url = 'https://api.metasheet.io/m' + model.model_id;
 
 		message.actionType = 'M' + model.model_id + '_CREATE'

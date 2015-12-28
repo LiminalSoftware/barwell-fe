@@ -13,14 +13,10 @@ var Application = React.createClass({
 
 	render: function() {
 		return <div className="application ">
-				<SideBar {...this.props} />
+				<SideBar {...this.props} workspaceId = {this.props.params.workspaceId}/>
 				<RouteHandler {...this.props} />
 				<textarea id = "copy-paste-dummy" value="" onPaste = {util.handlePaste}></textarea>
 		</div>;
-	},
-
-	componentWillMount: function () {
-		modelActionCreators.fetchModels(this.props.params.workspaceId)
 	},
 
 	componentWillReceiveProps: function (newProps) {

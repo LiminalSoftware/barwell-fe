@@ -1,16 +1,15 @@
 import React from "react";
 import { Link } from "react-router";
-import styles from "./style.less";
 import _ from 'underscore';
-import fieldTypes from "../../fields"
+import fieldTypes from "../../../fields"
 
-import ViewStore from "../../../../stores/ViewStore"
-import ModelStore from "../../../../stores/ModelStore"
-import AttributeStore from "../../../../stores/AttributeStore"
-import KeyStore from "../../../../stores/KeyStore"
-import KeycompStore from "../../../../stores/KeycompStore"
+import ViewStore from "../../../../../stores/ViewStore"
+import ModelStore from "../../../../../stores/ModelStore"
+import AttributeStore from "../../../../../stores/AttributeStore"
+import KeyStore from "../../../../../stores/KeyStore"
+import KeycompStore from "../../../../../stores/KeycompStore"
 
-import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
+import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
 var SortDetail = React.createClass({

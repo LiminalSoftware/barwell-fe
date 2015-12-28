@@ -15,7 +15,7 @@ var ViewSelector = React.createClass({
 	getInitialState: function () {
 		return {open: false}
 	},
-
+	
 	render: function() {
     var model = this.props.model
     var view = this.props.view
@@ -28,7 +28,7 @@ var ViewSelector = React.createClass({
 					<ViewItem {...this.props} className="inline"/>
 				</div>
 				{this.state.open ? <ViewsList {...this.props}/> : null}
-				<div className="dropdown small grayed icon icon-geo-arrw-down"
+				<div className="dropdown small grayed icon icon-chevron-down"
 					onClick = {this.handleOpen}></div>
 			</div>
 

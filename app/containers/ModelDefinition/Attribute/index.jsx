@@ -83,7 +83,7 @@ var AttributeDetailList = React.createClass({
 		})
 
 		return <div className = "detail-block">
-			<div className="detail-section-header">
+			<div className = "detail-section-header">
 				<h3>Attributes</h3>
 				<ul className="light mb-buttons">
 					<li onClick={this.handleEdit}>Edit</li>

@@ -29,6 +29,7 @@ var SideBar = React.createClass({
 
 	componentWillMount: function () {
 		ModelStore.addChangeListener(this._onChange)
+		modelActionCreators.fetchModels(this.props.workspaceId)
 	},
 
 	_onChange: function () {

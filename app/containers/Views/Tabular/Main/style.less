@@ -40,7 +40,8 @@
 	position: absolute;
 	overflow-x: hidden;
 	overflow-y: hidden;
-	.transition(all 0.1s);
+	// .transition(all 0.1s);
+	z-index: 100;
 	&.blurred {
 		.gray-out;
 	}
@@ -49,6 +50,7 @@
 .tabular-tbody {
 	.noselect;
 	background: white;
+	.transition(none);
 }
 
 .table-cell {
@@ -74,8 +76,9 @@
 	&.selected {
 		// border: 1px solid transparent;
 	}
-	.transition(max-width cubic-bezier(.16,.85,.5,1) .3s);
-	.transition(left cubic-bezier(.16,.85,.5,1) .3s);
+	// .transition(max-width cubic-bezier(.16,.85,.5,1) .3s);
+	// .transition(left cubic-bezier(.16,.85,.5,1) .3s);
+	.transition(none);
 }
 
 .add-new-row {
@@ -83,8 +86,8 @@
 	text-align: center;
 	border: 1px solid @gray3;
 	text-transform: uppercase;
+	z-index: 205;
 	&:hover {
-		z-index: 205;
 		color: @newgreen1;
 		border: 1px solid @newgreen1;
 	}
@@ -93,7 +96,24 @@
 .table-row {
 	display: block;
 	position: absolute;
-	.transition(top cubic-bezier(.16,.85,.5,1) .3s);
+	// .transition(top cubic-bezier(.16,.85,.5,1) .3s);
+	.transition(none);
+}
+
+.fake-lines {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: 10;
+}
+
+.fake-table-row {
+	position: absolute;
+	border: 1px solid @gray3;
+	background: white;
+	z-index: 11;
 }
 
 .table-cell:last-child {
@@ -296,6 +316,10 @@
 	&.focused {
 		cursor: move !important;
 	}
+}
+
+.selection.singleton {
+	background: transparent !important;
 }
 
 .row-selection {

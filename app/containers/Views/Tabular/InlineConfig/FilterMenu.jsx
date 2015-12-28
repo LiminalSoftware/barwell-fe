@@ -10,8 +10,6 @@ import AttributeStore from "../../../../stores/AttributeStore"
 import KeyStore from "../../../../stores/KeyStore"
 import KeycompStore from "../../../../stores/KeycompStore"
 
-import SortDetail from "./SortDetail"
-
 import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
 
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;

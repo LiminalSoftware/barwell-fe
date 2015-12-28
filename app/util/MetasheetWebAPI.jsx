@@ -75,8 +75,7 @@ var persist = module.exports.persist = function (subject, action, data, update, 
   var json = (action === 'CREATE') ? JSON.stringify(stripInternalVars(data)) : null;
   var method;
 
-  if (action === 'CREATE' && JSON.stringify(data._server) ===
-    JSON.stringify(stripInternalVars(data))) {
+  if (action === 'CREATE' && _.isEqual(data._server, stripInternalVars(data)) ) {
     console.log('object unchanged -- cancel persist')
     return;
   }

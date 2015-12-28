@@ -17,23 +17,12 @@ import TabularTR from './TabularTR'
 
 import util from '../../../../util/util'
 
+var VISIBLE_ROWS = 50
+
 var TabularTBody = React.createClass ({
 
 	shouldComponentUpdate: function () {
 		return false
-	},
-
-	getInitialState: function () {
-		var view = this.props.view
-		var geo = view.data.geometry
-		return {
-			scrollTop: 0,
-			window: {
-				offset: 0,
-				limit: 100,
-				windowSize: 40
-			}
-		}
 	},
 
 	_onChange: function () {
@@ -41,64 +30,17 @@ var TabularTBody = React.createClass ({
 	},
 
 	componentWillMount: function () {
-		ViewStore.addChangeListener(this._onChange)
-		AttributeStore.addChangeListener(this._onChange)
-		ModelStore.addChangeListener(this._onChange)
 		this.props.store.addChangeListener(this._onChange)
-		this.fetch(true)
 	},
 
 	componentWillUnmount: function () {
-		ViewStore.removeChangeListener(this._onChange)
-		AttributeStore.removeChangeListener(this._onChange)
-		ModelStore.removeChangeListener(this._onChange)
 		this.props.store.removeChangeListener(this._onChange)
-	},
-
-	componentWillReceiveProps: function (newProps) {
-		var oldProps = this.props;
-		if (!_.isEqual(oldProps.sorting, newProps.sorting)) {
-			this.fetch(true)
-		}
-	},
-
-	fetch: function (force) {
-		var window = this.state.window
-		var view = this.props.view
-		var geometry = view.data.geometry
-		var rowOffset = Math.floor(this.props.scrollTop / geometry.rowHeight)
-		var tgtOffset = Math.floor(rowOffset - (window.cursorLimit / 2) + (window.windowSize / 2))
-		var boundedOffset = util.limit(0, this.props.nRows - window.cursorLimit, tgtOffset)
-		var currentOffset = this.state.window.offset
-		var mismatch = Math.abs(currentOffset - tgtOffset)
-
-		if (!view.view_id) {
-			return;
-		}
-
-		if (force || (mismatch > OFFSET_TOLERANCE && currentOffset !== boundedOffset)
-			|| !_.isEqual(oldSort, view.data.sorting)) {
-
-			modelActionCreators.fetchRecords(view, 0, 100, view.data.sorting)
-
-			this.setState({
-				fetching: true,
-				sortSpec: view.data.sorting,
-				window: {
-					offset: boundedOffset,
-					limit: this.state.window.limit
-				}
-			})
-		}
 	},
 
 	getStyle: function () {
 		var geometry = view.data.geometry
 		return {
-			top: (this.state.window.offset * (geometry.rowHeight + geometry.rowPadding) +
-				geometry.headerHeight) + 'px',
-			height: ((	(this.props.view.rows || 0) - this.state.window.offset) *
-				(geometry.rowHeight + geometry.rowPadding)) + 'px'
+			top: 0 + 'px'
 		}
 	},
 
@@ -126,25 +68,31 @@ var TabularTBody = React.createClass ({
 		var view = this.props.view
 		var model = this.props.model
 		var pk = model._pk
-		var rows = _this.props.store ? _this.props.store.getObjects() : []
+		var rowOffset = this.props.rowOffset
+		var rows = _this.props.store ? _this.props.store.getObjects(
+			rowOffset, rowOffset + VISIBLE_ROWS
+		) : []
 		var rowCount = _this.props.store ? _this.props.store.getRecordCount() : 0
-		var geometry = view.data.geometry
+		var geo = view.data.geometry
+		var floatOffset = this.props.floatOffset
 
 		var style = {
-			top: 0,
-			left: 0,
-			height: ((rowCount + 1) * geometry.rowHeight + 5) + 'px',
+			top: (rowOffset * geo.rowHeight) + 'px',
+			left: floatOffset + 'px',
+			height: (VISIBLE_ROWS * geo.rowHeight) + 'px',
 			width: (this.props.totalWidth) + 'px',
 			position: 'absolute'
 		}
 
+		// console.log('render tbody')
+
 		return <div
 				className = {"tabular-tbody "}
-				onPaste = {this.props.handlePaste}
+				onPaste = {this.props._handlePaste}
 				ref = "tbody"
-				style = {style}>
-				// onContextMenu={_this.props.openContextMenu}>
-				
+				style = {style}
+				onContextMenu = {_this.props._handleContextMenu}>
+
 				{
 					rows.map(function (obj, i) {
 						var rowKey = 'tr-' + (obj.cid || obj[pk])
@@ -155,7 +103,7 @@ var TabularTBody = React.createClass ({
 							row = {i}
 							ref = {rowKey}
 							key = {rowKey}
-							geometry = {geometry}
+							geometry = {geo}
 							handlePaste = {_this.props._handlePaste}
 							handleBlur = {_this.props._handleBlur} />;
 					})

@@ -8,7 +8,6 @@ import modelActionCreators from "../../../../actions/modelActionCreators"
 import FocusStore from "../../../../stores/FocusStore"
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
-
 var ScrollOverlay = React.createClass ({
 	// mixins: [PureRenderMixin],
 
@@ -23,6 +22,15 @@ var ScrollOverlay = React.createClass ({
 		var vOffset = Math.floor(outerEl.getDOMNode().scrollTop)
 		var hOffset = Math.floor(outerEl.getDOMNode().scrollLeft)
 		this.props._setScrollOffset(vOffset, hOffset)
+	},
+
+	handleMouseWheel: function (e) {
+		e.preventDefault()
+		var wheelDelta = e.wheelDelta;
+		var outerEl = this.refs.overlay
+		var vOffset = outerEl.scrollTop
+		
+		// outerEl.getDOMNode().scrollTo(vOffset - wheelDelta, 0)
 	},
 
 	render: function () {
