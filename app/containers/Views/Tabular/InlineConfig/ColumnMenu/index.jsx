@@ -159,8 +159,8 @@ var ColumnMenu = React.createClass({
 		})
 
     	return <div className = "double header-section" >
-			<div className="header-label">Table Columns</div>
-			<div className="model-views-menu">
+				<div className="header-label">Table Columns</div>
+				<div className="model-views-menu">
 				{
 					this.state.open ?
 					// full dropdown menu with all columns

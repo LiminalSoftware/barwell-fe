@@ -17,17 +17,18 @@ import util from '../../../../util/util'
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
-var OFFSET_TOLERANCE = 30
-var WINDOW_ROWS = 30
+var OFFSET_TOLERANCE = 100
+var WINDOW_ROWS = 50
 var FETCH_DEBOUNCE = 800
-var MAX_ROWS = 50
-var _lastCall = 0
-var _timerSet = false
+var MAX_ROWS = 500
 
 import TabularTBody from "./TabularTBody"
 import FakeLines from "./FakeLines"
 
 var TabularBodyWrapper = React.createClass ({
+
+	_lastFetch: 0,
+	_lastPaint: 0,
 
 	getInitialState: function () {
 		var view = this.props.view
@@ -46,6 +47,7 @@ var TabularBodyWrapper = React.createClass ({
 	componentWillMount: function () {
 		ViewStore.addChangeListener(this._onChange)
 		this.props.store.addChangeListener(this._onChange)
+		this.debounceFetch = _.debounce(this.fetch, FETCH_DEBOUNCE)
 		this.fetch(true)
 	},
 
@@ -54,47 +56,24 @@ var TabularBodyWrapper = React.createClass ({
 		this.props.store.removeChangeListener(this._onChange)
 	},
 
-	componentWillReceiveProps: function (newProps) {
-		var oldProps = this.props;
-		this.fetch()
-	},
-
 	fetch: function (force) {
-		var now = new Date().getTime()
-		var timeSinceUpdt = (now - _lastCall)
-		var limit = this.state.limit
 		var view = this.props.view
-		var geometry = view.data.geometry
-		var rowOffset = this.props.rowOffset
-		var tgtOffset = (rowOffset - (MAX_ROWS - WINDOW_ROWS) / 2)
-		var boundedOffset = util.limit(0, this.props.nRows - MAX_ROWS, tgtOffset)
-		var currentOffset = this.state.offset
-		var mismatch = Math.abs(currentOffset - tgtOffset)
+		var offset = this.props.rowOffset
+		var target = (offset - (MAX_ROWS - WINDOW_ROWS) / 2)
+		var boundedOffset = util.limit(0, this.props.nRows - MAX_ROWS, target)
+		var delta = Math.abs(offset - target)
 
-		if (!view.view_id) return;
-		if (timeSinceUpdt < FETCH_DEBOUNCE && !this._timer) _this.timer =
-			window.setTimeout((FETCH_DEBOUNCE - timeSinceUpdt),
-			this.fetch
-		)
-		if (timeSinceUpdt < FETCH_DEBOUNCE) return
-
-		if (force || (mismatch > OFFSET_TOLERANCE && currentOffset !== boundedOffset)
+		if (force || (delta > OFFSET_TOLERANCE && offset !== boundedOffset)
 			// or sort order has changed
 			) {
-
-			console.log('**** FETCH ***** tgtOffset: ' + tgtOffset)
 			modelActionCreators.fetchRecords(
 				view,
 				boundedOffset,
 				boundedOffset + MAX_ROWS,
-				view.data.sorting
+				null //view.data.sorting
 			)
-			if (this._timer) clearTimeout(this._timer)
-			this._timer = null
-
 			this.setState({
 				fetching: true,
-				offset: boundedOffset
 			})
 		}
 	},
@@ -106,6 +85,7 @@ var TabularBodyWrapper = React.createClass ({
 	},
 
 	render: function () {
+		// console.log('render tbodywrapper: ' + this.id)
 		var view = this.props.view
 		var model = this.props.model
 		var store = this.props.store
@@ -116,7 +96,6 @@ var TabularBodyWrapper = React.createClass ({
 
 		var wrapperStyle = {
 			marginTop: (-1* this.props.rowOffset * geo.rowHeight) + 'px',
-			// top: ((-1* this.props.rowOffset * geo.rowHeight) + geo.headerHeight + geo.topGutter) + 'px',
 			top: geo.headerHeight + 'px',
 			bottom: 0,
 			left: (geo.leftGutter) + 'px',
@@ -139,12 +118,14 @@ var TabularBodyWrapper = React.createClass ({
 			<TabularTBody
 				{...this.props}
 				floatOffset = {0}
+				hiddenColWidth = {0}
 				ref="tbody"
 				columns = {this.props.fixedColumns}/>
 
 			<TabularTBody
 				{...this.props}
 				floatOffset = {this.props.floatOffset}
+				hiddenColWidth = {this.props.hiddenColWidth}
 				ref = "rhsTableBody"
 				columns = {this.props.visibleColumns}/>
 

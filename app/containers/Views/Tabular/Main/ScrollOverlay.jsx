@@ -29,7 +29,7 @@ var ScrollOverlay = React.createClass ({
 		var wheelDelta = e.wheelDelta;
 		var outerEl = this.refs.overlay
 		var vOffset = outerEl.scrollTop
-		
+
 		// outerEl.getDOMNode().scrollTo(vOffset - wheelDelta, 0)
 	},
 
@@ -48,19 +48,21 @@ var ScrollOverlay = React.createClass ({
 		var innerStyle = {
 			top: 0,
 			left: 0,
-			height: ((rowCount + 1) * geo.rowHeight + geo.headerHeight) + 'px',
 			width: (this.props.totalWidth) + 'px',
 			position: 'absolute'
 		}
+		if (rowCount == 0) innerStyle.bottom = 0
+		else innerStyle.height = ((rowCount + 1) * geo.rowHeight + geo.headerHeight) + 'px'
+		
 		return <div className = "scroll-overlay"
 			style = {style}
 			onScroll = {this.handleScroll}
 			ref = "overlay">
-			<div className = "scroll-overlay-inner"
-			style = {innerStyle}
-			onMouseDown = {this.handleClick}
-			ref = "overlay-inner">
-			</div>
+				<div className = "scroll-overlay-inner"
+					style = {innerStyle}
+					onMouseDown = {this.handleClick}
+					ref = "overlay-inner">
+				</div>
 		</div>
 	}
 })

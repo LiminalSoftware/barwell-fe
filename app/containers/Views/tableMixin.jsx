@@ -30,13 +30,7 @@ var TableMixin = {
 		}
 	},
 
-	componentDidMount: function () {
-		$(document.body).on('keydown', this.onKey)
-	},
-
-	componentWillUnmount: function () {
-		$(document.body).off('keydown', this.onKey)
-	},
+	
 
 	isFocused: function () {
 		return (FocusStore.getFocus() === 'view')
@@ -47,32 +41,26 @@ var TableMixin = {
 	},
 
 	handleBlur: function () {
-		this.setState({editing: false})
+		this.throttleSetState({editing: false})
 	},
 
 	handleContextBlur: function () {
-		this.setState({contextOpen: false})
+		this.throttleSetState({contextOpen: false})
 	},
-
-	// ========================================================================
-	// selection control
-	// ========================================================================
-
-
-
 
 	onSelectMouseMove: function (e) {
 		this.updateSelect(this.getRCCoords(e), true)
 	},
 
 	onMouseUp: function (e) {
-		this.setState({mousedown: false})
+		// this.setState({mousedown: false})
 		document.removeEventListener('selectstart', util.returnFalse)
 		document.removeEventListener('mousemove', this.onSelectMouseMove)
 		document.removeEventListener('mouseup', this.onMouseUp)
 	},
 
 	onKey: function (e) {
+		console.log('onKey')
 		var sel = this.state.selection
 		var view = this.props.view
 		var model = this.props.model
@@ -95,7 +83,7 @@ var TableMixin = {
 			return;
 		}
 		if (e.keyCode == keycodes.ESC) {
-			this.setState({copyarea: null})
+			this.throttleSetState({copyarea: null})
 			return;
 		}
 		if (e.keyCode == keycodes.C && e.ctrlKey) {
@@ -151,22 +139,7 @@ var TableMixin = {
 		else if (e.keyCode >= 48 && e.keyCode <= 90) {
 			return this.editCell(e);
 		}
-	},
-
-	selectColumn: function () {
-
-	},
-
-	commitSelection: function () {
-		view.data.selection = this.state.selection
-		view.data.pointer = this.state.pointer
-		modelActionCreators.createView(view, false, false)
 	}
-
-	// ========================================================================
-	// rendering
-	// ========================================================================
-
 
 }
 

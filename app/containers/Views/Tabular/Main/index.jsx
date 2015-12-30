@@ -49,29 +49,7 @@ var TabularPane = React.createClass ({
 
 	mixins: [TableMixin],
 
-	nextState: {
-		sorting: null,
-		contextOpen: false,
-		detailOpen: false,
-		contextX: null,
-		contextY: null,
-		rowOffset: 0,
-		colOffset: 0,
-		selection: {
-			left: 0,
-			top: 0,
-			right: 0,
-			bottom: 0
-		},
-		pointer: {
-			left: 0,
-			top: 0
-		},
-		anchor: {
-			left: 0,
-			top: 0
-		}
-	},
+	nextState: {},
 
 	getInitialState: function () {
 		return {
@@ -86,26 +64,27 @@ var TabularPane = React.createClass ({
 	},
 
 	componentWillMount: function () {
+		document.body.addEventListener('keydown', this.onKey)
 		FocusStore.addChangeListener(this._onChange)
 		this.store = createTabularStore(this.props.view)
-		this.store.addChangeListener(this._onChange)
 	},
 
 	componentWillUnmount: function () {
+		document.body.removeEventListener('keydown', this.onKey)
 		FocusStore.removeChangeListener(this._onChange)
-		this.store.removeChangeListener(this._onChange)
 		this.store.unregister()
 	},
 
-	componentWillReceiveProps: function (newProps) {
-		var oldProps = this.props;
-		var oldState = this.state;
-		if (!_.isEqual(oldProps.sorting, newProps.sorting)) {
-			this.fetch(true)
-		}
+	componentWillUpdate: function (newProps, newState) {
+		Object.assign(this.nextState, newState)
+	},
+
+	componentDidMount: function () {
+		this.nextState = _.clone(this.state)
 	},
 
 	_onChange: function () {
+		console.log('main index onChange')
 		var focused = (FocusStore.getFocus() == 'view')
 		if (!focused) this.blurPointer()
 		this.forceUpdate()
@@ -191,26 +170,18 @@ var TabularPane = React.createClass ({
 		this.getFieldAt(this.nextState.pointer).handleEdit(event);
 	},
 
-	toggleCell: function (pos, toggle) {
-		var cell = this.getFieldAt(pos);
-		cell.toggleSelect(toggle)
-		return cell
-	},
-
 	addRecord: function () {
 		var cid = this.store.getClientId()
-		console.log('cid: '  + cid)
 		var obj = {cid: cid}
 		console.log('obj: ' + JSON.stringify(obj))
 		this.blurPointer()
 		modelActionCreators.insertRecord(this.props.model, obj, this.store.getRecordCount())
-		this.setState({copyarea: null})
+		this.throttleSetState({copyarea: null})
 		this.forceUpdate()
 	},
 
 	insertRecord: function (pos) {
 		var cid = this.store.getClientId()
-		console.log('cid: '  + cid)
 		var obj = {cid: cid}
 		var position = pos || this.nextState.selection.top;
 		var model = this.props.model
@@ -305,7 +276,7 @@ var TabularPane = React.createClass ({
 			rc.col > sel.right || rc.col < sel.left)
 			this.updateSelect(rc.row, rc.col, false, false)
 
-		this.setState({
+		this.throttleSetState({
 			contextOpen: true,
 			contextX: rc.x,
 			contextY: rc.y + 20
@@ -329,9 +300,11 @@ var TabularPane = React.createClass ({
 			index = index % bigMod
 			ptr.left = (index % mod) + outline.left
 			ptr.top = Math.floor(index / mod) + outline.top
-			if (singleCell) this.throttleSetState({selection: ptr})
-			else this.updatePointer(ptr)
-		} else if (direction === 'ENTER') {
+			if (singleCell) this.throttleSetState({selection: _.clone(ptr)})
+			this.updatePointer(ptr)
+		}
+
+		else if (direction === 'ENTER') {
 			var mod = (outline.bottom - outline.top + 1)
 			var bigMod = mod * (outline.right - outline.left + 1)
 			var index = (ptr.left - outline.left) * mod + ptr.top - outline.top
@@ -340,8 +313,8 @@ var TabularPane = React.createClass ({
 			index = index % bigMod
 			ptr.left = Math.floor(index / mod) + outline.left
 			ptr.top = (index % mod) + outline.top
-			if (singleCell) this.throttleSetState({selection: ptr})
-			else this.updatePointer(ptr)
+			if (singleCell) this.throttleSetState({selection: _.clone(ptr)})
+			this.updatePointer(ptr)
 		}
 		// Right
 		else if (direction === 'RIGHT' && shift) {
@@ -394,7 +367,7 @@ var TabularPane = React.createClass ({
 		pos.top = Math.max(Math.min(pos.top, numRows), 0)
 		// if pointer has moved, then unselect the old position and select the new
 		if (pos.left !== oldPos.left || pos.top !== oldPos.top) {
-			if (current) current.toggleSelect(false)
+			if (current && current.isMounted()) current.toggleSelect(false)
 			cell = this.getFieldAt(pos)
 			cell.toggleSelect(true)
 		}
@@ -402,6 +375,7 @@ var TabularPane = React.createClass ({
 		this.throttleSetState({
 			pointer: pos,
 			detailOpen: false,
+			contextOpen: false,
 			selected: (cell || this.nextState.selected)
 		})
 
@@ -446,13 +420,17 @@ var TabularPane = React.createClass ({
 	},
 
 	onMouseDown: function (e) {
-		modelActionCreators.setFocus('view')
-		this.throttleSetState({mousedown: true})
+		console.log('mouseDown')
+		if (FocusStore.getFocus() !== 'view')
+			modelActionCreators.setFocus('view')
+
 		this.updateSelect(this.getRCCoords(e), e.shiftKey)
 		document.addEventListener('selectstart', util.returnFalse)
 		document.addEventListener('mousemove', this.onSelectMouseMove)
 		document.addEventListener('mouseup', this.onMouseUp)
 		e.preventDefault()
+		e.stopPropagation()
+		e.nativeEvent.stopPropagation()
 	},
 
 	setScrollOffset: function (vOffset, hOffset) {
@@ -461,12 +439,12 @@ var TabularPane = React.createClass ({
 		var rows = Math.floor(vOffset / geo.rowHeight)
 		var columns = view.data.columnList
 		var visibleColumns = columns.filter(c => !c.fixed && c.visible )
-		var hiddenColumnWidth = 0
+		var hiddenColWidth = 0
 		var hiddenCols = 0
 
 		visibleColumns.forEach(function (col) {
-			if (col.width + hiddenColumnWidth < hOffset){
-				hiddenColumnWidth += col.width
+			if (col.width + hiddenColWidth < hOffset){
+				hiddenColWidth += col.width
 				hiddenCols + 1
 			}
 		})
@@ -474,7 +452,7 @@ var TabularPane = React.createClass ({
 		this.throttleSetState({
 			rowOffset: rows,
 			hiddenCols: hiddenCols,
-			hiddenColumnWidth: hiddenColumnWidth
+			hiddenColWidth: hiddenColWidth
 		})
 	},
 
@@ -497,6 +475,7 @@ var TabularPane = React.createClass ({
 	},
 
 	render: function () {
+		// console.log('tabular main index')
 		var _this = this
 		var model = this.props.model
 		var view = this.props.view
@@ -543,15 +522,6 @@ var TabularPane = React.createClass ({
 				focused = {focused}
 				view = {view} />
 
-			<TabularTHead
-				key = {"rhsThead-" + view.view_id}
-				scrollTop = {this.state.scrollTop}
-				totalWidth = {totalWidth}
-				columns = {columns}
-				focused = {focused}
-				view = {view} />
-
-			// fixed columns
 			<TabularBodyWrapper
 				ref = "tableWrapper"
 				_handleBlur = {_this.handleBlur}
@@ -563,6 +533,8 @@ var TabularPane = React.createClass ({
 
 				totalWidth = {totalWidth}
 				rowOffset = {this.state.rowOffset}
+				hiddenColWidth = {this.state.hiddenColWidth}
+				hiddenCols = {this.state.hiddenCols}
 
 				model = {model}
 				view = {view}
@@ -576,35 +548,35 @@ var TabularPane = React.createClass ({
 
 			<Overlay
 				columns = {columns}
-				className = {"pointer" + (focused ? " focused" : "")}
+				className = {" pointer" + (focused ? " focused" : "")}
 				ref = "pointer"
 				{...this.props}
 				onDoubleClick={this.startEdit}
 				position = {sel}
-				fudge = {{left: -5.25 + geo.leftOffset, top: -0.25, height: -0.5, width: -0.5}} />
+				fudge = {{left: -5.25 + geo.leftOffset, top: -1.25, height: -0.5, width: -0.5}} />
 
 			<Overlay
 				columns = {columns}
-				className = {"selection " + (_this.isFocused() ? " focused" : "")}
+				className = {" selection " + (_this.isFocused() ? " focused" : "")}
 				ref = "selection"
 				{...this.props}
 				onDoubleClick = {this.startEdit}
 				position = {sel}
-				fudge = {{left: -6.25  + geo.leftOffset, top: -1.25, width: -4.25, height: -4.25}} />
+				fudge = {{left: -6.25  + geo.leftOffset, top: -2.25, width: -4.25, height: -4.25}} />
 
 			<Overlay
 				columns = {columns}
-				className = {"copyarea marching-ants " + (_this.isFocused() ? " focused" : "") + (_this.state.mousedown ? "" : " running")}
+				className = {" copyarea running marching-ants " + (_this.isFocused() ? " focused" : "")}
 				ref="copyarea"
 				{...this.props}
-				{...this.props}
 				position = {cpy}
-				fudge = {{left: -4  + geo.leftOffset, top: 0.75, height: 1.25, width: 1.25}}/>
+				fudge = {{left: -4  + geo.leftOffset, top: 0.25, height: 0.75, width: 1.25}}/>
 
 		</TabularBodyWrapper>
 
 		<FakeLines
 			totalWidth = {totalWidth}
+			rowCount = {this.getNumberRows()}
 			{...this.props}/>
 
 		{_this.state.contextOpen ?

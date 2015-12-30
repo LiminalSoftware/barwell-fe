@@ -1,22 +1,19 @@
 import React from "react"
 import fieldTypes from "../../fields"
 import _ from "underscore"
+
 import modelActionCreators from "../../../../actions/modelActionCreators"
-import ModelStore from "../../../../stores/ModelStore"
 import ViewStore from "../../../../stores/ViewStore"
-import AttributeStore from "../../../../stores/AttributeStore"
-import FocusStore from "../../../../stores/FocusStore"
-import ViewDataStores from "../../../../stores/ViewDataStores"
-import storeFactory from 'flux-store-factory';
-import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
-import createTabularStore from './TabularStore.jsx'
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
 
 
 var TabularTR = React.createClass({
 
-	mixins: [PureRenderMixin],
+	shouldComponentUpdate: function (newProps) {
+		var oldProps = this.props
+		return (!_.isEqual(oldProps.obj, newProps.obj))
+	},
 
 	render: function () {
 		var _this = this

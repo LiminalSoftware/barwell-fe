@@ -22,13 +22,8 @@ var Application = React.createClass({
 	componentWillReceiveProps: function (newProps) {
 		if (newProps.params.workspaceId != this.props.params.workspaceId)
 			modelActionCreators.fetchModels(newProps.params.workspaceId)
-	},
-
-	toggleSidebar: function() {
-		this.setState({
-			hiddenSidebar: !this.state.hiddenSidebar
-		})
 	}
+
 })
 
 export default Application

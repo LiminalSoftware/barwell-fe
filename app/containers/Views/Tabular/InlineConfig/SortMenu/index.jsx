@@ -12,10 +12,11 @@ import SortDetail from "./SortDetail"
 import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 
 var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+var blurOnClickMixin = require('../../../../../blurOnClickMixin')
 
 var SortMenu = React.createClass({
 
-	mixins: [PureRenderMixin],
+	mixins: [blurOnClickMixin],
 
 	_onChange: function () {
 		var view = ViewStore.get(this.props.view.view_id || this.props.view.cid)
@@ -24,10 +25,6 @@ var SortMenu = React.createClass({
 
 	getInitialState: function () {
 		return {open: false}
-	},
-
-	handleOpen: function () {
-		return this.setState({open: true})
 	},
 
 	render: function() {
@@ -43,10 +40,22 @@ var SortMenu = React.createClass({
     return <div className = "header-section">
 			<div className="header-label">Sort Order</div>
 			<div className="model-views-menu" onClick = {this.onClick}>
+				{
+				this.state.open ?
+				<div className="dropdown-menu">
+					<div className = "menu-item menu-sub-item">
+						
+					</div>
+					<div className = "menu-item menu-sub-item">
+						Select
+					</div>
+				</div>
+				:
 				<div className="model-views-menu-inner">
 					{sortPreview}
 				</div>
-				<div className="dropdown small grayed icon icon-geo-arrw-down" onClick = {this.handleOpen}></div>
+				}
+				<div className="dropdown small grayed icon icon-chevron-down" onClick = {this.handleOpen}></div>
 			</div>
 
 		</div>
