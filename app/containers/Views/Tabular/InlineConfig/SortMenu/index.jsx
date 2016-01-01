@@ -11,7 +11,7 @@ import SortDetail from "./SortDetail"
 
 import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 var blurOnClickMixin = require('../../../../../blurOnClickMixin')
 
 var SortMenu = React.createClass({

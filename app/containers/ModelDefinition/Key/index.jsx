@@ -16,7 +16,7 @@ import KeyDetail from './KeyDetail'
 
 import ConfirmationMixin from '../ConfirmationMixin'
 
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 var KeyDetailList = React.createClass({
 

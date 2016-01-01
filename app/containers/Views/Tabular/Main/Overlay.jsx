@@ -2,8 +2,8 @@ import React from "react"
 import fieldTypes from "../../fields"
 import _ from "underscore"
 import modelActionCreators from "../../../../actions/modelActionCreators"
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import TabularTBody from "./TabularTBody"
 

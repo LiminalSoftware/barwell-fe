@@ -1,7 +1,7 @@
 import React from "react"
 import { RouteHandler } from "react-router"
 import styles from "./style.less"
-import EventListener from 'react/lib/EventListener'
+ 
 import _ from 'underscore'
 import fieldTypes from "../../fields"
 

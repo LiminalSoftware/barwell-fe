@@ -1,6 +1,6 @@
 import React from "react"
 import $ from "jquery"
-import EventListener from 'react/lib/EventListener'
+ 
 import _ from 'underscore'
 import fieldTypes from "../../fields"
 import modelActionCreators from "../../../../actions/modelActionCreators"

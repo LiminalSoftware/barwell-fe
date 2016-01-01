@@ -20,9 +20,9 @@ import getIconClasses from './getIconClasses'
 
 import _ from 'underscore'
 
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 var ModelDefinition = React.createClass({
 

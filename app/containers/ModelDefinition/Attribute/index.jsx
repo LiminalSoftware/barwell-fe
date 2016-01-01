@@ -13,9 +13,9 @@ import util from '../../../util/util'
 
 import AttributeDetail from './AttributeDetail'
 import ConfirmationMixin from '../ConfirmationMixin'
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 var AttributeDetailList = React.createClass({
 

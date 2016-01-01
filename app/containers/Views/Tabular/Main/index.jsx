@@ -1,7 +1,7 @@
 import React from "react"
 import { RouteHandler } from "react-router"
 import styles from "./style.less"
-import EventListener from 'react/lib/EventListener'
+ 
 import _ from 'underscore'
 import $ from 'jquery'
 
@@ -33,8 +33,8 @@ import DetailBar from '../../../DetailBar'
 import ScrollOverlay from "./ScrollOverlay"
 import FakeLines from './FakeLines'
 
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 var THROTTLE_DELAY = 60
 

@@ -14,7 +14,7 @@ import _ from 'underscore'
 import ConfirmationMixin from '../ConfirmationMixin'
 import RelationDetail from './RelationDetail'
 
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 var RelationDetailList = React.createClass({
 

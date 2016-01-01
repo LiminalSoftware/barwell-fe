@@ -15,7 +15,7 @@ import constants from '../../../../constants/MetasheetConstants'
 import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
 import _ from 'underscore'
 
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 var CubeViewConfig = React.createClass({
 

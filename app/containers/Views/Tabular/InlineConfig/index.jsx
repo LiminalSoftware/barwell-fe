@@ -13,7 +13,7 @@ import KeycompStore from "../../../../stores/KeycompStore"
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import groomView from '../../groomView'
 
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 
 import ViewSelector from '../../../ViewSelector'

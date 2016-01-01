@@ -14,8 +14,8 @@ import createTabularStore from './TabularStore.jsx'
 
 import util from '../../../../util/util'
 
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 var OFFSET_TOLERANCE = 100
 var WINDOW_ROWS = 50

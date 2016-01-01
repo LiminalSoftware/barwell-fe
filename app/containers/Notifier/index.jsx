@@ -4,7 +4,7 @@ import SideBar from "containers/SideBar";
 import styles from "./style.less";
 import modelActionCreators from "../../actions/modelActionCreators"
 import NotificationStore from "../../stores/NotificationStore"
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 var Notifier = React.createClass({
 	componentWillMount: function () {

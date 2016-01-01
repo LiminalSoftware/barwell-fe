@@ -14,7 +14,7 @@ import ModelStore from "../../stores/ModelStore"
 import ViewStore from "../../stores/ViewStore"
 import MetasheetConst from '../../constants/MetasheetConstants'
 
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import viewTypes from '../Views/viewTypes'
 import Notifier from '../Notifier'
@@ -160,26 +160,23 @@ var ModelLink = React.createClass ({
 		var model_id = model.cid || model.model_id
 		var workspace_id = model.workspace_id
 		var views
-		var lock_icon
 
 		var modelDisplay = (!!this.state.renaming) ?
 			(<input className="renamer header-renamer" ref="renamer" value={this.state.name} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/>) :
 			(<span>{model.model}</span>) ;
 
-		if (model.lock_user)
-			lock_icon = <span className="icon grayed icon-lock-close"
-							title={'locked by ' + model.lock_user}></span>
+		return <li
+			className={(this.props.active ? "active " : "") + (this.props.editing ? " editmode" : "")}>
 
-		return <li className={(this.props.active ? "active " : "") + (this.props.editing ? " editmode" : "")}>
-			{this.props.editing ? <span className="tight grayed draggable icon icon-Layer_2 model-reorder"></span> : null}
+			<Link
+				to = {`/workspace/${workspace_id}/model/${model_id}`}
+				onDoubleClick = {this.edit}>
 
-			<Link to="model" params={{modelId: model_id, workspaceId: workspace_id}} key={"model-link-" + model_id} onDoubleClick={this.edit}>
-			{lock_icon}
-			{modelDisplay}
-			{this.props.editing && !this.props.renaming ?
-				<span className="grayed right-align icon icon-kub-trash"></span> : null}
-			{this.props.editing && !this.props.renaming ?
-				<span className="grayed right-align icon icon-tl-pencil" onClick={this.edit}></span> : null}
+				{modelDisplay}
+				{this.props.editing && !this.props.renaming ?
+					<span className="grayed right-align icon icon-kub-trash"></span> : null}
+				{this.props.editing && !this.props.renaming ?
+					<span className="grayed right-align icon icon-tl-pencil" onClick={this.edit}></span> : null}
 			</Link>
 		</li>
 	}

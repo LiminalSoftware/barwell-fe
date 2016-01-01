@@ -12,7 +12,7 @@ import KeycompStore from "../../../../stores/KeycompStore"
 
 import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
 
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 var FilterMenu = React.createClass({
 

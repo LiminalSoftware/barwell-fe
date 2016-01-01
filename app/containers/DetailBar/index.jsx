@@ -8,7 +8,7 @@ import ViewStore from "../../stores/ViewStore"
 import ModelStore from "../../stores/ModelStore"
 import modelActionCreators from "../../actions/modelActionCreators"
 
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+var PureRenderMixin = require('react-addons-pure-render-mixin');
 
 var DetailBar = React.createClass({
 

@@ -20,7 +20,7 @@ var FakeLines = React.createClass ({
         width: this.props.totalWidth + 'px',
   			top: (geo.rowHeight * i +  geo.headerHeight) + 'px',
   		}
-      lines.push(<div style = {rowStyle} className = "fake-table-row"></div> )
+      lines.push(<div key = {i} style = {rowStyle} className = "fake-table-row"></div> )
     }
 
 		return <div className = "fake-lines">

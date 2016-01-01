@@ -5,8 +5,8 @@ import moment from "moment"
 
 import constants from '../../../../constants/MetasheetConstants'
 import DateValidatorMixin from './dateValidatorMixin'
-// var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+// import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import editableInputMixin from '../editableInputMixin'
 
 import CommitMixin from '../commitMixin'

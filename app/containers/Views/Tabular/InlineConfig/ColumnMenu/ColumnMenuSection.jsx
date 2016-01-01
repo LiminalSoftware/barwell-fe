@@ -9,7 +9,7 @@ import constant from '../../../../../constants/MetasheetConstants'
 import util from "../../../../../util/util"
 
 import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 var blurOnClickMixin = require('../../../../../blurOnClickMixin')
 
 var ColumnMenuSection = React.createClass({

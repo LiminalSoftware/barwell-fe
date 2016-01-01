@@ -12,7 +12,7 @@ import getIconClasses from '../getIconClasses'
 import _ from 'underscore'
 
 import ConfirmationMixin from '../ConfirmationMixin'
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 
 var KeyDetail = React.createClass({

@@ -1,6 +1,5 @@
 import React from "react"
 import { Link } from "react-router"
-
 import ModelStore from "../../../stores/ModelStore"
 import AttributeStore from "../../../stores/AttributeStore"
 import KeyStore from "../../../stores/KeyStore"
@@ -10,11 +9,9 @@ import constants from '../../../constants/MetasheetConstants'
 import getIconClasses from '../getIconClasses'
 import _ from 'underscore'
 import util from '../../../util/util'
-
 import ConfirmationMixin from '../ConfirmationMixin'
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
-
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 var AttributeDetail = React.createClass({
 

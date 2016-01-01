@@ -11,7 +11,7 @@ import constants from '../../../constants/MetasheetConstants'
 import getIconClasses from '../getIconClasses'
 import _ from 'underscore'
 
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 var relationPrettyNames = {
 	HAS_MANY: 'Has many',

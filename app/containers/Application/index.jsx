@@ -14,7 +14,7 @@ var Application = React.createClass({
 	render: function() {
 		return <div className="application ">
 				<SideBar {...this.props} workspaceId = {this.props.params.workspaceId}/>
-				<RouteHandler {...this.props} />
+				{this.props.children}
 				<textarea id = "copy-paste-dummy" value="" onPaste = {util.handlePaste}></textarea>
 		</div>;
 	},

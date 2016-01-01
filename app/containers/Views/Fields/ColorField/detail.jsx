@@ -5,8 +5,8 @@ import tinycolor from "tinycolor2"
 // import styles from "./detailStyle.less"
 import { Link } from "react-router"
 import util from '../../../../util/util'
-// var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+// import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 import CommitMixin from '../commitMixin'
 import ColorValidationMixin from './ColorValidationMixin'
 

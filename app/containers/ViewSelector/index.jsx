@@ -3,9 +3,9 @@ import ViewStore from "../../stores/ViewStore"
 import styles from "./style.less"
 import viewTypes from "../Views/viewTypes"
 import { Link } from "react-router"
-// var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+// import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 var blurOnClickMixin = require('../../blurOnClickMixin')
 
 var ViewSelector = React.createClass({
@@ -15,7 +15,7 @@ var ViewSelector = React.createClass({
 	getInitialState: function () {
 		return {open: false}
 	},
-	
+
 	render: function() {
     var model = this.props.model
     var view = this.props.view
@@ -94,14 +94,10 @@ var ViewItem = React.createClass({
 		var view = this.props.view
 		var model = this.props.model
 
-		if (view) return <Link to="view"
+		if (view) return <Link
+				to={`/workspace/${model.workspace_id}/model/${view.model_id}/view/${view.view_id}`}
 				className= {"menu-item tight menu-sub-item " +
-					(this.props.selected ? " selected" : "")}
-				params={{
-					modelId: view.model_id,
-					workspaceId: model.workspace_id,
-					viewId: view.view_id
-				}}>
+					(this.props.selected ? " selected" : "")}>
 				{this.props.editing ?
 						<span className = "half-column-config">
 							<span className="draggable icon grayed icon-Layer_2"/>

@@ -10,7 +10,7 @@ import ViewSelector from '../ViewSelector'
 
 import viewTypes from "../Views/viewTypes"
 import modelActionCreators from "../../actions/modelActionCreators"
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 var ModelPane = React.createClass({
 

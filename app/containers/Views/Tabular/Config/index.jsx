@@ -16,7 +16,7 @@ import ColumnDetail from './ColumnDetail'
 import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
 import groomView from '../../groomView'
 
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 var TabularViewConfig = React.createClass({
 

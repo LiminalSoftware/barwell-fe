@@ -1,12 +1,12 @@
 import React from "react"
 import $ from "jquery"
 import styles from "./tabularTHStyle.less"
-import EventListener from 'react/lib/EventListener'
+ 
 import _ from 'underscore'
 import fieldTypes from "../../fields"
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import FocusStore from "../../../../stores/FocusStore"
-var PureRenderMixin = require('react/addons').addons.PureRenderMixin;
+import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import TabularTH from "./TabularTH"
 var TabularTHead = React.createClass ({
