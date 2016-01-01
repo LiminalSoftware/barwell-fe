@@ -30,7 +30,7 @@ var TableMixin = {
 		}
 	},
 
-	
+
 
 	isFocused: function () {
 		return (FocusStore.getFocus() === 'view')
@@ -41,11 +41,11 @@ var TableMixin = {
 	},
 
 	handleBlur: function () {
-		this.throttleSetState({editing: false})
+		this.setState({editing: false})
 	},
 
 	handleContextBlur: function () {
-		this.throttleSetState({contextOpen: false})
+		this.setState({contextOpen: false})
 	},
 
 	onSelectMouseMove: function (e) {
@@ -83,7 +83,7 @@ var TableMixin = {
 			return;
 		}
 		if (e.keyCode == keycodes.ESC) {
-			this.throttleSetState({copyarea: null})
+			this.setState({copyarea: null})
 			return;
 		}
 		if (e.keyCode == keycodes.C && e.ctrlKey) {

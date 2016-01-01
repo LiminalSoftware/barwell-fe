@@ -19,6 +19,10 @@ module.exports.encode = function (str) {
   }).join('.')
 }
 
+module.exports.sum = function (arr, prop) {
+  return arr.map(a => a[prop]).reduce((a,b) => (a + b), 0)
+}
+
 module.exports.sequence = function (start, stop, howMany) {
   var a = []
   for (var i = start; i < stop; i += ((stop - start)/(howMany + 0.0000000000001))) {

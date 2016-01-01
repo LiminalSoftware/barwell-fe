@@ -15,6 +15,10 @@ var ScrollOverlay = React.createClass ({
 		this.props._handleClick(e)
 	},
 
+	handleDoubleClick: function (e) {
+		this.props._handleDoubleClick(e)
+	},
+
 	handleScroll: function (e) {
 		var view = this.props.view
 		var geo = view.data.geometry
@@ -53,7 +57,7 @@ var ScrollOverlay = React.createClass ({
 		}
 		if (rowCount == 0) innerStyle.bottom = 0
 		else innerStyle.height = ((rowCount + 1) * geo.rowHeight + geo.headerHeight) + 'px'
-		
+
 		return <div className = "scroll-overlay"
 			style = {style}
 			onScroll = {this.handleScroll}
@@ -61,6 +65,7 @@ var ScrollOverlay = React.createClass ({
 				<div className = "scroll-overlay-inner"
 					style = {innerStyle}
 					onMouseDown = {this.handleClick}
+					onDoubleClick = {this.handleDoubleClick}
 					ref = "overlay-inner">
 				</div>
 		</div>

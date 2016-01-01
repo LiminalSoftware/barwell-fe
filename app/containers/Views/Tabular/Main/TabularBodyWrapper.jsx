@@ -40,8 +40,8 @@ var TabularBodyWrapper = React.createClass ({
 
 	_onChange: function () {
 		this.forceUpdate()
-		this.refs.tbody.forceUpdate()
-		this.refs.rhsTableBody.forceUpdate()
+		this.refs.lhs.forceUpdate()
+		this.refs.rhs.forceUpdate()
 	},
 
 	componentWillMount: function () {
@@ -92,43 +92,45 @@ var TabularBodyWrapper = React.createClass ({
 		var rowCount = store.getRecordCount()
 		var geo = view.data.geometry
 		var focused = this.props.focused
-		var rowOffset = this.props.rowOffset
 
-		var wrapperStyle = {
-			marginTop: (-1* this.props.rowOffset * geo.rowHeight) + 'px',
-			top: geo.headerHeight + 'px',
-			bottom: 0,
-			left: (geo.leftGutter) + 'px',
-			width: this.props.totalWidth + 'px',
-			position: 'absolute',
-		}
+		var rowOffset = this.props.rowOffset
+		var colOffset = this.props.hiddenColWidth
+
+		var marginTop = (-1* this.props.rowOffset * geo.rowHeight)
+		var fixedWidth = util.sum(this.props.fixedColumns, 'width')
+		var floatWidth = util.sum(this.props.visibleColumns, 'width')
 
 		var newRowBarStyle = {
 			top: rowCount * geo.rowHeight + 'px',
 			left: 0,
 			height: (geo.rowHeight  + 'px'),
-			width: (this.props.totalWidth - 1) + 'px'
+			width: (fixedWidth + floatWidth - 1) + 'px'
 		}
 
 		return <div
 			className = {"tabular-body-wrapper " + (focused ? "focused" : "blurred")}
 			ref="tbodyWrapper"
-			style={wrapperStyle}>
+			style = {{
+				left: 0,
+				top: 0,
+				bottom: 0,
+				width: (fixedWidth + floatWidth + 2) + 'px'
+			}}>
 
-			<TabularTBody
-				{...this.props}
-				floatOffset = {0}
-				hiddenColWidth = {0}
-				ref="tbody"
-				columns = {this.props.fixedColumns}/>
+			<FakeLines
+				totalWidth = {this.props.totalWidth}
+				rowCount = {rowCount}
+				{...this.props}/>
 
-			<TabularTBody
-				{...this.props}
-				floatOffset = {this.props.floatOffset}
-				hiddenColWidth = {this.props.hiddenColWidth}
-				ref = "rhsTableBody"
-				columns = {this.props.visibleColumns}/>
-
+			<div
+				className = "inner-wrapper lhs-wrapper"
+				style = {{
+					left: geo.leftGutter + 'px',
+					top: geo.headerHeight + 'px',
+					marginTop: marginTop + 'px',
+					bottom: 0,
+					width: fixedWidth + 'px',
+				}}>
 			{this.props.children}
 			<div style = {newRowBarStyle}
 				className = "table-cell add-new-row">
@@ -137,6 +139,46 @@ var TabularBodyWrapper = React.createClass ({
 					+ Add a new row of data
 				</div>
 			</div>
+			<TabularTBody
+				{...this.props}
+				style = {{
+					left: 0,
+					marginLeft: 0,
+					top: 0,
+					width:  view.data.fixedWidth + 'px',
+					height: (rowCount * geo.rowHeight) + 'px',
+				}}
+				ref="lhs"
+				prefix = "lhs"
+				columns = {this.props.fixedColumns}/>
+			</div>
+
+			<div
+				className = "inner-wrapper rhs-wrapper"
+				style = {{
+					left: geo.leftGutter + fixedWidth + 'px',
+					marginLeft: 0,
+					top: geo.headerHeight + 'px',
+					marginTop: marginTop + 'px',
+					bottom: 0,
+					width:  floatWidth + 'px',
+				}}>
+			<TabularTBody
+				{...this.props}
+				style = {{
+					left: 0,
+					marginLeft: (-1 * this.props.hiddenColWidth) + 'px',
+					top: 0,
+					width:  view.data.floatWidth + 'px',
+					height: (rowCount * geo.rowHeight) + 'px',
+				}}
+				ref = "rhs"
+				prefix = "rhs"
+				columns = {this.props.visibleColumns}/>
+			</div>
+
+
+
 		</div>;
 	}
 });

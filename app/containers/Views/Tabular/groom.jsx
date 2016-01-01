@@ -9,7 +9,8 @@ import util from "../../../util/util"
 var BIG_NUM = 10000000;
 
 var comparator = function (a, b) {
-	return ((b.fixed || 0) - (a.fixed || 0)) + (a.order - b.order) / 1000
+	return ((b.fixed + b.visible/3 + b.order/1000)
+		- (a.fixed + a.visible/3 + a.order/1000))
 }
 
 var enumerate = function (list) {
@@ -57,6 +58,7 @@ var groomView = function (view) {
 			else col.align = 'left'
 		}
 		col.visible = (prev.visible === false) ? false : true
+		col.fixed = !!col.fixed
 		col.width = Math.max(_.isNumber(col.width) ? col.width : 0, 50)
 		columns[col.column_id] = col
 	})
@@ -74,6 +76,8 @@ var groomView = function (view) {
 		col.relation_id = relation.relation_id;
 		col.type = relation.type
 		col.name = relation.relation
+		col.fixed = !!col.fixed
+		col.visible = !!col.visible
 		col.width = Math.max(_.isNumber(col.width) ? col.width : 0, 50)
 
 		columns[col.column_id] = col
@@ -81,11 +85,15 @@ var groomView = function (view) {
 
 	var columnList = enumerate(_.values(columns))
 	columnList.map(function (col) {
-		
 
 	})
 
 	data.columnList = columnList
+	data.visibleCols = columnList.filter(c => c.visible)
+	data.floatCols = columnList.filter(c => !c.fixed && c.visible)
+	data.fixedCols = columnList.filter(c => c.fixed && c.visible)
+	data.floatWidth = util.sum(data.visibleCols, 'width')
+	data.fixedWidth = util.sum(data.fixedCols, 'width')
 	data.columns = _.indexBy(data.columnList, 'column_id');
 
 	data.selection = _.extend({'left': 0, 'top': 0, 'right': 0, 'bottom': 0}, (data.selection || {}) );

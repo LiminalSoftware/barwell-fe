@@ -2,6 +2,7 @@
 
 .tabular-view-header {
 	position: absolute;
+	border-right: 1px solid @purple4;
 }
 
 .th-context {
@@ -10,7 +11,7 @@
   font-weight: 400 !important;
   position: absolute;
   left: 0;
-  top: 0;
+  top: 10px;
 	min-width: 250px;
 }
 
@@ -35,9 +36,13 @@
 	font-style: @headerFont;
 	font-weight: 700;
 	border: 1px solid @gray3;
-	border-bottom: 1px solid @headerBorderColor;
+	border-bottom: 1px solid @purple4;
 	border-top: none;
 	z-index: 200;
+
+	&:first-child {
+		border-left: none;
+	}
 
 	.context {
 		z-index: 300;

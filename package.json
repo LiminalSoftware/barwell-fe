@@ -4,7 +4,7 @@
   "description": "web front end for the metasheet application",
   "main": "app/app.js",
   "scripts": {
-    "test": "mocha ./**/*.test.js​",
+    "test": "mocha --compilers js:babel-register ./**/*.test.js​",
     "dev-server": "webpack-dev-server --config webpack-dev-server.config.js --progress --colors --port 2992 --inline",
     "hot-dev-server": "webpack-dev-server --config webpack-hot-dev-server.config.js --hot --progress --colors --port 2992 --inline",
     "build": "webpack --config webpack-production.config.js --progress --profile --colors",
@@ -19,6 +19,7 @@
     "hot"
   ],
   "devDependencies": {
+    "babel-register": "^6.3.13",
     "css-loader": "^0.14.0",
     "express": "^4.13.3",
     "extract-text-webpack-plugin": "^0.8.0",

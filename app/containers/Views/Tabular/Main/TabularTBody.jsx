@@ -11,7 +11,7 @@ import util from '../../../../util/util'
 
 var VISIBLE_ROWS = 40
 var MAX_SKIP = 1
-var CYCLE = 40
+var CYCLE = 60
 
 var TabularTBody = React.createClass ({
 
@@ -36,9 +36,8 @@ var TabularTBody = React.createClass ({
 	},
 
 	updateOffset: function (target) {
-		target = Math.max(target - 5, 0)
 		var current = this.state.offset
-		var delta = (target - current)
+		var delta = (Math.max(target - 5, 0) - current)
 		var magnitude = Math.abs(delta)
 		var direction = Math.sign(delta)
 		var setpoint = current + (Math.min(magnitude, MAX_SKIP) * direction)
@@ -102,24 +101,16 @@ var TabularTBody = React.createClass ({
 		var geo = view.data.geometry
 		var floatOffset = this.props.floatOffset
 
-		var style = {
-			top: 0,
-			left: floatOffset + 'px',
-			height: (rowCount * geo.rowHeight) + 'px',
-			width: (this.props.totalWidth) + 'px',
-			position: 'absolute'
-		}
-
 		return <div
 				className = {"tabular-tbody "}
 				onPaste = {this.props._handlePaste}
 				ref = "tbody"
-				style = {style}
+				style = {this.props.style}
 				onContextMenu = {_this.props._handleContextMenu}>
 
 				{
 					rows.map(function (obj, i) {
-						var rowKey = 'tr-' + (obj.cid || obj[pk])
+						var rowKey = _this.props.prefix + '-tr-' + (obj.cid || obj[pk])
 						return <TabularTR  {..._this.props}
 							selection = {_this.selection}
 							obj = {obj}
