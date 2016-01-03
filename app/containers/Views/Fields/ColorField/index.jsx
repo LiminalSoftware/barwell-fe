@@ -24,15 +24,15 @@ var ColorElement = React.createClass({
 		var value = this.props.value
 		var className = (this.props.className || '') + ' table-cell '
 			+ (this.state.selected ? ' selected ' : '');
-		return <span {...this.props} className={className}>
+		return <span {...this.props} className={className} onMouseDown = {this.props.handleClick}>
 				<span className = "table-cell-inner color-picker">
 					<span className = "color-block" style = {{background: this.state.value}}></span>
-					{this.state.selected ?
-						 <span
-							className = "editor-icon icon icon-tl-paint"
-							onClick = {this.props.handleDetail}></span>
-						: null}
 				</span>
+				{this.state.selected ?
+					 <span
+						className = "editor-icon icon icon-tl-paint"
+						onClick = {this.props.handleDetail}></span>
+					: null}
 		</span>
 	}
 });

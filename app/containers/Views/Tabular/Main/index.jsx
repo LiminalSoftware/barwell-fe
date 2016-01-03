@@ -93,7 +93,6 @@ var TabularPane = React.createClass ({
 	},
 
 	_onChange: function () {
-		console.log('main index onChange')
 		var focused = (FocusStore.getFocus() == 'view')
 		if (!focused) this.blurPointer()
 		this.forceUpdate()
@@ -190,7 +189,6 @@ var TabularPane = React.createClass ({
 	addRecord: function () {
 		var cid = this.store.getClientId()
 		var obj = {cid: cid}
-		console.log('obj: ' + JSON.stringify(obj))
 		this.blurPointer()
 		modelActionCreators.insertRecord(this.props.model, obj, this.store.getRecordCount())
 		this.setState({copyarea: null})
@@ -375,7 +373,6 @@ var TabularPane = React.createClass ({
 	},
 
 	updatePointer: function (pos) {
-		console.log('updatePointer: ' + JSON.stringify(pos))
 		var oldPos = this.state.pointer
 		var view = this.props.view
 		var current = this.state.selected
@@ -519,6 +516,7 @@ var TabularPane = React.createClass ({
 			<TabularBodyWrapper
 				ref = "tableWrapper"
 				_handleBlur = {_this.handleBlur}
+				_handleClick = {_this.onMouseDown}
 				_handleDetail = {_this.handleDetail}
 				_handlePaste = {_this.pasteSelection}
 				_addRecord = {_this.addRecord}

@@ -9,9 +9,11 @@ import TabularTR from './TabularTR'
 
 import util from '../../../../util/util'
 
-var VISIBLE_ROWS = 40
-var MAX_SKIP = 1
-var CYCLE = 60
+var VISIBLE_ROWS = 50
+var MAX_SKIP = 3
+var CYCLE = 25
+var LONG_CYCLE = 250
+var BACKWARD_BUFFER = 10
 
 var TabularTBody = React.createClass ({
 
@@ -27,26 +29,35 @@ var TabularTBody = React.createClass ({
 	},
 
 	componentDidUpdate: function (prevProps) {
+		var _this = this
 		var now = new Date().getTime()
-		this._lastUpdate = new Date().getTime()
-		if (this.state.offset !== this.props.rowOffset)
-			this.updateOffset(this.props.rowOffset)
-		if (this._timer) window.clearTimeout(this._timer)
-		this._timer = window.setTimeout(this._onChange, this._lastUpdate - now)
+		var target = Math.max(this.props.rowOffset - BACKWARD_BUFFER, 0)
+		// we just updated so set the _lastUpdate time to now
+		this._lastUpdate = now
+		// we shouldn't have a timer set, but if we do clear it
+		if (this.__timer) clearTimeout(this.__timer)
+		// if we haven't reached home yet, set a timer for next frame
+
+		if (this.state.offset !== target ) {
+			this.__timer = setTimeout(function() {
+				_this.updateOffset(target)
+			}, CYCLE)
+		}
 	},
 
 	updateOffset: function (target) {
 		var current = this.state.offset
-		var delta = (Math.max(target - 5, 0) - current)
+		var delta = (target - current)
 		var magnitude = Math.abs(delta)
 		var direction = Math.sign(delta)
 		var setpoint = current + (Math.min(magnitude, MAX_SKIP) * direction)
-		if (setpoint !== current) this.setState({offset: setpoint})
+		this.setState({offset: setpoint})
 	},
 
-	shouldComponentUpdate: function () {
+	shouldComponentUpdate: function (nextProps, nextState) {
 		var now = new Date().getTime()
-		return (now - this._lastUpdate > CYCLE);
+		return (nextProps.rowOffset !== this.state.offset &&
+			now - this._lastUpdate >= CYCLE);
 	},
 
 	_onChange: function () {
@@ -99,7 +110,6 @@ var TabularTBody = React.createClass ({
 	},
 
 	render: function () {
-		// console.log('render tbody')
 		var view = this.props.view
 		var model = this.props.model
 		var pk = model._pk

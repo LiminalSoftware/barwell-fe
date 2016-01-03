@@ -51,12 +51,12 @@ var CheckboxElement = React.createClass({
 			+ (this.state.selected ? ' selected ' : '');
 
 		return <span {...this.props} className={className}>
-				<span className = "table-cell-inner checkbox-inner">
-					<span className="checkbox-surround" onClick={this.handleClick}>
-						<span className={"check greened icon " + (this.state.value ? "" : "icon-kub-approve")}>
-						</span>
+			<span className = "table-cell-inner checkbox-inner">
+				<span className="checkbox-surround" onClick={this.handleClick}>
+					<span className={"check greened icon " + (this.state.value ? "" : "icon-kub-approve")}>
 					</span>
 				</span>
+			</span>
 		</span>
 	}
 });
