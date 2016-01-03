@@ -12,7 +12,8 @@ var TabularTR = React.createClass({
 
 	shouldComponentUpdate: function (newProps) {
 		var oldProps = this.props
-		return (!_.isEqual(oldProps.obj, newProps.obj))
+		return (!_.isEqual(oldProps.obj, newProps.obj)
+		|| this.props.view != newProps.view)
 	},
 
 	render: function () {

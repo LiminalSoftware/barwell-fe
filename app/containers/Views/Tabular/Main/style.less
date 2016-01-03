@@ -45,23 +45,30 @@
 
 .inner-wrapper {
 	position: absolute;
-	overflow-y: hidden;
-	border-left: 1px solid @purple4;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
 }
 .lhs-wrapper {
 	overflow: visible;
 }
 
 .rhs-wrapper {
-	overflow-x: hidden;
+	overflow: hidden;
+}
+
+.rhs-outer {
+	border-left: 1px solid @purple4;
+}
+
+.rhs-h-scroll {
+	.transition(margin-left cubic-bezier(.16,.85,.5,1) 150ms);
 }
 
 .tabular-tbody {
 	.noselect;
 	position: absolute;
 	background: none;
-
-	.transition(margin-left cubic-bezier(.16,.85,.5,1) .2s);
 }
 
 .table-cell {
@@ -75,6 +82,9 @@
 	border-right: 1px solid transparent;
 	&:first-child {
 		border-left: none;
+	}
+	&:last-child {
+		border-right: none;
 	}
 	&.sorted	 {
 		border-right: 1px solid @newgreen1;
@@ -115,22 +125,19 @@
 .fake-lines {
 	position: absolute;
 	left: 0;
-	right: 0;
 	top: 0;
-	bottom: 0;
+	overflow: visible;
 	// z-index: 10;
 }
 
 .fake-table-row {
 	position: absolute;
-	border: 1px solid @gray3;
+	border-top: 1px solid @gray3;
+	border-bottom: 1px solid @gray3;
 	background: white;
 	// z-index: 11;
 }
 
-.table-cell:last-child {
-	border-right: 1px solid @gray3;
-}
 
 .sort-icon {
 	margin-left: 5px;
@@ -175,23 +182,25 @@
 
 .align-left .table-cell-inner {
 	align: left;
-	.editor-icon {
-		right: 0px;
-	}
+}
+.align-left .editor-icon {
+	right: 0px;
 }
 
 .align-center .table-cell-inner {
 	text-align: center;
-	.editor-icon {
-		left: 0;
-	}
+}
+
+.align-center .editor-icon {
+	left: 0;
 }
 
 .align-right .table-cell-inner {
 	text-align: right;
-	.editor-icon {
-		left: 0;
-	}
+}
+
+.align-right .editor-icon {
+	left: 0;
 }
 
 
@@ -265,8 +274,6 @@
 	}
 }
 
-
-
 .has-many-bubble {
 	.draggable;
 	position: relative;
@@ -308,7 +315,7 @@
 }
 
 
-.selection, .copyarea, .pointer, .row-selection {
+.selection, .copyarea, .pointer, .row-selection, .jagged-edge {
 	z-index: 112;
 	position: absolute;
 	top: 0;
@@ -317,8 +324,14 @@
 	pointer-events: none;
 }
 
+.jagged-edge {
+	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAASUlEQVQYV2P8////f45plgwg8CPrOJhmZGRkBDOQAFgAXTFOhcQoRrECn8kYCkGmI7sZ5gwMR4NMxaaYPBOJciOhIMIajtgCHQBjIEYLL+ygOgAAAABJRU5ErkJggg==) repeat-y;
+	z-index: 151;
+}
+
 .selection, .pointer {
-	.transition(all cubic-bezier(.16,.85,.5,1) .1s);
+	.transition(all cubic-bezier(.1,.85,.5,1) 150ms);
+	// .transition(all linear 100ms);
 }
 
 .copyarea {
@@ -351,7 +364,23 @@
 	z-index: 130;
 	border: 2px solid @gray3;
 	&.focused {
-		border: 2px solid @newgreen1;
+		border-color: @newgreen1;
+	}
+
+}
+
+.pointer, .selection {
+	&.open-right {
+		border-right-color: transparent;
+	}
+	&.open-left {
+		border-left-color: transparent;
+	}
+}
+
+.pointer, .copyarea {
+	&.top-position {
+		z-index: 205;
 	}
 }
 

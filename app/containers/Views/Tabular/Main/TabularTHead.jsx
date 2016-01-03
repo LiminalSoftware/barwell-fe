@@ -1,7 +1,7 @@
 import React from "react"
 import $ from "jquery"
 import styles from "./tabularTHStyle.less"
- 
+
 import _ from 'underscore'
 import fieldTypes from "../../fields"
 import modelActionCreators from "../../../../actions/modelActionCreators"
@@ -16,40 +16,44 @@ var TabularTHead = React.createClass ({
 		var _this = this
 		var view = this.props.view
 		var geo = view.data.geometry
-		var left = geo.leftGutter
 		var focused = this.props.focused
+		var left = 0
 
 		var style = {
 			top: 0,
-			left: this.props.leftOffset + 'px',
+			left: 0,
+			marginLeft: this.props.leftOffset + 'px',
 			height: (geo.headerHeight + 1) + 'px',
-			width: (this.props.totalWidth + 6) + 'px'
+			width: (this.props.totalWidth) + 'px'
 		}
 
 		return <div
-			className = "tabular-view-header"
+			className = {"tabular-view-header " + this.props.side + '-header'}
 			style = {style}
 			ref = {this.props.side + "-thead"}>
 			{
 			_this.props.columns.map(function (col, idx) {
 				var el = <TabularTH key={"th-" + col.attribute_id}
 					scrollTop = {_this.props.scrollTop}
-					focused = {focused}
-					column={col}
-					view={view}
-					idx={idx}
-					left={left}/>;
+					column = {col}
+					view = {view}
+					idx = {idx}
+					left = {left}/>;
 				left += col.width
 				return el
 			})
 			}
-			<span style={{left: (left) + 'px',
-				width: (geo.rowHeight * 2) + 'px',
-				height: geo.headerHeight}}
-				className= {"table-cell table-header-cell columnAdder " +
-					(focused ? " focused " : " blurred ")}>
-				<span className="table-cell-inner"> + </span>
-			</span>
+			{
+				this.props.side === 'rhs' ?
+				<span style={{left: (left) + 'px',
+					width: (geo.rowHeight * 2) + 'px',
+					height: geo.headerHeight}}
+					className= "table-cell table-header-cell columnAdder ">
+					<span className="table-cell-inner"> + </span>
+				</span>
+				:
+				null
+			}
 		</div>
 	}
 })

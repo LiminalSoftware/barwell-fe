@@ -90,7 +90,9 @@ var AttributeDetail = React.createClass({
 
 		var actions = [];
 
-		return <ReactCSSTransitionGroup key={key} transitionName="detail-row" component = "div"
+		return <ReactCSSTransitionGroup
+				transitionEnterTimeout={500} transitionLeaveTimeout={300} 
+				key={key} transitionName="detail-row" component = "div"
 				className={("detail-row ") + (col._dirty?'unsaved':'') + (col._destroy?'destroyed':'') +
 				 (this.props.editing ? ' editing ' : null) + (this.state.new ? ' new' : null)}>
 				{this.props.editing ?

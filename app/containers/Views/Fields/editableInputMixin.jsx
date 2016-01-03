@@ -28,11 +28,18 @@ var editableInputMixin = {
 
 	handleKeyPress: function (event) {
 		if (event.keyCode === constant.keycodes.ESC) this.cancelChanges()
-		if (event.keyCode === constant.keycodes.ENTER) this.commitChanges()
-		if (event.keyCode === constant.keycodes.TAB) this.commitChanges()
+		if (event.keyCode === constant.keycodes.ENTER) {
+			console.log('yippee')
+			this.commitChanges()
+		}
+		if (event.keyCode === constant.keycodes.TAB) {
+			console.log('yikes')
+			this.commitChanges()
+		}
 	},
 
 	cancelChanges: function () {
+		console.log('cancel')
 		this.revert()
 	},
 
@@ -86,14 +93,14 @@ var editableInputMixin = {
 				this.format(this.props.value) :
 				this.props.value
 			}
-			{this.detailIcon && this.state.selected ?
-				<span
-					className = {"editor-icon icon " + this.detailIcon}
-					onClick = {this.handleDetail}
-					></span>
-				: null
-			}
 			</span>
+		}
+		{this.detailIcon && this.state.selected ?
+			<span
+				className = {"editor-icon icon " + this.detailIcon}
+				onClick = {this.handleDetail}
+				></span>
+			: null
 		}
 		</span>
 	}

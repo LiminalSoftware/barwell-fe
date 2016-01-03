@@ -22,7 +22,9 @@ var Notifier = React.createClass({
 	render: function() {
 		var notifications = NotificationStore.getNotifications();
 
-		return <ReactCSSTransitionGroup component="ul" className="notifier" transitionName="flip">{
+		return <ReactCSSTransitionGroup
+			transitionEnterTimeout={500} transitionLeaveTimeout={300}
+			component="ul" className="notifier" transitionName="flip">{
 				notifications.map(function (note) {
 					var iconName;
 					switch(note.type) {

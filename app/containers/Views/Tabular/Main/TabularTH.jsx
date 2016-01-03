@@ -1,6 +1,7 @@
 import React from "react"
+import ReactDOM from "react-dom"
 import $ from "jquery"
- 
+
 import _ from 'underscore'
 import fieldTypes from "../../fields"
 import modelActionCreators from "../../../../actions/modelActionCreators"
@@ -31,9 +32,7 @@ var TabularTH = React.createClass ({
 		classes.push('table-cell')
 		classes.push('table-header-cell')
 		if (!!col.sorting) classes.push(col.sorting.descending ? 'desc' : 'asc')
-	    if (this.state.context) classes.push('context')
-	    if (FocusStore.getFocus() === 'view') classes.push('focused')
-		else if (!this.state.context) classes.push('blurred')
+	  if (this.state.context) classes.push('context')
 
 		return <span
 				onContextMenu = {this.onContextMenu}
@@ -43,11 +42,11 @@ var TabularTH = React.createClass ({
 			   {col.name}
 			</span>
 			{
-				this.state.context ? 
+				this.state.context ?
 				<TabularTHContext
 	        		headerHeight = {geo.headerHeight}
 	        		config = {col}
-	        		handleBlur = {this.handleBlur}/> 
+	        		handleBlur = {this.handleBlur}/>
 	        	: null
 	        }
 			<span ref = "resizer"
@@ -73,7 +72,7 @@ var TabularTH = React.createClass ({
 	},
 
 	onResizerMouseDown: function (e) {
-		var pos = $(this.getDOMNode()).offset()
+		var pos = $(ReactDOM.findDOMNode(this)).offset()
 		this.setState({
 			dragging: true,
 			rel: e.pageX
@@ -100,7 +99,7 @@ var TabularTH = React.createClass ({
 	   if (!this.state.dragging) return
 	   this.setState({
 	      pos: Math.max(
-	      	e.pageX - this.state.rel, 
+	      	e.pageX - this.state.rel,
 	      	this.columnMinWidth - this.state.rel - this.props.column.width
 	      )
 	   })
@@ -131,7 +130,7 @@ var TabularTH = React.createClass ({
   	},
 
 	handleKeyPress: function (event) {
-		if (event.keyCode === constant.keycodes.ESC) 
+		if (event.keyCode === constant.keycodes.ESC)
 			this.handleBlur()
 	},
 

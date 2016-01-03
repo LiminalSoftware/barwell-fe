@@ -21,8 +21,10 @@ var OFFSET_TOLERANCE = 100
 var WINDOW_ROWS = 50
 var FETCH_DEBOUNCE = 800
 var MAX_ROWS = 500
+var RHS_PADDING = 100
 
 import TabularTBody from "./TabularTBody"
+import TabularTHead from "./TabularTHead"
 import FakeLines from "./FakeLines"
 
 var TabularBodyWrapper = React.createClass ({
@@ -55,6 +57,12 @@ var TabularBodyWrapper = React.createClass ({
 		ViewStore.removeChangeListener(this._onChange)
 		this.props.store.removeChangeListener(this._onChange)
 	},
+
+	// shouldComponentUpdate: function (nextProps) {
+	// 	return this.props.hiddenColWidth !== nextProps.hiddenColWidth ||
+	// 		this.props.rowOffset !== nextProps.rowOffset ||
+	// 		this.props.focused !== nextProps.focused
+	// },
 
 	fetch: function (force) {
 		var view = this.props.view
@@ -117,8 +125,16 @@ var TabularBodyWrapper = React.createClass ({
 				width: (fixedWidth + floatWidth + 2) + 'px'
 			}}>
 
+			<TabularTHead
+				totalWidth = {fixedWidth}
+				leftOffset = {0}
+				side = {'lhs'}
+				columns = {view.data.fixedCols}
+				focused = {focused}
+				view = {view} />
+
 			<FakeLines
-				totalWidth = {this.props.totalWidth}
+				width = {view.data.fixedWidth}
 				rowCount = {rowCount}
 				{...this.props}/>
 
@@ -131,54 +147,84 @@ var TabularBodyWrapper = React.createClass ({
 					bottom: 0,
 					width: fixedWidth + 'px',
 				}}>
-			{this.props.children}
-			<div style = {newRowBarStyle}
-				className = "table-cell add-new-row">
-				<div className = "table-cell-inner"
-					onMouseDown = {this.handleAddRecord}>
-					+ Add a new row of data
+				{this.props.children}
+				<div style = {newRowBarStyle}
+					className = "table-cell add-new-row">
+					<div className = "table-cell-inner"
+						onMouseDown = {this.handleAddRecord}>
+						+ Add a new row of data
+					</div>
 				</div>
+
+				<TabularTBody
+					{...this.props}
+					style = {{
+						left: 0,
+						marginLeft: 0,
+						top: 0,
+						width:  view.data.fixedWidth + 'px',
+						height: (rowCount * geo.rowHeight) + 'px',
+					}}
+					ref="lhs"
+					prefix = "lhs"
+					columns = {this.props.fixedColumns}/>
 			</div>
-			<TabularTBody
-				{...this.props}
+
+			<div
+				className = "inner-wrapper rhs-outer"
+				style = {{
+					overflow: 'hidden',
+					left: geo.leftGutter + fixedWidth + 'px',
+					top: 0,
+					bottom: 0,
+					width:  floatWidth + RHS_PADDING + 'px'
+				}}>
+			<div
+				className = "inner-wrapper rhs-h-scroll"
 				style = {{
 					left: 0,
-					marginLeft: 0,
+					marginLeft: (-1 * this.props.hiddenColWidth) + 'px',
 					top: 0,
-					width:  view.data.fixedWidth + 'px',
-					height: (rowCount * geo.rowHeight) + 'px',
-				}}
-				ref="lhs"
-				prefix = "lhs"
-				columns = {this.props.fixedColumns}/>
-			</div>
+					bottom: 0,
+					width:  floatWidth + RHS_PADDING + 'px',
+				}}>
+			<FakeLines
+				{...this.props}
+				width = {floatWidth}
+				rowCount = {rowCount}/>
+
+			<TabularTHead
+				totalWidth = {floatWidth + RHS_PADDING}
+				leftOffset = {-1}
+				side = {'rhs'}
+				columns = {view.data.floatCols}
+				focused = {focused}
+				view = {view} />
 
 			<div
 				className = "inner-wrapper rhs-wrapper"
 				style = {{
-					left: geo.leftGutter + fixedWidth + 'px',
-					marginLeft: 0,
+					left: 0,
 					top: geo.headerHeight + 'px',
 					marginTop: marginTop + 'px',
 					bottom: 0,
 					width:  floatWidth + 'px',
 				}}>
+
 			<TabularTBody
 				{...this.props}
 				style = {{
 					left: 0,
-					marginLeft: (-1 * this.props.hiddenColWidth) + 'px',
 					top: 0,
-					width:  view.data.floatWidth + 'px',
+					width:  floatWidth + 'px',
 					height: (rowCount * geo.rowHeight) + 'px',
 				}}
 				ref = "rhs"
 				prefix = "rhs"
 				columns = {this.props.visibleColumns}/>
 			</div>
-
-
-
+			</div>
+			</div>
 		</div>;
 	}
 });

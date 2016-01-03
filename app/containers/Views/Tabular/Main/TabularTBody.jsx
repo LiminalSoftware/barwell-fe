@@ -67,13 +67,6 @@ var TabularTBody = React.createClass ({
 		this.props.store.removeChangeListener(this._onChange)
 	},
 
-	getStyle: function () {
-		var geometry = view.data.geometry
-		return {
-			top: 0 + 'px'
-		}
-	},
-
 	getNumberCols: function () {
 		return this.props.columns.length - 1
 	},
@@ -86,18 +79,36 @@ var TabularTBody = React.createClass ({
 		return this.props.columns
 	},
 
+	createRow: function (obj, index) {
+		var view = this.props.view
+		var geo = view.data.geometry
+		var model = this.props.model
+		var pk = model._pk
+		var rowKey = this.props.prefix + '-tr-' + (obj.cid || obj[pk])
+		var offset = this.state.offset
+
+		return <TabularTR  {...this.props}
+			obj = {obj}
+			rowKey = {rowKey}
+			row = {index + offset}
+			ref = {rowKey}
+			key = {rowKey}
+			geometry = {geo}
+			handlePaste = {this.props._handlePaste}
+			handleBlur = {this.props._handleBlur} />;
+	},
+
 	render: function () {
 		// console.log('render tbody')
-		var _this = this
 		var view = this.props.view
 		var model = this.props.model
 		var pk = model._pk
 		var offset = this.state.offset
 		var length = this.state.length
-		var rows = _this.props.store ? _this.props.store.getObjects(
+		var rows = this.props.store ? this.props.store.getObjects(
 			offset, offset + length
 		) : []
-		var rowCount = _this.props.store ? _this.props.store.getRecordCount() : 0
+		var rowCount = this.props.store ? this.props.store.getRecordCount() : 0
 		var geo = view.data.geometry
 		var floatOffset = this.props.floatOffset
 
@@ -106,23 +117,9 @@ var TabularTBody = React.createClass ({
 				onPaste = {this.props._handlePaste}
 				ref = "tbody"
 				style = {this.props.style}
-				onContextMenu = {_this.props._handleContextMenu}>
+				onContextMenu = {this.props._handleContextMenu}>
 
-				{
-					rows.map(function (obj, i) {
-						var rowKey = _this.props.prefix + '-tr-' + (obj.cid || obj[pk])
-						return <TabularTR  {..._this.props}
-							selection = {_this.selection}
-							obj = {obj}
-							rowKey = {rowKey}
-							row = {i + offset}
-							ref = {rowKey}
-							key = {rowKey}
-							geometry = {geo}
-							handlePaste = {_this.props._handlePaste}
-							handleBlur = {_this.props._handleBlur} />;
-					})
-				}
+				{ rows.map(this.createRow) }
 			</div>
 	}
 })

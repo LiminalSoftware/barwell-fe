@@ -8,6 +8,8 @@ import modelActionCreators from "../../../../actions/modelActionCreators"
 import FocusStore from "../../../../stores/FocusStore"
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
+var RHS_PADDING = 100
+
 var ScrollOverlay = React.createClass ({
 	// mixins: [PureRenderMixin],
 
@@ -52,9 +54,10 @@ var ScrollOverlay = React.createClass ({
 		var innerStyle = {
 			top: 0,
 			left: 0,
-			width: (this.props.totalWidth) + 'px',
+			width: (view.data.fixedWidth + view.data.floatWidth + RHS_PADDING) + 'px',
 			position: 'absolute'
 		}
+		// hack! - need something clickable before the rows load
 		if (rowCount == 0) innerStyle.bottom = 0
 		else innerStyle.height = ((rowCount + 1) * geo.rowHeight + geo.headerHeight) + 'px'
 

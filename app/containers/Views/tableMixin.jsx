@@ -60,7 +60,6 @@ var TableMixin = {
 	},
 
 	onKey: function (e) {
-		console.log('onKey')
 		var sel = this.state.selection
 		var view = this.props.view
 		var model = this.props.model

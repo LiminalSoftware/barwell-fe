@@ -21,6 +21,8 @@ var commitMixin = {
 	},
 
 	commitChanges: function () {
+		var value = this.validator(this.props.value)
+		if (_.isEqual(this.state.value, value)) return;
 		this.commitValue(this.state.value)
 	},
 

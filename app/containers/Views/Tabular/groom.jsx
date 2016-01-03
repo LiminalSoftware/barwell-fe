@@ -9,8 +9,8 @@ import util from "../../../util/util"
 var BIG_NUM = 10000000;
 
 var comparator = function (a, b) {
-	return ((b.fixed + b.visible/3 + b.order/1000)
-		- (a.fixed + a.visible/3 + a.order/1000))
+	return ((b.fixed + b.visible - b.order/1000)
+		- (a.fixed + a.visible - a.order/1000))
 }
 
 var enumerate = function (list) {
@@ -22,9 +22,9 @@ var enumerate = function (list) {
 }
 
 var limit = function (thing, view) {
-	var columns = view.data.columnList.filter(col => col.visible).length
-	thing.left = Math.min(thing.left, columns - 1)
-	if (thing.right) thing.right = Math.min(thing.right, columns)
+	var numCols = view.data.visibleCols.length
+	thing.left = Math.min(thing.left, numCols - 1)
+	if (thing.right) thing.right = Math.min(thing.right, numCols)
 	return thing
 }
 
@@ -57,8 +57,8 @@ var groomView = function (view) {
 			else if (col.type === 'BOOLEAN') col.align = 'center'
 			else col.align = 'left'
 		}
-		col.visible = (prev.visible === false) ? false : true
-		col.fixed = !!col.fixed
+		col.visible = !!col.visible
+		col.fixed = !!col.fixed && col.visible
 		col.width = Math.max(_.isNumber(col.width) ? col.width : 0, 50)
 		columns[col.column_id] = col
 	})
@@ -76,8 +76,8 @@ var groomView = function (view) {
 		col.relation_id = relation.relation_id;
 		col.type = relation.type
 		col.name = relation.relation
-		col.fixed = !!col.fixed
 		col.visible = !!col.visible
+		col.fixed = !!col.fixed && col.visible
 		col.width = Math.max(_.isNumber(col.width) ? col.width : 0, 50)
 
 		columns[col.column_id] = col

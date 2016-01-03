@@ -146,6 +146,7 @@ var ColumnMenu = React.createClass({
 		var sections = this.sections.map(function (section, idx) {
 			return <ColumnMenuSection
 				view = {view}
+				key = {"section-" + idx}
 				label = {section.label}
 				ref = {"section-" + idx}
 				icon = {section.icon}

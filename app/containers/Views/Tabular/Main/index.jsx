@@ -1,7 +1,8 @@
 import React from "react"
+import ReactDOM from "react-dom"
 import { RouteHandler } from "react-router"
 import styles from "./style.less"
- 
+
 import _ from 'underscore'
 import $ from 'jquery'
 
@@ -23,20 +24,17 @@ import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 import createTabularStore from './TabularStore.jsx'
 
 import fieldTypes from "../../fields"
-import TabularTBody from "./TabularTBody"
 import TabularBodyWrapper from "./TabularBodyWrapper"
-import TabularTHead from "./TabularTHead"
 import TableMixin from '../../TableMixin'
 import Overlay from './Overlay'
 import ContextMenu from './ContextMenu'
 import DetailBar from '../../../DetailBar'
 import ScrollOverlay from "./ScrollOverlay"
-import FakeLines from './FakeLines'
 
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-var THROTTLE_DELAY = 60
+var THROTTLE_DELAY = 30
 
 var debouncedCreateView = _.debounce(function (view) {
 	modelActionCreators.createView(view, false, false, true)
@@ -48,6 +46,8 @@ var TabularPane = React.createClass ({
 
 	getInitialState: function () {
 		return {
+      hiddenCols: 0,
+      hiddenColWidth: 0,
 			sorting: null,
 			contextOpen: false,
 			detailOpen: false,
@@ -101,15 +101,17 @@ var TabularPane = React.createClass ({
 
 	getVisibleColumns: function () {
 		var view = this.props.view
-		return _.filter(view.data.columnList, 'visible');
+		return view.data.visibleCols
 	},
 
 	getTotalWidth: function () {
-		return _.pluck(this.getVisibleColumns(), 'width').reduce((a,b) => a + b, 0)
+    var view = this.props.view
+		return util.sum(view.data.visibleCols, 'width')
 	},
 
 	getColumns: function () {
-		return this.getVisibleColumns()
+    var view = this.props.view
+		return view.data.visibleCols
 	},
 
 	getNumberCols: function () {
@@ -133,10 +135,12 @@ var TabularPane = React.createClass ({
 	},
 
 	getRCCoords: function (event) {
-		var lhs = React.findDOMNode(this.refs.tableWrapper.refs.lhs)
+		var lhs = ReactDOM.findDOMNode(this.refs.tableWrapper.refs.lhs)
 		var view = this.props.view
 		var geo = view.data.geometry
-		var columns = this.getColumns()
+		var visibleCols = view.data.visibleCols
+		var scrolledCols = this.state.hiddenCols
+		var numFixed = view.data.fixedCols.length
 		var offset = $(lhs).offset()
 		var y = event.pageY - offset.top
 		var x = event.pageX - offset.left
@@ -144,11 +148,12 @@ var TabularPane = React.createClass ({
 		var r = Math.floor((y) / geo.rowHeight, 1)
 		var c = 0
 
-		columns.forEach(function (col) {
-			xx -= (col.width)
-			if (xx > 0) c ++
+		visibleCols.some(function (col, idx) {
+			if (idx < numFixed || idx - numFixed >= scrolledCols) xx -= col.width
+			if (xx > 0) c++
+			else return true
 		})
-		c = Math.min(columns.length - 1, c)
+		c = Math.min(visibleCols.length - 1, c)
 		c = Math.max(0, c)
 		r = Math.max(0, r)
 		r = Math.min(r, this.store.getRecordCount())
@@ -298,10 +303,10 @@ var TabularPane = React.createClass ({
 	move: function (direction, shift) {
 		var sel = _.clone(this.state.selection)
 		var ptr = _.clone(this.state.pointer)
-		var numCols = this.getNumberCols()
+		var numCols = this.props.view.data.visibleCols.length - 1
 		var numRows = this.getNumberRows()
 		var singleCell = (sel.left === sel.right && sel.top === sel.bottom)
-		var outline = singleCell ? {left: 0, right: numCols, top: 0, bottom: numRows} : sel ;
+		var outline = singleCell ? {left: 0, right: numCols, top: 0, bottom: numRows - 1} : sel ;
 
 		if (direction === 'TAB') {
 			var mod = (outline.right - outline.left + 1)
@@ -312,7 +317,8 @@ var TabularPane = React.createClass ({
 			index = index % bigMod
 			ptr.left = (index % mod) + outline.left
 			ptr.top = Math.floor(index / mod) + outline.top
-			if (singleCell) this.setState({selection: _.clone(ptr)})
+			if (singleCell) this.setState({selection: {left: ptr.left, right: ptr.left,
+				top: ptr.top, bottom: ptr.top}})
 			this.updatePointer(ptr)
 		}
 
@@ -325,22 +331,23 @@ var TabularPane = React.createClass ({
 			index = index % bigMod
 			ptr.left = Math.floor(index / mod) + outline.left
 			ptr.top = (index % mod) + outline.top
-			if (singleCell) this.setState({selection: _.clone(ptr)})
+			if (singleCell) this.setState({selection: {left: ptr.left, right: ptr.left,
+				top: ptr.top, bottom: ptr.top}})
 			this.updatePointer(ptr)
 		}
 		// Right
 		else if (direction === 'RIGHT' && shift) {
-			if (sel.left >= ptr.left) sel.right += 1
-			else sel.left += 1
+			if (sel.left === ptr.left && sel.right < numCols) sel.right += 1
+			else if (sel.left < ptr.left) sel.left += 1
 			this.setState({selection: sel})
 		} else if (direction === 'RIGHT') {
-			ptr.left = ptr.right = (ptr.left + 1)
+			if (ptr.left < numCols) ptr.left = (ptr.left + 1)
 			this.updateSelect(ptr, shift)
 		}
 		// Left
 		else if (direction === 'LEFT' && shift) {
 			if (sel.right > ptr.left) sel.right -= 1
-			else sel.left -= 1
+			else if (sel.left > 0) sel.left -= 1
 			this.setState({selection: sel})
 		} else if (direction === 'LEFT') {
 			ptr.left -= 1
@@ -350,24 +357,25 @@ var TabularPane = React.createClass ({
 		// down
 		else if (direction === 'DOWN' && shift) {
 			if (sel.top < ptr.top) sel.top += 1
-			else sel.bottom += 1
+			else if (sel.bottom < numRows) sel.bottom += 1
 			this.setState({selection: sel})
 		} else if (direction === 'DOWN') {
-			ptr.top = ptr.bottom = (ptr.top + 1)
+			if (ptr.top < numRows) ptr.top = (ptr.top + 1)
 			this.updateSelect(ptr, shift)
 		}
 		// up
 		else if (direction === 'UP' && shift) {
-			if (sel.bottom > ptr.top) sel. bottom -= 1
-			else sel.top -= 1
+			if (sel.bottom > ptr.top) sel.bottom -= 1
+			else if (sel.top > 0) sel.top -= 1
 			this.setState({selection: sel})
 		} else if (direction === 'UP') {
-			ptr.top -= 1
+			if (ptr.top > 0) ptr.top -= 1
 			this.updateSelect(ptr, false)
 		}
 	},
 
 	updatePointer: function (pos) {
+		console.log('updatePointer: ' + JSON.stringify(pos))
 		var oldPos = this.state.pointer
 		var view = this.props.view
 		var current = this.state.selected
@@ -393,14 +401,14 @@ var TabularPane = React.createClass ({
 		})
 
 		// commit the pointer position to the view object, but not immediately
-		// view.data.pointer = pos
-		// debouncedCreateView(view, false, false, true)
+		view.data.pointer = pos
+		debouncedCreateView(view, false, false, true)
 	},
 
 	blurPointer: function () {
 		var current = this.state.selected
 		if (current) {
-			if (current.cancelChanges) current.cancelChanges()
+			if (current.commitChanges) current.commitChanges()
 			current.toggleSelect(false)
 		}
 		// this.setState({copyarea: null})
@@ -436,7 +444,6 @@ var TabularPane = React.createClass ({
 	},
 
 	onMouseDown: function (e) {
-		console.log('mouseDown')
 		if (FocusStore.getFocus() !== 'view')
 			modelActionCreators.setFocus('view')
 
@@ -454,15 +461,15 @@ var TabularPane = React.createClass ({
 		var geo = this.props.view.data.geometry
 		var rows = Math.floor(vOffset / geo.rowHeight)
 		var columns = view.data.columnList
-		var visibleColumns = view.data.floatCols
+		var floatCols = view.data.floatCols
 		var hiddenColWidth = 0
 		var hiddenCols = 0
 
-		visibleColumns.forEach(function (col) {
-			if (col.width + hiddenColWidth < hOffset){
+		floatCols.some(function (col) {
+			if (col.width + hiddenColWidth <= hOffset){
 				hiddenColWidth += col.width
-				hiddenCols + 1
-			}
+				hiddenCols ++
+			} else return true
 		})
 
 		this.setState({
@@ -473,12 +480,11 @@ var TabularPane = React.createClass ({
 	},
 
 	render: function () {
-		// console.log('tabular main index')
 		var _this = this
 		var model = this.props.model
 		var view = this.props.view
 		var geo = this.props.view.data.geometry
-		var columns = this.getVisibleColumns()
+		var columns = view.data.visibleCols
 
 		var focused = (FocusStore.getFocus() == 'view')
 		var totalWidth = this.getTotalWidth()
@@ -487,6 +493,8 @@ var TabularPane = React.createClass ({
 		var cpy = this.state.copyarea
 		var object = this.store.getObject(ptr.top)
 		var detailColumn = columns[ptr.left]
+		var showJaggedEdge = (sel.right >= view.data.fixedCols.length
+			&& sel.left <= view.data.fixedCols.length && this.state.hiddenCols > 0)
 
 		// <div className = "loader-box">
 		// 	<span className = "three-quarters-loader"></span>
@@ -501,30 +509,12 @@ var TabularPane = React.createClass ({
 
 			<ScrollOverlay
 				store = {_this.store}
-				totalWidth = {totalWidth}
 				_handleClick = {_this.onMouseDown}
 				_handleDoubleClick = {this.editCell}
 				_editCell = {_this.editCell}
 				_setScrollOffset = {_this.setScrollOffset}
 				onScroll = {this.onScroll}
-
 				view = {view}/>
-
-			<TabularTHead
-				totalWidth = {totalWidth}
-				leftOffset = {0}
-				side = {'lhs'}
-				columns = {view.data.fixedCols}
-				focused = {focused}
-				view = {view} />
-
-			<TabularTHead
-				totalWidth = {totalWidth}
-				leftOffset = {view.data.fixedWidth}
-				side = {'rhs'}
-				columns = {view.data.floatCols}
-				focused = {focused}
-				view = {view} />
 
 			<TabularBodyWrapper
 				ref = "tableWrapper"
@@ -551,15 +541,19 @@ var TabularPane = React.createClass ({
 
 			<Overlay
 				columns = {columns}
+        numHiddenCols = {_this.state.hiddenCols}
 				className = {" pointer" + (focused ? " focused" : "")}
+				rowOffset = {this.state.rowOffset}
 				ref = "pointer"
 				{...this.props}
 				position = {sel}
-				fudge = {{left: -5.25 + geo.leftOffset, top: -1.25, height: -0.5, width: -0.5}} />
+				fudge = {{left: -5.25 + geo.leftOffset, top: -0.25, height: -1.5, width: -0.5}} />
 
 			<Overlay
 				columns = {columns}
+        numHiddenCols = {_this.state.hiddenCols}
 				className = {" selection " + (_this.isFocused() ? " focused" : "")}
+				rowOffset = {this.state.rowOffset}
 				ref = "selection"
 				{...this.props}
 				position = {sel}
@@ -567,6 +561,22 @@ var TabularPane = React.createClass ({
 
 			<Overlay
 				columns = {columns}
+        numHiddenCols = {_this.state.hiddenCols}
+				className = {showJaggedEdge ? " jagged-edge " : ""}
+				rowOffset = {this.state.rowOffset}
+				ref = "jaggedEdge"
+				{...this.props}
+				position = {{
+					left: view.data.fixedCols.length,
+					top: sel.top,
+					bottom: sel.bottom
+				}}
+				fudge = {{left: -7  + geo.leftOffset, top: 0, width: -4.25, height: 0}} />
+
+			<Overlay
+				columns = {columns}
+        numHiddenCols = {_this.state.hiddenCols}
+				rowOffset = {this.state.rowOffset}
 				className = {" copyarea running marching-ants " + (_this.isFocused() ? " focused" : "")}
 				ref="copyarea"
 				{...this.props}

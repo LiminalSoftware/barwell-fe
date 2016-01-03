@@ -1,8 +1,9 @@
 import React from "react"
+import ReactDOM from "react-dom"
 import { RouteHandler } from "react-router"
 import styles from "./style.less"
 
- 
+
 import _ from 'underscore'
 import $ from 'jquery'
 
@@ -70,7 +71,7 @@ var CubePane = React.createClass ({
 	},
 
 	onScroll: function (event) {
-		var wrapper = React.findDOMNode(this.refs.wrapper)
+		var wrapper = ReactDOM.findDOMNode(this.refs.wrapper)
 		this.setState({
 			scrollTop: wrapper.scrollTop,
 			scrollLeft: wrapper.scrollLeft
@@ -141,7 +142,7 @@ var CubePane = React.createClass ({
 	},
 
 	getRCCoords: function (event, isDrag) {
-		var tableBody = React.findDOMNode(this.refs.tbody)
+		var tableBody = ReactDOM.findDOMNode(this.refs.tbody)
 		var view = this.props.view
 		var geo = view.data.geometry
 		var columnWidth = geo.columnWidth + geo.widthPadding

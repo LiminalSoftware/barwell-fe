@@ -1,6 +1,7 @@
 import React from "react"
+import ReactDOM from "react-dom"
 import $ from "jquery"
- 
+
 import _ from 'underscore'
 import fieldTypes from "../../fields"
 import modelActionCreators from "../../../../actions/modelActionCreators"
@@ -35,7 +36,7 @@ var TabularTHContext = React.createClass ({
 	},
 
 	onClick: function (event) {
-   	var resizer = React.findDOMNode(this.refs.resizer)
+   	var resizer = ReactDOM.findDOMNode(this.refs.resizer)
 		var view = this.props.view
 		var col = this.props.column
 
@@ -53,7 +54,6 @@ var TabularTHContext = React.createClass ({
 	},
 
   render: function () {
-		console.log('this.props.headerHeight: ' + this.props.headerHeight)
     var config = this.props.config
     return <div className="th-context dropdown-menu"
 			onClick = {this.clickTrap}

@@ -77,7 +77,7 @@ var RelationDetailList = React.createClass({
 				relation = {relation} />;
 		})
 		if (relList.length === 0) {
-			relList = <tr><td className="grayed centered" colSpan="4">No relations defined</td></tr>;
+			relList = <div><span className="grayed centered" colSpan="4">No relations defined</span></div>;
 		}
 
 		return <div className = "detail-block">
