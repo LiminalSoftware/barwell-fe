@@ -92,7 +92,7 @@ var groomView = function (view) {
 	data.visibleCols = columnList.filter(c => c.visible)
 	data.floatCols = columnList.filter(c => !c.fixed && c.visible)
 	data.fixedCols = columnList.filter(c => c.fixed && c.visible)
-	data.floatWidth = util.sum(data.visibleCols, 'width')
+	data.floatWidth = util.sum(data.floatCols, 'width')
 	data.fixedWidth = util.sum(data.fixedCols, 'width')
 	data.columns = _.indexBy(data.columnList, 'column_id');
 
@@ -106,11 +106,12 @@ var groomView = function (view) {
 
 	data.geometry = _.extend({
 		leftGutter: 0,
+		labelWidth: 30,
 		topGutter: 0,
 		headerHeight: 28.5,
 		rowHeight: 25,
 		rowPadding: 1,
-	}, data.geometry)
+	}, {})
 
 	view.data = data;
 	return view

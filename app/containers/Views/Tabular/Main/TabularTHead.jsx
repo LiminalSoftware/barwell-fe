@@ -1,6 +1,6 @@
 import React from "react"
 import $ from "jquery"
-import styles from "./tabularTHStyle.less"
+import styles from "./styles/header.less"
 
 import _ from 'underscore'
 import fieldTypes from "../../fields"
@@ -10,7 +10,10 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import TabularTH from "./TabularTH"
 var TabularTHead = React.createClass ({
-	mixins: [PureRenderMixin],
+
+	shouldComponentUpdate: function (nextProps) {
+		return (nextProps.leftOffset !== this.props.leftOffset)
+	},
 
 	render: function () {
 		var _this = this
@@ -31,6 +34,14 @@ var TabularTHead = React.createClass ({
 			className = {"tabular-view-header " + this.props.side + '-header'}
 			style = {style}
 			ref = {this.props.side + "-thead"}>
+			{this.props.hasRowLabel ?
+			<span style = {{left: 0, right: (left += geo.labelWidth), top: 0, bottom: 0}}
+				className = "table-cell header-table-cell">
+				<span className = "table-cell-inner ">
+				</span>
+			</span>
+			: null }
+
 			{
 			_this.props.columns.map(function (col, idx) {
 				var el = <TabularTH key={"th-" + col.attribute_id}
@@ -46,7 +57,7 @@ var TabularTHead = React.createClass ({
 			{
 				this.props.side === 'rhs' ?
 				<span style={{left: (left) + 'px',
-					width: (geo.rowHeight * 2) + 'px',
+					width: 100 + 'px',
 					height: geo.headerHeight}}
 					className= "table-cell table-header-cell columnAdder ">
 					<span className="table-cell-inner"> + </span>

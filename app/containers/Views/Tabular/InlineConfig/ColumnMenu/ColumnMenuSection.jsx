@@ -119,9 +119,10 @@ var ColumnMenuSection = React.createClass({
 		var editing = this.props.editing
 		var columns = this.state.columns.sort(util.sortByOrder)
 
-		return <div>
+		return <div className = "menu-section">
 			<div className="menu-item menu-sub-item menu-divider">
 			<div className="menu-divider-label">
+			<span className = {"icon grayed " + this.props.icon}/>
 			{this.props.label}
 			</div>
 			</div>

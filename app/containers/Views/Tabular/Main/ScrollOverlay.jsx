@@ -1,10 +1,8 @@
 import React from "react"
+import ReactDOM from "react-dom"
 import $ from "jquery"
-import styles from "./tabularTHStyle.less"
 
 import _ from 'underscore'
-import fieldTypes from "../../fields"
-import modelActionCreators from "../../../../actions/modelActionCreators"
 import FocusStore from "../../../../stores/FocusStore"
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
@@ -25,18 +23,20 @@ var ScrollOverlay = React.createClass ({
 		var view = this.props.view
 		var geo = view.data.geometry
 		var outerEl = this.refs.overlay
-		var vOffset = Math.floor(outerEl.scrollTop)
-		var hOffset = Math.floor(outerEl.scrollLeft)
+		var vOffset = outerEl.scrollTop
+		var hOffset = outerEl.scrollLeft
 		this.props._setScrollOffset(vOffset, hOffset)
 	},
 
 	handleMouseWheel: function (e) {
 		e.preventDefault()
-		var wheelDelta = e.wheelDelta;
+		var deltaY = e.deltaY;
+		var deltaX = e.deltaX;
 		var outerEl = this.refs.overlay
 		var vOffset = outerEl.scrollTop
-
-		// outerEl.getDOMNode().scrollTo(vOffset - wheelDelta, 0)
+		var hOffset = outerEl.scrollLeft
+		ReactDOM.findDOMNode(outerEl).scrollTop = (vOffset + deltaY)
+		ReactDOM.findDOMNode(outerEl).scrollLeft = (hOffset + deltaX)
 	},
 
 	render: function () {

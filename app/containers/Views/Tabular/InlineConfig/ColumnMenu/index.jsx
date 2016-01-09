@@ -81,7 +81,7 @@ var ColumnMenu = React.createClass({
 		{
 			label: "Fixed Attributes",
 			emptyText: "No fixed attributes...",
-			icon: "icon-pin-3",
+			icon: "icon-Layer_1",
 			selector: function (columns) {
 				return columns.filter(c => c.visible && c.fixed).sort(util.orderSort)
 			},
@@ -94,7 +94,7 @@ var ColumnMenu = React.createClass({
 		{
 			label: "Visible Attributes",
 			emptyText: "No visible attributes...",
-			icon: "icon-eye-3",
+			icon: "icon-Layer_1",
 			selector: function (columns) {
 				return columns.filter(c => c.visible && !c.fixed).sort(util.orderSort)
 			},
@@ -133,7 +133,7 @@ var ColumnMenu = React.createClass({
 				</div>
 			}
 			<div className="menu-sub-item">
-				Add new attribute
+				<span className="grayed icon icon-plus"/>Add new attribute
 			</div>
 		</div>
 	},

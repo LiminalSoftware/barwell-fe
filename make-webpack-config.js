@@ -8,7 +8,7 @@ var loadersByExtension = require("./config/loadersByExtension");
 module.exports = function(options) {
 	var entry = {
 		main: reactEntry("main"),
-		// second: reactEntry("second")
+		"scrollWorker.js": "./app/containers/Views/Tabular/Main/scrollWorker.js"
 	};
 	var loaders = {
 		"coffee": "coffee-redux-loader",

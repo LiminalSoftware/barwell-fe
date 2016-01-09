@@ -1,13 +1,10 @@
-@import "../../../../global.less";
+@import "../../../../../global.less";
 
 .tabular-view-header {
 	position: absolute;
-	overflow: hidden;
-	.transition(margin-left cubic-bezier(.16,.85,.5,1) .2s);
-}
-
-.rhs-header .table-cell {
+	border-bottom: 1px solid @purple4;
 	z-index: 200;
+	background: white;
 }
 
 .th-context {
@@ -28,30 +25,20 @@
 		border: 1px solid @newgreen1;
 		color: @newgreen1;
 	}
-	.table-cell-inner {
-		text-align: center;
-		font-family: @headerFont !important;
-		font-weight: 100 !important;
-		font-size: 16px !important;
-		background: white;
-
-	}
 }
 
 .table-header-cell.table-cell {
-	border-bottom: 1px solid @purple4;
+	border-bottom: none;
 	border-top: none;
-	border-left: 1px solid @gray3;
+	// border-right: 1px solid @gray3;
 	background: white;
 
-	&:first-child {
-		border-left: 1px solid @purple4;
-	}
+
 	.context {
 		z-index: 300;
 	}
 	&.asc, &.desc {
-		border: 1px solid @newgreen1;
+		// border: 1px solid @newgreen1;
 	}
 	&.desc > .table-cell-inner, &.asc > .table-cell-inner {
 		// .horizontal-gradient(@green-trans, white);
@@ -59,6 +46,7 @@
 	}
 	.table-cell-inner {
 		cursor: pointer;
+		padding-top: 5px;
 	}
 	.table-resizer {
 		position: absolute;

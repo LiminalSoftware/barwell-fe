@@ -18,7 +18,8 @@ var editableInputMixin = {
 
 	getInitialState: function () {
 		return {
-			editing: false
+			editing: false,
+			value: this.props.value
 		}
 	},
 
@@ -76,6 +77,7 @@ var editableInputMixin = {
 	render: function () {
 		var prettyValue = this.format ? this.format(this.props.value) : this.props.value
 		var style = this.props.style
+		var showDetail = this.detailIcon && this.state.selected && !this.state.editing
 		var className = (this.props.className || '')
 			+ (this.state.selected ? ' selected ' : '');
 
@@ -88,14 +90,15 @@ var editableInputMixin = {
 				onBlur = {this.revert}
 				onChange = {this.handleChange} />
 			:
-			<span className = "table-cell-inner">
-			{this.format ?
-				this.format(this.props.value) :
-				this.props.value
-			}
+			<span className = {"table-cell-inner " + (showDetail? " with-detail " : "")
+				+ (this.state.selected ? " selected" : "")}>
+				{this.format ?
+					this.format(this.state.value) :
+					this.state.value
+				}
 			</span>
 		}
-		{this.detailIcon && this.state.selected ?
+		{showDetail ?
 			<span
 				className = {"editor-icon icon " + this.detailIcon}
 				onClick = {this.handleDetail}
