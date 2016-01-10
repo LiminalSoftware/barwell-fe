@@ -130,7 +130,7 @@ var TabularBodyWrapper = React.createClass ({
 				left: 0,
 				top: 0,
 				bottom: 0,
-				width: (view.data.fixedWidth + view.data.floatWidth + 2) + 'px'
+				width: (view.data.fixedWidth + view.data.floatWidth) + 'px'
 			}}>
 
 			<TabularTHead
@@ -193,7 +193,7 @@ var TabularBodyWrapper = React.createClass ({
 					top: 0,
 					bottom: 0,
 					left: (view.data.fixedWidth + geo.labelWidth) + 'px',
-					width:  view.data.floatWidth  + 'px'
+					width:  view.data.floatWidth + geo.colAddWidth + 'px'
 				}}>
 				<div className = "rhs-h-scroll inner-wrapper"
 					style = {{

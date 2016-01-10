@@ -111,6 +111,7 @@ var groomView = function (view) {
 		headerHeight: 28.5,
 		rowHeight: 25,
 		rowPadding: 1,
+		colAddWidth: 100
 	}, {})
 
 	view.data = data;

@@ -464,9 +464,9 @@ var TabularPane = React.createClass ({
 		var hiddenColWidth = 0
 		var hiddenCols = 0
 
-		// tricky use of some to bailout when we exceed hOffset
+		// tricky use of some to break when we exceed hOffset
 		floatCols.some(function (col) {
-			if (col.width + hiddenColWidth <= hOffset){
+			if (col.width + hiddenColWidth <= hOffset) {
 				hiddenColWidth += col.width
 				hiddenCols ++
 			} else return true

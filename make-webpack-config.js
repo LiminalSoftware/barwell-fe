@@ -76,7 +76,7 @@ module.exports = function(options) {
 			exclude: excludeFromStats
 		}));
 		aliasLoader["react-proxy$"] = "react-proxy/unavailable";
-		aliasLoader["react-proxy-loader$"] = "react-proxy-loader/unavailable";
+		aliasLoader["react-router-proxy-loader$"] = "react-router-proxy-loader/unavailable";
 		externals.push(
 			/^react(\/.*)?$/,
 			/^reflux(\/.*)?$/,
@@ -100,7 +100,7 @@ module.exports = function(options) {
 		test: require("./app/routeHandlers/async").map(function(name) {
 			return path.join(__dirname, "app", "routeHandlers", name);
 		}),
-		loader: options.prerender ? "react-proxy-loader/unavailable" : "react-proxy-loader"
+		loader: options.prerender ? "react-router-proxy-loader/unavailable" : "react-router-proxy-loader"
 	};
 
 
