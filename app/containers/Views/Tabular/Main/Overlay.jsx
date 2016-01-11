@@ -21,7 +21,7 @@ var Overlay = React.createClass ({
     var pos = this.props.position
     var fudge = this.props.fudge || {}
     var width = 0
-    var left = 0
+    var left = geo.leftGutter + geo.labelWidth + 1
     var classes = this.props.className || ""
     var style
 

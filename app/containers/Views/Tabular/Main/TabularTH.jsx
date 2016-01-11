@@ -117,17 +117,17 @@ var TabularTH = React.createClass ({
 		}
 	},
 
-  	onContextMenu: function (e) {
-    	modelActionCreators.setFocus('view-config')
-    	this.setState({context: true})
-    	e.stopPropagation()
-		e.preventDefault()
-  	},
+	onContextMenu: function (e) {
+  	modelActionCreators.setFocus('view-config')
+  	this.setState({context: true})
+  	e.stopPropagation()
+	e.preventDefault()
+	},
 
-  	handleBlur: function () {
-    	modelActionCreators.setFocus('view')
-    	this.setState({context: false})
-  	},
+	handleBlur: function () {
+  	modelActionCreators.setFocus('view')
+  	this.setState({context: false})
+	},
 
 	handleKeyPress: function (event) {
 		if (event.keyCode === constant.keycodes.ESC)

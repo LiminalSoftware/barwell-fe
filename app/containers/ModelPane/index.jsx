@@ -58,7 +58,7 @@ var ModelPane = React.createClass({
 	},
 
 	render: function() {
-		console.log('render ModelPane')
+		// console.log('render ModelPane')
 		var _this = this
 		var workspace_id = this.props.params.workspaceId
 		var model_id = this.props.params.modelId

@@ -26,6 +26,11 @@ var editableInputMixin = {
 		$(document.body).off('keydown', this.onKey)
 	},
 
+	handleWheel: function (e) {
+			console.log('on wheel!!!!! gg')
+			this.props._handleWheel(e)
+	},
+
 	handleKeyPress: function (event) {
 		if (event.keyCode === constant.keycodes.ESC) this.cancelChanges()
 		if (event.keyCode === constant.keycodes.ENTER) {
@@ -40,14 +45,16 @@ var editableInputMixin = {
 
 	cancelChanges: function () {
 		console.log('cancel')
+		this.setState({
+			value: this.props.value
+		})
 		this.revert()
 	},
 
 	revert: function () {
 		document.removeEventListener('keyup', this.handleKeyPress)
 		this.setState({
-			editing: false,
-			value: this.props.value
+			editing: false
 		})
 		this.props.handleBlur()
 	},
@@ -61,6 +68,7 @@ var editableInputMixin = {
 		if (ordinal >= 48 && ordinal <= 90)
 			this.setValue('')
 		else this.setValue(prettyValue)
+		this.props._handleEdit(event)
 	},
 
 	handleChange: function (event) {
@@ -68,7 +76,7 @@ var editableInputMixin = {
 	},
 
 	handleDetail: function (event) {
-		this.props.handleDetail()
+		this.props._handleDetail()
 		event.preventDefault()
 		event.stopPropagation()
 	},
@@ -76,10 +84,14 @@ var editableInputMixin = {
 	render: function () {
 		var prettyValue = this.format ? this.format(this.props.value) : this.props.value
 		var style = this.props.style
+		var showDetail = this.detailIcon && this.state.selected && !this.state.editing
 		var className = (this.props.className || '')
 			+ (this.state.selected ? ' selected ' : '');
 
-		return <span {...this.props} className = {className}>
+		return <span {...this.props}
+			onWheel = {this.handleWheel}
+			onDoubleClick = {this.handleEdit}
+			className = {className}>
 			{this.state.editing ?
 			<input
 				className = "input-editor"
@@ -88,14 +100,15 @@ var editableInputMixin = {
 				onBlur = {this.revert}
 				onChange = {this.handleChange} />
 			:
-			<span className = "table-cell-inner">
-			{this.format ?
-				this.format(this.props.value) :
-				this.props.value
-			}
+			<span className = {"table-cell-inner " + (showDetail? " with-detail " : "")
+				+ (this.state.selected ? " selected" : "")}>
+				{this.format ?
+					this.format(this.state.value) :
+					this.state.value
+				}
 			</span>
 		}
-		{this.detailIcon && this.state.selected ?
+		{showDetail ?
 			<span
 				className = {"editor-icon icon " + this.detailIcon}
 				onClick = {this.handleDetail}

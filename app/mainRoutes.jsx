@@ -17,6 +17,7 @@ module.exports = (
 				<Route path="workspace/:workspaceId" component = {Application}>
 					<Route path="model/:modelId" component = {ModelPane}>
 						<Route path="view/:viewId" component = {ModelPane}></Route>
+						<Route path="config" component = {ModelPane}></Route>
 						<IndexRoute component = {ModelPane}></IndexRoute>
 					</Route>
 					<IndexRoute component = {ModelPane}></IndexRoute>

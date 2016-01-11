@@ -5,6 +5,9 @@ import _ from "underscore"
 var NUM_LINES = 50
 
 var FakeLines = React.createClass ({
+	shouldComponentUpdate: function (nextProps) {
+			return this.props.width !== nextProps.width
+	},
 
 	render: function () {
 		var view = this.props.view
@@ -18,7 +21,7 @@ var FakeLines = React.createClass ({
   			height: (geo.rowHeight + 2) + 'px',
         left: 0,
         width: this.props.width + 'px',
-  			top: (geo.rowHeight * i +  geo.headerHeight) + 'px',
+  			top: (geo.rowHeight * i +  geo.headerHeight + 1) + 'px',
   		}
       lines.push(<div key = {i} style = {rowStyle} className = "fake-table-row"></div> )
     }

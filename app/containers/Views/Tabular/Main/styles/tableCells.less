@@ -1,0 +1,150 @@
+@import "../../../../../global.less";
+
+.table-row {
+	display: block;
+	position: absolute;
+	// margin-left: -1px;
+}
+
+.table-cell {
+	.border-box;
+	display: block;
+	position: absolute;
+	padding: 0; margin: 0;
+	border-left: 1px solid @gray3;
+	border-top: 1px solid @gray3;
+}
+
+.table-cell-inner {
+	.noselect;
+	.ellipsis;
+	-webkit-user-drag: none;
+}
+
+.label-cell-inner {
+	color: @purple4;
+	font-size: 10px;
+	.noselect;
+}
+
+.table-cell-inner.selected, .special-cell-inner.selected {
+	z-index: 130 !important;
+	background: white;
+}
+
+// ************************************************************************
+// ALIGNMENT
+// ************************************************************************
+.align-left {
+	& > .table-cell-inner, & > .input-editor {
+		text-align: left;
+		&.with-detail {
+			padding-right: 20px !important;
+		}
+	}
+	& > .editor-icon {
+		right: 1px;
+	}
+}
+
+.align-center {
+	& > .table-cell-inner, & > .input-editor {
+		text-align: center;
+		&.with-detail {
+			padding-left: 20px !important;
+		}
+	}
+	& > .editor-icon {
+		left: 1px;
+	}
+}
+
+.align-right {
+	& > .table-cell-inner, & > .input-editor {
+		text-align: right;
+		&.with-detail {
+			padding-left: 20px !important;
+		}
+	}
+	& > .editor-icon {
+		left: 1px;
+	}
+}
+
+// ************************************************************************
+// TABLE_CELL_INNER
+// ************************************************************************
+
+.table-cell-inner, .special-cell-inner, .input-editor {
+	display: block;
+	font-size: 14px;
+	font-family: @bodyFont;
+	font-weight: 400;
+	left: 0px;
+	right: 1px;
+}
+
+.editor-icon, .table-cell-inner, .special-cell-inner, .input-editor {
+	position: absolute;
+	.border-box;
+	margin: 0;
+	padding: 1px 3px;
+	border: none;
+	top: 0;
+	bottom: 2px;
+}
+
+.editor-icon {
+	padding: 2px !important;
+	cursor: pointer;
+	margin: 1px !important;
+	width: 22px;
+	z-index: 200;
+}
+
+.input-editor {
+	z-index: 150;
+	width: 100%;
+	background: white !important;
+	outline: 0;
+	padding-top: 0;
+	padding-bottom: 2px;
+}
+
+.color-block.selected {
+	right: 25px;
+}
+
+.has-many-bubble {
+	.draggable;
+	position: relative;
+	display: inline;
+
+	padding: 0px 5px;
+	margin-right: 2px;
+	margin-left: 0;
+	margin-top: 2px;
+	margin-bottom: 2px;
+
+	&.selected {
+		background: @newgreen1;
+		color: white;
+	}
+}
+
+.has-many-bubble.placeholder {
+	border: 1px dashed @newgreen1;
+	min-width: 50px;
+	width: 50px;
+}
+
+.checkbox-surround, .has-many-bubble {
+	border-radius: 3px;
+	background: white;
+	border: 1px solid @gray3;
+	z-index: 121;
+}
+
+.checkbox-surround:hover, .selected .checkbox-surround {
+	border: 1px solid @newgreen1;
+}

@@ -1,7 +1,7 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import { RouteHandler } from "react-router"
-import styles from "./style.less"
+import cursorStyles from "./styles/cursors.less"
 
 import _ from 'underscore'
 import $ from 'jquery'
@@ -34,7 +34,7 @@ import ScrollOverlay from "./ScrollOverlay"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-var THROTTLE_DELAY = 30
+var THROTTLE_DELAY = 14
 
 var debouncedCreateView = _.debounce(function (view) {
 	modelActionCreators.createView(view, false, false, true)
@@ -46,15 +46,13 @@ var TabularPane = React.createClass ({
 
 	getInitialState: function () {
 		return {
-      hiddenCols: 0,
-      hiddenColWidth: 0,
 			sorting: null,
 			contextOpen: false,
 			detailOpen: false,
 			contextX: null,
 			contextY: null,
-			rowOffset: 0,
-			colOffset: 0
+			hiddenCols: 0,
+			hiddenColWidth: 0
 		}
 	},
 
@@ -142,7 +140,7 @@ var TabularPane = React.createClass ({
 		var numFixed = view.data.fixedCols.length
 		var offset = $(lhs).offset()
 		var y = event.pageY - offset.top
-		var x = event.pageX - offset.left
+		var x = event.pageX - offset.left - geo.labelWidth
 		var xx = x
 		var r = Math.floor((y) / geo.rowHeight, 1)
 		var c = 0
@@ -155,7 +153,7 @@ var TabularPane = React.createClass ({
 		c = Math.min(visibleCols.length - 1, c)
 		c = Math.max(0, c)
 		r = Math.max(0, r)
-		r = Math.min(r, this.store.getRecordCount())
+		r = Math.min(r, this.store.getRecordCount() - 1)
 
 		return {top: r, left: c}
 	},
@@ -277,6 +275,10 @@ var TabularPane = React.createClass ({
 		this.showDetailBar()
 	},
 
+	handleMouseWheel: function (e) {
+		this.refs.scrollOverlay.handleMouseWheel(e)
+	},
+
 	hideDetailBar: function () {
 		this.setState({detailOpen: false})
 	},
@@ -304,7 +306,7 @@ var TabularPane = React.createClass ({
 		var numCols = this.props.view.data.visibleCols.length - 1
 		var numRows = this.getNumberRows()
 		var singleCell = (sel.left === sel.right && sel.top === sel.bottom)
-		var outline = singleCell ? {left: 0, right: numCols, top: 0, bottom: numRows - 1} : sel ;
+		var outline = singleCell ? {left: 0, right: numCols, top: 0, bottom: numRows} : sel ;
 
 		if (direction === 'TAB') {
 			var mod = (outline.right - outline.left + 1)
@@ -348,7 +350,7 @@ var TabularPane = React.createClass ({
 			else if (sel.left > 0) sel.left -= 1
 			this.setState({selection: sel})
 		} else if (direction === 'LEFT') {
-			ptr.left -= 1
+			if (ptr.left > 0) ptr.left -= 1
 			this.updateSelect(ptr, false)
 		}
 
@@ -462,15 +464,22 @@ var TabularPane = React.createClass ({
 		var hiddenColWidth = 0
 		var hiddenCols = 0
 
+		// tricky use of some to break when we exceed hOffset
 		floatCols.some(function (col) {
-			if (col.width + hiddenColWidth <= hOffset){
+			if (col.width + hiddenColWidth <= hOffset) {
 				hiddenColWidth += col.width
 				hiddenCols ++
 			} else return true
 		})
 
-		this.setState({
+		// set state (rather than props)  on tablewrapper for performance
+		this.refs.tableWrapper.setState({
 			rowOffset: rows,
+			hiddenCols: hiddenCols,
+			hiddenColWidth: hiddenColWidth
+		})
+
+		this.setState({
 			hiddenCols: hiddenCols,
 			hiddenColWidth: hiddenColWidth
 		})
@@ -506,6 +515,7 @@ var TabularPane = React.createClass ({
 
 			<ScrollOverlay
 				store = {_this.store}
+				ref = "scrollOverlay"
 				_handleClick = {_this.onMouseDown}
 				_handleDoubleClick = {this.editCell}
 				_editCell = {_this.editCell}
@@ -521,7 +531,8 @@ var TabularPane = React.createClass ({
 				_handlePaste = {_this.pasteSelection}
 				_addRecord = {_this.addRecord}
 				_handleContextMenu = {_this.openContextMenu}
-				_editCell = {_this.editCell}
+				_handleWheel = {this.handleMouseWheel}
+				_handleEdit = {_this.editCell}
 
 				totalWidth = {totalWidth}
 				rowOffset = {this.state.rowOffset}
@@ -537,6 +548,15 @@ var TabularPane = React.createClass ({
 				sorting = {view.data.sorting}
 				focused = {focused}>
 
+			{_this.state.contextOpen ?
+				<ContextMenu
+					x = {this.state.contextX} y = {this.state.contextY}
+					handleContextBlur = {this.handleContextBlur}
+					insertRecord = {this.insertRecord}
+					deleteRecords = {this.deleteRecords}
+					copySelection = {this.copySelectbion} />
+				: null}
+
 			<Overlay
 				columns = {columns}
         numHiddenCols = {_this.state.hiddenCols}
@@ -545,7 +565,7 @@ var TabularPane = React.createClass ({
 				ref = "pointer"
 				{...this.props}
 				position = {sel}
-				fudge = {{left: -5.25 + geo.leftOffset, top: -0.25, height: -1.5, width: -0.5}} />
+				fudge = {{left: -2.25, top: -1.25, height: 3.5, width: 3.5}} />
 
 			<Overlay
 				columns = {columns}
@@ -555,7 +575,7 @@ var TabularPane = React.createClass ({
 				ref = "selection"
 				{...this.props}
 				position = {sel}
-				fudge = {{left: -6.25  + geo.leftOffset, top: -2.25, width: -4.25, height: -4.25}} />
+				fudge = {{left: -2.25, top: -1.25, height: 3.5, width: 3.5}} />
 
 			<Overlay
 				columns = {columns}
@@ -569,7 +589,7 @@ var TabularPane = React.createClass ({
 					top: sel.top,
 					bottom: sel.bottom
 				}}
-				fudge = {{left: -7  + geo.leftOffset, top: 0, width: -4.25, height: 0}} />
+				fudge = {{left: -6, width: 10 }} />
 
 			<Overlay
 				columns = {columns}
@@ -579,20 +599,10 @@ var TabularPane = React.createClass ({
 				ref="copyarea"
 				{...this.props}
 				position = {cpy}
-				fudge = {{left: -4  + geo.leftOffset, top: 0.25, height: 0.75, width: 1.25}}/>
+				fudge = {{left: -6  + geo.leftOffset, top: 0.25, height: 0.75, width: 1.25}}/>
 
 		</TabularBodyWrapper>
 
-
-
-		{_this.state.contextOpen ?
-			<ContextMenu
-				x = {this.state.contextX} y = {this.state.contextY}
-				handleContextBlur = {this.handleContextBlur}
-				insertRecord = {this.insertRecord}
-				deleteRecords = {this.deleteRecords}
-				copySelection = {this.copySelection} />
-			: null}
 
 		</div>
 

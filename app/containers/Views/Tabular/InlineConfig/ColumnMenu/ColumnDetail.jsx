@@ -13,11 +13,13 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 var ColumnDetail = React.createClass({
 
 	getInitialState: function () {
+		var config = this.props.config
 		return {
 			open: false,
 			yOffset: 0,
 			dragging: false,
-			rel: null
+			rel: null,
+			name: config.name
 		}
 	},
 
@@ -62,6 +64,10 @@ var ColumnDetail = React.createClass({
 
 	},
 
+	handleNameChange: function (e) {
+		this.setState(e.target.value)
+	},
+
 	render: function() {
 		var _this = this
     var view = this.props.view
@@ -92,7 +98,10 @@ var ColumnDetail = React.createClass({
 						className="draggable icon grayed icon-Layer_2"
 						></span>
 					: null}
-					{config.name}
+					{editing ? <input className = "menu-input
+													text-input" value={this.state.name}
+													onChange = {this.handleNameChange}/>
+									: <span>{config.name}</span>}
 				</span>
 
 				{editing ? null :

@@ -12,31 +12,48 @@ var TabularTR = React.createClass({
 
 	shouldComponentUpdate: function (newProps) {
 		var oldProps = this.props
-		return (!_.isEqual(oldProps.obj, newProps.obj)
-		|| this.props.view != newProps.view)
+		if (newProps.isScrolling) return false;
+		if (oldProps.view !== newProps.view) return true
+		var result =  this.props.columns.every(function (col) {
+			if (newProps[col.column_id] !== oldProps[col.column_id]) return true
+			else return false
+		})
+		return result
+	},
+
+	prepareColumn: function () {
+
 	},
 
 	render: function () {
 		var _this = this
-		var model = _this.props.model
+		var model = this.props.model
+		var view = this.props.view
 		var rowKey = this.props.rowKey
 		var row = this.props.row
 		var obj = this.props.obj
-		var geometry = this.props.geometry
+		var geo = view.data.geometry
 		var ptr = this.props.pointer
 		var selector = {}
 		var rowStyle = {
-			height: (geometry.rowHeight + 2) + 'px',
-			top: (geometry.rowHeight * (row)) + 'px',
+			height: (geo.rowHeight + 2) + 'px',
+			top: (geo.rowHeight * (row)) + 'px',
 		}
 		selector[model._pk] = obj[model._pk]
-		var left = 0;
+		var left = geo.leftGutter;
 		var prevSort = false;
 		var prevFixed = true;
 
 		return <div id={rowKey}
 			className = {"table-row " +  (obj._dirty ? "dirty" : "")}
 			style = {rowStyle}>
+			{_this.props.hasRowLabel ?
+				<span style = {{left: 0, right: (left += geo.labelWidth), top: 0, bottom: 0}}
+					className = "table-cell label-cell">
+					<span className = "table-cell-inner label-cell-inner"></span>
+				</span> : null
+			}
+
 			{_this.props.columns.map(function (col, j) {
 				var element = (fieldTypes[col.type] || fieldTypes.TEXT).element
 				var cellKey = rowKey + '-' + col.column_id
@@ -60,9 +77,12 @@ var TabularTR = React.createClass({
 					className: classes.join(' '),
 					value: obj[col.column_id],
 					column_id: col.column_id,
-					handleBlur: _this.props.handleBlur,
-					handleDetail: _this.props.handleDetail,
+					
+					handleBlur: _this.props._handleBlur,
+					_handleDetail: _this.props._handleDetail,
 					handleClick: _this.props._handleClick,
+					_handleEdit: _this.props._handleEdit,
+					_handleWheel: _this.props._handleWheel,
 					key: cellKey,
 					cellKey: cellKey,
 					ref: cellKey,

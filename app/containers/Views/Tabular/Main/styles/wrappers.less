@@ -1,0 +1,90 @@
+@import "../../../../../global.less";
+
+// z-index
+// table-cell
+// .selection: 112
+// .scroll-overlay: 120
+// .table-cell.selected > .table-cell-inner: 125
+// .input-editor: 150
+// .add-new-row: 200
+
+.scroll-overlay {
+	position: absolute;
+	z-index: 130;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: none;
+	overflow-x: scroll;
+	overflow-y: scroll;
+	-webkit-user-drag: none;
+	.noselect;
+}
+
+.tabular-body-wrapper {
+	&.blurred {
+		.gray-out;
+	}
+}
+
+.inner-wrapper {
+	position: absolute;
+	margin: 0;
+	padding: 0;
+	-webkit-user-drag: none;
+	.noselect;
+}
+
+//
+.rhs-h-scroll {
+	overflow: hidden;
+	.transition(margin-left cubic-bezier(.16,.85,.5, 1) 150ms);
+}
+
+.rhs-h-scroll-outer {
+	overflow: hidden;
+	border-left: 1px solid @purple4;
+}
+
+.tabular-tbody {
+	position: absolute;
+
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+}
+
+.add-new-row {
+	cursor: pointer;
+	text-align: center;
+	border: 1px solid @purple4;
+	text-transform: uppercase;
+	z-index: 205;
+	background: white;
+	&:hover {
+		color: @newgreen1;
+		border: 1px solid @newgreen1;
+	}
+}
+
+.fake-lines {
+	position: absolute;
+	left: 0;
+	top: 0;
+	overflow: visible;
+}
+
+.fake-table-row {
+	.border-box;
+	position: absolute;
+	border-top: 1px solid @gray3;
+	border-bottom: 1px solid @gray3;
+	border-right: 1px solid @purple4;
+	background: white;
+}
+//
+// .view-body-wrapper {
+// 	background: white;
+// }

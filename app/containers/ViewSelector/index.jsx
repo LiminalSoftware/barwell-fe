@@ -57,7 +57,8 @@ var ViewsList = React.createClass({
 
 	render: function () {
 		var _this = this
-		var views = ViewStore.query({model_id: this.props.model.model_id})
+		var model = this.props.model
+		var views = ViewStore.query({model_id: model.model_id})
 		var editing = this.state.editing
 		return <div className = "dropdown-menu "
 					style = {{minWidth: "250px"}}>
@@ -68,6 +69,11 @@ var ViewsList = React.createClass({
 					view = {view}
 					editing = {editing}/>
 			)}
+			<Link to={`/workspace/${model.workspace_id}/model/${model.model_id}/config`}
+					className = "menu-item menu-sub-item" key="model-editor">
+				<span className="large view-icon icon icon-tl-toolbox"/>
+				Database Configuration
+			</Link>
 			<div className="menu-item column-item menu-config-row" key="detail-menu-items">
 				{
 					this.state.editing ?
@@ -95,7 +101,7 @@ var ViewItem = React.createClass({
 		var model = this.props.model
 
 		if (view) return <Link
-				to={`/workspace/${model.workspace_id}/model/${view.model_id}/view/${view.view_id}`}
+				to = {`/workspace/${model.workspace_id}/model/${view.model_id}/view/${view.view_id}`}
 				className= {"menu-item tight menu-sub-item " +
 					(this.props.selected ? " selected" : "")}>
 				{this.props.editing ?
