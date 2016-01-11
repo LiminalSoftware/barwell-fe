@@ -29,6 +29,7 @@ import TabularTBody from "./TabularTBody"
 import TabularTHead from "./TabularTHead"
 import FakeLines from "./FakeLines"
 import AddNewRowBar from "./AddNewRowBar"
+import RowResizer from "./RowResizer"
 
 var TabularBodyWrapper = React.createClass ({
 
@@ -122,6 +123,8 @@ var TabularBodyWrapper = React.createClass ({
 		var marginTop = (-1* this.state.rowOffset * geo.rowHeight)
 		var fixedWidth = view.data.fixedWidth
 		var floatWidth = view.data.floatWidth
+		var adjustedWidth = fixedWidth + floatWidth + geo.labelWidth
+			- this.state.hiddenColWidth
 
 		return <div
 			className = {"tabular-body-wrapper " + (focused ? "focused" : "blurred")}
@@ -130,7 +133,7 @@ var TabularBodyWrapper = React.createClass ({
 				left: 0,
 				top: 0,
 				bottom: 0,
-				width: (view.data.fixedWidth + view.data.floatWidth) + 'px'
+				width: (adjustedWidth) + 'px'
 			}}>
 
 			<TabularTHead
@@ -144,11 +147,12 @@ var TabularBodyWrapper = React.createClass ({
 				view = {view} />
 
 			<FakeLines
-				width = {fixedWidth + floatWidth + geo.labelWidth
-					- this.state.hiddenColWidth}
+				width = {adjustedWidth}
 				rowCount = {rowCount}
 				ref = "FakeLines"
 				{...this.props}/>
+
+			<RowResizer {...this.props} adjustedWidth = {adjustedWidth} />
 
 			{/*LHS TABLE BODY*/}
 			<div className = "inner-wrapper "

@@ -50,9 +50,14 @@ var TabularTH = React.createClass ({
 	        	: null
 	        }
 			<span ref = "resizer"
-				className = {"table-resizer " + (this.state.dragging ? "dragging" : "")}
+				className = {"table-resizer col-resizer " + (this.state.dragging ? "dragging" : "")}
 				onMouseDown = {this.onResizerMouseDown}
-				style = {{right: (-1 * this.state.pos) + 'px', top: 0}}>
+				style = {{
+					right: (-1 * this.state.pos) + 'px',
+					top: "0",
+					height: this.state.dragging ? "1000px" : "100%",
+					width: this.state.dragging ? "2px" : "10px"
+				}}>
 			</span>
 		</span>
 	},

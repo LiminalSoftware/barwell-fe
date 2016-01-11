@@ -74,20 +74,31 @@ var TabularPane = React.createClass ({
 	},
 
 	shouldComponentUpdate: function (nextProps, nextState) {
+		var _this = this
 		var props = this.props
 		var state = this.state
 		var now = new Date().getTime()
 		var timeSinceUpdt = (now - this._lastUpdate)
 
-		if (timeSinceUpdt >= THROTTLE_DELAY || !_.isEqual(props, nextProps)) {
-			if (this._updtTimer) window.clearTimeout(this._updtTimer)
-			return true
-		} else this._updtTimer = window.setTimeout(
-			this.forceUpdate,
-			THROTTLE_DELAY - timeSinceUpdt,
-			{}
-		)
+		if (props.view !== nextProps.view ||
+				!_.isEqual(state.selection, nextState.selection) ||
+				!_.isEqual(state.pointer, nextState.pointer) ||
+				state.hiddenColWidth !== nextState.hiddenColWidth
+		) {
+			// if (timeSinceUpdt >= THROTTLE_DELAY) {
+				window.clearTimeout(this._updtTimer)
+				return true
+			// } else {
+			// 	this._updtTimer =
+			// 	window.setTimeout(function(){_this._onChange}, THROTTLE_DELAY - timeSinceUpdt + 1, {})
+			// }
+		}
 		return false
+	},
+
+	componentDidUpdate: function () {
+		var now = new Date().getTime()
+		this._lastUpdate = now
 	},
 
 	_onChange: function () {

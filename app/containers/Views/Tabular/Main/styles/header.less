@@ -48,24 +48,26 @@
 		cursor: pointer;
 		padding-top: 5px;
 	}
-	.table-resizer {
-		position: absolute;
-		right: 0;
-		top: 0;
-		height: 100%;
-		width: 10px;
-		z-index: 203;
+}
+
+.table-resizer {
+	display: block;
+	position: absolute;
+	z-index: 203;
+
+	&.row-resizer {
+		cursor: row-resize;
+	}
+	&.col-resizer {
 		cursor: col-resize;
+	}
 
-		&:hover {
-			background: @green-trans;
-		}
+	&:hover {
+		background: @green-trans;
+	}
 
-		&.dragging {
-			height: 1000px;
-			width: 2px;
-			background: @red-bright-trans;
-		}
+	&.dragging {
+		background: @red-bright-trans !important;
 	}
 }
 
