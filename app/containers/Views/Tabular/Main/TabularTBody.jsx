@@ -143,25 +143,11 @@ var TabularTBody = React.createClass ({
 		var rowCount = this.props.store ? this.props.store.getRecordCount() : 0
 		var geo = view.data.geometry
 		var floatOffset = this.props.floatOffset
-		// var style
-
-		// if (this.props.prefix === 'rhs') style = {
-		// 	left: view.data.fixedWidth + 'px',
-		// 	marginLeft: (-1 * view.data.hiddenColWidth) + 'px',
-		// 	top: 0,
-		// 	width:  view.data.floatWidth + 'px',
-		// 	height: (rowCount * geo.rowHeight) + 'px',
-		// }
-		// if (this.props.prefix === 'lhs') style = {
-		// 	left: 0,
-		// 	top: 0,
-		// 	width:  view.data.fixedWidth + 'px',
-		// 	height: (rowCount * geo.rowHeight) + 'px',
-		// }
 
 		return <div
 				className = {"tabular-tbody "}
 				onPaste = {this.props._handlePaste}
+				onDoubleClick = {this.props._handleEdit}
 				ref = "tbody"
 				style = {this.props.style}
 				onContextMenu = {this.props._handleContextMenu}>

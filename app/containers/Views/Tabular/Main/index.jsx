@@ -184,6 +184,7 @@ var TabularPane = React.createClass ({
 	},
 
 	editCell: function (e) {
+		console.log("index.editCell")
 		var pos = this.state.pointer
 		var fixedCols = this.props.view.data.fixedCols
 		var side = (pos.left >= fixedCols.length) ? 'rhs' : 'lhs'
@@ -191,7 +192,6 @@ var TabularPane = React.createClass ({
 			editing: true,
 			copyarea: null
 		})
-		// this.nextState.selected.handleEdit(e);
 		this.getFieldAt(pos).handleEdit(e);
 	},
 

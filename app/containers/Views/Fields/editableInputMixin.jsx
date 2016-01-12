@@ -68,7 +68,6 @@ var editableInputMixin = {
 		if (ordinal >= 48 && ordinal <= 90)
 			this.setValue('')
 		else this.setValue(prettyValue)
-		this.props._handleEdit(event)
 	},
 
 	handleChange: function (event) {
@@ -90,7 +89,6 @@ var editableInputMixin = {
 
 		return <span {...this.props}
 			onWheel = {this.handleWheel}
-			onDoubleClick = {this.handleEdit}
 			className = {className}>
 			{this.state.editing ?
 			<input
