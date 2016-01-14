@@ -148,6 +148,7 @@ var TabularTBody = React.createClass ({
 				className = {"tabular-tbody "}
 				onPaste = {this.props._handlePaste}
 				onDoubleClick = {this.props._handleEdit}
+				onClick = {this.props._handleClick}
 				ref = "tbody"
 				style = {this.props.style}
 				onContextMenu = {this.props._handleContextMenu}>

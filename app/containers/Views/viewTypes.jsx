@@ -8,6 +8,7 @@ import CalendarMain from "./Calendar/Main/index.jsx"
 import CalendarGroomer from "./Calendar/groom.jsx"
 
 import CubeConfig from "./Cube/Config/index.jsx"
+import CubeInlineConfig from "./Cube/InlineConfig/index.jsx"
 import CubeMain from "./Cube/Main/index.jsx"
 import CubeGroomer from "./Cube/groom"
 
@@ -21,7 +22,7 @@ var viewTypes = {
 		configElement: TabularConfig,
 		inlineConfigElement: TabularInlineConfig,
 		category: "Tables",
-		description: "Just a plain old table of data.  Each object is one row in the table."
+		description: "Simple, tabular format. Each row represents a single record."
 	},
 	Cube: {
 		type: "Cube",
@@ -29,8 +30,9 @@ var viewTypes = {
 		groomer: CubeGroomer,
 		mainElement: CubeMain,
 		configElement: CubeConfig,
+		inlineConfigElement: CubeInlineConfig,
 		category: "Tables",
-		description: "Dynamic table with rows and columns grouped as you please."
+		description: "Dynamic table with configurable row and column grouping."
 	},
 	Calendar: {
 		type: "Calendar",

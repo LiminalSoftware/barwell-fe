@@ -86,8 +86,7 @@ var ColumnDetail = React.createClass({
 			className= "double-column-config"
 			key="type-specific"/>
 
-    return <div
-			className={"menu-item tight menu-sub-item column-item " +
+    return <div className={"menu-item tight menu-sub-item column-item " +
 			(this.props.dragging ? " dragging " : "")}>
 
 	      <span

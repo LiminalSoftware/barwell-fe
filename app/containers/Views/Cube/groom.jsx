@@ -5,11 +5,13 @@ import RelationStore from '../../../stores/RelationStore'
 import fieldTypes from '../fields'
 import viewTypes from '../viewTypes'
 
+import groomFields from '../groomFields'
+
 var groomView = function (view) {
 	var model = ModelStore.get(view.model_id);
-	var columns = {}
 	var data = view.data || {}
 	if (!model) return view
+	// var columns = data.columns = groomFields(view)
 
 	var groupCleanser = function (group) {
 		var field = AttributeStore.get(group)
@@ -18,6 +20,8 @@ var groomView = function (view) {
 	}
 
 	if (!_.isObject(data.sorting)) data.sorting = {}
+
+
 
 	data.geometry = _.extend({
 		headerHeight: 29,

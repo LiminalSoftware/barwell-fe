@@ -14,6 +14,7 @@ import editableInputMixin from '../editableInputMixin'
 import selectableMixin from '../selectableMixin'
 
 var decimalField = {
+	defaultAlign: 'right',
 	element: React.createClass({
 		mixins: [editableInputMixin, commitMixin, selectableMixin],
 

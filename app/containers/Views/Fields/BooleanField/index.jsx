@@ -33,15 +33,15 @@ var CheckboxElement = React.createClass({
 		return !!input
 	},
 
-	handleClick: function (event) {
+	handleClick: function (e) {
 		this.toggle()
-		event.preventDefault()
-		event.stopPropagation()
+		e.preventDefault()
+		e.stopPropagation()
+		e.nativeEvent.stopPropagation()
 	},
 
 	toggle: function () {
-		this.setState({value: !this.props.value})
-		this.commitChanges()
+		this.commitValue(!this.state.value)
 	},
 
 	render: function () {
@@ -54,7 +54,7 @@ var CheckboxElement = React.createClass({
 		return <span {...this.props} className={className}>
 			<span className = {"special-cell-inner checkbox-inner " + selectionClass}>
 				<span className="checkbox-surround" onClick={this.handleClick}>
-					<span className={"check greened icon " + (this.state.value ? "" : "icon-kub-approve")}>
+					<span className={"check greened icon " + (this.state.value ? "icon-kub-approve" : "")}>
 					</span>
 				</span>
 			</span>
@@ -63,6 +63,7 @@ var CheckboxElement = React.createClass({
 });
 
 var booleanField = {
+	defaultAlign: 'center',
 	element: CheckboxElement,
 	uneditable: true
 }

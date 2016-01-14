@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router";
-import styles from "./style.less";
 import _ from 'underscore';
 import fieldTypes from "../../fields"
 
@@ -14,14 +13,9 @@ import modelActionCreators from "../../../../actions/modelActionCreators"
 import groomView from '../../groomView'
 
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-
-
 import ViewSelector from '../../../ViewSelector'
-import ColumnMenu from './ColumnMenu/index'
-import SortMenu from './SortMenu/index'
-import FilterMenu from './FilterMenu'
 
-var TabularViewInlineConfig = React.createClass({
+var CubeViewInlineConfig = React.createClass({
 
 	mixins: [PureRenderMixin],
 
@@ -47,11 +41,8 @@ var TabularViewInlineConfig = React.createClass({
 
     return <div className = "view-config" onClick={this.focus}>
 			<ViewSelector view = {view} model = {model}/>
-			<ColumnMenu view = {view} model = {model}/>
-			<SortMenu view = {view} model = {model}/>
-			<FilterMenu view = {view} model = {model}/>
 		</div>
 	}
 });
 
-export default TabularViewInlineConfig;
+export default CubeViewInlineConfig;

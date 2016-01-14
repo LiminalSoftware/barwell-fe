@@ -6,6 +6,8 @@ import fieldTypes from '../fields'
 import viewTypes from '../viewTypes'
 import util from "../../../util/util"
 
+import groomFields from '../groomFields'
+
 var BIG_NUM = 10000000;
 
 var comparator = function (a, b) {
@@ -38,55 +40,9 @@ var groomView = function (view) {
 	var iter =  BIG_NUM;
 	data.sorting = []
 	var sorting = {}
-	data.columns = data.columns || {}
 
-	fields.forEach(function (field) {
-		var prev = data.columns['a' + field.attribute_id] || {};
-		var col = prev
-		col.column_id = 'a' + field.attribute_id
-		col.attribute_id = field.attribute_id;
-		col.type = field.type
-		col.name = field.attribute
-		col.sorting = null
-		if (col.type in fieldTypes && !!fieldTypes[col.type].configCleanser)
-			col = fieldTypes[col.type].configCleanser(col)
-
-		col.align = prev.align
-		if (!col.align) {
-			if(col.type === 'INTEGER' || col.type === 'DECIMAL' || col.type === 'DATE') col.align = 'right'
-			else if (col.type === 'BOOLEAN') col.align = 'center'
-			else col.align = 'left'
-		}
-		col.visible = !!col.visible
-		col.fixed = !!col.fixed && col.visible
-		col.width = Math.max(_.isNumber(col.width) ? col.width : 0, 50)
-		columns[col.column_id] = col
-	})
-
-	relations.forEach(function (relation) {
-		var col = data.columns['r' + relation.relation_id] || {};
-		var attrs = AttributeStore.query({model_id: relation.related_model_id});
-		var relatedModel = ModelStore.get(relation.related_model_id)
-		var pk =  (relatedModel || {}).pk;
-		col.column_id = 'r' + relation.relation_id
-		col.related_model_id = relation.related_model_id
-		col.related_key_id = relation.related_key_id
-		col.key_id = relation.key_id
-		col.label = col.label || ('a' + attrs[0].attribute_id)
-		col.relation_id = relation.relation_id;
-		col.type = relation.type
-		col.name = relation.relation
-		col.visible = !!col.visible
-		col.fixed = !!col.fixed && col.visible
-		col.width = Math.max(_.isNumber(col.width) ? col.width : 0, 50)
-
-		columns[col.column_id] = col
-	})
-
+  var columns = data.columns = groomFields(view)
 	var columnList = enumerate(_.values(columns))
-	columnList.map(function (col) {
-
-	})
 
 	data.columnList = columnList
 	data.visibleCols = columnList.filter(c => c.visible)

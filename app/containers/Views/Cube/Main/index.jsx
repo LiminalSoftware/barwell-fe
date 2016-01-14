@@ -3,7 +3,6 @@ import ReactDOM from "react-dom"
 import { RouteHandler } from "react-router"
 import styles from "./style.less"
 
-
 import _ from 'underscore'
 import $ from 'jquery'
 
@@ -47,21 +46,15 @@ var CubePane = React.createClass ({
 	},
 
 	componentWillMount: function () {
-		ViewStore.addChangeListener(this._onChange)
-		AttributeStore.addChangeListener(this._onChange)
-		ModelStore.addChangeListener(this._onChange)
+		document.body.addEventListener('keydown', this.onKey)
 		FocusStore.addChangeListener(this._onChange)
-
 		this.store = createCubeStore(this.props.view)
 		this.store.addChangeListener(this._onChange)
 	},
 
 	componentWillUnmount: function () {
-		ViewStore.removeChangeListener(this._onChange)
-		AttributeStore.removeChangeListener(this._onChange)
-		ModelStore.removeChangeListener(this._onChange)
+		document.body.removeEventListener('keydown', this.onKey)
 		FocusStore.removeChangeListener(this._onChange)
-
 		if (this.store) this.store.removeChangeListener(this._onChange)
 		this.store.unregister()
 	},
@@ -123,22 +116,6 @@ var CubePane = React.createClass ({
 			height: 0,
 			width: -1
 		})
-	},
-
-	getOverlayStyle: function (pos, fudge) {
-		var view = this.props.view
-		var geo = view.data.geometry
-		var headerRows = view.row_aggregates.length
-		var headerCols = view.column_aggregates.length
-		var actRowHt = this.state.actRowHt
-		var width = geo.columnWidth + geo.widthPadding
-
-		return {
-			top: ((pos.top + headerCols) * actRowHt + fudge.top || 0) + 'px',
-			left: (((pos.left + headerRows) * width) + geo.leftGutter + fudge.left || 0 ) + 'px',
-			minWidth: ((pos.right - pos.left + 1) * width + fudge.width || 0) + 'px',
-			minHeight: ((pos.bottom - pos.top + 1) * actRowHt - geo.rowPadding) + 'px'
-		}
 	},
 
 	getRCCoords: function (event, isDrag) {
@@ -337,6 +314,7 @@ var CubePane = React.createClass ({
 
 		return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">
 				<div id="main-data-table" className="header data-table">
+					{/*
 					<CubeColTHead
 						key = {"cube-col-thead-" + view.view_id}
 						clicker = {_this.onMouseDown}
@@ -375,9 +353,9 @@ var CubePane = React.createClass ({
 						vStart = {vStart}
 						hStart = {hStart}
 						store = {this.store}
-						/>
+					/>*/}
 				</div>
-				<div
+				{/*<div
 					className={"pointer" + (_this.isFocused() ? " focused" : "")}
 					ref = "anchor"
 					onDoubleClick = {this.startEdit}
@@ -397,6 +375,7 @@ var CubePane = React.createClass ({
 						copySelection = {_this.copySelection}
 						/>
 					: null}
+				*/}
 		</div>
 	}
 })

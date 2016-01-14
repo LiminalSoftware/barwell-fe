@@ -1,5 +1,6 @@
 import React from "react"
 import _ from "underscore"
+import util from "./util/util"
 
 import constant from './constants/MetasheetConstants'
 import modelActionCreators from "./actions/modelActionCreators.jsx"
@@ -32,10 +33,7 @@ var blurOnClickMixin = {
     if (event.keyCode === constant.keycodes.ESC) this.handleBlur()
   },
 
-  clickTrap: function (event) {
-    event.stopPropagation()
-    event.nativeEvent.stopImmediatePropagation();
-  },
+  clickTrap: util.clickTrap
 
 }
 

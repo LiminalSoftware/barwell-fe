@@ -83,6 +83,9 @@ var TabularPane = React.createClass ({
 		if (props.view !== nextProps.view ||
 				!_.isEqual(state.selection, nextState.selection) ||
 				!_.isEqual(state.pointer, nextState.pointer) ||
+				!_.isEqual(state.copyarea, nextState.copyarea) ||
+				!_.isEqual(state.detailOpen, nextState.detailOpen) ||
+				!_.isEqual(state.contextOpen, nextState.contextOpen) ||
 				state.hiddenColWidth !== nextState.hiddenColWidth
 		) {
 			// if (timeSinceUpdt >= THROTTLE_DELAY) {
@@ -610,7 +613,7 @@ var TabularPane = React.createClass ({
 				ref="copyarea"
 				{...this.props}
 				position = {cpy}
-				fudge = {{left: -6  + geo.leftOffset, top: 0.25, height: 0.75, width: 1.25}}/>
+				fudge = {{left: -1, top: 0, height: 0.75, width: 1.1}}/>
 
 		</TabularBodyWrapper>
 

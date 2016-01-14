@@ -26,7 +26,7 @@ var ColorElement = React.createClass({
 		var className = (this.props.className || '') + ' table-cell '+ selectionClass;
 		return <span {...this.props} className={className} onMouseDown = {this.props.handleClick}>
 				<span className = {"special-cell-inner color-picker " + selectionClass}>
-					<span className = "color-block" style = {{background: this.state.value}}></span>
+					<span className = {"color-block " + selectionClass} style = {{background: this.state.value}}></span>
 				</span>
 				{this.state.selected ?
 					 <span
@@ -39,7 +39,6 @@ var ColorElement = React.createClass({
 
 var colorField = {
 	element: ColorElement,
-
 	detail: ColorDetail
 }
 

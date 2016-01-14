@@ -45,8 +45,9 @@ module.exports.clean = function (obj) {
 	return obj
 }
 
-module.exports.enumerate = function (list) {
-	return _.sortBy(list, 'order').map(function(item, i) {
+module.exports.enumerate = function (list, comparator) {
+  list.sort(comparator)
+	return list.map(function(item, i) {
 		item.order = i
 		return item
 	})
@@ -58,13 +59,9 @@ var limit = module.exports.limit = function (min, max, value) {
 	else return value
 }
 
-
-var isClean = module.exports.isClean = function (obj) {
-  return _.isEqual(stripInternalVars(obj), stripInternalVars(obj._server))
-}
-
-var isDirty = module.exports.isDirty = function (obj) {
-  return !isClean(obj)
+var clickTrap = module.exports.clickTrap = function (event) {
+  event.stopPropagation()
+  event.nativeEvent.stopImmediatePropagation();
 }
 
 module.exports.choose = function (obj, keys) {

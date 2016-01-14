@@ -77,10 +77,10 @@ var TabularTR = React.createClass({
 					className: classes.join(' '),
 					value: obj[col.column_id],
 					column_id: col.column_id,
-					
+
 					handleBlur: _this.props._handleBlur,
 					_handleDetail: _this.props._handleDetail,
-					handleClick: _this.props._handleClick,
+					_handleClick: _this.props._handleClick,
 					_handleEdit: _this.props._handleEdit,
 					_handleWheel: _this.props._handleWheel,
 					key: cellKey,

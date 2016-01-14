@@ -10,7 +10,7 @@ import AttributeStore from "../../../../../stores/AttributeStore"
 import SortDetail from "./SortDetail"
 
 import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
-
+import util from "../../../../../util/util"
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 var blurOnClickMixin = require('../../../../../blurOnClickMixin')
 
@@ -18,36 +18,60 @@ var SortMenu = React.createClass({
 
 	mixins: [blurOnClickMixin],
 
-	_onChange: function () {
-		var view = ViewStore.get(this.props.view.view_id || this.props.view.cid)
-		this.setState(view.data)
+	getInitialState: function () {
+		var view = this.props.view
+		return {
+			open: false,
+			editing: false,
+			sortList: view.data.sorting
+		}
 	},
 
-	getInitialState: function () {
-		return {open: false}
+	chooseItem: function (e) {
+		var choice = e.target.value
+		var sortList = _.clone(this.state.sortList)
+		var attr = AttributeStore.get(choice)
+		sortList.push(attr)
+		this.setState({sortList: sortList})
 	},
 
 	render: function() {
+		var _this = this
 		var view = this.props.view
-		var data = view.data
-		var sortList = data.sorting
+		var sortList = this.state.sortList
+		var sortAttrs = _.pluck(sortList, 'attribute_id')
 		var sortPreview
+		var attrSelections = []
 
 		if (sortList.length === 1) sortPreview = <SortDetail config = {sortList[0]} view = {view}/>
 		else if (sortList.length > 1) sortPreview = <div className="menu-item closed menu-sub-item">Multiple sort levels</div>
 		else if (sortList.length === 0) sortPreview = <div className="menu-item closed menu-sub-item empty-item">Default sort order</div>
 
+		AttributeStore.query({model_id: view.model_id}).forEach(function (attr) {
+			if (_.contains(sortAttrs, attr.attribute_id)) return;
+			var attribute_id = (attr.attribute_id || attr.cid)
+			attrSelections.push(
+				<option value = {attribute_id} key = {attribute_id}>
+						{attr.attribute}
+				</option>
+				);
+		})
+
     return <div className = "header-section">
 			<div className="header-label">Sort Order</div>
-			<div className="model-views-menu" onClick = {this.onClick}>
+			<div className="model-views-menu" onClick = {util.clickTrap}>
 				{
 				this.state.open ?
 				<div className="dropdown-menu">
+					{
+					this.state.sortList.map(function (sortItem) {
+						return <SortDetail config = {sortItem} view = {view} editing = {true}/>
+					})
+					}
 					<div className = "menu-item menu-sub-item">
-						
-					</div>
-					<div className = "menu-item menu-sub-item">
-						Select
+						<select className = "menu-input selector" onChange = {this.chooseItem}>
+							{attrSelections}
+						</select>
 					</div>
 				</div>
 				:

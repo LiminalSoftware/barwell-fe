@@ -27,8 +27,11 @@ var editableInputMixin = {
 	},
 
 	handleWheel: function (e) {
-			console.log('on wheel!!!!! gg')
 			this.props._handleWheel(e)
+	},
+
+	handleClick: function (e) {
+		this.props._handleClick(e)
 	},
 
 	handleKeyPress: function (event) {
@@ -89,6 +92,7 @@ var editableInputMixin = {
 
 		return <span {...this.props}
 			onWheel = {this.handleWheel}
+			onMouseDown = {this._handleClick}
 			className = {className}>
 			{this.state.editing ?
 			<input

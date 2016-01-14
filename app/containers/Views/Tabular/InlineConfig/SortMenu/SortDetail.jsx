@@ -39,13 +39,16 @@ var SortDetail = React.createClass({
     var view = this.props.view
     var config = this.props.config
 		var attr = AttributeStore.get(config.attribute_id)
-    return <div className="menu-item menu-sub-item">
-      {attr.attribute}
+    return <div className="menu-item tight menu-sub-item">
+			{this.props.editing ? <span
+				onMouseDown = {this.handleDrag}
+				className="draggable half-column-config tight icon grayed icon-Layer_2"/> : null }
+      <span className = "double-column-config">{attr.attribute}</span>
 
 			<span onClick={this.switch}
-				className={"icon grayed left-pad icon-sort-az-" + (config.descending ? 'high' : 'low')}>
+				className={"half-column-config tight icon grayed icon-sort-az-" + (config.descending ? 'high' : 'low')}>
 			</span>
-			<span onClick={this.remove} className="icon small grayed icon-kub-remove"></span>
+			<span onClick={this.remove} className="half-column-config tight icon small grayed icon-kub-remove"></span>
 		</div>
 	}
 });
