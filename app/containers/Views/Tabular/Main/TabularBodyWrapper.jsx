@@ -179,6 +179,7 @@ var TabularBodyWrapper = React.createClass ({
 					ref="lhs"
 					prefix = "lhs"
 					hasRowLabel = {true}
+					offsetCols = {0}
 					style = {{
 						left: 0,
 						top: 0,
@@ -231,6 +232,7 @@ var TabularBodyWrapper = React.createClass ({
 							ref = "rhs"
 							prefix = "rhs"
 							columns = {this.props.visibleColumns}
+							offsetCols = {view.data.fixedCols.length}
 							style = {{
 								left: 0,
 								top: 0,

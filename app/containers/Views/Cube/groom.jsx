@@ -21,8 +21,6 @@ var groomView = function (view) {
 
 	if (!_.isObject(data.sorting)) data.sorting = {}
 
-
-
 	data.geometry = _.extend({
 		headerHeight: 29,
 		rowHeight: 30,

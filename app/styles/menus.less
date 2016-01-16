@@ -1,5 +1,26 @@
 @import "../global.less";
 
+.pop-down {
+	position: relative;
+	display: inline-block;
+	height:30px;
+	line-height: 30px;
+	padding: 0 5px;
+	background: @headerBgDark;
+	border-radius: @menuItemBorderRadius;
+}
+
+.pop-down-menu {
+	position: absolute;
+	top: 100%;
+
+	background: @headerBgDark;
+	list-style: none;
+	& > li {
+		display: block;
+	}
+}
+
 .header-section {
 	flex-direction: column;
 	display: flex;
@@ -7,7 +28,7 @@
 	flex-grow: 1;
 	max-width: 300px;
 	padding: 0 10px;
-	border-right: 1px solid @headerBorderColor;
+	border-right: 1px solid @headerBgDark;
 }
 
 .double.header-section {
@@ -25,41 +46,20 @@
   color: @headerFontColor;
 }
 
-.header-option {
-	text-transform: none;
-	font-size: 12px;
-	margin-left: 10px;
-}
-
 .model-views-menu {
 	margin-top: 8px;
 	position: relative;
 	display: flex;
 	flex-direction: row;
 	cursor: pointer;
-
-	border-radius: @headerBorderRadius;
-	// border: @headerOuterBorderWidth solid @headerOuterBorderColor;
-
-	&:hover {
-		& > div{
-				// border-color: @headerBorderHilite;
-		}
-
-		.dropdown {
-			color: @headerBorderHilite !important;
-		}
+	& > div:first-child {
+		border-top-left-radius: @headerBorderRadius;
+		border-bottom-left-radius: @headerBorderRadius;
 	}
-}
-
-.model-views-menu > div:first-child {
-	border-top-left-radius: @headerBorderRadius;
-	border-bottom-left-radius: @headerBorderRadius;
-}
-
-.model-views-menu > div:last-child {
-	border-top-right-radius: @headerBorderRadius;
-	border-bottom-right-radius: @headerBorderRadius;
+	& > div:last-child {
+		border-top-right-radius: @headerBorderRadius;
+		border-bottom-right-radius: @headerBorderRadius;
+	}
 }
 
 
@@ -71,14 +71,7 @@
 	.ellipsis;
 	background: @headerMenuBgColor;
 	margin: 0 !important;
-
 	border: 1px solid @headerBorderColor;
-
-	.view-label {
-		float: left;
-		width: 140px;
-		padding: 5px 10px;
-	}
 }
 
 .dropdown, .model-views-menu-inner {
@@ -87,7 +80,6 @@
 	&:first-child {
 		border-left: 1px solid @headerBorderColor;
 	}
-
 }
 
 .dropdown {
@@ -107,64 +99,81 @@
 	right: 0;
 	min-height: 100;
 	z-index: 300;
-
 	background: @headerMenuBgColor;
 	border-radius: @headerBorderRadius;
 	.box-shadow-transitioned(0 0 0 @headerOuterBorderWidth @headerOuterBorderColor);
 	border: 1px solid @headerBorderHilite;
-
 }
 
-.view-icon {
-	margin-top: -2px;
-}
 
 .menu-item {
 	display: flex;
 	flex-direction: row;
-	// border-bottom: 1px solid @menuBorderColor;
 	background: none;
 	text-decoration: none;
 	border-top: 1px dotted @headerFontColor;
+	&:first-child {
+		border-top: none;
+	}
+	&:first-child:last-child {
+		border-top: 1px solid @headerFontColor;
+	}
 }
 
 .empty-item {
 	color: @gray3 !important;
 }
 
+.menu-box {
+	background: @headerBgDark;
+	padding: 6px;
+	border-radius: @headerBorderRadius;
+}
+
 .menu-sub-item {
+	height: 40px;
+	line-height: 40px;
+	padding: 0;
+	margin: 0;
+	padding-left: 10px;
+	padding-right: 10px;
+
+	.ellipsis;
 	text-decoration: none;
 	display: flex;
 	flex: 1 1;
-	padding: 10px;
 	color: @headerFontColor;
 	cursor: pointer;
 
-	white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-	&.active {
-
+	& > span {
+		flex: 1 1;
+		.ellipsis;
+		margin: 0;
+		height: 40px;
+		line-height: 40px;
+		&.double {
+			flex: 2 2;
+		}
+		&.triple {
+			flex: 3 3;
+		}
+		&.icon {
+			min-width: 25px;
+			flex: 0;
+			flex-grow: 0;
+		}
 	}
+}
+
+.menu-item.dragging {
+	z-index: 305;
+	background: @headerBgDark;
 }
 
 .menu-sub-item.warning-item {
 	color: @red-bright;
-	background: #FFE;
 }
 
-.menu-sub-item.tight {
-	padding: 3px;
-}
-
-.dragging {
-	z-index: 305;
-	border-top: 1px solid @purple5;
-	border-bottom: 1px solid @purple5;
-	margin-bottom: -1px;
-	color: @purple5;
-}
 
 .menu-divider {
 	border-top: 1px solid @headerBorderColor !important;
@@ -177,9 +186,9 @@
 }
 
 .menu-config-row {
-  border-top: 1px solid @headerBorderColor;
+  border-top: 1px solid @headerFontColor;
   .menu-sub-item {
-    border-left: 1px solid @headerBorderColor;
+    border-left: 1px solid @headerFontColor;
 		&:hover {
 			.icon.icon-plus {
 				color: @newgreen1;

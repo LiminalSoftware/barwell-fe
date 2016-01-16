@@ -15,6 +15,8 @@ import selectableMixin from '../selectableMixin'
 import DateValidatorMixin from './dateValidatorMixin'
 import DateDetail from "./detail"
 
+import TextFieldConfig from "../textFieldConfig"
+
 var dateField = {
 
 	detail: DateDetail,
@@ -24,7 +26,9 @@ var dateField = {
 		return config
 	},
 
-	configRows: React.createClass({
+	configA: TextFieldConfig,
+
+	configB: React.createClass({
 
 		getInitialState: function () {
 			var config = this.props.config;
@@ -54,6 +58,10 @@ var dateField = {
 			modelActionCreators.createView(view, false, true)
 		},
 
+		handleFocus: function () {
+			modelActionCreators.setFocus('view-config')
+		},
+
 		render: function () {
 			var config = this.props.config
 			var key = "attr-" + config.id
@@ -65,6 +73,7 @@ var dateField = {
 						className = "menu-input text-input"
 						spellCheck = "false"
 						value = {this.state.dateFormat}
+						onFocus = {this.handleFocus}
 						onBlur = {this.onBlur}
 						onChange = {this.onFormatChange}/>
 			</span>

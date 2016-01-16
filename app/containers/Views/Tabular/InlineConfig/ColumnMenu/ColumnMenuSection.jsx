@@ -121,14 +121,14 @@ var ColumnMenuSection = React.createClass({
 
 		return <div>
 			<div className="menu-item menu-sub-item menu-divider">
-			<div className="menu-divider-label">
+			<div className="column-config menu-divider-label">
 			{this.props.label}
 			</div>
 			</div>
 			{
 				(columns.length === 0) ?
 				// if there's no content then show the emptyText message
-				<div className="menu-item menu-sub-item empty-item">
+				<div className="menu-item menu-sub-item padded empty-item">
 					{this.props.emptyText}
 				</div>
 				:

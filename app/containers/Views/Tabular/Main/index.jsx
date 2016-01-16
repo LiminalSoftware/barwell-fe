@@ -183,7 +183,9 @@ var TabularPane = React.createClass ({
 		var objId = (obj.cid || obj[model._pk]);
 		var rowKey = side + '-tr-' + objId
 		var cellKey = rowKey + '-' + colId
-		return tbody.refs[rowKey].refs[cellKey]
+		var row = tbody.refs[rowKey]
+		if (row) return row.refs[cellKey]
+		else return null
 	},
 
 	editCell: function (e) {
@@ -392,17 +394,15 @@ var TabularPane = React.createClass ({
 		var oldPos = this.state.pointer
 		var view = this.props.view
 		var current = this.state.selected
-		var cell
+		var cell = this.getFieldAt(pos)
 		var numCols = this.getNumberCols()
 		var numRows = this.getNumberRows()
 
 		pos.left = Math.max(Math.min(pos.left, numCols), 0)
 		pos.top = Math.max(Math.min(pos.top, numRows), 0)
 		// if pointer has moved, then unselect the old position and select the new
-		if (pos.left !== oldPos.left || pos.top !== oldPos.top) {
+		if (cell && cell !== current) {
 			if (current && current.isMounted()) this.blurPointer()
-
-			cell = this.getFieldAt(pos)
 			cell.toggleSelect(true)
 		}
 		// save the new values to state
@@ -413,7 +413,7 @@ var TabularPane = React.createClass ({
 			selected: (cell || this.state.selected)
 		})
 
-		// commit the pointer position to the view object, but not immediately
+		// commit the pointer position to the view object, but debounce
 		view.data.pointer = pos
 		debouncedCreateView(view, false, false, true)
 	},
@@ -547,6 +547,7 @@ var TabularPane = React.createClass ({
 				_handleContextMenu = {_this.openContextMenu}
 				_handleWheel = {this.handleMouseWheel}
 				_handleEdit = {_this.editCell}
+				_updatePointer = {this.updatePointer}
 
 				totalWidth = {totalWidth}
 				rowOffset = {this.state.rowOffset}

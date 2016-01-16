@@ -15,14 +15,13 @@ var groomFields = function (view) {
 
 	fields.forEach(function (field) {
     var fieldType = fieldTypes[field.type] || {}
-		var col = data.columns['a' + field.attribute_id] || {};
+		var col = columns['a' + field.attribute_id] || {};
 		col.column_id = 'a' + field.attribute_id
 		col.attribute_id = field.attribute_id;
 		col.type = field.type
 		col.name = field.attribute
 		col.sorting = null
-		if ('configCleanser' in fieldType)
-		 	col = fieldType.configCleanser(col)
+		if ('configCleanser' in fieldType) col = fieldType.configCleanser(col)
 
 		if (!col.align) {
       if('defaultAlign' in fieldType) col.align = fieldType.defaultAlign
@@ -35,7 +34,7 @@ var groomFields = function (view) {
 	})
 
 	relations.forEach(function (relation) {
-		var col = data.columns['r' + relation.relation_id] || {};
+		var col = columns['r' + relation.relation_id] || {};
 		var attrs = AttributeStore.query({model_id: relation.related_model_id});
 		var relatedModel = ModelStore.get(relation.related_model_id)
 		var pk =  (relatedModel || {}).pk;
@@ -43,7 +42,7 @@ var groomFields = function (view) {
 		col.related_model_id = relation.related_model_id
 		col.related_key_id = relation.related_key_id
 		col.key_id = relation.key_id
-		col.label = col.label || ('a' + attrs[0].attribute_id)
+		// col.label = col.label || ('a' + attrs[0].attribute_id)
 		col.relation_id = relation.relation_id;
 		col.type = relation.type
 		col.name = relation.relation

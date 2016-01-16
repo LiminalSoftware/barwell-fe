@@ -13,7 +13,10 @@ import commitMixin from '../commitMixin'
 import editableInputMixin from '../editableInputMixin'
 import selectableMixin from '../selectableMixin'
 
+import TextFieldConfig from "../textFieldConfig"
+
 var decimalField = {
+	configA: TextFieldConfig,
 	defaultAlign: 'right',
 	element: React.createClass({
 		mixins: [editableInputMixin, commitMixin, selectableMixin],

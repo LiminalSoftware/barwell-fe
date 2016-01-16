@@ -25,11 +25,18 @@ var TabularTR = React.createClass({
 
 	},
 
+	componentDidMount: function () {
+		var ptr = this.props.pointer || {}
+		if (this.props.row === ptr.top)
+			this.props._updatePointer(ptr)
+	},
+
 	render: function () {
 		var _this = this
 		var model = this.props.model
 		var view = this.props.view
 		var rowKey = this.props.rowKey
+		var offsetCols = this.props.offsetCols
 		var row = this.props.row
 		var obj = this.props.obj
 		var geo = view.data.geometry
@@ -57,7 +64,6 @@ var TabularTR = React.createClass({
 			{_this.props.columns.map(function (col, j) {
 				var element = (fieldTypes[col.type] || fieldTypes.TEXT).element
 				var cellKey = rowKey + '-' + col.column_id
-				var isCurrent = (ptr.left === j && ptr.top === row)
 				var classes = []
 
 				classes.push('table-cell')
@@ -71,8 +77,11 @@ var TabularTR = React.createClass({
 					config: col,
 					model: _this.props.model,
 					view: _this.props.view,
+
 					selector: selector,
 					object: obj,
+					pointer: ptr,
+					rowHeight: geo.rowHeight,
 
 					className: classes.join(' '),
 					value: obj[col.column_id],
@@ -83,6 +92,7 @@ var TabularTR = React.createClass({
 					_handleClick: _this.props._handleClick,
 					_handleEdit: _this.props._handleEdit,
 					_handleWheel: _this.props._handleWheel,
+
 					key: cellKey,
 					cellKey: cellKey,
 					ref: cellKey,

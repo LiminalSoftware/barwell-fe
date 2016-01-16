@@ -23,28 +23,6 @@ var ColumnDetail = React.createClass({
 		}
 	},
 
-	toggleOpenMenu: function () {
-		this.setState({open: !this.state.open})
-	},
-
-	toggleVisibility: function (event) {
-		var config = this.props.config
-		this.commitChanges({visible: !config.visible})
-	},
-
-	toggleAlign: function (event) {
-		var align = this.props.config.align
-		if (align === 'left') align = 'center'
-		else if (align === 'center') align = 'right'
-		else align = 'left'
-		this.commitChanges({align: align})
-	},
-
-	toggleBold: function (event) {
-		var config = this.props.config
-		this.commitChanges({bold: !config.bold})
-	},
-
 	commitChanges: function (colProps) {
 		var view = this.props.view
 		var column_id = this.props.config.column_id
@@ -72,56 +50,39 @@ var ColumnDetail = React.createClass({
 		var _this = this
     var view = this.props.view
     var config = this.props.config
-		var fieldType = fieldTypes[config.type]
+		var fieldType = fieldTypes[config.type] || {}
 		var editing = this.props.editing
-		var typeSpecificConfig
-
-		if (!!fieldType && fieldType.configRows)
-			typeSpecificConfig = React.createElement(fieldType.configRows, {
+		var configPartA = ('configA' in fieldType) ?
+			React.createElement(fieldType.configA, {
 				view: view,
 				config: config,
-				classes: editing ? " col-editing " : ""
-			})
-		else typeSpecificConfig = <span
-			className= "double-column-config"
-			key="type-specific"/>
+				classes: (editing ? "double col-editing " : "")
+			}) : <span className = "double"/>;
+		var configPartB = ('configB' in fieldType) ?
+			 React.createElement(fieldType.configB, {
+				view: view,
+				config: config,
+				classes: (editing ? "double col-editing " : "")
+			}) : <span className = "double"/>;
 
     return <div className={"menu-item tight menu-sub-item column-item " +
 			(this.props.dragging ? " dragging " : "")}>
 
-	      <span
-					className = {"column-config " + (editing ? " " : "")}
-					key = "name">
+	      <span>
 					{this.props.open ? <span
 						onMouseDown = {_this.handleDrag}
 						className="draggable icon grayed icon-Layer_2"
 						></span>
 					: null}
-					{editing ? <input className = "menu-input
-													text-input" value={this.state.name}
-													onChange = {this.handleNameChange}/>
-									: <span>{config.name}</span>}
+					{editing ?
+						<input className = "menu-input
+							text-input" value={this.state.name}
+							onChange = {this.handleNameChange}/>
+						: <span>{config.name}</span>}
 				</span>
 
-				{editing ? null :
-					<span className = {"column-config " + (editing ? "  " : "")} key = "column">
-						<span className={" clickable icon icon-align-" + config.align}
-							onClick={this.toggleAlign}>
-						</span>
-						<span className={" clickable icon icon-tl-bold " + (config.bold ? "" : " grayed")}
-							onClick={this.toggleBold}>
-						</span>
-						<span className={" clickable icon icon-tl-italic " + (config.italic ? "" : " grayed")}
-							onClick={this.toggleBold}>
-						</span>
-						<span className={" clickable icon icon-tl-brush " + (config.italic ? "" : " grayed")}
-							onClick={this.toggleBold}>
-						</span>
-					</span>
-				}
-				{
-				editing ? null : typeSpecificConfig
-				}
+				{editing ? null : configPartA}
+				{editing ? null : configPartB}
 
 				{editing ? <span
 						className="half-column-config "

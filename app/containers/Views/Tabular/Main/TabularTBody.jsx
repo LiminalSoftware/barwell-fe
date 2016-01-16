@@ -118,6 +118,7 @@ var TabularTBody = React.createClass ({
 		var geo = view.data.geometry
 		var model = this.props.model
 		var pk = model._pk
+		var ptr = this.props.pointer
 		var rowKey = this.props.prefix + '-tr-' + (obj.cid || obj[pk])
 		var offset = Math.floor(this.state.offset/PAGE_SIZE) * PAGE_SIZE
 
@@ -128,6 +129,7 @@ var TabularTBody = React.createClass ({
 			geometry = {geo}
 			ref = {rowKey}
 			key = {rowKey}
+			
 			isScrolling = {this.state.scrolling} />;
 	},
 

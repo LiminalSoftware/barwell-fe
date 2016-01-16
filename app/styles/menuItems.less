@@ -1,56 +1,16 @@
 @import "../global.less";
 
-.menu-token {
-  display: inline-block;
-  padding: 5px;
-  margin: 5px;
-  border: 1px solid gray;
-}
-
-.column-item {
-  display: flex;
-  flex-direction: row;
-}
-
-.column-config, .half-column-config, .double-column-config {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.column-config {
-  padding: 8px;
-  flex: 1;
-  flex-grow: 1;
-}
-
-.half-column-config {
-  padding: 8px 3px;
-  flex: 1;
-  flex-grow: 0.2;
-  min-width: 22px;
-  &:first-child {
-    margin-left: 5px;
-  }
-}
-
-.double-column-config {
-  padding: 8px;
-  flex: 2;
-  flex-grow: 2;
-}
-
-.col-editing {
-  background: @gray4;
-}
 
 .menu-input {
   margin-left: 10px;
-  max-width: 100px;
-  padding: 1px 5px;
+  min-width: 50px;
+  display: inline-flex;
+	height:30px;
+	line-height: 30px;
+  padding: 0 5px;
+
+  border-radius: @menuItemBorderRadius;
   background: @headerMenuBgColor;
-  margin-bottom: -1px;
-  margin-top: -1px;
 
   font-family: @bodyFont;
   color: @headerFontColor;
@@ -60,12 +20,26 @@
 .menu-input.text-input {
   background: none;
   border: none;
-  border-bottom: 1px solid @headerFontColor;
+  background: @headerBgDark;
+  // border-bottom: 1px solid @headerFontColor;
   outline: none;
 }
 
 .menu-input.selector {
   padding: 0;
-  border: 1px solid @headerFontColor;
-  -webkit-appearance: none;
+  background: @headerBgDark;
+  border: none;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  appearance:none;
+  // border: 1px solid @headerFontColor;
+  // -webkit-appearance: none;
+}
+
+.hovershow {
+  opacity: 0;
+}
+div:hover > .hovershow {
+  opacity: 100%;
+  color: @gray3;
 }
