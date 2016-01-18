@@ -1,9 +1,17 @@
 var _ = require('underscore')
+import tinycolor from "tinycolor2"
 
 // fix javascript modulo bug
 Number.prototype.mod = function(n) {
     return ((this%n)+n)%n;
 };
+
+module.exports.lighten = function (color, lightness) {
+  var hsl = (!!color) ? tinycolor(color).toHsl() : tinycolor("white")
+  hsl.l = Math.max(hsl.l, lightness)
+  // hsl.s = Math.max(hsl.l, 0.8)
+  return tinycolor(hsl).toRgbString()
+}
 
 var stripInternalVars = module.exports.stripInternalVars = function (obj) {
   var newObj = {}

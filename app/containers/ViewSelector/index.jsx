@@ -28,7 +28,7 @@ var ViewSelector = React.createClass({
 			<div className="header-label">View Selector</div>
 			<div className="model-views-menu" onClick = {this.clickTrap}>
 				<div className="model-views-menu-inner" onClick = {this.handleOpen}>
-					<ViewItem {...this.props} className="inline"/>
+					<ViewItem {...this.props} singleton = {true} className="inline"/>
 				</div>
 				{this.state.open ? <ViewList {...this.props}/> : null}
 				<div className="dropdown small grayed icon icon-chevron-down"

@@ -58,12 +58,17 @@ var ModelDefinition = React.createClass({
 			<h3 key="attr-header">No Model Selected</h3>
 		</div>;
 
-		else return <div key = "model-detail-bar" className = "model-details">
-			<ModelDetails model = {model} key = {'details-'+model.model_id} />
-			<AttributeDetailList model = {model} />
-			<RelationDetailList model = {model} />
-			<KeyDetailList model = {model} />
-		</div>;
+		else return	<div className = "model-panes"><div className = "model-details">
+			<div className = "model-details-row">
+				<ModelDetails model = {model} key = {'details-'+model.model_id} />
+				<AttributeDetailList model = {model} />
+			</div>
+			<div className = "model-details-row">
+				<RelationDetailList model = {model} />
+				<KeyDetailList model = {model} />
+			</div>
+		</div></div>
+
 	}
 });
 

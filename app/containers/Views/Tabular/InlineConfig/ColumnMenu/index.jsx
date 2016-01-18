@@ -118,7 +118,7 @@ var ColumnMenu = React.createClass({
 
 	renderButtonBar: function () {
 		return <div
-			className="menu-item column-item menu-config-row"
+			className="menu-item menu-config-row"
 			key="detail-menu-items">
 			{
 				this.state.editing ?
@@ -170,7 +170,7 @@ var ColumnMenu = React.createClass({
 						{sections}
 						{this.state.editing ?
 							<div className="menu-item menu-sub-item warning-item">
-								<span className = "icon icon-kub-warning"></span>Warning: making changes here will affect all views for this model
+								<span className = "icon icon-kub-warning"/>Warning: making changes here will affect all views for this model
 							</div> : null
 						}
 						{this.renderButtonBar()}
@@ -179,10 +179,10 @@ var ColumnMenu = React.createClass({
 					:
 					// detail for currently selected column
 					<div className="model-views-menu-inner" onClick={this.clickTrap}>
-						<ColumnDetail config = {this.getCurrentCol()} view= {view}/>
+						<ColumnDetail key = {this.getCurrentCol().column_id} config = {this.getCurrentCol()} view = {view}/>
 					</div>
 				}
-				<div className="dropdown small grayed icon icon-chevron-down" onClick = {this.handleOpen}></div>
+				<div className="dropdown small grayed icon icon-chevron-down" onClick = {this.handleOpen}/>
 			</div>
 		</div>
 	}

@@ -56,19 +56,19 @@ var ColumnDetail = React.createClass({
 			React.createElement(fieldType.configA, {
 				view: view,
 				config: config,
-				classes: (editing ? "double col-editing " : "")
-			}) : <span className = "double"/>;
+				classes: ""
+			}) : <span className = ""/>;
 		var configPartB = ('configB' in fieldType) ?
 			 React.createElement(fieldType.configB, {
 				view: view,
 				config: config,
-				classes: (editing ? "double col-editing " : "")
-			}) : <span className = "double"/>;
+				classes: " "
+			}) : <span className = " "/>;
 
     return <div className={"menu-item tight menu-sub-item column-item " +
 			(this.props.dragging ? " dragging " : "")}>
 
-	      <span>
+	      <span className = "ellipsis">
 					{this.props.open ? <span
 						onMouseDown = {_this.handleDrag}
 						className="draggable icon grayed icon-Layer_2"

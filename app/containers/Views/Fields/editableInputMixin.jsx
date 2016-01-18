@@ -8,6 +8,8 @@ import ModelStore from "../../../stores/ModelStore"
 import constant from "../../../constants/MetasheetConstants"
 import modelActionCreators from "../../../actions/modelActionCreators"
 
+import util from "../../../util/util"
+
 var editableInputMixin = {
 
 	setValue: function (value) {
@@ -84,11 +86,20 @@ var editableInputMixin = {
 	},
 
 	render: function () {
+		var config = this.props.config
 		var prettyValue = this.format ? this.format(this.props.value) : this.props.value
-		var style = this.props.style
+		// var style = this.props.style
 		var showDetail = this.detailIcon && this.state.selected && !this.state.editing
 		var className = (this.props.className || '')
 			+ (this.state.selected ? ' selected ' : '');
+		var obj = this.props.object
+		var cellClass = ''
+		var cellStyle = (config.color) ? {background: util.lighten(config.color, 0.85)} :
+			(config.colorAttr) ? {background: util.lighten(obj['a' + config.colorAttr], 0.85)} : {}
+
+		if (config.bold) cellClass += ' bolded'
+		else if (config.boldAttr) cellClass += ( obj['a' + config.boldAttr] ? ' bolded' : '')
+
 
 		return <span {...this.props}
 			onWheel = {this.handleWheel}
@@ -102,16 +113,18 @@ var editableInputMixin = {
 				onBlur = {this.revert}
 				onChange = {this.handleChange} />
 			:
-			<span className = {"table-cell-inner " + (showDetail? " with-detail " : "")
-				+ (this.state.selected ? " selected" : "")}>
-				{this.format ?
-					this.format(this.state.value) :
-					this.state.value
-				}
+			<span style = {cellStyle}
+				className = {"table-cell-inner " + (showDetail? " with-detail " : "")
+				+ (this.state.selected ? " selected" : "") + cellClass}>
+					{this.format ?
+						this.format(this.state.value) :
+						this.state.value
+					}
 			</span>
 		}
 		{showDetail ?
 			<span
+				style = {{lineHeight: this.props.rowHeight + 'px'}}
 				className = {"editor-icon icon " + this.detailIcon}
 				onClick = {this.handleDetail}
 				></span>

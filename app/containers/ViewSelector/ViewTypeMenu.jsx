@@ -19,20 +19,29 @@ var ViewTypeMenu = React.createClass({
     }
   },
 
+  handleClickType: function (type) {
+    this.setState({type: type, open: false})
+  },
 
 	render: function () {
+    var _this = this
     if (!this.props.editing)
       return <span className = {"large icon view-icon " + viewTypes[this.state.type].icon}/>
     return <span className = "view-icon">
-        <span className = "pop-down" onClick = {this.handleOpen}>
-        <span className = {"large icon view-icon " + viewTypes[this.state.type].icon}/>
-        <span className = "small icon icon-chevron-down"/>
+        <span className = {"pop-down large icon " + viewTypes[this.state.type].icon
+          + (this.state.open ? " open " : " ")}
+          onClick = {this.handleOpen}>
+
         {
         this.state.open ?
         <ul className = "pop-down-menu">
-    			{_.map(viewTypes, function (type) {
-            return <li>
-              <span className = {"large icon view-icon " + type.icon}/>
+    			{_.map(viewTypes, function (type, typeKey) {
+            return <li className = "border-bottom"
+              onClick = {_this.handleClickType.bind(_this, typeKey)}
+              key ={typeKey}>
+              <span className = {"small icon icon-geo-circle " +
+                (typeKey === _this.state.type ? 'green' : 'hovershow')}/>
+              <span className = {"icon view-icon " + type.icon}/>
               {type.type}
             </li>
           })

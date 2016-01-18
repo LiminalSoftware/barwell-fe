@@ -29,9 +29,7 @@ var TableMixin = {
 			editing: false
 		}
 	},
-
-
-
+	
 	isFocused: function () {
 		return (FocusStore.getFocus() === 'view')
 	},
@@ -135,7 +133,7 @@ var TableMixin = {
 			e.preventDefault()
 			return;
 		}
-		else if (e.keyCode >= 48 && e.keyCode <= 90) {
+		else if (e.keyCode >= 48 && e.keyCode <= 90 && !e.ctrlKey) {
 			return this.editCell(e);
 		}
 	}

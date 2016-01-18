@@ -9,10 +9,10 @@ import util from '../../../../util/util'
 
 import TabularTR from './TabularTR'
 
-var VISIBLE_ROWS = 40
-var MAX_SKIP = 2
-var CYCLE = 30
-var MIN_CYCLE = 25
+var VISIBLE_ROWS = 45
+var MAX_SKIP = 3
+var CYCLE = 21
+var MIN_CYCLE = 20
 var BACKWARD_BUFFER = MAX_SKIP
 var BUFFER_SIZE = MAX_SKIP
 var PAGE_SIZE = MAX_SKIP
@@ -129,7 +129,7 @@ var TabularTBody = React.createClass ({
 			geometry = {geo}
 			ref = {rowKey}
 			key = {rowKey}
-			
+
 			isScrolling = {this.state.scrolling} />;
 	},
 

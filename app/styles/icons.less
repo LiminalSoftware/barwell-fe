@@ -1,12 +1,21 @@
 @import "./colors.less";
 
 .icon {
+	position: relative;
 	font-weight: 400;
 	text-align: center;
 	.noselect;
 	font-size: 17px;
 	min-width: 25 px;
 	margin-right: 8px;
+
+	&.decorator {
+		position: absolute !important;
+		left: 0; top: 0;
+		margin-left: -8px;
+		margin-top: -4px;
+		font-size: 13px !important;
+	}
 
 	&.right-align {
 		float: right;
@@ -27,7 +36,7 @@
     color: @gray3;
   }
 
-	
+
 
   &.green {
     color: @newgreen1;

@@ -22,6 +22,7 @@ var ViewList = React.createClass({
 	},
 
 	handleDoneEdit: function () {
+
 		this.setState({editing: false})
 	},
 
@@ -41,12 +42,12 @@ var ViewList = React.createClass({
 					editing = {editing}/>
 			)}
 			<Link to={`/workspace/${model.workspace_id}/model/${model.model_id}/config`}
-					className = "menu-item menu-sub-item" key="model-editor">
-				<span className = "small hovershow icon icon-geo-circle"/>
+					className = "menu-item menu-sub-item no-left-padding" key="model-editor">
+				<span className = {"small icon icon-geo-circle " + (!view ? " green" : " hovershow")}/>
 				<span className = "large icon icon-tl-toolbox"></span>
 				<span className = "double-column-config">Database Configuration</span>
 			</Link>
-			<div className="menu-item column-item menu-config-row" key="detail-menu-items">
+			<div className="menu-item menu-config-row" key="detail-menu-items">
 				{
 					this.state.editing ?
 					<div className = "menu-sub-item padded"

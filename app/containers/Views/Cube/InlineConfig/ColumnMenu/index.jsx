@@ -133,7 +133,7 @@ var ColumnMenu = React.createClass({
 
 	renderButtonBar: function () {
 		return <div
-			className="menu-item column-item menu-config-row"
+			className="menu-item menu-config-row"
 			key="detail-menu-items">
 			{
 				this.state.editing ?

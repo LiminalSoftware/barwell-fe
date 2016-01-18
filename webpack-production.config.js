@@ -4,12 +4,12 @@ module.exports = [
 		longTermCaching: true,
 		separateStylesheet: true,
 		minimize: true,
-		uglify: true
-		// devtool: "source-map"
+		uglify: false,
+		devtool: "source-map"
 	}),
 	require("./make-webpack-config")({
 		prerender: true,
 		minimize: true,
-		uglify: true
+		uglify: false
 	})
 ];

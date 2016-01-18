@@ -92,11 +92,9 @@ var ModelPane = React.createClass({
 				}
 
 				else {
-					bodyContent = <div className=" view-body-wrapper" key="no-view">
-					<ModelDefinition model={model}/>
-					</div>
+					bodyContent = <ModelDefinition model={model}/>
 					configElement = <div className = "view-config">
-					<ViewSelector view = {view} model = {model}/>
+						<ViewSelector view = {view} model = {model}/>
 					</div>;
 					viewDetailContent = null
 				}

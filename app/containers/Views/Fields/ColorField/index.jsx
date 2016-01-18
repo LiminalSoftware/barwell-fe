@@ -30,6 +30,7 @@ var ColorElement = React.createClass({
 				</span>
 				{this.state.selected ?
 					 <span
+					 	style = {{lineHeight: this.props.rowHeight + 'px'}}
 						className = "editor-icon icon icon-tl-paint"
 						onClick = {this.props._handleDetail}></span>
 					: null}

@@ -1,6 +1,7 @@
 @import "../global.less";
 
 .pop-down {
+
 	position: relative;
 	display: inline-block;
 	height:30px;
@@ -8,16 +9,60 @@
 	padding: 0 5px;
 	background: @headerBgDark;
 	border-radius: @menuItemBorderRadius;
+	overflow: visible;
+	border: 1px solid transparent;
+
+	&.active {
+		background: @headerFontColor;
+		color: @headerBgDark;
+	}
+
+	&.open {
+		z-index: 401;
+		// .box-shadow-transitioned(0 0 0 1px @headerBorderHilite);
+
+		background: white;
+		color: @headerMenuBgColor;
+
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+	}
 }
 
 .pop-down-menu {
+	z-index: 400;
 	position: absolute;
 	top: 100%;
+	left: 0;
+	padding: 0;
+	margin: 0;
+	margin-left: -1px;
 
-	background: @headerBgDark;
 	list-style: none;
+
+	// border: 1px solid @headerBorderHilite;
+	// .box-shadow-transitioned(0 0 0 1px @headerBorderHilite);
+
+	border-radius: 0;
+
+
+	font-family: @bodyFont;
+
+	background: white;
+	color: @headerMenuBgColor;
+	font-size: 15px;
+
 	& > li {
 		display: block;
+		padding: 6px;
+		margin: 0;
+		text-align: left;
+		&.bottom-divider {
+			border-bottom: 1px dotted @headerMenuBgColor;
+		}
+		&.top-divider {
+			border-top: 1px dotted @headerMenuBgColor;
+		}
 	}
 }
 
@@ -68,24 +113,24 @@
 	display: flex;
 	flex: 1 1;
 	height: 40px;
-	.ellipsis;
+	overflow: visible;
+
 	background: @headerMenuBgColor;
 	margin: 0 !important;
 	border: 1px solid @headerBorderColor;
 }
 
 .dropdown, .model-views-menu-inner {
-	border: 1px solid @headerBorderColor;
-	border-left: none;
-	&:first-child {
-		border-left: 1px solid @headerBorderColor;
-	}
 }
 
 .dropdown {
 	background: @headerMenuBgColor;
 	display: flex;
-	padding: 14px 8px;
+	height: 40px;
+	line-height: 40px;
+	padding: 5px;
+	text-align: center;
+
 	margin: 0 !important;
 	text-align: center;
 	vertical-align: middle;
@@ -107,6 +152,7 @@
 
 
 .menu-item {
+	overflow: visible;
 	display: flex;
 	flex-direction: row;
 	background: none;
@@ -131,6 +177,7 @@
 }
 
 .menu-sub-item {
+	overflow: visible;
 	height: 40px;
 	line-height: 40px;
 	padding: 0;
@@ -138,7 +185,10 @@
 	padding-left: 10px;
 	padding-right: 10px;
 
-	.ellipsis;
+	&.no-left-padding {
+		padding-left: 0;
+	}
+
 	text-decoration: none;
 	display: flex;
 	flex: 1 1;
@@ -147,10 +197,14 @@
 
 	& > span {
 		flex: 1 1;
-		.ellipsis;
+		white-space: nowrap;
 		margin: 0;
 		height: 40px;
 		line-height: 40px;
+		&.ellipsis {
+			.ellipsis;
+		}
+
 		&.double {
 			flex: 2 2;
 		}

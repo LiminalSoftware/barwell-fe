@@ -34,8 +34,7 @@ var ColorDetail = React.createClass({
 		var hue = util.sequence(0, 360, 17).map(Math.round)
 		var sat = [0.8, 0.6, 0.4, 0.2].map(e => Math.round(e*100) + '%')
 		var lit = util.sequence(0.3, 0.9, 3).map(e => Math.round(e*100)  + '%')
-
-		// console.log(hue)
+		
 		var color = tinycolor(obj[config.column_id]).toRgbString()
 
 		return <div className = "color-detail-inner">

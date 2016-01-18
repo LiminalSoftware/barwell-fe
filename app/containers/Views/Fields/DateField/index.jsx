@@ -67,8 +67,7 @@ var dateField = {
 			var key = "attr-" + config.id
 			var style = this.props.style
 
-			return <span className="double-column-config">
-					Format:
+			return <span>
 					<input type = "text"
 						className = "menu-input text-input"
 						spellCheck = "false"

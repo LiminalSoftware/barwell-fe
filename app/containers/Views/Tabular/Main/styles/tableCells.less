@@ -85,11 +85,11 @@
 	font-family: @bodyFont;
 	font-weight: 400;
 	left: 0px;
-	right: 1px;
+	right: 0px;
 }
 
 .editor-icon, .table-cell-inner, .special-cell-inner, .input-editor {
-	position: absolute;
+	position: absolute !important;
 	.border-box;
 	margin: 0;
 	padding: 1px 3px;
@@ -99,10 +99,11 @@
 }
 
 .editor-icon {
-	padding: 2px !important;
+	margin: 0 !important;
+	margin-right: 5px;
+	margin-left: 5px;
 	cursor: pointer;
-	margin: 1px !important;
-	width: 22px;
+	max-width: 22px;
 	z-index: 200;
 }
 
