@@ -23,7 +23,7 @@ var SortMenu = React.createClass({
 		return {
 			open: false,
 			editing: false,
-			sortList: view.data.sorting
+			sortList: view.data.sorting || []
 		}
 	},
 
@@ -35,30 +35,47 @@ var SortMenu = React.createClass({
 		this.setState({sortList: sortList})
 	},
 
+	handleSave: function () {
+		var view = this.props.view
+		view.data.sorting = this.state.sortList
+
+		modelActionCreators.createView(view, true, true);
+	},
+
+	handleCancel: function () {
+		this.setState({
+			sortList: view.data.sorting,
+			open: false
+		})
+	},
+
 	render: function() {
 		var _this = this
 		var view = this.props.view
 		var sortList = this.state.sortList
 		var sortAttrs = _.pluck(sortList, 'attribute_id')
 		var sortPreview
-		var attrSelections = []
+		var attrSelections = [<option key = "null" value = {null}>-- Select attribute --</option>]
 
 		if (sortList.length === 1) sortPreview = <SortDetail config = {sortList[0]} view = {view}/>
 		else if (sortList.length > 1) sortPreview = <div className="menu-item closed menu-sub-item">Multiple sort levels</div>
 		else if (sortList.length === 0) sortPreview = <div className="menu-item closed menu-sub-item empty-item">Default sort order</div>
 
 		AttributeStore.query({model_id: view.model_id}).forEach(function (attr) {
+			var type = fieldTypes[attr.type]
 			if (_.contains(sortAttrs, attr.attribute_id)) return;
+			if (!type || !type.sortable) return
+
 			var attribute_id = (attr.attribute_id || attr.cid)
 			attrSelections.push(
 				<option value = {attribute_id} key = {attribute_id}>
 						{attr.attribute}
 				</option>
-				);
+			);
 		})
 
-    return <div className = "header-section">
-			<div className="header-label">Sort Order</div>
+    	return <div className = "header-section">
+			<div className="header-label">Sorting</div>
 			<div className="model-views-menu" onClick = {util.clickTrap}>
 				{
 				this.state.open ?
@@ -69,9 +86,21 @@ var SortMenu = React.createClass({
 					})
 					}
 					<div className = "menu-item menu-sub-item">
-						<select className = "menu-input selector" onChange = {this.chooseItem}>
-							{attrSelections}
-						</select>
+						<span>
+							<select className = "menu-input selector" onChange = {this.chooseItem}>
+								{attrSelections}
+							</select>
+						</span>
+					</div>
+					<div className = "menu-item menu-config-row">
+						<div className = "menu-sub-item"
+							onClick = {this.handleSave}>
+							Save changes
+						</div>
+						<div className = "menu-sub-item"
+							onClick = {this.handleCancel}>
+							Cancel
+						</div>
 					</div>
 				</div>
 				:

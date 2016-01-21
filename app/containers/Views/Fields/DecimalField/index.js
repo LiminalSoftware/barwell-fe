@@ -21,6 +21,29 @@ var decimalField = {
 	element: React.createClass({
 		mixins: [editableInputMixin, commitMixin, selectableMixin],
 
+		sortable: true,
+
+		configA: TextFieldConfig,
+
+		configB: {
+			getInitialState: function () {
+				return {
+					commas: true
+				}
+			},
+
+			handleToggleCommas: function () {
+				this.setState({commas: !this.state.commas})
+			},
+
+			render: function () {
+				return <span>
+					<span className={"pop-down clickable  " + (this.state.commas ? " selected " : "")}
+			        onMouseDown = {this.handleToggleCommas}>,</span>
+				</span>
+			},
+		},
+
 		validator: function (input) {
 			if (!(/^\d*(\.\d*)?$/).test(input))
 				return null

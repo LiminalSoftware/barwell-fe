@@ -11,7 +11,7 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 import selectableMixin from './selectableMixin'
 
 var hasOneField = {
-	configRows: React.createClass({
+	configA: React.createClass({
 
 		getInitialState: function () {
 			var config = this.props.config
@@ -38,7 +38,6 @@ var hasOneField = {
 			var model_id = config.related_model_id
 
 			return <span className="double-column-config">
-					Label:
 					<select className="menu-input selector" onChange={this.onLabelChange} value={this.state.label}>
 						{AttributeStore.query({model_id: model_id}).map(function (attr) {
 							return <option

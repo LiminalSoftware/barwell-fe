@@ -6,7 +6,7 @@ import { Link } from "react-router"
 
 import ViewTypeMenu from './ViewTypeMenu'
 import util from "../../util/util"
-
+import modelActionCreators from "../../actions/modelActionCreators.jsx"
 
 var ViewItem = React.createClass({
 
@@ -14,7 +14,8 @@ var ViewItem = React.createClass({
 			var view = this.props.view || {}
 			return {
 				name: view.view,
-				editing: false
+				editing: false,
+				deleting: false
 			}
 	},
 
@@ -32,6 +33,25 @@ var ViewItem = React.createClass({
 		util.clickTrap(e)
 	},
 
+	handleClickRestore: function (e) {
+		this.setState({deleting: false})
+		util.clickTrap(e)
+	},
+
+	componentWillReceiveProps: function (nextProps) {
+		var props = this.props
+		if (props.editing && !nextProps.editing) this.saveChanges()
+	},
+
+	saveChanges: function () {
+		var view = this.props.view
+		view.type = this.refs.viewTypeMenu.state.type
+		view.view = this.state.name
+		if (this.state.deleting)
+			modelActionCreators.destroyView(view);
+		else modelActionCreators.createView(view, true, true);
+	},
+
 	render: function () {
 		var view = this.props.view
 		var model = this.props.model
@@ -39,8 +59,8 @@ var ViewItem = React.createClass({
 		if (view && this.props.editing)
 			return <div className = "menu-item menu-sub-item no-left-padding">
 				<span className = "draggable icon grayed icon-Layer_2"/>
-				<ViewTypeMenu type = {view.type} editing = {this.state.editing}/>
-				<span className = "double ellipsis">
+				<ViewTypeMenu ref = "viewTypeMenu" type = {view.type} editing = {this.state.editing} deleting = {this.state.deleting}/>
+				<span className = {"double ellipsis " + (this.state.deleting ? " strikethrough" : "")}>
 					{this.state.editing ?
 						<input className = "menu-input text-input"
 								value = {this.state.name}
@@ -48,12 +68,14 @@ var ViewItem = React.createClass({
 								onChange = {this.handleNameChange}/>
 						: view.view}
 				</span>
-				{this.props.editing ?
+				{this.props.editing && !this.state.deleting && !this.state.editing?
 						<span className = "icon icon-pencil-2"
 							onClick = {this.handleClickEdit}/> : null}
-				{this.props.editing ?
+				{this.props.editing && this.state.deleting ?
+						<span className = "icon icon-tl-undo"
+							onClick = {this.handleClickRestore}/> :
 						<span className = "icon icon-cr-delete"
-							onClick = {this.handleClicDelete}/> : null}
+							onClick = {this.handleClickDelete}/>}
 			</div>
 		else if (view)
 			return <Link

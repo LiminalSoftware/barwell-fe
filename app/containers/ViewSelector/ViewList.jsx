@@ -5,6 +5,7 @@ import viewTypes from "../Views/viewTypes"
 import { Link } from "react-router"
 
 import ViewItem from './ViewItem'
+import modelActionCreators from "../../actions/modelActionCreators.jsx"
 
 var ViewList = React.createClass({
 	getInitialState: function () {
@@ -14,7 +15,18 @@ var ViewList = React.createClass({
 	},
 
 	addNew: function () {
-
+		var model = this.props.model
+		var name = 'New view'
+		var iter = 0
+		while (ViewStore.query({model_id: model.model_id, view: name}).length > 0) {
+			name = 'New view ' + (iter++)
+		}
+		modelActionCreators.createView({
+			view: name,
+			model_id: model.model_id,
+			type: 'Tabular'
+		})
+		this.setState({editing: true})
 	},
 
 	handleEdit: function () {
@@ -22,7 +34,6 @@ var ViewList = React.createClass({
 	},
 
 	handleDoneEdit: function () {
-
 		this.setState({editing: false})
 	},
 
@@ -60,7 +71,7 @@ var ViewList = React.createClass({
 						Edit views
 					</div>
 				}
-				<div className="menu-sub-item padded">
+				<div className="menu-sub-item padded" onClick = {this.addNew}>
 					Add view
 				</div>
 			</div>

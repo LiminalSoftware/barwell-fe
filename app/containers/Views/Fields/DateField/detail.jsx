@@ -74,7 +74,7 @@ var DateDetail = React.createClass({
 						Year:
 						<input className = "menu-input text-input"
 						value = {this.state.year}/></div>
-				</div>
+					</div>
 				<div className="dropdown small grayed icon icon-geo-arrw-right" onClick = {this.incYear}></div>
 			</div>
 

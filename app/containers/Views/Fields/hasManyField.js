@@ -12,7 +12,7 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 import selectableMixin from './selectableMixin'
 
 var hasManyField = {
-	configRows: React.createClass({
+	configA: React.createClass({
 
 		handleEdit: function () {
 
@@ -47,12 +47,11 @@ var hasManyField = {
 
 			return <span className="double-column-config"
 				key = {key + '-label-attribute'} >
-				Label:
 				<select onChange={this.onLabelChange}
 					className = "menu-input selector"
 					value={this.state.label}>
 					{AttributeStore.query({model_id: model_id}).map(function (attr) {
-						return <option value={'a' + attr.attribute_id}>{attr.attribute}</option>
+						return <option key = {'a' + attr.attribute_id} value={'a' + attr.attribute_id}>{attr.attribute}</option>
 					})}
 				</select>
 			</span>

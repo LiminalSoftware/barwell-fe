@@ -64,6 +64,7 @@ var CheckboxElement = React.createClass({
 });
 
 var booleanField = {
+	sortable: true,
 	defaultAlign: 'center',
 	element: CheckboxElement,
 	uneditable: true

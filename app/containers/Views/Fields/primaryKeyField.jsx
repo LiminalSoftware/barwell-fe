@@ -21,7 +21,9 @@ var PrimaryKeyElement = React.createClass({
 		var style = this.props.style
 
 		return <span style={style} className="table-cell uneditable">
-			{this.props.value}
+			<span className = {"table-cell-inner " + (this.state.selected ? " selected" : "")}>
+				{this.props.value}
+			</span>
 		</span>
 	}
 })

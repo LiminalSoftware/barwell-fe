@@ -5,6 +5,7 @@ import viewTypes from "../Views/viewTypes"
 import { Link } from "react-router"
 // import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
+
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import blurOnClickMixin from '../../blurOnClickMixin'
 
@@ -25,7 +26,7 @@ var ViewSelector = React.createClass({
 		if (!model) return null
 
 		return <div className = "header-section ">
-			<div className="header-label">View Selector</div>
+			<div className="header-label">Views</div>
 			<div className="model-views-menu" onClick = {this.clickTrap}>
 				<div className="model-views-menu-inner" onClick = {this.handleOpen}>
 					<ViewItem {...this.props} singleton = {true} className="inline"/>

@@ -1,0 +1,49 @@
+@import "../../../../global.less";
+
+.calendar-table {
+  border-collapse: collapse;
+}
+
+.month-label {
+  color: @headerFontColor;
+  border: 1px double @headerFontColor;
+  border-left: none;
+}
+
+.week-box {
+  // display: flex;
+  // flex-direction: row;
+  // flex: 1 1;
+  &:first-child {
+    border-top: none;
+  }
+}
+
+.day-box {
+  // display: flex;
+  // flex-direction: column;
+  // flex: 1 1;
+  color: @headerFontColor;
+  border-right: 1px solid @headerBgDark;
+  border-bottom: 1px solid @headerBgDark;
+
+  padding: 5px;
+  text-align: center;
+  cursor: pointer;
+
+  &.last-week {
+    border-bottom: 1px double @headerFontColor;
+  }
+  &.last-day {
+    border-right: 1px double @headerFontColor;
+  }
+  &.first-day {
+    border-left: 1px solid @headerFontColor;
+  }
+  &.selected {
+    border: 1px double @newgreen1;
+    color: white;
+  }
+  &.different-year {
+  }
+}

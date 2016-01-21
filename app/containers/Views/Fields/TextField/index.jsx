@@ -17,6 +17,7 @@ import TextFieldConfig from "../textFieldConfig"
 
 var textField = {
 	configA: TextFieldConfig,
+	sortable: true,
 	element: React.createClass({
 		mixins: [editableInputMixin, commitMixin, selectableMixin],
     detailIcon: 'icon-maximise-2',

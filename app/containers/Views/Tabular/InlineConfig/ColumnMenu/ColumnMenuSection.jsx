@@ -45,9 +45,10 @@ var ColumnMenuSection = React.createClass({
 
 	dragInto: function (e, item, direction) {
 		var columns = this.state.columns
-		if (direction === 'up') item.order = _.last(columns).order + 0.5
-		else item.order = _.first(columns).order - 0.5
-		columns.push(item)
+		if(columns && columns.length > 0) 
+			item.order = (direction === 'up') ? 
+			_.last(columns).order + 0.5 : 
+			_.first(columns).order - 0.5
 
 		this.setState({
 			dragItem: item,

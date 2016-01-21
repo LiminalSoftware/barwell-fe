@@ -2,7 +2,7 @@ import React from "react"
 import _ from "underscore"
 import $ from "jquery"
 import moment from "moment"
-
+import styles from "./style.less"
 import AttributeStore from "../../../../stores/AttributeStore"
 import ModelStore from "../../../../stores/ModelStore"
 
@@ -20,6 +20,8 @@ import TextFieldConfig from "../textFieldConfig"
 var dateField = {
 
 	detail: DateDetail,
+
+	sortable: true,
 
 	configCleanser: function (config) {
 		config.dateFormat = config.dateFormat || "MM/DD/YYYY"

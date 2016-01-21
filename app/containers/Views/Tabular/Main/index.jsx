@@ -253,10 +253,13 @@ var TabularPane = React.createClass ({
 
 	copySelection: function () {
 		var clipboard = ""
+		var view = this.props.view
 		var sel = this.state.selection
 		for (var r = sel.top; r <= sel.bottom; r++) {
+			var obj = this.store.getObject(r)
 			for (var c = sel.left; c <= sel.right; c++) {
-				var value = this.getFieldAt({top: r, left: c}).props.value
+				var colId = view.data.visibleCols[c].column_id
+				var value = obj[colId]
 				clipboard += (value === null ? "" : value) + (c == sel.right ? "" : "\t")
 			}
 			clipboard += (r == sel.bottom ? "" : "\n")
@@ -268,12 +271,10 @@ var TabularPane = React.createClass ({
 	pasteSelection: function (e) {
 		var text = e.clipboardData.getData('text')
 		var data = text.split('\n').map(r => r.split('\t'))
-		var cbr = 0
-		var cbc = 0
 		var sel = this.state.selection
-		for (var r = sel.top; r <= sel.bottom; r++) {
+		for (var r = sel.top, cbr; r <= sel.bottom; r++) {
 			cbr = (r - sel.top) % data.length
-			for (var c = sel.left; c <= sel.right; c++) {
+			for (var c = sel.left, cbc; c <= sel.right; c++) {
 				cbc = (c - sel.left) % data[cbr].length
 				var value = data[cbr][cbc]
 				this.getFieldAt({top: r, left: c}).commitValue(value);

@@ -13,9 +13,14 @@ import commitMixin from './commitMixin'
 import editableInputMixin from './editableInputMixin'
 import selectableMixin from './selectableMixin'
 
+import TextFieldConfig from "./textFieldConfig"
+
 var integerField = {
 	element: React.createClass({
 		mixins: [editableInputMixin, commitMixin, selectableMixin],
+
+		configA: TextFieldConfig,
+		sortable: true,
 
 		validator: function (input) {
 			if (_.isNumber(input) )

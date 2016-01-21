@@ -38,10 +38,9 @@ var groomView = function (view) {
 	var fields = AttributeStore.query({model_id: view.model_id});
 	var relations = RelationStore.query({model_id: view.model_id})
 	var iter =  BIG_NUM;
-	data.sorting = []
-	var sorting = {}
+	
 
-  var columns = data.columns = groomFields(view)
+  	var columns = data.columns = groomFields(view)
 	var columnList = enumerate(_.values(columns))
 
 	data.columnList = columnList
@@ -51,6 +50,14 @@ var groomView = function (view) {
 	data.floatWidth = util.sum(data.floatCols, 'width')
 	data.fixedWidth = util.sum(data.fixedCols, 'width')
 	data.columns = _.indexBy(data.columnList, 'column_id');
+
+	data.sorting = _.isArray(data.sorting) ? data.sorting : []
+	data.sorting = data.sorting.filter(function (sort) {
+		var column = data.columns[sort.column_id]
+		if (!column) return false
+		var type = fieldTypes[column.type]
+		if (type.sortable) return true
+	})
 
 	data.selection = _.extend({'left': 0, 'top': 0, 'right': 0, 'bottom': 0}, (data.selection || {}) );
 	data.selection = limit(data.selection, view)
@@ -70,6 +77,8 @@ var groomView = function (view) {
 		rowPadding: 1,
 		colAddWidth: 100
 	}, {})
+
+
 
 	view.data = data;
 	return view

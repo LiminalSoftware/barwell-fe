@@ -16,6 +16,12 @@ var SortDetail = React.createClass({
 
 	mixins: [PureRenderMixin],
 
+	getInitialState: function () {
+		return {
+			ascending: true
+		}
+	},
+
 	remove: function () {
 		var view = this.props.view
 		var config = this.props.config
@@ -25,25 +31,19 @@ var SortDetail = React.createClass({
 	},
 
 	switch: function () {
-		var view = this.props.view
-		var config = this.props.config
-		view.data.sorting = view.data.sorting.map(function (sort) {
-			if (sort.attribute_id === config.attribute_id)
-				sort.descending = !sort.descending
-			return sort
-		})
-		modelActionCreators.createView(view, true, false)
+		this.setState({ascending: !this.state.ascending})
 	},
 
 	render: function() {
     var view = this.props.view
     var config = this.props.config
-		var attr = AttributeStore.get(config.attribute_id)
+	var attr = AttributeStore.get(config.attribute_id)
+
     return <div className="menu-item tight menu-sub-item">
 			{this.props.editing ? <span
 				onMouseDown = {this.handleDrag}
 				className="draggable half-column-config tight icon grayed icon-Layer_2"/> : null }
-      <span className = "double-column-config">{attr.attribute}</span>
+      		<span className = "ellipsis">{attr.attribute}</span>
 
 			<span onClick={this.switch}
 				className={"half-column-config tight icon grayed icon-sort-az-" + (config.descending ? 'high' : 'low')}>

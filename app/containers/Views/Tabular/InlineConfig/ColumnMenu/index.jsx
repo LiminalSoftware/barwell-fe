@@ -59,9 +59,9 @@ var ColumnMenu = React.createClass({
 	getCurrentCol: function () {
 		var view = this.props.view
 		var data = view.data
-		var columns = view.data.columnList
-		columns = columns.filter(col => col.visible)
+		var columns = view.data.columnList.filter(col => col.visible)
 		return columns[data.pointer.left]
+
 	},
 
 	sections : [
@@ -143,6 +143,7 @@ var ColumnMenu = React.createClass({
 		var view = this.props.view
 		var data = view.data
 		var columns = view.data.columnList
+		var currentCol = this.getCurrentCol()
 		var sections = this.sections.map(function (section, idx) {
 			return <ColumnMenuSection
 				view = {view}
@@ -160,7 +161,7 @@ var ColumnMenu = React.createClass({
 		})
 
     	return <div className = "double header-section" >
-				<div className="header-label">Table Columns</div>
+				<div className="header-label">Columns</div>
 				<div className="model-views-menu">
 				{
 					this.state.open ?
@@ -178,9 +179,16 @@ var ColumnMenu = React.createClass({
 					</div>
 					:
 					// detail for currently selected column
+					
+					currentCol ? 
 					<div className="model-views-menu-inner" onClick={this.clickTrap}>
-						<ColumnDetail key = {this.getCurrentCol().column_id} config = {this.getCurrentCol()} view = {view}/>
+						<ColumnDetail key = {currentCol.column_id} config = {currentCol} view = {view}/>
 					</div>
+					:
+					<div className="model-views-menu-inner" onClick={this.clickTrap}>
+						<div className="menu-item menu-sub-item">No selection...</div>
+					</div>
+					
 				}
 				<div className="dropdown small grayed icon icon-chevron-down" onClick = {this.handleOpen}/>
 			</div>

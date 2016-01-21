@@ -9,6 +9,10 @@ import constant from "../../../constants/MetasheetConstants"
 import modelActionCreators from "../../../actions/modelActionCreators"
 
 import util from "../../../util/util"
+import tinycolor from "tinycolor2"
+
+var MIN_LIGHTNESS = 0.85
+var SELECTED_LIGHTNESS = 0.97
 
 var editableInputMixin = {
 
@@ -94,12 +98,24 @@ var editableInputMixin = {
 			+ (this.state.selected ? ' selected ' : '');
 		var obj = this.props.object
 		var cellClass = ''
-		var cellStyle = (config.color) ? {background: util.lighten(config.color, 0.85)} :
-			(config.colorAttr) ? {background: util.lighten(obj['a' + config.colorAttr], 0.85)} : {}
+		var cellStyle = {}
+		var bg = null
+		var fontColor = null
 
-		if (config.bold) cellClass += ' bolded'
-		else if (config.boldAttr) cellClass += ( obj['a' + config.boldAttr] ? ' bolded' : '')
+		// if (this.state.selected) bg = "white"
+		if (config.color) bg = config.color
+		else if (config.colorAttr) bg = obj['a' + config.colorAttr]
 
+		if (bg) {
+			var c = tinycolor(bg)
+			var hsl = c.toHsl()
+			if (config.adjustColor) hsl.l = 
+				Math.max(hsl.l, (this.state.selected ? SELECTED_LIGHTNESS : MIN_LIGHTNESS))
+			else if (c.isDark()) cellStyle.color = 'white'
+			cellStyle.background = tinycolor(hsl).toRgbString()
+		}
+
+		if (config.boldAttr) cellClass += ( obj['a' + config.boldAttr] ? ' bolded' : '')
 
 		return <span {...this.props}
 			onWheel = {this.handleWheel}

@@ -65,7 +65,7 @@ var TabularTBody = React.createClass ({
 		var current = this.state.offset
 		var delta = (target - current)
 		var magnitude = Math.abs(delta)
-		var direction = Math.sign(delta)
+		var direction = (delta > 0 ? 1 : delta < 0 ? -1 : 0)
 		var setpoint = current + (Math.min(magnitude, MAX_SKIP) * direction)
 		this.setState({
 			offset: setpoint,

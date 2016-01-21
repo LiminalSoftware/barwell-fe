@@ -46,9 +46,8 @@ var ColorChoice = React.createClass({
     this.setState({open: false})
   },
 
-  handelAdjustCheck: function (e) {
-    var value = e.target.value
-    this.commitChanges({adjustColor: value})
+  handleAdjustCheck: function () {
+    this.commitChanges({adjustColor: !this.state.adjustColor})
   },
 
   render: function () {
@@ -68,9 +67,7 @@ var ColorChoice = React.createClass({
           {
             colorAttrs.length > 0 ?
             <li className="bottom-divider">
-              Conditional (adjust: <input type="checkbox"
-                checked = {this.state.adjustColor}
-                onChange = {this.handleAdjustCheck}/>)
+              Conditional
             </li>
             :
             null
@@ -112,6 +109,12 @@ var ColorChoice = React.createClass({
               ((_this.state.colorAttr === null && _this.state.color === null) ? 'green' : 'hovershow')}/>
             <span className = "icon icon-tl-forecolour"/>
             No cell color
+          </li>
+
+          <li className = "top-divider">
+          Auto-lighten colors: <input type="checkbox"
+            onChange = {_this.handleAdjustCheck}
+            checked = {_this.state.adjustColor} />
           </li>
 
 
