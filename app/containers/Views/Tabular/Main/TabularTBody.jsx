@@ -9,12 +9,14 @@ import util from '../../../../util/util'
 
 import TabularTR from './TabularTR'
 
-var VISIBLE_ROWS = 45
+
+var VISIBLE_ROWS = 40
+var MAX_ROWS = 90
 var MAX_SKIP = 1
 var TURBO_SKIP = 2
 var TURBO_THRESHOLD = 10 
 var CYCLE = 31
-var MIN_CYCLE = 28
+var MIN_CYCLE = 30
 var BACKWARD_BUFFER = 6
 var BUFFER_SIZE = 4
 var PAGE_SIZE = MAX_SKIP
@@ -30,6 +32,8 @@ var TabularTBody = React.createClass ({
 
 	getInitialState: function () {
 		return {
+			start: 0,
+			end: VISIBLE_ROWS,
 			offset: 0,
 			target: 0,
 			length: VISIBLE_ROWS,
@@ -63,22 +67,41 @@ var TabularTBody = React.createClass ({
 	},
 
 	updateOffset: function () {
+		if (!this.isMounted()) return
+		var rowCount = this.props.store ? this.props.store.getRecordCount() : 0
 		var current = this.state.offset
 		var target = this.state.target
 		var delta = (target - current)
 		var paintDirection = (delta > 0 ? 1 : delta < 0 ? -1 : 0)
 		var magnitude = Math.abs(delta)
 		var skip = (magnitude >= TURBO_THRESHOLD || this.state.speed > 3) ? TURBO_SKIP : MAX_SKIP
-		var setpoint = current + (Math.min(magnitude, skip) * paintDirection)
+		var step = Math.min(magnitude, skip) * paintDirection
+		var setpoint = current + step
+		var start = this.state.start
+		var end = this.state.end
+		var visibleRows = (end - start)
 		
+		// if (start > target && start - 1 >= 0) 
+		// 	start -= (magnitude >= TURBO_THRESHOLD ? TURBO_SKIP : MAX_SKIP)
+		// if (paintDirection > 0 && visibleRows >= MAX_ROWS) start += TURBO_SKIP
+		// if (paintDirection === 0 && start < setpoint) start += TURBO_SKIP
+
+		// if (end < target + VISIBLE_ROWS && end + 1 <= rowCount) 
+		// 	end += (magnitude >= TURBO_THRESHOLD ? TURBO_SKIP : MAX_SKIP)
+		// if (paintDirection < 0 && visibleRows >= MAX_ROWS) end -= TURBO_SKIP
+		// if (paintDirection === 0 && end > setpoint + VISIBLE_ROWS) end -= TURBO_SKIP	
+
 		this.setState({
 			scrolling: (setpoint !== target),
-			offset: setpoint
+			offset: setpoint,
+			start: start,
+			end: end
 		})
 	},
 
 	componentDidUpdate: function (prevProps) {
 		var now = new Date().getTime()
+		var visibleRows = this.state.end - this.state.start
 
 		// we just updated so set the _lastUpdate time to now
 		this._lastUpdate = now
@@ -86,7 +109,7 @@ var TabularTBody = React.createClass ({
 		if (this.__timer) clearTimeout(this.__timer)
 		// if we haven't reached the target yet, set a timer for next frame
 
-		if (this.state.offset !== this.state.target ) {
+		if (this.state.offset !== this.state.target || visibleRows >= VISIBLE_ROWS) {
 			this.__timer = onFrame(this.updateOffset)
 		}
 	},
@@ -94,9 +117,10 @@ var TabularTBody = React.createClass ({
 	shouldComponentUpdate: function (nextProps, nextState) {
 		// return false;
 		var now = new Date().getTime()
+		var visibleRows = this.state.end - this.state.start
 		if (now - this._lastUpdate < MIN_CYCLE) return false
 
-		return (this.state.offset !== this.state.target)
+		return (this.state.offset !== this.state.target || visibleRows >= VISIBLE_ROWS)
 	},
 
 	_onChange: function () {
@@ -138,6 +162,7 @@ var TabularTBody = React.createClass ({
 		var ptr = this.props.pointer
 		var rowKey = this.props.prefix + '-tr-' + (obj.cid || obj[pk])
 		var offset = this.state.offset
+		// var offset = this.state.start
 
 		return <TabularTR  {...this.props}
 			obj = {obj}
@@ -155,7 +180,8 @@ var TabularTBody = React.createClass ({
 		var offset = Math.floor(this.state.offset/PAGE_SIZE) * PAGE_SIZE
 		var length = Math.floor(this.state.length/PAGE_SIZE) * PAGE_SIZE
 		var rows = this.props.store ? this.props.store.getObjects(
-			offset, offset + length
+			// this.state.start, this.state.end
+			this.state.offset, this.state.offset + VISIBLE_ROWS
 		) : []
 		var rowCount = this.props.store ? this.props.store.getRecordCount() : 0
 		var geo = view.data.geometry

@@ -91,10 +91,14 @@ var AttributeDetail = React.createClass({
 		var actions = [];
 
 		return <ReactCSSTransitionGroup
-				transitionEnterTimeout={500} transitionLeaveTimeout={300} 
-				key={key} transitionName="detail-row" component = "div"
-				className={("detail-row ") + (col._dirty?'unsaved':'') + (col._destroy?'destroyed':'') +
-				 (this.props.editing ? ' editing ' : null) + (this.state.new ? ' new' : null)}>
+				transitionEnterTimeout={500} 
+				transitionLeaveTimeout={300} 
+				key={key} 
+				transitionName="detail-row" 
+				component = "div"
+				className={("detail-row ") + (col._dirty ?' unsaved ':'') + (col._destroy ? ' destroyed ':'') +
+				 (this.props.editing ? ' editing ' : '') + (this.state.new ? ' new' : '')}>
+
 				{this.props.editing ?
 					<span className="draggable" key="drag-cell">
 						<span className="tighter icon icon-Layer_2 model-reorder"></span>

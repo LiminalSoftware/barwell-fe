@@ -9,11 +9,11 @@ import modelActionCreators from "../../actions/modelActionCreators.jsx"
 
 var ViewList = React.createClass({
 	getInitialState: function () {
-			return {
-				editing: false
-			}
+		return {
+			editing: false
+		}
 	},
-
+	
 	addNew: function () {
 		var model = this.props.model
 		var name = 'New view'
@@ -24,7 +24,8 @@ var ViewList = React.createClass({
 		modelActionCreators.createView({
 			view: name,
 			model_id: model.model_id,
-			type: 'Tabular'
+			type: 'Tabular',
+			data: {}
 		})
 		this.setState({editing: true})
 	},

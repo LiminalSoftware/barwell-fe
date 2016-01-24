@@ -57,52 +57,40 @@ var TabularPane = React.createClass ({
 	},
 
 	componentWillMount: function () {
-		// var copyPasteDummy = document.getElementById('copy-paste-dummy')
 		
+
 		document.body.addEventListener('keydown', this.onKey)
 		FocusStore.addChangeListener(this._onChange)
-		// copyPasteDummy.addEventListener('paste', this.pasteSelection)
-		// copyPasteDummy.focus()
+		
 		this.store = createTabularStore(this.props.view)
 	},
 
 	componentWillUnmount: function () {
-		// var copyPasteDummy = document.getElementById('copy-paste-dummy')
+		var copyPasteDummy = document.getElementById('copy-paste-dummy')
 		document.body.removeEventListener('keydown', this.onKey)
 		FocusStore.removeChangeListener(this._onChange)
-		// copyPasteDummy.removeChangeListener('paste', this.pasteSelection)
+		copyPasteDummy.removeEventListener('paste', this.pasteSelection)
 		this.store.unregister()
 	},
 
 	componentDidMount: function () {
-		var now = new Date().getTime()
-		this._lastUpdate = now
+		var copyPasteDummy = document.getElementById('copy-paste-dummy')
+		copyPasteDummy.addEventListener('paste', this.pasteSelection)
+		copyPasteDummy.focus()
 	},
 
 	shouldComponentUpdate: function (nextProps, nextState) {
 		var _this = this
 		var props = this.props
 		var state = this.state
-		var now = new Date().getTime()
-		var timeSinceUpdt = (now - this._lastUpdate)
-
-		if (props.view !== nextProps.view ||
-				!_.isEqual(state.selection, nextState.selection) ||
-				!_.isEqual(state.pointer, nextState.pointer) ||
-				!_.isEqual(state.copyarea, nextState.copyarea) ||
-				!_.isEqual(state.detailOpen, nextState.detailOpen) ||
-				!_.isEqual(state.contextOpen, nextState.contextOpen) ||
-				state.hiddenColWidth !== nextState.hiddenColWidth
-		) {
-			// if (timeSinceUpdt >= THROTTLE_DELAY) {
-				window.clearTimeout(this._updtTimer)
-				return true
-			// } else {
-			// 	this._updtTimer =
-			// 	window.setTimeout(function(){_this._onChange}, THROTTLE_DELAY - timeSinceUpdt + 1, {})
-			// }
-		}
-		return false
+		return (props.view !== nextProps.view ||
+			!_.isEqual(state.selection, nextState.selection) ||
+			!_.isEqual(state.pointer, nextState.pointer) ||
+			!_.isEqual(state.copyarea, nextState.copyarea) ||
+			!_.isEqual(state.detailOpen, nextState.detailOpen) ||
+			!_.isEqual(state.contextOpen, nextState.contextOpen) ||
+			state.hiddenColWidth !== nextState.hiddenColWidth
+		)
 	},
 
 	componentDidUpdate: function () {
@@ -436,7 +424,7 @@ var TabularPane = React.createClass ({
 
 		// commit the pointer position to the view object, but debounce
 		view.data.pointer = pos
-		// debouncedCreateView(view, false, false, true)
+		debouncedCreateView(view, false, false, true)
 	},
 
 	blurPointer: function () {

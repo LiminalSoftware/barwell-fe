@@ -153,7 +153,7 @@ var TabularBodyWrapper = React.createClass ({
 			style = {{
 				left: 0,
 				top: 0,
-				bottom: 0,
+				bottom: '20px',
 				width: (adjustedWidth) + 'px'
 			}}>
 
@@ -197,8 +197,8 @@ var TabularBodyWrapper = React.createClass ({
 					// MsTransition:     'margin-top cubic-bezier(.16,.85,.5, 1) 150ms',
 					// OTransition:      'margin-top cubic-bezier(.16,.85,.5, 1) 150ms',
 					// transform: 'translate3d(0,' + marginTop + 'px,0)',
-					height: (rowCount * geo.rowHeight) + 'px',
-					width: (fixedWidth + floatWidth) + 'px'
+					height: ((rowCount + 1) * geo.rowHeight) + 'px',
+					width: (fixedWidth + floatWidth + geo.labelWidth) + 'px'
 				}}>
 				{this.props.children}
 
@@ -215,18 +215,10 @@ var TabularBodyWrapper = React.createClass ({
 					left: geo.leftGutter + 'px',
 					top: geo.headerHeight + 1 + 'px',
 					marginTop: marginTop + 'px',
-					// background: 'white',
-					// WebkitTransition: 'margin-top cubic-bezier(.16,.85,.5, 1) 150ms',
-					// MozTransition:    'margin-top cubic-bezier(.16,.85,.5, 1) 150ms',
-					// MsTransition:     'margin-top cubic-bezier(.16,.85,.5, 1) 150ms',
-					// OTransition:      'margin-top cubic-bezier(.16,.85,.5, 1) 150ms',
-					// transform: 'translate3d(0,' + marginTop + 'px,0)',
 					height: (rowCount * geo.rowHeight) + 'px',
-					width: (fixedWidth) + 'px',
+					width: (fixedWidth + geo.labelWidth) + 'px',
 					overflow: 'hidden'
 				}}>
-
-				
 
 				<TabularTBody
 					{...this.props}

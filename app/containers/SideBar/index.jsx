@@ -43,37 +43,13 @@ var SideBar = React.createClass({
 		}
 	},
 
-	handleAddModel: function (event) {
-		var model = {
-			model: 'New model',
-			plural: 'New models'
-		}
-		modelActionCreators.create('model', true, model)
-		event.preventDefault();
-	},
-
-	handleEdit: function (event) {
-		this.setState({editing: true});
-	},
-
-	handleRevertEdit: function (event) {
-		this.setState({editing: false});
-	},
+	
 
 	render: function () {
 		var _this = this;
 		var curModelId = this.props.params.modelId
 		return <div className="left-side-bar">
-			<ModelList editing = {this.state.editing} curModelId = {curModelId} />
-			{
-				this.state.editing ?
-				<div className="padded">
-					<ul className="light padded mb-buttons">
-						<li onClick={this.handleRevertEdit}>Done editing</li>
-					</ul>
-				</div>
-				: null
-			}
+			<ModelList curModelId = {curModelId} />
 		</div>
 	}
 
@@ -81,6 +57,16 @@ var SideBar = React.createClass({
 export default SideBar
 
 var ModelList = React.createClass ({
+
+	handleAddModel: function (event) {
+		var model = {
+			model: 'New model',
+			workspace_id: this.props.params.workspaceId,
+			plural: 'New models'
+		}
+		modelActionCreators.create('model', true, model)
+		event.preventDefault();
+	},
 
 	render: function () {
 		var _this = this
@@ -97,7 +83,7 @@ var ModelList = React.createClass ({
 					{..._this.movableProps} />;
 			})
 		}
-		<li className="add-new"><a href="#">+</a></li>
+		<li className="add-new"><a href="#" onClick = {this.handleAddModel}>+</a></li>
 		</ul>
 	}
 })
@@ -168,15 +154,9 @@ var ModelLink = React.createClass ({
 		return <li
 			className={(this.props.active ? "active " : "") + (this.props.editing ? " editmode" : "")}>
 
-			<Link
-				to = {`/workspace/${workspace_id}/model/${model_id}`}
+			<Link to = {`/workspace/${workspace_id}/model/${model_id}`}
 				onDoubleClick = {this.edit}>
-
 				{modelDisplay}
-				{this.props.editing && !this.props.renaming ?
-					<span className="grayed right-align icon icon-kub-trash"></span> : null}
-				{this.props.editing && !this.props.renaming ?
-					<span className="grayed right-align icon icon-tl-pencil" onClick={this.edit}></span> : null}
 			</Link>
 		</li>
 	}

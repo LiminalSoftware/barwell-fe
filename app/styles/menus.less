@@ -7,10 +7,11 @@
 	height:30px;
 	line-height: 30px;
 	padding: 0 5px;
+	margin: 0;
+	margin-right: 5px;
 	background: @headerBgDark;
 	border-radius: @menuItemBorderRadius;
 	overflow: visible;
-	border: 1px solid transparent;
 
 	&.active {
 		background: @headerFontColor;
@@ -201,6 +202,7 @@
 		margin: 0;
 		height: 40px;
 		line-height: 40px;
+
 		&.ellipsis {
 			.ellipsis;
 		}
@@ -213,6 +215,9 @@
 		}
 		&.icon {
 			min-width: 25px;
+			&.wide {
+				min-width: 40px;
+			}
 			flex: 0;
 			flex-grow: 0;
 		}

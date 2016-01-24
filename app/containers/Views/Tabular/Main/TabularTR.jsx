@@ -49,7 +49,8 @@ var TabularTR = React.createClass({
 		var rowStyle = {
 			height: (geo.rowHeight + 1) + 'px',
 			top: (geo.rowHeight * (row)) + 'px',
-			background: "white"
+			// background: "white"
+			visibility: 'none'
 		}
 		selector[model._pk] = obj[model._pk]
 		var left = geo.leftGutter;

@@ -27,7 +27,7 @@ var ViewTypeMenu = React.createClass({
     var _this = this
     if (!this.props.editing)
       return <span className = {"large icon view-icon " + (this.props.deleting ? ' red ' : '') + viewTypes[this.state.type].icon}/>
-    return <span className = "view-icon">
+    return <span className = "wide icon view-icon">
         <span className = {"pop-down large icon " + viewTypes[this.state.type].icon
           + (this.state.open ? " open " : " ")}
           onClick = {this.handleOpen}>

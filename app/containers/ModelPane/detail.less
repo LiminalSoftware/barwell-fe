@@ -27,7 +27,7 @@
 	flex: 1 1;
 	flex-wrap: wrap;
 	flex-direction: row;
-  border-top: 1px solid @gray3;
+  	border-top: 1px solid @gray3;
 	padding: 10px;
 	margin: 10px;
 	display: block;
@@ -36,12 +36,13 @@
 p.explainer {
 	padding-top: 0;
 	margin-top: 0;
-	display: block;
+	display: sticky;
 	font-family: @bodyFont;
 }
 
 .detail-section-header {
 	display: block;
+	position: sticky !important;
 	clear: all;
 	padding: 10px 0;
 	h3 {
@@ -66,22 +67,30 @@ p.explainer {
 	padding: 0;
 	margin: 0;
 	display: block;
-  width: 100%;
+  	width: 100%;
 
 	list-style: none;
 
-  .detail-row, .detail-header {
-    display: block;
+  	.detail-row, .detail-header {
 		display: flex;
-    clear: both;
+    	clear: both;
 		margin-bottom: 3px;
-  }
+	}
 
-  .detail-header {
+	.detail-header {
+		position: -webkit-sticky;
+		position: -moz-sticky;
+		position: -ms-sticky;
+		position: -o-sticky;
+		position: sticky;
+		top: 15px;
+	}
+
+  	.detail-header {
 		font-family: @bodyFont;
 		border-bottom: 1px solid @gray3;
 		border-top: 1px solid @gray3;
-  }
+  	}
 
 	.detail-row {
 		border-radius: 4px;
@@ -100,31 +109,26 @@ p.explainer {
 
   .detail-row > span, .detail-header > span {
 
-		flex-direction: column;
-		transition: background cubic-bezier(.16,.85,.5,1) 100ms;
-		transition: max-width cubic-bezier(.16,.85,.5,1) 100ms;
-
-
+	flex-direction: column;
+	transition: background cubic-bezier(.16,.85,.5,1) 100ms;
+	transition: max-width cubic-bezier(.16,.85,.5,1) 100ms;
     padding: 7px;
-		margin: 0;
+	margin: 0;
 
-		&.tight {
-			// padding: 2px 7px;
-		}
-		&.draggable {
-			color: @gray3;
-			position: absolute;
-			top: 0;
-			left: -25px;
-			width: 15px;
-		}
-		&.draggable:hover {
-			cursor: grab;
-		}
+	&.draggable {
+		color: @gray3;
+		position: absolute;
+		top: 0;
+		left: -25px;
+		width: 15px;
+	}
+	&.draggable:hover {
+		cursor: grab;
+	}
     &.title {
-			font-family: @subheaderFont;
-			color: @gray2;
-			font-weight: 400;
+		font-family: @subheaderFont;
+		color: @gray2;
+		font-weight: 400;
     }
     &.right-align {
       text-align: right;
@@ -141,12 +145,12 @@ p.explainer {
     &.padded {
       padding: 4px 6px;
     }
-		&.width-5 {
-			width: 5%;
-		}
-		&.width-8 {
-			width: 7%;
-		}
+	&.width-5 {
+		width: 5%;
+	}
+	&.width-8 {
+		width: 7%;
+	}
     &.width-10 {
       width: 10%;
     }
@@ -180,13 +184,13 @@ p.explainer {
     &.width-70 {
       width: 70%;
     }
-		&.width-80 {
+	&.width-80 {
       width: 80%;
     }
-		&.width-90 {
+	&.width-90 {
       width: 90%;
     }
-		&.width-100 {
+	&.width-100 {
       width: 100%;
     }
   }

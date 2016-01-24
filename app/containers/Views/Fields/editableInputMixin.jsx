@@ -110,7 +110,9 @@ var editableInputMixin = {
 		else editorIconStyle.right = 0
 
 		cellStyle.textAlign = (config.align.center ? 'center' : config.align.right ? 'right' : 'left')
-		cellStyle.zIndex = (this.state.selected ? 130 : null)
+		cellStyle.zIndex = (this.state.selected ? 1130 : null)
+		// cellStyle.transform = this.state.selected ? 'translateZ(1px)' : null;
+		cellStyle.transformStyle = 'flat'
 		cellStyle.lineHeight = config.rowHeight + 'px'
 
 		if (this.state.selected) bg = "white"
