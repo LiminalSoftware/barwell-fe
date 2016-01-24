@@ -23,7 +23,7 @@ var Overlay = React.createClass ({
     var width = 0
     var left = geo.leftGutter + geo.labelWidth + 1
     var classes = this.props.className || ""
-    var style
+    var style = this.props.style || {}
 
     if (!pos) return null
 
@@ -35,13 +35,11 @@ var Overlay = React.createClass ({
         width += col.width
     })
 
-    style = {
-      top: (pos.top * geo.rowHeight + (fudge.top || 0)) + 'px',
-      left: (left + (fudge.left || 0)) + 'px',
-      height: (geo.rowHeight * ((pos.bottom || pos.top) - pos.top + 1) + (fudge.height || 0)) + 'px',
-      width: (width + (fudge.width || 0)) + 'px'
-    }
-
+    style.top = (pos.top * geo.rowHeight + (fudge.top || 0)) + 'px'
+    style.left = (left + (fudge.left || 0)) + 'px'
+    style.height = (geo.rowHeight * ((pos.bottom || pos.top) - pos.top + 1) + (fudge.height || 0)) + 'px'
+    style.width = (width + (fudge.width || 0)) + 'px'
+    
     if (pos && (pos.left === pos.right) && (pos.top === pos.bottom))
       classes +=  ' singleton';
     if (pos && pos.right >= fixedCols.length &&

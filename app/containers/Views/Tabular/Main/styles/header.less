@@ -33,16 +33,8 @@
 	// border-right: 1px solid @gray3;
 	background: white;
 
-
-	.context {
-		z-index: 300;
-	}
-	&.asc, &.desc {
-		// border: 1px solid @newgreen1;
-	}
-	&.desc > .table-cell-inner, &.asc > .table-cell-inner {
-		// .horizontal-gradient(@green-trans, white);
-		color: @newgreen1;
+	&.sorted > .table-cell-inner {
+		color: @purple4;
 	}
 	.table-cell-inner {
 		cursor: pointer;

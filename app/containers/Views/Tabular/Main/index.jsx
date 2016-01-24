@@ -57,14 +57,18 @@ var TabularPane = React.createClass ({
 	},
 
 	componentWillMount: function () {
+		var copyPasteDummy = document.getElementById('copy-paste-dummy')
 		document.body.addEventListener('keydown', this.onKey)
 		FocusStore.addChangeListener(this._onChange)
+		copyPasteDummy.addEventListener('paste', this.pasteSelection)
+		copyPasteDummy.focus()
 		this.store = createTabularStore(this.props.view)
 	},
 
 	componentWillUnmount: function () {
 		document.body.removeEventListener('keydown', this.onKey)
 		FocusStore.removeChangeListener(this._onChange)
+		document.getElementById('copy-paste-dummy').removeChangeListener('paste', this.pasteSelection)
 		this.store.unregister()
 	},
 
@@ -258,8 +262,11 @@ var TabularPane = React.createClass ({
 		for (var r = sel.top; r <= sel.bottom; r++) {
 			var obj = this.store.getObject(r)
 			for (var c = sel.left; c <= sel.right; c++) {
-				var colId = view.data.visibleCols[c].column_id
-				var value = obj[colId]
+				var column = view.data.visibleCols[c]
+				var type = fieldTypes[column.type]
+				var value = obj[column.column_id]
+
+				if (type.stringify) value = type.stringify(value)
 				clipboard += (value === null ? "" : value) + (c == sel.right ? "" : "\t")
 			}
 			clipboard += (r == sel.bottom ? "" : "\n")
@@ -270,18 +277,29 @@ var TabularPane = React.createClass ({
 
 	pasteSelection: function (e) {
 		var text = e.clipboardData.getData('text')
+		var model = this.props.model
+		var view = this.props.view
+
 		var data = text.split('\n').map(r => r.split('\t'))
 		var sel = this.state.selection
-		for (var r = sel.top, cbr; r <= sel.bottom; r++) {
-			cbr = (r - sel.top) % data.length
-			for (var c = sel.left, cbc; c <= sel.right; c++) {
-				cbc = (c - sel.left) % data[cbr].length
-				var value = data[cbr][cbc]
-				this.getFieldAt({top: r, left: c}).commitValue(value);
+
+		for (var r = sel.top; r <= sel.bottom; r++) {
+			var cbr = (r - sel.top) % data.length
+			var obj = this.store.getObject(r)
+			var selector = {[model._pk]: obj[model._pk]}
+			var patch = {}
+
+			for (var c = sel.left; c <= sel.right; c++) {
+				var cbc = (c - sel.left) % data[cbr].length
+				var column = view.data.visibleCols[c]
+				var type = fieldTypes[column.type]
+				var validator = type.element.validator || _.identity
+				var value = validator(data[cbr][cbc])
+				
+				patch[column.column_id] = value
 			}
+			modelActionCreators.patchRecords(model, patch, selector)
 		}
-		e.preventDefault();
-		e.stopPropagation();
 	},
 
 	showDetailBar: function () {
@@ -416,7 +434,7 @@ var TabularPane = React.createClass ({
 
 		// commit the pointer position to the view object, but debounce
 		view.data.pointer = pos
-		debouncedCreateView(view, false, false, true)
+		// debouncedCreateView(view, false, false, true)
 	},
 
 	blurPointer: function () {
@@ -575,7 +593,7 @@ var TabularPane = React.createClass ({
 
 			<Overlay
 				columns = {columns}
-        numHiddenCols = {_this.state.hiddenCols}
+        		numHiddenCols = {_this.state.hiddenCols}
 				className = {" pointer" + (focused ? " focused" : "")}
 				rowOffset = {this.state.rowOffset}
 				ref = "pointer"
@@ -585,17 +603,17 @@ var TabularPane = React.createClass ({
 
 			<Overlay
 				columns = {columns}
-        numHiddenCols = {_this.state.hiddenCols}
+        		numHiddenCols = {_this.state.hiddenCols}
 				className = {" selection " + (_this.isFocused() ? " focused" : "")}
 				rowOffset = {this.state.rowOffset}
 				ref = "selection"
 				{...this.props}
 				position = {sel}
-				fudge = {{left: -2.25, top: -1.25, height: 3.5, width: 3.5}} />
+				fudge = {{left: -4.25, top: -3.25, height: 7.5, width: 7.5}} />
 
 			<Overlay
 				columns = {columns}
-        numHiddenCols = {_this.state.hiddenCols}
+        		numHiddenCols = {_this.state.hiddenCols}
 				className = {showJaggedEdge ? " jagged-edge " : ""}
 				rowOffset = {this.state.rowOffset}
 				ref = "jaggedEdge"
@@ -609,7 +627,7 @@ var TabularPane = React.createClass ({
 
 			<Overlay
 				columns = {columns}
-        numHiddenCols = {_this.state.hiddenCols}
+        		numHiddenCols = {_this.state.hiddenCols}
 				rowOffset = {this.state.rowOffset}
 				className = {" copyarea running marching-ants " + (_this.isFocused() ? " focused" : "")}
 				ref="copyarea"

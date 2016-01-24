@@ -10,6 +10,8 @@ import ModelStore from "../../../../stores/ModelStore"
 import constant from "../../../../constants/MetasheetConstants"
 import modelActionCreators from "../../../../actions/modelActionCreators"
 
+import defaultCellStyle from '../defaultCellStyle'
+
 import commitMixin from '../commitMixin'
 import editableInputMixin from '../editableInputMixin'
 import selectableMixin from '../selectableMixin'
@@ -22,7 +24,7 @@ var CheckboxElement = React.createClass({
 
 	handleEdit: function () {
 		this.toggle()
-		this.props.handleBlur()
+		this.props._handleBlur()
 	},
 
 	validator: function (input) {
@@ -45,16 +47,44 @@ var CheckboxElement = React.createClass({
 	},
 
 	render: function () {
+		var config = this.props.config
 		var value = this.props.value
 		var style = this.props.style
 		var selectionClass = (this.state.selected ? ' selected ' : '')
-		var className = (this.props.className || '') + ' table-cell '
-			+ selectionClass;
 
-		return <span {...this.props} className={className}>
-			<span className = {"special-cell-inner checkbox-inner " + selectionClass}
-				style = {{lineHeight: this.props.rowHeight + 'px'}}>
-				<span className="checkbox-surround" onClick={this.handleClick}>
+		var cellStyle = _.clone(defaultCellStyle)
+		
+		cellStyle.lineHeight = this.props.rowHeight + 'px'
+		cellStyle.textAlign = 'center'
+		if (this.state.selected) {
+			cellStyle.zIndex = 130
+			cellStyle.background = 'white'
+		}
+
+		var boxStyle = {
+			position: 'relative',
+			display: 'inline-block',
+			maxHeight: '14px',
+			minHeight: '14px',
+			maxWidth: '14px',
+			minWidth: '14px',
+			cursor: 'pointer',
+			borderRadius: '3px',
+			background: 'white',
+			border: '1px solid ' + constant.colors.GRAY_3,
+			zIndex: 121
+		}
+
+		var checkStyle = {
+			position: 'absolute',
+			left: '0px',
+			top: '-3px'
+		}
+
+		return <span {...this.props} >
+			<span style = {cellStyle}>
+				<span style = {boxStyle}
+					 onClick={this.handleClick}>
 					<span className={"check green icon " + (this.state.value ? "icon-kub-approve" : "")}>
 					</span>
 				</span>

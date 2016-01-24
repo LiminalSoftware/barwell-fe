@@ -40,11 +40,12 @@ var TabularBodyWrapper = React.createClass ({
 		var view = this.props.view
 		var geo = view.data.geometry
 		return {
-			offset: 0,
+			fetchOffset: 0,
 			hiddenCols: 0,
-      hiddenColWidth: 0,
+      		hiddenColWidth: 0,
 			rowOffset: 0,
-			colOffset: 0
+			colOffset: 0,
+			sorting: view.data.sorting
 		}
 	},
 
@@ -70,25 +71,46 @@ var TabularBodyWrapper = React.createClass ({
 		this.props.store.removeChangeListener(this._onChange)
 	},
 
-	fetch: function (force) {
-		var view = this.props.view
-		var offset = this.state.rowOffset
-		var target = (offset - (MAX_ROWS - WINDOW_ROWS) / 2)
-		var boundedOffset = util.limit(0, this.props.nRows - MAX_ROWS, target)
-		var delta = Math.abs(offset - target)
+	componentWillReceiveProps: function (nextProps) {
+		this.debounceFetch(false, nextProps)
+	},
 
-		if (force || (delta > OFFSET_TOLERANCE && offset !== boundedOffset)
-			// or sort order has changed
-			) {
+	finishFetch: function () {
+		this.setState({fetching: false})
+	},
+
+	fetch: function (force, nextProps) {
+		var view = this.props.view
+		var offset = this.state.fetchOffset
+
+		var target = (this.state.rowOffset - (MAX_ROWS - WINDOW_ROWS) / 2)
+		var boundedTarget = util.limit(0, this.props.nRows - MAX_ROWS, target)
+
+		var delta = Math.abs(offset - target)
+		var sorting = nextProps ? nextProps.view.data.sorting : view.data.sorting
+
+		if ((force === true)
+			|| (delta > OFFSET_TOLERANCE && offset !== boundedTarget)
+			|| !_.isEqual(sorting, this.state.sorting) 
+		) {
+			console.log('fetch..')
 			modelActionCreators.fetchRecords(
 				view,
-				boundedOffset,
-				boundedOffset + MAX_ROWS,
-				null //view.data.sorting
-			)
+				boundedTarget,
+				boundedTarget + MAX_ROWS,
+				view.data.sorting
+			).then(this.finishFetch)
+
 			this.setState({
+				fetchOffset: boundedTarget,
 				fetching: true,
+				sorting: sorting
 			})
+		}
+		else if (delta > OFFSET_TOLERANCE && offset !== boundedTarget) {
+			console.log('target: ' + boundedTarget)
+			console.log('offset: ' + offset)
+			console.log('delta: ' + delta)
 		}
 	},
 
@@ -103,10 +125,9 @@ var TabularBodyWrapper = React.createClass ({
 		return this.props.view !== nextProps.view ||
 			this.props.hiddenColWidth !== nextProps.hiddenColWidth ||
 			this.state.rowOffset !== nextState.rowOffset ||
-			this.props.children !== nextProps.children
+			this.props.children !== nextProps.children ||
+			this.state.fetching !== nextState.fetching
 	},
-
-
 
 	render: function () {
 		// console.log('render tbodywrapper: ')
@@ -146,6 +167,15 @@ var TabularBodyWrapper = React.createClass ({
 				focused = {focused}
 				view = {view} />
 
+			{
+				this.state.fetching ? 
+					<div 
+						className = "loader-overlay"
+						style = {{width: 100 + 'px'}}
+						>Loading...</div>
+					: null
+			}
+
 			<FakeLines
 				width = {adjustedWidth}
 				rowCount = {rowCount}
@@ -160,6 +190,10 @@ var TabularBodyWrapper = React.createClass ({
 					left: geo.leftGutter + 'px',
 					top: geo.headerHeight + 1 + 'px',
 					marginTop: marginTop + 'px',
+					// WebkitTransition: 'margin-top cubic-bezier(.16,.85,.5, 1) 150ms',
+					// MozTransition:    'margin-top cubic-bezier(.16,.85,.5, 1) 150ms',
+					// MsTransition:     'margin-top cubic-bezier(.16,.85,.5, 1) 150ms',
+					// OTransition:      'margin-top cubic-bezier(.16,.85,.5, 1) 150ms',
 					// transform: 'translate3d(0,' + marginTop + 'px,0)',
 					height: (rowCount * geo.rowHeight) + 'px',
 					width: (fixedWidth + floatWidth) + 'px'

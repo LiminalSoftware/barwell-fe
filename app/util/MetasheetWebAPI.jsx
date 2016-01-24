@@ -21,7 +21,19 @@ var stripInternalVars = module.exports.stripInternalVars = function (obj) {
   return newObj;
 }
 
-var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
+var wait = module.exports.wait = function () {
+  return new Promise (function (resolve, reject) {
+    window.setTimeout(resolve, 500);
+  })
+}
+
+var ajax = module.exports.ajax  = function (method, url, json, retry, headers) {
+  return wait().then(function () {
+    return ajaxActual(method, url, json, retry, headers)
+  })
+}
+
+var ajaxActual = function (method, url, json, retry, headers) {
   console.log(method + '->' + url)
   console.log(JSON.parse(json))
 
@@ -88,13 +100,13 @@ var persist = module.exports.persist = function (subject, action, data, update, 
 
   if (method === 'PATCH' || method === 'DELETE') url = url + '?' + identifier + '=eq.' + data[identifier];
 
+  
   return ajax(method, url, json).then(function (results) {
     if (update === false || method=='DELETE') return;  // temporary hack until I refactor model push
     (results.data instanceof Array ? results.data : [results.data]).forEach(function (obj) {
       issueReceipt(subject, obj)
     })
-  })
-  .catch(function (error) {
+  }).catch(function (error) {
     console.log('error: ' + error)
     console.log('trace: ' + error.trace)
     modelActionCreators.createNotification('Connection problem!', error.message, 'error')

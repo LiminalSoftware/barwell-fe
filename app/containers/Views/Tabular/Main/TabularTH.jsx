@@ -31,8 +31,8 @@ var TabularTH = React.createClass ({
 		var classes = []
 		classes.push('table-cell')
 		classes.push('table-header-cell')
-		if (!!col.sorting) classes.push(col.sorting.descending ? 'desc' : 'asc')
-	  if (this.state.context) classes.push('context')
+		if (!!this.props.sorted) classes.push(' sorted ')
+	  	if (this.state.context) classes.push('context')
 
 		return <span
 				onContextMenu = {this.onContextMenu}
@@ -123,8 +123,9 @@ var TabularTH = React.createClass ({
 	},
 
 	onContextMenu: function (e) {
-  	modelActionCreators.setFocus('view-config')
-  	this.setState({context: true})
+	// disable column context menus for now
+  	// modelActionCreators.setFocus('view-config')
+  	// this.setState({context: true})
   	e.stopPropagation()
 	e.preventDefault()
 	},

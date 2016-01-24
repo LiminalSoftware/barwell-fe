@@ -14,41 +14,38 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 var SortDetail = React.createClass({
 
-	mixins: [PureRenderMixin],
-
 	getInitialState: function () {
 		return {
-			ascending: true
+			ascending: this.props.ascending
 		}
 	},
 
 	remove: function () {
-		var view = this.props.view
-		var config = this.props.config
-		view.data.sorting = _.filter(view.data.sorting,
-			sort => sort.attribute_id !== config.attribute_id)
-		modelActionCreators.createView(view, true, false)
+		this.props._remove(this.props.sortSpec)
 	},
 
 	switch: function () {
-		this.setState({ascending: !this.state.ascending})
+		var spec = this.props.sortSpec
+		spec.ascending = !spec.ascending
+		this.props._updateItem(spec)
 	},
 
 	render: function() {
-    var view = this.props.view
-    var config = this.props.config
-	var attr = AttributeStore.get(config.attribute_id)
+	    var view = this.props.view
+	    var spec = this.props.sortSpec
+		var attr = AttributeStore.get(spec.attribute_id)
 
-    return <div className="menu-item tight menu-sub-item">
+	    return <div className="menu-item tight menu-sub-item">
 			{this.props.editing ? <span
 				onMouseDown = {this.handleDrag}
 				className="draggable half-column-config tight icon grayed icon-Layer_2"/> : null }
       		<span className = "ellipsis">{attr.attribute}</span>
 
 			<span onClick={this.switch}
-				className={"half-column-config tight icon grayed icon-sort-az-" + (config.descending ? 'high' : 'low')}>
+				className={"half-column-config tight icon grayed icon-sort-az-" + (spec.ascending ? 'high' : 'low')}>
 			</span>
-			<span onClick={this.remove} className="half-column-config tight icon small grayed icon-kub-remove"></span>
+			<span onClick={this.remove} 
+				className="half-column-config tight icon grayed icon-cr-remove"></span>
 		</div>
 	}
 });

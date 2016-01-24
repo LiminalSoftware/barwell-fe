@@ -53,10 +53,11 @@ var groomView = function (view) {
 
 	data.sorting = _.isArray(data.sorting) ? data.sorting : []
 	data.sorting = data.sorting.filter(function (sort) {
-		var column = data.columns[sort.column_id]
-		if (!column) return false
-		var type = fieldTypes[column.type]
+		var attribute = data.columns['a' + sort.attribute_id]
+		if (!attribute) return false
+		var type = fieldTypes[attribute.type]
 		if (type.sortable) return true
+		else return false
 	})
 
 	data.selection = _.extend({'left': 0, 'top': 0, 'right': 0, 'bottom': 0}, (data.selection || {}) );

@@ -87,7 +87,7 @@ var ColumnDetail = React.createClass({
 				{editing ? <span
 						className="half-column-config "
 						onMouseDown = {this.handleDelete}>
-							<span className = "icon red icon-cr-delete"></span>
+							<span className = "icon red icon-cr-remove"></span>
 						</span>
 					: null}
 		</div>

@@ -12,10 +12,17 @@ var Application = React.createClass({
 	},
 
 	render: function() {
+		var dummyStyle = {
+			position: 'absolute', 
+			left: 0, 
+			top: 0, 
+			height: '1px', 
+			width: '1px'
+		}
 		return <div className="application ">
 				<SideBar {...this.props} workspaceId = {this.props.params.workspaceId}/>
 				{this.props.children}
-				<textarea id = "copy-paste-dummy" value="" onPaste = {util.handlePaste}></textarea>
+				<textarea style = {dummyStyle} id = "copy-paste-dummy" value=""></textarea>
 		</div>;
 	},
 

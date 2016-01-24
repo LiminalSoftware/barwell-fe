@@ -21,6 +21,7 @@ var TabularTHead = React.createClass ({
 		var geo = view.data.geometry
 		var focused = this.props.focused
 		var left = 0
+		var sortAttrs = _.pluck(view.data.sorting, 'attribute_id').map(parseInt)
 
 		var style = {
 			top: 0,
@@ -47,6 +48,7 @@ var TabularTHead = React.createClass ({
 				var el = <TabularTH key={"th-" + col.attribute_id}
 					scrollTop = {_this.props.scrollTop}
 					column = {col}
+					sorted = {_.contains(sortAttrs, col.attribute_id)}
 					view = {view}
 					idx = {idx}
 					left = {left}/>;

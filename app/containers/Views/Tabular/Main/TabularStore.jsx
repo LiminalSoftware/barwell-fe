@@ -92,6 +92,7 @@ var createTabularStore = function (view) {
               _.filter(_records, _.matcher(selector) ).map(function (rec) {
                   rec = _.extend(rec, update, dirty)
               });
+              // console.log('TabularStore.emitChange()')
               TabularStore.emitChange()
             }
 

@@ -23,6 +23,10 @@ var dateField = {
 
 	sortable: true,
 
+	stringify: function (value) {
+		return moment(value).format('YYYY-MM-DD')
+	},
+
 	configCleanser: function (config) {
 		config.dateFormat = config.dateFormat || "MM/DD/YYYY"
 		return config

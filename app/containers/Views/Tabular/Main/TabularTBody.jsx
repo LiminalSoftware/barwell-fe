@@ -9,12 +9,14 @@ import util from '../../../../util/util'
 
 import TabularTR from './TabularTR'
 
-var VISIBLE_ROWS = 45
-var MAX_SKIP = 3
-var CYCLE = 21
-var MIN_CYCLE = 20
-var BACKWARD_BUFFER = MAX_SKIP
-var BUFFER_SIZE = MAX_SKIP
+var VISIBLE_ROWS = 46
+var MAX_SKIP = 1
+var TURBO_SKIP = 2
+var TURBO_THRESHOLD = 10
+var CYCLE = 31
+var MIN_CYCLE = 28
+var BACKWARD_BUFFER = 8
+var BUFFER_SIZE = 4
 var PAGE_SIZE = MAX_SKIP
 var BAILOUT = MAX_SKIP
 
@@ -29,24 +31,46 @@ var TabularTBody = React.createClass ({
 	getInitialState: function () {
 		return {
 			offset: 0,
+			target: 0,
 			length: VISIBLE_ROWS,
-			direction: 0
+			scrollDirection: 1
 		}
 	},
 
-	calcTarget: function (rowOffset, prevOffset) {
+	
+	componentWillReceiveProps: function (next) {
 		var rowCount = this.props.store ? this.props.store.getRecordCount() : 0
-		var buffer = 0 - BACKWARD_BUFFER  - (BUFFER_SIZE * this.state.direction)
-		var buffer = 0
-		return Math.min(Math.max((rowOffset || 0) + buffer , 0), rowCount)
+		var newOffset = next.rowOffset
+		var oldOffset = this.props.rowOffset
+		var delta = (newOffset - oldOffset)
+		var scrollDirection = (delta > 0 ? 1 : delta < 0 ? -1 : this.state.scrollDirection)
+		var buffer = 0 - BACKWARD_BUFFER  + (BUFFER_SIZE * scrollDirection)
+		var target = util.limit(0, rowCount, newOffset + buffer)
+
+		this.setState({
+			scrollDirection: scrollDirection,
+			target: target
+		})
+		this.updateOffset()
 	},
 
-	componentWillReceiveProps: function (next) {
-		this.updateOffset(this.calcTarget(next.rowOffset, this.props.rowOffset))
+	componentWillUpdate: function () {
+		
+	},
+
+	updateOffset: function () {
+		var current = this.state.offset
+		var target = this.state.target
+		var delta = (target - current)
+		var paintDirection = (delta > 0 ? 1 : delta < 0 ? -1 : 0)
+		var magnitude = Math.abs(delta)
+		var skip = magnitude >= TURBO_THRESHOLD ? TURBO_SKIP : MAX_SKIP
+		var setpoint = current + (Math.min(magnitude, skip) * paintDirection)
+		setpoint = 
+		this.setState({offset: setpoint})
 	},
 
 	componentDidUpdate: function (prevProps) {
-		var _this = this
 		var now = new Date().getTime()
 
 		// we just updated so set the _lastUpdate time to now
@@ -55,34 +79,21 @@ var TabularTBody = React.createClass ({
 		if (this.__timer) clearTimeout(this.__timer)
 		// if we haven't reached the target yet, set a timer for next frame
 
-		if (this.state.offset !== this.calcTarget(this.props.rowOffset, prevProps.rowOffset) ) {
-			this.__timer = onFrame(function () {_this.updateOffset()})
+		if (this.state.offset !== this.state.target ) {
+			this.__timer = onFrame(this.updateOffset)
 		}
-	},
-
-	updateOffset: function (target) {
-		target = this.calcTarget(target || this.props.rowOffset)
-		var current = this.state.offset
-		var delta = (target - current)
-		var magnitude = Math.abs(delta)
-		var direction = (delta > 0 ? 1 : delta < 0 ? -1 : 0)
-		var setpoint = current + (Math.min(magnitude, MAX_SKIP) * direction)
-		this.setState({
-			offset: setpoint,
-			scrolling: (setpoint !== target),
-			direction: (direction || this.state.direction)
-		})
 	},
 
 	shouldComponentUpdate: function (nextProps, nextState) {
 		// return false;
 		var now = new Date().getTime()
 		if (now - this._lastUpdate < MIN_CYCLE) return false
-		return (Math.floor(nextProps.offset/PAGE_SIZE) !==
-				Math.floor(this.state.offset/PAGE_SIZE))
+
+		return (this.state.offset !== this.state.target)
 	},
 
 	_onChange: function () {
+		console.log('tbody onchange')
 		this.forceUpdate()
 	},
 
@@ -115,7 +126,6 @@ var TabularTBody = React.createClass ({
 
 	prepareRow: function (obj, index) {
 		var view = this.props.view
-		var geo = view.data.geometry
 		var model = this.props.model
 		var pk = model._pk
 		var ptr = this.props.pointer
@@ -126,11 +136,9 @@ var TabularTBody = React.createClass ({
 			obj = {obj}
 			row = {index + offset}
 			rowKey = {rowKey}
-			geometry = {geo}
 			ref = {rowKey}
 			key = {rowKey}
-
-			isScrolling = {this.state.scrolling} />;
+			isScrolling = {this.state.scrolling}/>;
 	},
 
 	render: function () {
@@ -147,15 +155,15 @@ var TabularTBody = React.createClass ({
 		var floatOffset = this.props.floatOffset
 
 		return <div
-				className = {"tabular-tbody "}
-				onPaste = {this.props._handlePaste}
-				onDoubleClick = {this.props._handleEdit}
-				onClick = {this.props._handleClick}
-				ref = "tbody"
-				style = {this.props.style}
-				onContextMenu = {this.props._handleContextMenu}>
-				{ rows.map(this.prepareRow) }
-			</div>
+			className = {"tabular-tbody "}
+			onPaste = {this.props._handlePaste}
+			onDoubleClick = {this.props._handleEdit}
+			onClick = {this.props._handleClick}
+			ref = "tbody"
+			style = {this.props.style}
+			onContextMenu = {this.props._handleContextMenu}>
+			{ rows.map(this.prepareRow) }
+		</div>
 	}
 })
 

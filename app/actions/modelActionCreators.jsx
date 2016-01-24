@@ -110,7 +110,7 @@ var modelActions = {
 		MetasheetDispatcher.dispatch(message)
 
 		var url = 'https://api.metasheet.io/m' + model.model_id;
-		if (!selector instanceof Object) throw new Error ('NOOOOOOOOOOOoOooooo!!!!!!!')
+		if (!selector instanceof Object) throw new Error ('dont patch globally!')
 		else url += '?' + _.map(selector, function (value, key) {
 			return key + '=eq.' + value;
 		}).join('&')
@@ -128,14 +128,14 @@ var modelActions = {
 		var url = 'https://api.metasheet.io/v' + view_id;
 		if (sortSpec) {
 			url = url + '?order=' + _.map(sortSpec, function (comp) {
-				return 'a' + comp.attribute_id + '.' + (comp.descending ? 'desc' : 'asc')
+				return 'a' + comp.attribute_id + '.' + (comp.ascending ? 'asc' : 'desc')
 			}).join(",")
 		}
 		var header = {
 			'Range-Unit': 'items',
 			'Range': (offset + '-' + (offset + limit))
 		}
-		webUtils.ajax('GET', url, null, header).then(function (results) {
+		return webUtils.ajax('GET', url, null, header).then(function (results) {
 			var message = {}
 			var range = results.xhr.getResponseHeader('Content-Range')
 			var rangeParts = range.split(/[-/]/)

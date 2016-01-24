@@ -11,6 +11,8 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 import util from "../../../util/util"
 import tinycolor from "tinycolor2"
 
+import defaultCellStyle from './defaultCellStyle'
+
 var MIN_LIGHTNESS = 0.85
 var SELECTED_LIGHTNESS = 0.97
 
@@ -65,7 +67,7 @@ var editableInputMixin = {
 		this.setState({
 			editing: false
 		})
-		this.props.handleBlur()
+		this.props._handleBlur()
 	},
 
 	handleEdit: function (event) {
@@ -92,18 +94,27 @@ var editableInputMixin = {
 	render: function () {
 		var config = this.props.config
 		var prettyValue = this.format ? this.format(this.props.value) : this.props.value
-		// var style = this.props.style
 		var showDetail = this.detailIcon && this.state.selected && !this.state.editing
-		var className = (this.props.className || '')
-			+ (this.state.selected ? ' selected ' : '');
 		var obj = this.props.object
-		var cellClass = ''
-		var cellStyle = {}
 		var bg = null
 		var fontColor = null
+		var cellStyle = _.clone(defaultCellStyle)
+		var editorIconStyle = {
+			position: 'absolute',
+			top: 0,
+			bottom: 0,
+			width: '25px',
+			lineHeight: config.rowHeight + 'px'
+		}
+		if (config.align === 'right') editorIconStyle.left = 0
+		else editorIconStyle.right = 0
 
-		// if (this.state.selected) bg = "white"
-		if (config.color) bg = config.color
+		cellStyle.textAlign = (config.align.center ? 'center' : config.align.right ? 'right' : 'left')
+		cellStyle.zIndex = (this.state.selected ? 130 : null)
+		cellStyle.lineHeight = config.rowHeight + 'px'
+
+		if (this.state.selected) bg = "white"
+		else if (config.color) bg = config.color
 		else if (config.colorAttr) bg = obj['a' + config.colorAttr]
 
 		if (bg) {
@@ -115,12 +126,10 @@ var editableInputMixin = {
 			cellStyle.background = tinycolor(hsl).toRgbString()
 		}
 
-		if (config.boldAttr) cellClass += ( obj['a' + config.boldAttr] ? ' bolded' : '')
-
 		return <span {...this.props}
-			onWheel = {this.handleWheel}
-			onMouseDown = {this._handleClick}
-			className = {className}>
+			onWheel = {this._handleWheel}
+			onPaste = {this._handlePaste}
+			onMouseDown = {this._handleClick}>
 			{this.state.editing ?
 			<input
 				className = "input-editor"
@@ -129,18 +138,16 @@ var editableInputMixin = {
 				onBlur = {this.revert}
 				onChange = {this.handleChange} />
 			:
-			<span style = {cellStyle}
-				className = {"table-cell-inner " + (showDetail? " with-detail " : "")
-				+ (this.state.selected ? " selected" : "") + cellClass}>
-					{this.format ?
-						this.format(this.state.value) :
-						this.state.value
-					}
+			<span style = {cellStyle}>
+				{this.format ?
+					this.format(this.state.value) :
+					this.state.value
+				}
 			</span>
 		}
 		{showDetail ?
 			<span
-				style = {{lineHeight: this.props.rowHeight + 'px'}}
+				style = {editorIconStyle}
 				className = {"editor-icon icon " + this.detailIcon}
 				onClick = {this.handleDetail}
 				></span>

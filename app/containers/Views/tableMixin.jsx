@@ -88,6 +88,11 @@ var TableMixin = {
 			e.preventDefault()
 			return;
 		}
+		// if (e.keyCode == keycodes.V && e.ctrlKey) {
+		// 	this.pasteSelection(e)
+		// 	e.preventDefault()
+		// 	return;
+		// }
 		if (e.keyCode == keycodes.PLUS && e.ctrlKey && e.shiftKey) {
 			this.insertRecord()
 			e.preventDefault()

@@ -26,7 +26,7 @@ var FakeLines = React.createClass ({
       lines.push(<div key = {i} style = {rowStyle} className = "fake-table-row"></div> )
     }
 
-		return <div className = "fake-lines">
+	return <div className = "fake-lines" >
       {lines}
     </div>
 	}
