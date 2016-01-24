@@ -165,6 +165,7 @@ var TabularBodyWrapper = React.createClass ({
 				hasRowLabel = {true}
 				columns = {view.data.fixedCols}
 				focused = {focused}
+				style = {{overflow: 'hidden'}}
 				view = {view} />
 
 			{
@@ -175,17 +176,18 @@ var TabularBodyWrapper = React.createClass ({
 						>Loading...</div>
 					: null
 			}
-
+			
 			<FakeLines
 				width = {adjustedWidth}
 				rowCount = {rowCount}
 				ref = "FakeLines"
 				{...this.props}/>
+			
 
 			<RowResizer {...this.props} adjustedWidth = {adjustedWidth} />
 
-			{/*LHS TABLE BODY*/}
-			<div className = "inner-wrapper "
+			{/*CURSORS*/}
+			<div className = "inner-wrapper"
 				style = {{
 					left: geo.leftGutter + 'px',
 					top: geo.headerHeight + 1 + 'px',
@@ -198,7 +200,6 @@ var TabularBodyWrapper = React.createClass ({
 					height: (rowCount * geo.rowHeight) + 'px',
 					width: (fixedWidth + floatWidth) + 'px'
 				}}>
-
 				{this.props.children}
 
 				<AddNewRowBar {...this.props}
@@ -206,6 +207,26 @@ var TabularBodyWrapper = React.createClass ({
 						- this.state.hiddenColWidth}
 					ref = "addNew"
 					rowCount = {rowCount}/>
+			</div>
+
+			{/*LHS TABLE BODY*/}
+			<div className = "inner-wrapper force-layer"
+				style = {{
+					left: geo.leftGutter + 'px',
+					top: geo.headerHeight + 1 + 'px',
+					marginTop: marginTop + 'px',
+					// background: 'white',
+					// WebkitTransition: 'margin-top cubic-bezier(.16,.85,.5, 1) 150ms',
+					// MozTransition:    'margin-top cubic-bezier(.16,.85,.5, 1) 150ms',
+					// MsTransition:     'margin-top cubic-bezier(.16,.85,.5, 1) 150ms',
+					// OTransition:      'margin-top cubic-bezier(.16,.85,.5, 1) 150ms',
+					// transform: 'translate3d(0,' + marginTop + 'px,0)',
+					height: (rowCount * geo.rowHeight) + 'px',
+					width: (fixedWidth) + 'px',
+					overflow: 'hidden'
+				}}>
+
+				
 
 				<TabularTBody
 					{...this.props}
@@ -250,15 +271,18 @@ var TabularBodyWrapper = React.createClass ({
 						side = {'rhs'}
 						columns = {view.data.floatCols}
 						focused = {focused}
+						style = {{overflow: 'hidden'}}
 						view = {view} />
 					{/*RHS TABLE BODY WRAPPER*/}
-					<div className = "inner-wrapper "
+					<div className = "inner-wrapper force-layer"
 						style = {{
 							left: 0,
 							top: geo.headerHeight + 1 + 'px',
 							marginTop: marginTop + 'px',
 							height: (rowCount * geo.rowHeight) + 'px',
-							width: (fixedWidth + floatWidth) + 'px'
+							width: (fixedWidth + floatWidth) + 'px',
+							overflow: 'hidden'
+							// background: 'white'
 						}}>
 						<TabularTBody
 							{...this.props}

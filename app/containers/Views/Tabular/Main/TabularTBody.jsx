@@ -9,13 +9,13 @@ import util from '../../../../util/util'
 
 import TabularTR from './TabularTR'
 
-var VISIBLE_ROWS = 46
+var VISIBLE_ROWS = 45
 var MAX_SKIP = 1
 var TURBO_SKIP = 2
-var TURBO_THRESHOLD = 10
+var TURBO_THRESHOLD = 10 
 var CYCLE = 31
 var MIN_CYCLE = 28
-var BACKWARD_BUFFER = 8
+var BACKWARD_BUFFER = 6
 var BUFFER_SIZE = 4
 var PAGE_SIZE = MAX_SKIP
 var BAILOUT = MAX_SKIP
@@ -33,7 +33,8 @@ var TabularTBody = React.createClass ({
 			offset: 0,
 			target: 0,
 			length: VISIBLE_ROWS,
-			scrollDirection: 1
+			scrollDirection: 1,
+			speed: 0
 		}
 	},
 
@@ -47,8 +48,11 @@ var TabularTBody = React.createClass ({
 		var buffer = 0 - BACKWARD_BUFFER  + (BUFFER_SIZE * scrollDirection)
 		var target = util.limit(0, rowCount, newOffset + buffer)
 
+		// target = 0
+
 		this.setState({
 			scrollDirection: scrollDirection,
+			speed: Math.abs(delta),
 			target: target
 		})
 		this.updateOffset()
@@ -64,10 +68,13 @@ var TabularTBody = React.createClass ({
 		var delta = (target - current)
 		var paintDirection = (delta > 0 ? 1 : delta < 0 ? -1 : 0)
 		var magnitude = Math.abs(delta)
-		var skip = magnitude >= TURBO_THRESHOLD ? TURBO_SKIP : MAX_SKIP
+		var skip = (magnitude >= TURBO_THRESHOLD || this.state.speed > 3) ? TURBO_SKIP : MAX_SKIP
 		var setpoint = current + (Math.min(magnitude, skip) * paintDirection)
-		setpoint = 
-		this.setState({offset: setpoint})
+		
+		this.setState({
+			scrolling: (setpoint !== target),
+			offset: setpoint
+		})
 	},
 
 	componentDidUpdate: function (prevProps) {
@@ -130,7 +137,7 @@ var TabularTBody = React.createClass ({
 		var pk = model._pk
 		var ptr = this.props.pointer
 		var rowKey = this.props.prefix + '-tr-' + (obj.cid || obj[pk])
-		var offset = Math.floor(this.state.offset/PAGE_SIZE) * PAGE_SIZE
+		var offset = this.state.offset
 
 		return <TabularTR  {...this.props}
 			obj = {obj}

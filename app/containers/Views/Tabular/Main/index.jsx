@@ -57,18 +57,20 @@ var TabularPane = React.createClass ({
 	},
 
 	componentWillMount: function () {
-		var copyPasteDummy = document.getElementById('copy-paste-dummy')
+		// var copyPasteDummy = document.getElementById('copy-paste-dummy')
+		
 		document.body.addEventListener('keydown', this.onKey)
 		FocusStore.addChangeListener(this._onChange)
-		copyPasteDummy.addEventListener('paste', this.pasteSelection)
-		copyPasteDummy.focus()
+		// copyPasteDummy.addEventListener('paste', this.pasteSelection)
+		// copyPasteDummy.focus()
 		this.store = createTabularStore(this.props.view)
 	},
 
 	componentWillUnmount: function () {
+		// var copyPasteDummy = document.getElementById('copy-paste-dummy')
 		document.body.removeEventListener('keydown', this.onKey)
 		FocusStore.removeChangeListener(this._onChange)
-		document.getElementById('copy-paste-dummy').removeChangeListener('paste', this.pasteSelection)
+		// copyPasteDummy.removeChangeListener('paste', this.pasteSelection)
 		this.store.unregister()
 	},
 

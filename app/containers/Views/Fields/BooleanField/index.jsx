@@ -50,7 +50,6 @@ var CheckboxElement = React.createClass({
 		var config = this.props.config
 		var value = this.props.value
 		var style = this.props.style
-		var selectionClass = (this.state.selected ? ' selected ' : '')
 
 		var cellStyle = _.clone(defaultCellStyle)
 		

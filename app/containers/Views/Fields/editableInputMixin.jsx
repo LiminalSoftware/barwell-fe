@@ -138,7 +138,7 @@ var editableInputMixin = {
 				onBlur = {this.revert}
 				onChange = {this.handleChange} />
 			:
-			<span style = {cellStyle}>
+			<span style = {cellStyle} className = {this.state.selected ? " force-layer " : ""}>
 				{this.format ?
 					this.format(this.state.value) :
 					this.state.value
