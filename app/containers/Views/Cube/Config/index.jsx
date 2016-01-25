@@ -84,10 +84,10 @@ var CubeViewConfig = React.createClass({
 			<table className="detail-table">
 				<tbody>
 				<tr className="top-line">
-					<td className="width-10"></td>
+					<td style={{width: "10%"}}></td>
 					<td className="width-60 top-line">Row Groupings</td>
-					<td className="width-20">Order</td>
-					<td className="width-10"></td>
+					<td style={{width: "20%"}}>Order</td>
+					<td style={{width: "10%"}}></td>
 				</tr>
 				</tbody>
 				<GroupingSelector
@@ -97,10 +97,10 @@ var CubeViewConfig = React.createClass({
 					model = {model} />
 				<tbody>
 				<tr className="top-line">
-					<td className="width-10"></td>
+					<td style={{width: "10%"}}></td>
 					<td className="width-60 top-line">Column Groupings</td>
-					<td className="width-20">Order</td>
-					<td className="width-10"></td>
+					<td style={{width: "20%"}}>Order</td>
+					<td style={{width: "10%"}}></td>
 				</tr>
 				</tbody>
 				<GroupingSelector
@@ -119,21 +119,21 @@ var CubeViewConfig = React.createClass({
 			<table className="detail-table">
 				<thead>
 					<tr className="top-line">
-						<th className="width-10"></th>
-						<th className="width-65">Value</th>
-						<th className="width-25">Aggregator</th>
+						<th style={{width: "10%"}}></th>
+						<th style={{width: "65%"}}>Value</th>
+						<th style={{width: "25%"}}>Aggregator</th>
 
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
-						<td className="width-10"><span className="icon grayed icon-Layer_6"></span></td>
+						<td style={{width: "10%"}}><span className="icon grayed icon-Layer_6"></span></td>
 						<td>
 							<select value={view.value} onChange={this.handleSelectValue}>
 								{this.getOptions()}
 							</select>
 						</td>
-						<td className="width-75"><select value = {view.aggregator} onChange={this.handleSelectAggregator}>
+						<td style={{width: "75%"}}><select value = {view.aggregator} onChange={this.handleSelectAggregator}>
 							{_.map(constants.aggregators, function (label, key) {
 								return <option value = {key} key = {key}>
 									{label}
@@ -229,10 +229,10 @@ var GroupingDetail = React.createClass({
 		var dimension = this.props.dimension
 
 		return <tr>
-			<td className="width-10">
+			<td style={{width: "10%"}}>
 				<span className={"grayed icon " + (dimension === 'column_aggregates' ? "icon-Layer_1" : "icon-Layer_8")}></span>
 			</td>
-			<td className="width-60">
+			<td style={{width: "60%"}}>
 				{group ?
 				attr.attribute
 				:

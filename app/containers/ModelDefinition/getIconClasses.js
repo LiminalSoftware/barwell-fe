@@ -1,9 +1,8 @@
-var KEY_ICONS = ["icon-geo-str-square", "icon-geo-str-circle", "icon-geo-str-triangle", "icon-geo-str-trifold", "icon-geo-str-diamond"];
+var KEY_ICONS = ["icon-geo-square", "icon-geo-circle", "icon-geo-triangle", "icon-geo-octogon", "icon-geo-pentagon", "icon-geo-diamond", 'icon-geo-trifoil', "icon-geo-peakhead"];
 var KEY_COLORS = ["green", "blue", "red"];
 
 var getIconClasses = function (ordinal, key) {
-	return [
-		"small", 
+	return [ 
 		"icon",
 		(key && key._dirty) ? "greened" : "grayed",
 		KEY_ICONS[ordinal % KEY_ICONS.length]

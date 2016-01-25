@@ -89,11 +89,11 @@ var ViewDetails = React.createClass({
 			</div>
 			<div className="detail-table">
 					<div className = "header-row">
-						<span className="width-25">Name:</span>
-						<span className="width-75">{this.state.name}</span>
+						<span style={{width: "25%"}}>Name:</span>
+						<span style={{width: "75%"}}>{this.state.name}</span>
 					</div>
 					<div>
-						<span className="width-25">Type:</span>
+						<span style={{width: "25%"}}>Type:</span>
 						<span className="width-75 clickable"
 						   onClick={this.chgType}>
 								<span className={"icon " + icon}></span>

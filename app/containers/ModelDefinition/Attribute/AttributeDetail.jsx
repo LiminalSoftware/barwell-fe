@@ -18,42 +18,37 @@ var AttributeDetail = React.createClass({
 	mixins: [PureRenderMixin],
 
 	getInitialState: function () {
-		var attribute = this.props.attribute;
-		return {
-			renaming: false,
-			attribute: attribute.attribute,
-			type: attribute.type,
-			default_value: this.props.default_value,
-			open: false
-		};
+		var attribute = this.props.attribute
+		return attribute
 	},
 
-	commitUpdate: function () {
-		var attribute = this.props.attribute
-		attribute.attribute = this.state.attribute
-		attribute.type = this.state.type
+	componentWillReceiveProps: function (nextProps) {
+		var attribute = nextProps.attribute
+		if (!this.props.editing) this.setState(attribute)
+	},
+
+	commitUpdate: function (state) {
+		var attribute = _.extend(this.props.attribute, state)
+		this.setState(state)
 		modelActionCreators.create('attribute', false, attribute)
 	},
 
-	handleNameUpdate: function (event) {
-		this.setState({attribute: event.target.value})
+	handleNameUpdate: function (e) {
+		this.commitUpdate({attribute: e.target.value})
 	},
 
-	handleTypeChange: function (event) {
-		this.setState({type: event.target.value})
-		this.commitUpdate()
+	handleTypeChange: function (e) {
+		this.commitUpdate({type: e.target.value})
 	},
 
 	handleDelete: function (event) {
 		var attribute = this.props.attribute
 		modelActionCreators.destroy('attribute', false, attribute)
-		KeycompStore.query({attribute_id: attribute.attribute_id}).forEach(function (keycomp) {
-			var key = KeyStore.get(keycomp.key_id)
-			key._destroyerType = 'attribute'
-			key._destroyerId = attribute.attribute_id
-			modelActionCreators.destroy('key', false, key)
-		})
 		event.preventDefault()
+	},
+
+	toggleVisibility: function () {
+		this.commitUpdate({hidden: !this.state.hidden})
 	},
 
 	render: function () {
@@ -64,6 +59,7 @@ var AttributeDetail = React.createClass({
 		var name = col.attribute;
 		var keyIcons = [];
 		var components = KeycompStore.query({attribute_id: col.attribute_id});
+
 		var typeFieldChoices = Object.keys(constants.fieldTypes).filter(function (type) {
 			return type !== 'PRIMARY_KEY'
 		}).map(function (type) {
@@ -79,8 +75,7 @@ var AttributeDetail = React.createClass({
 			keyIcons.push(<span
 				key = {'keycomp-' + comp.keycomp_id}
 				className={getIconClasses(ord, key)}
-				title={key.key}>
-				</span>
+				title={key.key} />
 			);
 		});
 
@@ -91,7 +86,7 @@ var AttributeDetail = React.createClass({
 		var actions = [];
 
 		return <ReactCSSTransitionGroup
-				transitionEnterTimeout={500} 
+				transitionEnterTimeout={500}
 				transitionLeaveTimeout={300} 
 				key={key} 
 				transitionName="detail-row" 
@@ -101,11 +96,13 @@ var AttributeDetail = React.createClass({
 
 				{this.props.editing ?
 					<span className="draggable" key="drag-cell">
-						<span className="tighter icon icon-Layer_2 model-reorder"></span>
+						<span className="grayed icon icon-Layer_2 model-reorder"></span>
 					</span>
 					: null
 				}
-				<span  key={key + '-name'} title={col.attribute_id} className={"width-40 " + (this.props.editing ? " tight" : "")}>
+				<span  key={key + '-name'} 
+					title={col.attribute_id}
+					style = {{width: '35%'}}>
 					{this.props.editing ?
 					<input ref="renamer"
 						className="renamer header-renamer"
@@ -117,24 +114,29 @@ var AttributeDetail = React.createClass({
 					}
 				</span>
 				{
-					!col.attribute_id ?
-					<span className="width-30 tight">
+					this.props.editing ?
+					<span style = {{width: '25%'}}>
 						<select name="type" value={col.type} onChange={this.handleTypeChange}>
 							{typeFieldChoices}
 						</select>
 					</span>
 					:
-					<span className="width-30">
+					<span style = {{width: '20%'}}>
 						{constants.fieldTypes[col.type]}
 					</span>
 				}
-				<span  className="centered width-20 tight">
+				<span  style = {{width: '20%', textAlign: 'center'}}>
 					{keyIcons}
 				</span>
-				<span className="width-10 grayed">
-					{this.props.editing ? <span className="clickable icon icon-kub-trash"
-						title="Delete attribute" onClick={this.handleDelete}>
-						</span> : null}
+				<span style = {{width: '20%', textAlign: 'center'}}>
+					<span className = {"grayed clickable icon " + (this.state.hidden ? " icon-eye-4 " : " icon-eye-3")}
+						onClick = {this.toggleVisibility}/>
+					{
+						this.props.editing ? 
+						<span className="grayed clickable icon icon-cr-remove"
+						title="Delete attribute" onClick={this.handleDelete}/>
+						: null
+					}
 				</span>
 
 			</ReactCSSTransitionGroup>

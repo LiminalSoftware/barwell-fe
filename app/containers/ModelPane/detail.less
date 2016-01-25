@@ -3,15 +3,15 @@
 
 .model-details {
     display: block;
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		overflow-y: scroll;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	overflow-y: scroll;
 
-		background: white;
-		font-size: 15px;
+	background: white;
+	font-size: 15px;
 }
 
 .model-details-row {
@@ -23,14 +23,15 @@
 
 
 .detail-block {
-	min-width: 400px;
+	position: relative;
 	flex: 1 1;
 	flex-wrap: wrap;
 	flex-direction: row;
-  	border-top: 1px solid @gray3;
 	padding: 10px;
 	margin: 10px;
 	display: block;
+	background: @gray4;
+	min-width: 400px;
 }
 
 p.explainer {
@@ -69,22 +70,50 @@ p.explainer {
 	display: block;
   	width: 100%;
 
+  	flex-direction: column;
+	
+	// transition: max-width cubic-bezier(.16,.85,.5,1) 100ms;
+    padding: 7px;
+	margin: 0;
+	overflow: visible;
 	list-style: none;
 
+	.detail-grouping {
+		position: relative;
+		display: block;
+		margin-bottom: 3px;
+		padding: 0;
+		.border-box;
+	}
+
   	.detail-row, .detail-header {
+  		position: relative;
 		display: flex;
     	clear: both;
 		margin-bottom: 3px;
+		line-height: 40px;
+		height: 40px;
+		padding: 0;
+		.border-box;
+		transition: background cubic-bezier(.16,.85,.5,1) 200ms;
+		overflow: visible;
+		&.new {
+			margin-left: -100%;
+		}
 	}
 
-	.detail-header {
-		position: -webkit-sticky;
-		position: -moz-sticky;
-		position: -ms-sticky;
-		position: -o-sticky;
-		position: sticky;
-		top: 15px;
+	.draggable {
+		position: absolute;
+		left: -20px;
+		top: 0;
+		bottom: 0;
+		line-height: 100px;
 	}
+
+	// .detail-header {
+	// 	position: sticky;
+	// 	top: 15px;
+	// }
 
   	.detail-header {
 		font-family: @bodyFont;
@@ -92,130 +121,38 @@ p.explainer {
 		border-top: 1px solid @gray3;
   	}
 
-	.detail-row {
-		border-radius: 4px;
-		position: relative;
-		transition: all cubic-bezier(.16,.85,.5,1) 1000ms;
-
-		&.new {
-			margin-left: -100%;
-		}
-	}
-
-	.detail-row.editing > span:not(.draggable) {
+	.detail-row.editing {
 		background: @gray4;
 	}
 
+  	.detail-row > span, .detail-header > span {
+  		margin: 0;
+  		display: inline-block;
+  		padding: 0 5px;
+		.border-box;
+		height: 40px;
+		line-height: 40px;
+  	}
 
-  .detail-row > span, .detail-header > span {
-
-	flex-direction: column;
-	transition: background cubic-bezier(.16,.85,.5,1) 100ms;
-	transition: max-width cubic-bezier(.16,.85,.5,1) 100ms;
-    padding: 7px;
-	margin: 0;
-
-	&.draggable {
-		color: @gray3;
-		position: absolute;
-		top: 0;
-		left: -25px;
-		width: 15px;
-	}
-	&.draggable:hover {
-		cursor: grab;
-	}
-    &.title {
-		font-family: @subheaderFont;
-		color: @gray2;
-		font-weight: 400;
-    }
-    &.right-align {
-      text-align: right;
-    }
-    &.no-line {
-      border-bottom: none;
-    }
-    &.centered {
-      text-align: center;
-    }
-    &.grayed {
-      color: @gray3;
-    }
-    &.padded {
-      padding: 4px 6px;
-    }
-	&.width-5 {
-		width: 5%;
-	}
-	&.width-8 {
-		width: 7%;
-	}
-    &.width-10 {
-      width: 10%;
-    }
-    &.width-15 {
-      width: 15%;
-    }
-    &.width-20 {
-      width: 19%;
-    }
-    &.width-22{
-      width: 22%
-    }
-    &.width-25 {
-      width: 24%;
-    }
-    &.width-30 {
-      width: 29%;
-    }
-    &.width-35 {
-      width: 35%;
-    }
-    &.width-40 {
-      width: 39%;
-    }
-    &.width-50 {
-      width: 50%;
-    }
-    &.width-60 {
-      width: 60%;
-    }
-    &.width-70 {
-      width: 70%;
-    }
-	&.width-80 {
-      width: 80%;
-    }
-	&.width-90 {
-      width: 90%;
-    }
-	&.width-100 {
-      width: 100%;
-    }
-  }
-
-  input:not([type]), input[type=text], select {
+	input:not([type]), input[type=text], select {
 		-webkit-appearance: none;
 		-firefox-appearance: none;
 
 		box-sizing: border-box;
 		width: 100%;
-		padding: 4px 4px;
-		margin-left: -5px;
-		margin-top: -5px;
-		margin-bottom: -5px;
-		margin-right: -5px;
 
-    border: 1px solid @gray3;
-    background: white;
 
-    font-size: 15px;
-    font-family: @bodyFont;
+		padding: 4px;
+		border: 1px solid @gray3;
+		background: white;
 
-    outline: 0;
+		font-size: 15px;
+		font-family: @bodyFont;
+		color: black;
+
+		outline: 0;
 		transition: all cubic-bezier(.16,.85,.5,1) 100ms;
-  }
+	}
 
 	input[type=checkbox] {
 		border-radius: 4px;
@@ -231,8 +168,8 @@ p.explainer {
 		border: 1px solid @newgreen1;
 	}
 
-  input::selection {
-      background: @newgreen1; /* WebKit/Blink Browsers */
-  }
+	// input::selection {
+	// 	background: @newgreen1; /* WebKit/Blink Browsers */
+	// }
 
 }

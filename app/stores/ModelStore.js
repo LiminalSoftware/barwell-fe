@@ -23,7 +23,7 @@ var ModelStore = storeFactory({
         model._dirty = false
         if (model.attributes instanceof Array) model._pk =
           'a' + model.attributes.filter(attr => attr.type === 'PRIMARY_KEY')[0].attribute_id
-        model = _.pick(model, '_pk', 'model', 'model_id', 'cid', 'workspace_id',
+        model = _.pick(model, '_pk', 'model', 'model_id', 'cid', 'workspace_id', 'label_attribute_id', 'label_key_id',
             'plural', 'lock_user', '_dirty', '_destroy')
         this.create(util.clean(model))
         this.emitChange()

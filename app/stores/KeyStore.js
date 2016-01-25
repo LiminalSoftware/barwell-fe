@@ -18,13 +18,13 @@ var KeyStore = storeFactory({
 
       case 'KEYCOMP_CREATE':
         var keycomp = payload.keycomp
-        var related_key = this.get(keycomp.key_id)
+        var related_key = this.get(keycomp.key_id) || {}
         if (!related_key._named) {
           var attr = AttributeStore.get(keycomp.attribute_id)
+          related_key.model_id = attr.model_id
           related_key.key = attr.attribute + ' key'
           this.create(related_key)
         }
-          
         this.emitChange()
         break;
 

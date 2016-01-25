@@ -36,19 +36,14 @@ var AttributeDetailList = React.createClass({
 	commitChanges: function () {
 		var _this = this
 		var model = this.props.model;
-		model.lock_user = 'me'
 		this.setState({committing: true})
 
-		modelActionCreators.create('model', true, model, false).then(function () {
-			return Promise.all(
+		return Promise.all(
 			AttributeStore.query({model_id: (model.model_id || model.cid)}).map(function (attr) {
 				if (attr._dirty) return modelActionCreators.create('attribute', true, attr)
 				if (attr._destroy) return modelActionCreators.destroy('attribute', true, attr)
-			}))
-		}).then(function () {
-				model.lock_user = null
-				modelActionCreators.create('model', true, model, false)
-		}).then(function () {
+			})
+		).then(function () {
 			_this.setState({editing: false, committing: false})
 			_this.cancelChanges()
 			// modelActionCreators.createNotification('Attribute udpate complete!', 'Your changes have been committed to the server', 'info')
@@ -96,15 +91,15 @@ var AttributeDetailList = React.createClass({
 			</p>
 			<div key="attr-table" className={"detail-table " + (this.state.editing ? " editing" : "")}>
 					<div className="detail-header">
-						<span className="width-40" key="name-cell">Name</span>
-						<span className="width-30" key="type-cell">Type</span>
-						<span className="width-10" key="keys-cell">Keys</span>
-						<span clasName="width-8" key="action-cell"></span>
+						<span style={{width: '40%'}} key="name-cell">Name</span>
+						<span style={{width: "30%"}} key="type-cell">Type</span>
+						<span style={{width: "10%"}} key="keys-cell">Keys</span>
+						<span style={{width: "10%"}} key="action-cell"></span>
 					</div>
 					{
 						AttributeStore.query({model_id: (model.model_id || model.cid)}, ['ordering']).map(function (col) {
 							var colId = (col.attribute_id || col.cid);
-							if (col._destroy || col.hidden) return null
+							if (col._destroy) return null
 							return <AttributeDetail
 								key = {colId}
 								editing = {_this.state.editing}

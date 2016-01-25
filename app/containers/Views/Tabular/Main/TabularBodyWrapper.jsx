@@ -198,7 +198,7 @@ var TabularBodyWrapper = React.createClass ({
 					// OTransition:      'margin-top cubic-bezier(.16,.85,.5, 1) 150ms',
 					// transform: 'translate3d(0,' + marginTop + 'px,0)',
 					height: ((rowCount + 1) * geo.rowHeight) + 'px',
-					width: (fixedWidth + floatWidth + geo.labelWidth) + 'px'
+					width: (fixedWidth + floatWidth + geo.labelWidth + 6) + 'px'
 				}}>
 				{this.props.children}
 

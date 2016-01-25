@@ -119,7 +119,7 @@ var RelationDetail = React.createClass({
 				</span>
 				: null
 			}
-			<span className="width-30">
+			<span style={{width: "30%"}}>
 				{this.props.editing ?
 					<input ref="renamer"
 					value={this.state.name}
@@ -129,10 +129,10 @@ var RelationDetail = React.createClass({
 					relation.relation
 				}
 			</span>
-			<span className="width-30">
+			<span style={{width: "30%"}}>
 				{relatedModelField}
 			</span>
-			<span className="width-25">
+			<span style={{width: "25%"}}>
 				{typeField}
 			</span>
 			{this.props.editing ?

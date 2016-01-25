@@ -78,33 +78,23 @@ var KeyDetail = React.createClass({
 						</span>
 						: null
 					}
-					<span className="width-70">
+					<span style={{width: "70%"}} title = {key.key_id}>
 						{
 							this.props.editing ?
-							<input value={_this.state.name}/>
-							:
-							<div>
-								<div>{key.key}</div>
-								<div className="faint">
-									<span className="">Including: </span> {
-										components.map(function (comp) {
-											return AttributeStore.get(comp.attribute_id).attribute
-										}).join(', ')
-									}
-								</div>
-							</div>
-						}
+								<input value={_this.state.name}/>
+								: key.key
+						}		
 					</span>
-					<span className="width-10">
+					<span style={{width: "10%"}}>
 						{keyIcon}
 					</span>
-					<span className="width-10">
+					<span style={{width: "10%"}}>
 						<input type="checkbox"
 							checked={key.uniq}
 							onChange={this.handleUniqClick}/>
 					</span>
-					<span className="width-10 grayed">
-						{this.props.editing ? <span className="clickable icon icon-kub-trash"
+					<span style={{width: "10%"}}>
+						{this.props.editing ? <span className="clickable icon icon-cr-remove"
 							title="Delete key" onClick={this.handleDelete}>
 							</span> : null}
 					</span>
@@ -113,32 +103,40 @@ var KeyDetail = React.createClass({
 					this.props.editing ?
 					components.map(function (comp) {
 						return <div className="detail-row sub-row">
-							<span className="width-70">
+							<span style={{width: "70%"}}>
 								<select value = {comp.attribute_id}
-												onChange = {_this.handleCompChoice}>
+										onChange = {_this.handleCompChoice}>
 									{selections}
 								</select>
 							</span>
-							<span className="width-10"></span>
-							<span className="width-10"></span>
-							<span className="width-10 grayed">
+							<span style={{width: "10%"}}></span>
+							<span style={{width: "10%"}}></span>
+							<span style={{width: "10%"}}>
 								<span className="clickable icon icon-kub-trash"
 									title="Delete component" onClick={_this.handleDelete}>
 								</span>
 							</span>
 						</div>;
 					}).concat(<div className="detail-row sub-row">
-						<span className="width-70">
+						<span style={{width: "70%"}}>
 						<ul className="light mb-buttons">
 							<li onClick={this.handleEdit}>Add component</li>
 						</ul>
 						</span>
-						<span className="width-10"></span>
-						<span className="width-10"></span>
-						<span className="width-10"></span>
+						<span style={{width: "10%"}}></span>
+						<span style={{width: "10%"}}></span>
+						<span style={{width: "10%"}}></span>
 					</div>)
 					:
-					null
+					<div className="faint detail-row">
+						<span style={{width: '100%'}}>
+							{
+							'Including: ' + components.map(function (comp) {
+								return AttributeStore.get(comp.attribute_id).attribute
+							}).join(', ')
+							}
+						</span>
+					</div>
 				}
 			</div>;
 	}

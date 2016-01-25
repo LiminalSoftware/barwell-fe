@@ -24,7 +24,7 @@ var ModelDetails = React.createClass({
 			name: model.model,
 			plural: model.plural,
 			pluralUpdated: false,
-			label: null
+			label_attribute_id: model.label_attribute_id
 		}
 	},
 
@@ -38,44 +38,16 @@ var ModelDetails = React.createClass({
 		var key
 		var model = _.clone(this.props.model)
 		var name = this.state.name
-		var plural = this.state.plural
-		var label = this.state.label
-		var numComps = _.countBy(KeycompStore.query({model_id: model.model_id}), 'key_id')
 
-		var candidateKc = KeycompStore.query({attribute_id: label}).forEach(function (kc) {
-			if (numComps[kc.key_id] === 1) key = KeyStore.get(kc.key_id)
-		});
-		if (!key) {
-			modelActionCreators.create('key', false, {
-				_named: false,
-				_label: true,
-				model_id: model.model_id
-			}).then(function (k) {
-				key = k
-				modelActionCreators.create('keycomp', false, {key_id: key.cid, attribute_id: label})
-			})
-		}
-
-		model.model = name
-		model.plural = plural
-		model.lock_user = 'me'
+		model.model = this.state.name
+		model.plural = this.state.plural
+		model.label_key_id = this.state.label_key_id
 
 		modelActionCreators.create('model', true, model).then(function () {
-			key.keycomps = KeycompStore.query({key_id: (key.key_id || key.cid)})
-				.map(function(kc) {return _.pick(kc, 'attribute_id', 'ord')})
-			console.log('key: ')
-			console.log(key);
-			// if (!key.key_id) return modelActionCreators.create('key', true, key, false)
-		}).then(function (key) {
-				// model.label = key.key_id
-				model.lock_user = null
-				modelActionCreators.create('model', true, model)
-		}).then(function () {
 			_this.setState({editing: false, committing: false})
 			// modelActionCreators.createNotification('Model udpate complete!', 'Your changes have been committed to the server', 'info')
 		})
 	},
-
 
 	cancelChanges: function () {
 		var model = this.props.model;
@@ -88,9 +60,12 @@ var ModelDetails = React.createClass({
 	},
 
 	handlePickLabel:function (event) {
+		var _this = this
 		var model = this.props.model
 		var value = event.target.value
-		this.setState({label: value});
+		this.setState({
+			label_attribute_id: value
+		})
 	},
 
 	revert: function () {
@@ -119,6 +94,8 @@ var ModelDetails = React.createClass({
 
 	render: function () {
 		var model = this.props.model;
+		var labelAttribute = AttributeStore.get(model.label_attribute_id) || {}
+
 		return <div className="detail-block">
 		<div className="detail-section-header">
 			<h3>Database Details</h3>
@@ -126,13 +103,12 @@ var ModelDetails = React.createClass({
 				<li onClick={this.handleEdit}>Edit</li>
 			</ul>
 		</div>
-
 			<div className="detail-table">
 					<div className={'detail-row'}>
-						<span className="width-30 title">
+						<span style = {{width: "30%"}}>
 							Name
 						</span>
-						<span className={"width-70 " + (this.state.editing ? " tight" : "")}>
+						<span style = {{width: "70%"}} >
 								{this.state.editing ?
 								<input
 									value={this.state.name}
@@ -146,8 +122,8 @@ var ModelDetails = React.createClass({
 						</span>
 					</div>
 					<div className='detail-row'>
-						<span className="width-30 title">Plural</span>
-						<span className={"width-70 " + (this.state.editing ? " tight" : "")}>
+						<span style = {{width: "30%"}}>Plural</span>
+						<span style = {{width: "70%"}}>
 							{this.state.editing ?
 								<input
 									value={this.state.plural}
@@ -160,10 +136,10 @@ var ModelDetails = React.createClass({
 						</span>
 					</div>
 					<div className="detail-row">
-						<span className="width-30 title">Label</span>
-						<span className={"width-70 " + (this.state.editing ? " tight" : "")}>
+						<span style = {{width: "30%"}}>Label</span>
+						<span style = {{width: "70%"}}>
 							{this.state.editing ?
-								<select value = {model.label} onChange = {this.handlePickLabel}> {
+								<select value = {labelAttribute.attribute_id} onChange = {this.handlePickLabel}> {
 									[<option value={null} key="null-option">-Select from dropdown-</option>].concat(
 									AttributeStore.query({model_id: model.model_id, type: 'TEXT'}).map(function (attr) {
 										return <option value={attr.attribute_id} key={attr.attribute_id}>
@@ -172,7 +148,7 @@ var ModelDetails = React.createClass({
 									}))
 								} </select>
 								:
-								model.label
+								labelAttribute.attribute
 							}
 
 						</span>

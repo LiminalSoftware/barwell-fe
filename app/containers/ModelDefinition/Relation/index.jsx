@@ -95,10 +95,10 @@ var RelationDetailList = React.createClass({
 			</p>
 			<div className={"detail-table " + (this.state.editing ? "editing" : "")}>
 				<div className="detail-header">
-					<span className="width-30">Name</span>
-					<span className="width-30">Related Model</span>
-					<span className="width-20">Type</span>
-					<span className="width-20"></span>
+					<span style={{width: "30%"}}>Name</span>
+					<span style={{width: "30%"}}>Related Model</span>
+					<span style={{width: "20%"}}>Type</span>
+					<span style={{width: "20%"}}></span>
 				</div>
 				{relList}
 			</div>

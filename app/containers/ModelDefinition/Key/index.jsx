@@ -57,12 +57,12 @@ var KeyDetailList = React.createClass({
 			<p className="explainer">
 			Keys are groupings of attributes.  They can be used to enforce uniqueness or to define more complex relations between databases.
 			</p>
-			<div className={"detail-table " + (this.state.editing ? "editing" : "")}>
+			<div className="detail-table">
 				<div key="detail-header" className="detail-header">
-					<span className="width-70">Name / Component</span>
-					<span className="width-10"></span>
-					<span className="width-15">Unique?</span>
-					<span className="width-10"></span>
+					<span style={{width: "70%"}}>Name / Component</span>
+					<span style={{width: "10%"}}></span>
+					<span style={{width: "15%"}}>Unique?</span>
+					<span style={{width: "10%"}}></span>
 				</div>
 				{
 					KeyStore.query({model_id: model.model_id}).map(function (key) {
