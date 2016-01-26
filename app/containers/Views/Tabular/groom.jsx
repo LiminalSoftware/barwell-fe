@@ -40,9 +40,10 @@ var groomView = function (view) {
 	var iter =  BIG_NUM;
 	
 
-  	var columns = data.columns = groomFields(view)
+  	var columns = groomFields(view)
 	var columnList = enumerate(_.values(columns))
 
+	data.columns = columns
 	data.columnList = columnList
 	data.visibleCols = columnList.filter(c => c.visible)
 	data.floatCols = columnList.filter(c => !c.fixed && c.visible)

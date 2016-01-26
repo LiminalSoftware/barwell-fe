@@ -3,7 +3,6 @@
 .tabular-view-header {
 	position: absolute;
 	border-bottom: 1px solid @purple4;
-	z-index: 3;
 	background: white;
 }
 
@@ -31,7 +30,6 @@
 	border-bottom: none;
 	border-top: none;
 	// border-right: 1px solid @gray3;
-	background: white;
 
 	&.sorted > .table-cell-inner {
 		color: @purple4;
@@ -39,6 +37,8 @@
 	.table-cell-inner {
 		cursor: pointer;
 		padding-top: 5px;
+		z-index: 300;
+		background: white;
 	}
 }
 

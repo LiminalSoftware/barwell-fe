@@ -24,17 +24,23 @@ var AttributeDetail = React.createClass({
 
 	componentWillReceiveProps: function (nextProps) {
 		var attribute = nextProps.attribute
-		if (!this.props.editing) this.setState(attribute)
+		if (!nextProps.editing) {
+			this.setState(attribute)
+		}
 	},
 
-	commitUpdate: function (state) {
-		var attribute = _.extend(this.props.attribute, state)
-		this.setState(state)
-		modelActionCreators.create('attribute', false, attribute)
+	commitUpdate: function (diff) {
+		var attr = _.extend(_.clone(this.props.attribute), diff || {})
+		this.setState(diff)
+		modelActionCreators.create('attribute', false, attr)
 	},
 
 	handleNameUpdate: function (e) {
-		this.commitUpdate({attribute: e.target.value})
+		this.setState({attribute: e.target.value})
+	},
+
+	handleBlurName: function (e) {
+		this.commitUpdate({attribute: this.state.attribute})
 	},
 
 	handleTypeChange: function (e) {
@@ -48,7 +54,8 @@ var AttributeDetail = React.createClass({
 	},
 
 	toggleVisibility: function () {
-		this.commitUpdate({hidden: !this.state.hidden})
+		if (this.props.editing)
+			this.commitUpdate({hidden: !this.state.hidden})
 	},
 
 	render: function () {
@@ -100,7 +107,7 @@ var AttributeDetail = React.createClass({
 					</span>
 					: null
 				}
-				<span  key={key + '-name'} 
+				<span  key={key + '-name'}
 					title={col.attribute_id}
 					style = {{width: '35%'}}>
 					{this.props.editing ?
@@ -108,7 +115,7 @@ var AttributeDetail = React.createClass({
 						className="renamer header-renamer"
 						value = {this.state.attribute}
 						onChange = {this.handleNameUpdate}
-						onBlur = {this.commitUpdate}
+						onBlur = {this.handleBlurName}
 						/>
 					: col.attribute
 					}
@@ -116,7 +123,7 @@ var AttributeDetail = React.createClass({
 				{
 					this.props.editing ?
 					<span style = {{width: '25%'}}>
-						<select name="type" value={col.type} onChange={this.handleTypeChange}>
+						<select name="type" value={this.state.type} onChange={this.handleTypeChange}>
 							{typeFieldChoices}
 						</select>
 					</span>
@@ -130,7 +137,7 @@ var AttributeDetail = React.createClass({
 				</span>
 				<span style = {{width: '20%', textAlign: 'center'}}>
 					<span className = {"grayed clickable icon " + (this.state.hidden ? " icon-eye-4 " : " icon-eye-3")}
-						onClick = {this.toggleVisibility}/>
+						title = "Hidden by default" onClick = {this.toggleVisibility}/>
 					{
 						this.props.editing ? 
 						<span className="grayed clickable icon icon-cr-remove"

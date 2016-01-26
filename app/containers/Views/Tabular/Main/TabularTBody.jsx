@@ -109,7 +109,7 @@ var TabularTBody = React.createClass ({
 		if (this.__timer) clearTimeout(this.__timer)
 		// if we haven't reached the target yet, set a timer for next frame
 
-		if (this.state.offset !== this.state.target || visibleRows >= VISIBLE_ROWS) {
+		if (this.state.offset !== this.state.target) {
 			this.__timer = onFrame(this.updateOffset)
 		}
 	},
@@ -120,11 +120,10 @@ var TabularTBody = React.createClass ({
 		var visibleRows = this.state.end - this.state.start
 		if (now - this._lastUpdate < MIN_CYCLE) return false
 
-		return (this.state.offset !== this.state.target || visibleRows >= VISIBLE_ROWS)
+		return (this.state.offset !== this.state.target)
 	},
 
 	_onChange: function () {
-		console.log('tbody onchange')
 		this.forceUpdate()
 	},
 

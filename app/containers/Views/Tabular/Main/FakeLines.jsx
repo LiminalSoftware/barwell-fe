@@ -19,18 +19,19 @@ var FakeLines = React.createClass ({
 	    for (var i = 0; i < rowCount; i++) {
 	      var rowStyle = {
 	  			height: (geo.rowHeight + 2) + 'px',
-	        left: 0,
-	        width: this.props.width + 'px',
+	        	left: 0,
+	        	width: this.props.width + 'px',
 	  			top: (geo.rowHeight * i +  geo.headerHeight + 1) + 'px',
 	  		}
 	      lines.push(<div key = {i} style = {rowStyle} className = "fake-table-row"></div> )
 	    }
 
-		return <div className = "fake-lines force-layer" style = {{
+		return <div className = "fake-lines" style = {{
 			left: 0,
 			top: 0,
 			bottom: 0,
-			width: this.props.width + 'px'
+			width: this.props.width + 'px',
+			// zIndex: 1
 			}} >
 	      {lines}
 	    </div>

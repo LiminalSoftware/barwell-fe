@@ -23,7 +23,7 @@ var stripInternalVars = module.exports.stripInternalVars = function (obj) {
 
 var wait = module.exports.wait = function () {
   return new Promise (function (resolve, reject) {
-    window.setTimeout(resolve, 500);
+    window.setTimeout(resolve, 0);
   })
 }
 

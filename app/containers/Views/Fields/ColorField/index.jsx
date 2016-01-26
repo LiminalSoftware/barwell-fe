@@ -27,7 +27,7 @@ var ColorElement = React.createClass({
 		var value = this.props.value
 		var cellStyle = _.clone(defaultCellStyle)
 		var blockStyle = {
-			zIndex: 150,
+			// zIndex: 150,
 			display: 'block',
 			position: 'absolute',
 			left: '5px',

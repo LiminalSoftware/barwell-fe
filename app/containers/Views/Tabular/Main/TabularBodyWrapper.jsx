@@ -154,7 +154,8 @@ var TabularBodyWrapper = React.createClass ({
 				left: 0,
 				top: 0,
 				bottom: '20px',
-				width: (adjustedWidth) + 'px'
+				width: (adjustedWidth) + 'px',
+				zIndex: 1
 			}}>
 
 			<TabularTHead
@@ -192,11 +193,7 @@ var TabularBodyWrapper = React.createClass ({
 					left: geo.leftGutter + 'px',
 					top: geo.headerHeight + 1 + 'px',
 					marginTop: marginTop + 'px',
-					// WebkitTransition: 'margin-top cubic-bezier(.16,.85,.5, 1) 150ms',
-					// MozTransition:    'margin-top cubic-bezier(.16,.85,.5, 1) 150ms',
-					// MsTransition:     'margin-top cubic-bezier(.16,.85,.5, 1) 150ms',
-					// OTransition:      'margin-top cubic-bezier(.16,.85,.5, 1) 150ms',
-					// transform: 'translate3d(0,' + marginTop + 'px,0)',
+					// transform: 'translate(0, ' + marginTop + 'px)',
 					height: ((rowCount + 1) * geo.rowHeight) + 'px',
 					width: (fixedWidth + floatWidth + geo.labelWidth + 6) + 'px'
 				}}>
@@ -210,14 +207,16 @@ var TabularBodyWrapper = React.createClass ({
 			</div>
 
 			{/*LHS TABLE BODY*/}
-			<div className = "inner-wrapper force-layer"
+			<div className = "inner-wrapper"
 				style = {{
 					left: geo.leftGutter + 'px',
 					top: geo.headerHeight + 1 + 'px',
-					marginTop: marginTop + 'px',
 					height: (rowCount * geo.rowHeight) + 'px',
 					width: (fixedWidth + geo.labelWidth) + 'px',
-					overflow: 'hidden'
+					// transform: 'translate3D(0,0,1em)',
+					marginTop: marginTop + 'px',
+					// transform: 'translate(0, ' + marginTop + 'px)',
+					// overflow: 'hidden'
 				}}>
 
 				<TabularTBody
@@ -266,14 +265,16 @@ var TabularBodyWrapper = React.createClass ({
 						style = {{overflow: 'hidden'}}
 						view = {view} />
 					{/*RHS TABLE BODY WRAPPER*/}
-					<div className = "inner-wrapper force-layer"
+					<div className = "inner-wrapper"
 						style = {{
 							left: 0,
 							top: geo.headerHeight + 1 + 'px',
 							marginTop: marginTop + 'px',
 							height: (rowCount * geo.rowHeight) + 'px',
 							width: (fixedWidth + floatWidth) + 'px',
-							overflow: 'hidden'
+							overflow: 'hidden',
+							zIndex: 1,
+							// transform: 'translate(0, ' + marginTop + 'px)',
 							// background: 'white'
 						}}>
 						<TabularTBody

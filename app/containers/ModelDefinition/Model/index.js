@@ -33,7 +33,6 @@ var ModelDetails = React.createClass({
 	},
 
 	commitChanges: function () {
-		this.setState({committing: true, editing: false});
 		var _this = this
 		var key
 		var model = _.clone(this.props.model)
@@ -41,7 +40,9 @@ var ModelDetails = React.createClass({
 
 		model.model = this.state.name
 		model.plural = this.state.plural
-		model.label_key_id = this.state.label_key_id
+		model.label_attribute_id = this.state.label_attribute_id
+
+		this.setState({committing: true, editing: false});
 
 		modelActionCreators.create('model', true, model).then(function () {
 			_this.setState({editing: false, committing: false})
@@ -63,6 +64,7 @@ var ModelDetails = React.createClass({
 		var _this = this
 		var model = this.props.model
 		var value = event.target.value
+		console.log('value: ' + value)
 		this.setState({
 			label_attribute_id: value
 		})
@@ -94,7 +96,7 @@ var ModelDetails = React.createClass({
 
 	render: function () {
 		var model = this.props.model;
-		var labelAttribute = AttributeStore.get(model.label_attribute_id) || {}
+		var labelAttribute = AttributeStore.get(this.state.label_attribute_id) || {}
 
 		return <div className="detail-block">
 		<div className="detail-section-header">

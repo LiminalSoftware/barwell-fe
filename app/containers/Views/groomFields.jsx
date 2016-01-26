@@ -7,15 +7,16 @@ import fieldTypes from './fields'
 var BIG_NUM = 10000000;
 
 var groomFields = function (view) {
-  var data = view.data
-  var fields = AttributeStore.query({model_id: view.model_id});
+	var data = view.data
+	var fields = AttributeStore.query({model_id: view.model_id});
 	var relations = RelationStore.query({model_id: view.model_id})
 	var iter =  BIG_NUM;
-	var columns = data.columns || {}
+	var oldColumns = data.columns || {}
+	var columns = {}
 
 	fields.forEach(function (field) {
-    var fieldType = fieldTypes[field.type] || {}
-		var col = columns['a' + field.attribute_id] || {};
+   		var fieldType = fieldTypes[field.type] || {}
+		var col = oldColumns['a' + field.attribute_id] || {};
 		col.column_id = 'a' + field.attribute_id
 		col.attribute_id = field.attribute_id;
 		col.type = field.type
@@ -24,7 +25,7 @@ var groomFields = function (view) {
 		if ('configCleanser' in fieldType) col = fieldType.configCleanser(col)
 
 		if (!col.align) {
-      if('defaultAlign' in fieldType) col.align = fieldType.defaultAlign
+    		if('defaultAlign' in fieldType) col.align = fieldType.defaultAlign
 			else col.align = 'left'
 		}
 		col.visible = !!col.visible
@@ -49,11 +50,10 @@ var groomFields = function (view) {
 		col.visible = !!col.visible
 		col.fixed = !!col.fixed && col.visible
 		col.width = Math.max(_.isNumber(col.width) ? col.width : 0, 50)
-
 		columns[col.column_id] = col
 	})
 
-  return columns
+  	return columns
 }
 
 export default groomFields

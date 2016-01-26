@@ -14,15 +14,22 @@ var TabularTR = React.createClass({
 
 	shouldComponentUpdate: function (newProps) {
 		var oldProps = this.props
-		if (newProps.isScrolling) return false;
-		if (oldProps.view !== newProps.view) return true
-		if (oldProps.row !== newProps.row) return true
-		var result =  this.props.columns.some(function (col) {
-			if (newProps.obj[col.column_id] !== oldProps.obj[col.column_id]) return true
-			else return false
+		if (newProps.isScrolling) {
+			// console.log('TabualrTR.shouldComponentUpdate: scrolling')
+			return false;
+		}
+		if (oldProps.view !== newProps.view) {
+			// console.log('TabualrTR.shouldComponentUpdate: oldProps.view !== newProps.view')
+			return true
+		}
+		if (oldProps.row !== newProps.row) {
+			// console.log('TabualrTR.shouldComponentUpdate: oldProps.row !== newProps.row')
+			return true
+		}
+		return this.props.columns.some(function (col) {
+			return newProps.obj[col.column_id] !== oldProps.obj[col.column_id]
 		})
-		if (result) console.log('TabualrTR.shouldComponentUpdate : ' + result)
-		return result
+		
 	},
 
 	prepareColumn: function () {
@@ -50,7 +57,6 @@ var TabularTR = React.createClass({
 			height: (geo.rowHeight + 1) + 'px',
 			top: (geo.rowHeight * (row)) + 'px',
 			// background: "white"
-			visibility: 'none'
 		}
 		selector[model._pk] = obj[model._pk]
 		var left = geo.leftGutter;

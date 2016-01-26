@@ -45,11 +45,9 @@ var editableInputMixin = {
 	handleKeyPress: function (event) {
 		if (event.keyCode === constant.keycodes.ESC) this.cancelChanges()
 		if (event.keyCode === constant.keycodes.ENTER) {
-			console.log('yippee')
 			this.commitChanges()
 		}
 		if (event.keyCode === constant.keycodes.TAB) {
-			console.log('yikes')
 			this.commitChanges()
 		}
 	},
@@ -109,10 +107,14 @@ var editableInputMixin = {
 		if (config.align === 'right') editorIconStyle.left = 0
 		else editorIconStyle.right = 0
 
-		cellStyle.textAlign = (config.align.center ? 'center' : config.align.right ? 'right' : 'left')
-		cellStyle.zIndex = (this.state.selected ? 1130 : null)
-		// cellStyle.transform = this.state.selected ? 'translateZ(1px)' : null;
-		cellStyle.transformStyle = 'flat'
+		cellStyle.textAlign = config.align
+		
+		// cellStyle.transformStyle = 'preserve-3d'
+		cellStyle.zIndex = this.state.selected ? 250 : 10
+		// cellStyle.transform = this.state.selected ? 'translate3D(0,0,5em)' : null
+
+		// cellStyle.paddingRight = (this.state.selected && config.align !== 'right') ? '22px' : '1px'
+		// cellStyle.paddingLeft = (this.state.selected && config.align === 'right') ? '22px' : '1px'
 		cellStyle.lineHeight = config.rowHeight + 'px'
 
 		if (this.state.selected) bg = "white"
@@ -140,7 +142,7 @@ var editableInputMixin = {
 				onBlur = {this.revert}
 				onChange = {this.handleChange} />
 			:
-			<span style = {cellStyle} className = {this.state.selected ? " force-layer " : ""}>
+			<span style = {cellStyle}>
 				{this.format ?
 					this.format(this.state.value) :
 					this.state.value
