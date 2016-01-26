@@ -211,13 +211,20 @@ var TabularBodyWrapper = React.createClass ({
 				style = {{
 					left: geo.leftGutter + 'px',
 					top: geo.headerHeight + 1 + 'px',
-					height: (rowCount * geo.rowHeight) + 'px',
+					bottom: 0,
 					width: (fixedWidth + geo.labelWidth) + 'px',
 					// transform: 'translate3D(0,0,1em)',
-					marginTop: marginTop + 'px',
 					// transform: 'translate(0, ' + marginTop + 'px)',
-					// overflow: 'hidden'
+					overflow: 'hidden'
 				}}>
+				<div className = "inner-wrapper"
+						style = {{
+							left: 0,
+							right: 0,
+							top: 0,
+							height: (rowCount * geo.rowHeight) + 'px',
+							marginTop: marginTop + 'px',
+						}}>
 
 				<TabularTBody
 					{...this.props}
@@ -233,6 +240,7 @@ var TabularBodyWrapper = React.createClass ({
 						height: (rowCount * geo.rowHeight) + 'px',
 					}}
 					columns = {this.props.fixedColumns}/>
+				</div>
 			</div>
 			{/*END LHS TABLE BODY*/}
 
@@ -252,7 +260,8 @@ var TabularBodyWrapper = React.createClass ({
 						bottom: 0,
 						top: 0,
 						right: 0,
-						marginLeft: (-1 * this.props.hiddenColWidth - 1) + 'px'
+						marginLeft: (-1 * this.props.hiddenColWidth - 1) + 'px',
+						overflow: 'hidden'
 					}}>
 
 					<TabularTHead
@@ -269,11 +278,19 @@ var TabularBodyWrapper = React.createClass ({
 						style = {{
 							left: 0,
 							top: geo.headerHeight + 1 + 'px',
+							width: (fixedWidth + floatWidth) + 'px',
+							bottom: 0,
+							overflow: 'hidden'
+						}}>
+					<div className = "inner-wrapper"
+						style = {{
+							top: 0,
+							left: 0,
+							right: 0,
 							marginTop: marginTop + 'px',
 							height: (rowCount * geo.rowHeight) + 'px',
 							width: (fixedWidth + floatWidth) + 'px',
 							overflow: 'hidden',
-							zIndex: 1,
 							// transform: 'translate(0, ' + marginTop + 'px)',
 							// background: 'white'
 						}}>
@@ -290,6 +307,7 @@ var TabularBodyWrapper = React.createClass ({
 								width:  view.data.floatWidth  + 'px',
 								height: (rowCount * geo.rowHeight) + 'px',
 							}} />
+					</div>
 					</div>
 				</div>
 			</div>
