@@ -6,7 +6,14 @@ var NUM_LINES = 50
 
 var AddNewRowBar = React.createClass ({
 	shouldComponentUpdate: function (nextProps) {
-			return this.props.width !== nextProps.width
+		return this.props.width !== nextProps.width
+	},
+
+	handleAddRecord: function (e) {
+		console.log('handleAddRecord')
+		this.props._addRecord()
+		e.nativeEvent.stopPropagation()
+		e.stopPropagation()
 	},
 
 	render: function () {
@@ -15,20 +22,23 @@ var AddNewRowBar = React.createClass ({
 		var geo = view.data.geometry
 		var rowCount = this.props.rowCount
 
-    var newRowBarStyle = {
+    	var newRowBarStyle = {
 			top: ((rowCount) * geo.rowHeight) + 'px',
 			left: 0,
-			height: (geo.rowHeight  + 'px'),
-			width: this.props.width + 'px'
+			height: (1.5 * geo.rowHeight  + 'px'),
+			lineHeight: (1 * geo.rowHeight  + 'px'),
+			width: this.props.width + 'px',
+			transform: 'translateZ(0)'
 		}
 
 		return <div style = {newRowBarStyle}
-      className = "table-cell add-new-row">
-      <div className = "table-cell-inner"
-        onMouseDown = {this.props.handleAddRecord}>
-        + Add a new row of data
-      </div>
-    </div>
+			onMouseDown = {this.handleAddRecord}
+    		className = "table-cell add-new-row">
+    		<div className = "table-cell-inner">
+    			<span className = "small grayed icon icon-plus"></span>
+    			Add a new row of data
+    		</div>
+    	</div>
 	}
 
 });

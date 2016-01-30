@@ -34,14 +34,6 @@ var editableInputMixin = {
 		$(document.body).off('keydown', this.onKey)
 	},
 
-	handleWheel: function (e) {
-			this.props._handleWheel(e)
-	},
-
-	handleClick: function (e) {
-		this.props._handleClick(e)
-	},
-
 	handleKeyPress: function (event) {
 		if (event.keyCode === constant.keycodes.ESC) this.cancelChanges()
 		if (event.keyCode === constant.keycodes.ENTER) {
@@ -99,10 +91,11 @@ var editableInputMixin = {
 		var cellStyle = _.clone(defaultCellStyle)
 		var editorIconStyle = {
 			position: 'absolute',
-			top: 0,
+			top: 0, 
 			bottom: 0,
 			width: '25px',
-			lineHeight: config.rowHeight + 'px'
+			lineHeight: this.props.rowHeight + 'px',
+			zIndex: 251
 		}
 		if (config.align === 'right') editorIconStyle.left = 0
 		else editorIconStyle.right = 0
@@ -113,10 +106,11 @@ var editableInputMixin = {
 		cellStyle.zIndex = this.state.selected ? 250 : 10
 		// cellStyle.transform = this.state.selected ? 'translate3D(0,0,5em)' : null
 
-		// cellStyle.paddingRight = (this.state.selected && config.align !== 'right') ? '22px' : '1px'
-		// cellStyle.paddingLeft = (this.state.selected && config.align === 'right') ? '22px' : '1px'
-		cellStyle.lineHeight = config.rowHeight + 'px'
-
+		cellStyle.paddingRight = (this.state.selected && config.align !== 'right') ? '22px' : '5px'
+		cellStyle.paddingLeft = (this.state.selected && config.align === 'right') ? '22px' : '5px'
+		cellStyle.lineHeight = this.props.rowHeight + 'px'
+		cellStyle.cursor = "cell"
+		
 		if (this.state.selected) bg = "white"
 		else if (config.color) bg = config.color
 		else if (config.colorAttr) bg = obj['a' + config.colorAttr]
@@ -130,19 +124,18 @@ var editableInputMixin = {
 			cellStyle.background = tinycolor(hsl).toRgbString()
 		}
 
-		return <span {...this.props}
-			onWheel = {this._handleWheel}
-			onPaste = {this._handlePaste}
-			onMouseDown = {this._handleClick}>
+		return <span {...this.props}>
 			{this.state.editing ?
 			<input
 				className = "input-editor"
 				value = {this.state.value}
 				autoFocus
+				onClick = {e => e.stopPropagation() && e.nativeEvent.stopPropagation()}
 				onBlur = {this.revert}
 				onChange = {this.handleChange} />
 			:
-			<span style = {cellStyle}>
+			<span style = {cellStyle}
+				onPaste = {this.props._handlePaste}>
 				{this.format ?
 					this.format(this.state.value) :
 					this.state.value
@@ -153,7 +146,7 @@ var editableInputMixin = {
 			<span
 				style = {editorIconStyle}
 				className = {"editor-icon icon " + this.detailIcon}
-				onClick = {this.handleDetail}
+				onClick = {this.props._handleDetail}
 				></span>
 			: null
 		}

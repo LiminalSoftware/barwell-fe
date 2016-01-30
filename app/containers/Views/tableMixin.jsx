@@ -46,16 +46,7 @@ var TableMixin = {
 		this.setState({contextOpen: false})
 	},
 
-	onSelectMouseMove: function (e) {
-		this.updateSelect(this.getRCCoords(e), true)
-	},
-
-	onMouseUp: function (e) {
-		// this.setState({mousedown: false})
-		document.removeEventListener('selectstart', util.returnFalse)
-		document.removeEventListener('mousemove', this.onSelectMouseMove)
-		document.removeEventListener('mouseup', this.onMouseUp)
-	},
+	
 
 	onKey: function (e) {
 		var sel = this.state.selection

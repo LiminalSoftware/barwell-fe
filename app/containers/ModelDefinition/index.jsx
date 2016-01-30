@@ -59,14 +59,11 @@ var ModelDefinition = React.createClass({
 		</div>;
 
 		else return	<div className = "model-panes"><div className = "model-details">
-			<div className = "model-details-row">
 				<ModelDetails model = {model} key = {'model-config-'+model.model_id} />
 				<AttributeDetailList model = {model} key = {'attribute-config-'+model.model_id} />
-			</div>
-			<div className = "model-details-row">
 				<KeyDetailList model = {model} key = {'key-config-' + model.model_id} />
 				<RelationDetailList model = {model} key = {'relation-config-' + model.model_id} />
-			</div>
+			
 		</div></div>
 
 	}

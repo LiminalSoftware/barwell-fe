@@ -21,6 +21,11 @@
 	flex-direction: row;
 }
 
+.detail-grouping {
+	&.editing {
+		background: @gray4;
+	}
+}
 
 .detail-block {
 	position: relative;
@@ -30,8 +35,8 @@
 	padding: 10px;
 	margin: 10px;
 	display: block;
-	background: @gray4;
 	min-width: 400px;
+	max-width: 800px;
 }
 
 p.explainer {
@@ -64,6 +69,15 @@ p.explainer {
 }
 
 
+.keycomp-bubble {
+	border: 1px solid @gray3;
+	padding: 4px;
+	border-radius: 3px;
+	margin-right: 2px;
+	background: white;
+	color: black;
+}
+
 .detail-table {
 	padding: 0;
 	margin: 0;
@@ -89,9 +103,6 @@ p.explainer {
 		.border-box;
 		transition: background cubic-bezier(.16,.85,.5,1) 200ms;
 		overflow: visible;
-		&.new {
-			margin-left: -100%;
-		}
 	}
 
 	.draggable {
@@ -133,6 +144,13 @@ p.explainer {
 		box-sizing: border-box;
 		width: 100%;
 
+		&.inline-select {
+			display: inline-block;
+			width: 100px;
+			border-radius: 3px;
+			padding: 5px;
+			color: @gray2;
+		}
 
 		padding: 4px;
 		border: 1px solid @gray3;
@@ -145,6 +163,8 @@ p.explainer {
 		outline: 0;
 		transition: all cubic-bezier(.16,.85,.5,1) 100ms;
 	}
+
+
 
 	input[type=checkbox] {
 		border-radius: 4px;

@@ -16,11 +16,13 @@ import selectableMixin from './selectableMixin'
 import TextFieldConfig from "./textFieldConfig"
 
 var integerField = {
+	sortable: true,
+	defaultWidth: 50,
 	element: React.createClass({
 		mixins: [editableInputMixin, commitMixin, selectableMixin],
 
 		configA: TextFieldConfig,
-		sortable: true,
+		
 
 		validator: function (input) {
 			if (_.isNumber(input) )

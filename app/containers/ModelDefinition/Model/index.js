@@ -105,8 +105,8 @@ var ModelDetails = React.createClass({
 				<li onClick={this.handleEdit}>Edit</li>
 			</ul>
 		</div>
-			<div className="detail-table">
-					<div className={'detail-row'}>
+			<div className="detail-table ">
+					<div className={'detail-row' + (this.state.editing ? " editing" : "")}>
 						<span style = {{width: "30%"}}>
 							Name
 						</span>
@@ -123,7 +123,7 @@ var ModelDetails = React.createClass({
 								}
 						</span>
 					</div>
-					<div className='detail-row'>
+					<div className= {'detail-row' + (this.state.editing ? " editing" : "")}>
 						<span style = {{width: "30%"}}>Plural</span>
 						<span style = {{width: "70%"}}>
 							{this.state.editing ?
@@ -137,7 +137,7 @@ var ModelDetails = React.createClass({
 							}
 						</span>
 					</div>
-					<div className="detail-row">
+					<div className={"detail-row" + (this.state.editing ? " editing" : "")}>
 						<span style = {{width: "30%"}}>Label</span>
 						<span style = {{width: "70%"}}>
 							{this.state.editing ?

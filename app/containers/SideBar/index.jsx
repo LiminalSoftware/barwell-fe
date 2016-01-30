@@ -48,8 +48,9 @@ var SideBar = React.createClass({
 	render: function () {
 		var _this = this;
 		var curModelId = this.props.params.modelId
+		var workspaceId = this.props.params.workspaceId
 		return <div className="left-side-bar">
-			<ModelList curModelId = {curModelId} />
+			<ModelList curModelId = {curModelId} workspaceId = {workspaceId}/>
 		</div>
 	}
 
@@ -58,14 +59,19 @@ export default SideBar
 
 var ModelList = React.createClass ({
 
-	handleAddModel: function (event) {
-		var model = {
-			model: 'New model',
-			workspace_id: this.props.params.workspaceId,
-			plural: 'New models'
+	handleAddModel: function (e) {
+		var name = 'New model'
+		var workspaceId = this.props.workspaceId
+		var iter = 0
+		while (ModelStore.query({workspace_id: workspaceId, model: name}).length > 0) {
+			name = 'New model ' + (iter++)
 		}
-		modelActionCreators.create('model', true, model)
-		event.preventDefault();
+		modelActionCreators.create('model', true, {
+			model: name,
+			workspace_id: workspaceId,
+			plural: 'New models'
+		})
+		e.preventDefault();
 	},
 
 	render: function () {
@@ -83,7 +89,7 @@ var ModelList = React.createClass ({
 					{..._this.movableProps} />;
 			})
 		}
-		<li className="add-new"><a href="#" onClick = {this.handleAddModel}>+</a></li>
+		<li className="clickable add-new"><a onClick = {this.handleAddModel}>+</a></li>
 		</ul>
 	}
 })

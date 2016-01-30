@@ -10,8 +10,8 @@
 
 .loader-overlay {
 	position: absolute;
-	bottom: 15px;
-	left: 15px;
+	bottom: 50px;
+	left: 50px;
 	height: 30px;
 	line-height: 30px;
 	font-style: 15px;
@@ -26,11 +26,7 @@
 
 .scroll-overlay {
 	position: absolute;
-	z-index: 130;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
+	z-index: 10;
 	background: none;
 	overflow-x: scroll;
 	overflow-y: scroll;
@@ -50,6 +46,7 @@
 	margin: 0;
 	padding: 0;
 	overflow: hidden;
+	
 	-webkit-user-drag: none;
 	.noselect;
 }
@@ -57,21 +54,12 @@
 //
 .rhs-h-scroll {
 	overflow: hidden;
-	.transition(margin-left cubic-bezier(.16,.85,.5, 1) 150ms);
+	.transition(transform cubic-bezier(.16,.85,.5, 1) 150ms);
 }
 
 .rhs-h-scroll-outer {
 	overflow: hidden;
 	border-left: 1px solid @purple4;
-}
-
-.tabular-tbody {
-	position: absolute;
-
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
 }
 
 .add-new-row {
@@ -84,6 +72,7 @@
 	&:hover {
 		color: @newgreen1;
 		border: 1px solid @newgreen1;
+		background: @gray4;
 	}
 }
 

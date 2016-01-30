@@ -6,7 +6,7 @@ var selectableMixin = {
     return {selected: false}
   },
   toggleSelect: function (selected) {
-    this.setState({selected: selected})
+  	if(this.isMounted()) this.setState({selected: selected})
   }
 }
 

@@ -89,7 +89,7 @@ var persist = module.exports.persist = function (subject, action, data, update, 
 
   if (action === 'CREATE' && _.isEqual(data._server, stripInternalVars(data)) ) {
     console.log('object unchanged -- cancel persist')
-    return;
+    return wait();
   }
 
   if (action == 'FETCH') method = 'GET';

@@ -1,4 +1,5 @@
 import React from "react";
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { Link } from "react-router";
 import styles from "./style.less";
 import _ from 'underscore';
@@ -162,34 +163,34 @@ var ColumnMenu = React.createClass({
 
     	return <div className = "double header-section" >
 				<div className="header-label">Columns</div>
-				<div className="model-views-menu">
-				{
-					this.state.open ?
-					// full dropdown menu with all columns
-					<div className="model-views-menu-inner" onClick={this.clickTrap}>
-					<div className = "dropdown-menu" style = {{minWidth: '500px'}}>
-						{sections}
-						{this.state.editing ?
-							<div className="menu-item menu-sub-item warning-item">
-								<span className = "icon icon-kub-warning"/>Warning: making changes here will affect all views for this model
-							</div> : null
+				<div className = "model-views-menu">
+					<ReactCSSTransitionGroup 
+						component = "div"
+						onClick={this.clickTrap}
+						className="model-views-menu-inner"
+						transitionName="fade-in"
+						transitionAppear={true}
+						transitionEnterTimeout={500}
+						transitionLeaveTimeout={500}
+						transitionAppearTimeout={500}>
+						{
+						this.state.open ?
+							<div className = "dropdown-menu" style = {{minWidth: '500px'}}>
+								{sections}
+								{this.state.editing ?
+									<div className="menu-item menu-sub-item warning-item">
+										<span className = "icon icon-kub-warning"/>Warning: making changes here will affect all views for this model
+									</div> : null
+								}
+								{this.renderButtonBar()}
+							</div>
+							:
+							currentCol ? 
+							<ColumnDetail singleton = {true} key = {currentCol.column_id} config = {currentCol} view = {view}/>
+							:
+							<div className="singleton menu-item menu-sub-item">No selection...</div>
 						}
-						{this.renderButtonBar()}
-					</div>
-					</div>
-					:
-					// detail for currently selected column
-					
-					currentCol ? 
-					<div className="model-views-menu-inner" onClick={this.clickTrap}>
-						<ColumnDetail key = {currentCol.column_id} config = {currentCol} view = {view}/>
-					</div>
-					:
-					<div className="model-views-menu-inner" onClick={this.clickTrap}>
-						<div className="menu-item menu-sub-item">No selection...</div>
-					</div>
-					
-				}
+					</ReactCSSTransitionGroup>
 				<div className="dropdown small grayed icon icon-chevron-down" onClick = {this.handleOpen}/>
 			</div>
 		</div>

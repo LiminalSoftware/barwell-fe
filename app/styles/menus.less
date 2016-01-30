@@ -1,7 +1,6 @@
 @import "../global.less";
 
 .pop-down {
-
 	position: relative;
 	display: inline-block;
 	height:30px;
@@ -12,6 +11,7 @@
 	background: @headerBgDark;
 	border-radius: @menuItemBorderRadius;
 	overflow: visible;
+	transform-style: flat;
 
 	&.active {
 		background: @headerFontColor;
@@ -20,7 +20,7 @@
 
 	&.open {
 		z-index: 401;
-		// .box-shadow-transitioned(0 0 0 1px @headerBorderHilite);
+		
 
 		background: white;
 		color: @headerMenuBgColor;
@@ -98,14 +98,6 @@
 	display: flex;
 	flex-direction: row;
 	cursor: pointer;
-	& > div:first-child {
-		border-top-left-radius: @headerBorderRadius;
-		border-bottom-left-radius: @headerBorderRadius;
-	}
-	& > div:last-child {
-		border-top-right-radius: @headerBorderRadius;
-		border-bottom-right-radius: @headerBorderRadius;
-	}
 }
 
 
@@ -115,13 +107,10 @@
 	flex: 1 1;
 	height: 40px;
 	overflow: visible;
-
 	background: @headerMenuBgColor;
 	margin: 0 !important;
 	border: 1px solid @headerBorderColor;
-}
-
-.dropdown, .model-views-menu-inner {
+	overflow: visible;
 }
 
 .dropdown {
@@ -146,24 +135,26 @@
 	min-height: 100;
 	z-index: 300;
 	background: @headerMenuBgColor;
-	border-radius: @headerBorderRadius;
-	.box-shadow-transitioned(0 0 0 @headerOuterBorderWidth @headerOuterBorderColor);
-	border: 1px solid @headerBorderHilite;
+	border-radius: 0;
+	border: 1px solid @gray3;
 }
 
 
 .menu-item {
-	overflow: visible;
+	.force-layer;
 	display: flex;
 	flex-direction: row;
 	background: none;
 	text-decoration: none;
-	border-top: 1px dotted @headerFontColor;
-	&:first-child {
-		border-top: none;
-	}
-	&:first-child:last-child {
-		border-top: 1px solid @headerFontColor;
+	// border-top: 1px dotted @headerFontColor;
+	&.singleton {
+		border: none !important;
+		position: absolute !important;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 30px !important;
+		margin: 0;
 	}
 }
 
@@ -178,13 +169,12 @@
 }
 
 .menu-sub-item {
-	overflow: visible;
 	height: 40px;
 	line-height: 40px;
 	padding: 0;
 	margin: 0;
-	padding-left: 10px;
-	padding-right: 10px;
+	padding-left: 8px;
+	padding-right: 8px;
 
 	&.no-left-padding {
 		padding-left: 0;
@@ -202,6 +192,7 @@
 		margin: 0;
 		height: 40px;
 		line-height: 40px;
+		position: relative;
 
 		&.ellipsis {
 			.ellipsis;

@@ -31,8 +31,43 @@ var KeyDetailList = React.createClass({
 			uniq: false,
 			_named: false
 		}
+		this.setState({editing: true})
 		modelActionCreators.create('key', false, obj)
 	},
+
+	commitChanges: function () {
+		var _this = this
+		var model = this.props.model;
+		this.setState({committing: true})
+
+		return Promise.all(
+			KeyStore.query({model_id: (model.model_id || model.cid)}).map(function (key) {
+				if (attr._dirty) return modelActionCreators.create('key', true, key)
+				if (attr._destroy) return modelActionCreators.destroy('key', true, key)
+			})
+		).then(function () {
+			_this.setState({editing: false, committing: false})
+			_this.cancelChanges()
+			// modelActionCreators.createNotification('Attribute udpate complete!', 'Your changes have been committed to the server', 'info')
+		})
+	},
+
+	cancelChanges: function () {
+		var model = this.props.model;
+		KeyStore.query({model_id: (model.model_id || model.cid)}).map(function (attr) {
+			if (!key.key_id) {
+				modelActionCreators.destroy('key', false, key)
+				KeycompStore.map(function (kc) {
+					modelActionCreators.destroy('keycomp', false, kc)
+				})
+			} else {
+				_.extend(attr, attr._server, {_destroy: false, _clean: true})
+				modelActionCreators.create('attribute', false, attr)
+			}
+		})
+		this.setState({editing: false})
+	},
+
 
 	render: function () {
 		var _this = this
@@ -50,7 +85,7 @@ var KeyDetailList = React.createClass({
 				<h3>Keys</h3>
 				<ul className="light mb-buttons">
 					<li onClick={this.handleEdit}>Edit</li>
-					<li onClick={this.handleAddNewRelation} className="plus">+</li>
+					<li onClick={this.handleAddNewKey} className="plus">+</li>
 				</ul>
 			</div>
 

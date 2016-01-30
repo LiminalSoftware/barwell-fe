@@ -13,21 +13,6 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 var KeycompDetail = React.createClass({
 
-	mixins: [PureRenderMixin],
-
-	handleAttrChoice: function (event) {
-		var key = this.props._key;
-		var keycomp = this.props.keycomp || {}
-		var model = ModelStore.get(key.model_id)
-		var attribute_id = event.target.value
-
-		keycomp.key_id = key.cid
-		keycomp.attribute_id = attribute_id
-		keycomp.ord = this.props.idx
-
-		modelActionCreators.create('keycomp', false, keycomp)
-	},
-
 	handleDelete: function (event) {
 		var keycomp = this.props.keycomp;
 		if (!keycomp) return

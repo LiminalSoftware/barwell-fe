@@ -48,8 +48,8 @@ var ColumnDetail = React.createClass({
 
 	render: function() {
 		var _this = this
-    var view = this.props.view
-    var config = this.props.config
+	    var view = this.props.view
+	    var config = this.props.config
 		var fieldType = fieldTypes[config.type] || {}
 		var editing = this.props.editing
 		var configPartA = ('configA' in fieldType) ?
@@ -65,32 +65,38 @@ var ColumnDetail = React.createClass({
 				classes: " "
 			}) : <span className = " "/>;
 
-    return <div className={"menu-item tight menu-sub-item column-item " +
-			(this.props.dragging ? " dragging " : "")}>
+	    return <div className={"menu-item menu-sub-item" +
+				(this.props.singleton ? " singleton " : "") +
+				(this.props.dragging ? " dragging " : "")}>
+		      	<span className = "ellipsis">
+					{
+					this.props.open ? 
+					<span onMouseDown = {_this.handleDrag}
+					      className="draggable icon grayed icon-Layer_2"/>
+					: null
+					}
 
-	      <span className = "ellipsis">
-					{this.props.open ? <span
-						onMouseDown = {_this.handleDrag}
-						className="draggable icon grayed icon-Layer_2"
-						></span>
-					: null}
-					{editing ?
-						<input className = "menu-input
-							text-input" value={this.state.name}
-							onChange = {this.handleNameChange}/>
-						: <span>{config.name}</span>}
+					{
+					editing ?
+					<input className = "menu-input
+						text-input" value={this.state.name}
+						onChange = {this.handleNameChange}/>
+					: <span>{config.name}</span>
+					}
 				</span>
 
 				{editing ? null : configPartA}
 				{editing ? null : configPartB}
 
-				{editing ? <span
-						className="half-column-config "
-						onMouseDown = {this.handleDelete}>
-							<span className = "icon red icon-cr-remove"></span>
-						</span>
-					: null}
-		</div>
+				{
+				editing ? 
+				<span className="half-column-config "
+				      onMouseDown = {this.handleDelete}>
+					<span className = "icon red icon-cr-remove"></span>
+				</span>
+				: null
+				}
+			</div>
 	}
 });
 

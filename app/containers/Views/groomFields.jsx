@@ -9,6 +9,7 @@ var BIG_NUM = 10000000;
 var groomFields = function (view) {
 	var data = view.data
 	var fields = AttributeStore.query({model_id: view.model_id});
+	var model = ModelStore.get(view.model_id)
 	var relations = RelationStore.query({model_id: view.model_id})
 	var iter =  BIG_NUM;
 	var oldColumns = data.columns || {}
@@ -16,7 +17,9 @@ var groomFields = function (view) {
 
 	fields.forEach(function (field) {
    		var fieldType = fieldTypes[field.type] || {}
-		var col = oldColumns['a' + field.attribute_id] || {};
+		var col = oldColumns['a' + field.attribute_id]
+		var existing = !!col
+		col = col || {}
 		col.column_id = 'a' + field.attribute_id
 		col.attribute_id = field.attribute_id;
 		col.type = field.type
@@ -28,14 +31,14 @@ var groomFields = function (view) {
     		if('defaultAlign' in fieldType) col.align = fieldType.defaultAlign
 			else col.align = 'left'
 		}
-		col.visible = !!col.visible
-		col.fixed = !!col.fixed && col.visible
-		col.width = Math.max(_.isNumber(col.width) ? col.width : 0, 50)
+		col.visible = existing ? (!!col.visible) : (!field.hidden)
+		col.fixed = existing ? (col.fixed && col.visible) : (!field.hidden && field.attribute_id === model.label_attribute_id)
+		col.width = existing ? Math.max(_.isNumber(col.width) ? col.width : 0, 50) : (fieldType.defaultWidth || 100)
 		columns[col.column_id] = col
 	})
 
 	relations.forEach(function (relation) {
-		var col = columns['r' + relation.relation_id] || {};
+		var col = oldColumns['r' + relation.relation_id] || {};
 		var attrs = AttributeStore.query({model_id: relation.related_model_id});
 		var relatedModel = ModelStore.get(relation.related_model_id)
 		var pk =  (relatedModel || {}).pk;

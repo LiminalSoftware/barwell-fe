@@ -32,13 +32,12 @@ var limit = function (thing, view) {
 
 var groomView = function (view) {
 	var model = ModelStore.get(view.model_id);
-	var columns = {}
-	var data = view.data || {};
+	
+	var data = view.data = view.data || {};
 	if (!model) return view;
 	var fields = AttributeStore.query({model_id: view.model_id});
 	var relations = RelationStore.query({model_id: view.model_id})
 	var iter =  BIG_NUM;
-	
 
   	var columns = groomFields(view)
 	var columnList = enumerate(_.values(columns))

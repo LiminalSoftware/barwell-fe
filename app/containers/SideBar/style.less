@@ -24,6 +24,7 @@ ul.sidebar-model-list {
 		.flex-direction(row);
 		padding: 0;
 		border-left: @headerBorderWidth solid @headerBorderColor;
+		// border-left: 1px solid @gray3;
 	}
 
 	& > li > a {
@@ -61,12 +62,18 @@ ul.sidebar-model-list {
 
 
 	& > li.active {
-		background: @headerBgColor;
-		margin-bottom: -1 * @headerBorderWidth;
+		z-index: 2;
+		a {
+			background: @headerBgColor;
+			// border-right: 1px solid @gray3;
+			// border-top: 1px solid @gray3;
+		}
+		
 	}
 
 	& > li:not(.active) > a {
 		background: @headerBgDark;
+		border-top: 1px solid @headerBgDark;
 	}
 
 
@@ -76,6 +83,7 @@ ul.sidebar-model-list {
 	display: block;
 	font-size: inherit;
 	.msInput;
+	-webkit-user-drag: none;
 }
 .header-renamer {
 	font-size: @headerFontSize !important;

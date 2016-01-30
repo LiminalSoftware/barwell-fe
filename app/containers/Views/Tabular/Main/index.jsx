@@ -31,6 +31,8 @@ import ContextMenu from './ContextMenu'
 import DetailBar from '../../../DetailBar'
 import ScrollOverlay from "./ScrollOverlay"
 
+import constant from "../../../../constants/MetasheetConstants"
+
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
@@ -49,6 +51,7 @@ var TabularPane = React.createClass ({
 			sorting: null,
 			contextOpen: false,
 			detailOpen: false,
+			detailWidth: 300,
 			contextX: null,
 			contextY: null,
 			hiddenCols: 0,
@@ -57,11 +60,8 @@ var TabularPane = React.createClass ({
 	},
 
 	componentWillMount: function () {
-		
-
 		document.body.addEventListener('keydown', this.onKey)
 		FocusStore.addChangeListener(this._onChange)
-		
 		this.store = createTabularStore(this.props.view)
 	},
 
@@ -139,7 +139,7 @@ var TabularPane = React.createClass ({
 		this.setState({selection: sel})
 	},
 
-	getRCCoords: function (event) {
+	getRCCoords: function (e) {
 		var lhs = ReactDOM.findDOMNode(this.refs.tableWrapper.refs.lhs)
 		var view = this.props.view
 		var geo = view.data.geometry
@@ -147,8 +147,8 @@ var TabularPane = React.createClass ({
 		var scrolledCols = this.state.hiddenCols
 		var numFixed = view.data.fixedCols.length
 		var offset = $(lhs).offset()
-		var y = event.pageY - offset.top
-		var x = event.pageX - offset.left - geo.labelWidth
+		var y = e.pageY - offset.top
+		var x = e.pageX - offset.left - geo.labelWidth
 		var xx = x
 		var r = Math.floor((y) / geo.rowHeight, 1)
 		var c = 0
@@ -270,7 +270,8 @@ var TabularPane = React.createClass ({
 		var model = this.props.model
 		var view = this.props.view
 
-		var data = text.split('\n').map(r => r.split('\t'))
+		var rows = text.split('\n')
+		var data = rows.map(r => r.split('\t'))
 		var sel = this.state.selection
 
 		for (var r = sel.top; r <= sel.bottom; r++) {
@@ -301,7 +302,8 @@ var TabularPane = React.createClass ({
 	},
 
 	handleMouseWheel: function (e) {
-		this.refs.scrollOverlay.handleMouseWheel(e)
+		this.refs.verticalScrollOverlay.handleMouseWheel(e)
+		this.refs.horizontalScrollOverlay.handleMouseWheel(e)
 	},
 
 	hideDetailBar: function () {
@@ -334,28 +336,28 @@ var TabularPane = React.createClass ({
 		var outline = singleCell ? {left: 0, right: numCols, top: 0, bottom: numRows} : sel ;
 
 		if (direction === 'TAB') {
-			var mod = (outline.right - outline.left + 1)
-			var bigMod = mod * (outline.bottom - outline.top + 1)
-			var index = (ptr.top - outline.top) * mod + ptr.left - outline.left
+			var lilMod = (outline.right - outline.left + 1)
+			var bigMod = lilMod * (outline.bottom - outline.top + 1)
+			var index = (ptr.top - outline.top) * lilMod + ptr.left - outline.left
 			index += (shift ? -1 : 1)
 			if (index < 0) index += bigMod
 			index = index % bigMod
-			ptr.left = (index % mod) + outline.left
-			ptr.top = Math.floor(index / mod) + outline.top
+			ptr.left = (index % lilMod) + outline.left
+			ptr.top = Math.floor(index / lilMod) + outline.top
 			if (singleCell) this.setState({selection: {left: ptr.left, right: ptr.left,
 				top: ptr.top, bottom: ptr.top}})
 			this.updatePointer(ptr)
 		}
 
 		else if (direction === 'ENTER') {
-			var mod = (outline.bottom - outline.top + 1)
-			var bigMod = mod * (outline.right - outline.left + 1)
-			var index = (ptr.left - outline.left) * mod + ptr.top - outline.top
+			var lilMod = (outline.bottom - outline.top + 1)
+			var bigMod = lilMod * (outline.right - outline.left + 1)
+			var index = (ptr.left - outline.left) * lilMod + ptr.top - outline.top
 			index += (shift ? -1 : 1)
 			if (index < 0) index += bigMod
 			index = index % bigMod
-			ptr.left = Math.floor(index / mod) + outline.left
-			ptr.top = (index % mod) + outline.top
+			ptr.left = Math.floor(index / lilMod) + outline.left
+			ptr.top = (index % lilMod) + outline.top
 			if (singleCell) this.setState({selection: {left: ptr.left, right: ptr.left,
 				top: ptr.top, bottom: ptr.top}})
 			this.updatePointer(ptr)
@@ -466,22 +468,27 @@ var TabularPane = React.createClass ({
 	},
 
 	onMouseDown: function (e) {
+		var _this = this
 		if (FocusStore.getFocus() !== 'view')
 			modelActionCreators.setFocus('view')
-
 		this.updateSelect(this.getRCCoords(e), e.shiftKey)
-		document.addEventListener('selectstart', util.returnFalse)
-		document.addEventListener('mousemove', this.onSelectMouseMove)
-		document.addEventListener('mouseup', this.onMouseUp)
-		e.preventDefault()
-		e.stopPropagation()
-		e.nativeEvent.stopPropagation()
+		window.addEventListener('selectstart', util.returnFalse)
+		window.addEventListener('mousemove', this.onSelectMouseMove)
+		window.addEventListener('mouseup', this.onMouseUp)
 	},
 
-	setScrollOffset: function (vOffset, hOffset) {
+	onSelectMouseMove: function (e) {
+		this.updateSelect(this.getRCCoords(e), true)
+	},
+
+	onMouseUp: function (e) {
+		window.removeEventListener('selectstart', util.returnFalse)
+		window.removeEventListener('mousemove', this.onSelectMouseMove)
+		window.removeEventListener('mouseup', this.onMouseUp)
+	},
+
+	setHorizontalScrollOffset: function (hOffset) {
 		var view = this.props.view
-		var geo = this.props.view.data.geometry
-		var rows = Math.floor(vOffset / geo.rowHeight)
 		var columns = view.data.columnList
 		var floatCols = view.data.floatCols
 		var hiddenColWidth = 0
@@ -495,9 +502,7 @@ var TabularPane = React.createClass ({
 			} else return true
 		})
 
-		// set state (rather than props)  on tablewrapper for performance
 		this.refs.tableWrapper.setState({
-			rowOffset: rows,
 			hiddenCols: hiddenCols,
 			hiddenColWidth: hiddenColWidth
 		})
@@ -505,6 +510,17 @@ var TabularPane = React.createClass ({
 		this.setState({
 			hiddenCols: hiddenCols,
 			hiddenColWidth: hiddenColWidth
+		})
+
+	},
+
+	setVerticalScrollOffset: function (vOffset) {
+		var view = this.props.view
+		var geo = this.props.view.data.geometry
+		var rows = Math.floor(vOffset / geo.rowHeight)
+
+		this.refs.tableWrapper.setState({
+			rowOffset: rows
 		})
 	},
 
@@ -533,18 +549,14 @@ var TabularPane = React.createClass ({
 		return <div className = "model-panes">
 			<div ref="wrapper"
 				className = "view-body-wrapper"
+				style = {{
+					left: 0,
+					right: (this.state.detailOpen ? this.state.detailWidth : 0) + 'px',
+					top: 0,
+					bottom: 0
+				}}
 				onPaste = {this.pasteSelection}
 				beforePaste = {this.beforePaste}>
-
-			<ScrollOverlay
-				store = {_this.store}
-				ref = "scrollOverlay"
-				_handleClick = {_this.onMouseDown}
-				_handleDoubleClick = {this.editCell}
-				_editCell = {_this.editCell}
-				_setScrollOffset = {_this.setScrollOffset}
-				onScroll = {this.onScroll}
-				view = {view}/>
 
 			<TabularBodyWrapper
 				ref = "tableWrapper"
@@ -627,13 +639,45 @@ var TabularPane = React.createClass ({
 
 		</TabularBodyWrapper>
 
+		<ScrollOverlay
+			store = {_this.store}
+			ref = "verticalScrollOverlay"
+			axis = "vertical"
+			_handleClick = {_this.onMouseDown}
+			_handleDoubleClick = {this.editCell}
+			_editCell = {_this.editCell}
+			_setScrollOffset = {_this.setVerticalScrollOffset}
+			view = {view}/>
+
+		<ScrollOverlay
+			store = {_this.store}
+			ref = "horizontalScrollOverlay"
+			axis = "horizontal"
+			_handleClick = {_this.onMouseDown}
+			_handleDoubleClick = {this.editCell}
+			_editCell = {_this.editCell}
+			_setScrollOffset = {_this.setHorizontalScrollOffset}
+			onScroll = {this.onScroll}
+			view = {view}/>
 
 		</div>
-
+		<div style = {{
+			right: this.state.detailWidth + 'px',
+			width: '10px',
+			top: 0,
+			bottom: 0,
+			background: constant.colors.GRAY_2
+		}} className = "detail-resize"></div>
 		{_this.state.detailOpen ?
 			<DetailBar
 				model = {model}
 				view = {view}
+				style = {{
+					width: this.state.detailWidth + 'px',
+					right: 0,
+					top: 0,
+					bottom: 0
+				}}
 				config = {detailColumn}
 				object = {object}/>
 			: null}

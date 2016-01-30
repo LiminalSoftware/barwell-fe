@@ -12,6 +12,9 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 import selectableMixin from './selectableMixin'
 
 var hasManyField = {
+	
+	defaultWidth: 150,
+
 	configA: React.createClass({
 
 		handleEdit: function () {

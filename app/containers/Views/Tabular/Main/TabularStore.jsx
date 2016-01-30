@@ -78,6 +78,7 @@ var createTabularStore = function (view) {
 
             if (type === upperLabel + '_DESTROY') {
                 var selector = payload.selector
+                _recordCount--
                 _records = _.reject(_records, _.matcher(selector) )
                 TabularStore.emitChange()
             }
@@ -89,10 +90,10 @@ var createTabularStore = function (view) {
               var dirty = {
                   _dirty: (type === (upperLabel + '_UPDATE'))
               }
-              _.filter(_records, _.matcher(selector) ).map(function (rec) {
+              var updater = function (rec) {
                   rec = _.extend(rec, update, dirty)
-              });
-              // console.log('TabularStore.emitChange()')
+              }
+              _.filter(_records, _.matcher(selector) ).map(updater);
               TabularStore.emitChange()
             }
 

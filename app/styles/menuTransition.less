@@ -1,0 +1,25 @@
+@import "../global.less";
+
+.fade-in-appear, .fade-in-enter {
+  transform: translate3D(0,-40px,0);
+  opacity: 0.01;
+}
+
+.fade-in-appear.fade-in-appear-active, .fade-in-enter.fade-in-enter-active {
+  opacity: 1;
+  transform: translate3D(0,0,0);
+  transition: all ease-in 100ms;
+  // transition: opacity cubic-bezier(.16,.85,.5,1) 600ms;
+}
+
+.fade-in-leave {
+  transform: translate3D(0,0,0);
+  right: 30px;
+  opacity: 1;
+}
+
+.fade-in-leave.fade-in-leave-active {
+  opacity: 0.01;
+  transform: translate3D(0,40px,0);
+  transition: all ease-in 100ms;
+}

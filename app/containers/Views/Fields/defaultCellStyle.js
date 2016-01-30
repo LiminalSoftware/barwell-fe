@@ -1,4 +1,4 @@
-var cellStyle = {
+var defaultCellStyle = {
 	position: 'absolute',
 	display: 'block',
 	left: '0px',
@@ -15,6 +15,11 @@ var cellStyle = {
 	textOverflow: 'ellipsis',
 	padding: '1px 3px',
 	margin: 0,
+	cursor: 'cell',
+    WebkitUserSelect: 'none',
+    KhtmlUserSelect: 'none',
+    MozUserSelect: 'none',
+    userSelect: 'none'
 }
 
-export default cellStyle
+export default defaultCellStyle

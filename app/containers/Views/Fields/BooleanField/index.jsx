@@ -28,6 +28,8 @@ var CheckboxElement = React.createClass({
 	},
 
 	validator: function (input) {
+		if (input === 'TRUE' || input === 'true') return true
+		if (input === 'FALSE' || input === 'false') return false
 		return (!!input)
 	},
 
@@ -52,13 +54,6 @@ var CheckboxElement = React.createClass({
 		var style = this.props.style
 
 		var cellStyle = _.clone(defaultCellStyle)
-		
-		cellStyle.lineHeight = this.props.rowHeight + 'px'
-		cellStyle.textAlign = 'center'
-		if (this.state.selected) {
-			cellStyle.zIndex = 130
-			cellStyle.background = 'white'
-		}
 
 		var boxStyle = {
 			position: 'relative',
@@ -80,11 +75,19 @@ var CheckboxElement = React.createClass({
 			top: '-3px'
 		}
 
+		cellStyle.lineHeight = this.props.rowHeight + 'px'
+		cellStyle.textAlign = 'center'
+		if (this.state.selected) {
+			cellStyle.zIndex = 130
+			cellStyle.background = 'white'
+			boxStyle.border = '1px solid ' + constant.colors.GRAY_3
+		}
+
 		return <span {...this.props} >
 			<span style = {cellStyle}>
 				<span style = {boxStyle}
 					 onClick={this.handleClick}>
-					<span className={"check green icon " + (this.state.value ? "icon-kub-approve" : "")}>
+					<span className={"check grayed icon " + (this.state.value ? "icon-kub-approve" : "")}>
 					</span>
 				</span>
 			</span>
@@ -93,6 +96,7 @@ var CheckboxElement = React.createClass({
 });
 
 var booleanField = {
+	defaultWidth: 50,
 	sortable: true,
 	defaultAlign: 'center',
 	element: CheckboxElement,

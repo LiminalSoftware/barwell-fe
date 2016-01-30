@@ -7,7 +7,9 @@
   display: inline-block;
 	height:30px;
 	line-height: 30px;
-  padding: 0 5px;
+  width: 100%;
+  padding: 0;
+  padding-left: 3px;
   margin: 0;
 
   border-radius: @menuItemBorderRadius;
@@ -16,6 +18,13 @@
   font-family: @bodyFont;
   color: @headerFontColor;
   font-size: 15px;
+  outline: none;
+  transition: background ease-in 100ms;
+  &:focus, &:hover {
+    // border: 1px solid  @purple4;
+    background: lighten(@headerMenuBgColor, 5%);
+  }
+
 }
 
 .menu-input.text-input {
@@ -23,7 +32,6 @@
   border: none;
   background: @headerBgDark;
   // border-bottom: 1px solid @headerFontColor;
-  outline: none;
 }
 
 .menu-input.selector {

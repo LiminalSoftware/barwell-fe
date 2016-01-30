@@ -5,6 +5,7 @@ import ModelStore from "../../../stores/ModelStore"
 import AttributeStore from "../../../stores/AttributeStore"
 import KeyStore from "../../../stores/KeyStore"
 import KeycompStore from "../../../stores/KeycompStore"
+import RelationStore from "../../../stores/RelationStore"
 import modelActionCreators from '../../../actions/modelActionCreators'
 import constants from '../../../constants/MetasheetConstants'
 
@@ -40,8 +41,20 @@ var KeyDetail = React.createClass({
 		this.setState({name: event.target.value})
 	},
 
-	handleCompChoice: function () {
+	handleCompChoice: function (e) {
+		var value = e.target.value
+		var key = this.props._key
+		var components = KeycompStore.query({key_id: (key.key_id || key.cid)}, 'ord');
+		var keycomp = {
+			key_id: key.key_id,
+			attribute_id: value,
+			order: components.length
+		}
+		modelActionCreators.create('keycomp', false, keycomp)
+	},
 
+	handleDeleteComp: function (e, keycomp_id) {
+		modelActionCreators.destroy('keycomp', false, {})
 	},
 
 	handleDelete: function (event) {
@@ -52,29 +65,37 @@ var KeyDetail = React.createClass({
 
 	handleUniqClick: function (event) {
 		var key = this.props._key
-		key.uniq = !key.uniq
-		modelActionCreators.create('key', false, key)
+		if (this.props.editing) {
+			key.uniq = !key.uniq
+			modelActionCreators.create('key', false, key)
+		}
 	},
 
 	render: function () {
 		var _this = this;
 		var key = this.props._key;
+		var model = ModelStore.get(key.model_id)
 		var keyOrd = this.props.keyOrd;
 		var ord = keyOrd[key.key_id];
 		var keyIcon = <span className={getIconClasses(ord, key)}></span>;
 		var components = KeycompStore.query({key_id: (key.key_id || key.cid)}, 'ord');
-
-		var selections = AttributeStore.query({model_id: key.model_id}).map(function (attr) {
-			return <option value = {attr.attribute_id} key = {attr.attribute_id}>
+		var compIndex = _.indexBy(components, 'attribute_id')
+		var selections = [<option value={null} key="null-choice"> -- Select --</option>]
+		var relations = RelationStore.query({related_key_id: key.key_id})
+		var hasRelations = relations.length > 0
+		var isPrimary = (model.primary_key_key_id === key.key_id)
+		
+		AttributeStore.query({model_id: key.model_id}).forEach(function (attr) {
+			if (!(attr.attribute_id in compIndex)) selections.push(<option value = {attr.attribute_id} key = {attr.attribute_id}>
 				{attr.attribute}
-			</option>
+			</option>)
 		})
 
 		return <div className={"detail-grouping " + (this.props.editing ? ' editing' : '')}>
 				<div key='keyrow' className = "detail-row main-row">
 					{this.props.editing ?
 						<span className="draggable" key="drag-cell">
-							<span className="tighter icon icon-Layer_2 model-reorder"></span>
+							<span className="grayed icon icon-Layer_2 model-reorder"></span>
 						</span>
 						: null
 					}
@@ -94,50 +115,56 @@ var KeyDetail = React.createClass({
 							onChange={this.handleUniqClick}/>
 					</span>
 					<span style={{width: "10%"}}>
-						{this.props.editing ? <span className="clickable icon icon-cr-remove"
+						{this.props.editing ? <span className="clickable grayed icon icon-cr-remove"
 							title="Delete key" onClick={this.handleDelete}>
 							</span> : null}
 					</span>
 				</div>
-				{
-					this.props.editing ?
-					components.map(function (comp) {
-						return <div className="detail-row sub-row">
-							<span style={{width: "70%"}}>
-								<select value = {comp.attribute_id}
-										onChange = {_this.handleCompChoice}>
-									{selections}
-								</select>
-							</span>
-							<span style={{width: "10%"}}></span>
-							<span style={{width: "10%"}}></span>
-							<span style={{width: "10%"}}>
-								<span className="clickable icon icon-kub-trash"
-									title="Delete component" onClick={_this.handleDelete}>
+				<div className="faint detail-row">
+					<span style={{width: '100%'}}>
+						<span>Includes: </span>
+						{
+						(this.props.editing && !isPrimary && !hasRelations) ?
+						components.map(function (kc) {
+							var attr = AttributeStore.get(kc.attribute_id)
+							return <span className=  "keycomp-bubble" key={kc.cid || kc.keycomp_id}>
+								{attr.attribute} 
+								<span 
+									className="clickable small grayed icon icon-kub-remove"
+									onClick = {e => _this.handleDeleteComp(e, kc)}
+									style = {{padding: '5px', lineHeight: '20px'}}>
 								</span>
 							</span>
-						</div>;
-					}).concat(<div className="detail-row sub-row">
-						<span style={{width: "70%"}}>
-						<ul className="light mb-buttons">
-							<li onClick={this.handleEdit}>Add component</li>
-						</ul>
-						</span>
-						<span style={{width: "10%"}}></span>
-						<span style={{width: "10%"}}></span>
-						<span style={{width: "10%"}}></span>
-					</div>)
-					:
-					<div className="faint detail-row">
-						<span style={{width: '100%'}}>
-							{
-							'Including: ' + components.map(function (comp) {
-								return AttributeStore.get(comp.attribute_id).attribute
-							}).join(', ')
-							}
-						</span>
-					</div>
-				}
+						})
+						:
+						(components.map(function (comp) {
+							return AttributeStore.get(comp.attribute_id).attribute
+						}).join(', '))
+						}
+						{
+						isPrimary ? 
+							<span style={{marginLeft: '5px'}}> (The primary key cannot be changed)</span>
+							: ''
+						}
+						{
+						hasRelations ? 
+							<span style={{marginLeft: '5px'}}>
+								(This key is used as part of a relation:
+								{relations.map(r => r.relation).join(', ')})
+							</span> 
+							: ''
+						}
+										
+						{
+						(this.props.editing && !isPrimary && !hasRelations) ? <select 
+							className = "inline-select"
+							onChange = {this.handleCompChoice} >
+							{selections}
+						</select> : null
+						}
+
+					</span>
+				</div>
 			</div>;
 	}
 

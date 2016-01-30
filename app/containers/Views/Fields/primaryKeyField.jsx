@@ -13,15 +13,22 @@ import commitMixin from './commitMixin'
 import editableInputMixin from './editableInputMixin'
 import selectableMixin from './selectableMixin'
 
+import defaultCellStyle from './defaultCellStyle'
+
 var PrimaryKeyElement = React.createClass({
 	mixins: [selectableMixin],
 	
 	render: function () {
 		var value = this.props.value
 		var style = this.props.style
+		var cellStyle = _.clone(defaultCellStyle)
 
-		return <span style={style} className="table-cell uneditable">
-			<span className = {"table-cell-inner " + (this.state.selected ? " selected" : "")}>
+		cellStyle.fontSize = '10px'
+		cellStyle.lineHeight = this.props.rowHeight + 'px'
+		cellStyle.textAlign = 'right'
+
+		return <span style = {style}>
+			<span style={cellStyle}>
 				{this.props.value}
 			</span>
 		</span>
@@ -29,6 +36,8 @@ var PrimaryKeyElement = React.createClass({
 })
 
 var PrimaryKeyField = {
+	defaultWidth: 50,
+	sortable: true,
 	element: PrimaryKeyElement,
 	uneditable: true
 }

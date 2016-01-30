@@ -11,55 +11,67 @@ var RHS_PADDING = 100
 var ScrollOverlay = React.createClass ({
 	// mixins: [PureRenderMixin],
 
-	handleClick: function (e) {
-		this.props._handleClick(e)
-	},
-
-	handleDoubleClick: function (e) {
-		this.props._handleDoubleClick(e)
-	},
-
 	handleScroll: function (e) {
+		var scrollVar = this.props.axis === 'vertical' ? 'scrollTop' : 'scrollLeft'
+		var outerEl = this.refs.overlay
 		var view = this.props.view
 		var geo = view.data.geometry
-		var outerEl = this.refs.overlay
-		var vOffset = outerEl.scrollTop
-		var hOffset = outerEl.scrollLeft
-		this.props._setScrollOffset(vOffset, hOffset)
+		var offset = outerEl[scrollVar]
+		this.props._setScrollOffset(offset)
 	},
 
 	handleMouseWheel: function (e) {
 		e.preventDefault()
-		var deltaY = e.deltaY;
-		var deltaX = e.deltaX;
 		var outerEl = this.refs.overlay
-		var vOffset = outerEl.scrollTop
-		var hOffset = outerEl.scrollLeft
-		ReactDOM.findDOMNode(outerEl).scrollTop = (vOffset + deltaY)
-		ReactDOM.findDOMNode(outerEl).scrollLeft = (hOffset + deltaX)
+		var scrollVar = this.props.axis === 'vertical' ? 'scrollTop' : 'scrollLeft'
+		var delta = this.props.axis === 'vertical' ? e.deltaY : e.deltaX
+		var offset =  outerEl[scrollVar]
+		
+		ReactDOM.findDOMNode(outerEl)[scrollVar] = (offset + delta)
 	},
 
 	render: function () {
 		var _this = this
 		var view = this.props.view
 		var geo = view.data.geometry
+		var axis = this.props.axis
 		var store = this.props.store
 		var rowCount = store ? _this.props.store.getRecordCount() : 0
-		var style = {
+		
+		var innerStyle = (axis === 'vertical') ? {
 			top: 0,
+			right: 0,
 			left: 0,
+			position: 'absolute'
+		} : {
+			top: 0,
+			bottom: 0,
+			left: 0,
+			position: 'absolute'
+		};
+
+		var style =  (axis === 'vertical') ? {
+			position: 'absolute',
+			top: geo.headerHeight + 'px',
+			width: '10px',
 			right: 0,
 			bottom: 0
-		}
-		var innerStyle = {
-			top: 0,
+		} : {
+			position: 'absolute',
+			bottom: 0,
+			right: 0,
 			left: 0,
-			width: (view.data.fixedWidth + view.data.floatWidth + RHS_PADDING) + 'px',
-			position: 'absolute'
-		}
+			height: '10px'
+		};
+		
 		// hack! - need something clickable before the rows load
-		if (rowCount == 0) innerStyle.bottom = 0
-		else innerStyle.height = ((rowCount + 1) * geo.rowHeight + geo.headerHeight) + 'px'
+		if (axis === 'vertical') {
+			if (rowCount == 0) innerStyle.bottom = 0
+			else innerStyle.height = ((rowCount + 1) * geo.rowHeight + geo.headerHeight) + 'px'	
+		} else {
+			innerStyle.width = (view.data.floatWidth + view.data.fixedWidth + geo.labelWidth + 30) + 'px'
+		}
+		
 
 		return <div className = "scroll-overlay"
 			style = {style}
@@ -67,8 +79,6 @@ var ScrollOverlay = React.createClass ({
 			ref = "overlay">
 				<div className = "scroll-overlay-inner"
 					style = {innerStyle}
-					onMouseDown = {this.handleClick}
-					onDoubleClick = {this.handleDoubleClick}
 					ref = "overlay-inner">
 				</div>
 		</div>

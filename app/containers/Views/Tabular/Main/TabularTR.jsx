@@ -9,6 +9,8 @@ import ViewStore from "../../../../stores/ViewStore"
 
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
+import defaultCellStyle from '../../Fields/defaultCellStyle';
+
 
 var TabularTR = React.createClass({
 
@@ -58,18 +60,38 @@ var TabularTR = React.createClass({
 			top: (geo.rowHeight * (row)) + 'px',
 			// background: "white"
 		}
-		selector[model._pk] = obj[model._pk]
+		
 		var left = geo.leftGutter;
 		var prevSort = false;
 		var prevFixed = true;
+
+		// var boxStyle = {
+		// 	position: 'relative',
+		// 	display: 'inline-block',
+		// 	maxHeight: '14px',
+		// 	minHeight: '14px',
+		// 	maxWidth: '14px',
+		// 	minWidth: '14px',
+		// 	cursor: 'pointer',
+		// 	borderRadius: '3px',
+		// 	background: 'white',
+		// 	border: '1px solid ' + constants.colors.GRAY_3,
+		// 	zIndex: 121
+		// }
+
+		// var labelCellStyle = _.clone(defaultCellStyle)
+		// labelCellStyle.paddingLeft = '10px'
+		// labelCellStyle.lineHeight = geo.rowHeight + 'px'
+		// labelCellStyle.width = geo.labelWidth + 'px'
+
+		selector[model._pk] = obj[model._pk]
 
 		return <div id={rowKey}
 			className = {"table-row " +  (obj._dirty ? "dirty" : "")}
 			style = {rowStyle}>
 			{_this.props.hasRowLabel ?
-				<span style = {{left: 0, right: (left += geo.labelWidth), top: 0, bottom: 0}}
-					className = "table-cell label-cell">
-					<span className = "table-cell-inner label-cell-inner"></span>
+				<span style = {{position: 'absolute', left: 0, right: (left += geo.labelWidth), top: 0, bottom: 0}}>
+					
 				</span> : null
 			}
 

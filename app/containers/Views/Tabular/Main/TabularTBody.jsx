@@ -10,22 +10,21 @@ import util from '../../../../util/util'
 import TabularTR from './TabularTR'
 
 
-var VISIBLE_ROWS = 40
-var MAX_ROWS = 90
+var VISIBLE_ROWS = 50
+var MAX_ROWS = 70
 var MAX_SKIP = 1
 var TURBO_SKIP = 2
-var TURBO_THRESHOLD = 10 
-var CYCLE = 31
-var MIN_CYCLE = 30
-var BACKWARD_BUFFER = 6
-var BUFFER_SIZE = 4
+var TURBO_THRESHOLD = 20
+var CYCLE = 50
+var MIN_CYCLE = 20
+var BACKWARD_BUFFER = 3
+var BUFFER_SIZE = 3
 var PAGE_SIZE = MAX_SKIP
 var BAILOUT = MAX_SKIP
 
 var onFrame = function (f) {
-	// if ('requestAnimationFrame' in window) return window.requestAnimationFrame(f)
-	if (false) {}
-	else return setTimeout(f, CYCLE)
+	if ('requestAnimationFrame' in window) window.requestAnimationFrame(f)
+	return setTimeout(f, CYCLE)
 }
 
 var TabularTBody = React.createClass ({
@@ -81,18 +80,18 @@ var TabularTBody = React.createClass ({
 		var end = this.state.end
 		var visibleRows = (end - start)
 		
-		// if (start > target && start - 1 >= 0) 
-		// 	start -= (magnitude >= TURBO_THRESHOLD ? TURBO_SKIP : MAX_SKIP)
-		// if (paintDirection > 0 && visibleRows >= MAX_ROWS) start += TURBO_SKIP
-		// if (paintDirection === 0 && start < setpoint) start += TURBO_SKIP
+		if (start > target && start - 1 >= this.props.fetchStart) 
+			start -= (magnitude >= TURBO_THRESHOLD ? TURBO_SKIP : MAX_SKIP)
+		else if (paintDirection > 0 && visibleRows >= MAX_ROWS) start += TURBO_SKIP
+		else if (paintDirection === 0 && start < setpoint) start += TURBO_SKIP
 
-		// if (end < target + VISIBLE_ROWS && end + 1 <= rowCount) 
-		// 	end += (magnitude >= TURBO_THRESHOLD ? TURBO_SKIP : MAX_SKIP)
-		// if (paintDirection < 0 && visibleRows >= MAX_ROWS) end -= TURBO_SKIP
-		// if (paintDirection === 0 && end > setpoint + VISIBLE_ROWS) end -= TURBO_SKIP	
+		if (end < target + VISIBLE_ROWS && end < this.props.fetchEnd && end + 1 <= rowCount) 
+			end += (magnitude >= TURBO_THRESHOLD ? TURBO_SKIP : MAX_SKIP)
+		else if (paintDirection < 0 && visibleRows >= MAX_ROWS) end -= TURBO_SKIP
+		else if (paintDirection === 0 && end > setpoint + VISIBLE_ROWS) end -= TURBO_SKIP	
 
 		this.setState({
-			scrolling: (setpoint !== target),
+			scrolling: (start !== target || end !== (target + MAX_ROWS)),
 			offset: setpoint,
 			start: start,
 			end: end
@@ -109,9 +108,13 @@ var TabularTBody = React.createClass ({
 		if (this.__timer) clearTimeout(this.__timer)
 		// if we haven't reached the target yet, set a timer for next frame
 
-		if (this.state.offset !== this.state.target) {
+		if (this.isHome())
 			this.__timer = onFrame(this.updateOffset)
-		}
+	},
+
+	isHome: function () {
+		return (this.state.start !== this.state.target ||
+			this.state.end !== Math.min(this.state.target + VISIBLE_ROWS, this.props.fetchEnd))
 	},
 
 	shouldComponentUpdate: function (nextProps, nextState) {
@@ -120,7 +123,9 @@ var TabularTBody = React.createClass ({
 		var visibleRows = this.state.end - this.state.start
 		if (now - this._lastUpdate < MIN_CYCLE) return false
 
-		return (this.state.offset !== this.state.target)
+		// console.log('state: (' + this.state.start + ', ' + this.state.end + 
+		// 	') ; props: (' + this.state.target + ', ' + (this.state.target + VISIBLE_ROWS) + ')')
+		return this.isHome()
 	},
 
 	_onChange: function () {
@@ -149,7 +154,7 @@ var TabularTBody = React.createClass ({
 	getNumberRows: function () {
 		return this.store.getRecordCount()
 	},
-
+	
 	getColumns: function () {
 		return this.props.columns
 	},
@@ -160,8 +165,8 @@ var TabularTBody = React.createClass ({
 		var pk = model._pk
 		var ptr = this.props.pointer
 		var rowKey = this.props.prefix + '-tr-' + (obj.cid || obj[pk])
-		var offset = this.state.offset
-		// var offset = this.state.start
+		// var offset = this.state.offset
+		var offset = this.state.start
 
 		return <TabularTR  {...this.props}
 			obj = {obj}
@@ -179,18 +184,18 @@ var TabularTBody = React.createClass ({
 		var offset = Math.floor(this.state.offset/PAGE_SIZE) * PAGE_SIZE
 		var length = Math.floor(this.state.length/PAGE_SIZE) * PAGE_SIZE
 		var rows = this.props.store ? this.props.store.getObjects(
-			// this.state.start, this.state.end
-			this.state.offset, this.state.offset + VISIBLE_ROWS
+			this.state.start, this.state.end
+			// this.state.offset, this.state.offset + VISIBLE_ROWS
 		) : []
 		var rowCount = this.props.store ? this.props.store.getRecordCount() : 0
 		var geo = view.data.geometry
 		var floatOffset = this.props.floatOffset
-
+		
 		return <div
-			className = {"tabular-tbody "}
 			onPaste = {this.props._handlePaste}
+			onMouseDown = {this.props._handleClick}
 			onDoubleClick = {this.props._handleEdit}
-			onClick = {this.props._handleClick}
+			onWheel = {this.props._handleWheel}
 			ref = "tbody"
 			style = {this.props.style}
 			onContextMenu = {this.props._handleContextMenu}>

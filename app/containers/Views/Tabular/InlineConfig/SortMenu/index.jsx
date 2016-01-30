@@ -1,4 +1,5 @@
 import React from "react";
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { Link } from "react-router";
 import _ from 'underscore';
 import fieldTypes from "../../../fields"
@@ -96,9 +97,17 @@ var SortMenu = React.createClass({
     	return <div className = "header-section">
 			<div className="header-label">Ordering</div>
 			<div className="model-views-menu" onClick = {util.clickTrap}>
+			<ReactCSSTransitionGroup 
+				component = "div"
+				className="model-views-menu-inner"
+				transitionName="fade-in" 
+				transitionAppear={true}
+				transitionEnterTimeout={500}
+				transitionLeaveTimeout={500}
+				transitionAppearTimeout={500}>
 				{
 				this.state.open ?
-				<div className="dropdown-menu" style = {{minWidth: "200px"}}>
+				<div key = "menu" className="dropdown-menu" style = {{minWidth: "300px"}}>
 					{
 					this.state.sortList.map(function (sortItem, order) {
 						return <SortDetail 
@@ -113,6 +122,7 @@ var SortMenu = React.createClass({
 					<div className = "menu-item menu-sub-item">
 						<span>
 							<select className = "menu-input selector" 
+								style = {{width: "100%"}}
 								onChange = {this.chooseItem}
 								value = {0}>
 								{attrSelections}
@@ -131,10 +141,11 @@ var SortMenu = React.createClass({
 					</div>
 				</div>
 				:
-				<div className="model-views-menu-inner">
+				<div key = "preview" className="model-views-menu-inner">
 					{sortPreview}
 				</div>
 				}
+				</ReactCSSTransitionGroup>
 				<div className="dropdown small grayed icon icon-chevron-down" onClick = {this.handleOpen}></div>
 			</div>
 

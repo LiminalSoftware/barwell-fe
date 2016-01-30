@@ -60,7 +60,7 @@ var ViewItem = React.createClass({
 			return <div className = "menu-item menu-sub-item no-left-padding">
 				<span className = "draggable icon grayed icon-Layer_2"/>
 				<ViewTypeMenu ref = "viewTypeMenu" type = {view.type} editing = {this.state.editing} deleting = {this.state.deleting}/>
-				<span className = {"double ellipsis " + (this.state.deleting ? " strikethrough" : "")}>
+				<span className = "double ellipsis">
 					{this.state.editing ?
 						<input className = "menu-input text-input"
 								value = {this.state.name}
@@ -80,8 +80,11 @@ var ViewItem = React.createClass({
 		else if (view)
 			return <Link
 				to = {`/workspace/${model.workspace_id}/model/${view.model_id}/view/${view.view_id}`}
-				className = "menu-item menu-sub-item no-left-padding">
-				{this.props.singleton ? null :
+				className = {"menu-item menu-sub-item no-left-padding " 
+				+ (this.props.singleton ? " singleton" : "")}>
+				{
+				this.props.singleton ? 
+					null :
 					<span className = {"small icon icon-geo-circle " +
 					(this.props.selected ? 'green' : 'hovershow')}/>
 				}
@@ -90,7 +93,7 @@ var ViewItem = React.createClass({
 					{view.view}
 				</span>
 			</Link>
-		else return <div className = "menu-item menu-sub-item no-left-padding">
+		else return <div className = "singleton menu-item menu-sub-item no-left-padding">
 			<span className = "large icon icon-tl-toolbox"></span>
 			<span className = "double-column-config">Database Configuration</span>
 		</div>

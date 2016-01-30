@@ -13,6 +13,10 @@ var ViewList = React.createClass({
 			editing: false
 		}
 	},
+
+	componentDidMount: function () {
+		this.setState({mounted: true})
+	},
 	
 	addNew: function () {
 		var model = this.props.model
@@ -54,7 +58,7 @@ var ViewList = React.createClass({
 					editing = {editing}/>
 			)}
 			<Link to={`/workspace/${model.workspace_id}/model/${model.model_id}/config`}
-					className = "menu-item menu-sub-item no-left-padding" key="model-editor">
+				className = "menu-item menu-sub-item no-left-padding" key="model-editor">
 				<span className = {"small icon icon-geo-circle " + (!view ? " green" : " hovershow")}/>
 				<span className = "large icon icon-tl-toolbox"></span>
 				<span className = "double-column-config">Database Configuration</span>

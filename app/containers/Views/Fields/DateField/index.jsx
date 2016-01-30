@@ -24,7 +24,7 @@ var dateField = {
 	sortable: true,
 
 	stringify: function (value) {
-		return moment(value).format('YYYY-MM-DD')
+		return moment(value).toISOString()
 	},
 
 	configCleanser: function (config) {
@@ -74,13 +74,13 @@ var dateField = {
 			var style = this.props.style
 
 			return <span>
-					<input type = "text"
-						className = "menu-input text-input"
-						spellCheck = "false"
-						value = {this.state.dateFormat}
-						onFocus = {this.handleFocus}
-						onBlur = {this.onBlur}
-						onChange = {this.onFormatChange}/>
+				<input type = "text"
+					className = "menu-input text-input"
+					spellCheck = "false"
+					value = {this.state.dateFormat}
+					onFocus = {this.handleFocus}
+					onBlur = {this.onBlur}
+					onChange = {this.onFormatChange}/>
 			</span>
 		}
 	}),
