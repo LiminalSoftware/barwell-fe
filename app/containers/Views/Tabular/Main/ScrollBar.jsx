@@ -8,7 +8,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 var RHS_PADDING = 100
 
-var ScrollOverlay = React.createClass ({
+var ScrollBar = React.createClass ({
 	// mixins: [PureRenderMixin],
 
 	handleScroll: function (e) {
@@ -69,15 +69,15 @@ var ScrollOverlay = React.createClass ({
 			if (rowCount == 0) innerStyle.bottom = 0
 			else innerStyle.height = ((rowCount + 1) * geo.rowHeight + geo.headerHeight) + 'px'	
 		} else {
-			innerStyle.width = (view.data.floatWidth + view.data.fixedWidth + geo.labelWidth + 30) + 'px'
+			innerStyle.width = (view.data.floatWidth + view.data.fixedWidth + geo.labelWidth + 100) + 'px'
 		}
 		
 
-		return <div className = "scroll-overlay"
+		return <div className = "scroll-bar-outer"
 			style = {style}
 			onScroll = {this.handleScroll}
 			ref = "overlay">
-				<div className = "scroll-overlay-inner"
+				<div className = "scroll-bar-inner"
 					style = {innerStyle}
 					ref = "overlay-inner">
 				</div>
@@ -85,4 +85,4 @@ var ScrollOverlay = React.createClass ({
 	}
 })
 
-export default ScrollOverlay
+export default ScrollBar

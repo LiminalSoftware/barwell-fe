@@ -14,6 +14,13 @@ var ConfirmationMixin = {
 		this.setState({editing: false})
 	},
 
+  getEditButtons: function (canAdd) {
+    return <ul className="light mb-buttons">
+        {this.state.editing ? null : <li onClick={this.handleEdit}>Edit</li>}
+        {canAdd ? <li onClick={this.handleAddNew} className="plus">+</li> : null}
+      </ul>
+  },
+
   getConfirmationButtons: function () {
     if (this.state.committing) return <ul className="light mb-buttons" key="confirmations">
       <li key='save-changes' className="hilight">

@@ -37,7 +37,6 @@
 	left: 0;
 	padding: 0;
 	margin: 0;
-	margin-left: -1px;
 
 	list-style: none;
 
@@ -189,7 +188,7 @@
 	& > span {
 		flex: 1 1;
 		white-space: nowrap;
-		margin: 0;
+		margin: 0 5px;
 		height: 40px;
 		line-height: 40px;
 		position: relative;
@@ -236,14 +235,13 @@
 }
 
 .menu-config-row {
-  border-top: 1px solid @headerFontColor;
-  .menu-sub-item {
-    border-left: 1px solid @headerFontColor;
-		&:hover {
-			.icon.icon-plus {
-				color: @newgreen1;
-			}
-		}
+  	border-top: 1px solid @headerFontColor;
+  	.menu-sub-item {
+	text-align: center;
+	border-left: 1px solid @headerFontColor;
+	&:hover {
+		background: @headerMenuBgColor;
+	}
   }
   .menu-sub-item:first-child {
     border-left: none;

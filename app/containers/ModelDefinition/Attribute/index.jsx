@@ -21,7 +21,7 @@ var AttributeDetailList = React.createClass({
 
 	mixins: [ConfirmationMixin],
 
-	handleAddNewAttr: function (event) {
+	handleAddNew: function (event) {
 		var model = this.props.model;
 		var obj = {
 			attribute: 'New attribute',
@@ -39,27 +39,32 @@ var AttributeDetailList = React.createClass({
 		this.setState({committing: true})
 
 		return Promise.all(
-			AttributeStore.query({model_id: (model.model_id || model.cid)}).map(function (attr) {
+			AttributeStore.query({model_id: (model.cid || model.model_id)}).map(function (attr) {
 				if (attr._dirty) return modelActionCreators.create('attribute', true, attr)
 				if (attr._destroy) return modelActionCreators.destroy('attribute', true, attr)
 			})
 		).then(function () {
-			_this.setState({editing: false, committing: false})
-			_this.cancelChanges()
+			_this.clearEditMode(true)
 			// modelActionCreators.createNotification('Attribute udpate complete!', 'Your changes have been committed to the server', 'info')
 		})
 	},
 
 	cancelChanges: function () {
+		this.clearEditMode(false)
+	},
+
+	clearEditMode: function (save) {
+		var _this = this;
 		var model = this.props.model;
-		AttributeStore.query({model_id: (model.model_id || model.cid)}).map(function (attr) {
-			if (!attr.attribute_id) return modelActionCreators.destroy('attribute', false, attr)
-			else {
-				_.extend(attr, attr._server, {_destroy: false, _clean: true})
-				modelActionCreators.create('attribute', false, attr)
+		return Promise.all(AttributeStore.query({model_id: (model.model_id || model.cid)}).map(function (attr) {
+			if ((!attr.attribute_id) || (save && attr._destroy)) {
+				return modelActionCreators.destroy('attribute', false, attr)
+			} else {
+				return modelActionCreators.restore('attribute', attr)
 			}
+		})).then(function () {
+			_this.setState({editing: false, committing: false})
 		})
-		this.setState({editing: false})
 	},
 
 	isDirty: function () {
@@ -80,21 +85,16 @@ var AttributeDetailList = React.createClass({
 		return <div className = "detail-block">
 			<div className = "detail-section-header">
 				<h3>Attributes</h3>
-				<ul className="light mb-buttons">
-					<li onClick={this.handleEdit}>Edit</li>
-					<li onClick={this.handleAddNewAttr} className="plus">+</li>
-				</ul>
+				{this.getEditButtons(true)}
+				{this.getConfirmationButtons()}
 			</div>
 
-			<p className="explainer">
-				Attributes are properties that you might use to describe items in this database.
-			</p>
 			<div key="attr-table" className={"detail-table " + (this.state.editing ? " editing" : "")}>
 					<div className="detail-header">
-						<span style={{width: '40%'}} key="name-cell">Name</span>
-						<span style={{width: "30%"}} key="type-cell">Type</span>
-						<span style={{width: "10%"}} key="keys-cell">Keys</span>
-						<span style={{width: "10%"}} key="action-cell"></span>
+						<span style={{width: '35%'}} key="name-cell">Name</span>
+						<span style={{width: "25%"}} key="type-cell">Type</span>
+						<span style={{width: "20%"}} key="keys-cell">Keys</span>
+						<span style={{width: "20%"}} key="action-cell"></span>
 					</div>
 					{
 						AttributeStore.query({model_id: (model.model_id || model.cid)}, ['ordering']).map(function (col) {
@@ -108,9 +108,6 @@ var AttributeDetailList = React.createClass({
 								keyOrd = {keyOrd} />;
 						})
 					}
-			</div>
-			<div className="confirm-div">
-				{this.getConfirmationButtons()}
 			</div>
 		</div>
 	}

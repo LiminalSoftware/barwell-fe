@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router";
-import SideBar from "containers/SideBar";
 import styles from "./style.less";
 import modelActionCreators from "../../actions/modelActionCreators"
 import WorkspaceStore from '../../stores/WorkspaceStore'

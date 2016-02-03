@@ -29,7 +29,7 @@ import TableMixin from '../../TableMixin'
 import Overlay from './Overlay'
 import ContextMenu from './ContextMenu'
 import DetailBar from '../../../DetailBar'
-import ScrollOverlay from "./ScrollOverlay"
+import ScrollBar from "./ScrollBar"
 
 import constant from "../../../../constants/MetasheetConstants"
 
@@ -302,8 +302,8 @@ var TabularPane = React.createClass ({
 	},
 
 	handleMouseWheel: function (e) {
-		this.refs.verticalScrollOverlay.handleMouseWheel(e)
-		this.refs.horizontalScrollOverlay.handleMouseWheel(e)
+		this.refs.verticalScrollBar.handleMouseWheel(e)
+		this.refs.horizontalScrollBar.handleMouseWheel(e)
 	},
 
 	hideDetailBar: function () {
@@ -496,10 +496,11 @@ var TabularPane = React.createClass ({
 
 		// tricky use of some to break when we exceed hOffset
 		floatCols.some(function (col) {
-			if (col.width + hiddenColWidth <= hOffset) {
+			if (col.width + hiddenColWidth < hOffset) {
 				hiddenColWidth += col.width
 				hiddenCols ++
-			} else return true
+			}
+			return (col.width + hiddenColWidth > hOffset)
 		})
 
 		this.refs.tableWrapper.setState({
@@ -639,9 +640,9 @@ var TabularPane = React.createClass ({
 
 		</TabularBodyWrapper>
 
-		<ScrollOverlay
+		<ScrollBar
 			store = {_this.store}
-			ref = "verticalScrollOverlay"
+			ref = "verticalScrollBar"
 			axis = "vertical"
 			_handleClick = {_this.onMouseDown}
 			_handleDoubleClick = {this.editCell}
@@ -649,9 +650,9 @@ var TabularPane = React.createClass ({
 			_setScrollOffset = {_this.setVerticalScrollOffset}
 			view = {view}/>
 
-		<ScrollOverlay
+		<ScrollBar
 			store = {_this.store}
-			ref = "horizontalScrollOverlay"
+			ref = "horizontalScrollBar"
 			axis = "horizontal"
 			_handleClick = {_this.onMouseDown}
 			_handleDoubleClick = {this.editCell}

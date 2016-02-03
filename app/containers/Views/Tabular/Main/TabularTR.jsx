@@ -24,14 +24,9 @@ var TabularTR = React.createClass({
 			// console.log('TabualrTR.shouldComponentUpdate: oldProps.view !== newProps.view')
 			return true
 		}
-		if (oldProps.row !== newProps.row) {
-			// console.log('TabualrTR.shouldComponentUpdate: oldProps.row !== newProps.row')
-			return true
-		}
 		return this.props.columns.some(function (col) {
 			return newProps.obj[col.column_id] !== oldProps.obj[col.column_id]
 		})
-		
 	},
 
 	prepareColumn: function () {
@@ -58,7 +53,7 @@ var TabularTR = React.createClass({
 		var rowStyle = {
 			height: (geo.rowHeight + 1) + 'px',
 			top: (geo.rowHeight * (row)) + 'px',
-			// background: "white"
+			background: "white"
 		}
 		
 		var left = geo.leftGutter;
@@ -134,6 +129,7 @@ var TabularTR = React.createClass({
 						padding: 0,
 						borderLeft: '1px solid ' + constants.colors.GRAY_3,
 						borderBottom: '1px solid ' + constants.colors.GRAY_3,
+						overflow: 'hidden',
 						WebkitBoxSizing: 'border-box',
 						MozBoxSizing: 'border-box',
 						boxSizing: 'border-box',

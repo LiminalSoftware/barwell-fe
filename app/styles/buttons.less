@@ -3,6 +3,9 @@
 
 .light.mb-buttons {
   float: right;
+  margin: 0;
+  margin-right: 5px;
+  padding: 0;
   
   &.fixed {
     position: absolute;
@@ -16,16 +19,34 @@
 
   li {
     display: inline-block;
-    padding: 5px 10px;
+    padding: 0 10px;
+    line-height: 25px;
+    height: 25px;
     margin: 0;
     font-family: @bodyFont;
-    font-size: 15px;
-    background: @gray3;
-    color: @gray4;
+    font-size: 12px;
+
+    color: @gray2;
     cursor: pointer;
-    border-right: 1px solid transparent;
+
+    border: 1px solid @gray2;
+    border-color: @gray2;
+    border-width: 1px;
+    border-right-style: none;
+    
     &:hover {
+      color: white; 
       background: @newgreen1;
+      border-color: @newgreen1;
+    }
+    &:first-child {
+      border-top-left-radius: 3px;
+      border-bottom-left-radius: 3px;
+    }
+    &:last-child {
+      border-top-right-radius: 3px;
+      border-bottom-right-radius: 3px;
+      border-right-style: solid;
     }
   }
 }

@@ -64,17 +64,17 @@ var AttributeDetail = React.createClass({
 		var model = this.props.model;
 		var keyOrd = this.props.keyOrd;
 		var name = col.attribute;
-		var keyIcons = [];
 		var components = KeycompStore.query({attribute_id: col.attribute_id});
-
-		var typeFieldChoices = Object.keys(constants.fieldTypes).filter(function (type) {
-			return type !== 'PRIMARY_KEY'
-		}).map(function (type) {
-  			return <option value={type} key={type}>
-  				{constants.fieldTypes[type]}
-  			</option>;
-		});
-
+		var key = "attribute-" + (col.attribute_id || col.cid);
+		// prepare choices for the type choice
+		var typeFieldChoices = Object.keys(constants.fieldTypes)
+			.filter(function (type) {return type !== 'PRIMARY_KEY'}).map(function (type) {
+	  			return <option value={type} key={type}>
+	  				{constants.fieldTypes[type]}
+	  			</option>;
+			});
+		// prepare the list of key icons for this column
+		var keyIcons = [];
 		components.forEach(function (comp, idx) {
 			var key = KeyStore.get(comp.key_id)
 			if (!key) return;
@@ -85,12 +85,9 @@ var AttributeDetail = React.createClass({
 				title={key.key} />
 			);
 		});
-
 		if(keyIcons.length === 0) keyIcons.push(<span>-</span>)
 
-		var key = "attribute-" + (col.attribute_id || col.cid);
-
-		var actions = [];
+		
 
 		return <ReactCSSTransitionGroup
 				transitionEnterTimeout={500}
@@ -128,7 +125,7 @@ var AttributeDetail = React.createClass({
 						</select>
 					</span>
 					:
-					<span style = {{width: '20%'}}>
+					<span style = {{width: '25%'}}>
 						{constants.fieldTypes[col.type]}
 					</span>
 				}

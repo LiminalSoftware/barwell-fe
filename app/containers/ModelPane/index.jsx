@@ -6,8 +6,6 @@ import ModelDefinition from "../ModelDefinition"
 import ModelStore from "../../stores/ModelStore"
 import ViewStore from "../../stores/ViewStore"
 
-import ViewSelector from '../ViewSelector'
-
 import viewTypes from "../Views/viewTypes"
 import modelActionCreators from "../../actions/modelActionCreators"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';

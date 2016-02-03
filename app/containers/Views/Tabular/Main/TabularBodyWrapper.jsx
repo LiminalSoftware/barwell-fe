@@ -146,6 +146,9 @@ var TabularBodyWrapper = React.createClass ({
 		var adjustedWidth = fixedWidth + floatWidth + geo.labelWidth
 			- this.state.hiddenColWidth
 
+		var fetchStart = this.state.fetchOffset
+		var fetchEnd = Math.min(this.state.fetchOffset + MAX_ROWS, rowCount)
+
 		return <div
 			className = {"tabular-body-wrapper " + (focused ? "focused" : "blurred")}
 			ref="tbodyWrapper"
@@ -158,7 +161,13 @@ var TabularBodyWrapper = React.createClass ({
 				bottom: 0,
 				width: (adjustedWidth) + 'px',
 				transform: 'translateZ(0)',
-				transformStyle: 'preserve-3D'
+				transformStyle: 'preserve-3D',
+				WebkitUserDrag: 'none',
+				WebkitUserSelect: 'none',
+			    KhtmlUserSelect: 'none',
+			    MozUserSelect: 'none',
+			    MsUserSelect: 'none',
+			    UserSelect: 'none',
 			}}>
 
 			{
@@ -210,8 +219,8 @@ var TabularBodyWrapper = React.createClass ({
 						right: 0,
 						top: 0,
 						height: (rowCount * geo.rowHeight) + 'px',
-						// marginTop: marginTop + 'px',
-						transform: 'translateZ(0) translate(0, ' + marginTop + 'px)',
+						marginTop: marginTop + 'px',
+						transform: 'translateZ(0)',
 					}}>
 
 				<TabularTBody
@@ -221,8 +230,8 @@ var TabularBodyWrapper = React.createClass ({
 					prefix = "lhs"
 					hasRowLabel = {true}
 					offsetCols = {0}
-					fetchStart = {this.state.fetchOffset}
-					fetchEnd = {this.state.fetchOffset + MAX_ROWS}
+					fetchStart = {fetchStart}
+					fetchEnd = {fetchEnd}
 					style = {{
 						WebkitUserDrag: 'none',
 						WebkitUserSelect: 'none',
@@ -274,8 +283,8 @@ var TabularBodyWrapper = React.createClass ({
 						bottom: 0,
 						top: 0,
 						right: 0,
-						// marginLeft: (-1 * this.props.hiddenColWidth - 1) + 'px',
-						transform: 'translateZ(0) translate(' + (-1 * this.props.hiddenColWidth - 1 ) + 'px , 0)',
+						marginLeft: (-1 * this.props.hiddenColWidth - 1) + 'px',
+						transform: 'translateZ(0)',
 					}}>
 
 					<TabularTHead
@@ -306,7 +315,8 @@ var TabularBodyWrapper = React.createClass ({
 							top: 0,
 							left: 0,
 							right: 0,
-							transform: 'translateZ(0) translate(0, ' + marginTop + 'px)',
+							transform: 'translateZ(0)',
+							marginTop: marginTop + 'px',
 							height: (rowCount * geo.rowHeight) + 'px',
 							width: (fixedWidth + floatWidth) + 'px',
 							// transform: 'translate(0, ' + marginTop + 'px)',
@@ -318,8 +328,8 @@ var TabularBodyWrapper = React.createClass ({
 							prefix = "rhs"
 							columns = {this.props.visibleColumns}
 							offsetCols = {view.data.fixedCols.length}
-							fetchStart = {this.state.fetchOffset}
-							fetchEnd = {this.state.fetchOffset + MAX_ROWS}
+							fetchStart = {fetchStart}
+							fetchEnd = {fetchEnd}
 							style = {{
 								WebkitUserDrag: 'none',
 								WebkitUserSelect: 'none',
@@ -345,7 +355,7 @@ var TabularBodyWrapper = React.createClass ({
 					overflow: 'hidden',
 					margin: 0,
 					padding: 0,
-					top: geo.headerHeight + 1 + 'px',
+					top: geo.headerHeight - 3 + 'px',
 					bottom: 0,
 					left: geo.leftGutter + 'px',
 					width: (fixedWidth + floatWidth + geo.labelWidth + 6) + 'px',
@@ -360,8 +370,8 @@ var TabularBodyWrapper = React.createClass ({
 					top: 0,
 					left: 0,
 					right: 0,
-					// marginTop: marginTop + 'px',
-					transform: 'translateZ(0) translate(0, ' + marginTop + 'px)',
+					marginTop: marginTop + 4 + 'px',
+					transform: 'translateZ(0)',
 					height: ((rowCount + 1.5) * geo.rowHeight) + 'px',
 					WebkitUserDrag: 'none',
 					WebkitUserSelect: 'none',
@@ -372,14 +382,14 @@ var TabularBodyWrapper = React.createClass ({
 				    
 				}}>
 				{this.props.children}
-
-				<AddNewRowBar {...this.props}
+			</div>
+			</div>
+			<AddNewRowBar {...this.props}
 					width = {fixedWidth + floatWidth + geo.labelWidth
 						- this.state.hiddenColWidth}
 					ref = "addNew"
+					offset = {this.state.rowOffset}
 					rowCount = {rowCount}/>
-			</div>
-			</div>
 		</div>;
 	}
 });

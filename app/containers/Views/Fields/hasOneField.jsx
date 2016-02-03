@@ -11,7 +11,7 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 import selectableMixin from './selectableMixin'
 
 var hasOneField = {
-	configA: React.createClass({
+	configB: React.createClass({
 
 		getInitialState: function () {
 			var config = this.props.config

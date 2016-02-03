@@ -229,9 +229,7 @@ var modelActions = {
 		MetasheetDispatcher.dispatch(message)
 
 		if (persist) return webUtils.persist(subject, 'CREATE', obj, update);
-		else return new Promise(function(resolve, reject){
-			return resolve(obj)
-		})
+		else return Promise.resolve(obj)
 	},
 
 	undestroy: function (subject, obj) {
@@ -240,24 +238,32 @@ var modelActions = {
 		message[subject] = obj
 		message.actionType = subject.toUpperCase() + '_CREATE'
 		MetasheetDispatcher.dispatch(message)
+		return Promise.resolve(obj)
+	},
+
+	restore: function (subject, obj) {
+		var message = {}
+		obj = _.extend(obj, obj._server || {}, {_clean: true, _destroy: false})
+		message[subject] = obj
+		message.actionType = subject.toUpperCase() + '_CREATE'
+		MetasheetDispatcher.dispatch(message)
+		return Promise.resolve(obj)
 	},
 
 	destroy: function (subject, persist, obj) {
 		var message = {}
 		message[subject] = obj
-
 		if (!persist && ((subject+'_id') in obj)) {
 			// mark the object for destruction, but dont actually do it
 			message.actionType = subject.toUpperCase() + '_CREATE'
 			obj._destroy = true
 		} else {
 			message.actionType = subject.toUpperCase() + '_DESTROY'
-			if (persist) return webUtils.persist(subject, 'DESTROY', obj)
 		}
-		return new Promise(function (resolve, reject) {
-			MetasheetDispatcher.dispatch(message)
-			return resolve(obj)
-		});
+		MetasheetDispatcher.dispatch(message)
+		
+		if (persist) return webUtils.persist(subject, 'DESTROY', obj)	
+		else return Promise.resolve(obj)
 	},
 
 	handleDateChange: function (event) {
@@ -324,10 +330,9 @@ var modelActions = {
 	// keys
 
 	createKey: function(key) {
-		if (!key) return;
-		key.key = key.key,
+		var keycomps = KeycompStore.query({key_id: key.key_id})
 		key.model_id = ModelStore.get(key.model_id).model_id
-		key.indexed = false
+		
 		MetasheetDispatcher.dispatch({
 			actionType: 'KEY_CREATE',
 			key: key
@@ -337,6 +342,7 @@ var modelActions = {
 
 	// views
 	createView: function(view, persist, update, safe) {
+		view = _.clone(view)
 		modelActions.create('view', persist, view, update, safe)
 	},
 

@@ -22,12 +22,11 @@ var KeyDetailList = React.createClass({
 
 	mixins: [ConfirmationMixin],
 
-	handleAddNewKey: function (event) {
+	handleAddNew: function (event) {
 		var model = this.props.model;
 		var obj = {
 			key: 'New key',
 			model_id: model.model_id,
-			indexed: false,
 			uniq: false,
 			_named: false
 		}
@@ -42,32 +41,38 @@ var KeyDetailList = React.createClass({
 
 		return Promise.all(
 			KeyStore.query({model_id: (model.model_id || model.cid)}).map(function (key) {
-				if (attr._dirty) return modelActionCreators.create('key', true, key)
-				if (attr._destroy) return modelActionCreators.destroy('key', true, key)
+				var comps = KeycompStore.query({key_id: key.cid || key.key_id}, 'order')
+				key = _.clone(key)
+				
+				if (key._destroy) return modelActionCreators.destroy('key', true, key)
+				else if (key._dirty || _.any(_.pluck(comps, '_dirty')) ) {
+					key.keycomps = comps.map(kc => _.pick(kc, 'attribute_id', 'ord'))
+					return modelActionCreators.create('key', true, key)
+				}
 			})
 		).then(function () {
-			_this.setState({editing: false, committing: false})
-			_this.cancelChanges()
+			return _this.clearEditMode(true)
 			// modelActionCreators.createNotification('Attribute udpate complete!', 'Your changes have been committed to the server', 'info')
 		})
 	},
 
 	cancelChanges: function () {
-		var model = this.props.model;
-		KeyStore.query({model_id: (model.model_id || model.cid)}).map(function (attr) {
-			if (!key.key_id) {
-				modelActionCreators.destroy('key', false, key)
-				KeycompStore.map(function (kc) {
-					modelActionCreators.destroy('keycomp', false, kc)
-				})
-			} else {
-				_.extend(attr, attr._server, {_destroy: false, _clean: true})
-				modelActionCreators.create('attribute', false, attr)
-			}
-		})
-		this.setState({editing: false})
+		return this.clearEditMode(false)
 	},
 
+	clearEditMode: function (save) {
+		var _this = this;
+		var model = this.props.model;
+		return Promise.all(KeyStore.query({model_id: (model.model_id || model.cid)}).map(function (key) {
+			if (!key.key_id || (save && key._destroy)) {
+				return modelActionCreators.destroy('key', false, key)
+			} else {
+				return modelActionCreators.restore('key', key)
+			}
+		})).then(function () {
+			_this.setState({editing: false, committing: false})
+		})
+	},
 
 	render: function () {
 		var _this = this
@@ -83,34 +88,28 @@ var KeyDetailList = React.createClass({
 		return <div className = "detail-block">
 			<div className="detail-section-header">
 				<h3>Keys</h3>
-				<ul className="light mb-buttons">
-					<li onClick={this.handleEdit}>Edit</li>
-					<li onClick={this.handleAddNewKey} className="plus">+</li>
-				</ul>
-			</div>
+				{this.getEditButtons(true)}
+				{this.getConfirmationButtons()}
 
-			<p className="explainer">
-			Keys are groupings of attributes.  They can be used to enforce uniqueness or to define more complex relations between databases.
-			</p>
+
+			</div>
 			<div className="detail-table">
 				<div key="detail-header" className="detail-header">
 					<span style={{width: "70%"}}>Name / Component</span>
 					<span style={{width: "10%"}}></span>
-					<span style={{width: "15%"}}>Unique?</span>
+					<span style={{width: "10%"}}>Unique?</span>
 					<span style={{width: "10%"}}></span>
 				</div>
 				{
 					KeyStore.query({model_id: model.model_id}).map(function (key) {
-						return <KeyDetail
+						if (key._destroy) return null
+						else return <KeyDetail
 							_key = {key}
 							keyOrd = {keyOrd}
 							editing = {_this.state.editing}
-							key = {'key-detail-' + key.key_id}/>
+							key = {key.cid || key.key_id}/>
 					})
 				}
-			</div>
-			<div className="confirm-div">
-				{this.getConfirmationButtons()}
 			</div>
 		</div>
 	}

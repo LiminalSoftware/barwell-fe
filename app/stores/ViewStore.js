@@ -11,7 +11,7 @@ var ViewStore = storeFactory({
 
     switch (payload.actionType) {
       case 'VIEW_CREATE':
-        var view = payload.view
+        var view = _.clone(payload.view)
         if (!payload.safe) view = groomView(view)
         this.create(payload.view)
         this.emitChange()
@@ -23,7 +23,7 @@ var ViewStore = storeFactory({
         break;
 
       case 'VIEW_RECEIVE':
-        var view = payload.view
+        var view = _.clone(payload.view)
         if (!(view instanceof Object)) return;
         view = view
         view._dirty = false

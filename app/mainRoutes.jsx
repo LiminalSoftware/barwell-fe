@@ -4,7 +4,6 @@ import { Router, Route, IndexRoute, hashHistory } from "react-router";
 import Application from "./containers/Application";
 import ModelPane from "./containers/ModelPane";
 import WorkspaceBrowser from "./containers/WorkspaceBrowser";
-import Header from "./containers/Header";
 
 // polyfill
 if(!Object.assign)

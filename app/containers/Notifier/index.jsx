@@ -1,6 +1,5 @@
 import React from "react";
 import { RouteHandler } from "react-router";
-import SideBar from "containers/SideBar";
 import styles from "./style.less";
 import modelActionCreators from "../../actions/modelActionCreators"
 import NotificationStore from "../../stores/NotificationStore"

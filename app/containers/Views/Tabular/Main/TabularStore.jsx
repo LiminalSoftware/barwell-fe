@@ -91,9 +91,12 @@ var createTabularStore = function (view) {
                   _dirty: (type === (upperLabel + '_UPDATE'))
               }
               var updater = function (rec) {
-                  rec = _.extend(rec, update, dirty)
+                  return 
               }
-              _.filter(_records, _.matcher(selector) ).map(updater);
+              var matcher =  _.matcher(selector)
+              _records.forEach(function(rec, idx) {
+                if (matcher(rec)) _records[idx] = _.extend(_.clone(rec), update, dirty)
+              })
               TabularStore.emitChange()
             }
 

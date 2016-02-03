@@ -21,43 +21,59 @@ var KeyDetail = React.createClass({
 	getInitialState: function () {
 		var key = this.props._key;
 		return {
-			name: key.key
+			name: key.key,
+			_isNamed: !(key.key_id)
 		}
-	},
-
-	commit: function () {
-		var key = _.clone(this.props._key);
-		if (key.name !== this.state.name) key._named = true
-		key.key = this.state.name
-		modelActionCreators.create('key', false, key)
-		this.revert()
 	},
 
 	cancelChanges: function () {
 		this.setState({editing: true})
 	},
 
-	handleNameUpdate: function (event) {
-		this.setState({name: event.target.value})
+	handleNameUpdate: function (e) {
+		this.setState({name: e.target.value, _isNamed: true})
+	},
+
+	handleBlurName: function (e) {
+		this.commitUpdate({
+			key: this.state.name,
+		})
 	},
 
 	handleCompChoice: function (e) {
 		var value = e.target.value
 		var key = this.props._key
-		var components = KeycompStore.query({key_id: (key.key_id || key.cid)}, 'ord');
+		var components = KeycompStore.query({key_id: (key.cid || key.key_id)}, 'ord');
+		var attribute = AttributeStore.get(value)
 		var keycomp = {
-			key_id: key.key_id,
+			key_id: key.cid || key.key_id,
 			attribute_id: value,
 			order: components.length
 		}
+		if (!value || value === 'null') return
 		modelActionCreators.create('keycomp', false, keycomp)
+
+		// if the key has not been named, then name it based on the selected component
+		if (!this.state._isNamed) {
+			key.key = attribute.attribute + ' key'
+			modelActionCreators.create('key', false, key)
+		}
 	},
 
-	handleDeleteComp: function (e, keycomp_id) {
-		modelActionCreators.destroy('keycomp', false, {})
+	commitUpdate: function (diff) {
+		var key = _.clone(this.props._key)
+		key = _.extend(key, diff || {})
+		this.setState(diff)
+		modelActionCreators.create('key', false, key)
+	},
+
+	handleDeleteComp: function (e, keycomp) {
+		console.log('delete key comp: ' + JSON.stringify(keycomp))
+		modelActionCreators.destroy('keycomp', false, keycomp)
 	},
 
 	handleDelete: function (event) {
+		console.log('delete key')
 		var key = this.props._key
 		modelActionCreators.destroy('key', false, key)
 		event.preventDefault()
@@ -80,10 +96,12 @@ var KeyDetail = React.createClass({
 		var keyIcon = <span className={getIconClasses(ord, key)}></span>;
 		var components = KeycompStore.query({key_id: (key.key_id || key.cid)}, 'ord');
 		var compIndex = _.indexBy(components, 'attribute_id')
-		var selections = [<option value={null} key="null-choice"> -- Select --</option>]
+		var selections = [<option value={'null'} key="null-choice"> -- Select --</option>]
 		var relations = RelationStore.query({related_key_id: key.key_id})
 		var hasRelations = relations.length > 0
 		var isPrimary = (model.primary_key_key_id === key.key_id)
+		var isLabel = (model.label_key_id === key.key_id)
+		var isChangable = !isPrimary && !hasRelations && !isLabel
 		
 		AttributeStore.query({model_id: key.model_id}).forEach(function (attr) {
 			if (!(attr.attribute_id in compIndex)) selections.push(<option value = {attr.attribute_id} key = {attr.attribute_id}>
@@ -102,7 +120,9 @@ var KeyDetail = React.createClass({
 					<span style={{width: "70%"}} title = {key.key_id}>
 						{
 							this.props.editing ?
-								<input value={_this.state.name}/>
+								<input value={_this.state.name} 
+									onChange = {this.handleNameUpdate} 
+									onBlur = {this.handleBlurName}/>
 								: key.key
 						}		
 					</span>
@@ -115,8 +135,9 @@ var KeyDetail = React.createClass({
 							onChange={this.handleUniqClick}/>
 					</span>
 					<span style={{width: "10%"}}>
-						{this.props.editing ? <span className="clickable grayed icon icon-cr-remove"
-							title="Delete key" onClick={this.handleDelete}>
+						{this.props.editing && isChangable ? 
+							<span className="clickable grayed icon icon-cr-remove"
+								title="Delete key" onClick={this.handleDelete}>
 							</span> : null}
 					</span>
 				</div>
@@ -124,7 +145,7 @@ var KeyDetail = React.createClass({
 					<span style={{width: '100%'}}>
 						<span>Includes: </span>
 						{
-						(this.props.editing && !isPrimary && !hasRelations) ?
+						(this.props.editing && isChangable) ?
 						components.map(function (kc) {
 							var attr = AttributeStore.get(kc.attribute_id)
 							return <span className=  "keycomp-bubble" key={kc.cid || kc.keycomp_id}>
@@ -156,8 +177,9 @@ var KeyDetail = React.createClass({
 						}
 										
 						{
-						(this.props.editing && !isPrimary && !hasRelations) ? <select 
+						(this.props.editing && isChangable) ? <select 
 							className = "inline-select"
+							style = {{marginLeft: '3px'}}
 							onChange = {this.handleCompChoice} >
 							{selections}
 						</select> : null

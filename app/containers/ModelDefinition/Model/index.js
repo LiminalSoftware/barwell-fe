@@ -101,9 +101,8 @@ var ModelDetails = React.createClass({
 		return <div className="detail-block">
 		<div className="detail-section-header">
 			<h3>Database Details</h3>
-			<ul className="light mb-buttons">
-				<li onClick={this.handleEdit}>Edit</li>
-			</ul>
+			{this.getConfirmationButtons()}
+			{this.getEditButtons(false)}
 		</div>
 			<div className="detail-table ">
 					<div className={'detail-row' + (this.state.editing ? " editing" : "")}>
@@ -155,9 +154,6 @@ var ModelDetails = React.createClass({
 
 						</span>
 					</div>
-			</div>
-			<div className="confirm-div">
-				{this.getConfirmationButtons()}
 			</div>
 		</div>
 	}

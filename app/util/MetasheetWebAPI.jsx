@@ -27,6 +27,7 @@ var wait = module.exports.wait = function () {
   })
 }
 
+
 var ajax = module.exports.ajax  = function (method, url, json, retry, headers) {
   return wait().then(function () {
     return ajaxActual(method, url, json, retry, headers)
@@ -106,6 +107,7 @@ var persist = module.exports.persist = function (subject, action, data, update, 
     (results.data instanceof Array ? results.data : [results.data]).forEach(function (obj) {
       issueReceipt(subject, obj)
     })
+    return results.data
   }).catch(function (error) {
     console.log('error: ' + error)
     console.log('trace: ' + error.trace)

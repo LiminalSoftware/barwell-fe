@@ -25,7 +25,7 @@ var TabularTH = React.createClass ({
 			maxWidth: (col.width - 1) + 'px',
 			top: 0,
 			left: left + 'px',
-			height: geo.headerHeight + 'px',
+			bottom: 0
 		}
 		var sortArrow
 		var classes = []

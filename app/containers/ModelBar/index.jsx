@@ -5,8 +5,6 @@ import subHeader from "./subHeader.less"
 
 import _ from "underscore"
 
-import Header from "../Header";
-
 import modelActionCreators from '../../actions/modelActionCreators'
 import MetasheetDispatcher from '../../dispatcher/MetasheetDispatcher'
 
@@ -19,7 +17,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import viewTypes from '../Views/viewTypes'
 import Notifier from '../Notifier'
 
-var SideBar = React.createClass({
+var ModelBar = React.createClass({
 
 	mixins: [PureRenderMixin],
 
@@ -49,13 +47,13 @@ var SideBar = React.createClass({
 		var _this = this;
 		var curModelId = this.props.params.modelId
 		var workspaceId = this.props.params.workspaceId
-		return <div className="left-side-bar">
+		return <div className="model-bar">
 			<ModelList curModelId = {curModelId} workspaceId = {workspaceId}/>
 		</div>
 	}
 
 })
-export default SideBar
+export default ModelBar
 
 var ModelList = React.createClass ({
 
@@ -77,7 +75,7 @@ var ModelList = React.createClass ({
 	render: function () {
 		var _this = this
 
-		return <ul className="sidebar-model-list"> {
+		return <ul className="model-bar-list"> {
 			ModelStore.query(null, ['model']).map(function (model, idx) {
 				var modelId = model.cid || model.model_id;
 				return <ModelLink
