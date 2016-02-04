@@ -11,7 +11,7 @@ var DateValidatorMixin = {
     return date.isValid() ? date : null
   },
 
-  parser: function (input) {
+  parser: function (input) {u
 		return input
 	}
 }

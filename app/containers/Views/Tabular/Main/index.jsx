@@ -636,7 +636,7 @@ var TabularPane = React.createClass ({
 				ref="copyarea"
 				{...this.props}
 				position = {cpy}
-				fudge = {{left: -1, top: 0, height: 0.75, width: 1.1}}/>
+				fudge = {{left: -1, top: 1.1, height: 1.75, width: 1.1}}/>
 
 		</TabularBodyWrapper>
 

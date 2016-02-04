@@ -24,6 +24,7 @@ var TabularTR = React.createClass({
 			// console.log('TabualrTR.shouldComponentUpdate: oldProps.view !== newProps.view')
 			return true
 		}
+		// if (oldProps.row !== newProps.row) return true
 		return this.props.columns.some(function (col) {
 			return newProps.obj[col.column_id] !== oldProps.obj[col.column_id]
 		})
@@ -51,12 +52,13 @@ var TabularTR = React.createClass({
 		var ptr = this.props.pointer
 		var selector = {}
 		var rowStyle = {
-			height: (geo.rowHeight + 1) + 'px',
+			left: 0,
+			right: '1px',
+			height: (geo.rowHeight) + 'px',
 			top: (geo.rowHeight * (row)) + 'px',
-			background: "white"
 		}
 		
-		var left = geo.leftGutter;
+		var left = _this.props.hasRowLabel ? geo.labelWidth : 0;
 		var prevSort = false;
 		var prevFixed = true;
 
@@ -85,7 +87,12 @@ var TabularTR = React.createClass({
 			className = {"table-row " +  (obj._dirty ? "dirty" : "")}
 			style = {rowStyle}>
 			{_this.props.hasRowLabel ?
-				<span style = {{position: 'absolute', left: 0, right: (left += geo.labelWidth), top: 0, bottom: 0}}>
+				<span className = "table-cell" 
+					style = {{ 
+						left: geo.leftGutter + 'px', 
+						width: geo.labelWidth + 'px', 
+						top: 0, 
+						bottom: 0}}>
 					
 				</span> : null
 			}
@@ -118,26 +125,10 @@ var TabularTR = React.createClass({
 					key: cellKey,
 					cellKey: cellKey,
 					ref: cellKey,
+					className: 'table-cell',
 					style: {
-						position: 'absolute',
-						// transform: 'translatez(0)',
-						// WebkitTransform: 'translatez(0)',
-					    // MozTransform: 'translatez(0)',
-					    // MsTransform: 'translatez(0)',
-					    // OTransform: 'translatez(0)',
-						margin: 0,
-						padding: 0,
-						borderLeft: '1px solid ' + constants.colors.GRAY_3,
-						borderBottom: '1px solid ' + constants.colors.GRAY_3,
-						overflow: 'hidden',
-						WebkitBoxSizing: 'border-box',
-						MozBoxSizing: 'border-box',
-						boxSizing: 'border-box',
-						top: 0,
-						bottom: 0,
 						left: (left) + 'px',
-						minWidth: (col.width ) + 'px',
-						maxWidth: (col.width )  + 'px'
+						width: (col.width) + 'px'
 					}
 				})
 				left += col.width

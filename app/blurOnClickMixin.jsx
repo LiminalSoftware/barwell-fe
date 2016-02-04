@@ -10,7 +10,8 @@ var blurOnClickMixin = {
   handleBlur: function () {
     this.setState({
       open: false,
-      editing: false
+      editing: false,
+      context: false
     })
     modelActionCreators.setFocus('view')
     document.removeEventListener('keyup', this.handleKeyPress)

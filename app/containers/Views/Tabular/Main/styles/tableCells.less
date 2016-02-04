@@ -4,16 +4,31 @@
 	display: block;
 	position: absolute;
 	// margin-left: -1px;
+	background: white;
+	.border-box;
 }
 
+
 .table-cell {
-	.border-box;
 	display: block;
 	position: absolute;
-	padding: 0; margin: 0;
+	// margin-left: -1px;
 	border-left: 1px solid @gray3;
-	border-top: 1px solid @gray3;
+	border-bottom: 1px solid @gray3;
+
+
+	margin: 0;
+	padding: 0;
+	
+	.border-box;
+	.noselect;
+	top: 0;
+	bottom: 0;
 }
+
+// ************************************************************************
+// TABLE_CELL_INNER
+// ************************************************************************
 
 .table-cell-inner {
 	.noselect;
@@ -22,93 +37,19 @@
 	&.bolded {
 		font: @headerFont;
 		font-weight: 400;
-	}
+	}	
 }
-
-.label-cell-inner {
-	color: @purple4;
-	font-size: 10px;
-	.noselect;
-	cursor: cell;
-}
-
-.table-cell-inner.selected, .special-cell-inner.selected {
-	z-index: 130 !important;
-	background: white;
-}
-.checkbox-inner {
-	text-align: center;
-}
-
-// ************************************************************************
-// ALIGNMENT
-// ************************************************************************
-.align-left {
-	& > .table-cell-inner, & > .input-editor {
-		text-align: left;
-		&.with-detail {
-			padding-right: 20px !important;
-		}
-	}
-	& > .editor-icon {
-		right: 1px;
-	}
-}
-
-.align-center {
-	& > .table-cell-inner, & > .input-editor {
-		text-align: center;
-		&.with-detail {
-			padding-left: 20px !important;
-		}
-	}
-	& > .editor-icon {
-		left: 1px;
-	}
-}
-
-.align-right {
-	& > .table-cell-inner, & > .input-editor {
-		text-align: right;
-		&.with-detail {
-			padding-left: 20px !important;
-		}
-	}
-	& > .editor-icon {
-		left: 1px;
-	}
-}
-
-// ************************************************************************
-// TABLE_CELL_INNER
-// ************************************************************************
 
 .table-cell-inner, .special-cell-inner, .input-editor {
+	position: absolute !important;
 	display: block;
 	font-size: 14px;
 	font-family: @bodyFont;
 	font-weight: 400;
-	left: 0px;
-	right: 0px;
-}
-
-.editor-icon, .table-cell-inner, .special-cell-inner, .input-editor {
-	position: absolute !important;
-	.border-box;
-	margin: 0;
-	padding: 1px 3px;
-	border: none;
+	left: 0;
+	right: 0;
 	top: 0;
-	bottom: 2px;
-}
-
-.editor-icon {
-	margin: 0 !important;
-	margin-right: 5px;
-	margin-left: 5px;
-	cursor: pointer;
-	max-width: 22px;
-	z-index: 200;
+	bottom: 1px;
 }
 
 .input-editor {
@@ -118,10 +59,6 @@
 	outline: 0;
 	padding-top: 0;
 	padding-bottom: 2px;
-}
-
-.color-block.selected {
-	right: 25px;
 }
 
 .has-many-bubble {
@@ -145,6 +82,17 @@
 .checkbox-surround  {
 	border-radius: 3px;
 	background: white;
+	border: 1px solid @gray3;
+	z-index: 121;
+
+	position: relative;
+	display: inline-block;
+	height: 14px;
+	width: 14px;
+	
+	cursor: pointer;
+	border-radius: 3px;
+	background: 'white';
 	border: 1px solid @gray3;
 	z-index: 121;
 }

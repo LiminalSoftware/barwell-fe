@@ -24,7 +24,9 @@ var dateField = {
 	sortable: true,
 
 	stringify: function (value) {
-		return moment(value).toISOString()
+		var val = moment(value)
+		if (val.isValid()) return val.toISOString()
+		else return null
 	},
 
 	configCleanser: function (config) {

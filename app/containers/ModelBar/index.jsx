@@ -16,6 +16,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import viewTypes from '../Views/viewTypes'
 import Notifier from '../Notifier'
+import ModelContext from './ModelContext'
 
 var ModelBar = React.createClass({
 
@@ -95,7 +96,10 @@ var ModelList = React.createClass ({
 var ModelLink = React.createClass ({
 
 	getInitialState: function () {
-		return {renaming: false}
+		return {
+			renaming: false,
+			context: false
+		}
 	},
 
 	_onChange: function (changeEvent) {
@@ -109,7 +113,7 @@ var ModelLink = React.createClass ({
 		this.revert()
 	},
 
-	cancelChanges: function () {
+	handleBlur: function () {
 		this.revert()
 	},
 
@@ -118,6 +122,7 @@ var ModelLink = React.createClass ({
 		if (this.state.renaming) return
 		this.setState({
 			renaming: true,
+			context: false,
 			name: model.model
 		}, function () {
 			React.findDOMNode(this.refs.renamer).focus();
@@ -131,7 +136,6 @@ var ModelLink = React.createClass ({
 	},
 
 	handleKeyPress: function (event) {
-		if (event.keyCode === 27) this.cancelChanges()
 		if (event.keyCode === 13) this.commitChanges()
 	},
 
@@ -144,7 +148,11 @@ var ModelLink = React.createClass ({
 
 	},
 
-	render: function() {
+	showContext: function () {
+		this.setState({context: true})
+	},
+
+	render: function () {
 		var _this = this
 		var model = this.props.model
 		var model_id = model.cid || model.model_id
@@ -159,9 +167,11 @@ var ModelLink = React.createClass ({
 			className={(this.props.active ? "active " : "") + (this.props.editing ? " editmode" : "")}>
 
 			<Link to = {`/workspace/${workspace_id}/model/${model_id}`}
+				onContextMenu = {this.showContext}
 				onDoubleClick = {this.edit}>
 				{modelDisplay}
 			</Link>
+			{this.state.context ? <ModelContext model = {this.props.model}/> : null}
 		</li>
 	}
 })

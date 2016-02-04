@@ -21,14 +21,10 @@ var PrimaryKeyElement = React.createClass({
 	render: function () {
 		var value = this.props.value
 		var style = this.props.style
-		var cellStyle = _.clone(defaultCellStyle)
+		var cellStyle = {lineHeight: this.props.rowHeight + 'px'}
 
-		cellStyle.fontSize = '10px'
-		cellStyle.lineHeight = this.props.rowHeight + 'px'
-		cellStyle.textAlign = 'right'
-
-		return <span style = {style}>
-			<span style={cellStyle}>
+		return <span {...this.props} className = "table-cell" >
+			<span className = "table-cell-inner" style = {cellStyle}>
 				{this.props.value}
 			</span>
 		</span>

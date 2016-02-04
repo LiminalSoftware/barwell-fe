@@ -45,8 +45,7 @@ var TabularBodyWrapper = React.createClass ({
 			hiddenCols: 0,
       		hiddenColWidth: 0,
 			rowOffset: 0,
-			colOffset: 0,
-			sorting: view.data.sorting
+			colOffset: 0
 		}
 	},
 
@@ -57,7 +56,7 @@ var TabularBodyWrapper = React.createClass ({
 		this.refs.lhsHead.forceUpdate()
 		this.refs.rhsHead.forceUpdate()
 		this.refs.FakeLines.forceUpdate()
-		this.refs.addNew.forceUpdate()
+		// this.refs.addNew.forceUpdate()
 	},
 
 	componentWillMount: function () {
@@ -72,7 +71,11 @@ var TabularBodyWrapper = React.createClass ({
 		this.props.store.removeChangeListener(this._onChange)
 	},
 
-	componentWillUpdate: function (nextProps) {
+	componentWillUpdate: function (nextProps, nextState) {
+		this.debounceFetch(false, nextProps, nextState)
+	},
+
+	componentWillReceiveProps: function (nextProps) {
 		this.debounceFetch(false, nextProps)
 	},
 
@@ -82,12 +85,12 @@ var TabularBodyWrapper = React.createClass ({
 		})
 	},
 
-	fetch: function (force, nextProps) {
+	fetch: function (force, nextProps, nextState) {
 		var _this = this
 		var view = this.props.view
 		var offset = this.state.requestedOffset
 
-		var target = (this.state.rowOffset - (MAX_ROWS - WINDOW_ROWS) / 2)
+		var target = ((nextState ? nextState : this.state).rowOffset - (MAX_ROWS - WINDOW_ROWS) / 2)
 		var boundedTarget = util.limit(0, this.props.nRows - MAX_ROWS, target)
 
 		var delta = Math.abs(offset - target)
@@ -150,24 +153,15 @@ var TabularBodyWrapper = React.createClass ({
 		var fetchEnd = Math.min(this.state.fetchOffset + MAX_ROWS, rowCount)
 
 		return <div
-			className = {"tabular-body-wrapper " + (focused ? "focused" : "blurred")}
+			className = {"tabular-body-wrapper wrapper " + (focused ? "focused" : "blurred")}
 			ref="tbodyWrapper"
 			onPaste = {this.props._handlePaste}
 			style = {{
 				zIndex: 1,
-				position: 'absolute',
 				left: 0,
 				top: 0,
 				bottom: 0,
-				width: (adjustedWidth) + 'px',
-				transform: 'translateZ(0)',
-				transformStyle: 'preserve-3D',
-				WebkitUserDrag: 'none',
-				WebkitUserSelect: 'none',
-			    KhtmlUserSelect: 'none',
-			    MozUserSelect: 'none',
-			    MsUserSelect: 'none',
-			    UserSelect: 'none',
+				width: (adjustedWidth) + 'px'
 			}}>
 
 			{
@@ -190,37 +184,28 @@ var TabularBodyWrapper = React.createClass ({
 
 			<RowResizer {...this.props} adjustedWidth = {adjustedWidth} />
 
-			<div className = "lhs-outer"
+			<div className = "lhs-outer wrapper"
 				style = {{
-					overflow: 'hidden',
-					position: 'absolute',
 					left: geo.leftGutter + 'px',
 					top: 0,
 					bottom: 0,
 					width: (fixedWidth + geo.labelWidth) + 'px',
 				}}>
 			{/*LHS TABLE BODY*/}
-			<div 
+			<div className = "inner-wrapper"
 				style = {{
-					position: 'absolute',
 					left: 0,
-					right: 0,
-					top: geo.headerHeight + 2 + 'px',
 					bottom: 0,
-					// transform: 'translate3D(0,0,1em)',
-					// transform: 'translate(0, ' + marginTop + 'px)',
-					transform: 'translateZ(0)',
-					overflow: 'hidden'
+					right: 0,
+					top: geo.headerHeight - 1 + 'px'
 				}}>
-				<div 
+				<div className = "inner-wrapper"
 					style = {{
-						position: 'absolute',
 						left: 0,
 						right: 0,
 						top: 0,
 						height: (rowCount * geo.rowHeight) + 'px',
 						marginTop: marginTop + 'px',
-						transform: 'translateZ(0)',
 					}}>
 
 				<TabularTBody
@@ -233,13 +218,6 @@ var TabularBodyWrapper = React.createClass ({
 					fetchStart = {fetchStart}
 					fetchEnd = {fetchEnd}
 					style = {{
-						WebkitUserDrag: 'none',
-						WebkitUserSelect: 'none',
-					    KhtmlUserSelect: 'none',
-					    MozUserSelect: 'none',
-					    MsUserSelect: 'none',
-					    UserSelect: 'none',
-						position: 'absolute',
 						left: 0,
 						top: 0,
 						width:  (view.data.fixedWidth + geo.labelWidth) + 'px',
@@ -287,14 +265,6 @@ var TabularBodyWrapper = React.createClass ({
 						transform: 'translateZ(0)',
 					}}>
 
-					<TabularTHead
-						ref = "rhsHead"
-						totalWidth = {floatWidth}
-						leftOffset = {0}
-						side = "rhs"
-						columns = {view.data.floatCols}
-						focused = {focused}
-						view = {view} />
 					{/*RHS TABLE BODY WRAPPER*/}
 					<div
 						style = {{
@@ -303,7 +273,7 @@ var TabularBodyWrapper = React.createClass ({
 							margin: 0,
 							padding: 0,
 							left: 0,
-							top: geo.headerHeight + 2 + 'px',
+							top: geo.headerHeight - 1 + 'px',
 							width: (fixedWidth + floatWidth) + 'px',
 							bottom: 0
 						}}>
@@ -344,52 +314,41 @@ var TabularBodyWrapper = React.createClass ({
 								height: (rowCount * geo.rowHeight) + 'px',
 							}} />
 					</div>
+
 					</div>
+					<TabularTHead
+						ref = "rhsHead"
+						totalWidth = {floatWidth}
+						leftOffset = {0}
+						side = "rhs"
+						columns = {view.data.floatCols}
+						focused = {focused}
+						view = {view} />
 				</div>
 
 			</div>
 			{/*CURSORS*/}
-			<div
+			<div className = "wrapper"
 				style = {{
-					position: 'absolute',
-					overflow: 'hidden',
-					margin: 0,
-					padding: 0,
-					top: geo.headerHeight - 3 + 'px',
+					top: geo.headerHeight - 5 + 'px',
 					bottom: 0,
 					left: geo.leftGutter + 'px',
 					width: (fixedWidth + floatWidth + geo.labelWidth + 6) + 'px',
 					pointerEvents: 'none'
-					// transformStyle: 'flat'
 				}}>
-			<div 
+			<div className = "wrapper"
 				style = {{
-					position: 'absolute',
-					margin: 0,
-					padding: 0,
 					top: 0,
 					left: 0,
 					right: 0,
 					marginTop: marginTop + 4 + 'px',
-					transform: 'translateZ(0)',
 					height: ((rowCount + 1.5) * geo.rowHeight) + 'px',
-					WebkitUserDrag: 'none',
-					WebkitUserSelect: 'none',
-				    KhtmlUserSelect: 'none',
-				    MozUserSelect: 'none',
-				    MsUserSelect: 'none',
-				    UserSelect: 'none',
 				    
 				}}>
 				{this.props.children}
 			</div>
 			</div>
-			<AddNewRowBar {...this.props}
-					width = {fixedWidth + floatWidth + geo.labelWidth
-						- this.state.hiddenColWidth}
-					ref = "addNew"
-					offset = {this.state.rowOffset}
-					rowCount = {rowCount}/>
+			
 		</div>;
 	}
 });

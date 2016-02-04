@@ -3,12 +3,7 @@
 .tabular-view-header {
 	position: absolute;
 	border-bottom: 1px solid @purple4;
-	&.rhs-header {
-		border-right: 1px solid @purple4;
-	}
-	
 	background: white;
-
 }
 
 .th-context {
@@ -22,28 +17,16 @@
 }
 
 
-.columnAdder {
-	cursor: pointer;
-	border: 1px solid @headerBorderColor;
-	&:hover {
-		border: 1px solid @newgreen1;
-		color: @newgreen1;
+.table-header-cell {
+	&.sorted > .header-cell-inner {
+		color: @purple4;
 	}
 }
 
-.table-header-cell.table-cell {
-	border-bottom: none;
-	border-top: none;
-	// border-right: 1px solid @gray3;
-
-	&.sorted > .table-cell-inner {
-		color: @purple4;
-	}
-	.table-cell-inner {
-		cursor: pointer;
-		padding-top: 5px;
-		background: white;
-	}
+.header-cell-inner {
+	cursor: pointer;
+	padding: 5px;
+	background: white;
 }
 
 .table-resizer {

@@ -14,6 +14,10 @@ var ConfirmationMixin = {
 		this.setState({editing: false})
 	},
 
+  // componentWillUnmount: function () {
+  //   this.cancelChanges()
+  // },
+
   getEditButtons: function (canAdd) {
     return <ul className="light mb-buttons">
         {this.state.editing ? null : <li onClick={this.handleEdit}>Edit</li>}

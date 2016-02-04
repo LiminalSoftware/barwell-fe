@@ -10,15 +10,15 @@ import util from '../../../../util/util'
 import TabularTR from './TabularTR'
 
 
-var VISIBLE_ROWS = 50
-var MAX_ROWS = 60
+var VISIBLE_ROWS = 45
+var MAX_ROWS = 45
 var SLOW_SKIP = 1
 var FAST_SKIP = 3
 var TURBO_THRESHOLD = 15
-var CYCLE = 50
-var MIN_CYCLE = 20
-var BACKWARD_BUFFER = 3
-var BUFFER_SIZE = 3
+var CYCLE = 30
+var MIN_CYCLE = 15
+var BACKWARD_BUFFER = 8
+var BUFFER_SIZE = 5
 var PAGE_SIZE = SLOW_SKIP
 var BAILOUT = SLOW_SKIP
 
@@ -41,7 +41,6 @@ var TabularTBody = React.createClass ({
 		}
 	},
 
-	
 	componentWillReceiveProps: function (next) {
 		var rowCount = this.props.store ? this.props.store.getRecordCount() : 0
 		var newOffset = next.rowOffset
@@ -63,6 +62,12 @@ var TabularTBody = React.createClass ({
 		this.updateOffset(target, scrollDirection)
 	},
 
+	componentWillUpdate: function () {
+		// we shouldn't have a timer set, but if we do clear it
+		if (this.__timer) clearTimeout(this.__timer)
+		if (this.__longTimer) clearTimeout(this.__longTimer)
+	},
+
 	updateOffset: function (target, scrollDirection) {
 		if (!this.isMounted()) return
 		var start = this.state.start
@@ -73,15 +78,23 @@ var TabularTBody = React.createClass ({
 		var startTarget = target
 		var endTarget = target + VISIBLE_ROWS
 		
-		if (start > startTarget && scrollDirection === -1) start -= Math.min(skip, start - startTarget)
+		// advance or retreat the begining of the range as appropriate
+		if (start > startTarget && scrollDirection === -1 && start < endTarget) start -= Math.min(skip, start - startTarget)
 		else if ((end === target + VISIBLE_ROWS && visibleRows > VISIBLE_ROWS) || visibleRows >= MAX_ROWS) 
 			start += Math.min(FAST_SKIP, visibleRows - VISIBLE_ROWS)
-
-		if (end < endTarget && scrollDirection === 1) end += Math.min(skip, endTarget - end + 1)
+		
+		// advance or retreat the end of the range as appropriate
+		if (end < endTarget && scrollDirection === 1 && end > startTarget) end += Math.min(skip, endTarget - end + 1)
 		else if ((start === target && visibleRows > VISIBLE_ROWS) || visibleRows >= MAX_ROWS) 
 			end -= Math.min(FAST_SKIP, visibleRows - VISIBLE_ROWS)
 
-		// console.log('start: ' + start + ', end: ' + end + ', target: ' + target, ' visibleRows: ' + visibleRows)
+		// if the render range is totally out of the visible range, then just wind it down and start over
+		if (start > endTarget || end < startTarget) end -= Math.min(FAST_SKIP, end - start)
+		if (end === start) {
+			start = startTarget
+			end = startTarget + FAST_SKIP
+		} 
+
 		this.setState({
 			start: start,
 			target: target,
@@ -93,17 +106,19 @@ var TabularTBody = React.createClass ({
 		var _this = this
 		var now = new Date().getTime()
 		var visibleRows = this.state.end - this.state.start
+		var update = function () {
+			_this.updateOffset(_this.state.target, _this.state.scrollDirection)
+		}
 
 		// we just updated so set the _lastUpdate time to now
 		this._lastUpdate = now
-		// we shouldn't have a timer set, but if we do clear it
-		if (this.__timer) clearTimeout(this.__timer)
+
 		// if we haven't reached the target yet, set a timer for next frame
 
-		if (!this.isFullyPainted(this.state.start, this.state.end, this.state.target))
-			this.__timer = onFrame(function () {
-				_this.updateOffset(_this.state.target, _this.state.scrollDirection)
-			})
+		if (!this.isFullyPainted(this.state.start, this.state.end, this.state.target)) {
+			this.__timer = onFrame(update)
+			this.__longTimer = setTimeout(update, CYCLE * 3)
+		}
 	},
 
 	isFullyPainted: function (start, end, target) {

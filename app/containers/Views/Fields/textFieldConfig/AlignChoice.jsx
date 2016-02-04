@@ -56,7 +56,7 @@ var AlignChoice = React.createClass({
     var align = this.state.align
 
     return <span
-        className={"pop-down clickable icon icon-align-" + this.state.align + ""}
+        className={"pop-down clickable icon icon-align-" + this.state.align}
         onMouseDown = {this.handleOpen}>
         {
         this.state.open ? <ul className = "pop-down-menu" style = {{

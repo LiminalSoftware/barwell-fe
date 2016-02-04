@@ -20,6 +20,7 @@
 	color: white;
 	border-radius: 3px;
 	z-index: 220;
+	transform: translateZ(0);
 	text-align: center;
 	.noselect;
 }
@@ -42,13 +43,17 @@
 
 
 .inner-wrapper {
+	.wrapper;
+	transform: translateZ(0);
+}
+
+.wrapper {
+	overflow: hidden;
 	position: absolute;
 	margin: 0;
 	padding: 0;
-	overflow: hidden;
-	
-	-webkit-user-drag: none;
 	.noselect;
+	.border-box;
 }
 
 //

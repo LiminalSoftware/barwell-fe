@@ -89,7 +89,7 @@ var ColorChoice = React.createClass({
           })
           }
 
-          <li className = "top-divider">
+          <li className = {colorAttrs.length > 0 ? "top-divider" : ""}>
             Fixed color
           </li>
           {

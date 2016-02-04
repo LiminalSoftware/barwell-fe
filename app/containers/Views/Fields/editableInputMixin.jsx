@@ -89,23 +89,23 @@ var editableInputMixin = {
 		var bg = null
 		var fontColor = null
 		var cellStyle = _.clone(defaultCellStyle)
-		var editorIconStyle = {
-			position: 'absolute',
-			top: 0, 
-			bottom: 0,
-			width: '25px',
-			lineHeight: this.props.rowHeight + 'px',
-			zIndex: 251
-		}
-		if (config.align === 'right') editorIconStyle.left = 0
-		else editorIconStyle.right = 0
+		var editorIconStyle
+
+		if (showDetail) {
+			editorIconStyle = {
+				position: 'absolute',
+				top: 0, 
+				bottom: 0,
+				width: '25px',
+				lineHeight: this.props.rowHeight + 'px',
+				zIndex: 251
+			}
+			if (config.align === 'right') editorIconStyle.left = 0
+			else editorIconStyle.right = 0
+		} 
 
 		cellStyle.textAlign = config.align
-		
-		// cellStyle.transformStyle = 'preserve-3d'
 		cellStyle.zIndex = this.state.selected ? 250 : 10
-		// cellStyle.transform = this.state.selected ? 'translate3D(0,0,5em)' : null
-
 		cellStyle.paddingRight = (this.state.selected && config.align !== 'right') ? '22px' : '5px'
 		cellStyle.paddingLeft = (this.state.selected && config.align === 'right') ? '22px' : '5px'
 		cellStyle.lineHeight = this.props.rowHeight + 'px'
@@ -134,7 +134,7 @@ var editableInputMixin = {
 				onBlur = {this.revert}
 				onChange = {this.handleChange} />
 			:
-			<span style = {cellStyle}
+			<span style = {cellStyle} className = "table-cell-inner"
 				onPaste = {this.props._handlePaste}>
 				{this.format ?
 					this.format(this.state.value) :
@@ -146,8 +146,7 @@ var editableInputMixin = {
 			<span
 				style = {editorIconStyle}
 				className = {"editor-icon icon " + this.detailIcon}
-				onClick = {this.props._handleDetail}
-				></span>
+				onClick = {this.props._handleDetail}/>
 			: null
 		}
 		</span>

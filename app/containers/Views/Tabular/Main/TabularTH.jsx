@@ -21,24 +21,18 @@ var TabularTH = React.createClass ({
 		var col = this.props.column
 		var left = this.props.left
 		var cellStyle = {
-			minWidth: (col.width - 1) + 'px',
-			maxWidth: (col.width - 1) + 'px',
-			top: 0,
+			width: (col.width - 1) + 'px',
 			left: left + 'px',
-			bottom: 0
 		}
 		var sortArrow
 		var classes = []
-		classes.push('table-cell')
-		classes.push('table-header-cell')
-		if (!!this.props.sorted) classes.push(' sorted ')
-	  	if (this.state.context) classes.push('context')
+		
 
 		return <span
 				onContextMenu = {this.onContextMenu}
 				style = {cellStyle}
-				className = {classes.join(' ')}>
-			<span className="table-cell-inner">
+				className = {'table-cell table-header-cell ' + (this.props.sorted ? ' sorted ' : '')}>
+			<span className="table-cell-inner header-cell-inner">
 			   {col.name}
 			</span>
 			{

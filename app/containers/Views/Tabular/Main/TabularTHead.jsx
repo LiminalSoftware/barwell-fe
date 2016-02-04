@@ -20,26 +20,23 @@ var TabularTHead = React.createClass ({
 		var view = this.props.view
 		var geo = view.data.geometry
 		var focused = this.props.focused
-		var left = 0
+		var left = (this.props.hasRowLabel ? geo.labelWidth : 0) + this.props.leftOffset
 		var sortAttrs = _.pluck(view.data.sorting, 'attribute_id').map(parseInt)
 
 		var style = {
-			top: 0,
-			left: 0,
 			marginLeft: this.props.leftOffset + 'px',
 			height: (geo.headerHeight + 1) + 'px',
 			width: (this.props.totalWidth ) -1 + 'px',
-			transform: 'translateZ(0)'
 		}
 
 		return <div
-			className = {"tabular-view-header " + this.props.side + '-header'}
+			className = {"tabular-view-header wrapper " + this.props.side + '-header'}
 			style = {style}
 			ref = {this.props.side + "-thead"}>
 			{this.props.hasRowLabel ?
-			<span style = {{left: 0, right: (left += geo.labelWidth), top: 0, bottom: 0}}
+			<span style = {{left: 0, width: geo.labelWidth + 'px', top: 0, bottom: 0}}
 				className = "table-cell header-table-cell " >
-				<span className = "table-cell-inner ">
+				<span className = "table-cell-inner">
 				</span>
 			</span>
 			: null }

@@ -69,7 +69,7 @@ var ScrollBar = React.createClass ({
 			if (rowCount == 0) innerStyle.bottom = 0
 			else innerStyle.height = ((rowCount + 1) * geo.rowHeight + geo.headerHeight) + 'px'	
 		} else {
-			innerStyle.width = (view.data.floatWidth + view.data.fixedWidth + geo.labelWidth + 100) + 'px'
+			innerStyle.width = (view.data.floatWidth + view.data.fixedWidth + geo.labelWidth + _.last(view.data.columnList).width + 100) + 'px'
 		}
 		
 
