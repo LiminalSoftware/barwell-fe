@@ -1,3 +1,4 @@
+import _ from "underscore"
 import React from "react"
 import ViewStore from "../../stores/ViewStore"
 import styles from "./style.less"
@@ -10,7 +11,8 @@ import modelActionCreators from "../../actions/modelActionCreators.jsx"
 var ViewList = React.createClass({
 	getInitialState: function () {
 		return {
-			editing: false
+			editing: false,
+			adding: false
 		}
 	},
 
@@ -19,19 +21,7 @@ var ViewList = React.createClass({
 	},
 	
 	addNew: function () {
-		var model = this.props.model
-		var name = 'New view'
-		var iter = 0
-		while (ViewStore.query({model_id: model.model_id, view: name}).length > 0) {
-			name = 'New view ' + (iter++)
-		}
-		modelActionCreators.createView({
-			view: name,
-			model_id: model.model_id,
-			type: 'Tabular',
-			data: {}
-		})
-		this.setState({editing: true})
+		this.setState({adding: true})
 	},
 
 	handleEdit: function () {
@@ -40,6 +30,22 @@ var ViewList = React.createClass({
 
 	handleDoneEdit: function () {
 		this.setState({editing: false})
+	},
+
+	handleClickType: function (e, type) {
+		var model = this.props.model
+		var name = 'New view'
+		var iter = 0
+		while (ViewStore.query({model_id: model.model_id, view: name}).length > 0)
+			name = 'New view ' + (iter++)
+		
+		modelActionCreators.createView({
+			view: name,
+			model_id: model.model_id,
+			type: type,
+			data: {}
+		})
+		this.setState({adding: false, editing: true})
 	},
 
 	render: function () {
@@ -80,6 +86,21 @@ var ViewList = React.createClass({
 					Add view
 				</div>
 			</div>
+			{
+				this.state.adding ? 
+				_.map(viewTypes, function (type, typeKey) {
+		        	return <div className = "menu-item-light menu-item menu-sub-item"
+		            	onClick = {_this.handleClickType.bind(_this, typeKey)}
+		            	key ={typeKey}>
+		            	<span className = {"small icon icon-geo-circle " +
+		            		(typeKey === _this.state.type ? 'green' : 'hovershow')}/>
+		            	<span className = {"large icon view-icon " + type.icon}/>
+		            	{type.type}
+		            </div>
+		        })
+				:
+				null
+			}
 		</div>
 	}
 })

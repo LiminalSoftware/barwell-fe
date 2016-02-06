@@ -28,14 +28,7 @@ var ColorElement = React.createClass({
 		var cellStyle = _.clone(defaultCellStyle)
 		var blockStyle = {
 			// zIndex: 150,
-			display: 'block',
-			position: 'absolute',
-			left: '5px',
 			right: this.state.selected ? '25px': '5px',
-			top: '3px',
-			bottom: '3px',
-			border: '1px solid white',
-			borderRadius: '3px',
 			background: this.state.value,
 		}
 		var iconStyle = {
@@ -52,8 +45,8 @@ var ColorElement = React.createClass({
 		}
 		
 		return <span {...this.props} onMouseDown = {this.props.handleClick}>
-				<span style = {cellStyle}>
-					<span style = {blockStyle}></span>
+				<span style = {cellStyle} className = "special-cell-inner ">
+					<span style = {blockStyle} className = "color-block"></span>
 				</span>
 				{this.state.selected ?
 					 <span

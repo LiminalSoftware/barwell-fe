@@ -1,6 +1,6 @@
 @import "../../../../../global.less";
 
-.selection, .copyarea, .pointer, .row-selection, .jagged-edge {
+.selection, .copyarea, .pointer, .pointer-outer, .row-selection, .jagged-edge {
 	.border-box;
 	z-index: 112;
 	position: absolute;
@@ -9,17 +9,13 @@
 	padding: 0;
 	pointer-events: none;
 	.noselect;
-	transform: translateZ(0);
+	transform-style: preserve-3d;
+	.transition(all cubic-bezier(.1,.85,.5,1) 100ms);
 }
 
 .jagged-edge {
-	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAASUlEQVQYV2P8////f45plgwg8CPrOJhmZGRkBDOQAFgAXTFOhcQoRrECn8kYCkGmI7sZ5gwMR4NMxaaYPBOJciOhIMIajtgCHQBjIEYLL+ygOgAAAABJRU5ErkJggg==) repeat-y;
+	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAGCAYAAAD+Bd/7AAAAOklEQVQIW2Nkn2rx/0fWcQYQYGRkZAQzkADj/////3NMs2TApQisAKQBlyKwkSBFIOOxWUfYBEJuAADs9CgHgHfuFwAAAABJRU5ErkJggg==) repeat-y;
 	z-index: 151;
-}
-
-.selection, .pointer {
-	.transition(all cubic-bezier(.1,.85,.5,1) 100ms);
-	// .transition(all linear 100ms);
 }
 
 .copyarea {
@@ -28,6 +24,7 @@
 
 .selection {
 	z-index: 2;
+	transform: translateZ(-2px);
 	border: 6px solid white;
 	background-color: @gray-trans;
 	&.focused {
@@ -49,12 +46,17 @@
 }
 
 .pointer {
+	transform: translateZ(3px);
 	z-index: 130;
-	border: 2px solid @gray3;
+	border: 1px solid @gray3;
 	&.focused {
 		border-color: @newgreen1;
 	}
+}
 
+.pointer-outer {
+	border: 6px solid white;
+	transform: translateZ(2px);
 }
 
 .pointer, .selection {

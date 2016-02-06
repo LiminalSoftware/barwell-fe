@@ -147,21 +147,18 @@
 	border: 1px solid @gray3;
 	background: @headerMenuBgColor;
 	color: @headerFontColor;
-	&.light {
-		background: white;
-		color: black;
-		border: 1px solid @newgreen1;
-		.menu-sub-item {
-			color: black;
-		}
-	}
+}
+
+.dropdown-menu-light {
+	background: white;
+	color: black;
+	border: 1px solid @newgreen1;
 }
 
 
 .menu-item {
 	display: flex;
 	flex-direction: row;
-	background: none;
 	text-decoration: none;
 	// border-top: 1px dotted @headerFontColor;
 	&.singleton {
@@ -173,6 +170,11 @@
 		right: 30px !important;
 		margin: 0;
 	}
+}
+
+.menu-item-light {
+	background: white;
+	color: black;
 }
 
 .empty-item {

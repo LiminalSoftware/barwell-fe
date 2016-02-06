@@ -240,9 +240,10 @@ var TabularPane = React.createClass ({
 			selectors.push(selector)
 		}
 		selectors.forEach(function (selector) {
-				modelActionCreators.deleteRecord(model, selector)
+			modelActionCreators.deleteRecord(model, selector)
 		})
 		this.setState({copyarea: null})
+		this.forceUpdate()
 	},
 
 	copySelection: function () {
@@ -311,20 +312,20 @@ var TabularPane = React.createClass ({
 	},
 
 	openContextMenu: function (e) {
-		e.preventDefault();
-		var rc = this.getRCCoords(e)
-		var sel = this.state.selection
+		// e.preventDefault();
+		// var rc = this.getRCCoords(e)
+		// var sel = this.state.selection
 
-		modelActionCreators.setFocus('view')
-		if (rc.row > sel.bottom || rc.row < sel.top ||
-			rc.col > sel.right || rc.col < sel.left)
-			this.updateSelect(rc.row, rc.col, false, false)
+		// modelActionCreators.setFocus('view')
+		// if (rc.row > sel.bottom || rc.row < sel.top ||
+		// 	rc.col > sel.right || rc.col < sel.left)
+		// 	this.updateSelect(rc.row, rc.col, false, false)
 
-		this.setState({
-			contextOpen: true,
-			contextX: rc.x,
-			contextY: rc.y + 20
-		})
+		// this.setState({
+		// 	contextOpen: true,
+		// 	contextX: rc.x,
+		// 	contextY: rc.y + 20
+		// })
 	},
 
 	move: function (direction, shift) {
@@ -404,10 +405,12 @@ var TabularPane = React.createClass ({
 	updatePointer: function (pos) {
 		var oldPos = this.state.pointer
 		var view = this.props.view
+		var geo = view.data.geometry
 		var current = this.state.selected
 		var cell = this.getFieldAt(pos)
 		var numCols = this.getNumberCols()
 		var numRows = this.getNumberRows()
+		var rowOffset = this.refs.tableWrapper.state.rowOffset
 
 		pos.left = Math.max(Math.min(pos.left, numCols), 0)
 		pos.top = Math.max(Math.min(pos.top, numRows), 0)
@@ -423,6 +426,8 @@ var TabularPane = React.createClass ({
 			contextOpen: false,
 			selected: (cell || this.state.selected)
 		})
+
+		if (pos.top < rowOffset) this.refs.verticalScrollBar.scroll(pos.top * geo.rowHeight)
 
 		// commit the pointer position to the view object, but debounce
 		view.data.pointer = pos
@@ -602,7 +607,17 @@ var TabularPane = React.createClass ({
 				ref = "pointer"
 				{...this.props}
 				position = {sel}
-				fudge = {{left: -2.25, top: -1.25, height: 3.5, width: 3.5}} />
+				fudge = {{left: -2.25, top: -1.25, height: 2.5, width: 3.5}} />
+
+			<Overlay
+				columns = {columns}
+        		numHiddenCols = {_this.state.hiddenCols}
+				className = "pointer-outer"
+				rowOffset = {this.state.rowOffset}
+				ref = "outerPointer"
+				{...this.props}
+				position = {sel}
+				fudge = {{left: -4.25, top: -3.25, height: 6.5, width: 7.5}}/>
 
 			<Overlay
 				columns = {columns}
@@ -612,7 +627,7 @@ var TabularPane = React.createClass ({
 				ref = "selection"
 				{...this.props}
 				position = {sel}
-				fudge = {{left: -4.25, top: -3.25, height: 7.5, width: 7.5}} />
+				fudge = {{left: -4.25, top: -3.25, height: 6.5, width: 7.5}}/>
 
 			<Overlay
 				columns = {columns}
@@ -623,10 +638,11 @@ var TabularPane = React.createClass ({
 				{...this.props}
 				position = {{
 					left: view.data.fixedCols.length,
+					width: '10px',
 					top: sel.top,
 					bottom: sel.bottom
 				}}
-				fudge = {{left: -6, width: 10 }} />
+				fudge = {{left: -3, width: 10 }} />
 
 			<Overlay
 				columns = {columns}
@@ -636,7 +652,7 @@ var TabularPane = React.createClass ({
 				ref="copyarea"
 				{...this.props}
 				position = {cpy}
-				fudge = {{left: -1, top: 1.1, height: 1.75, width: 1.1}}/>
+				fudge = {{left: -0.75, top: -0.75, height: 1.25, width: 0.75}}/>
 
 		</TabularBodyWrapper>
 

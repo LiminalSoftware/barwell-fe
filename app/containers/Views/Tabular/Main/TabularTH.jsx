@@ -31,7 +31,7 @@ var TabularTH = React.createClass ({
 		return <span
 				onContextMenu = {this.onContextMenu}
 				style = {cellStyle}
-				className = {'table-cell table-header-cell ' + (this.props.sorted ? ' sorted ' : '')}>
+				className = {'table-header-cell ' + (this.props.sorted ? ' sorted ' : '')}>
 			<span className="table-cell-inner header-cell-inner">
 			   {col.name}
 			</span>

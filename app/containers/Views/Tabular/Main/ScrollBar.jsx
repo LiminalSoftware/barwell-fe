@@ -20,14 +20,17 @@ var ScrollBar = React.createClass ({
 		this.props._setScrollOffset(offset)
 	},
 
+	scroll: function (position, relative) {
+		var outerEl = this.refs.overlay
+		var scrollVar = (this.props.axis === 'vertical') ? 'scrollTop' : 'scrollLeft'
+		var offset =  relative ? outerEl[scrollVar] : 0
+		ReactDOM.findDOMNode(outerEl)[scrollVar] = (offset + position)
+	},
+
 	handleMouseWheel: function (e) {
 		e.preventDefault()
-		var outerEl = this.refs.overlay
-		var scrollVar = this.props.axis === 'vertical' ? 'scrollTop' : 'scrollLeft'
-		var delta = this.props.axis === 'vertical' ? e.deltaY : e.deltaX
-		var offset =  outerEl[scrollVar]
-		
-		ReactDOM.findDOMNode(outerEl)[scrollVar] = (offset + delta)
+		var delta = (this.props.axis === 'vertical') ? e.deltaY : e.deltaX
+		this.scroll(delta, true)
 	},
 
 	render: function () {

@@ -5,6 +5,14 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 
 var commitMixin = {
 
+	shouldComponentUpdate: function (nextProps, nextState) {
+		return nextProps.value !== this.props.value ||
+			nextState.value !== this.state.value ||
+			nextProps.config !== this.props.config ||
+			nextState.selected !== this.state.selected ||
+			nextState.editing !== this.state.editing
+	},
+
 	commitValue: function (value) {
 		var config = this.props.config
 		var column_id = config.column_id

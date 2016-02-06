@@ -124,7 +124,7 @@ var editableInputMixin = {
 			cellStyle.background = tinycolor(hsl).toRgbString()
 		}
 
-		return <span {...this.props}>
+		return <span {...this.props} className = {"table-cell " + (this.state.selected ? " table-cell-selected" : "")}>
 			{this.state.editing ?
 			<input
 				className = "input-editor"
@@ -134,7 +134,8 @@ var editableInputMixin = {
 				onBlur = {this.revert}
 				onChange = {this.handleChange} />
 			:
-			<span style = {cellStyle} className = "table-cell-inner"
+			<span style = {cellStyle} className = {"table-cell-inner " + 
+				(this.state.selected ? " table-cell-inner-selected" : "")}
 				onPaste = {this.props._handlePaste}>
 				{this.format ?
 					this.format(this.state.value) :

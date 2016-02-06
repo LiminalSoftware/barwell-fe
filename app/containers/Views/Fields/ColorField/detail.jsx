@@ -12,7 +12,7 @@ import ColorValidationMixin from './ColorValidationMixin'
 
 var ColorDetail = React.createClass({
 
-	mixins: [PureRenderMixin, ColorValidationMixin, CommitMixin],
+	mixins: [ColorValidationMixin, CommitMixin],
 
 	getInitialState: function () {
 		return {}

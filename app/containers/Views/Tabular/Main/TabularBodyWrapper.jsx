@@ -153,15 +153,15 @@ var TabularBodyWrapper = React.createClass ({
 		var fetchEnd = Math.min(this.state.fetchOffset + MAX_ROWS, rowCount)
 
 		return <div
-			className = {"tabular-body-wrapper wrapper " + (focused ? "focused" : "blurred")}
+			className = {"tabular-body-wrapper force-layer " + (focused ? "focused" : "blurred")}
 			ref="tbodyWrapper"
 			onPaste = {this.props._handlePaste}
 			style = {{
-				zIndex: 1,
 				left: 0,
 				top: 0,
 				bottom: 0,
-				width: (adjustedWidth) + 'px'
+				width: (adjustedWidth + 3) + 'px',
+				transformStyle: 'preserve-3d'
 			}}>
 
 			{
@@ -175,12 +175,6 @@ var TabularBodyWrapper = React.createClass ({
 					: null
 			}
 			
-			<FakeLines
-				width = {adjustedWidth}
-				rowCount = {rowCount}
-				ref = "FakeLines"
-				{...this.props}/>
-			
 
 			<RowResizer {...this.props} adjustedWidth = {adjustedWidth} />
 
@@ -190,22 +184,25 @@ var TabularBodyWrapper = React.createClass ({
 					top: 0,
 					bottom: 0,
 					width: (fixedWidth + geo.labelWidth) + 'px',
+					transform: 'translateZ(1px)',
+					overflow: 'hidden'
 				}}>
 			{/*LHS TABLE BODY*/}
-			<div className = "inner-wrapper"
+			<div className = "wrapper"
 				style = {{
 					left: 0,
 					bottom: 0,
 					right: 0,
-					top: geo.headerHeight - 1 + 'px'
+					top: geo.headerHeight - 1 + 'px',
 				}}>
-				<div className = "inner-wrapper"
+				<div className = "wrapper"
 					style = {{
 						left: 0,
 						right: 0,
 						top: 0,
 						height: (rowCount * geo.rowHeight) + 'px',
 						marginTop: marginTop + 'px',
+						transform: 'translateZ(0)'
 					}}>
 
 				<TabularTBody
@@ -231,7 +228,7 @@ var TabularBodyWrapper = React.createClass ({
 			{/*LHS HEADER*/}
 			<TabularTHead
 				ref = "lhsHead"
-				totalWidth = {fixedWidth +  geo.labelWidth}
+				totalWidth = {fixedWidth +  geo.labelWidth + 1}
 				leftOffset = {0}
 				side = {'lhs'}
 				hasRowLabel = {true}
@@ -242,54 +239,72 @@ var TabularBodyWrapper = React.createClass ({
 			</div>
 			{/*LHS OUTER*/}
 
+			<FakeLines
+				width = {adjustedWidth}
+				rowCount = {rowCount}
+				top = {geo.headerHeight - 1}
+				ref = "FakeLines"
+				{...this.props}/>
+
+			{/*CURSORS*/}
+			<div className = "wrapper"
+				style = {{
+					top: geo.headerHeight - 1 - 2 + 'px',
+					bottom: 0,
+					left: geo.leftGutter + 'px',
+					width: (fixedWidth + floatWidth + geo.labelWidth + 6) + 'px',
+					pointerEvents: 'none',
+					transformStyle: 'preserve-3d'
+				}}>
+			<div className = "wrapper"
+				style = {{
+					top: 0,
+					left: 0,
+					right: 0,
+					marginTop: marginTop + 2 + 'px',
+					height: ((rowCount + 1) * geo.rowHeight) + 'px',
+					transformStyle: 'preserve-3d'
+				}}>
+				{this.props.children}
+			</div>
+			</div>
+
 
 			{/*RHS OUTER*/}
-			<div className = "rhs-h-scroll-outer"
+			<div className = "rhs-h-scroll-outer wrapper"
 				style = {{
-					position: 'absolute',
-					overflow: 'hidden',
-					margin: 0,
-					padding: 0,
 					top: 0,
 					bottom: 0,
 					left: (view.data.fixedWidth + geo.labelWidth) + 'px',
-					width:  view.data.floatWidth + geo.colAddWidth + 'px'
+					width:  view.data.floatWidth + geo.colAddWidth + 'px',
+					transform: 'translateZ(1px)',
+					overflow: 'hidden'
 				}}>
-				<div className = "rhs-h-scroll inner-wrapper"
+				<div className = "rhs-h-scroll wrapper force-layer"
 					style = {{
 						left: 0,
 						bottom: 0,
 						top: 0,
 						right: 0,
 						marginLeft: (-1 * this.props.hiddenColWidth - 1) + 'px',
-						transform: 'translateZ(0)',
 					}}>
 
 					{/*RHS TABLE BODY WRAPPER*/}
-					<div
+					<div className = "wrapper"
 						style = {{
-							position: 'absolute',
-							overflow: 'hidden',
-							margin: 0,
-							padding: 0,
 							left: 0,
 							top: geo.headerHeight - 1 + 'px',
 							width: (fixedWidth + floatWidth) + 'px',
 							bottom: 0
 						}}>
-					<div
+					<div className = "wrapper force-layer"
 						style = {{
-							position: 'absolute',
-							margin: 0,
-							padding: 0,
 							top: 0,
 							left: 0,
 							right: 0,
-							transform: 'translateZ(0)',
 							marginTop: marginTop + 'px',
 							height: (rowCount * geo.rowHeight) + 'px',
 							width: (fixedWidth + floatWidth) + 'px',
-							// transform: 'translate(0, ' + marginTop + 'px)',
 						}}>
 						<TabularTBody
 							{...this.props}
@@ -301,13 +316,6 @@ var TabularBodyWrapper = React.createClass ({
 							fetchStart = {fetchStart}
 							fetchEnd = {fetchEnd}
 							style = {{
-								WebkitUserDrag: 'none',
-								WebkitUserSelect: 'none',
-							    KhtmlUserSelect: 'none',
-							    MozUserSelect: 'none',
-							    MsUserSelect: 'none',
-							    UserSelect: 'none',
-								position: 'absolute',
 								left: 0,
 								top: 0,
 								width:  view.data.floatWidth  + 'px',
@@ -318,7 +326,7 @@ var TabularBodyWrapper = React.createClass ({
 					</div>
 					<TabularTHead
 						ref = "rhsHead"
-						totalWidth = {floatWidth}
+						totalWidth = {floatWidth + 1}
 						leftOffset = {0}
 						side = "rhs"
 						columns = {view.data.floatCols}
@@ -327,27 +335,7 @@ var TabularBodyWrapper = React.createClass ({
 				</div>
 
 			</div>
-			{/*CURSORS*/}
-			<div className = "wrapper"
-				style = {{
-					top: geo.headerHeight - 5 + 'px',
-					bottom: 0,
-					left: geo.leftGutter + 'px',
-					width: (fixedWidth + floatWidth + geo.labelWidth + 6) + 'px',
-					pointerEvents: 'none'
-				}}>
-			<div className = "wrapper"
-				style = {{
-					top: 0,
-					left: 0,
-					right: 0,
-					marginTop: marginTop + 4 + 'px',
-					height: ((rowCount + 1.5) * geo.rowHeight) + 'px',
-				    
-				}}>
-				{this.props.children}
-			</div>
-			</div>
+			
 			
 		</div>;
 	}

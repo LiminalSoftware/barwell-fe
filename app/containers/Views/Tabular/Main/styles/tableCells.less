@@ -4,7 +4,6 @@
 	display: block;
 	position: absolute;
 	// margin-left: -1px;
-	background: white;
 	.border-box;
 }
 
@@ -16,7 +15,6 @@
 	border-left: 1px solid @gray3;
 	border-bottom: 1px solid @gray3;
 
-
 	margin: 0;
 	padding: 0;
 	
@@ -25,6 +23,10 @@
 	top: 0;
 	bottom: 0;
 }
+
+.table-cell-selected {
+}
+
 
 // ************************************************************************
 // TABLE_CELL_INNER
@@ -37,7 +39,7 @@
 	&.bolded {
 		font: @headerFont;
 		font-weight: 400;
-	}	
+	}
 }
 
 .table-cell-inner, .special-cell-inner, .input-editor {
@@ -46,10 +48,11 @@
 	font-size: 14px;
 	font-family: @bodyFont;
 	font-weight: 400;
+	
 	left: 0;
 	right: 0;
 	top: 0;
-	bottom: 1px;
+	bottom: 0;
 }
 
 .input-editor {
@@ -57,9 +60,15 @@
 	width: 100%;
 	background: white !important;
 	outline: 0;
+	border: none;
 	padding-top: 0;
-	padding-bottom: 2px;
+	padding-bottom: 0;
+	padding-left: 5px;
 }
+
+// ************************************************************************
+// CELL CONTENTS
+// ************************************************************************
 
 .has-many-bubble {
 	.draggable;
@@ -71,6 +80,29 @@
 	background: @gray4;
 	z-index: 121;
 	margin-right: 5px;
+}
+
+.editor-icon {
+	display: block;
+	position: absolute !important;
+	margin-right: 0 !important;
+	width: 20px;
+	top: 0;
+	bottom: 0;
+	cursor: pointer;
+	color: @newgreen1 !important;
+}
+
+
+.color-block {
+	// zIndex: 150,
+	display: block;
+	position: absolute;
+	left: 5px;
+	top: 3px;
+	bottom: 3px;
+	border: 1px solid white;
+	border-radius: 3px;
 }
 
 .has-many-bubble.placeholder {
@@ -97,6 +129,6 @@
 	z-index: 121;
 }
 
-.checkbox-surround:hover, .selected .checkbox-surround {
+.checkbox-surround-selected {
 	border: 1px solid @newgreen1;
 }

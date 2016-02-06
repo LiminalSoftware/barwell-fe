@@ -12,7 +12,7 @@ import editableInputMixin from '../editableInputMixin'
 import CommitMixin from '../commitMixin'
 var DateDetail = React.createClass({
 
-	mixins: [PureRenderMixin, DateValidatorMixin, CommitMixin],
+	mixins: [DateValidatorMixin, CommitMixin],
 
 	getInitialState: function () {
 		var val = this.props.value ? moment(this.props.value) : moment()

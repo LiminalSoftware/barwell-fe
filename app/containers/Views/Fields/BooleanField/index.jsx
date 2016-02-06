@@ -55,20 +55,6 @@ var CheckboxElement = React.createClass({
 
 		var cellStyle = _.clone(defaultCellStyle)
 
-		var boxStyle = {
-			position: 'relative',
-			display: 'inline-block',
-			maxHeight: '14px',
-			minHeight: '14px',
-			maxWidth: '14px',
-			minWidth: '14px',
-			cursor: 'pointer',
-			borderRadius: '3px',
-			background: 'white',
-			border: '1px solid ' + constant.colors.GRAY_3,
-			zIndex: 121
-		}
-
 		var checkStyle = {
 			position: 'absolute',
 			left: '0px',
@@ -80,14 +66,13 @@ var CheckboxElement = React.createClass({
 		if (this.state.selected) {
 			cellStyle.zIndex = 130
 			cellStyle.background = 'white'
-			boxStyle.border = '1px solid ' + constant.colors.GRAY_3
 		}
 
 		return <span {...this.props} >
 			<span style = {cellStyle} className = "table-cell-inner">
-				<span className = "checkbox-surround"
+				<span className = {"checkbox-surround " + (this.state.selected ? ' checkbox-surround-selected' : '')}
 					 onClick={this.handleClick}>
-					<span className={"check grayed icon " + (this.state.value ? "icon-kub-approve" : "")}>
+					<span className={"check green icon " + (this.state.value ? "icon-kub-approve" : "")}>
 					</span>
 				</span>
 			</span>

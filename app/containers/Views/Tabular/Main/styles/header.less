@@ -1,5 +1,9 @@
 @import "../../../../../global.less";
 
+.rhs-header {
+	border-right: 1px solid @purple4;
+}
+
 .tabular-view-header {
 	position: absolute;
 	border-bottom: 1px solid @purple4;
@@ -18,6 +22,19 @@
 
 
 .table-header-cell {
+	display: block;
+	position: absolute;
+	border-left: 1px solid @gray3;
+
+	margin: 0;
+	padding: 0;
+	top: 0;
+	bottom: 0;
+	
+	.border-box;
+	.noselect;
+	
+
 	&.sorted > .header-cell-inner {
 		color: @purple4;
 	}

@@ -62,20 +62,6 @@ var TabularTR = React.createClass({
 		var prevSort = false;
 		var prevFixed = true;
 
-		// var boxStyle = {
-		// 	position: 'relative',
-		// 	display: 'inline-block',
-		// 	maxHeight: '14px',
-		// 	minHeight: '14px',
-		// 	maxWidth: '14px',
-		// 	minWidth: '14px',
-		// 	cursor: 'pointer',
-		// 	borderRadius: '3px',
-		// 	background: 'white',
-		// 	border: '1px solid ' + constants.colors.GRAY_3,
-		// 	zIndex: 121
-		// }
-
 		// var labelCellStyle = _.clone(defaultCellStyle)
 		// labelCellStyle.paddingLeft = '10px'
 		// labelCellStyle.lineHeight = geo.rowHeight + 'px'
@@ -91,8 +77,7 @@ var TabularTR = React.createClass({
 					style = {{ 
 						left: geo.leftGutter + 'px', 
 						width: geo.labelWidth + 'px', 
-						top: 0, 
-						bottom: 0}}>
+					}}>
 					
 				</span> : null
 			}

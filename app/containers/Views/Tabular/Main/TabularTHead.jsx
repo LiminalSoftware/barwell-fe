@@ -27,6 +27,7 @@ var TabularTHead = React.createClass ({
 			marginLeft: this.props.leftOffset + 'px',
 			height: (geo.headerHeight + 1) + 'px',
 			width: (this.props.totalWidth ) -1 + 'px',
+			transform: 'translateZ(px)'
 		}
 
 		return <div

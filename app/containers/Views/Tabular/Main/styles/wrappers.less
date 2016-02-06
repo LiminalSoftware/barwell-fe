@@ -20,7 +20,7 @@
 	color: white;
 	border-radius: 3px;
 	z-index: 220;
-	transform: translateZ(0);
+	transform: translateZ(1px);
 	text-align: center;
 	.noselect;
 }
@@ -37,18 +37,21 @@
 }
 
 
-.blurred {
-	.gray-out;
+// .blurred {
+// 	.gray-out;
+// }
+
+
+.tabular-body {
+	.wrapper;
 }
 
-
-.inner-wrapper {
-	.wrapper;
-	transform: translateZ(0);
+.tabular-body-wrapper {
+	.wrapper
 }
 
 .wrapper {
-	overflow: hidden;
+	display: block;
 	position: absolute;
 	margin: 0;
 	padding: 0;
@@ -60,12 +63,14 @@
 .rhs-h-scroll {
 	overflow: hidden;
 	.transition(margin cubic-bezier(.16,.85,.5, 1) 100ms);
+	.force-layer;
 }
 
 .rhs-h-scroll-outer {
-	overflow: hidden;
 	border-left: 1px solid @purple4;
 }
+
+
 
 .add-new-row {
 	cursor: pointer;

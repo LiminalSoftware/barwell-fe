@@ -13,12 +13,14 @@ import TabularTR from './TabularTR'
 var VISIBLE_ROWS = 45
 var MAX_ROWS = 45
 var SLOW_SKIP = 1
-var FAST_SKIP = 3
-var TURBO_THRESHOLD = 15
+var FAST_SKIP = 2
+var FASTER_SKIP = 3
+var FAST_THRESHOLD = 5
+var FASTER_THRESHOLD = 25
 var CYCLE = 30
 var MIN_CYCLE = 15
-var BACKWARD_BUFFER = 8
-var BUFFER_SIZE = 5
+var BACKWARD_BUFFER = 5
+var BUFFER_SIZE = 3
 var PAGE_SIZE = SLOW_SKIP
 var BAILOUT = SLOW_SKIP
 
@@ -55,7 +57,7 @@ var TabularTBody = React.createClass ({
 		// target = 0
 
 		this.setState({
-			scrolling: false,
+			scrolling: delta !== 0,
 			scrollDirection: scrollDirection,
 			speed: Math.abs(delta)
 		})
@@ -74,26 +76,29 @@ var TabularTBody = React.createClass ({
 		var end = this.state.end
 		var visibleRows = (end - start)
 		var lag = Math.abs(target - start)
-		var skip = (lag >= 10) ? FAST_SKIP : SLOW_SKIP
+		var skip = (lag >= FAST_THRESHOLD || !this.state.scrolling) ? (lag >= FASTER_THRESHOLD ? FASTER_SKIP : FAST_SKIP) : SLOW_SKIP
 		var startTarget = target
 		var endTarget = target + VISIBLE_ROWS
 		
 		// advance or retreat the begining of the range as appropriate
 		if (start > startTarget && scrollDirection === -1 && start < endTarget) start -= Math.min(skip, start - startTarget)
 		else if ((end === target + VISIBLE_ROWS && visibleRows > VISIBLE_ROWS) || visibleRows >= MAX_ROWS) 
-			start += Math.min(FAST_SKIP, visibleRows - VISIBLE_ROWS)
+			start += Math.min(skip, visibleRows - VISIBLE_ROWS)
 		
 		// advance or retreat the end of the range as appropriate
 		if (end < endTarget && scrollDirection === 1 && end > startTarget) end += Math.min(skip, endTarget - end + 1)
 		else if ((start === target && visibleRows > VISIBLE_ROWS) || visibleRows >= MAX_ROWS) 
-			end -= Math.min(FAST_SKIP, visibleRows - VISIBLE_ROWS)
+			end -= Math.min(skip, visibleRows - VISIBLE_ROWS)
 
 		// if the render range is totally out of the visible range, then just wind it down and start over
 		if (start > endTarget || end < startTarget) end -= Math.min(FAST_SKIP, end - start)
-		if (end === start) {
+		if (end === start && end < startTarget) {
 			start = startTarget
-			end = startTarget + FAST_SKIP
-		} 
+			end = startTarget + skip
+		} else if (end === start) {
+			start = endTarget - skip
+			end = endTarget
+		}
 
 		this.setState({
 			start: start,
@@ -201,6 +206,7 @@ var TabularTBody = React.createClass ({
 		var floatOffset = this.props.floatOffset
 		
 		return <div
+			className = "tabular-body"
 			onPaste = {this.props._handlePaste}
 			onMouseDown = {this.props._handleClick}
 			onDoubleClick = {this.props._handleEdit}
