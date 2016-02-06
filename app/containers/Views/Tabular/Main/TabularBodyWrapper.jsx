@@ -184,16 +184,17 @@ var TabularBodyWrapper = React.createClass ({
 					top: 0,
 					bottom: 0,
 					width: (fixedWidth + geo.labelWidth) + 'px',
-					transform: 'translateZ(1px)',
-					overflow: 'hidden'
+					transformStyle: 'preserve-3d'
 				}}>
 			{/*LHS TABLE BODY*/}
-			<div className = "wrapper"
+			<div className = "wrapper outer-table-wrapper"
 				style = {{
 					left: 0,
 					bottom: 0,
 					right: 0,
-					top: geo.headerHeight - 1 + 'px',
+					top: geo.headerHeight + 'px',
+					transform: 'translateZ(1px)',
+					overflow: 'hidden',
 				}}>
 				<div className = "wrapper"
 					style = {{
@@ -201,8 +202,7 @@ var TabularBodyWrapper = React.createClass ({
 						right: 0,
 						top: 0,
 						height: (rowCount * geo.rowHeight) + 'px',
-						marginTop: marginTop + 'px',
-						transform: 'translateZ(0)'
+						marginTop: marginTop + 'px'
 					}}>
 
 				<TabularTBody
@@ -263,7 +263,7 @@ var TabularBodyWrapper = React.createClass ({
 					right: 0,
 					marginTop: marginTop + 2 + 'px',
 					height: ((rowCount + 1) * geo.rowHeight) + 'px',
-					transformStyle: 'preserve-3d'
+					transformStyle: 'preserve-3d overlay'
 				}}>
 				{this.props.children}
 			</div>
@@ -293,7 +293,7 @@ var TabularBodyWrapper = React.createClass ({
 					<div className = "wrapper"
 						style = {{
 							left: 0,
-							top: geo.headerHeight - 1 + 'px',
+							top: geo.headerHeight + 'px',
 							width: (fixedWidth + floatWidth) + 'px',
 							bottom: 0
 						}}>

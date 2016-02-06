@@ -71,7 +71,6 @@ var TabularTBody = React.createClass ({
 	},
 
 	updateOffset: function (target, scrollDirection) {
-		if (!this.isMounted()) return
 		var start = this.state.start
 		var end = this.state.end
 		var visibleRows = (end - start)

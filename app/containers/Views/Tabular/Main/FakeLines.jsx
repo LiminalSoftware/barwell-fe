@@ -16,6 +16,13 @@ var FakeLines = React.createClass ({
 		var rowCount = Math.min(this.props.rowCount, NUM_LINES)
 		var lines = []
 
+		lines.push(<div key = 'header' style ={{
+			height: (geo.headerHeight + 2) + 'px',
+    		left: 0,
+    		width: this.props.width + 'px',
+			top: 0
+		}} className = "fake-table-row"/>)
+
 	    for (var i = 0; i < rowCount; i++) {
 	      var rowStyle = {
 	  			height: (geo.rowHeight + 2) + 'px',
@@ -28,7 +35,7 @@ var FakeLines = React.createClass ({
 
 		return <div className = "fake-lines wrapper" style = {{
 			left: 0,
-			top: this.props.top - 1 + 'px',
+			top: this.props.top + 'px',
 			bottom: 0,
 			width: this.props.width + 'px',
 			transform: 'translateZ(-2px)'

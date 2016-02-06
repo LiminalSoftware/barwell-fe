@@ -10,7 +10,7 @@
 	pointer-events: none;
 	.noselect;
 	transform-style: preserve-3d;
-	.transition(all cubic-bezier(.1,.85,.5,1) 100ms);
+	
 }
 
 .jagged-edge {
@@ -20,6 +20,7 @@
 
 .copyarea {
 	z-index: 131;
+	transform: translateZ(4px);
 }
 
 .selection {
@@ -30,34 +31,29 @@
 	&.focused {
 		cursor: move !important;
 	}
+	.transition(all cubic-bezier(.1,.85,.5,1) 100ms);
 }
 
 .selection.singleton {
 	background: transparent !important;
 }
 
-.row-selection {
-	z-index: 112;
-	background-color: @gray-trans;
-}
-
-.selection-inner {
-	background-color: @gray-trans;
-}
-
 .pointer {
-	transform: translateZ(3px);
+	transform: translateZ(4px);
 	z-index: 130;
 	border: 1px solid @gray3;
 	&.focused {
 		border-color: @newgreen1;
 	}
+	.transition(all cubic-bezier(.1,.85,.5,1) 100ms);
 }
 
 .pointer-outer {
 	border: 6px solid white;
-	transform: translateZ(2px);
+	transform: translateZ(3px);
+	.transition(all cubic-bezier(.1,.85,.5,1) 100ms);
 }
+
 
 .pointer, .selection {
 	&.open-right {

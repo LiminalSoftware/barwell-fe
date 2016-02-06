@@ -79,7 +79,7 @@
 	flex-grow: 1;
 	max-width: 300px;
 	padding: 0 10px;
-	border-right: 1px solid @headerBgDark;
+	border-right: 1px solid @headerMenuBorderColor;
 }
 
 .double.header-section {
@@ -144,7 +144,7 @@
 	min-height: 100;
 	z-index: 300;
 	border-radius: 0;
-	border: 1px solid @gray3;
+	border: 1px solid @headerMenuBorderColor;
 	background: @headerMenuBgColor;
 	color: @headerFontColor;
 }
@@ -254,17 +254,17 @@
 }
 
 .menu-config-row {
-  	border-top: 1px solid @headerFontColor;
+  	border-top: 1px solid @headerMenuBorderColor;
   	.menu-sub-item {
-	text-align: center;
-	border-left: 1px solid @headerFontColor;
-	&:hover {
-		background: @headerMenuBgColor;
+		text-align: center;
+		border-left: 1px solid @headerMenuBorderColor;
+		&:hover {
+			background: @headerMenuBgColor;
+		}
+  	}
+	.menu-sub-item:first-child {
+		border-left: none;
 	}
-  }
-  .menu-sub-item:first-child {
-    border-left: none;
-  }
 }
 
 
