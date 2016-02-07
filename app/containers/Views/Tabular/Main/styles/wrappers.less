@@ -61,7 +61,7 @@
 //
 .rhs-h-scroll {
 	overflow: hidden;
-	.transition(margin cubic-bezier(.16,.85,.5, 1) 100ms);
+	.transition(margin cubic-bezier(.16,.85,.5, 1) 150ms);
 	.force-layer;
 }
 
@@ -90,7 +90,7 @@
 	left: 0;
 	top: 0;
 	overflow: hidden;
-	.transition(width cubic-bezier(.1,.85,.5,1) 100ms);
+	.transition(all cubic-bezier(.1,.85,.5,1) 150ms);
 }
 
 .fake-table-row {
@@ -100,8 +100,11 @@
 	border-bottom: 1px solid @gray3;
 	border-right: 1px solid @purple4;
 	background: white;
+	.transition(width cubic-bezier(.1,.85,.5,1) 150ms);
 }
-//
-// .view-body-wrapper {
-// 	background: white;
-// }
+
+.underlay {
+	background: white;
+	border-right: 1px solid @purple4;
+	.transition(width cubic-bezier(.1,.85,.5,1) 150ms);
+}

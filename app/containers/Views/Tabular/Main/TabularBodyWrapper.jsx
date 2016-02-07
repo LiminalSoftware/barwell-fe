@@ -12,7 +12,7 @@ import ViewDataStores from "../../../../stores/ViewDataStores"
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 import createTabularStore from './TabularStore.jsx'
-
+import Overlay from './Overlay'
 
 import util from '../../../../util/util'
 
@@ -55,7 +55,7 @@ var TabularBodyWrapper = React.createClass ({
 		this.refs.rhs.forceUpdate()
 		this.refs.lhsHead.forceUpdate()
 		this.refs.rhsHead.forceUpdate()
-		this.refs.FakeLines.forceUpdate()
+		// this.refs.FakeLines.forceUpdate()
 		// this.refs.addNew.forceUpdate()
 	},
 
@@ -128,7 +128,11 @@ var TabularBodyWrapper = React.createClass ({
 			this.props.hiddenColWidth !== nextProps.hiddenColWidth ||
 			this.state.rowOffset !== nextState.rowOffset ||
 			this.props.children !== nextProps.children ||
-			this.state.fetching !== nextState.fetching
+			this.state.fetching !== nextState.fetching ||
+			this.props.selection !== nextProps.selection ||
+			this.props.pointer !== nextProps.pointer ||
+			this.props.copyarea !== nextProps.copyarea
+
 	},
 
 	render: function () {
@@ -151,6 +155,14 @@ var TabularBodyWrapper = React.createClass ({
 
 		var fetchStart = this.state.fetchOffset
 		var fetchEnd = Math.min(this.state.fetchOffset + MAX_ROWS, rowCount)
+
+
+		var ptr = this.props.pointer
+		var sel = this.props.selection
+		var cpy = this.props.copyarea
+		var showJaggedEdge = (sel.right >= view.data.fixedCols.length
+			&& sel.left <= view.data.fixedCols.length && this.props.hiddenCols > 0)
+
 
 		return <div
 			className = {"tabular-body-wrapper force-layer " + (focused ? "focused" : "blurred")}
@@ -239,34 +251,132 @@ var TabularBodyWrapper = React.createClass ({
 			</div>
 			{/*LHS OUTER*/}
 
-			<FakeLines
+			{/*<FakeLines
 				width = {adjustedWidth}
 				rowCount = {rowCount}
 				top = {geo.headerHeight - 1}
 				ref = "FakeLines"
-				{...this.props}/>
+				{...this.props}/>*/}
 
 			{/*CURSORS*/}
-			<div className = "wrapper"
+			<div className = "wrapper overlay"
 				style = {{
 					top: geo.headerHeight - 1 - 2 + 'px',
 					bottom: 0,
 					left: geo.leftGutter + 'px',
 					width: (fixedWidth + floatWidth + geo.labelWidth + 6) + 'px',
 					pointerEvents: 'none',
-					transformStyle: 'preserve-3d'
+					overflow: 'hidden',
+					transform: 'translateZ(3px)'
 				}}>
+				<div className = "wrapper"
+					style = {{
+						top: 0,
+						left: 0,
+						right: 0,
+						marginTop: marginTop + 2 + 'px',
+						height: ((rowCount + 1) * geo.rowHeight) + 'px',
+						transformStyle: 'preserve-3d overlay'
+					}}>
+
+					<AddNewRowBar {...this.props}
+						width = {fixedWidth + floatWidth + geo.labelWidth
+							- this.props.hiddenColWidth}
+						ref = "addNew"
+						offset = {this.props.rowOffset}
+						rowCount = {rowCount}/>
+
+					<Overlay
+						columns = {this.props.columns}
+		        		numHiddenCols = {this.props.hiddenCols}
+						className = {" pointer" + (focused ? " focused" : "")}
+						rowOffset = {this.props.rowOffset}
+						ref = "pointer"
+						{...this.props}
+						position = {sel}
+						fudge = {{left: -2.25, top: -1.25, height: 3.5, width: 3.5}} />
+
+					<Overlay
+						columns = {this.props.columns}
+		        		numHiddenCols = {this.state.hiddenCols}
+						className = "pointer-outer"
+						rowOffset = {this.props.rowOffset}
+						ref = "outerPointer"
+						{...this.props}
+						position = {sel}
+						fudge = {{left: -4.25, top: -3.25, height: 7.5, width: 7.5}}/>
+
+
+					<Overlay
+						columns = {this.props.columns}
+			    		numHiddenCols = {this.props.hiddenCols}
+						className = {showJaggedEdge ? " jagged-edge " : ""}
+						rowOffset = {this.props.rowOffset}
+						ref = "jaggedEdge"
+						{...this.props}
+						position = {{
+							left: view.data.fixedCols.length,
+							width: '10px',
+							top: sel.top,
+							bottom: sel.bottom
+						}}
+						fudge = {{left: -3, width: 10 }} />
+
+					<Overlay
+						columns = {this.props.columns}
+			    		numHiddenCols = {this.props.hiddenCols}
+						rowOffset = {this.props.rowOffset}
+						className = {" copyarea running marching-ants " + (focused ? " focused" : "")}
+						ref="copyarea"
+						{...this.props}
+						position = {cpy}
+						fudge = {{left: -0.75, top: -0.75, height: 1.25, width: 0.75}}/>
+				</div>
+			</div>
+
 			<div className = "wrapper"
 				style = {{
-					top: 0,
-					left: 0,
-					right: 0,
-					marginTop: marginTop + 2 + 'px',
-					height: ((rowCount + 1) * geo.rowHeight) + 'px',
-					transformStyle: 'preserve-3d overlay'
+					top: geo.headerHeight - 1 - 2 + 'px',
+					bottom: 0,
+					left: geo.leftGutter + 'px',
+					width: (fixedWidth + floatWidth + geo.labelWidth + 6) + 'px',
+					overflow: 'hidden',
+					transform: 'translateZ(0px)'
 				}}>
-				{this.props.children}
+				<AddNewRowBar {...this.props} rowCount = {rowCount} rowOffset = {this.props.rowOffset}/>
 			</div>
+
+			<div className = "wrapper underlay"
+				style = {{
+					top: geo.headerHeight - 1 - 2 + 'px',
+					bottom: 0,
+					left: geo.leftGutter + 'px',
+					width: (fixedWidth + floatWidth + geo.labelWidth - this.props.hiddenColWidth) + 'px',
+					overflow: 'hidden',
+					transform: 'translateZ(-1px)'
+				}}>
+				<div className = "wrapper underlay-inner"
+					style = {{
+						top: 0,
+						left: 0,
+						right: 0,
+						marginTop: marginTop + 2 + 'px',
+						height: ((rowCount + 1) * geo.rowHeight) + 'px',
+					}}>
+
+					<Overlay
+						columns = {this.props.columns}
+		        		numHiddenCols = {this.state.hiddenCols}
+						className = {" selection " + (focused ? " focused" : "")}
+						rowOffset = {this.props.rowOffset}
+						ref = "selection"
+						{...this.props}
+						position = {sel}
+						fudge = {{left: -4.25, top: -3.25, height: 6.5, width: 7.5}}/>
+
+					
+				
+				</div>
 			</div>
 
 
@@ -295,7 +405,8 @@ var TabularBodyWrapper = React.createClass ({
 							left: 0,
 							top: geo.headerHeight + 'px',
 							width: (fixedWidth + floatWidth) + 'px',
-							bottom: 0
+							bottom: 0,
+							overflow: 'hidden'
 						}}>
 					<div className = "wrapper force-layer"
 						style = {{

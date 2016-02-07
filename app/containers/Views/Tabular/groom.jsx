@@ -59,6 +59,7 @@ var groomView = function (view) {
 		if (type.sortable) return true
 		else return false
 	})
+	data.sortIndex = _.indexBy(data.sorting, 'column_id')
 
 	data.selection = _.extend({'left': 0, 'top': 0, 'right': 0, 'bottom': 0}, (data.selection || {}) );
 	data.selection = limit(data.selection, view)

@@ -27,7 +27,7 @@ var TabularTHead = React.createClass ({
 			marginLeft: this.props.leftOffset + 'px',
 			height: (geo.headerHeight + 1) + 'px',
 			width: (this.props.totalWidth ) -1 + 'px',
-			transform: 'translateZ(6px)'
+			transform: 'translateZ(1px)'
 		}
 
 		return <div
@@ -36,8 +36,8 @@ var TabularTHead = React.createClass ({
 			ref = {this.props.side + "-thead"}>
 			{this.props.hasRowLabel ?
 			<span style = {{left: 0, width: geo.labelWidth + 'px', top: 0, bottom: 0}}
-				className = "table-cell header-table-cell " >
-				<span className = "table-cell-inner">
+				className = "table-cell header-table-cell" >
+				<span className = "table-cell-inner" style = {{background: 'white'}}>
 				</span>
 			</span>
 			: null }

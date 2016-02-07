@@ -20,8 +20,8 @@ var ViewList = React.createClass({
 		this.setState({mounted: true})
 	},
 	
-	addNew: function () {
-		this.setState({adding: true})
+	handleAddNewChoices: function () {
+		this.setState({adding: true, editing: true})
 	},
 
 	handleEdit: function () {
@@ -32,17 +32,17 @@ var ViewList = React.createClass({
 		this.setState({editing: false})
 	},
 
-	handleClickType: function (e, type) {
+	handleAddNewView: function (type, e) {
 		var model = this.props.model
-		var name = 'New view'
-		var iter = 0
+		var name = 'New ' + type.type
+		var iter = 1
 		while (ViewStore.query({model_id: model.model_id, view: name}).length > 0)
-			name = 'New view ' + (iter++)
-		
+			name = 'New ' + type.type + ' ' + (iter++)
+
 		modelActionCreators.createView({
 			view: name,
 			model_id: model.model_id,
-			type: type,
+			type: type.type,
 			data: {}
 		})
 		this.setState({adding: false, editing: true})
@@ -72,7 +72,7 @@ var ViewList = React.createClass({
 			<div className="menu-item menu-config-row" key="detail-menu-items">
 				{
 					this.state.editing ?
-					<div className = "menu-sub-item padded"
+					<div className = {"menu-sub-item padded " + (this.state.adding ? "border-bottom" : "")}
 						onClick = {this.handleDoneEdit}>
 						Save changes
 					</div>
@@ -82,18 +82,26 @@ var ViewList = React.createClass({
 						Edit views
 					</div>
 				}
-				<div className="menu-sub-item padded" onClick = {this.addNew}>
+				{
+					this.state.editing ?
+					<div className = {"menu-sub-item padded " + (this.state.adding ? "border-bottom" : "")}
+						onClick = {this.handleCancelEdit}>
+						Cancel changes
+					</div>
+					:
+					null
+				}
+				<div className="menu-sub-item padded" 
+					onClick = {this.handleAddNewChoices}>
 					Add view
 				</div>
 			</div>
 			{
 				this.state.adding ? 
 				_.map(viewTypes, function (type, typeKey) {
-		        	return <div className = "menu-item-light menu-item menu-sub-item"
-		            	onClick = {_this.handleClickType.bind(_this, typeKey)}
+		        	return <div className = "menu-item menu-item menu-sub-item"
+		            	onClick = {_this.handleAddNewView.bind(_this, type)}
 		            	key ={typeKey}>
-		            	<span className = {"small icon icon-geo-circle " +
-		            		(typeKey === _this.state.type ? 'green' : 'hovershow')}/>
 		            	<span className = {"large icon view-icon " + type.icon}/>
 		            	{type.type}
 		            </div>

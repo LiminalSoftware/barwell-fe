@@ -26,7 +26,6 @@ import createTabularStore from './TabularStore.jsx'
 import fieldTypes from "../../fields"
 import TabularBodyWrapper from "./TabularBodyWrapper"
 import TableMixin from '../../TableMixin'
-import Overlay from './Overlay'
 import ContextMenu from './ContextMenu'
 import DetailBar from '../../../DetailBar'
 import ScrollBar from "./ScrollBar"
@@ -235,7 +234,7 @@ var TabularPane = React.createClass ({
 		for (var row = sel.top; row <= sel.bottom; row++) {
 			var obj = this.getValueAt(row)
 			var selector = {}
-			if (!(pk in obj)) return
+			if (!(pk in obj)) return // what about cid?
 			else selector[pk] = obj[pk]
 			selectors.push(selector)
 		}
@@ -583,10 +582,13 @@ var TabularPane = React.createClass ({
 
 				model = {model}
 				view = {view}
-				pointer = {ptr}
+				pointer = {this.state.pointer}
+				selection = {this.state.selection}
+				copyarea = {this.state.copyarea}
 				store = {_this.store}
 				fixedColumns = {view.data.fixedCols}
 				visibleColumns = {view.data.floatCols}
+				columns = {view.data.visibleColumns}
 				sorting = {view.data.sorting}
 				focused = {focused}>
 
@@ -599,60 +601,7 @@ var TabularPane = React.createClass ({
 					copySelection = {this.copySelectbion} />
 				: null}
 
-			<Overlay
-				columns = {columns}
-        		numHiddenCols = {_this.state.hiddenCols}
-				className = {" pointer" + (focused ? " focused" : "")}
-				rowOffset = {this.state.rowOffset}
-				ref = "pointer"
-				{...this.props}
-				position = {sel}
-				fudge = {{left: -2.25, top: -1.25, height: 2.5, width: 3.5}} />
-
-			<Overlay
-				columns = {columns}
-        		numHiddenCols = {_this.state.hiddenCols}
-				className = "pointer-outer"
-				rowOffset = {this.state.rowOffset}
-				ref = "outerPointer"
-				{...this.props}
-				position = {sel}
-				fudge = {{left: -4.25, top: -3.25, height: 6.5, width: 7.5}}/>
-
-			<Overlay
-				columns = {columns}
-        		numHiddenCols = {_this.state.hiddenCols}
-				className = {" selection " + (_this.isFocused() ? " focused" : "")}
-				rowOffset = {this.state.rowOffset}
-				ref = "selection"
-				{...this.props}
-				position = {sel}
-				fudge = {{left: -4.25, top: -3.25, height: 6.5, width: 7.5}}/>
-
-			<Overlay
-				columns = {columns}
-        		numHiddenCols = {_this.state.hiddenCols}
-				className = {showJaggedEdge ? " jagged-edge " : ""}
-				rowOffset = {this.state.rowOffset}
-				ref = "jaggedEdge"
-				{...this.props}
-				position = {{
-					left: view.data.fixedCols.length,
-					width: '10px',
-					top: sel.top,
-					bottom: sel.bottom
-				}}
-				fudge = {{left: -3, width: 10 }} />
-
-			<Overlay
-				columns = {columns}
-        		numHiddenCols = {_this.state.hiddenCols}
-				rowOffset = {this.state.rowOffset}
-				className = {" copyarea running marching-ants " + (_this.isFocused() ? " focused" : "")}
-				ref="copyarea"
-				{...this.props}
-				position = {cpy}
-				fudge = {{left: -0.75, top: -0.75, height: 1.25, width: 0.75}}/>
+			
 
 		</TabularBodyWrapper>
 

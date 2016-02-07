@@ -56,9 +56,10 @@ var TableMixin = {
 		var direction
 		var ptr = this.state.pointer
 		var mode = e.shiftKey ? 'SHIFT' : 'MOVE';
-
 		var left = ptr.left
 		var top = ptr.top
+
+		var ctrlKey = (e.ctrlKey || e.metaKey)
 
 		if (!this.isFocused() || (
 			this.state.editing &&
@@ -66,15 +67,15 @@ var TableMixin = {
 			e.keyCode !== keycodes.TAB
 		)) return;
 
-		if (e.keyCode == keycodes.DELETE) {
+		else if (e.keyCode == keycodes.DELETE) {
 			this.clearSelection();
 			return;
 		}
-		if (e.keyCode == keycodes.ESC) {
+		else if (e.keyCode == keycodes.ESC) {
 			this.setState({copyarea: null})
 			return;
 		}
-		if (e.keyCode == keycodes.C && e.ctrlKey) {
+		else if (e.keyCode == keycodes.C && ctrlKey) {
 			this.copySelection()
 			e.preventDefault()
 			return;
@@ -84,17 +85,17 @@ var TableMixin = {
 		// 	e.preventDefault()
 		// 	return;
 		// }
-		if (e.keyCode == keycodes.PLUS && e.ctrlKey && e.shiftKey) {
+		else if (e.keyCode == keycodes.PLUS && ctrlKey && e.shiftKey) {
 			this.insertRecord()
 			e.preventDefault()
 			return;
 		}
-		if (e.keyCode == keycodes.MINUS && e.ctrlKey && e.shiftKey) {
+		else if (e.keyCode == keycodes.MINUS && ctrlKey && e.shiftKey) {
 			this.deleteRecords()
 			e.preventDefault()
 			return;
 		}
-		if (e.keyCode == keycodes.TAB) {
+		else if (e.keyCode == keycodes.TAB) {
 			this.move('TAB', e.shiftKey)
 			e.preventDefault()
 			return;
@@ -129,7 +130,11 @@ var TableMixin = {
 			e.preventDefault()
 			return;
 		}
-		else if (e.keyCode >= 48 && e.keyCode <= 90 && !e.ctrlKey) {
+		else if ((
+				(e.keyCode >= 48 && e.keyCode <= 90) || 
+				(e.keyCode >= 96 && e.keyCode <= 111) ||
+				(e.keyCode >= 186 && e.keyCode <= 222)
+			) && !ctrlKey) {
 			return this.editCell(e);
 		}
 	}

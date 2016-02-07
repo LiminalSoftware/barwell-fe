@@ -5,9 +5,11 @@ import _ from "underscore"
 var NUM_LINES = 50
 
 var AddNewRowBar = React.createClass ({
-	shouldComponentUpdate: function (nextProps) {
-		return this.props.width !== nextProps.width
-	},
+	// shouldComponentUpdate: function (nextProps) {
+	// 	return this.props.width !== nextProps.width ||
+	// 		this.props.rowCount !== nextProps.rowCount ||
+	// 		this.props.rowOffset !== nextProps.rowOffset
+	// },
 
 	handleAddRecord: function (e) {
 		console.log('handleAddRecord')
@@ -20,15 +22,13 @@ var AddNewRowBar = React.createClass ({
 		var view = this.props.view
 		var model = this.props.model
 		var geo = view.data.geometry
-		var rowCount = this.props.rowCount
 
     	var newRowBarStyle = {
-			top: ((rowCount) * geo.rowHeight) + 'px',
+			top: ((this.props.rowCount - (this.props.rowOffset || 0)) * geo.rowHeight) + 'px',
 			left: 0,
-			height: (1.5 * geo.rowHeight  + 'px'),
+			height: (2 * geo.rowHeight  + 'px'),
 			lineHeight: (1 * geo.rowHeight  + 'px'),
-			width: this.props.width + 'px',
-			transform: 'translateZ(0)'
+			width: this.props.width + 'px'
 		}
 
 		return <div style = {newRowBarStyle}

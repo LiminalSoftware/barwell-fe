@@ -22,7 +22,7 @@ var ModelContext = React.createClass ({
 		
 		var model = this.props.model
 
-		return <ul className = "context-menu">
+		return <ul className = "pop-down-menu">
 			<li>Rename model</li>
 			<li>Delete model</li>
 		</ul>
