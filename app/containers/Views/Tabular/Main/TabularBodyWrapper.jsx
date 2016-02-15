@@ -55,19 +55,20 @@ var TabularBodyWrapper = React.createClass ({
 		this.refs.rhs.forceUpdate()
 		this.refs.lhsHead.forceUpdate()
 		this.refs.rhsHead.forceUpdate()
-		// this.refs.FakeLines.forceUpdate()
-		// this.refs.addNew.forceUpdate()
 	},
 
 	componentWillMount: function () {
 		ViewStore.addChangeListener(this._onChange)
+		FocusStore.addChangeListener(this._onChange)
 		this.props.store.addChangeListener(this._onChange)
+		
 		this.debounceFetch = _.debounce(this.fetch, FETCH_DEBOUNCE)
 		this.fetch(true)
 	},
 
 	componentWillUnmount: function () {
 		ViewStore.removeChangeListener(this._onChange)
+		FocusStore.removeChangeListener(this._onChange)
 		this.props.store.removeChangeListener(this._onChange)
 	},
 
@@ -226,6 +227,7 @@ var TabularBodyWrapper = React.createClass ({
 					offsetCols = {0}
 					fetchStart = {fetchStart}
 					fetchEnd = {fetchEnd}
+					focused = {focused}
 					style = {{
 						left: 0,
 						top: 0,
@@ -294,7 +296,7 @@ var TabularBodyWrapper = React.createClass ({
 						ref = "pointer"
 						{...this.props}
 						position = {sel}
-						fudge = {{left: -2.25, top: -1.25, height: 3.5, width: 3.5}} />
+						fudge = {{left: -2.25, top: -0.25, height: 2.5, width: 3.5}} />
 
 					<Overlay
 						columns = {this.props.columns}
@@ -304,8 +306,8 @@ var TabularBodyWrapper = React.createClass ({
 						ref = "outerPointer"
 						{...this.props}
 						position = {sel}
-						fudge = {{left: -4.25, top: -3.25, height: 7.5, width: 7.5}}/>
-
+						fudge = {{left: -3.75, top: -2.75, height: 7.5, width: 6.5}}/>
+					
 
 					<Overlay
 						columns = {this.props.columns}
@@ -330,7 +332,7 @@ var TabularBodyWrapper = React.createClass ({
 						ref="copyarea"
 						{...this.props}
 						position = {cpy}
-						fudge = {{left: -0.75, top: -0.75, height: 1.25, width: 0.75}}/>
+						fudge = {{left: -1.25, top: 0, height: 1, width: 1.25}}/>
 				</div>
 			</div>
 
@@ -346,10 +348,11 @@ var TabularBodyWrapper = React.createClass ({
 				<AddNewRowBar {...this.props} rowCount = {rowCount} rowOffset = {this.props.rowOffset}/>
 			</div>
 
-			<div className = "wrapper underlay"
+			<div className = {"wrapper underlay underlay--" + (focused ? "focused" : "blurred")}
 				style = {{
 					top: geo.headerHeight - 1 - 2 + 'px',
 					bottom: 0,
+					maxHeight: rowCount * geo.rowHeight + 'px',
 					left: geo.leftGutter + 'px',
 					width: (fixedWidth + floatWidth + geo.labelWidth - this.props.hiddenColWidth) + 'px',
 					overflow: 'hidden',
@@ -372,16 +375,13 @@ var TabularBodyWrapper = React.createClass ({
 						ref = "selection"
 						{...this.props}
 						position = {sel}
-						fudge = {{left: -4.25, top: -3.25, height: 6.5, width: 7.5}}/>
-
-					
-				
+						fudge = {{left: -4.75, top: -2.75, height: 7.5, width: 8.5}}/>
 				</div>
 			</div>
 
 
 			{/*RHS OUTER*/}
-			<div className = "rhs-h-scroll-outer wrapper"
+			<div className = {"wrapper " + " rhs-h-scroll-outer--" + (focused ? "focused" : "blurred")}
 				style = {{
 					top: 0,
 					bottom: 0,
@@ -426,6 +426,7 @@ var TabularBodyWrapper = React.createClass ({
 							offsetCols = {view.data.fixedCols.length}
 							fetchStart = {fetchStart}
 							fetchEnd = {fetchEnd}
+							focused = {focused}
 							style = {{
 								left: 0,
 								top: 0,

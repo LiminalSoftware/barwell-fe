@@ -7,22 +7,35 @@ import modelActionCreators from "./actions/modelActionCreators.jsx"
 
 var blurOnClickMixin = {
 
-  handleBlur: function () {
+  handleBlur: function (e) {
     this.setState({
       open: false,
       editing: false,
       context: false
     })
-    modelActionCreators.setFocus('view')
-    document.removeEventListener('keyup', this.handleKeyPress)
-    document.removeEventListener('click', this.handleBlur)
   },
 
-  handleOpen: function () {
+  handleOpen: function (e) {
     this.setState({open: true})
     modelActionCreators.setFocus('view-config')
-    document.addEventListener('keyup', this.handleKeyPress)
-    document.addEventListener('click', this.handleBlur)
+    e.preventDefault()
+  },
+
+  componentWillUpdate: function (nextProps, nextState) {
+    var state = this.state
+    if ((nextState.editing || nextState.open || nextState.context) && !(state.editing || state.open || state.context)) {
+      document.addEventListener('keyup', this.handleKeyPress)
+      document.addEventListener('click', this.handleBlur)
+    } else if (!(nextState.editing || nextState.open || nextState.context) && (state.editing || state.open || state.context)) {
+      document.removeEventListener('keyup', this.handleKeyPress)
+      document.removeEventListener('click', this.handleBlur)
+    }
+  },
+
+  handleContext: function (e) {
+    this.setState({context: true})
+    modelActionCreators.setFocus('view-config')
+    e.preventDefault()
   },
 
   componentWillUnmount: function () {
@@ -30,8 +43,9 @@ var blurOnClickMixin = {
     document.removeEventListener('click', this.handleBlur)
   },
 
-  handleKeyPress: function (event) {
-    if (event.keyCode === constant.keycodes.ESC) this.handleBlur()
+  handleKeyPress: function (e) {
+    if (e.keyCode === constant.keycodes.ESC) this.handleBlur()
+    if (e.keyCode === constant.keycodes.ENTER && this.handleCommit) this.handleCommit()
   },
 
   clickTrap: util.clickTrap

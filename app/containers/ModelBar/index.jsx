@@ -14,9 +14,13 @@ import MetasheetConst from '../../constants/MetasheetConstants'
 
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
+import blurOnClickMixin from '../../blurOnClickMixin'
+
 import viewTypes from '../Views/viewTypes'
 import Notifier from '../Notifier'
 import ModelContext from './ModelContext'
+
+import util from '../../util/util'
 
 var ModelBar = React.createClass({
 
@@ -41,8 +45,6 @@ var ModelBar = React.createClass({
 			editing: false
 		}
 	},
-
-	
 
 	render: function () {
 		var _this = this;
@@ -95,6 +97,8 @@ var ModelList = React.createClass ({
 
 var ModelLink = React.createClass ({
 
+	mixins: [blurOnClickMixin],
+
 	getInitialState: function () {
 		return {
 			renaming: false,
@@ -106,50 +110,35 @@ var ModelLink = React.createClass ({
 		this.forceUpdate()
 	},
 
-	commitChanges: function () {
+	handleCommit: function () {
 		var model = this.props.model;
 		model.model = this.state.name
 		modelActionCreators.createModel(model)
 		this.revert()
 	},
 
-	handleBlur: function () {
-		this.revert()
-	},
-
-	edit: function () {
+	handleEdit: function () {
 		var model = this.props.model;
 		if (this.state.renaming) return
 		this.setState({
-			renaming: true,
+			editing: true,
 			context: false,
 			name: model.model
-		}, function () {
-			React.findDOMNode(this.refs.renamer).focus();
 		})
-		document.addEventListener('keyup', this.handleKeyPress)
 	},
 
 	revert: function () {
 		document.removeEventListener('keyup', this.handleKeyPress)
-		this.setState({renaming: false})
+		this.setState({editing: false})
 	},
 
-	handleKeyPress: function (event) {
-		if (event.keyCode === 13) this.commitChanges()
-	},
-
-	handleNameUpdate: function (event) {
-		var name = event.target.value
+	handleNameUpdate: function (e) {
+		var name = e.target.value
 		this.setState({name: name})
 	},
 
-	handleDelete: function (event) {
-
-	},
-
-	showContext: function () {
-		this.setState({context: true})
+	doDelete: function (e) {
+		modelActionCreators.destroy('model', true, this.props.model)
 	},
 
 	render: function () {
@@ -159,19 +148,23 @@ var ModelLink = React.createClass ({
 		var workspace_id = model.workspace_id
 		var views
 
-		var modelDisplay = (!!this.state.renaming) ?
+		var modelDisplay = (!!this.state.editing) ?
 			(<input className="renamer header-renamer" ref="renamer" value={this.state.name} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/>) :
 			(<span>{model.model}</span>) ;
 
 		return <li
-			className={(this.props.active ? "active " : "") + (this.props.editing ? " editmode" : "")}>
+			className={(this.props.active ? "active " : "") + (this.props.editing ? " editmode" : "")}
+			onClick = {util.clickTrap}>
 
 			<Link to = {`/workspace/${workspace_id}/model/${model_id}`}
-				onContextMenu = {this.showContext}
-				onDoubleClick = {this.edit}>
+				onContextMenu = {this.handleContext}
+				onDoubleClick = {this.handleEdit}>
 				{modelDisplay}
 			</Link>
-			{this.state.context ? <ModelContext model = {this.props.model}/> : null}
+			{this.state.context ? <ModelContext 
+				model = {this.props.model} 
+				_rename = {this.handleEdit}
+				_delete = {this.doDelete}/> : null}
 		</li>
 	}
 })

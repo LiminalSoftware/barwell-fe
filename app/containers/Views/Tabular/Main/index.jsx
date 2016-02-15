@@ -182,15 +182,16 @@ var TabularPane = React.createClass ({
 	},
 
 	editCell: function (e) {
-		console.log("index.editCell")
 		var pos = this.state.pointer
 		var fixedCols = this.props.view.data.fixedCols
 		var side = (pos.left >= fixedCols.length) ? 'rhs' : 'lhs'
+		var field = this.getFieldAt(pos)
+		if (!field.handleEdit) return
 		this.setState({
 			editing: true,
 			copyarea: null
 		})
-		this.getFieldAt(pos).handleEdit(e);
+		field.handleEdit(e);
 	},
 
 	addRecord: function () {
@@ -211,14 +212,13 @@ var TabularPane = React.createClass ({
 		this.blurPointer()
 		modelActionCreators.insertRecord(this.props.model, obj, position)
 		this.setState({copyarea: null})
-		this.forceUpdate()
 	},
 
 	clearSelection: function () {
 		var sel = this.state.selection
 		for (var r = sel.top; r <= sel.bottom; r++) {
 			for (var c = sel.left; c <= sel.right; c++) {
-				this.getFieldAt({top: r, left: c}).commitValue(null);
+				this.getFieldAt({top: r, left: c}).clear();
 			}
 		}
 	},
@@ -242,7 +242,6 @@ var TabularPane = React.createClass ({
 			modelActionCreators.deleteRecord(model, selector)
 		})
 		this.setState({copyarea: null})
-		this.forceUpdate()
 	},
 
 	copySelection: function () {

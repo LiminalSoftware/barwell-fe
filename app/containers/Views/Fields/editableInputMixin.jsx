@@ -18,6 +18,15 @@ var SELECTED_LIGHTNESS = 0.97
 
 var editableInputMixin = {
 
+	shouldComponentUpdate: function (nextProps, nextState) {
+		return nextProps.value !== this.props.value ||
+			nextState.value !== this.state.value ||
+			nextState.searchValue !== this.state.searchValue ||
+			nextProps.config !== this.props.config ||
+			nextState.selected !== this.state.selected ||
+			nextState.editing !== this.state.editing
+	},
+
 	setValue: function (value) {
 		value = value || ''
 		value = (this.parser) ? this.parser(value) : value;
@@ -34,18 +43,7 @@ var editableInputMixin = {
 		$(document.body).off('keydown', this.onKey)
 	},
 
-	handleKeyPress: function (event) {
-		if (event.keyCode === constant.keycodes.ESC) this.cancelChanges()
-		if (event.keyCode === constant.keycodes.ENTER) {
-			this.commitChanges()
-		}
-		if (event.keyCode === constant.keycodes.TAB) {
-			this.commitChanges()
-		}
-	},
-
 	cancelChanges: function () {
-		console.log('cancel')
 		this.setState({
 			value: this.props.value
 		})
@@ -53,7 +51,6 @@ var editableInputMixin = {
 	},
 
 	revert: function () {
-		document.removeEventListener('keyup', this.handleKeyPress)
 		this.setState({
 			editing: false
 		})
@@ -63,7 +60,6 @@ var editableInputMixin = {
 	handleEdit: function (event) {
 		var prettyValue = this.format ? this.format(this.props.value) : this.props.value
 		var ordinal = event.keyCode
-		document.addEventListener('keyup', this.handleKeyPress)
 		this.setState({editing: true})
 
 		if (ordinal >= 48 && ordinal <= 90)
@@ -79,6 +75,17 @@ var editableInputMixin = {
 		this.props._handleDetail()
 		event.preventDefault()
 		event.stopPropagation()
+	},
+
+	handleKeyPress: function (e) {
+		console.log('keypress: ' + e.keyCode)
+		if (e.keyCode === constant.keycodes.ESC) this.cancelChanges()
+		if (e.keyCode === constant.keycodes.ENTER) {
+			this.commitChanges()
+		}
+		if (e.keyCode === constant.keycodes.TAB) {
+			this.commitChanges()
+		}
 	},
 
 	render: function () {
@@ -135,7 +142,9 @@ var editableInputMixin = {
 				onChange = {this.handleChange} />
 			:
 			<span style = {cellStyle} className = {"table-cell-inner " + 
-				(this.state.selected ? " table-cell-inner-selected" : "")}
+				(this.state.selected ? " table-cell-inner-selected" : "") +
+				(this.props.sorted ? "table-cell-inner-sorted" : "")
+				}
 				onPaste = {this.props._handlePaste}>
 				{this.format ?
 					this.format(this.state.value) :

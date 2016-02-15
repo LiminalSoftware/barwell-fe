@@ -138,6 +138,7 @@ var TabularTBody = React.createClass ({
 		// console.log('state: (' + this.state.start + ', ' + this.state.end + 
 		// 	') ; props: (' + this.state.target + ', ' + (this.state.target + VISIBLE_ROWS) + ')')
 		if (nextProps.view !== this.props.view) return true
+		if (nextProps.focused !== this.props.focused) return true
 		return !this.isFullyPainted(this.state.start, this.state.end, this.state.target)
 	},
 
@@ -205,7 +206,7 @@ var TabularTBody = React.createClass ({
 		var floatOffset = this.props.floatOffset
 		
 		return <div
-			className = "tabular-body"
+			className = {"tabular-body " + (this.props.focused ? ' focused ' : ' gray-out ')}
 			onPaste = {this.props._handlePaste}
 			onMouseDown = {this.props._handleClick}
 			onDoubleClick = {this.props._handleEdit}

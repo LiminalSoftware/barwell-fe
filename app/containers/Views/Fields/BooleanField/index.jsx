@@ -22,6 +22,12 @@ var CheckboxElement = React.createClass({
 
 	revert: _.noop,
 
+	// shouldComponentUpdate: function (nextProps, nextState) {
+	// 	return nextProps.value !== this.props.value ||
+	// 		nextProps.config !== this.props.config ||
+	// 		nextState.selected !== this.state.selected
+	// },
+
 	handleEdit: function () {
 		this.toggle()
 		this.props._handleBlur()
@@ -63,13 +69,12 @@ var CheckboxElement = React.createClass({
 
 		cellStyle.lineHeight = this.props.rowHeight + 'px'
 		cellStyle.textAlign = 'center'
-		if (this.state.selected) {
-			cellStyle.zIndex = 130
-			cellStyle.background = 'white'
-		}
 
 		return <span {...this.props} >
-			<span style = {cellStyle} className = "table-cell-inner">
+			<span style = {cellStyle} className = {"table-cell-inner " + 
+				(this.state.selected ? " table-cell-inner-selected " : "") +
+				(this.props.sorted ? " table-cell-inner-sorted" : "")
+				}>
 				<span className = {"checkbox-surround " + (this.state.selected ? ' checkbox-surround-selected' : '')}
 					 onClick={this.handleClick}>
 					<span className={"check green icon " + (this.state.value ? "icon-kub-approve" : "")}>

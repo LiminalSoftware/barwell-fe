@@ -11,8 +11,8 @@ import $ from "jquery"
 
 import modelActionCreators from "../../actions/modelActionCreators"
 
-import hasManyField from './Fields/hasManyField'
-import hasOneField from './Fields/hasOneField'
+import hasManyField from './Fields/HasManyField'
+import hasOneField from './Fields/HasOneField'
 import colorField from './Fields/ColorField'
 import integerField from './Fields/integerField'
 import decimalField from './Fields/DecimalField'

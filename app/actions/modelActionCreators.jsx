@@ -2,7 +2,10 @@ import MetasheetDispatcher from "../dispatcher/MetasheetDispatcher"
 import webUtils from "../util/MetasheetWebAPI.jsx"
 import _ from 'underscore'
 import ModelStore from '../stores/ModelStore'
+import RelationStore from '../stores/RelationStore'
 import groomView from '../containers/Views/groomView'
+
+
 
 var modelActions = {
 
@@ -70,41 +73,52 @@ var modelActions = {
 		})
 	},
 
-	moveHasMany: function (localKeyId, relatedKeyId, obj, rObj) {
-		var keycomps = KeycompStore.query({key_id: localKeyId}, 'ord')
-		var related_keycomps = KeycompStore.query({key_id: relatedKeyId}, 'ord')
-		var relatedKey = KeyStore.get(relatedKeyId)
-		var localKey = KeyStore.get(localKeyId)
-		var relatedModel = ModelStore.get(relatedKey.model_id)
-		var localModel = ModelStore.get(localKey.model_id)
-		var selector = _.pick(rObj, relatedModel._pk)
+
+
+	moveHasMany: function (relationId, thisObj, relObj) {
+		var relation = RelationStore.get(relationId)
+		var hasOneRelation = RelationStore.get(relation.type === 'HAS_ONE' ? 
+			relation.relation_id : relation.related_relation_id)
+		var hasManyRelation = RelationStore.get(relation.type === 'HAS_ONE' ? 
+			relation.related_relation_id : relation.relation_id)
+		var hasOneObj = relation.type === 'HAS_MANY' ? relObj : thisObj
+		var hasManyObj = relation.type === 'HAS_MANY' ? thisObj : relObj
+		var hasOneKey = KeyStore.get(hasOneRelation.key_id)
+		var hasManyKey = KeyStore.get(hasManyRelation.key_id)
+		var hasOneModel = ModelStore.get(hasOneKey.model_id)
+		var hasOneKeycomps = KeycompStore.query({key_id: hasOneKey.key_id})
+		var hasManyKeycomps = KeycompStore.query({key_id: hasManyKey.key_id})
+
+		var selector = _.pick(hasOneObj, hasOneModel._pk)
 		var patch = {}
 
-		var relatedKeyAttrs = []
-		var localKeyAttrs = []
+		var hasOneKeyAttrs = []
+		var hasManyKeyAttrs = []
 
-		keycomps.forEach(function (kc, i) {
-			var rkcId = 'a' + related_keycomps[i].attribute_id
+		hasManyKeycomps.forEach(function (kc, i) {
+			var rkcId = 'a' + hasOneKeycomps[i].attribute_id
 			var kcId =  'a' + kc.attribute_id
-			relatedKeyAttrs.push(rkcId)
-			localKeyAttrs.push(kcId)
-			patch[rkcId] = obj[kcId]
+			hasOneKeyAttrs.push(rkcId)
+			hasManyKeyAttrs.push(kcId)
+			patch[rkcId] = hasManyObj[kcId]
 		});
 
-		var extras = {
-			relatedObject: rObj,
-			relatedKeyAttrs: relatedKeyAttrs,
-			localKeyAttrs: localKeyAttrs
-		}
+		patch['r' + hasOneRelation.relation_id] = JSON.parse(JSON.stringify(hasOneObj))
 
-		modelActions.patchRecords(relatedModel, patch, selector, extras)
+		var extras = {
+			hasOneObject: hasOneObj,
+			hasOneKeyAttrs: hasOneKeyAttrs,
+			hasManyKeyAttrs: hasManyKeyAttrs
+		}
+		modelActions.patchRecords(hasOneModel, patch, selector, extras)
 	},
 
 	patchRecords: function (model, patch, selector, extras) {
 		var model_id = model.model_id
 		var message = {}
+		var rx = /^a\d+$/i
 		message.actionType = 'M' + model.model_id + '_UPDATE'
-		message.update = patch
+		message.update = _.clone(patch)
 		message.selector = selector
 		message = _.extend(message, extras)
 		MetasheetDispatcher.dispatch(message)
@@ -114,10 +128,14 @@ var modelActions = {
 		else url += '?' + _.map(selector, function (value, key) {
 			return key + '=eq.' + value;
 		}).join('&')
+		
+		patch = _.pick(patch, (v,k)=> rx.test(k))
 
 		webUtils.ajax('PATCH', url, JSON.stringify(patch), {"Prefer": 'return=representation'}).then(function (results) {
+			var message = {}
 			message.actionType = 'M' + model.model_id + '_RECEIVEUPDATE'
 			message.update = results.data
+			message.selector = selector
 			MetasheetDispatcher.dispatch(message)
 		})
 	},
@@ -152,6 +170,31 @@ var modelActions = {
 
 		});
 	},
+
+	fetchSearchRecords: function (relationId, label, term, _offset, _limit) {
+		var relation = RelationStore.get(relationId)
+		var oppModel = ModelStore.get(relation.related_model_id)
+		var offset = _offset || 0
+		var limit = _limit || 20
+		var url = 'https://api.metasheet.io/m' + oppModel.model_id + '?' + label + '=ilike.*' + term + '*';
+
+		var header = {
+			'Range-Unit': 'items',
+			'Range': (offset + '-' + (offset + limit))
+		}
+
+		return webUtils.ajax('GET', url, null, header).then(function (results) {
+			var range = results.xhr.getResponseHeader('Content-Range')
+			var rangeParts = range.split(/[-/]/)
+			var res = {}
+			res.searchRecords = results.data
+			res.startIndex = parseInt(rangeParts[0])
+			res.endIndex = parseInt(rangeParts[1])
+			res.count = parseInt(rangeParts[2])
+			return res
+		})
+	},
+
 
 	fetchLevels: function (view, dimension, offset, limit) {
 		var view_id = view.view_id

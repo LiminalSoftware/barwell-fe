@@ -54,6 +54,9 @@ var TextChoice = React.createClass({
             top: "100%"
           }}>
 
+          <span className = "pop-down-pointer-outer"/>
+          <span className = "pop-down-pointer-inner"/>
+
           <li className = "bottom-divider" >
             Conditionally bold text
           </li>

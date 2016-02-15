@@ -24,7 +24,7 @@ var TabularTR = React.createClass({
 			// console.log('TabualrTR.shouldComponentUpdate: oldProps.view !== newProps.view')
 			return true
 		}
-		// if (oldProps.row !== newProps.row) return true
+		if (oldProps.row !== newProps.row) return true
 		return this.props.columns.some(function (col) {
 			return newProps.obj[col.column_id] !== oldProps.obj[col.column_id]
 		})
@@ -59,13 +59,6 @@ var TabularTR = React.createClass({
 		}
 		
 		var left = _this.props.hasRowLabel ? geo.labelWidth : 0;
-		var prevSort = false;
-		var prevFixed = true;
-
-		// var labelCellStyle = _.clone(defaultCellStyle)
-		// labelCellStyle.paddingLeft = '10px'
-		// labelCellStyle.lineHeight = geo.rowHeight + 'px'
-		// labelCellStyle.width = geo.labelWidth + 'px'
 
 		selector[model._pk] = obj[model._pk]
 
@@ -111,6 +104,7 @@ var TabularTR = React.createClass({
 					cellKey: cellKey,
 					ref: cellKey,
 					className: 'table-cell',
+					sorted: (col.attribute_id && (col.attribute_id in view.data.sortIndex)),
 					style: {
 						left: (left) + 'px',
 						width: (col.width) + 'px'

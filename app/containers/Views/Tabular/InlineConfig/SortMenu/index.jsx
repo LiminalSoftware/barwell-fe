@@ -32,6 +32,7 @@ var SortMenu = React.createClass({
 		var choice = e.target.value
 		var sortList = _.clone(this.state.sortList)
 		var attr = {attribute_id: choice, ascending: true}
+		if (choice == 0) return
 		sortList.push(attr)
 		this.setState({sortList: sortList})
 	},
@@ -70,7 +71,7 @@ var SortMenu = React.createClass({
 		var sortList = this.state.sortList
 		var sortAttrs = _.pluck(sortList, 'attribute_id').map(parseInt)
 		var sortPreview
-		var attrSelections = [<option key = {0} value = {null}>-- Select attribute --</option>]
+		var attrSelections = [<option key = {0} value = {0}>-- Select attribute --</option>]
 
 		if (sortList.length === 1) sortPreview = <SortDetail 
 			sortSpec = {sortList[0]}

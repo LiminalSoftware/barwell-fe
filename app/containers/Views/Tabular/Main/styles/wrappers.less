@@ -37,9 +37,9 @@
 }
 
 
-// .blurred {
-// 	.gray-out;
-// }
+.blurred {
+	
+}
 
 .tabular-body {
 	.wrapper;
@@ -65,8 +65,12 @@
 	.force-layer;
 }
 
-.rhs-h-scroll-outer {
+.rhs-h-scroll-outer--focused {
 	border-left: 1px solid @purple4;
+}
+
+.rhs-h-scroll-outer--blurred {
+	border-left: 1px solid @gray2;
 }
 
 
@@ -105,6 +109,13 @@
 
 .underlay {
 	background: white;
-	border-right: 1px solid @purple4;
 	.transition(width cubic-bezier(.1,.85,.5,1) 150ms);
+}
+
+.underlay--focused {
+	border-right: 1px solid @purple4;
+}
+
+.underlay--blurred {
+	border-right: 1px solid @gray2;
 }

@@ -31,7 +31,9 @@ var TabularTHead = React.createClass ({
 		}
 
 		return <div
-			className = {"tabular-view-header wrapper " + this.props.side + '-header'}
+			className = {"tabular-view-header wrapper " 
+				+ this.props.side + '-header--' + (this.props.focused ? 'focused' : 'blurred') 
+				+ ' tabular-view-header--' + (this.props.focused ? 'focused' : 'blurred')}
 			style = {style}
 			ref = {this.props.side + "-thead"}>
 			{this.props.hasRowLabel ?
@@ -47,7 +49,7 @@ var TabularTHead = React.createClass ({
 				var el = <TabularTH key={"th-" + col.attribute_id}
 					scrollTop = {_this.props.scrollTop}
 					column = {col}
-					sorted = {_.contains(sortAttrs, col.attribute_id)}
+					sorted = {col.attribute_id && (col.attribute_id in view.data.sortIndex)}
 					view = {view}
 					idx = {idx}
 					left = {left}/>;

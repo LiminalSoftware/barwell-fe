@@ -1,17 +1,11 @@
 import React from "react"
 import _ from "underscore"
 
+import constant from "../../../constants/MetasheetConstants"
+
 import modelActionCreators from "../../../actions/modelActionCreators"
 
 var commitMixin = {
-
-	shouldComponentUpdate: function (nextProps, nextState) {
-		return nextProps.value !== this.props.value ||
-			nextState.value !== this.state.value ||
-			nextProps.config !== this.props.config ||
-			nextState.selected !== this.state.selected ||
-			nextState.editing !== this.state.editing
-	},
 
 	commitValue: function (value) {
 		var config = this.props.config
@@ -35,8 +29,12 @@ var commitMixin = {
 	},
 
 	componentWillReceiveProps: function (nextProps) {
-		if (!this.state.editing) 
+		if (!this.state.editing)
 			this.setState({value: this.validator(nextProps.value)})
+	},
+
+	componentWillUpdate: function () {
+
 	},
 
 	getInitialState: function () {
@@ -44,6 +42,8 @@ var commitMixin = {
 			value: this.validator(this.props.value)
 		}
 	},
+
+	
 }
 
 export default commitMixin

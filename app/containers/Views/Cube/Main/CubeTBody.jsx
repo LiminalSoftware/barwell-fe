@@ -18,12 +18,6 @@ import createCubeStore from './CubeStore.jsx'
 
 var CubeTBody = React.createClass ({
 
-	getCalibration: function () {
-		if (!this.isMounted()) return;
-		return ($(React.findDOMNode(this.refs.tbody)).get(0).scrollHeight /
-				$(React.findDOMNode(this.refs.tbody)).children().length)
-	},
-
 	shouldComponentUpdate: function (props, state) {
 		var old = this.props
 		return props.vStart !== old.vStart ||
@@ -131,7 +125,7 @@ var CubeTBody = React.createClass ({
 		store.setStart('columns', hStart)
 	}
 })
-//
+
 // export default CubeTBody
 //
 // var CubeTR = React.createClass({

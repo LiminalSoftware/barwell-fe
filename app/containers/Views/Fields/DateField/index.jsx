@@ -13,6 +13,8 @@ import commitMixin from '../commitMixin'
 import editableInputMixin from '../editableInputMixin'
 import selectableMixin from '../selectableMixin'
 import DateValidatorMixin from './dateValidatorMixin'
+import keyPressMixin from '../keyPressMixin'
+
 import DateDetail from "./detail"
 
 import TextFieldConfig from "../textFieldConfig"
@@ -91,7 +93,7 @@ var dateField = {
 
 	element: React.createClass({
 
-		mixins: [editableInputMixin, DateValidatorMixin, commitMixin, selectableMixin],
+		mixins: [editableInputMixin, DateValidatorMixin, commitMixin, selectableMixin, keyPressMixin],
 
 		format: function (value) {
 			var config = this.props.config || {}

@@ -120,9 +120,11 @@ var createTabularStore = function (view) {
                 if (type === relUpperLabel + '_UPDATE') {
                     _records.forEach(function (rec) {
                         var pp = payload
+                        // filter the bubble out of its previous locaiton
                         rec['r' + rel.relation_id] = _.reject(rec['r' + rel.relation_id], _.matcher(payload.selector))
-                        if (_.isEqual(util.choose(rec, payload.localKeyAttrs), util.choose(payload.update, payload.relatedKeyAttrs))) {
-                          rec['r' + rel.relation_id].push(_.extend(payload.relatedObject, payload.update))
+                        // add it to its new home
+                        if (_.isEqual(util.choose(rec, payload.hasManyKeyAttrs), util.choose(payload.update, payload.hasOneKeyAttrs))) {
+                          rec['r' + rel.relation_id].push(_.extend(payload.hasOneObject, payload.update))
                         }
                     })
                     TabularStore.emitChange()

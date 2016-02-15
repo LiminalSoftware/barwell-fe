@@ -26,7 +26,7 @@ var AddNewRowBar = React.createClass ({
     	var newRowBarStyle = {
 			top: ((this.props.rowCount - (this.props.rowOffset || 0)) * geo.rowHeight) + 'px',
 			left: 0,
-			height: (2 * geo.rowHeight  + 'px'),
+			height: (1 * geo.rowHeight  + 'px'),
 			lineHeight: (1 * geo.rowHeight  + 'px'),
 			width: this.props.width + 'px'
 		}

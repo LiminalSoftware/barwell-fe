@@ -14,17 +14,53 @@ import MetasheetConst from '../../constants/MetasheetConstants'
 
 import viewTypes from '../Views/viewTypes'
 import Notifier from '../Notifier'
+import util from '../../util/util'
 
 var ModelContext = React.createClass ({
 
+	getInitialState: function () {
+		return {
+			deleting: false
+		}
+	},
+
+
+	handleClickDelete: function () {
+		this.setState({deleting: true})
+	},
+
+	handleCancelDelete: function () {
+		this.setState({deleting: false})
+	},
 
 	render: function() {
 		
 		var model = this.props.model
 
-		return <ul className = "pop-down-menu">
-			<li>Rename model</li>
-			<li>Delete model</li>
+		return <ul className = "pop-down-menu" 
+		onClick = {util.clickTrap}
+		style = {{
+			position: 'absolute',
+			top: '100%',
+			left: 0
+		}}>	
+			<span className = "pop-down-pointer-outer"/>
+			<span className = "pop-down-pointer-inner"/>
+			<li onClick = {this.props._rename}>Rename model</li>
+			
+			{this.state.deleting ?
+				<li>Delete this model?</li>
+				:
+				<li onClick = {this.handleClickDelete}>Delete model</li>
+			}
+			{this.state.deleting ?
+				<li onClick={this.props._delete}>Delete</li>
+				: null
+			}
+			{this.state.deleting ?
+				<li onClick={this.handleCancelDelete}>cancel</li>
+				: null
+			}
 		</ul>
 	}
 })

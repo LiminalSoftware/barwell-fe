@@ -12,14 +12,14 @@ import modelActionCreators from "../../../../actions/modelActionCreators"
 import commitMixin from '../commitMixin'
 import editableInputMixin from '../editableInputMixin'
 import selectableMixin from '../selectableMixin'
-
+import keyPressMixin from '../keyPressMixin'
 import TextFieldConfig from "../textFieldConfig"
 
 var textField = {
 	configA: TextFieldConfig,
 	sortable: true,
 	element: React.createClass({
-		mixins: [editableInputMixin, commitMixin, selectableMixin],
+		mixins: [editableInputMixin, commitMixin, selectableMixin, keyPressMixin],
     	detailIcon: 'icon-maximise-2',
     	validator: _.identity,
 		parser: _.identity

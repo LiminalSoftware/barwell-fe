@@ -59,13 +59,21 @@ var AlignChoice = React.createClass({
         className={"pop-down clickable icon icon-align-" + this.state.align}
         onMouseDown = {this.handleOpen}>
         {
-        this.state.open ? <ul className = "pop-down-menu" style = {{
-          top: (align === "left" ? "0" :
-          align === "center" ? "-100%" : "-200%")
-        }}>
-          <li className = "icon icon-align-left" onClick = {this.alignLeft}></li>
-          <li className = "icon icon-align-center" onClick = {this.alignCenter}></li>
-          <li className = "icon icon-align-right" onClick = {this.alignRight}></li>
+        this.state.open ? <ul className = "pop-down-menu">
+          <span className = "pop-down-pointer-outer"/>
+          <span className = "pop-down-pointer-inner"/>
+          <li onClick = {this.alignLeft}>
+            <span className = "icon icon-align-left"/>
+            Align left
+          </li>
+          <li onClick = {this.alignCenter}>
+            <span className = "icon icon-align-center"/>
+            Align center
+          </li>
+          <li onClick = {this.alignRight}>
+            <span className = "icon icon-align-right"/>
+            Align right
+          </li>
         </ul> : null
         }
     </span>;

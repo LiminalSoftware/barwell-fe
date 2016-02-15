@@ -64,6 +64,9 @@ var ColorChoice = React.createClass({
             top: "100%"
           }}>
 
+          <span className = "pop-down-pointer-outer"/>
+          <span className = "pop-down-pointer-inner"/>
+
           {
             colorAttrs.length > 0 ?
             <li className="bottom-divider">

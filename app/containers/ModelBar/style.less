@@ -15,14 +15,14 @@ ul.model-bar-list {
 		a {
 			font-weight: 800;
 			// font-family: @headerFont;
+			padding: 3px 5px;
 		}
 	}
 
 	& > li {
 		.flex-direction(row);
 		padding: 0;
-		
-		
+		position: relative;
 	}
 
 	& > li > a {
@@ -84,6 +84,8 @@ ul.model-bar-list {
 	font-size: inherit;
 	.msInput;
 	-webkit-user-drag: none;
+	background: white;
+	// border-bottom: 1px solid @gray3;
 }
 .header-renamer {
 	font-size: @headerFontSize !important;
