@@ -96,11 +96,6 @@ var SearchDropdown = React.createClass({
 		});
 	},
 
-	handleClickSearch: function (e) {
-		this.setState({editing: true})
-		e.preventDefault()
-	},
-
 	chooseSelection: function (e) {
 		var selection = this.state.selection
 		var index = this.state.page * SEARCH_RECORDS_VISIBLE + selection
@@ -114,6 +109,7 @@ var SearchDropdown = React.createClass({
 	},
 
 	chooseItem: function (hasManyObj) {
+		console.log('abc')
 		var model = this.props.model
 		var config = this.props.config
 		var hasOneObj = this.props.object
@@ -146,6 +142,7 @@ var SearchDropdown = React.createClass({
 		var count = filteredRecords.length;
 
 		return <ul className = "pop-down-menu green"
+			onClick = {function(e){console.log('clickkkkkk')}}
 			style = {style}>
 			<li className = {this.state.count > 0 ? "bottom-divider" : ""}
 				style = {{height: '30px', position: 'relative'}}>
@@ -176,7 +173,7 @@ var SearchDropdown = React.createClass({
 				{
 					this.state.searchTerm.length > 0 ?
 					<li className="selectable" style={{}}>
-						<span className="small icon green icon-plus"/>Add new record
+						<span className="small icon green icon-plus"/>Create new {oppModel.model}
 					</li>
 					: null
 				}

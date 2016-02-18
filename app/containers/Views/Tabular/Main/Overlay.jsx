@@ -8,7 +8,11 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import TabularTBody from "./TabularTBody"
 
 var Overlay = React.createClass ({
-  	mixins: [PureRenderMixin],
+  shouldComponentUpdate: function (nextProps, nextState) {
+    return  this.props.position !== nextProps.position || 
+            this.props.view !== nextProps.view ||
+            this.props.numColsScrolled !== nextProps.numColsScrolled
+  },
 
 	render: function () {
     var pos = this.props.position
@@ -18,12 +22,14 @@ var Overlay = React.createClass ({
     var fixedCols = view.data.fixedCols
     var numFixed = fixedCols.length
     var geo = view.data.geometry
-    var pos = this.props.position
     var fudge = this.props.fudge || {}
     var width = 0
     var left = geo.leftGutter + geo.labelWidth + 1
     var classes = this.props.className || ""
     var style = this.props.style || {}
+
+    if (pos && (pos.left === pos.right) && (pos.top === pos.bottom))
+      classes +=  ' singleton';
 
     if (!pos) return null
 
@@ -39,22 +45,13 @@ var Overlay = React.createClass ({
     style.left = (left + (fudge.left || 0)) + 'px'
     style.height = (geo.rowHeight * ((pos.bottom || pos.top) - pos.top + 1) + (fudge.height || 0)) + 'px'
     style.width = (width + (fudge.width || 0)) + 'px'
-    
-    if (pos && (pos.left === pos.right) && (pos.top === pos.bottom))
-      classes +=  ' singleton';
-    if (pos && pos.right >= fixedCols.length &&
-      pos.right - fixedCols.length < numColsScrolled)
-      classes += ' open-right';
-    if (pos && pos.left >= fixedCols.length &&
-      pos.left - fixedCols.length < numColsScrolled)
-      classes += ' open-left';
-    if (pos.top === this.props.rowOffset)
-      classes += ' top-position'
 
 		return <div
       className={classes}
-      style={style}/>;
-	}
+      style={style}>
+      {this.props.children}
+    </div>;
+    }
 });
 
 

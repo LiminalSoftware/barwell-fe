@@ -48,7 +48,9 @@ var DetailBar = React.createClass({
 				selector: selector
 			}) : null;
 
-    return <div className = "detail-bar" onClick={this.focus}>
+    return <div 
+    	className = "detail-bar" 
+    	onClick={this.focus}>
 			{detail}
 		</div>
 	}

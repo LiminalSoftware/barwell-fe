@@ -37,13 +37,18 @@ var ColorChoice = React.createClass({
 	},
 
   chooseColor: function (attributeId) {
-    this.commitChanges({colorAttr: attributeId, color: null})
-    this.setState({open: false})
+    this.commitChanges({colorAttr: attributeId, color: null, adjustColor: this.state.adjustColor})
+    // this.setState({open: false})
+  },
+
+  chooseCondition: function (attributeId) {
+    this.commitChanges({conditionAttr: attributeId, adjustColor: this.state.adjustColor})
+    // this.setState({open: false})
   },
 
   chooseFixedColor: function (color) {
-    this.commitChanges({colorAttr: null, color: color})
-    this.setState({open: false})
+    this.commitChanges({colorAttr: null, color: color, adjustColor: this.state.adjustColor})
+    // this.setState({open: false})
   },
 
   handleAdjustCheck: function () {
@@ -54,6 +59,7 @@ var ColorChoice = React.createClass({
     var _this = this
     var view = this.props.view
     var colorAttrs = AttributeStore.query({type: 'COLOR', model_id: view.model_id})
+    var boolAttrs = AttributeStore.query({type: 'BOOLEAN', model_id: view.model_id})
 
     return <span
         className={"pop-down clickable icon icon-tl-brush "
@@ -68,19 +74,47 @@ var ColorChoice = React.createClass({
           <span className = "pop-down-pointer-inner"/>
 
           {
-            colorAttrs.length > 0 ?
+            boolAttrs.length > 0 ?
             <li className="bottom-divider">
-              Conditional
+              Condition
             </li>
             :
             null
           }
 
 
+          {
+          boolAttrs.map(function (attr) {
+            return <li key = {attr.attribute_id} className = "selectable"
+              onClick = {_this.chooseCondition.bind(_this, attr.attribute_id)}>
+              <span className = {'small icon icon-geo-circle ' +
+                (_this.state.conditionAttr === attr.attribute_id ? 'green' : 'hovershow')}/>
+              <span className = "icon icon-checkbox-full  ">
+              </span>
+              {attr.attribute}
+            </li>
+          })
+          }
+
+           {
+            boolAttrs.length > 0 ?
+            <li key = "no-condition" className="selectable">
+              <span className = {'small icon icon-geo-circle ' +
+                (_this.state.conditionAttr === null ? 'green' : 'hovershow')}/>
+              <span className = "icon icon-checkbox-empty"/>
+              No condition
+            </li>
+            :
+            null
+          }
+
+          <li key = "color-divider" className = {colorAttrs.length > 0 ? "top-divider bottom-divider" : ""}>
+            Color
+          </li>
 
           {
           colorAttrs.map(function (attr) {
-            return <li key = {attr.attribute_id}
+            return <li key = {attr.attribute_id} className = "selectable"
               onClick = {_this.chooseColor.bind(_this, attr.attribute_id)}
               >
               <span className = {'small icon icon-geo-circle ' +
@@ -92,12 +126,10 @@ var ColorChoice = React.createClass({
           })
           }
 
-          <li className = {colorAttrs.length > 0 ? "top-divider" : ""}>
-            Fixed color
-          </li>
+          
           {
             ['red','orange','yellow','green','blue','violet'].map(function (fcolor) {
-              return <li className = ""
+              return <li className = "selectable" key={fcolor}
                 onClick = {_this.chooseFixedColor.bind(_this, fcolor)}>
                 <span className = {'small icon icon-geo-circle ' +
                   (_this.state.color === fcolor ? 'green' : 'hovershow')}/>
@@ -106,7 +138,7 @@ var ColorChoice = React.createClass({
             })
           }
 
-          <li className = ""
+          <li className = "selectable"
             onClick = {_this.chooseColor.bind(_this, null)}>
             <span className = {'small icon icon-geo-circle ' +
               ((_this.state.colorAttr === null && _this.state.color === null) ? 'green' : 'hovershow')}/>

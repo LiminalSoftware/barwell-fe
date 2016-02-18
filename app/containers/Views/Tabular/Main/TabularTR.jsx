@@ -52,8 +52,6 @@ var TabularTR = React.createClass({
 		var ptr = this.props.pointer
 		var selector = {}
 		var rowStyle = {
-			left: 0,
-			right: '1px',
 			height: (geo.rowHeight) + 'px',
 			top: (geo.rowHeight * (row)) + 'px',
 		}
@@ -69,7 +67,8 @@ var TabularTR = React.createClass({
 				<span className = "table-cell" 
 					style = {{ 
 						left: geo.leftGutter + 'px', 
-						width: geo.labelWidth + 'px', 
+						width: geo.labelWidth + 'px',
+						zIndex: 2,
 					}}>
 					
 				</span> : null

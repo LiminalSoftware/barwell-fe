@@ -58,7 +58,7 @@ var TextChoice = React.createClass({
           <span className = "pop-down-pointer-inner"/>
 
           <li className = "bottom-divider" >
-            Conditionally bold text
+            Condition
           </li>
 
           {
@@ -75,17 +75,17 @@ var TextChoice = React.createClass({
           }
 
           <li className = "top-divider bottom-divider" >
-            Fixed style
+            Font style
           </li>
 
-          <li className = "" onClick = {_this.chooseAlwaysBold}>
+          <li className = "selectable" onClick = {_this.chooseAlwaysBold}>
             <span className = {'small icon icon-geo-circle ' +
               (_this.state.bold ? 'green' : 'hovershow')}/>
             <span className = "icon icon-tl-bold"/>
             Bold text
           </li>
 
-          <li className = "" onClick = {_this.chooseBoldAttr.bind(_this, null)}>
+          <li className = "selectable" onClick = {_this.chooseBoldAttr.bind(_this, null)}>
             <span className = {'small icon icon-geo-circle ' +
               (_.isNull(_this.state.boldAttr) && !_this.state.bold ? 'green' : 'hovershow')}/>
             <span className = "icon icon-tl-text"/>

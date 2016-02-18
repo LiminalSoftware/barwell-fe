@@ -119,7 +119,7 @@ var hasManyField = {
 				{showDetail ? <span
 					className = "editor-icon icon icon-search"
 					style = {editorIconStyle}
-					onClick = {this.handleClickSearch}/>
+					onClick = {this.handleEdit}/>
 					: null}
 				</span>
 				{

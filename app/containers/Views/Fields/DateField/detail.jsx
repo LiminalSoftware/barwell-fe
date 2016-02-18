@@ -59,13 +59,13 @@ var DateDetail = React.createClass({
 	render: function() {
 		var _this = this
 		var value = this.state.date
-    var model = this.props.model
-    var view = this.props.view
+    	var model = this.props.model
+    	var view = this.props.view
 		var obj = this.props.object
 		var config = this.props.config
 		var weeks = this.getDaysInYear(value)
 
-		return <div className = "color-detail-inner">
+		return <div className = "detail-inner">
 			<div className = "header-label">Date picker</div>
 			<div className = "model-views-menu">
 				<div className="dropdown small grayed icon icon-geo-arrw-left" onClick = {this.decYear}></div>

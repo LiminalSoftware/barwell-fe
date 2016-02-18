@@ -8,7 +8,8 @@
 // .input-editor: 150
 // .add-new-row: 200
 
-.loader-overlay {
+
+.loader-overlay, .notification-overlay, .error-overlay {
 	position: absolute;
 	bottom: 50px;
 	left: 50px;
@@ -16,7 +17,6 @@
 	line-height: 30px;
 	font-style: 15px;
 	font-family: @bodyFont;
-	background: @newgreen1;
 	color: white;
 	border-radius: 3px;
 	z-index: 220;
@@ -25,6 +25,19 @@
 	.noselect;
 }
 
+.loader-overlay {
+	background: @newgreen1;
+}
+
+.notification-overlay {
+	background: @gray2;
+}
+
+.error-overlay {
+	background: @red-bright;
+}
+
+
 .scroll-bar-outer {
 	position: absolute;
 	z-index: 10;
@@ -32,7 +45,8 @@
 	overflow-x: scroll;
 	overflow-y: scroll;
 	-webkit-user-drag: none;
-	.force-layer;
+	
+	transform: translateZ(10px);
 	.noselect;
 }
 
@@ -76,14 +90,22 @@
 
 
 .add-new-row {
+	.border-box;
+	.noselect;
+	position: absolute;
 	cursor: pointer;
 	text-align: center;
 	border: 1px solid @purple4;
+	padding: 0;
+	margin: 0;
+
 	text-transform: uppercase;
-	z-index: 205;
+	z-index: 3;
 	background: white;
+	pointer-events: auto;
+
 	&:hover {
-		color: @newgreen1;
+		color: @newgreen1 !important;
 		border: 1px solid @newgreen1;
 		background: @gray4;
 	}

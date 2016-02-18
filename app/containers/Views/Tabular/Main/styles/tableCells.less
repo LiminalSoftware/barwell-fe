@@ -4,6 +4,9 @@
 	display: block;
 	position: absolute;
 	.border-box;
+	z-index: 1;
+	left: 0;
+	right: 1px;
 }
 
 .table-cell {
@@ -20,7 +23,7 @@
 	.noselect;
 	top: 0;
 	bottom: 0;
-	// .transition(width cubic-bezier(.16,.85,.5, 1) 150ms);
+	z-index: 2;
 	.transition(left cubic-bezier(.16,.85,.5, 1) 150ms);
 }
 
@@ -67,10 +70,10 @@
 	top: 0;
 	bottom: 0;
 	.border-box;
+	z-index: 3;
 }
 
 .input-editor {
-	z-index: 150;
 	background: white !important;
 	outline: 0;
 	border: none;
@@ -79,7 +82,6 @@
 	padding-left: 5px;
 	min-width: 10px;
 	width: 100%;
-
 }
 
 // ************************************************************************
@@ -94,8 +96,8 @@
 	margin-bottom: 2px;
 	border-radius: 3px;
 	background: @gray4;
-	z-index: 121;
 	margin-right: 5px;
+	z-index: 4;
 }
 
 .editor-icon {
@@ -107,11 +109,12 @@
 	bottom: 0;
 	cursor: pointer;
 	color: @newgreen1 !important;
+	z-index: 4;
 }
 
 
 .color-block {
-	// zIndex: 150,
+	z-index: 4;
 	display: block;
 	position: absolute;
 	left: 5px;
@@ -125,13 +128,14 @@
 	border: 1px dashed @newgreen1;
 	min-width: 50px;
 	width: 50px;
+	z-index: 4;
 }
 
 .checkbox-surround  {
 	border-radius: 3px;
 	background: white;
 	border: 1px solid @gray3;
-	z-index: 121;
+	z-index: 4;
 
 	position: relative;
 	display: inline-block;
@@ -142,7 +146,6 @@
 	border-radius: 3px;
 	background: 'white';
 	border: 1px solid @gray3;
-	z-index: 121;
 }
 
 .checkbox-surround-selected {

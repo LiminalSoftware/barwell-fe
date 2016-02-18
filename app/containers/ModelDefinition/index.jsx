@@ -54,10 +54,10 @@ var ModelDefinition = React.createClass({
 		var _this = this;
 		var model = this.props.model;
 
-		if(!model) return <div key="model-detail-bar" className="model-details">
-			<h3 key="attr-header">No Model Selected</h3>
-		</div>;
-
+		if(!model) return <div className = "model-panes">
+			<div className = "model-details"></div>
+		</div>
+		
 		else return	<div className = "model-panes"><div className = "model-details">
 				<ModelDetails model = {model} key = {'model-config-'+model.model_id} />
 				<AttributeDetailList model = {model} key = {'attribute-config-'+model.model_id} />

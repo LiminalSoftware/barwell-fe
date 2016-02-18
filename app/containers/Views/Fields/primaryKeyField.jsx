@@ -21,10 +21,11 @@ var PrimaryKeyElement = React.createClass({
 	render: function () {
 		var value = this.props.value
 		var style = this.props.style
-		var cellStyle = {lineHeight: this.props.rowHeight + 'px'}
+		var cellStyle = {lineHeight: this.props.rowHeight + 'px', paddingLeft: '5px'}
+		var className = "table-cell-inner" + (this.state.selected ? " table-cell-inner-selected" : "")
 
 		return <span {...this.props} className = "table-cell" >
-			<span className = "table-cell-inner" style = {cellStyle}>
+			<span className = {className} style = {cellStyle}>
 				{this.props.value}
 			</span>
 		</span>

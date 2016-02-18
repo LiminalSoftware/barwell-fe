@@ -121,13 +121,17 @@ var TabularTBody = React.createClass ({
 
 		if (!this.isFullyPainted(this.state.start, this.state.end, this.state.target)) {
 			this.__timer = onFrame(update)
-			this.__longTimer = setTimeout(update, CYCLE * 3)
+			this.__longTimer = setTimeout(update, CYCLE * 2)
 		}
 	},
 
 	isFullyPainted: function (start, end, target) {
+		// console.log('start: ' + start)
+		// console.log('end: ' + end)
+		// console.log('target: ' + target)
+		// console.log('fetchEnd: ' + this.props.fetchEnd)
 		return (start === target &&
-			end === Math.min(target + VISIBLE_ROWS, this.props.fetchEnd))
+			end === (Math.min(target + VISIBLE_ROWS, this.props.fetchEnd)))
 	},
 
 	shouldComponentUpdate: function (nextProps, nextState) {
@@ -192,6 +196,7 @@ var TabularTBody = React.createClass ({
 	},
 
 	render: function () {
+		// console.log("render tbody")
 		var view = this.props.view
 		var model = this.props.model
 		var pk = model._pk

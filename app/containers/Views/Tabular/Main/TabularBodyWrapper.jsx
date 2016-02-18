@@ -13,6 +13,7 @@ import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 import createTabularStore from './TabularStore.jsx'
 import Overlay from './Overlay'
+import DetailBar from '../../../DetailBar'
 
 import util from '../../../../util/util'
 
@@ -28,7 +29,6 @@ var RHS_PADDING = 100
 import TabularTBody from "./TabularTBody"
 import TabularTHead from "./TabularTHead"
 import FakeLines from "./FakeLines"
-import AddNewRowBar from "./AddNewRowBar"
 import RowResizer from "./RowResizer"
 
 var TabularBodyWrapper = React.createClass ({
@@ -45,11 +45,14 @@ var TabularBodyWrapper = React.createClass ({
 			hiddenCols: 0,
       		hiddenColWidth: 0,
 			rowOffset: 0,
-			colOffset: 0
+			colOffset: 0,
+			detailOpen: false,
+			contextOpen: false
 		}
 	},
 
 	_onChange: function () {
+		// this.setState({contextOpen: false, detailOpen: false})
 		this.forceUpdate()
 		this.refs.lhs.forceUpdate()
 		this.refs.rhs.forceUpdate()
@@ -97,7 +100,6 @@ var TabularBodyWrapper = React.createClass ({
 		var delta = Math.abs(offset - target)
 		var sorting = nextProps ? nextProps.view.data.sorting : view.data.sorting
 
-		// console.log('delta: ' + delta)
 		if ((force === true)
 			|| (delta > OFFSET_TOLERANCE && offset !== boundedTarget)
 			|| !_.isEqual(sorting, this.state.sorting) 
@@ -133,7 +135,20 @@ var TabularBodyWrapper = React.createClass ({
 			this.props.selection !== nextProps.selection ||
 			this.props.pointer !== nextProps.pointer ||
 			this.props.copyarea !== nextProps.copyarea
+	},
 
+	handleDetail: function (e) {
+		console.log('open detail!')
+		var coords = this.props._getRCCoords(e)
+		this.setState({
+			detailOpen: true,
+			detailX: coords.left,
+			detailY: coords.top
+		})
+	},
+
+	hideDetailBar: function () {
+		this.setState({detailOpen: false})
 	},
 
 	render: function () {
@@ -163,7 +178,8 @@ var TabularBodyWrapper = React.createClass ({
 		var cpy = this.props.copyarea
 		var showJaggedEdge = (sel.right >= view.data.fixedCols.length
 			&& sel.left <= view.data.fixedCols.length && this.props.hiddenCols > 0)
-
+		var detailColumn = view.data.visibleCols[ptr.left]
+		var detailObject = store.getObject(ptr.top)
 
 		return <div
 			className = {"tabular-body-wrapper force-layer " + (focused ? "focused" : "blurred")}
@@ -188,7 +204,6 @@ var TabularBodyWrapper = React.createClass ({
 					: null
 			}
 			
-
 			<RowResizer {...this.props} adjustedWidth = {adjustedWidth} />
 
 			<div className = "lhs-outer wrapper"
@@ -220,6 +235,7 @@ var TabularBodyWrapper = React.createClass ({
 
 				<TabularTBody
 					{...this.props}
+					_handleDetail = {this.handleDetail}
 					rowOffset = {this.state.rowOffset}
 					ref="lhs"
 					prefix = "lhs"
@@ -234,7 +250,7 @@ var TabularBodyWrapper = React.createClass ({
 						width:  (view.data.fixedWidth + geo.labelWidth) + 'px',
 						height: (rowCount * geo.rowHeight) + 'px',
 					}}
-					columns = {this.props.fixedColumns}/>
+					columns = {view.data.fixedCols}/>
 				</div>
 			</div>
 			{/*END LHS TABLE BODY*/}
@@ -253,12 +269,6 @@ var TabularBodyWrapper = React.createClass ({
 			</div>
 			{/*LHS OUTER*/}
 
-			{/*<FakeLines
-				width = {adjustedWidth}
-				rowCount = {rowCount}
-				top = {geo.headerHeight - 1}
-				ref = "FakeLines"
-				{...this.props}/>*/}
 
 			{/*CURSORS*/}
 			<div className = "wrapper overlay"
@@ -281,41 +291,70 @@ var TabularBodyWrapper = React.createClass ({
 						transformStyle: 'preserve-3d overlay'
 					}}>
 
-					<AddNewRowBar {...this.props}
-						width = {fixedWidth + floatWidth + geo.labelWidth
-							- this.props.hiddenColWidth}
-						ref = "addNew"
-						offset = {this.props.rowOffset}
-						rowCount = {rowCount}/>
+					<Overlay
+		        		{...this.props}
+		        		ref = "addNew"
+		        		position = {{left: 0, right: view.data.visibleCols.length + view.data.fixedCols.length, 
+		        			top: rowCount, bottom: rowCount}}
+		        		fudge = {{left: -1}}
+		        		numHiddenCols = {this.state.hiddenCols}
+		        		className = "add-new-row">
+		        		<div className = "table-cell-inner" style={{cursor: 'pointer', lineHeight: (geo.rowHeight + 'px')}} 
+		        			onClick = {this.props._addRecord}>
+			    			<span className = "small grayed icon icon-plus"></span>
+			    			Add a new row of data
+			    		</div>
+		        	</Overlay>
+
+					{this.state.detailOpen ? 
+						<Overlay
+							{...this.props}
+							numHiddenCols = {this.state.hiddenCols}
+							className = "detail-bar"
+							ref = "detail"
+							position = {{
+								left: this.state.detailX,
+								right: this.state.detailX, 
+								top: this.state.detailY + 1,
+								bottom: this.state.detailY + 1
+							}}>
+						<DetailBar
+							model = {model}
+							view = {view}
+							style = {{
+								right: 0,
+								left: 0,
+								top: 0,
+								bottom: 0
+							}}
+							config = {detailColumn}
+							object = {detailObject}/>
+						</Overlay>
+						: null
+					}
 
 					<Overlay
-						columns = {this.props.columns}
-		        		numHiddenCols = {this.props.hiddenCols}
-						className = {" pointer" + (focused ? " focused" : "")}
-						rowOffset = {this.props.rowOffset}
-						ref = "pointer"
 						{...this.props}
+						numHiddenCols = {this.state.hiddenCols}
+						className = {" pointer" + (focused ? " focused" : "")}
+						ref = "pointer"
 						position = {sel}
 						fudge = {{left: -2.25, top: -0.25, height: 2.5, width: 3.5}} />
 
 					<Overlay
-						columns = {this.props.columns}
-		        		numHiddenCols = {this.state.hiddenCols}
-						className = "pointer-outer"
-						rowOffset = {this.props.rowOffset}
-						ref = "outerPointer"
 						{...this.props}
+						numHiddenCols = {this.state.hiddenCols}
+						className = "pointer-outer"
+						ref = "outerPointer"
 						position = {sel}
 						fudge = {{left: -3.75, top: -2.75, height: 7.5, width: 6.5}}/>
 					
-
+					{
+					showJaggedEdge ? 
 					<Overlay
-						columns = {this.props.columns}
-			    		numHiddenCols = {this.props.hiddenCols}
-						className = {showJaggedEdge ? " jagged-edge " : ""}
-						rowOffset = {this.props.rowOffset}
-						ref = "jaggedEdge"
 						{...this.props}
+						className = " jagged-edge "
+						ref = "jaggedEdge"
 						position = {{
 							left: view.data.fixedCols.length,
 							width: '10px',
@@ -323,9 +362,10 @@ var TabularBodyWrapper = React.createClass ({
 							bottom: sel.bottom
 						}}
 						fudge = {{left: -3, width: 10 }} />
+					: null}
 
 					<Overlay
-						columns = {this.props.columns}
+						columns = {view.data.visibleCols}
 			    		numHiddenCols = {this.props.hiddenCols}
 						rowOffset = {this.props.rowOffset}
 						className = {" copyarea running marching-ants " + (focused ? " focused" : "")}
@@ -336,17 +376,7 @@ var TabularBodyWrapper = React.createClass ({
 				</div>
 			</div>
 
-			<div className = "wrapper"
-				style = {{
-					top: geo.headerHeight - 1 - 2 + 'px',
-					bottom: 0,
-					left: geo.leftGutter + 'px',
-					width: (fixedWidth + floatWidth + geo.labelWidth + 6) + 'px',
-					overflow: 'hidden',
-					transform: 'translateZ(0px)'
-				}}>
-				<AddNewRowBar {...this.props} rowCount = {rowCount} rowOffset = {this.props.rowOffset}/>
-			</div>
+			
 
 			<div className = {"wrapper underlay underlay--" + (focused ? "focused" : "blurred")}
 				style = {{
@@ -368,10 +398,8 @@ var TabularBodyWrapper = React.createClass ({
 					}}>
 
 					<Overlay
-						columns = {this.props.columns}
 		        		numHiddenCols = {this.state.hiddenCols}
 						className = {" selection " + (focused ? " focused" : "")}
-						rowOffset = {this.props.rowOffset}
 						ref = "selection"
 						{...this.props}
 						position = {sel}
@@ -419,10 +447,11 @@ var TabularBodyWrapper = React.createClass ({
 						}}>
 						<TabularTBody
 							{...this.props}
+							_handleDetail = {this.handleDetail}
 							rowOffset = {this.state.rowOffset}
 							ref = "rhs"
 							prefix = "rhs"
-							columns = {this.props.visibleColumns}
+							columns = {view.data.floatCols}
 							offsetCols = {view.data.fixedCols.length}
 							fetchStart = {fetchStart}
 							fetchEnd = {fetchEnd}
