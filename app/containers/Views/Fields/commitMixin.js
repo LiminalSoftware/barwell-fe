@@ -33,10 +33,6 @@ var commitMixin = {
 			this.setState({value: this.validator(nextProps.value)})
 	},
 
-	componentWillUpdate: function () {
-
-	},
-
 	getInitialState: function () {
 		return {
 			value: this.validator(this.props.value)

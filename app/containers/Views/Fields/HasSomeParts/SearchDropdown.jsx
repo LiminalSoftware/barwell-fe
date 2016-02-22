@@ -16,7 +16,6 @@ var SEARCH_RECORDS_VISIBLE = 10
 var SearchDropdown = React.createClass({
 
 	handleKeyPress: function (e) {
-		// console.log('e.keyCode: ' + e.keyCode)
 		if (e.keyCode === constant.keycodes.ESC) this.props._revert()
 		if (e.keyCode === constant.keycodes.ENTER) {
 			this.chooseSelection(e)
@@ -161,12 +160,18 @@ var SearchDropdown = React.createClass({
 					})
 				}
 				
-				
 				{
+					this.state.searching ? 
+					<li>
+						<div className="three-quarters-loader three-quarters-loader--green"/>
+						Searching...
+					</li>
+					:
 					(this.state.count > SEARCH_RECORDS_VISIBLE) ? 
 					<li className="top-divider">Show more</li>
 					:
-					this.state.count === 0 ? <li>No records found</li> 
+					this.state.count === 0 ? 
+					<li>No records found</li> 
 					: null
 				}
 

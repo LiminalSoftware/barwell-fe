@@ -5,29 +5,26 @@
 }
 
 .month-label {
+  font-size: 12px;
   color: @headerFontColor;
   border: 1px double @headerFontColor;
   border-left: none;
 }
 
 .week-box {
-  // display: flex;
-  // flex-direction: row;
-  // flex: 1 1;
+  font-size: 12px;
   &:first-child {
     border-top: none;
   }
 }
 
 .day-box {
-  // display: flex;
-  // flex-direction: column;
-  // flex: 1 1;
+  font-size: 12px;
   color: @headerFontColor;
   border-right: 1px solid @headerBgDark;
   border-bottom: 1px solid @headerBgDark;
 
-  padding: 5px;
+  padding: 3px;
   text-align: center;
   cursor: pointer;
 
@@ -42,7 +39,7 @@
   }
   &.selected {
     border: 1px double @newgreen1;
-    color: white;
+    color: @newgreen1;
   }
   &.different-year {
   }

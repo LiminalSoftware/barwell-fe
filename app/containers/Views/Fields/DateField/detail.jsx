@@ -66,18 +66,6 @@ var DateDetail = React.createClass({
 		var weeks = this.getDaysInYear(value)
 
 		return <div className = "detail-inner">
-			<div className = "header-label">Date picker</div>
-			<div className = "model-views-menu">
-				<div className="dropdown small grayed icon icon-geo-arrw-left" onClick = {this.decYear}></div>
-				<div className = "model-views-menu-inner">
-					<div className = "closed menu-item menu-sub-item">
-						Year:
-						<input className = "menu-input text-input"
-						value = {this.state.year}/></div>
-					</div>
-				<div className="dropdown small grayed icon icon-geo-arrw-right" onClick = {this.incYear}></div>
-			</div>
-
 			<div className = "color-detail-scroll" ref = "calendarwrapper">
 				<table className = "calendar-table"><tbody>
 					{weeks.map(function (days, weekIdx) {

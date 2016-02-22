@@ -14,7 +14,6 @@ import tinycolor from "tinycolor2"
 import defaultCellStyle from './defaultCellStyle'
 
 var MIN_LIGHTNESS = 0.85
-var SELECTED_LIGHTNESS = 0.97
 
 var editableInputMixin = {
 
@@ -34,9 +33,7 @@ var editableInputMixin = {
 	},
 
 	getInitialState: function () {
-		return {
-			editing: false
-		}
+		return {editing: false}
 	},
 
 	componentWillUnmount: function () {
@@ -78,9 +75,9 @@ var editableInputMixin = {
 	},
 
 	handleKeyPress: function (e) {
-		console.log('keypress: ' + e.keyCode)
 		if (e.keyCode === constant.keycodes.ESC) this.cancelChanges()
 		if (e.keyCode === constant.keycodes.ENTER) {
+			console.log('editableInputMixin: ENTER')
 			this.commitChanges()
 		}
 		if (e.keyCode === constant.keycodes.TAB) {
@@ -97,6 +94,7 @@ var editableInputMixin = {
 		var fontColor = null
 		var cellStyle = _.clone(defaultCellStyle)
 		var editorIconStyle
+		var conditional = (!config.conditionAttr || obj['a' + config.conditionAttr])
 
 		if (showDetail) {
 			editorIconStyle = {
@@ -119,8 +117,8 @@ var editableInputMixin = {
 		cellStyle.cursor = "cell"
 		
 		if (this.state.selected) bg = "white"
-		else if (config.color) bg = config.color
-		else if (config.colorAttr) bg = obj['a' + config.colorAttr]
+		else if (config.color && conditional) bg = config.color
+		else if (config.colorAttr && conditional) bg = obj['a' + config.colorAttr]
 
 		if (bg) {
 			var c = tinycolor(bg)

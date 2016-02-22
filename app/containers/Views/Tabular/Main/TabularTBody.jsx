@@ -54,8 +54,6 @@ var TabularTBody = React.createClass ({
 		var buffer = 0 - BACKWARD_BUFFER  + (BUFFER_SIZE * scrollDirection)
 		var target = util.limit(fetchStart, fetchEnd - VISIBLE_ROWS, newOffset + buffer)
 
-		// target = 0
-
 		this.setState({
 			scrolling: delta !== 0,
 			scrollDirection: scrollDirection,
@@ -67,7 +65,6 @@ var TabularTBody = React.createClass ({
 	componentWillUpdate: function () {
 		// we shouldn't have a timer set, but if we do clear it
 		if (this.__timer) clearTimeout(this.__timer)
-		if (this.__longTimer) clearTimeout(this.__longTimer)
 	},
 
 	updateOffset: function (target, scrollDirection) {
@@ -121,7 +118,6 @@ var TabularTBody = React.createClass ({
 
 		if (!this.isFullyPainted(this.state.start, this.state.end, this.state.target)) {
 			this.__timer = onFrame(update)
-			this.__longTimer = setTimeout(update, CYCLE * 2)
 		}
 	},
 
@@ -137,13 +133,16 @@ var TabularTBody = React.createClass ({
 	shouldComponentUpdate: function (nextProps, nextState) {
 		var now = new Date().getTime()
 		var visibleRows = this.state.end - this.state.start
-		if (now - this._lastUpdate < MIN_CYCLE) return false
+		
 
 		// console.log('state: (' + this.state.start + ', ' + this.state.end + 
-		// 	') ; props: (' + this.state.target + ', ' + (this.state.target + VISIBLE_ROWS) + ')')
+		// if (nextProps.shouldPaint && !this.props.shouldPaint) console.log('' + this.props.frameNum + ') paint: ' + this.props.prefix)
+
 		if (nextProps.view !== this.props.view) return true
 		if (nextProps.focused !== this.props.focused) return true
-		return !this.isFullyPainted(this.state.start, this.state.end, this.state.target)
+		if (now - this._lastUpdate < MIN_CYCLE) return false
+		return !this.isFullyPainted(this.state.start, this.state.end, this.state.target)  && 
+			(nextProps.shouldPaint && !this.props.shouldPaint)
 	},
 
 	_onChange: function () {
@@ -151,6 +150,7 @@ var TabularTBody = React.createClass ({
 	},
 
 	componentWillMount: function () {
+		// if (this.props.prefix === 'lhs') gTbodyHistory = []
 		ViewStore.addChangeListener(this._onChange)
 		this.props.store.addChangeListener(this._onChange)
 		// this.worker = new Worker('/_assets/js/scrollWorker.js');
@@ -196,7 +196,6 @@ var TabularTBody = React.createClass ({
 	},
 
 	render: function () {
-		// console.log("render tbody")
 		var view = this.props.view
 		var model = this.props.model
 		var pk = model._pk
@@ -210,9 +209,14 @@ var TabularTBody = React.createClass ({
 		var geo = view.data.geometry
 		var floatOffset = this.props.floatOffset
 		
+		var style = this.props.style
+
+		// if (this.props.prefix === 'lhs') gTbodyHistory.push(this.state.start)
+		// if (this.props.prefix === 'lhs') console.log(this.state.target + '; ' + this.state.start + ', ' + this.state.end)
+
 		return <div
-			className = {"tabular-body " + (this.props.focused ? ' focused ' : ' gray-out ')}
-			onPaste = {this.props._handlePaste}
+			className = {"tabular-body force-layer " + (this.props.focused ? ' focused ' : ' gray-out ')}
+			
 			onMouseDown = {this.props._handleClick}
 			onDoubleClick = {this.props._handleEdit}
 			onWheel = {this.props._handleWheel}

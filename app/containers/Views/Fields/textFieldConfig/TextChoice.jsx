@@ -12,7 +12,7 @@ var TextChoice = React.createClass({
 
   getInitialState: function () {
     return {
-      boldAttr: this.props.config.boldAttr,
+      conditionAttr: this.props.config.conditionAttr,
       bold: false,
       open: false
     }
@@ -30,13 +30,17 @@ var TextChoice = React.createClass({
 		modelActionCreators.createView(view, true, true)
 	},
 
-  chooseBoldAttr: function (attributeId) {
-    this.commitChanges({boldAttr: attributeId, bold: false})
+  chooseConditionAttr: function (attributeId) {
+    this.commitChanges({conditionAttr: attributeId, bold: false})
+  },
+
+  chooseBoldStyle: function () {
+    this.commitChanges({bold: true})
     this.setState({open: false})
   },
 
-  chooseAlwaysBold: function () {
-    this.commitChanges({boldAttr: null, bold: true})
+  chooseNoStyle: function () {
+    this.commitChanges({bold: false})
     this.setState({open: false})
   },
 
@@ -57,15 +61,19 @@ var TextChoice = React.createClass({
           <span className = "pop-down-pointer-outer"/>
           <span className = "pop-down-pointer-inner"/>
 
-          <li className = "bottom-divider" >
-            Condition
-          </li>
+          {
+          boolAttrs.length > 0 ?
+            <li className = "bottom-divider" >
+              Condition
+            </li>
+            :
+            null
+          }
 
           {
           boolAttrs.map(function (attr) {
-            return <li key = {attr.attribute_id}
-              onClick = {_this.chooseBoldAttr.bind(_this, attr.attribute_id)}
-              >
+            return <li key = {attr.attribute_id} className = "selectable"
+              onClick = {_this.chooseConditionAttr.bind(_this, attr.attribute_id)}>
               <span className = {'small icon icon-geo-circle ' +
                 (_this.state.boldAttr === attr.attribute_id ? 'green' : 'hovershow')}/>
               <span className = "icon icon-checkbox-full"/>
@@ -74,20 +82,34 @@ var TextChoice = React.createClass({
           })
           }
 
-          <li className = "top-divider bottom-divider" >
+          {
+          boolAttrs.length > 0 ?
+            <li className = "bottom-divider selectable"
+              onClick = {_this.chooseConditionAttr.bind(_this, null)}>
+              <span className = {'small icon icon-geo-circle ' +
+                (!_this.state.conditionAttr ? 'green' : 'hovershow')}/>
+              <span className = "icon icon-checkbox-empty"/>
+              No Condition
+            </li>
+            :
+            null
+          }
+
+
+          <li className = "bottom-divider" >
             Font style
           </li>
 
-          <li className = "selectable" onClick = {_this.chooseAlwaysBold}>
+          <li className = "selectable" onClick = {_this.chooseBoldStyle}>
             <span className = {'small icon icon-geo-circle ' +
               (_this.state.bold ? 'green' : 'hovershow')}/>
             <span className = "icon icon-tl-bold"/>
             Bold text
           </li>
 
-          <li className = "selectable" onClick = {_this.chooseBoldAttr.bind(_this, null)}>
+          <li className = "selectable" onClick = {_this.chooseNoStyle.bind(_this, null)}>
             <span className = {'small icon icon-geo-circle ' +
-              (_.isNull(_this.state.boldAttr) && !_this.state.bold ? 'green' : 'hovershow')}/>
+              (!_this.state.bold ? 'green' : 'hovershow')}/>
             <span className = "icon icon-tl-text"/>
             No font style
           </li>

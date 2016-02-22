@@ -28,6 +28,7 @@ import TabularBodyWrapper from "./TabularBodyWrapper"
 import TableMixin from '../../TableMixin'
 import ContextMenu from './ContextMenu'
 import ScrollBar from "./ScrollBar"
+import Cursors from "./Cursors"
 
 import constant from "../../../../constants/MetasheetConstants"
 
@@ -50,25 +51,35 @@ var TabularPane = React.createClass ({
 			contextX: null,
 			contextY: null,
 			hiddenCols: 0,
-			hiddenColWidth: 0
+			hiddenColWidth: 0,
+			rowOffset: 0,
+			expanded: false
 		}
 	},
 
+
 	componentWillMount: function () {
+		var copyPasteDummy = document.getElementById('copy-paste-dummy')
+
 		document.body.addEventListener('keydown', this.onKey)
+		copyPasteDummy.addEventListener('paste', this.pasteSelection)
 		FocusStore.addChangeListener(this._onChange)
+		ViewStore.addChangeListener(this._onChange)
 		this.store = createTabularStore(this.props.view)
+		this.store.addChangeListener(this._onChange)
 		this._debounceCalibrateHeight = _.debounce(this.calibrateHeight, 500)
 		this._debounceCreateView = _.debounce(this.createView, 500)
+
 	},
 
 	componentWillUnmount: function () {
 		var copyPasteDummy = document.getElementById('copy-paste-dummy')
 		document.body.removeEventListener('keydown', this.onKey)
 		FocusStore.removeChangeListener(this._onChange)
+		ViewStore.removeChangeListener(this._onChange)
 		copyPasteDummy.removeEventListener('paste', this.pasteSelection)
 		removeEventListener('resize', this._debounceCalibrateHeight)
-
+		this.store.removeChangeListener(this._onChange)
 		this.store.unregister()
 	},
 
@@ -89,22 +100,26 @@ var TabularPane = React.createClass ({
 		this.setState({visibleHeight: wrapper.offsetHeight})
 	},
 
-	shouldComponentUpdate: function (nextProps, nextState) {
-		var _this = this
-		var props = this.props
-		var state = this.state
-		return (props.view !== nextProps.view ||
-			!_.isEqual(state.selection, nextState.selection) ||
-			!_.isEqual(state.pointer, nextState.pointer) ||
-			!_.isEqual(state.copyarea, nextState.copyarea) ||
-			state.hiddenColWidth !== nextState.hiddenColWidth
-		)
-	},
+	// shouldComponentUpdate: function (nextProps, nextState) {
+	// 	var _this = this
+	// 	var props = this.props
+	// 	var state = this.state
+	// 	return (props.view !== nextProps.view ||
+	// 		!_.isEqual(state.selection, nextState.selection) ||
+	// 		!_.isEqual(state.pointer, nextState.pointer) ||
+	// 		!_.isEqual(state.copyarea, nextState.copyarea) ||
+	// 		!_.isEqual(state.rowOffset, nextState.rowOffset) ||
+	// 		!state.expanded !== nextState.expanded ||
+	// 		state.hiddenColWidth !== nextState.hiddenColWidth
+	// 	)
+	// },
 
 	_onChange: function () {
 		var focused = (FocusStore.getFocus() == 'view')
 		if (!focused) this.blurPointer()
 		this.forceUpdate()
+		this.refs.tableWrapper.forceUpdate()
+		this.refs.cursors.forceUpdate()
 	},
 
 	getVisibleColumns: function () {
@@ -164,26 +179,11 @@ var TabularPane = React.createClass ({
 		return {top: r, left: c}
 	},
 
-	getFieldAt: function (pos) {
-		var view = this.props.view
-		var fixedCols = view.data.fixedCols
-		var side = (pos.left >= fixedCols.length) ? 'rhs' : 'lhs'
-		var tbody = this.refs.tableWrapper.refs[side]
-		var colId = view.data.visibleCols[pos.left].column_id
-		var obj = this.getValueAt(pos.top)
-		var model = this.props.model
-		var objId = (obj.cid || obj[model._pk]);
-		var rowKey = side + '-tr-' + objId
-		var cellKey = rowKey + '-' + colId
-		var row = tbody.refs[rowKey]
-		if (row) return row.refs[cellKey]
-		else return null
-	},
-
 	editCell: function (e) {
 		var pos = this.state.pointer
-		var field = this.getFieldAt(pos)
+		var field = this.refs.cursors.refs.pointerCell
 		if (!field.handleEdit) return
+		
 		this.setState({
 			editing: true,
 			copyarea: null
@@ -273,6 +273,7 @@ var TabularPane = React.createClass ({
 	},
 
 	pasteSelection: function (e) {
+		console.log('paste!')
 		var text = e.clipboardData.getData('text')
 		var model = this.props.model
 		var view = this.props.view
@@ -301,30 +302,13 @@ var TabularPane = React.createClass ({
 		}
 	},
 
-	
+	toggleExpand: function () {
+		this.setState({expanded: !this.state.expanded})
+	},
 
 	handleMouseWheel: function (e) {
 		this.refs.verticalScrollBar.handleMouseWheel(e)
 		this.refs.horizontalScrollBar.handleMouseWheel(e)
-	},
-
-	
-
-	openContextMenu: function (e) {
-		// e.preventDefault();
-		// var rc = this.getRCCoords(e)
-		// var sel = this.state.selection
-
-		// modelActionCreators.setFocus('view')
-		// if (rc.row > sel.bottom || rc.row < sel.top ||
-		// 	rc.col > sel.right || rc.col < sel.left)
-		// 	this.updateSelect(rc.row, rc.col, false, false)
-
-		// this.setState({
-		// 	contextOpen: true,
-		// 	contextX: rc.x,
-		// 	contextY: rc.y + 20
-		// })
 	},
 
 	move: function (direction, shift) {
@@ -335,6 +319,7 @@ var TabularPane = React.createClass ({
 		var singleCell = (sel.left === sel.right && sel.top === sel.bottom)
 		var outline = singleCell ? {left: 0, right: numCols, top: 0, bottom: numRows} : sel ;
 
+		// Tab ----------------------
 		if (direction === 'TAB') {
 			var lilMod = (outline.right - outline.left + 1)
 			var bigMod = lilMod * (outline.bottom - outline.top + 1)
@@ -348,7 +333,7 @@ var TabularPane = React.createClass ({
 				top: ptr.top, bottom: ptr.top}})
 			this.updatePointer(ptr)
 		}
-
+		// Enter ---------------------
 		else if (direction === 'ENTER') {
 			var lilMod = (outline.bottom - outline.top + 1)
 			var bigMod = lilMod * (outline.right - outline.left + 1)
@@ -362,7 +347,7 @@ var TabularPane = React.createClass ({
 				top: ptr.top, bottom: ptr.top}})
 			this.updatePointer(ptr)
 		}
-		// Right
+		// Right ------------------------
 		else if (direction === 'RIGHT' && shift) {
 			if (sel.left === ptr.left && sel.right < numCols) sel.right += 1
 			else if (sel.left < ptr.left) sel.left += 1
@@ -371,7 +356,7 @@ var TabularPane = React.createClass ({
 			if (ptr.left < numCols) ptr.left = (ptr.left + 1)
 			this.updateSelect(ptr, shift)
 		}
-		// Left
+		// Left --------------------------
 		else if (direction === 'LEFT' && shift) {
 			if (sel.right > ptr.left) sel.right -= 1
 			else if (sel.left > 0) sel.left -= 1
@@ -381,7 +366,7 @@ var TabularPane = React.createClass ({
 			this.updateSelect(ptr, false)
 		}
 
-		// down
+		// down ---------------------------
 		else if (direction === 'DOWN' && shift) {
 			if (sel.top < ptr.top) sel.top += 1
 			else if (sel.bottom < numRows) sel.bottom += 1
@@ -405,31 +390,30 @@ var TabularPane = React.createClass ({
 		var oldPos = this.state.pointer
 		var view = this.props.view
 		var geo = view.data.geometry
-		var current = this.state.selected
-		var cell = this.getFieldAt(pos)
 		var numCols = this.getNumberCols()
 		var numRows = this.getNumberRows()
-		var rowOffset = this.refs.tableWrapper.state.rowOffset
+		var rowOffset = this.state.rowOffset
 		var visibleRows = Math.floor((this.state.visibleHeight - geo.headerHeight) / geo.rowHeight)
 
 		pos.left = Math.max(Math.min(pos.left, numCols), 0)
 		pos.top = Math.max(Math.min(pos.top, numRows), 0)
-		// if pointer has moved, then unselect the old position and select the new
-		if (cell && cell !== current) {
-			if (current && current.isMounted()) this.blurPointer()
-			cell.toggleSelect(true)
-		}
+		
+		if (pos.left !== oldPos.left ||pos.top !== oldPos.top)
+			this.blurPointer()
 		// save the new values to state
 		this.setState({
 			pointer: pos,
-			detailOpen: false,
-			contextOpen: false,
-			selected: (cell || this.state.selected)
+			expanded: false
 		})
 
-		if (pos.top < rowOffset) this.refs.verticalScrollBar.scroll(pos.top * geo.rowHeight)
+
+		if (pos.top < rowOffset) 
+			this.refs.verticalScrollBar.scroll(pos.top * geo.rowHeight)
 		if (pos.top > (rowOffset + visibleRows - 1)) 
 			this.refs.verticalScrollBar.scroll((pos.top - visibleRows) * geo.rowHeight)
+
+		// focus the paste area just in case
+		document.getElementById("copy-paste-dummy").focus()
 
 		// commit the pointer position to the view object, but debounce
 		view.data.pointer = pos
@@ -437,12 +421,10 @@ var TabularPane = React.createClass ({
 	},
 
 	blurPointer: function () {
-		var current = this.state.selected
+		var current = this.refs.cursors.refs.pointerCell
 		if (current) {
 			if (current.commitChanges) current.commitChanges()
-			current.toggleSelect(false)
 		}
-		// this.setState({copyarea: null})
 	},
 
 	updateSelect: function (pos, shift) {
@@ -492,6 +474,7 @@ var TabularPane = React.createClass ({
 		removeEventListener('selectstart', util.returnFalse)
 		removeEventListener('mousemove', this.onSelectMouseMove)
 		removeEventListener('mouseup', this.onMouseUp)
+		document.getElementById("copy-paste-dummy").focus()
 	},
 
 	setHorizontalScrollOffset: function (hOffset) {
@@ -503,16 +486,11 @@ var TabularPane = React.createClass ({
 
 		// tricky use of some to break when we exceed hOffset
 		floatCols.some(function (col) {
-			if (col.width + hiddenColWidth < hOffset) {
+			if (hOffset > col.width + hiddenColWidth) {
 				hiddenColWidth += col.width
 				hiddenCols ++
 			}
 			return (col.width + hiddenColWidth > hOffset)
-		})
-
-		this.refs.tableWrapper.setState({
-			hiddenCols: hiddenCols,
-			hiddenColWidth: hiddenColWidth
 		})
 
 		this.setState({
@@ -525,7 +503,7 @@ var TabularPane = React.createClass ({
 	setVerticalScrollOffset: function (vOffset) {
 		var geo = this.props.view.data.geometry
 		var rows = Math.floor(vOffset / geo.rowHeight)
-		this.refs.tableWrapper.setState({rowOffset: rows})
+		this.setState({rowOffset: rows})
 	},
 
 	render: function () {
@@ -536,68 +514,60 @@ var TabularPane = React.createClass ({
 		var focused = (FocusStore.getFocus() == 'view')
 		var totalWidth = this.getTotalWidth()
 
+		var childProps = {
+			_handleBlur: _this.handleBlur,
+			_handleClick: _this.onMouseDown,
+			_handlePaste: _this.pasteSelection,
+			_addRecord: _this.addRecord,
+			_handleContextMenu: _this.openContextMenu,
+			_handleWheel: this.handleMouseWheel,
+			_handleEdit: _this.editCell,
+			_updatePointer: this.updatePointer,
+			_getRCCoords: this.getRCCoords,
+
+			hiddenColWidth: this.state.hiddenColWidth,
+			hiddenCols: this.state.hiddenCols,
+			rowOffset: this.state.rowOffset,
+
+			model: model,
+			view: view,
+			pointer: this.state.pointer,
+			selection: this.state.selection,
+			copyarea: this.state.copyarea,
+			store: this.store,
+			sorting: view.data.sorting,
+			focused: focused,
+			expanded: this.state.expanded
+		}
+
 		return <div className = "model-panes">
 			<div ref="wrapper"
 				className = "view-body-wrapper"
-				style = {{
-					left: 0,
-					right: (this.state.detailOpen ? this.state.detailWidth : 0) + 'px',
-					top: 0,
-					bottom: 0
-				}}
-				onPaste = {this.pasteSelection}
+				
 				beforePaste = {this.beforePaste}>
 
-				<TabularBodyWrapper
-					ref = "tableWrapper"
-					_handleBlur = {_this.handleBlur}
-					_handleClick = {_this.onMouseDown}
-					_handlePaste = {_this.pasteSelection}
-					_addRecord = {_this.addRecord}
-					_handleContextMenu = {_this.openContextMenu}
-					_handleWheel = {this.handleMouseWheel}
-					_handleEdit = {_this.editCell}
-					_updatePointer = {this.updatePointer}
-					_getRCCoords = {this.getRCCoords}
+				<TabularBodyWrapper {...childProps}
+					ref = "tableWrapper"/>
+				
+				<Cursors {...childProps}
+					ref = "cursors"/>
 
-					hiddenColWidth = {this.state.hiddenColWidth}
-					hiddenCols = {this.state.hiddenCols}
-					model = {model}
-					view = {view}
-					pointer = {this.state.pointer}
-					selection = {this.state.selection}
-					copyarea = {this.state.copyarea}
-					store = {this.store}
-					sorting = {view.data.sorting}
-					focused = {focused}/>
 				<ScrollBar
 					store = {_this.store}
 					ref = "verticalScrollBar"
 					axis = "vertical"
-					_handleClick = {_this.onMouseDown}
-					_handleDoubleClick = {this.editCell}
-					_editCell = {_this.editCell}
 					_setScrollOffset = {_this.setVerticalScrollOffset}
 					view = {view}/>
+				
 				<ScrollBar
 					store = {_this.store}
 					ref = "horizontalScrollBar"
 					axis = "horizontal"
-					_handleClick = {_this.onMouseDown}
-					_handleDoubleClick = {this.editCell}
-					_editCell = {_this.editCell}
 					_setScrollOffset = {_this.setHorizontalScrollOffset}
-					onScroll = {this.onScroll}
 					view = {view}/>
 			</div>
-			<div style = {{
-				right: this.state.detailWidth + 'px',
-				width: '10px',
-				top: 0,
-				bottom: 0,
-				background: constant.colors.GRAY_2
-			}} className = "detail-resize"></div>
-			</div>
+		</div>
+			
 	}
 })
 

@@ -66,8 +66,8 @@ var ModelPane = React.createClass({
 		var view = ViewStore.get(view_id)
 		var model = ModelStore.get(model_id)
 
-		var viewDetailContent
-		var detailContent
+		// var viewDetailContent
+		// var detailContent
 		var bodyContent
 
 		var activePane = this.state.activePane
@@ -98,7 +98,6 @@ var ModelPane = React.createClass({
 					configElement = <div className = "view-config">
 						<ViewSelector view = {view} model = {model}/>
 					</div>;
-					viewDetailContent = null
 				}
 
 				return <div className="model-views">

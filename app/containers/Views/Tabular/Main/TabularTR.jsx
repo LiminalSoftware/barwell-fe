@@ -12,9 +12,10 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import defaultCellStyle from '../../Fields/defaultCellStyle';
 
 
-var TabularTR = React.createClass({
+// var TabularTR = React.createClass({
+class TabularTR extends React.Component {
 
-	shouldComponentUpdate: function (newProps) {
+	shouldComponentUpdate (newProps) {
 		var oldProps = this.props
 		if (newProps.isScrolling) {
 			// console.log('TabualrTR.shouldComponentUpdate: scrolling')
@@ -28,19 +29,19 @@ var TabularTR = React.createClass({
 		return this.props.columns.some(function (col) {
 			return newProps.obj[col.column_id] !== oldProps.obj[col.column_id]
 		})
-	},
+	}
 
-	prepareColumn: function () {
+	prepareColumn () {
 
-	},
+	}
 
-	componentDidMount: function () {
+	componentDidMount () {
 		var ptr = this.props.pointer || {}
 		if (this.props.row === ptr.top)
 			this.props._updatePointer(ptr)
-	},
+	}
 
-	render: function () {
+	render () {
 		var _this = this
 		var model = this.props.model
 		var view = this.props.view
@@ -114,6 +115,6 @@ var TabularTR = React.createClass({
 			})}
 		</div>
 	}
-})
+}
 
 export default TabularTR;

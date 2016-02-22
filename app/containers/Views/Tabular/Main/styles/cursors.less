@@ -1,8 +1,7 @@
 @import "../../../../../global.less";
 
-.selection, .copyarea, .pointer, .pointer-outer, .row-selection, .jagged-edge {
+.selection, .copyarea, .pointer, .selection-outer, .selection-border, .jagged-edge {
 	.border-box;
-	z-index: 112;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -15,7 +14,7 @@
 
 .jagged-edge {
 	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAGCAYAAAD+Bd/7AAAAOklEQVQIW2Nkn2rx/0fWcQYQYGRkZAQzkADj/////3NMs2TApQisAKQBlyKwkSBFIOOxWUfYBEJuAADs9CgHgHfuFwAAAABJRU5ErkJggg==) repeat-y;
-	z-index: 151;
+	z-index: 6;
 }
 
 .copyarea {
@@ -32,6 +31,7 @@
 		cursor: move !important;
 	}
 	.transition(all cubic-bezier(.1,.85,.5,1) 100ms);
+	z-index: 1;
 }
 
 .selection.singleton {
@@ -39,21 +39,36 @@
 }
 
 .pointer {
-	transform: translateZ(4px);
-	z-index: 130;
-	border: 1px solid @gray3;
-	&.focused {
-		border-color: @newgreen1;
-	}
-	.transition(all cubic-bezier(.1,.85,.5,1) 100ms);
+	transform: translateZ(5px);
+	background: white;
+	z-index: 6;
+	pointer-events: auto;
 }
 
-.pointer-outer {
+.pointer--expanded {
+	background: white;
+	border: 1px solid @newgreen1;
+	.transition(all cubic-bezier(.1,.85,.5,1) 150ms);
+}
+
+.selection-outer {
 	border: 6px solid white;
 	transform: translateZ(3px);
 	.transition(all cubic-bezier(.1,.85,.5,1) 100ms);
+	z-index: 3;
+}
+.selection-border {
+	.transition(all cubic-bezier(.1,.85,.5,1) 100ms);
+	z-index: 5;
 }
 
+.selection-border--blurred {
+	border: 1px solid @gray3;
+}
+
+.selection-border--focused {
+	border: 1px solid @newgreen1;
+}
 
 .pointer, .selection {
 	&.open-right {

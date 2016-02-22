@@ -7,12 +7,12 @@
 	z-index: 1;
 	left: 0;
 	right: 1px;
+	// overflow: hidden;
 }
 
 .table-cell {
 	display: block;
 	position: absolute;
-	// margin-left: -1px;
 	border-left: 1px solid @gray3;
 	border-bottom: 1px solid @gray3;
 
@@ -24,7 +24,12 @@
 	top: 0;
 	bottom: 0;
 	z-index: 2;
-	.transition(left cubic-bezier(.16,.85,.5, 1) 150ms);
+	// .transition(left cubic-bezier(.16,.85,.5, 1) 150ms);
+}
+
+.table-cell--selected {
+	border-left: 1px solid transparent;
+	border-bottom: 1px solid transparent;
 }
 
 .table-cell-selected {

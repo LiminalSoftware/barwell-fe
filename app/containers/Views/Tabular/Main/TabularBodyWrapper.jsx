@@ -47,7 +47,9 @@ var TabularBodyWrapper = React.createClass ({
 			rowOffset: 0,
 			colOffset: 0,
 			detailOpen: false,
-			contextOpen: false
+			contextOpen: false,
+			renderSide: 'lhs',
+			frameNum: 0
 		}
 	},
 
@@ -61,21 +63,19 @@ var TabularBodyWrapper = React.createClass ({
 	},
 
 	componentWillMount: function () {
-		ViewStore.addChangeListener(this._onChange)
-		FocusStore.addChangeListener(this._onChange)
-		this.props.store.addChangeListener(this._onChange)
-		
 		this.debounceFetch = _.debounce(this.fetch, FETCH_DEBOUNCE)
 		this.fetch(true)
 	},
 
 	componentWillUnmount: function () {
-		ViewStore.removeChangeListener(this._onChange)
-		FocusStore.removeChangeListener(this._onChange)
-		this.props.store.removeChangeListener(this._onChange)
+		
 	},
 
 	componentWillUpdate: function (nextProps, nextState) {
+		this.setState({
+			renderSide: this.state.renderSide === 'lhs' ? 'rhs' : 'lhs',
+			frameNum: this.state.frameNum + 1
+		})
 		this.debounceFetch(false, nextProps, nextState)
 	},
 
@@ -129,16 +129,12 @@ var TabularBodyWrapper = React.createClass ({
 		var oldProps = this.props
 		return this.props.view !== nextProps.view ||
 			this.props.hiddenColWidth !== nextProps.hiddenColWidth ||
-			this.state.rowOffset !== nextState.rowOffset ||
+			this.props.rowOffset !== nextProps.rowOffset ||
 			this.props.children !== nextProps.children ||
-			this.state.fetching !== nextState.fetching ||
-			this.props.selection !== nextProps.selection ||
-			this.props.pointer !== nextProps.pointer ||
-			this.props.copyarea !== nextProps.copyarea
+			this.state.fetching !== nextState.fetching
 	},
 
 	handleDetail: function (e) {
-		console.log('open detail!')
 		var coords = this.props._getRCCoords(e)
 		this.setState({
 			detailOpen: true,
@@ -152,7 +148,6 @@ var TabularBodyWrapper = React.createClass ({
 	},
 
 	render: function () {
-		// console.log('render tbodywrapper: ')
 		var view = this.props.view
 		var model = this.props.model
 		var store = this.props.store
@@ -160,10 +155,10 @@ var TabularBodyWrapper = React.createClass ({
 		var geo = view.data.geometry
 		var focused = this.props.focused
 
-		var rowOffset = this.state.rowOffset
-		var colOffset = this.state.hiddenColWidth
+		var rowOffset = this.props.rowOffset
+		var colOffset = this.props.hiddenColWidth
 
-		var marginTop = (-1* this.state.rowOffset * geo.rowHeight)
+		var marginTop = (-1 * rowOffset * geo.rowHeight)
 		var fixedWidth = view.data.fixedWidth
 		var floatWidth = view.data.floatWidth
 		var adjustedWidth = fixedWidth + floatWidth + geo.labelWidth
@@ -172,19 +167,13 @@ var TabularBodyWrapper = React.createClass ({
 		var fetchStart = this.state.fetchOffset
 		var fetchEnd = Math.min(this.state.fetchOffset + MAX_ROWS, rowCount)
 
+		var tableProps = _.extend(_.clone(this.props), {
 
-		var ptr = this.props.pointer
-		var sel = this.props.selection
-		var cpy = this.props.copyarea
-		var showJaggedEdge = (sel.right >= view.data.fixedCols.length
-			&& sel.left <= view.data.fixedCols.length && this.props.hiddenCols > 0)
-		var detailColumn = view.data.visibleCols[ptr.left]
-		var detailObject = store.getObject(ptr.top)
+		})
 
 		return <div
 			className = {"tabular-body-wrapper force-layer " + (focused ? "focused" : "blurred")}
 			ref="tbodyWrapper"
-			onPaste = {this.props._handlePaste}
 			style = {{
 				left: 0,
 				top: 0,
@@ -198,7 +187,7 @@ var TabularBodyWrapper = React.createClass ({
 					<div 
 						className = "loader-overlay"
 						style = {{width: 250 + 'px'}}>
-						<div className="three-quarters-loader"></div>
+						<div className="three-quarters-loader three-quarters-loader--green"></div>
 						Loading...
 					</div>
 					: null
@@ -215,7 +204,7 @@ var TabularBodyWrapper = React.createClass ({
 					transformStyle: 'preserve-3d'
 				}}>
 			{/*LHS TABLE BODY*/}
-			<div className = "wrapper outer-table-wrapper"
+			<div className = "wrapper outer-table-wrapper "
 				style = {{
 					left: 0,
 					bottom: 0,
@@ -224,7 +213,7 @@ var TabularBodyWrapper = React.createClass ({
 					transform: 'translateZ(1px)',
 					overflow: 'hidden',
 				}}>
-				<div className = "wrapper"
+				<div className = "wrapper force-layer"
 					style = {{
 						left: 0,
 						right: 0,
@@ -235,15 +224,15 @@ var TabularBodyWrapper = React.createClass ({
 
 				<TabularTBody
 					{...this.props}
-					_handleDetail = {this.handleDetail}
-					rowOffset = {this.state.rowOffset}
+					rowOffset = {rowOffset}
 					ref="lhs"
 					prefix = "lhs"
 					hasRowLabel = {true}
 					offsetCols = {0}
 					fetchStart = {fetchStart}
 					fetchEnd = {fetchEnd}
-					focused = {focused}
+					shouldPaint = {this.state.renderSide === 'lhs'}
+					frameNum = {this.state.frameNum}
 					style = {{
 						left: 0,
 						top: 0,
@@ -268,144 +257,7 @@ var TabularBodyWrapper = React.createClass ({
 			{/*END LHS HEADER*/}
 			</div>
 			{/*LHS OUTER*/}
-
-
-			{/*CURSORS*/}
-			<div className = "wrapper overlay"
-				style = {{
-					top: geo.headerHeight - 1 - 2 + 'px',
-					bottom: 0,
-					left: geo.leftGutter + 'px',
-					width: (fixedWidth + floatWidth + geo.labelWidth + 6) + 'px',
-					pointerEvents: 'none',
-					overflow: 'hidden',
-					transform: 'translateZ(3px)'
-				}}>
-				<div className = "wrapper"
-					style = {{
-						top: 0,
-						left: 0,
-						right: 0,
-						marginTop: marginTop + 2 + 'px',
-						height: ((rowCount + 1) * geo.rowHeight) + 'px',
-						transformStyle: 'preserve-3d overlay'
-					}}>
-
-					<Overlay
-		        		{...this.props}
-		        		ref = "addNew"
-		        		position = {{left: 0, right: view.data.visibleCols.length + view.data.fixedCols.length, 
-		        			top: rowCount, bottom: rowCount}}
-		        		fudge = {{left: -1}}
-		        		numHiddenCols = {this.state.hiddenCols}
-		        		className = "add-new-row">
-		        		<div className = "table-cell-inner" style={{cursor: 'pointer', lineHeight: (geo.rowHeight + 'px')}} 
-		        			onClick = {this.props._addRecord}>
-			    			<span className = "small grayed icon icon-plus"></span>
-			    			Add a new row of data
-			    		</div>
-		        	</Overlay>
-
-					{this.state.detailOpen ? 
-						<Overlay
-							{...this.props}
-							numHiddenCols = {this.state.hiddenCols}
-							className = "detail-bar"
-							ref = "detail"
-							position = {{
-								left: this.state.detailX,
-								right: this.state.detailX, 
-								top: this.state.detailY + 1,
-								bottom: this.state.detailY + 1
-							}}>
-						<DetailBar
-							model = {model}
-							view = {view}
-							style = {{
-								right: 0,
-								left: 0,
-								top: 0,
-								bottom: 0
-							}}
-							config = {detailColumn}
-							object = {detailObject}/>
-						</Overlay>
-						: null
-					}
-
-					<Overlay
-						{...this.props}
-						numHiddenCols = {this.state.hiddenCols}
-						className = {" pointer" + (focused ? " focused" : "")}
-						ref = "pointer"
-						position = {sel}
-						fudge = {{left: -2.25, top: -0.25, height: 2.5, width: 3.5}} />
-
-					<Overlay
-						{...this.props}
-						numHiddenCols = {this.state.hiddenCols}
-						className = "pointer-outer"
-						ref = "outerPointer"
-						position = {sel}
-						fudge = {{left: -3.75, top: -2.75, height: 7.5, width: 6.5}}/>
-					
-					{
-					showJaggedEdge ? 
-					<Overlay
-						{...this.props}
-						className = " jagged-edge "
-						ref = "jaggedEdge"
-						position = {{
-							left: view.data.fixedCols.length,
-							width: '10px',
-							top: sel.top,
-							bottom: sel.bottom
-						}}
-						fudge = {{left: -3, width: 10 }} />
-					: null}
-
-					<Overlay
-						columns = {view.data.visibleCols}
-			    		numHiddenCols = {this.props.hiddenCols}
-						rowOffset = {this.props.rowOffset}
-						className = {" copyarea running marching-ants " + (focused ? " focused" : "")}
-						ref="copyarea"
-						{...this.props}
-						position = {cpy}
-						fudge = {{left: -1.25, top: 0, height: 1, width: 1.25}}/>
-				</div>
-			</div>
-
 			
-
-			<div className = {"wrapper underlay underlay--" + (focused ? "focused" : "blurred")}
-				style = {{
-					top: geo.headerHeight - 1 - 2 + 'px',
-					bottom: 0,
-					maxHeight: rowCount * geo.rowHeight + 'px',
-					left: geo.leftGutter + 'px',
-					width: (fixedWidth + floatWidth + geo.labelWidth - this.props.hiddenColWidth) + 'px',
-					overflow: 'hidden',
-					transform: 'translateZ(-1px)'
-				}}>
-				<div className = "wrapper underlay-inner"
-					style = {{
-						top: 0,
-						left: 0,
-						right: 0,
-						marginTop: marginTop + 2 + 'px',
-						height: ((rowCount + 1) * geo.rowHeight) + 'px',
-					}}>
-
-					<Overlay
-		        		numHiddenCols = {this.state.hiddenCols}
-						className = {" selection " + (focused ? " focused" : "")}
-						ref = "selection"
-						{...this.props}
-						position = {sel}
-						fudge = {{left: -4.75, top: -2.75, height: 7.5, width: 8.5}}/>
-				</div>
-			</div>
 
 
 			{/*RHS OUTER*/}
@@ -448,14 +300,15 @@ var TabularBodyWrapper = React.createClass ({
 						<TabularTBody
 							{...this.props}
 							_handleDetail = {this.handleDetail}
-							rowOffset = {this.state.rowOffset}
+							rowOffset = {rowOffset}
 							ref = "rhs"
 							prefix = "rhs"
 							columns = {view.data.floatCols}
 							offsetCols = {view.data.fixedCols.length}
 							fetchStart = {fetchStart}
 							fetchEnd = {fetchEnd}
-							focused = {focused}
+							shouldPaint = {this.state.renderSide === 'rhs'}
+							frameNum = {this.state.frameNum}
 							style = {{
 								left: 0,
 								top: 0,

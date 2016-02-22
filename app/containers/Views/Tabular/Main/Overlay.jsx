@@ -11,13 +11,15 @@ var Overlay = React.createClass ({
   shouldComponentUpdate: function (nextProps, nextState) {
     return  this.props.position !== nextProps.position || 
             this.props.view !== nextProps.view ||
-            this.props.numColsScrolled !== nextProps.numColsScrolled
+            this.props.numHiddenCols !== nextProps.numHiddenCols ||
+            this.props.className !== nextProps.className ||
+            this.props.children !== nextProps.children
   },
 
 	render: function () {
     var pos = this.props.position
     var view = this.props.view
-    var numColsScrolled = this.props.numHiddenCols
+    var numHiddenCols = this.props.numHiddenCols
     var visibleCols = view.data.visibleCols
     var fixedCols = view.data.fixedCols
     var numFixed = fixedCols.length
@@ -29,12 +31,12 @@ var Overlay = React.createClass ({
     var style = this.props.style || {}
 
     if (pos && (pos.left === pos.right) && (pos.top === pos.bottom))
-      classes +=  ' singleton';
+      classes += ' singleton';
 
     if (!pos) return null
 
     visibleCols.forEach(function (col, idx) {
-      if (idx >= numFixed && idx < numFixed + numColsScrolled) return
+      if (idx >= numFixed && idx < numFixed + numHiddenCols) return
       if (idx < pos.left)
         left += col.width
       else if (idx <= (pos.right || pos.left) )
@@ -47,6 +49,7 @@ var Overlay = React.createClass ({
     style.width = (width + (fudge.width || 0)) + 'px'
 
 		return <div
+      {...this.props}
       className={classes}
       style={style}>
       {this.props.children}

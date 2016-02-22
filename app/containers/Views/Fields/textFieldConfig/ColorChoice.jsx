@@ -12,7 +12,8 @@ var ColorChoice = React.createClass({
 
   getInitialState: function () {
     return {
-      colorAttr: this.props.config.colorAttr,
+      colorAttr: this.props.config.colorAttr || null,
+      conditionAttr: this.props.config.conditionAttr || null,
       color: this.props.config.color,
       adjustColor: !(this.props.config.adjustColor === false),
       open: false
@@ -98,7 +99,8 @@ var ColorChoice = React.createClass({
 
            {
             boolAttrs.length > 0 ?
-            <li key = "no-condition" className="selectable">
+            <li key = "no-condition" className="selectable"
+              onClick = {_this.chooseCondition.bind(_this, null)}>
               <span className = {'small icon icon-geo-circle ' +
                 (_this.state.conditionAttr === null ? 'green' : 'hovershow')}/>
               <span className = "icon icon-checkbox-empty"/>
@@ -108,7 +110,7 @@ var ColorChoice = React.createClass({
             null
           }
 
-          <li key = "color-divider" className = {colorAttrs.length > 0 ? "top-divider bottom-divider" : ""}>
+          <li key = "color-divider" className = {boolAttrs.length > 0 ? "top-divider bottom-divider" : ""}>
             Color
           </li>
 

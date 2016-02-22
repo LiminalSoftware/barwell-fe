@@ -12,7 +12,8 @@ import TabularTH from "./TabularTH"
 var TabularTHead = React.createClass ({
 
 	shouldComponentUpdate: function (nextProps) {
-		return (nextProps.leftOffset !== this.props.leftOffset)
+		return (nextProps.leftOffset !== this.props.leftOffset ||
+			nextProps.view !== this.props.view)
 	},
 
 	render: function () {

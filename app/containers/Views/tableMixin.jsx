@@ -71,8 +71,12 @@ var TableMixin = {
 			this.clearSelection();
 			return;
 		}
+		else if (e.keyCode == keycodes.SPACE) {
+			this.toggleExpand();
+			return;
+		}
 		else if (e.keyCode == keycodes.ESC) {
-			this.setState({copyarea: null})
+			this.setState({copyarea: null, expanded: false})
 			return;
 		}
 		else if (e.keyCode == keycodes.C && ctrlKey) {
