@@ -6,6 +6,7 @@ import RelationStore from '../stores/RelationStore'
 import groomView from '../containers/Views/groomView'
 
 
+var BASE_URL = 'https://api.metasheet.io/m'
 
 var modelActions = {
 
@@ -38,7 +39,7 @@ var modelActions = {
 		var model_id = model.model_id
 		var message = {}
 		var json = JSON.stringify(obj)
-		var url = 'https://api.metasheet.io/m' + model.model_id;
+		var url = BASE_URL + model.model_id;
 
 		message.actionType = 'M' + model.model_id + '_CREATE'
 		message.index = position
@@ -58,9 +59,8 @@ var modelActions = {
 	deleteRecord: function (model, selector) {
 		var model_id = model.model_id
 		var message = {}
-
-		var url = 'https://api.metasheet.io/m' + model.model_id;
-		if (!selector instanceof Object) throw new Error ('NOOOOOOOOOOOoOooooo!!!!!!!')
+		var url = BASE_URL + model.model_id;
+		if (!selector instanceof Object) throw new Error ('Delete without qualifier is not permitted')
 		else url += '?' + _.map(selector, function (value, key) {
 			return key + '=eq.' + value;
 		}).join('&')
@@ -73,7 +73,44 @@ var modelActions = {
 		})
 	},
 
+	patchRecords: function (model, patch, selector, extras) {
+		var model_id = model.model_id
+		var message = {}
+		var rx = /^a\d+$/i
+		var keyRx = /violates unique constraint/i
 
+		message.actionType = 'M' + model.model_id + '_UPDATE'
+		message.update = _.clone(patch)
+		message.selector = selector
+		message = _.extend(message, extras)
+		MetasheetDispatcher.dispatch(message)
+
+		var url = BASE_URL + model.model_id;
+		if (!selector instanceof Object) throw new Error ('Patch without qualifier is not permitted')
+		else url += '?' + _.map(selector, function (value, key) {
+			return key + '=eq.' + value;
+		}).join('&')
+		
+		patch = _.pick(patch, (v,k)=> rx.test(k))
+
+		webUtils.ajax('PATCH', url, JSON.stringify(patch), {"Prefer": 'return=representation'}).then(function (results) {
+			var message = {}
+			message.actionType = 'M' + model.model_id + '_RECEIVEUPDATE'
+			message.update = results.data
+			message.selector = selector
+			MetasheetDispatcher.dispatch(message)
+		}).catch(function (error) {
+			var message = error.message
+			if (keyRx.test(message)) {
+				var message = {}
+				message.notice = 'Update failed-unique key already exists'
+				message.selector = selector
+				message.actionType = 'M' + model.model_id + '_REVERT'
+				MetasheetDispatcher.dispatch(message)
+			}
+			
+		})
+	},
 
 	moveHasMany: function (relationId, thisObj, relObj) {
 		var relation = RelationStore.get(relationId)
@@ -113,33 +150,6 @@ var modelActions = {
 		modelActions.patchRecords(hasOneModel, patch, selector, extras)
 	},
 
-	patchRecords: function (model, patch, selector, extras) {
-		var model_id = model.model_id
-		var message = {}
-		var rx = /^a\d+$/i
-		message.actionType = 'M' + model.model_id + '_UPDATE'
-		message.update = _.clone(patch)
-		message.selector = selector
-		message = _.extend(message, extras)
-		MetasheetDispatcher.dispatch(message)
-
-		var url = 'https://api.metasheet.io/m' + model.model_id;
-		if (!selector instanceof Object) throw new Error ('dont patch globally!')
-		else url += '?' + _.map(selector, function (value, key) {
-			return key + '=eq.' + value;
-		}).join('&')
-		
-		patch = _.pick(patch, (v,k)=> rx.test(k))
-
-		webUtils.ajax('PATCH', url, JSON.stringify(patch), {"Prefer": 'return=representation'}).then(function (results) {
-			var message = {}
-			message.actionType = 'M' + model.model_id + '_RECEIVEUPDATE'
-			message.update = results.data
-			message.selector = selector
-			MetasheetDispatcher.dispatch(message)
-		})
-	},
-
 	fetchRecords: function (view, offset, limit, sortSpec) {
 		var view_id = view.view_id
 		var model_id = view.model_id
@@ -176,7 +186,7 @@ var modelActions = {
 		var oppModel = ModelStore.get(relation.related_model_id)
 		var offset = _offset || 0
 		var limit = _limit || 20
-		var url = 'https://api.metasheet.io/m' + oppModel.model_id + '?' + label + '=ilike.*' + term + '*';
+		var url = BASE_URL + oppModel.model_id + '?' + label + '=ilike.*' + term + '*';
 
 		var header = {
 			'Range-Unit': 'items',
@@ -341,11 +351,11 @@ var modelActions = {
 	fetchModels: function (workspace_id) {
 		var url = 'https://api.metasheet.io/model?workspace_id=eq.' + workspace_id;
 		return webUtils.ajax('GET', url, null, {"Prefer": 'return=representation'}).then(function (models) {
-			return models.data.map(function (model) {
-				var message = {}
-				message.actionType = 'MODEL_RECEIVE'
-				message.model = model
-				return MetasheetDispatcher.dispatch(message)
+			models.data.map(function (model) {				
+				return MetasheetDispatcher.dispatch({
+					actionType: 'MODEL_RECEIVE',
+					model: model
+				})
 			})
 		});
 	},

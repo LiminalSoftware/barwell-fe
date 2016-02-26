@@ -29,65 +29,102 @@
 		border-bottom-right-radius: 0;
 	}
 }
-.pop-down-menu-padded > li{
-	padding: 10px;
+
+.pop-down-pointer-outer, .pop-down-pointer-inner, .pop-up-pointer-inner, .pop-up-pointer-outer {
+	position: absolute;
+	margin: 0; 
+	padding: 0;
+	width: 0;
+	height: 0;
+}
+
+
+
+pop-down-pointer-inner, .pop-up-pointer-inner {
+	z-index: 11;
 }
 
 .pop-down-pointer-outer {
-	.border-box;
-	width: 0;
-	height: 0;
 	border-left: @pointerSize/2 solid @headerMenuBorderColor;
 	border-bottom: @pointerSize/2 solid @headerMenuBorderColor;
 	border-right: @pointerSize/2 solid transparent;
 	border-top: @pointerSize/2 solid transparent;
-
-	position: absolute;
-	top: 0;
-	margin: 0; 
-	padding: 0;
 	left: @pointerSize;
 	margin-top: -1 * @pointerSize;
-	z-index: 10;
+	top: 0;
 }
 
 .pop-down-pointer-inner {
-	.border-box;
-	width: 0;
-	height: 0;
 	border-left: @pointerSize/2  solid white;
 	border-bottom: @pointerSize/2 solid white;
 	border-right: @pointerSize/2 solid transparent;
 	border-top: @pointerSize/2 solid transparent;
-
-	position: absolute;
-	top: 0;
-	margin: 0; 
-	padding: 0;
 	left: @pointerSize + 1px;
 	margin-top: -1 * @pointerSize + 2px;
-	z-index: 11;
+	top: 0;
+}
+
+.pop-up-pointer-outer {
+	border-left: @pointerSize/2 solid transparent;
+	border-bottom: @pointerSize/2 solid transparent;
+	border-right: @pointerSize/2 solid @headerMenuBorderColor;
+	border-top: @pointerSize/2 solid @headerMenuBorderColor;
+	left: @pointerSize;
+	margin-bottom: -1 * @pointerSize;
+	bottom: 0;
+}
+
+.pop-up-pointer-inner {
+	border-left: @pointerSize/2  solid transparent;
+	border-bottom: @pointerSize/2 solid transparent;
+	border-right: @pointerSize/2 solid white;
+	border-top: @pointerSize/2 solid white;
+	left: @pointerSize - 1px;
+	margin-bottom: -1 * @pointerSize + 2px;
+	bottom: 0;
+}
+
+
+.pop-down-pointer-outer--green {
+	border-left: @pointerSize/2 solid @newgreen1 !important;
+	border-bottom: @pointerSize/2 solid @newgreen1 !important;
+}
+
+.pop-up-pointer-outer--green {
+	border-right: @pointerSize/2 solid @newgreen1 !important;
+	border-top: @pointerSize/2 solid @newgreen1 !important;
+}
+
+
+.pop-up-menu {
+	bottom: 100%;
+	flex-direction: column-reverse;
+	margin-bottom: @pointerSize - 2;
 }
 
 .pop-down-menu {
+	top: 100%;
+	flex-direction: column;
+	margin-top: @pointerSize - 2;
+}
+
+.pop-down-menu--green, .pop-up-menu--green {
+	border: 1px solid @newgreen1;
+}
+
+.pop-down-menu, .pop-up-menu {
 	min-width: 200px;
 	position: absolute;
-	top: 100%;
-	margin-top: @pointerSize;
+	display: flex;
+
 	left: 0;
-
 	padding: 0;
-	margin: 0;
-	margin-top: 10px;
-
-	list-style: none;
-
-	border: 1px solid @headerMenuBorderColor;
 	
+	list-style: none;
+	border: 1px solid @headerMenuBorderColor;
 	.transition(max-height cubic-bezier(.1,.85,.5,1) 250ms);
 
 	border-radius: 0;
-
 	font-family: @bodyFont;
 	background: white;
 	color: @headerFontColor;

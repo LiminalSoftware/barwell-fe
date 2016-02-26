@@ -30,12 +30,12 @@ var commitMixin = {
 
 	componentWillReceiveProps: function (nextProps) {
 		if (!this.state.editing)
-			this.setState({value: this.validator(nextProps.value)})
+			this.setState({value: this.format ? this.format(nextProps.value) : nextProps.value})
 	},
 
 	getInitialState: function () {
 		return {
-			value: this.validator(this.props.value)
+			value: this.format ? this.format(this.props.value) : this.props.value
 		}
 	},
 

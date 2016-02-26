@@ -26,9 +26,7 @@ class TabularTR extends React.Component {
 			return true
 		}
 		if (oldProps.row !== newProps.row) return true
-		return this.props.columns.some(function (col) {
-			return newProps.obj[col.column_id] !== oldProps.obj[col.column_id]
-		})
+		return newProps.obj !== oldProps.obj
 	}
 
 	prepareColumn () {

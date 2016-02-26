@@ -87,15 +87,34 @@ var createTabularStore = function (view) {
               var _this = this
               var update = payload.update
               var selector = payload.selector
-              var dirty = {
+              var patch = {
                   _dirty: (type === (upperLabel + '_UPDATE'))
+              }
+              if (type === (upperLabel + '_UPDATE')) patch._server = update
+
+              var updater = function (rec) {
+                  return 
+              }
+              var matcher =  _.matcher(selector)
+              _records.forEach(function(rec, idx) {
+                if (matcher(rec)) _records[idx] = _.extend(_.clone(rec), update, patch)
+              })
+              TabularStore.emitChange()
+            }
+
+            if (type === (upperLabel + '_REVERT')) {
+              var _this = this
+              var update = payload.update
+              var selector = payload.selector
+              var patch = {
+                  _dirty: false
               }
               var updater = function (rec) {
                   return 
               }
               var matcher =  _.matcher(selector)
               _records.forEach(function(rec, idx) {
-                if (matcher(rec)) _records[idx] = _.extend(_.clone(rec), update, dirty)
+                if (matcher(rec)) _records[idx] = _.extend(_.clone(rec), rec._server, patch)
               })
               TabularStore.emitChange()
             }

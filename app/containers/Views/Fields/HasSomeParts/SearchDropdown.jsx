@@ -5,6 +5,7 @@ import AttributeStore from "../../../../stores/AttributeStore"
 import RelationStore from "../../../../stores/RelationStore"
 import ModelStore from "../../../../stores/ModelStore"
 
+import util from "../../../../util/util"
 import constant from "../../../../constants/MetasheetConstants"
 
 import modelActionCreators from "../../../../actions/modelActionCreators"
@@ -21,14 +22,14 @@ var SearchDropdown = React.createClass({
 			this.chooseSelection(e)
 		}
 		if (e.keyCode === constant.keycodes.TAB) {
-			this.commitChanges(e)
+			this.chooseSelection(e)
 		}
-		if (e.keyCode === constant.keycodes.ARROW_UP) {
-			this.setState({selection: Math.max(this.state.selection - 1, -1)})
-			e.preventDefault()
-		}
-		if (e.keyCode === constant.keycodes.ARROW_DOWN) {
-			this.setState({selection: Math.min(this.state.selection + 1, SEARCH_RECORDS_VISIBLE - 1)})
+		if (e.keyCode === constant.keycodes.ARROW_UP || 
+			e.keyCode === constant.keycodes.ARROW_DOWN) {
+			var increment = (e.keyCode === constant.keycodes.ARROW_DOWN ? 1 : -1) * (this.shouldOpenDown() ? 1 : -1)
+			this.setState({selection: 
+				Math.max(Math.min(this.state.selection + increment, SEARCH_RECORDS_VISIBLE - 1), -1)
+			})
 			e.preventDefault()
 		}
 	},
@@ -117,6 +118,11 @@ var SearchDropdown = React.createClass({
 		modelActionCreators.moveHasMany(config.relation_id, hasOneObj, hasManyObj)
 	},
 
+	shouldOpenDown: function () {
+		return this.props.spaceBottom > 5 
+			&& (this.props.spaceBottom > this.props.spaceTop)
+	},
+
 	render: function () {
 		var _this = this
 		var model = this.props.model;
@@ -126,12 +132,12 @@ var SearchDropdown = React.createClass({
 			minWidth: '160px',
 			left: 0,
 			right: 0,
-			margin: '-1px',
+			marginLeft: '-1px',
 			marginRight: '0',
-			overflow: 'hidden',
-			transform: 'translateZ(5px)',
-			maxHeight: this.state.expanded ? (40 * (this.state.searchRecords.length + 3) + 'px') : 0
+			pointerEvents: 'auto',
+			maxHeight: this.state.expanded ? (50 * (this.state.searchRecords.length + 3) + 'px') : 0
 		};
+		var shouldOpenDown = this.shouldOpenDown()
 		var relation = RelationStore.get(config.relation_id);
 		var oppModel = ModelStore.get(relation.related_model_id);
 		var searchTerm = this.state.searchTerm.toLowerCase();
@@ -140,10 +146,23 @@ var SearchDropdown = React.createClass({
 		).slice(this.state.page * SEARCH_RECORDS_VISIBLE, SEARCH_RECORDS_VISIBLE);
 		var count = filteredRecords.length;
 
-		return <ul className = "pop-down-menu green"
-			onClick = {function(e){console.log('clickkkkkk')}}
-			style = {style}>
-			<li className = {this.state.count > 0 ? "bottom-divider" : ""}
+		return <ul className = {"green " + (shouldOpenDown ? " pop-down-menu" : " pop-up-menu")}
+			style = {style} onClick = {function () {console.log('blah')}}>
+			{
+			shouldOpenDown ? 
+			<span className = "pop-down-pointer-outer pop-down-pointer-outer--green"/>
+          	:
+          	<span className = "pop-up-pointer-outer pop-up-pointer-outer--green"/>
+          	}
+          	{
+			shouldOpenDown ? 
+			<span className = "pop-down-pointer-inner"/>
+          	:
+          	<span className = "pop-up-pointer-inner"/>
+          	}
+          	
+			
+			<li key = "search-li" className = {this.state.count > 0 ? (shouldOpenDown ? "bottom-divider" : "top-divider") : ""}
 				style = {{height: '30px', position: 'relative'}}>
 				<input className = "input-editor" autoFocus
 					onChange = {this.updateSearchValue}
@@ -162,22 +181,23 @@ var SearchDropdown = React.createClass({
 				
 				{
 					this.state.searching ? 
-					<li>
+					<li key="loader-li">
 						<div className="three-quarters-loader three-quarters-loader--green"/>
 						Searching...
 					</li>
 					:
 					(this.state.count > SEARCH_RECORDS_VISIBLE) ? 
-					<li className="top-divider">Show more</li>
+					<li key="loader-li" >Show more</li>
 					:
-					this.state.count === 0 ? 
-					<li>No records found</li> 
+					filteredRecords.length === 0 ? 
+					<li key="loader-li" >No records found</li> 
 					: null
 				}
 
 				{
 					this.state.searchTerm.length > 0 ?
-					<li className="selectable" style={{}}>
+					<li key="create-li" className="selectable" 
+						className={"selectable " + (shouldOpenDown ? "top-divider" : "bottom-divider")}>
 						<span className="small icon green icon-plus"/>Create new {oppModel.model}
 					</li>
 					: null

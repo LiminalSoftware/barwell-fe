@@ -20,14 +20,10 @@ var FASTER_THRESHOLD = 25
 var CYCLE = 30
 var MIN_CYCLE = 15
 var BACKWARD_BUFFER = 5
-var BUFFER_SIZE = 3
+var BUFFER_SIZE = 0
 var PAGE_SIZE = SLOW_SKIP
 var BAILOUT = SLOW_SKIP
 
-var onFrame = function (f) {
-	if ('requestAnimationFrame' in window) window.requestAnimationFrame(f)
-	return setTimeout(f, CYCLE)
-}
 
 var TabularTBody = React.createClass ({
 
@@ -50,7 +46,7 @@ var TabularTBody = React.createClass ({
 		var delta = (newOffset - oldOffset)
 		var fetchStart = this.props.fetchStart
 		var fetchEnd = this.props.fetchEnd
-		var scrollDirection = (delta > 0 ? 1 : delta < 0 ? -1 : this.state.scrollDirection)
+		var scrollDirection = (delta > 0 ? 1 : delta < 0 ? -1 : 0)
 		var buffer = 0 - BACKWARD_BUFFER  + (BUFFER_SIZE * scrollDirection)
 		var target = util.limit(fetchStart, fetchEnd - VISIBLE_ROWS, newOffset + buffer)
 
@@ -63,7 +59,7 @@ var TabularTBody = React.createClass ({
 	},
 
 	componentWillUpdate: function () {
-		// we shouldn't have a timer set, but if we do clear it
+		//we shouldn't have a timer set, but if we do clear it
 		if (this.__timer) clearTimeout(this.__timer)
 	},
 
@@ -103,46 +99,23 @@ var TabularTBody = React.createClass ({
 		})
 	},
 
-	componentDidUpdate: function (prevProps) {
-		var _this = this
-		var now = new Date().getTime()
-		var visibleRows = this.state.end - this.state.start
-		var update = function () {
-			_this.updateOffset(_this.state.target, _this.state.scrollDirection)
-		}
-
-		// we just updated so set the _lastUpdate time to now
-		this._lastUpdate = now
-
-		// if we haven't reached the target yet, set a timer for next frame
-
-		if (!this.isFullyPainted(this.state.start, this.state.end, this.state.target)) {
-			this.__timer = onFrame(update)
-		}
-	},
-
-	isFullyPainted: function (start, end, target) {
-		// console.log('start: ' + start)
-		// console.log('end: ' + end)
-		// console.log('target: ' + target)
-		// console.log('fetchEnd: ' + this.props.fetchEnd)
-		return (start === target &&
-			end === (Math.min(target + VISIBLE_ROWS, this.props.fetchEnd)))
+	isUnpainted: function (state) {
+		var startTarget = Math.max(state.target, this.props.fetchStart)
+		var endTarget = Math.min(state.target + VISIBLE_ROWS, this.props.fetchEnd)
+		return !(state.start === startTarget && state.end === endTarget)
 	},
 
 	shouldComponentUpdate: function (nextProps, nextState) {
-		var now = new Date().getTime()
-		var visibleRows = this.state.end - this.state.start
-		
-
-		// console.log('state: (' + this.state.start + ', ' + this.state.end + 
-		// if (nextProps.shouldPaint && !this.props.shouldPaint) console.log('' + this.props.frameNum + ') paint: ' + this.props.prefix)
 
 		if (nextProps.view !== this.props.view) return true
 		if (nextProps.focused !== this.props.focused) return true
-		if (now - this._lastUpdate < MIN_CYCLE) return false
-		return !this.isFullyPainted(this.state.start, this.state.end, this.state.target)  && 
-			(nextProps.shouldPaint && !this.props.shouldPaint)
+		if (!nextProps.shouldPaint) return false
+		// if (now - this._lastUpdate < MIN_CYCLE) return false
+		return this.isUnpainted(nextState)
+	},
+
+	componentDidUpdate: function (prev) {
+		// this.updateOffset(this.state.target, this.state.scrollDirection)
 	},
 
 	_onChange: function () {
@@ -207,12 +180,10 @@ var TabularTBody = React.createClass ({
 		) : []
 		var rowCount = this.props.store ? this.props.store.getRecordCount() : 0
 		var geo = view.data.geometry
-		var floatOffset = this.props.floatOffset
-		
+		var floatOffset = this.props.floatOffset		
 		var style = this.props.style
 
-		// if (this.props.prefix === 'lhs') gTbodyHistory.push(this.state.start)
-		// if (this.props.prefix === 'lhs') console.log(this.state.target + '; ' + this.state.start + ', ' + this.state.end)
+		// console.log('tbody render.  ' + this.props.frameNum + '/' + this.props.prefix)
 
 		return <div
 			className = {"tabular-body force-layer " + (this.props.focused ? ' focused ' : ' gray-out ')}

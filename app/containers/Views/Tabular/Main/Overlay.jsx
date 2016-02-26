@@ -11,7 +11,7 @@ var Overlay = React.createClass ({
   shouldComponentUpdate: function (nextProps, nextState) {
     return  this.props.position !== nextProps.position || 
             this.props.view !== nextProps.view ||
-            this.props.numHiddenCols !== nextProps.numHiddenCols ||
+            this.props.hiddenCols !== nextProps.hiddenCols ||
             this.props.className !== nextProps.className ||
             this.props.children !== nextProps.children
   },
@@ -19,7 +19,7 @@ var Overlay = React.createClass ({
 	render: function () {
     var pos = this.props.position
     var view = this.props.view
-    var numHiddenCols = this.props.numHiddenCols
+    var hiddenCols = this.props.hiddenCols
     var visibleCols = view.data.visibleCols
     var fixedCols = view.data.fixedCols
     var numFixed = fixedCols.length
@@ -36,7 +36,7 @@ var Overlay = React.createClass ({
     if (!pos) return null
 
     visibleCols.forEach(function (col, idx) {
-      if (idx >= numFixed && idx < numFixed + numHiddenCols) return
+      if (idx >= numFixed && idx < numFixed + hiddenCols) return
       if (idx < pos.left)
         left += col.width
       else if (idx <= (pos.right || pos.left) )

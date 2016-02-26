@@ -29,6 +29,12 @@ var Cursors = React.createClass ({
       model: model,
       view: view,
 
+      selected: true,
+
+      spaceBottom: this.props.spaceBottom,
+      spaceTop: ptr.top - this.props.rowOffset,
+      spaceBottom: this.props.visibleRows + this.props.rowOffset - ptr.top,
+
       selector: selector,
       object: obj,
       pointer: ptr,

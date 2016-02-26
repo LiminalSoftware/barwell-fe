@@ -25,6 +25,7 @@ var WINDOW_ROWS = 50
 var FETCH_DEBOUNCE = 500
 var MAX_ROWS = 300
 var RHS_PADDING = 100
+var CYCLE = 60
 
 import TabularTBody from "./TabularTBody"
 import TabularTHead from "./TabularTHead"
@@ -72,15 +73,27 @@ var TabularBodyWrapper = React.createClass ({
 	},
 
 	componentWillUpdate: function (nextProps, nextState) {
+		var renderSide = this.state.renderSide === 'lhs' ? 'rhs' : 'lhs';
+		// if (this.__timer) clearTimeout(this.__timer);
+		this.debounceFetch(false, nextProps, nextState);
 		this.setState({
-			renderSide: this.state.renderSide === 'lhs' ? 'rhs' : 'lhs',
+			renderSide: renderSide,
 			frameNum: this.state.frameNum + 1
-		})
-		this.debounceFetch(false, nextProps, nextState)
+		});
 	},
 
 	componentWillReceiveProps: function (nextProps) {
-		this.debounceFetch(false, nextProps)
+		this.debounceFetch(false, nextProps);
+	},
+
+	componentDidUpdate: function () {
+		// var renderSide = this.state.renderSide === 'lhs' ? 'rhs' : 'lhs';
+		// var side = this.refs[renderSide];
+		
+		// if (side.isUnpainted(side.state)) {
+		// 	setTimeout(this.forceUpdate.bind(this), 0)
+		// }
+
 	},
 
 	finishFetch: function () {
@@ -132,6 +145,7 @@ var TabularBodyWrapper = React.createClass ({
 			this.props.rowOffset !== nextProps.rowOffset ||
 			this.props.children !== nextProps.children ||
 			this.state.fetching !== nextState.fetching
+			this.state.renderSide !== nextState.renderSide
 	},
 
 	handleDetail: function (e) {

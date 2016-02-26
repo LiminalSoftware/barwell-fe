@@ -53,7 +53,8 @@ var TabularPane = React.createClass ({
 			hiddenCols: 0,
 			hiddenColWidth: 0,
 			rowOffset: 0,
-			expanded: false
+			expanded: false,
+			context: false
 		}
 	},
 
@@ -97,22 +98,27 @@ var TabularPane = React.createClass ({
 
 	calibrateHeight: function () {
 		var wrapper = ReactDOM.findDOMNode(this.refs.tableWrapper)
-		this.setState({visibleHeight: wrapper.offsetHeight})
+		var view = this.props.view
+		var geo = view.data.geometry
+		this.setState({
+			visibleHeight: wrapper.offsetHeight,
+			visibleRows: Math.floor((wrapper.offsetHeight - geo.headerHeight) / geo.rowHeight)
+		})
 	},
 
-	// shouldComponentUpdate: function (nextProps, nextState) {
-	// 	var _this = this
-	// 	var props = this.props
-	// 	var state = this.state
-	// 	return (props.view !== nextProps.view ||
-	// 		!_.isEqual(state.selection, nextState.selection) ||
-	// 		!_.isEqual(state.pointer, nextState.pointer) ||
-	// 		!_.isEqual(state.copyarea, nextState.copyarea) ||
-	// 		!_.isEqual(state.rowOffset, nextState.rowOffset) ||
-	// 		!state.expanded !== nextState.expanded ||
-	// 		state.hiddenColWidth !== nextState.hiddenColWidth
-	// 	)
-	// },
+	shouldComponentUpdate: function (nextProps, nextState) {
+		var _this = this
+		var props = this.props
+		var state = this.state
+		return (props.view !== nextProps.view ||
+			!_.isEqual(state.selection, nextState.selection) ||
+			!_.isEqual(state.pointer, nextState.pointer) ||
+			!_.isEqual(state.copyarea, nextState.copyarea) ||
+			!_.isEqual(state.rowOffset, nextState.rowOffset) ||
+			!state.expanded !== nextState.expanded ||
+			state.hiddenColWidth !== nextState.hiddenColWidth
+		)
+	},
 
 	_onChange: function () {
 		var focused = (FocusStore.getFocus() == 'view')
@@ -233,9 +239,11 @@ var TabularPane = React.createClass ({
 
 	deleteRecords: function () {
 		var model = this.props.model
-		var sel = this.state.selection
+		var sel = _.clone(this.state.selection)
+		var ptr = _.clone(this.state.pointer)
 		var pk = model._pk
 		var selectors = []
+		var numRows = this.getNumberRows()
 
 		this.blurPointer()
 
@@ -249,7 +257,11 @@ var TabularPane = React.createClass ({
 		selectors.forEach(function (selector) {
 			modelActionCreators.deleteRecord(model, selector)
 		})
-		this.setState({copyarea: null})
+		ptr.top = Math.min(ptr.top, numRows - 1)
+		ptr.bottom = Math.min(ptr.bottom, numRows - 1)
+		sel.top = Math.min(sel.top, numRows - 1)
+		sel.bottom = Math.min(sel.bottom, numRows - 1)
+		this.setState({copyarea: null, selection: sel, pointer: ptr})
 	},
 
 	copySelection: function () {
@@ -273,7 +285,6 @@ var TabularPane = React.createClass ({
 	},
 
 	pasteSelection: function (e) {
-		console.log('paste!')
 		var text = e.clipboardData.getData('text')
 		var model = this.props.model
 		var view = this.props.view
@@ -304,6 +315,15 @@ var TabularPane = React.createClass ({
 
 	toggleExpand: function () {
 		this.setState({expanded: !this.state.expanded})
+	},
+
+	showContext: function (e) {
+		console.log('context!')
+		var position = this.getRCCoords(e)
+		this.setState({
+			context: true, 
+			contextPosition: position
+		})
 	},
 
 	handleMouseWheel: function (e) {
@@ -393,7 +413,7 @@ var TabularPane = React.createClass ({
 		var numCols = this.getNumberCols()
 		var numRows = this.getNumberRows()
 		var rowOffset = this.state.rowOffset
-		var visibleRows = Math.floor((this.state.visibleHeight - geo.headerHeight) / geo.rowHeight)
+		var visibleRows = this.state.visibleRows
 
 		pos.left = Math.max(Math.min(pos.left, numCols), 0)
 		pos.top = Math.max(Math.min(pos.top, numRows), 0)
@@ -519,7 +539,7 @@ var TabularPane = React.createClass ({
 			_handleClick: _this.onMouseDown,
 			_handlePaste: _this.pasteSelection,
 			_addRecord: _this.addRecord,
-			_handleContextMenu: _this.openContextMenu,
+			_handleContextMenu: _this.showContext,
 			_handleWheel: this.handleMouseWheel,
 			_handleEdit: _this.editCell,
 			_updatePointer: this.updatePointer,
@@ -528,6 +548,8 @@ var TabularPane = React.createClass ({
 			hiddenColWidth: this.state.hiddenColWidth,
 			hiddenCols: this.state.hiddenCols,
 			rowOffset: this.state.rowOffset,
+			visibleRows: this.state.visibleRows,
+			visibleHeight: this.state.visibleHeight,
 
 			model: model,
 			view: view,
@@ -537,7 +559,9 @@ var TabularPane = React.createClass ({
 			store: this.store,
 			sorting: view.data.sorting,
 			focused: focused,
-			expanded: this.state.expanded
+			expanded: this.state.expanded,
+			context: this.state.context,
+			contextPosition: this.state.contextPosition
 		}
 
 		return <div className = "model-panes">

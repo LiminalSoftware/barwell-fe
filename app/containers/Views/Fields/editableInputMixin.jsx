@@ -88,7 +88,7 @@ var editableInputMixin = {
 	render: function () {
 		var config = this.props.config
 		var prettyValue = this.format ? this.format(this.props.value) : this.props.value
-		var showDetail = this.detailIcon && this.state.selected && !this.state.editing
+		var showDetail = this.detailIcon && this.props.selected && !this.state.editing
 		var obj = this.props.object
 		var bg = null
 		var fontColor = null
@@ -110,13 +110,12 @@ var editableInputMixin = {
 		} 
 
 		cellStyle.textAlign = config.align
-		cellStyle.zIndex = this.state.selected ? 250 : 10
-		cellStyle.paddingRight = (this.state.selected && config.align !== 'right') ? '22px' : '5px'
-		cellStyle.paddingLeft = (this.state.selected && config.align === 'right') ? '22px' : '5px'
+		cellStyle.paddingRight = (this.props.selected && config.align !== 'right') ? '22px' : '5px'
+		cellStyle.paddingLeft = (this.props.selected && config.align === 'right') ? '22px' : '5px'
 		cellStyle.lineHeight = this.props.rowHeight + 'px'
 		cellStyle.cursor = "cell"
 		
-		if (this.state.selected) bg = "white"
+		if (this.props.selected) bg = "white"
 		else if (config.color && conditional) bg = config.color
 		else if (config.colorAttr && conditional) bg = obj['a' + config.colorAttr]
 
@@ -124,7 +123,7 @@ var editableInputMixin = {
 			var c = tinycolor(bg)
 			var hsl = c.toHsl()
 			if (config.adjustColor) hsl.l = 
-				Math.max(hsl.l, (this.state.selected ? SELECTED_LIGHTNESS : MIN_LIGHTNESS))
+				Math.max(hsl.l, MIN_LIGHTNESS)
 			else if (c.isDark()) cellStyle.color = 'white'
 			cellStyle.background = tinycolor(hsl).toRgbString()
 		}
@@ -143,11 +142,9 @@ var editableInputMixin = {
 				(this.state.selected ? " table-cell-inner-selected" : "") +
 				(this.props.sorted ? "table-cell-inner-sorted" : "")
 				}
+				onContextMenu = {this._handleContextMenu}
 				onPaste = {this.props._handlePaste}>
-				{this.format ?
-					this.format(this.state.value) :
-					this.state.value
-				}
+				{prettyValue}
 			</span>
 		}
 		{showDetail ?

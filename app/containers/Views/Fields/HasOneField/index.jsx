@@ -19,6 +19,7 @@ import SearchDropdown from '../HasSomeParts/SearchDropdown'
 import Bubble from '../HasSomeParts/Bubble'
 
 var hasOneField = {
+	
 	configCleanser: function (config) {
 		var label = config.label
 		var model_id = config.related_model_id
