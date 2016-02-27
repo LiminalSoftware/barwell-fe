@@ -110,10 +110,9 @@ var editableInputMixin = {
 		} 
 
 		cellStyle.textAlign = config.align
-		cellStyle.paddingRight = (this.props.selected && config.align !== 'right') ? '22px' : '5px'
-		cellStyle.paddingLeft = (this.props.selected && config.align === 'right') ? '22px' : '5px'
+		if (this.props.selected && config.align !== 'right') cellStyle.paddingRight = '22px'
+		if (this.props.selected && config.align === 'right') cellStyle.paddingLeft = '22px'
 		cellStyle.lineHeight = this.props.rowHeight + 'px'
-		cellStyle.cursor = "cell"
 		
 		if (this.props.selected) bg = "white"
 		else if (config.color && conditional) bg = config.color

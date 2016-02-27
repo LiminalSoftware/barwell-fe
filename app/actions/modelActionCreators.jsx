@@ -77,7 +77,6 @@ var modelActions = {
 		var model_id = model.model_id
 		var message = {}
 		var rx = /^a\d+$/i
-		var keyRx = /violates unique constraint/i
 
 		message.actionType = 'M' + model.model_id + '_UPDATE'
 		message.update = _.clone(patch)
@@ -100,13 +99,14 @@ var modelActions = {
 			message.selector = selector
 			MetasheetDispatcher.dispatch(message)
 		}).catch(function (error) {
-			var message = error.message
-			if (keyRx.test(message)) {
-				var message = {}
-				message.notice = 'Update failed-unique key already exists'
-				message.selector = selector
-				message.actionType = 'M' + model.model_id + '_REVERT'
-				MetasheetDispatcher.dispatch(message)
+			var message = {}
+			message.notice = 'Update failed: '
+			message.selector = selector
+			message.actionType = 'M' + model.model_id + '_REVERT'
+			MetasheetDispatcher.dispatch(message)
+			
+			if (error.code === "23505") {
+				
 			}
 			
 		})

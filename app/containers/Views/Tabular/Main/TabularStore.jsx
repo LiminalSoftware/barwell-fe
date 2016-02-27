@@ -46,7 +46,7 @@ var createTabularStore = function (view) {
         getObjects: function (from, to) {
           // console.log('from: ' + from + ', to: ' + to)
             if (from !== null && to !== null)
-              return _.map(_records.slice(from, to), _.clone);
+              return _records.slice(from, to);
             // return _.map(_records, _.clone);
         },
 
@@ -90,7 +90,7 @@ var createTabularStore = function (view) {
               var patch = {
                   _dirty: (type === (upperLabel + '_UPDATE'))
               }
-              if (type === (upperLabel + '_UPDATE')) patch._server = update
+              if (type === (upperLabel + '_RECEIVEUPDATE')) patch._server = update
 
               var updater = function (rec) {
                   return 
@@ -128,6 +128,11 @@ var createTabularStore = function (view) {
               _records = payload[label]
               _recordCount = payload.recordCount
               _startIndex = payload.startIndex
+
+              _records.map(function (rec) {
+                rec._server = _.clone(rec)
+                return rec
+              })
 
               TabularStore.emitChange()
             }

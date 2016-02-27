@@ -27,6 +27,8 @@ var MAX_ROWS = 300
 var RHS_PADDING = 100
 var CYCLE = 60
 
+var HAS_3D = util.has3d()
+
 import TabularTBody from "./TabularTBody"
 import TabularTHead from "./TabularTHead"
 import FakeLines from "./FakeLines"
@@ -141,11 +143,8 @@ var TabularBodyWrapper = React.createClass ({
 	shouldComponentUpdate: function (nextProps, nextState) {
 		var oldProps = this.props
 		return this.props.view !== nextProps.view ||
-			this.props.hiddenColWidth !== nextProps.hiddenColWidth ||
-			this.props.rowOffset !== nextProps.rowOffset ||
 			this.props.children !== nextProps.children ||
 			this.state.fetching !== nextState.fetching
-			this.state.renderSide !== nextState.renderSide
 	},
 
 	handleDetail: function (e) {
@@ -185,13 +184,14 @@ var TabularBodyWrapper = React.createClass ({
 
 		})
 
+
+		// console.log('render wrapper')
+		
 		return <div
 			className = {"tabular-body-wrapper force-layer " + (focused ? "focused" : "blurred")}
 			ref="tbodyWrapper"
 			style = {{
 				left: 0,
-				top: 0,
-				bottom: 0,
 				width: (adjustedWidth + 3) + 'px',
 				transformStyle: 'preserve-3d'
 			}}>
@@ -220,20 +220,17 @@ var TabularBodyWrapper = React.createClass ({
 			{/*LHS TABLE BODY*/}
 			<div className = "wrapper outer-table-wrapper "
 				style = {{
-					left: 0,
-					bottom: 0,
-					right: 0,
 					top: geo.headerHeight + 'px',
 					transform: 'translateZ(1px)',
 					overflow: 'hidden',
 				}}>
 				<div className = "wrapper force-layer"
+					ref = "lhsOffsetter"
 					style = {{
-						left: 0,
-						right: 0,
 						top: 0,
 						height: (rowCount * geo.rowHeight) + 'px',
-						marginTop: marginTop + 'px'
+						marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
+						transform: 'translateZ(0) translateY(' + marginTop + 'px)'
 					}}>
 
 				<TabularTBody
@@ -286,11 +283,8 @@ var TabularBodyWrapper = React.createClass ({
 				}}>
 				<div className = "rhs-h-scroll wrapper force-layer"
 					style = {{
-						left: 0,
-						bottom: 0,
-						top: 0,
-						right: 0,
-						marginLeft: (-1 * this.props.hiddenColWidth - 1) + 'px',
+						marginLeft: HAS_3D ? 0 : (-1 * this.props.hiddenColWidth - 1) + 'px',
+						transform: 'translateZ(0) translateX(' + (-1 * this.props.hiddenColWidth - 1) + 'px)'
 					}}>
 
 					{/*RHS TABLE BODY WRAPPER*/}
@@ -303,11 +297,13 @@ var TabularBodyWrapper = React.createClass ({
 							overflow: 'hidden'
 						}}>
 					<div className = "wrapper force-layer"
+						ref = "rhsOffsetter"
 						style = {{
 							top: 0,
 							left: 0,
 							right: 0,
-							marginTop: marginTop + 'px',
+							marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
+							transform: 'translateZ(0) translateY(' + marginTop + 'px)',
 							height: (rowCount * geo.rowHeight) + 'px',
 							width: (fixedWidth + floatWidth) + 'px',
 						}}>

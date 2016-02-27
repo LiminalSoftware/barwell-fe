@@ -17,16 +17,11 @@ class TabularTR extends React.Component {
 
 	shouldComponentUpdate (newProps) {
 		var oldProps = this.props
-		if (newProps.isScrolling) {
-			// console.log('TabualrTR.shouldComponentUpdate: scrolling')
-			return false;
-		}
-		if (oldProps.view !== newProps.view) {
-			// console.log('TabualrTR.shouldComponentUpdate: oldProps.view !== newProps.view')
-			return true
-		}
-		if (oldProps.row !== newProps.row) return true
-		return newProps.obj !== oldProps.obj
+		var response =	oldProps.view !== newProps.view ||
+						oldProps.row !== newProps.row ||
+						newProps.obj !== oldProps.obj;
+		// if (response) console.log('render TR: ' + this.props.rowKey)
+		return response
 	}
 
 	prepareColumn () {

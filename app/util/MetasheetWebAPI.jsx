@@ -62,7 +62,7 @@ var ajaxActual = function (method, url, json, retry, headers) {
           $.ajax(this);
         } else {
           console.log('xhr: '+ JSON.stringify(xhr, null, 2));
-          reject(status)
+          reject(xhr.responseJSON)
         }
       }
     };

@@ -36,7 +36,18 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 var THROTTLE_DELAY = 14
+var MIN_CYCLE = 10
+var CYCLE = 50
 
+var getFrame = function (f, cycle) {
+	if (window.requestAnimationFrame) return window.requestAnimationFrame(f)
+	else return window.setTimeout(f, cycle)
+}
+
+var cancelFrame = function (id) {
+	if (window.cancelAnimationFrame) return window.cancelAnimationFrame(id)
+	else return window.clearTimeout(id)
+}
 
 var TabularPane = React.createClass ({
 
@@ -54,7 +65,8 @@ var TabularPane = React.createClass ({
 			hiddenColWidth: 0,
 			rowOffset: 0,
 			expanded: false,
-			context: false
+			context: false,
+			renderSide: 'lhs'
 		}
 	},
 
@@ -110,14 +122,13 @@ var TabularPane = React.createClass ({
 		var _this = this
 		var props = this.props
 		var state = this.state
-		return (props.view !== nextProps.view ||
-			!_.isEqual(state.selection, nextState.selection) ||
-			!_.isEqual(state.pointer, nextState.pointer) ||
-			!_.isEqual(state.copyarea, nextState.copyarea) ||
-			!_.isEqual(state.rowOffset, nextState.rowOffset) ||
-			!state.expanded !== nextState.expanded ||
-			state.hiddenColWidth !== nextState.hiddenColWidth
-		)
+		return props.view !== nextProps.view ||
+			state.selection !== nextState.selection ||
+			state.pointer !== nextState.pointer ||
+			state.copyarea !== nextState.copyarea ||
+			// state.rowOffset !== nextState.rowOffset ||
+			state.expanded !== nextState.expanded ||
+			state.hiddenColWidth !== nextState.hiddenColWidth;
 	},
 
 	_onChange: function () {
@@ -126,11 +137,6 @@ var TabularPane = React.createClass ({
 		this.forceUpdate()
 		this.refs.tableWrapper.forceUpdate()
 		this.refs.cursors.forceUpdate()
-	},
-
-	getVisibleColumns: function () {
-		var view = this.props.view
-		return view.data.visibleCols
 	},
 
 	getTotalWidth: function () {
@@ -318,7 +324,7 @@ var TabularPane = React.createClass ({
 	},
 
 	showContext: function (e) {
-		console.log('context!')
+		// console.log('context!')
 		var position = this.getRCCoords(e)
 		this.setState({
 			context: true, 
@@ -520,10 +526,53 @@ var TabularPane = React.createClass ({
 
 	},
 
-	setVerticalScrollOffset: function (vOffset) {
-		var geo = this.props.view.data.geometry
-		var rows = Math.floor(vOffset / geo.rowHeight)
-		this.setState({rowOffset: rows})
+	_lastUpdate: 0,
+
+	setVerticalScrollOffset: function (rowOffset) {
+		
+		var view = this.props.view
+		var geo = view.data.geometry
+		
+		var previousOffset = this.state.rowOffset
+		var delta = rowOffset - previousOffset
+		var direction = delta > 0 ? 1 : delta < 0 ? -1 : 0;
+
+		var lhsOffsetter = this.refs.tableWrapper.refs.lhsOffsetter
+		var rhsOffsetter = this.refs.tableWrapper.refs.rhsOffsetter
+		var underlay = this.refs.cursors.refs.underlayInner
+		var overlay = this.refs.cursors.refs.overlayInner
+
+		ReactDOM.findDOMNode(lhsOffsetter).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 0)"
+		ReactDOM.findDOMNode(rhsOffsetter).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 0)"
+		ReactDOM.findDOMNode(underlay).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 0)"
+		ReactDOM.findDOMNode(overlay).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 0)"
+		this.setState({rowOffset: rowOffset, direction: direction})
+		
+		if (!this._timer) this._timer = getFrame(this.refreshTable, CYCLE)
+	},
+
+	refreshTable: function () {
+		var now = Date.now()
+		if (now - this._lastUpdate < MIN_CYCLE && this._timer) return;
+
+		var side = this.state.renderSide
+		var body = this.refs.tableWrapper.refs[side]
+		var alt = this.refs.tableWrapper.refs[side === 'lhs' ? 'rhs' : 'lhs']
+		var isUnpainted = body.isUnpainted()
+
+		// console.log('refresh: ' + side)
+
+		body.updateOffset(this.state.rowOffset, this.state.direction)
+		this._lastUpdate = now
+
+		
+		if (isUnpainted) this._timer = getFrame(this.refreshTable, CYCLE)
+		else this._timer = null
+
+		this.setState({
+			renderSide: (side === 'lhs' ? 'rhs' : 'lhs'),
+			frame: (this.state.frame || 0) + 1,	
+		})
 	},
 
 	render: function () {
@@ -533,6 +582,8 @@ var TabularPane = React.createClass ({
 
 		var focused = (FocusStore.getFocus() == 'view')
 		var totalWidth = this.getTotalWidth()
+
+		// console.log('update index')
 
 		var childProps = {
 			_handleBlur: _this.handleBlur,

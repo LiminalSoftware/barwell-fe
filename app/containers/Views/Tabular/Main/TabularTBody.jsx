@@ -7,13 +7,15 @@ import ViewStore from "../../../../stores/ViewStore"
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import util from '../../../../util/util'
 
+import ReactPerf from "react-addons-perf"
+
 import TabularTR from './TabularTR'
 
 
 var VISIBLE_ROWS = 45
 var MAX_ROWS = 45
-var SLOW_SKIP = 1
-var FAST_SKIP = 2
+var SLOW_SKIP = 2
+var FAST_SKIP = 3
 var FASTER_SKIP = 3
 var FAST_THRESHOLD = 5
 var FASTER_THRESHOLD = 25
@@ -24,6 +26,7 @@ var BUFFER_SIZE = 0
 var PAGE_SIZE = SLOW_SKIP
 var BAILOUT = SLOW_SKIP
 
+var HAS_3D = util.has3d()
 
 var TabularTBody = React.createClass ({
 
@@ -35,27 +38,9 @@ var TabularTBody = React.createClass ({
 			target: 0,
 			length: VISIBLE_ROWS,
 			scrollDirection: 1,
-			speed: 0
+			speed: 0,
+			rowOffset: 0
 		}
-	},
-
-	componentWillReceiveProps: function (next) {
-		var rowCount = this.props.store ? this.props.store.getRecordCount() : 0
-		var newOffset = next.rowOffset
-		var oldOffset = this.props.rowOffset
-		var delta = (newOffset - oldOffset)
-		var fetchStart = this.props.fetchStart
-		var fetchEnd = this.props.fetchEnd
-		var scrollDirection = (delta > 0 ? 1 : delta < 0 ? -1 : 0)
-		var buffer = 0 - BACKWARD_BUFFER  + (BUFFER_SIZE * scrollDirection)
-		var target = util.limit(fetchStart, fetchEnd - VISIBLE_ROWS, newOffset + buffer)
-
-		this.setState({
-			scrolling: delta !== 0,
-			scrollDirection: scrollDirection,
-			speed: Math.abs(delta)
-		})
-		this.updateOffset(target, scrollDirection)
 	},
 
 	componentWillUpdate: function () {
@@ -64,13 +49,19 @@ var TabularTBody = React.createClass ({
 	},
 
 	updateOffset: function (target, scrollDirection) {
+		var fetchStart = this.props.fetchStart
+		var fetchEnd = this.props.fetchEnd
+
+		var buffer = 0 - BACKWARD_BUFFER  + (BUFFER_SIZE * scrollDirection)
+		var adjTarget = util.limit(fetchStart, fetchEnd - 10, target + buffer)
+
 		var start = this.state.start
 		var end = this.state.end
 		var visibleRows = (end - start)
 		var lag = Math.abs(target - start)
 		var skip = (lag >= FAST_THRESHOLD || !this.state.scrolling) ? (lag >= FASTER_THRESHOLD ? FASTER_SKIP : FAST_SKIP) : SLOW_SKIP
-		var startTarget = target
-		var endTarget = target + VISIBLE_ROWS
+		var startTarget = adjTarget
+		var endTarget = adjTarget + VISIBLE_ROWS
 		
 		// advance or retreat the begining of the range as appropriate
 		if (start > startTarget && scrollDirection === -1 && start < endTarget) start -= Math.min(skip, start - startTarget)
@@ -94,22 +85,22 @@ var TabularTBody = React.createClass ({
 
 		this.setState({
 			start: start,
-			target: target,
+			target: adjTarget,
 			end: end
 		})
 	},
 
-	isUnpainted: function (state) {
-		var startTarget = Math.max(state.target, this.props.fetchStart)
-		var endTarget = Math.min(state.target + VISIBLE_ROWS, this.props.fetchEnd)
-		return !(state.start === startTarget && state.end === endTarget)
+	isUnpainted: function () {
+		var startTarget = Math.max(this.state.target, this.props.fetchStart)
+		var endTarget = Math.min(this.state.target + VISIBLE_ROWS, this.props.fetchEnd)
+		return Math.abs(this.state.start - startTarget) + Math.abs(this.state.end  - endTarget) > 3
 	},
 
 	shouldComponentUpdate: function (nextProps, nextState) {
 
 		if (nextProps.view !== this.props.view) return true
 		if (nextProps.focused !== this.props.focused) return true
-		if (!nextProps.shouldPaint) return false
+		// if (!nextProps.shouldPaint) return false
 		// if (now - this._lastUpdate < MIN_CYCLE) return false
 		return this.isUnpainted(nextState)
 	},
@@ -182,8 +173,9 @@ var TabularTBody = React.createClass ({
 		var geo = view.data.geometry
 		var floatOffset = this.props.floatOffset		
 		var style = this.props.style
+		style.transform = "translate3d(0, " + (-1 * this.state.rowOffset * geo.rowHeight ) + "px, 0)"
 
-		// console.log('tbody render.  ' + this.props.frameNum + '/' + this.props.prefix)
+		// console.log('tbody render.  ' + this.props.prefix)
 
 		return <div
 			className = {"tabular-body force-layer " + (this.props.focused ? ' focused ' : ' gray-out ')}

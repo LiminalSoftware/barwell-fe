@@ -11,13 +11,20 @@ var RHS_PADDING = 100
 var ScrollBar = React.createClass ({
 	// mixins: [PureRenderMixin],
 
+	getInitialState: function () {
+		return {rowOffset: 0}
+	},
+
 	handleScroll: function (e) {
 		var scrollVar = this.props.axis === 'vertical' ? 'scrollTop' : 'scrollLeft'
 		var outerEl = this.refs.overlay
 		var view = this.props.view
 		var geo = view.data.geometry
 		var offset = outerEl[scrollVar]
-		this.props._setScrollOffset(offset)
+		var rowOffset = Math.floor(offset / geo.rowHeight)
+
+		if (rowOffset !== this.state.rowOffset) this.props._setScrollOffset(rowOffset)
+		this.setState({rowOffset: rowOffset})
 	},
 
 	scroll: function (position, relative) {

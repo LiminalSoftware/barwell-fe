@@ -7,6 +7,11 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Overlay from './Overlay'
 
+import util from '../../../../util/util'
+
+
+var HAS_3D = util.has3d()
+
 var Cursors = React.createClass ({
 
   getPointerElement: function () {
@@ -99,6 +104,17 @@ var Cursors = React.createClass ({
       height: 30,
     } : {width: -1, top: 1, height: -1};
 
+    var style = {
+      top: 0,
+      left: 0,
+      right: 0,
+      height: ((rowCount + 1) * geo.rowHeight) + 'px',
+      transformStyle: 'preserve-3d'
+    }
+
+    if (HAS_3D) style.transform = 'translateY(' + (marginTop + 2) + 'px)'
+    else style.marginTop = marginTop + 2 + 'px'
+
     return <div className = "wrapper" style = {{
         left: 0,
         top: 0,
@@ -117,14 +133,8 @@ var Cursors = React.createClass ({
           transform: 'translateZ(3px)'
         }}>
         <div className = "wrapper force-layer"
-          style = {{
-            top: 0,
-            left: 0,
-            right: 0,
-            marginTop: marginTop + 2 + 'px',
-            height: ((rowCount + 1) * geo.rowHeight) + 'px',
-            transformStyle: 'preserve-3d overlay'
-          }}>
+          ref = "overlayInner"
+          style = {style}>
 
           <Overlay
                 {...this.props}
@@ -210,13 +220,8 @@ var Cursors = React.createClass ({
           transform: 'translateZ(-1px)'
         }}>
         <div className = "wrapper underlay-inner force-layer"
-          style = {{
-            top: 0,
-            left: 0,
-            right: 0,
-            marginTop: marginTop + 2 + 'px',
-            height: ((rowCount + 1) * geo.rowHeight) + 'px',
-          }}>
+          ref = "underlayInner"
+          style = {style}>
 
           <Overlay
                 numHiddenCols = {this.props.hiddenCols}
