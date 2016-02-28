@@ -16,7 +16,7 @@ var VISIBLE_ROWS = 45
 var MAX_ROWS = 45
 var SLOW_SKIP = 2
 var FAST_SKIP = 3
-var FASTER_SKIP = 3
+var FASTER_SKIP = 6
 var FAST_THRESHOLD = 5
 var FASTER_THRESHOLD = 25
 var CYCLE = 30
@@ -74,7 +74,7 @@ var TabularTBody = React.createClass ({
 			end -= Math.min(skip, visibleRows - VISIBLE_ROWS)
 
 		// if the render range is totally out of the visible range, then just wind it down and start over
-		if (start > endTarget || end < startTarget) end -= Math.min(FAST_SKIP, end - start)
+		if (start > endTarget || end < startTarget) end -= Math.min(FASTER_SKIP, end - start)
 		if (end === start && end < startTarget) {
 			start = startTarget
 			end = startTarget + skip

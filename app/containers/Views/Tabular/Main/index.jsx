@@ -250,6 +250,7 @@ var TabularPane = React.createClass ({
 		var pk = model._pk
 		var selectors = []
 		var numRows = this.getNumberRows()
+		var numRowsDeleted = (sel.bottom - sel.top + 1)
 
 		this.blurPointer()
 
@@ -263,10 +264,10 @@ var TabularPane = React.createClass ({
 		selectors.forEach(function (selector) {
 			modelActionCreators.deleteRecord(model, selector)
 		})
-		ptr.top = Math.min(ptr.top, numRows - 1)
-		ptr.bottom = Math.min(ptr.bottom, numRows - 1)
-		sel.top = Math.min(sel.top, numRows - 1)
-		sel.bottom = Math.min(sel.bottom, numRows - 1)
+		ptr.top = Math.min(ptr.top, numRows - numRowsDeleted)
+		ptr.bottom = Math.min(ptr.bottom, numRows - numRowsDeleted)
+		sel.top = Math.min(sel.top, numRows - numRowsDeleted)
+		sel.bottom = Math.min(sel.bottom, numRows - numRowsDeleted)
 		this.setState({copyarea: null, selection: sel, pointer: ptr})
 	},
 
@@ -324,10 +325,10 @@ var TabularPane = React.createClass ({
 	},
 
 	showContext: function (e) {
-		// console.log('context!')
+		console.log('context!')
 		var position = this.getRCCoords(e)
 		this.setState({
-			context: true, 
+			context: true,
 			contextPosition: position
 		})
 	},
@@ -526,10 +527,9 @@ var TabularPane = React.createClass ({
 			hiddenColWidth: hiddenColWidth
 		});
 		
-		// console.log('hOffset: ' + hOffset)
-		// if (hiddenColWidth !== this.state.hiddenColWidth) 
-		// 	ReactDOM.findDOMNode(rhsHorizontalOffsetter).style.marginLeft = 
-		// 		(-1 * hiddenColWidth - 1) + 'px';
+		if (hiddenColWidth !== this.state.hiddenColWidth) 
+			ReactDOM.findDOMNode(rhsHorizontalOffsetter).style.marginLeft = 
+				(-1 * hiddenColWidth - 1) + 'px';
 	},
 
 	_lastUpdate: 0,
@@ -537,7 +537,7 @@ var TabularPane = React.createClass ({
 	setVerticalScrollOffset: function (vOffset) {
 		var view = this.props.view;
 		var geo = view.data.geometry;
-		var rowOffset = vOffset / geo.rowHeight;
+		var rowOffset = Math.floor(vOffset / geo.rowHeight);
 		var previousOffset = this.state.rowOffset;
 		var delta = rowOffset - previousOffset;
 		var direction = delta > 0 ? 1 : delta < 0 ? -1 : 0;
@@ -559,7 +559,7 @@ var TabularPane = React.createClass ({
 
 	refreshTable: function () {
 		var now = Date.now()
-		if (now - this._lastUpdate < MIN_CYCLE && this._timer) return;
+		// if (now - this._lastUpdate < MIN_CYCLE) return;
 
 		var side = this.state.renderSide
 		var body = this.refs.tableWrapper.refs[side]
@@ -570,7 +570,6 @@ var TabularPane = React.createClass ({
 
 		body.updateOffset(this.state.rowOffset, this.state.direction)
 		this._lastUpdate = now
-
 		
 		if (isUnpainted) this._timer = getFrame(this.refreshTable, CYCLE)
 		else this._timer = null

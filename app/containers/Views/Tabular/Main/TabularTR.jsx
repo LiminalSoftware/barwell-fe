@@ -58,13 +58,13 @@ class TabularTR extends React.Component {
 			className = {"table-row " +  (obj._dirty ? "dirty" : "")}
 			style = {rowStyle}>
 			{_this.props.hasRowLabel ?
-				<span className = "table-cell" 
+				<span className = {"table-cell" + (obj._dirty ? " dirty-label " : "")}  
 					style = {{ 
 						left: geo.leftGutter + 'px', 
 						width: geo.labelWidth + 'px',
 						zIndex: 2,
 					}}>
-					
+					{obj._dirty ? <span className = "icon green icon-geo-circle" style={{padding: '3px'}}/> : null}
 				</span> : null
 			}
 
