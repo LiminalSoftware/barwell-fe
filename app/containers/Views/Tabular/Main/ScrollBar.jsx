@@ -9,44 +9,36 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 var RHS_PADDING = 100
 
 var ScrollBar = React.createClass ({
-	// mixins: [PureRenderMixin],
-
-	getInitialState: function () {
-		return {rowOffset: 0}
-	},
 
 	handleScroll: function (e) {
-		var scrollVar = this.props.axis === 'vertical' ? 'scrollTop' : 'scrollLeft'
-		var outerEl = this.refs.overlay
-		var view = this.props.view
-		var geo = view.data.geometry
-		var offset = outerEl[scrollVar]
-		var rowOffset = Math.floor(offset / geo.rowHeight)
+		var scrollVar = this.props.axis === 'vertical' ? 'scrollTop' : 'scrollLeft';
+		var outerEl = this.refs.overlay;
+		var view = this.props.view;
+		var geo = view.data.geometry;
+		var offset = outerEl[scrollVar];
 
-		if (rowOffset !== this.state.rowOffset) this.props._setScrollOffset(rowOffset)
-		this.setState({rowOffset: rowOffset})
+		this.props._setScrollOffset(offset);
 	},
 
 	scroll: function (position, relative) {
-		var outerEl = this.refs.overlay
-		var scrollVar = (this.props.axis === 'vertical') ? 'scrollTop' : 'scrollLeft'
-		var offset =  relative ? outerEl[scrollVar] : 0
+		var outerEl = this.refs.overlay;
+		var scrollVar = (this.props.axis === 'vertical') ? 'scrollTop' : 'scrollLeft';
+		var offset =  relative ? outerEl[scrollVar] : 0;
 		ReactDOM.findDOMNode(outerEl)[scrollVar] = (offset + position)
 	},
 
 	handleMouseWheel: function (e) {
-		e.preventDefault()
-		var delta = (this.props.axis === 'vertical') ? e.deltaY : e.deltaX
-		this.scroll(delta, true)
+		var delta = (this.props.axis === 'vertical') ? e.deltaY : e.deltaX;
+		e.preventDefault();
+		this.scroll(delta, true);
 	},
 
 	render: function () {
-		var _this = this
 		var view = this.props.view
 		var geo = view.data.geometry
 		var axis = this.props.axis
 		var store = this.props.store
-		var rowCount = store ? _this.props.store.getRecordCount() : 0
+		var rowCount = store ? this.props.store.getRecordCount() : 0
 		
 		var innerStyle = (axis === 'vertical') ? {
 			top: 0,

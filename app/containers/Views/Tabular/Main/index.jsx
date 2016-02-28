@@ -497,50 +497,56 @@ var TabularPane = React.createClass ({
 	},
 
 	onMouseUp: function (e) {
-		removeEventListener('selectstart', util.returnFalse)
-		removeEventListener('mousemove', this.onSelectMouseMove)
-		removeEventListener('mouseup', this.onMouseUp)
-		document.getElementById("copy-paste-dummy").focus()
+		removeEventListener('selectstart', util.returnFalse);
+		removeEventListener('mousemove', this.onSelectMouseMove);
+		removeEventListener('mouseup', this.onMouseUp);
+		document.getElementById("copy-paste-dummy").focus();
 	},
 
 	setHorizontalScrollOffset: function (hOffset) {
-		var view = this.props.view
-		var columns = view.data.columnList
-		var floatCols = view.data.floatCols
-		var hiddenColWidth = 0
-		var hiddenCols = 0
+		var view = this.props.view;
+		var columns = view.data.columnList;
+		var floatCols = view.data.floatCols;
+		var hiddenColWidth = 0;
+		var hiddenCols = 0;
+		var rhsHorizontalOffsetter = this.refs.tableWrapper.refs.rhsHorizontalOffsetter;
 
-		// tricky use of some to break when we exceed hOffset
+		
 		floatCols.some(function (col) {
 			if (hOffset > col.width + hiddenColWidth) {
 				hiddenColWidth += col.width
 				hiddenCols ++
 			}
+			// break when we exceed hOffset
 			return (col.width + hiddenColWidth > hOffset)
-		})
+		});
 
 		this.setState({
 			hiddenCols: hiddenCols,
 			hiddenColWidth: hiddenColWidth
-		})
-
+		});
+		
+		// console.log('hOffset: ' + hOffset)
+		// if (hiddenColWidth !== this.state.hiddenColWidth) 
+		// 	ReactDOM.findDOMNode(rhsHorizontalOffsetter).style.marginLeft = 
+		// 		(-1 * hiddenColWidth - 1) + 'px';
 	},
 
 	_lastUpdate: 0,
 
-	setVerticalScrollOffset: function (rowOffset) {
-		
-		var view = this.props.view
-		var geo = view.data.geometry
-		
-		var previousOffset = this.state.rowOffset
-		var delta = rowOffset - previousOffset
+	setVerticalScrollOffset: function (vOffset) {
+		var view = this.props.view;
+		var geo = view.data.geometry;
+		var rowOffset = vOffset / geo.rowHeight;
+		var previousOffset = this.state.rowOffset;
+		var delta = rowOffset - previousOffset;
 		var direction = delta > 0 ? 1 : delta < 0 ? -1 : 0;
+		var lhsOffsetter = this.refs.tableWrapper.refs.lhsOffsetter;
+		var rhsOffsetter = this.refs.tableWrapper.refs.rhsOffsetter;
+		var underlay = this.refs.cursors.refs.underlayInner;
+		var overlay = this.refs.cursors.refs.overlayInner;
 
-		var lhsOffsetter = this.refs.tableWrapper.refs.lhsOffsetter
-		var rhsOffsetter = this.refs.tableWrapper.refs.rhsOffsetter
-		var underlay = this.refs.cursors.refs.underlayInner
-		var overlay = this.refs.cursors.refs.overlayInner
+		if (rowOffset === this.state.rowOffset) return;
 
 		ReactDOM.findDOMNode(lhsOffsetter).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 0)"
 		ReactDOM.findDOMNode(rhsOffsetter).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 0)"

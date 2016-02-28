@@ -99,16 +99,14 @@ var modelActions = {
 			message.selector = selector
 			MetasheetDispatcher.dispatch(message)
 		}).catch(function (error) {
-			var message = {}
-			message.notice = 'Update failed: '
-			message.selector = selector
-			message.actionType = 'M' + model.model_id + '_REVERT'
-			MetasheetDispatcher.dispatch(message)
-			
-			if (error.code === "23505") {
+			MetasheetDispatcher.dispatch({
+				selector: selector,
+				actionType: 'M' + model.model_id + '_REVERT'
+			})
+
+			// if (error.code === "23505") {
 				
-			}
-			
+			// }
 		})
 	},
 

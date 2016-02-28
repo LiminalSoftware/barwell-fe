@@ -93,8 +93,6 @@
 	border-left: 1px solid @gray2;
 }
 
-
-
 .add-new-row {
 	.border-box;
 	.noselect;
@@ -117,27 +115,8 @@
 	}
 }
 
-.fake-lines {
-	position: absolute;
-	left: 0;
-	top: 0;
-	overflow: hidden;
-	.transition(all cubic-bezier(.1,.85,.5,1) 150ms);
-}
-
-.fake-table-row {
-	.border-box;
-	position: absolute;
-	border-top: 1px solid @gray3;
-	border-bottom: 1px solid @gray3;
-	border-right: 1px solid @purple4;
-	background: white;
-	.transition(width cubic-bezier(.1,.85,.5,1) 150ms);
-}
-
 .underlay {
 	background: white;
-	.transition(width cubic-bezier(.1,.85,.5,1) 150ms);
 }
 
 .underlay--focused {
