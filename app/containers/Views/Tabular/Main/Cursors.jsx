@@ -162,7 +162,7 @@ var Cursors = React.createClass ({
             position = {ptr}
             onMouseDown = {this.props._handleClick}
             onDoubleClick = {this.props._handleEdit}
-            onContext: this.props._handleContextMenu,
+            onContext = {this.props._handleContextMenu}
             onWheel = {this.props._handleWheel}>
             {this.getPointerElement()}
           </Overlay>
