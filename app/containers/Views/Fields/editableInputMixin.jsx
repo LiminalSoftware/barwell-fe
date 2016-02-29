@@ -77,7 +77,6 @@ var editableInputMixin = {
 	handleKeyPress: function (e) {
 		if (e.keyCode === constant.keycodes.ESC) this.cancelChanges()
 		if (e.keyCode === constant.keycodes.ENTER) {
-			console.log('editableInputMixin: ENTER')
 			this.commitChanges()
 		}
 		if (e.keyCode === constant.keycodes.TAB) {

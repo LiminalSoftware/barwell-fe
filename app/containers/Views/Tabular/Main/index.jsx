@@ -59,8 +59,7 @@ var TabularPane = React.createClass ({
 			contextOpen: false,
 			detailOpen: false,
 			detailWidth: 300,
-			contextX: null,
-			contextY: null,
+			contextPosition: {left: 0, top: 0},
 			hiddenCols: 0,
 			hiddenColWidth: 0,
 			rowOffset: 0,
@@ -119,13 +118,13 @@ var TabularPane = React.createClass ({
 	},
 
 	shouldComponentUpdate: function (nextProps, nextState) {
-		var _this = this
 		var props = this.props
 		var state = this.state
 		return props.view !== nextProps.view ||
 			state.selection !== nextState.selection ||
 			state.pointer !== nextState.pointer ||
 			state.copyarea !== nextState.copyarea ||
+			state.contextOpen !== nextState.contextOpen ||
 			// state.rowOffset !== nextState.rowOffset ||
 			state.expanded !== nextState.expanded ||
 			state.hiddenColWidth !== nextState.hiddenColWidth;
@@ -325,11 +324,18 @@ var TabularPane = React.createClass ({
 	},
 
 	showContext: function (e) {
-		console.log('context!')
 		var position = this.getRCCoords(e)
+		console.log('context!')
 		this.setState({
-			context: true,
+			contextOpen: true,
 			contextPosition: position
+		})
+		e.preventDefault()
+	},
+
+	hideContext: function (e) {
+		this.setState({
+			contextOpen: false
 		})
 	},
 
@@ -430,7 +436,8 @@ var TabularPane = React.createClass ({
 		// save the new values to state
 		this.setState({
 			pointer: pos,
-			expanded: false
+			expanded: false,
+			contextOpen: false
 		})
 
 
@@ -479,12 +486,22 @@ var TabularPane = React.createClass ({
 		}
 		this.updatePointer(ptr)
 		this.setState({
-			selection: sel
+			selection: sel,
+			contextOpen: false
 		})
 	},
 
 	onMouseDown: function (e) {
-		var _this = this
+		var isRight
+		if ("which" in e)  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
+        	isRight = e.which === 3; 
+    	else if ("button" in e)  // IE, Opera 
+        	isRight = e.button === 2; 
+        if (isRight) {
+        	e.preventDefault()
+        	return;
+        }
+
 		if (FocusStore.getFocus() !== 'view')
 			modelActionCreators.setFocus('view')
 		this.updateSelect(this.getRCCoords(e), e.shiftKey)
@@ -550,8 +567,8 @@ var TabularPane = React.createClass ({
 
 		ReactDOM.findDOMNode(lhsOffsetter).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 0)"
 		ReactDOM.findDOMNode(rhsOffsetter).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 0)"
-		ReactDOM.findDOMNode(underlay).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 0)"
-		ReactDOM.findDOMNode(overlay).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 0)"
+		ReactDOM.findDOMNode(underlay).style.transform = "translate3d(0, " + ( -1 * rowOffset * geo.rowHeight + 2 ) + "px, 0)"
+		ReactDOM.findDOMNode(overlay).style.transform = "translate3d(0, " + ( -1 * rowOffset * geo.rowHeight + 2 ) + "px, 0)"
 		this.setState({rowOffset: rowOffset, direction: direction})
 		
 		if (!this._timer) this._timer = getFrame(this.refreshTable, CYCLE)
@@ -581,23 +598,24 @@ var TabularPane = React.createClass ({
 	},
 
 	render: function () {
-		var _this = this
 		var model = this.props.model
 		var view = this.props.view
 
 		var focused = (FocusStore.getFocus() == 'view')
 		var totalWidth = this.getTotalWidth()
 
-		// console.log('update index')
-
 		var childProps = {
-			_handleBlur: _this.handleBlur,
-			_handleClick: _this.onMouseDown,
-			_handlePaste: _this.pasteSelection,
-			_addRecord: _this.addRecord,
-			_handleContextMenu: _this.showContext,
+			_handleBlur: this.handleBlur,
+			_handleClick: this.onMouseDown,
+			_handlePaste: this.pasteSelection,
+			_copySelection: this.copySelection,
+			_addRecord: this.addRecord,
+			_deleteRecords: this.deleteRecords,
+			_insertRecord: this.insertRecord,
+			_handleContextMenu: this.showContext,
+			_hideContextMenu: this.hideContext,
 			_handleWheel: this.handleMouseWheel,
-			_handleEdit: _this.editCell,
+			_handleEdit: this.editCell,
 			_updatePointer: this.updatePointer,
 			_getRCCoords: this.getRCCoords,
 
@@ -606,6 +624,9 @@ var TabularPane = React.createClass ({
 			rowOffset: this.state.rowOffset,
 			visibleRows: this.state.visibleRows,
 			visibleHeight: this.state.visibleHeight,
+
+			spaceTop: this.state.pointer.top - this.state.rowOffset,
+    		spaceBottom: this.state.visibleRows + this.state.rowOffset - this.state.pointer.top,
 
 			model: model,
 			view: view,
@@ -616,7 +637,7 @@ var TabularPane = React.createClass ({
 			sorting: view.data.sorting,
 			focused: focused,
 			expanded: this.state.expanded,
-			context: this.state.context,
+			context: this.state.contextOpen,
 			contextPosition: this.state.contextPosition
 		}
 
@@ -633,17 +654,17 @@ var TabularPane = React.createClass ({
 					ref = "cursors"/>
 
 				<ScrollBar
-					store = {_this.store}
+					store = {this.store}
 					ref = "verticalScrollBar"
 					axis = "vertical"
-					_setScrollOffset = {_this.setVerticalScrollOffset}
+					_setScrollOffset = {this.setVerticalScrollOffset}
 					view = {view}/>
 				
 				<ScrollBar
-					store = {_this.store}
+					store = {this.store}
 					ref = "horizontalScrollBar"
 					axis = "horizontal"
-					_setScrollOffset = {_this.setHorizontalScrollOffset}
+					_setScrollOffset = {this.setHorizontalScrollOffset}
 					view = {view}/>
 			</div>
 		</div>

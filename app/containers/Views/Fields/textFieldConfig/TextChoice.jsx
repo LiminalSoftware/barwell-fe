@@ -11,9 +11,11 @@ var TextChoice = React.createClass({
   mixins: [blurOnClickMixin],
 
   getInitialState: function () {
+    var config = this.props.config
     return {
-      conditionAttr: this.props.config.conditionAttr,
-      bold: false,
+      conditionAttr: config.conditionAttr,
+      bold: config.bold,
+      italic: config.italic,
       open: false
     }
   },
@@ -51,7 +53,7 @@ var TextChoice = React.createClass({
 
     return <span className={"pop-down clickable icon "
           + (this.state.boldAttr ? " icon-tl-bold " : " icon-tl-text ")
-          + (this.state.open ? " open" : (this.state.boldAttr ? " active" : ""))}
+          + (this.state.open ? " open " : (this.state.italic || this.state.bold ? " active" : ""))}
         onClick = {this.handleOpen}>
         {
           this.state.open ? <ul className = "pop-down-menu" style = {{

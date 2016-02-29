@@ -72,7 +72,7 @@ var CheckboxElement = React.createClass({
 
 		return <span {...this.props} >
 			<span style = {cellStyle} className = {"table-cell-inner " + 
-				(this.state.selected ? " table-cell-inner-selected " : "") +
+				(this.props.selected ? " table-cell-inner-selected " : "") +
 				(this.props.sorted ? " table-cell-inner-sorted" : "")
 				}>
 				<span className = {"checkbox-surround " + (this.state.selected ? ' checkbox-surround-selected' : '')}
@@ -88,6 +88,7 @@ var CheckboxElement = React.createClass({
 var booleanField = {
 	defaultWidth: 50,
 	sortable: true,
+	expandable: false,
 	defaultAlign: 'center',
 	element: CheckboxElement,
 	uneditable: true

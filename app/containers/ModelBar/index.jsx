@@ -63,7 +63,7 @@ var ModelList = React.createClass ({
 	handleAddModel: function (e) {
 		var name = 'New model'
 		var workspaceId = this.props.workspaceId
-		var iter = 0
+		var iter = 1
 		while (ModelStore.query({workspace_id: workspaceId, model: name}).length > 0) {
 			name = 'New model ' + (iter++)
 		}
@@ -80,13 +80,12 @@ var ModelList = React.createClass ({
 
 		return <ul className="model-bar-list"> {
 			ModelStore.query(null, ['model']).map(function (model, idx) {
-				var modelId = model.cid || model.model_id;
+				var modelId = "" + (model.model_id || model.cid);
 				return <ModelLink
 					index = {idx}
 					key = {'model-link-' + modelId}
 					model = {model}
-					editing = {_this.props.editing}
-					active = {_this.props.curModelId == modelId}
+					active = {_this.props.curModelId === modelId}
 					{..._this.movableProps} />;
 			})
 		}
@@ -144,7 +143,7 @@ var ModelLink = React.createClass ({
 	render: function () {
 		var _this = this
 		var model = this.props.model
-		var model_id = model.cid || model.model_id
+		var model_id = model.model_id || model.cid
 		var workspace_id = model.workspace_id
 		var views
 

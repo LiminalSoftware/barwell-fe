@@ -31,13 +31,13 @@ var hasManyField = {
 			}
 		},
 
-		handleDragEnter: function (event) {
-			event.preventDefault();
+		handleDragEnter: function (e) {
+			e.preventDefault();
 			this.setState({droppable: true})
 		},
 
-		preventDefault: function (event) {
-			event.preventDefault();
+		preventDefault: function (e) {
+			e.preventDefault();
 		},
 
 		handleDragLeave: function () {
@@ -68,16 +68,16 @@ var hasManyField = {
 			})
 		},
 
-		handleDrop: function (event) {
+		handleDrop: function (e) {
 			var model = this.props.model
 			var config = this.props.config
 			var relationId = config.relation_id
 			var thisObj = this.props.object
 			var relObj = JSON.parse(
-				event.dataTransfer.getData('application/json')
+				e.dataTransfer.getData('application/json')
 			)
 			modelActionCreators.moveHasMany(relationId, thisObj, relObj)
-			event.dataTransfer.dropEffect = 'move'
+			e.dataTransfer.dropEffect = 'move'
 			this.setState({droppable: false})
 		},
 
@@ -90,7 +90,7 @@ var hasManyField = {
 			var showDetail = this.state.selected && !this.state.editing
 			var cellStyle = {
 				lineHeight: this.props.rowHeight + 'px',
-				background: this.state.selected ? 'white' : null
+				background: this.props.selected ? 'white' : null
 			}
 			var editorIconStyle = {
 				lineHeight: this.props.rowHeight + 'px',

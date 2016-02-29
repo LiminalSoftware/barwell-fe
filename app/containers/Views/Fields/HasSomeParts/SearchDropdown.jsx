@@ -5,10 +5,15 @@ import AttributeStore from "../../../../stores/AttributeStore"
 import RelationStore from "../../../../stores/RelationStore"
 import ModelStore from "../../../../stores/ModelStore"
 
+import PopDownMenu from "../../../../components/PopDownMenu"
+
 import util from "../../../../util/util"
 import constant from "../../../../constants/MetasheetConstants"
 
+import MenuKeysMixin from '../MenuKeysMixin'
 import modelActionCreators from "../../../../actions/modelActionCreators"
+
+
 
 var SEARCH_DEBOUNCE = 200;
 var SEARCH_RECORD_COUNT = 50;
@@ -16,35 +21,18 @@ var SEARCH_RECORDS_VISIBLE = 10
 
 var SearchDropdown = React.createClass({
 
-	handleKeyPress: function (e) {
-		if (e.keyCode === constant.keycodes.ESC) this.props._revert()
-		if (e.keyCode === constant.keycodes.ENTER) {
-			this.chooseSelection(e)
-		}
-		if (e.keyCode === constant.keycodes.TAB) {
-			this.chooseSelection(e)
-		}
-		if (e.keyCode === constant.keycodes.ARROW_UP || 
-			e.keyCode === constant.keycodes.ARROW_DOWN) {
-			var increment = (e.keyCode === constant.keycodes.ARROW_DOWN ? 1 : -1) * (this.shouldOpenDown() ? 1 : -1)
-			this.setState({selection: 
-				Math.max(Math.min(this.state.selection + increment, SEARCH_RECORDS_VISIBLE - 1), -1)
-			})
-			e.preventDefault()
-		}
-	},
+	mixins: [MenuKeysMixin],
 
 	componentWillMount: function () {
 		this._debounceSearch = _.debounce(this.search, SEARCH_DEBOUNCE)
-		addEventListener('keyup', this.handleKeyPress)
-	},
-
-	componentWillUnmount: function () {
-		removeEventListener('keyup', this.handleKeyPress)
 	},
 
 	componentDidMount: function () {
 		this.setState({expanded: true})
+	},
+
+	getNumberOptions: function () {
+		return Math.min(this.state.count, SEARCH_RECORDS_VISIBLE) + 2 
 	},
 
 	getInitialState: function () {
@@ -130,10 +118,8 @@ var SearchDropdown = React.createClass({
 		var style = {
 			position: 'absolute',
 			minWidth: '160px',
-			left: 0,
-			right: 0,
-			marginLeft: '-1px',
-			marginRight: '0',
+			left: '-3px !important',
+			right: '-3px !important',
 			pointerEvents: 'auto',
 			maxHeight: this.state.expanded ? (50 * (this.state.searchRecords.length + 3) + 'px') : 0
 		};
@@ -146,22 +132,8 @@ var SearchDropdown = React.createClass({
 		).slice(this.state.page * SEARCH_RECORDS_VISIBLE, SEARCH_RECORDS_VISIBLE);
 		var count = filteredRecords.length;
 
-		return <ul className = {"green " + (shouldOpenDown ? " pop-down-menu" : " pop-up-menu")}
-			style = {style} onClick = {function () {console.log('blah')}}>
-			{
-			shouldOpenDown ? 
-			<span className = "pop-down-pointer-outer pop-down-pointer-outer--green"/>
-          	:
-          	<span className = "pop-up-pointer-outer pop-up-pointer-outer--green"/>
-          	}
-          	{
-			shouldOpenDown ? 
-			<span className = "pop-down-pointer-inner"/>
-          	:
-          	<span className = "pop-up-pointer-inner"/>
-          	}
+		return <PopDownMenu {...this.props}>
           	
-			
 			<li key = "search-li" className = {this.state.count > 0 ? (shouldOpenDown ? "bottom-divider" : "top-divider") : ""}
 				style = {{height: '30px', position: 'relative'}}>
 				<input className = "input-editor" autoFocus
@@ -203,7 +175,7 @@ var SearchDropdown = React.createClass({
 					: null
 				}
 				
-			</ul>
+			</PopDownMenu>
 	}
 
 })

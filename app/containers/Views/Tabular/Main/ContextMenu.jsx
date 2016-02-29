@@ -1,9 +1,10 @@
 import React from "react"
-import styles from "./contextMenuStyle.less"
 import _ from "underscore"
 import $ from 'jquery'
 
 import modelActionCreators from "../../../../actions/modelActionCreators"
+
+import PopDownMenu from "../../../../components/PopDownMenu"
 
 import ViewDataStores from "../../../../stores/ViewDataStores"
 import storeFactory from 'flux-store-factory';
@@ -26,32 +27,46 @@ var TabularContextMenu = React.createClass ({
 		document.addEventListener('click', this.handleClick)
 	},
 
-	handleKeyPress: function (event) {
-		if (event.keyCode === constant.keycodes.ESC) this.props.handleContextBlur()
+	componentWillUnmount: function () {
+		document.removeEventListener('keyup', this.handleKeyPress)
+		document.removeEventListener('click', this.handleClick)
 	},
 
-	handleClick: function (event) {
-		this.props.handleContextBlur()
+	handleKeyPress: function (e) {
+		if (e.keyCode === constant.keycodes.ESC) this.props._hideContextMenu()
+	},
+
+	handleClick: function (e) {
+		this.props._hideContextMenu(e)
 	},
 
 	clickAddNewRow: function (e) {
-		this.props.insertRecord()
+		this.props._insertRecord()
 	},
 
 	clickDeleteRow: function (e) {
-		this.props.deleteRecords()
+		this.props._deleteRecords()
 	},
 
 	clickCopySelection: function (e) {
-		this.props.copySelection()
+		this.props._copySelection()
 	},
 
 	render: function () {
-		return <ul className = "tabular-context-menu" style={{left: this.props.x, top: this.props.y}}>
-			<li onClick={this.clickAddNewRow}><span className="white icon icon-sign-in"></span> Add new record [SHIFT-PLUS]</li>
-			<li onClick={this.clickCopySelection}><span className="white icon icon-bolt"></span> Copy selection  [CTL-C]</li>
-			<li onClick={this.clickDeleteRow}><span className="white icon icon-kub-trash"></span> Delete record [CTL-SHIFT-MINUS]</li>
-		</ul>
+		return <PopDownMenu {...this.props}>
+			<li onClick={this.clickAddNewRow} className = "selectable">
+				Insert new record
+				<span className="key-shortcut">ctrl+shift+plus</span>
+			</li>
+			<li onClick={this.clickCopySelection} className = "selectable">
+				Copy selection  
+				<span className="key-shortcut">ctrl+c</span>
+			</li>
+			<li onClick={this.clickDeleteRow} className = "selectable">
+				Delete record
+				<span className="key-shortcut">ctrl+shift+minus</span>
+			</li>
+		</PopDownMenu>
 	}
 })
 

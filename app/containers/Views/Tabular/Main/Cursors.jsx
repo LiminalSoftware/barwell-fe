@@ -6,7 +6,9 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Overlay from './Overlay'
+import ContextMenu from './ContextMenu'
 
+import PopDownMenu from '../../../../components/PopDownMenu'
 import util from '../../../../util/util'
 
 
@@ -22,21 +24,20 @@ var Cursors = React.createClass ({
     var ptr = this.props.pointer
     var col = view.data.visibleCols[ptr.left]
     var obj = store.getObject(ptr.top)
-    var element = (fieldTypes[col.type] || fieldTypes.TEXT).element
+    var element = col ? (fieldTypes[col.type]).element : null
     var selector = {}
     
     if (!obj) return ;
 
     selector[model._pk] = obj[model._pk]
 
-    return React.createElement(element, {
+    if (element) return React.createElement(element, {
       config: col,
       model: model,
       view: view,
 
       selected: true,
 
-      spaceBottom: this.props.spaceBottom,
       spaceTop: ptr.top - this.props.rowOffset,
       spaceBottom: this.props.visibleRows + this.props.rowOffset - ptr.top,
 
@@ -50,7 +51,8 @@ var Cursors = React.createClass ({
 
       _handleBlur: this.props._handleBlur,
       _handleDetail: this.props._handleDetail,
-      _handleClick: this.props._handleClick,
+      // _handleClick: this.props._handleClick,
+      _handleClick: (e => e.stopPropagation()),
       _handleEdit: this.props._handleEdit,
       _handleWheel: this.props._handleWheel,
       _handlePaste: this.props._handlePaste,
@@ -64,8 +66,6 @@ var Cursors = React.createClass ({
         top: '0px',
         right: '0px',
         border: 'none'
-        // borderLeft: '1px solid transparent',
-        // borderBottom: '1px solid transparent',
       }
     })
   },
@@ -95,7 +95,8 @@ var Cursors = React.createClass ({
 
     var detailColumn = view.data.visibleCols[ptr.left]
     var detailObject = store.getObject(ptr.top)
-    var element = (fieldTypes[detailColumn.type] || fieldTypes.TEXT).element
+
+    
 
     var pointerFudge = this.props.expanded ? {
       left: -30,
@@ -147,7 +148,7 @@ var Cursors = React.createClass ({
               <div className = "table-cell-inner" style={{cursor: 'pointer', lineHeight: (geo.rowHeight + 'px')}} 
                 onClick = {this.props._addRecord}>
                 <span className = "small grayed icon icon-plus"></span>
-                Add a new row of data
+                Add new record
               </div>
           </Overlay>
 
@@ -160,11 +161,12 @@ var Cursors = React.createClass ({
             ref = "pointer"
             fudge = {pointerFudge}
             position = {ptr}
-            onMouseDown = {this.props._handleClick}
+            
             onDoubleClick = {this.props._handleEdit}
-            onContext = {this.props._handleContextMenu}
+            onContextMenu = {this.props._handleContextMenu}
             onWheel = {this.props._handleWheel}>
             {this.getPointerElement()}
+            {this.props.context ? <ContextMenu {...this.props}/> : null}
           </Overlay>
 
           <Overlay

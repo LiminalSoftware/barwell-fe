@@ -5,7 +5,7 @@ import util from "./util/util"
 import constant from './constants/MetasheetConstants'
 import modelActionCreators from "./actions/modelActionCreators.jsx"
 
-var blurOnClickMixin = {
+var BlurOnClickMixin = {
 
   handleBlur: function (e) {
     this.setState({
@@ -52,4 +52,4 @@ var blurOnClickMixin = {
 
 }
 
-export default blurOnClickMixin
+export default BlurOnClickMixin

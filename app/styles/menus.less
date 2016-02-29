@@ -112,21 +112,28 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	border: 1px solid @newgreen1;
 }
 
+.key-shortcut {
+	color: @gray3;
+	float: right;
+}
+
 .pop-down-menu, .pop-up-menu {
-	min-width: 200px;
+	min-width: 250px;
 	position: absolute;
 	display: flex;
 
 	left: 0;
 	padding: 0;
+	margin-left: -1px;
+	margin-right: -1px;
 	
+	border-radius: 0;
 	list-style: none;
 	border: 1px solid @headerMenuBorderColor;
 	.transition(max-height cubic-bezier(.1,.85,.5,1) 250ms);
-
-	border-radius: 0;
-	font-family: @bodyFont;
 	background: white;
+	
+	font-family: @bodyFont;
 	color: @headerFontColor;
 	font-size: 15px;
 

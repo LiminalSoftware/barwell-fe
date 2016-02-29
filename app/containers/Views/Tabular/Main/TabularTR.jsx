@@ -47,6 +47,7 @@ class TabularTR extends React.Component {
 		var selector = {}
 		var rowStyle = {
 			height: (geo.rowHeight) + 'px',
+			lineHeight: (geo.rowHeight) + 'px',
 			top: (geo.rowHeight * (row)) + 'px',
 		}
 		
@@ -63,8 +64,9 @@ class TabularTR extends React.Component {
 						left: geo.leftGutter + 'px', 
 						width: geo.labelWidth + 'px',
 						zIndex: 2,
+						textAlign: 'center'
 					}}>
-					{obj._dirty ? <span className = "icon green icon-geo-circle" style={{padding: '3px'}}/> : null}
+					{obj._dirty ? <span className = "icon small green icon-geo-circle"/> : null}
 				</span> : null
 			}
 

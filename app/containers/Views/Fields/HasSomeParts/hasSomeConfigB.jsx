@@ -12,7 +12,7 @@ var hasSomeConfigB = React.createClass({
 
 	},
 
-	getInitialState: function () {o
+	getInitialState: function () {
 		var view = this.props.view
 		var config = this.props.config
 		return {label: config.label}

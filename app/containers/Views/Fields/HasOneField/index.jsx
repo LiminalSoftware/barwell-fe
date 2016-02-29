@@ -43,6 +43,15 @@ var hasOneField = {
 				nextState.editing !== this.state.editing
 		},
 
+		handleDragEnter: function (e) {
+			e.preventDefault();
+			this.setState({droppable: true})
+		},
+
+		handleDragLeave: function () {
+			this.setState({droppable: false})
+		},
+
 		getInitialState: function () {
 			return {editing: false}
 		},
@@ -67,6 +76,19 @@ var hasOneField = {
 			})
 		},
 
+		handleDrop: function (e) {
+			var model = this.props.model
+			var config = this.props.config
+			var relationId = config.relation_id
+			var thisObj = this.props.object
+			var relObj = JSON.parse(
+				e.dataTransfer.getData('application/json')
+			)
+			modelActionCreators.moveHasMany(relationId, thisObj, relObj)
+			e.dataTransfer.dropEffect = 'move'
+			this.setState({droppable: false})
+		},
+
 		render: function () {
 			var array = this.props.value
 			var obj = (array instanceof Array ? array[0] : null)
@@ -77,7 +99,7 @@ var hasOneField = {
 			var value = (array instanceof Array ? array[0][config.label] : '')
 			var cellStyle = {
 				lineHeight: this.props.rowHeight + 'px',
-				background: this.state.selected ? 'white' : null
+				background: this.props.selected ? 'white' : null
 			}
 			var editorIconStyle = {
 				lineHeight: this.props.rowHeight + 'px',
@@ -86,6 +108,7 @@ var hasOneField = {
 
 			return <span
 				className = {"table-cell " + (this.state.selected ? " table-cell-selected" : "")}
+				onDrop = {this.handleDrop}
 				style={style} >
 				<span 
 					className = "table-cell-inner"
