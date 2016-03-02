@@ -183,7 +183,6 @@ var TabularTBody = React.createClass ({
 			onMouseDown = {this.props._handleClick}
 			onDoubleClick = {this.props._handleEdit}
 			onWheel = {this.props._handleWheel}
-			onContextMenu = {this.props._handleContextMenu}
 			
 			ref = "tbody"
 			style = {this.props.style}

@@ -152,7 +152,7 @@ var TabularPane = React.createClass ({
 	},
 
 	getValueAt: function (idx) {
-		return this.store.getObjects()[idx]
+		return this.store.getObject(idx)
 	},
 
 	selectRow: function () {
@@ -210,13 +210,18 @@ var TabularPane = React.createClass ({
 		this.setState({copyarea: null})
 	},
 
-	insertRecord: function (pos) {
+	insertRecord: function () {
 		var cid = this.store.getClientId()
 		var obj = {cid: cid}
-		var position = pos || this.state.selection.top;
+		var pos = pos || this.state.pointer.top;
+		var sel = this.state.selection
 		this.blurPointer()
-		modelActionCreators.insertRecord(this.props.model, obj, position)
-		this.setState({copyarea: null})
+		if (pos >= sel.top && pos <= sel.bottom) {
+			sel = _.clone(sel)
+			sel.bottom++;
+		}
+		modelActionCreators.insertRecord(this.props.model, obj, pos)
+		this.setState({copyarea: null, selection: sel})
 	},
 
 	clearSelection: function () {
@@ -324,11 +329,13 @@ var TabularPane = React.createClass ({
 	},
 
 	showContext: function (e) {
-		var position = this.getRCCoords(e)
-		console.log('context!')
+		var pos = this.getRCCoords(e)
+		var sel = this.state.selection
+		if (pos.left >= sel.left && pos.left <= sel.right &&
+			pos.top >= sel.top && pos.top <= sel.bottom) this.updatePointer(pos)
+		else this.updateSelect(pos, false)
 		this.setState({
-			contextOpen: true,
-			contextPosition: position
+			contextOpen: true
 		})
 		e.preventDefault()
 	},

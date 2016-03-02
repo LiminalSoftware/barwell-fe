@@ -40,6 +40,14 @@ var editableInputMixin = {
 		$(document.body).off('keydown', this.onKey)
 	},
 
+	componentDidUpdate: function (prevProps, prevState) {
+		if (prevState.editing === false && this.state.editing === true) {
+			var val = this.refs.input.value
+			this.refs.input.value = ''
+			this.refs.input.value = val
+		}
+	},
+
 	cancelChanges: function () {
 		this.setState({
 			value: this.props.value
@@ -129,6 +137,7 @@ var editableInputMixin = {
 		return <span {...this.props} className = {"table-cell " + (this.state.selected ? " table-cell-selected" : "")}>
 			{this.state.editing ?
 			<input
+				ref = "input"
 				className = "input-editor"
 				value = {this.state.value}
 				autoFocus

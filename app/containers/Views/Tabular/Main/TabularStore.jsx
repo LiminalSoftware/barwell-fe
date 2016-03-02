@@ -24,6 +24,8 @@ var createTabularStore = function (view) {
     var _recordCount = null
     var _startIndex = 0
     var _iterator = 0
+    var _sortKey = []
+    var stickyRecs = []
 
     var TabularStore = assign({}, EventEmitter.prototype, {
 
@@ -44,10 +46,8 @@ var createTabularStore = function (view) {
         },
 
         getObjects: function (from, to) {
-          // console.log('from: ' + from + ', to: ' + to)
             if (from !== null && to !== null)
-              return _records.slice(from, to);
-            // return _.map(_records, _.clone);
+              return _records.slice(from - _startIndex, to - _startIndex);
         },
 
         getObject: function (at) {
@@ -58,8 +58,35 @@ var createTabularStore = function (view) {
             return _recordCount || 0;
         },
 
+        getRange: function () {
+          return {
+            start: _startIndex, 
+            end: _startIndex + _records.length
+          }
+        },
+
         unregister: function () {
           dispatcher.unregister(this.dispatchToken)
+        },
+
+        compare: function (a, b) {
+          for (var i = 0; i < _sortKey.length; i++) {
+            var key = _sortKey[i].attribute_id
+            var inversion = _sortKey[i].descending ? 1 : -1
+            if (a[key] < b[key]) return (1 * inversion)
+            if (a[key] > b[key]) return (-1 * inversion)
+          }
+          return 0
+        },
+
+        indexOf: function(array, obj, iteratee, context) {
+          var low = 0;
+          var high = _records.length;
+          while (low < high) {
+            var mid = Math.floor((low + high) / 2);
+            if (this.compare(_records[mid], obj)) low = mid + 1; else high = mid;
+          }
+          return low;
         },
 
         dispatchToken: dispatcher.register(function (payload) {
@@ -67,7 +94,13 @@ var createTabularStore = function (view) {
 
             if (type === upperLabel + '_CREATE') {
                 var object = payload.record
-                var index = payload.index || 0
+                var index 
+                if (payload.index) {
+                  index = payload.index
+
+                } else {
+                  index = this.search(object)
+                }
                 _records =
                   _records.slice(0, index)
                   .concat(payload.record)
@@ -117,6 +150,15 @@ var createTabularStore = function (view) {
                 if (matcher(rec)) _records[idx] = _.extend(_.clone(rec), rec._server, patch)
               })
               TabularStore.emitChange()
+
+              // we want to set the error flag only momentarily, then clear it
+              // setTimeout(function() {
+              //   _records.forEach(function(rec, idx) {
+              //     patch._error = false
+              //     if (matcher(rec)) _records[idx] = _.extend(_.clone(rec), rec._server, patch)
+              //   })
+              //   TabularStore.emitChange()
+              // }, 100)
             }
 
             if (type === (upperLabel + '_RECEIVE')) {
@@ -137,6 +179,7 @@ var createTabularStore = function (view) {
               TabularStore.emitChange()
             }
 
+            // this is crazy, but for now, loop through all the relations and 
             relations.forEach(function (rel) {
                 var relLabel = 'm' + rel.related_model_id
                 var relUpperLabel = relLabel.toUpperCase()

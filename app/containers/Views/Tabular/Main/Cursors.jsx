@@ -13,6 +13,7 @@ import util from '../../../../util/util'
 
 
 var HAS_3D = util.has3d()
+var RIGHT_FRINGE = '200px'
 
 var Cursors = React.createClass ({
 
@@ -120,7 +121,7 @@ var Cursors = React.createClass ({
         left: 0,
         top: 0,
         bottom: 0,
-        width: (adjustedWidth + 3) + 'px',
+        width: (adjustedWidth + RIGHT_FRINGE) + 'px',
         transformStyle: 'preserve-3d'
       }}>
       <div className = "wrapper overlay "
@@ -128,7 +129,7 @@ var Cursors = React.createClass ({
           top: geo.headerHeight - 1 - 2 + 'px',
           bottom: 0,
           left: geo.leftGutter + 'px',
-          width: (fixedWidth + floatWidth + geo.labelWidth + 6) + 'px',
+          width: (fixedWidth + floatWidth + geo.labelWidth + RIGHT_FRINGE) + 'px',
           pointerEvents: 'none',
           overflow: 'hidden',
           transform: 'translateZ(3px)'

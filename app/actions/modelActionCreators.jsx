@@ -174,6 +174,8 @@ var modelActions = {
 			message['m' + model_id] = results.data
 
 			MetasheetDispatcher.dispatch(message)
+
+			return message;
 		}).catch(function () {
 
 		});

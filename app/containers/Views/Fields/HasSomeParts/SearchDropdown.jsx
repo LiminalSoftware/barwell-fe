@@ -168,7 +168,7 @@ var SearchDropdown = React.createClass({
 
 				{
 					this.state.searchTerm.length > 0 ?
-					<li key="create-li" className="selectable" 
+					<li key="create-li"
 						className={"selectable " + (shouldOpenDown ? "top-divider" : "bottom-divider")}>
 						<span className="small icon green icon-plus"/>Create new {oppModel.model}
 					</li>

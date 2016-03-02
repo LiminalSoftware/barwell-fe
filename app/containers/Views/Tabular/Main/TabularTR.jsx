@@ -50,13 +50,14 @@ class TabularTR extends React.Component {
 			lineHeight: (geo.rowHeight) + 'px',
 			top: (geo.rowHeight * (row)) + 'px',
 		}
-		
 		var left = _this.props.hasRowLabel ? geo.labelWidth : 0;
+
+
 
 		selector[model._pk] = obj[model._pk]
 
 		return <div id={rowKey}
-			className = {"table-row " +  (obj._dirty ? "dirty" : "")}
+			className = {"table-row " +  (obj._dirty ? " dirty " : "") + (obj._error ? " row-error " : "")}
 			style = {rowStyle}>
 			{_this.props.hasRowLabel ?
 				<span className = {"table-cell" + (obj._dirty ? " dirty-label " : "")}  
@@ -66,7 +67,6 @@ class TabularTR extends React.Component {
 						zIndex: 2,
 						textAlign: 'center'
 					}}>
-					{obj._dirty ? <span className = "icon small green icon-geo-circle"/> : null}
 				</span> : null
 			}
 
