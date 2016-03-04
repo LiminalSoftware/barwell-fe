@@ -23,9 +23,9 @@ var PopDownMenu = React.createClass({
 		this.setState({mounted: true})
 	},
 
-	shouldOpenDown: function () {
-		return this.props.spaceBottom > 5 
-			&& (this.props.spaceBottom > this.props.spaceTop)
+	shouldOpenUp: function () {
+		return this.props.spaceTop > 5 
+			&& (this.props.spaceTop > this.props.spaceBottom)
 	},
 
 	render: function () {
@@ -39,22 +39,24 @@ var PopDownMenu = React.createClass({
 			pointerEvents: 'auto',
 			maxHeight: this.state.mounted ? ((50 * _.flatten(this.props.children).length) + 'px') : 0
 		};
-		var shouldOpenDown = this.shouldOpenDown()
+		var shouldOpenUp = this.shouldOpenUp()
 
 		return <ul 
-			className = {"green " + (shouldOpenDown ? " pop-down-menu " : " pop-up-menu")}
+			className = {(this.props.green ? "menu--green " : "") + (shouldOpenUp ? " pop-up-menu " : " pop-down-menu")}
 			style = {style}>
 			{
-			shouldOpenDown ? 
-			<span className = "pop-down-pointer-outer pop-down-pointer-outer--green"/>
+			shouldOpenUp ? 
+			<span className = {"pop-up-pointer-outer " + 
+				(this.props.green ? " pop-up-pointer-outer--green" : "")}/>
           	:
-          	<span className = "pop-up-pointer-outer pop-up-pointer-outer--green"/>
+          	<span className = {"pop-down-pointer-outer " + + 
+          		(this.props.green ? " pop-down-pointer-outer--green" : "")}/>
           	}
           	{
-			shouldOpenDown ? 
-			<span className = "pop-down-pointer-inner"/>
+			shouldOpenUp ? 
+			<span className = "pop-up-pointer-inner"/>
           	:
-          	<span className = "pop-up-pointer-inner"/>
+          	<span className = "pop-down-pointer-inner"/>
           	}
           	
 			{this.props.children}

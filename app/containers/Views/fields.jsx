@@ -14,7 +14,7 @@ import modelActionCreators from "../../actions/modelActionCreators"
 import hasManyField from './Fields/HasManyField'
 import hasOneField from './Fields/HasOneField'
 import colorField from './Fields/ColorField'
-import integerField from './Fields/integerField'
+import integerField from './Fields/IntegerField'
 import decimalField from './Fields/DecimalField'
 import textField from './Fields/TextField'
 import dateField from './Fields/DateField'

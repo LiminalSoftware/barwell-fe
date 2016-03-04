@@ -123,6 +123,7 @@ var TabularPane = React.createClass ({
 		return props.view !== nextProps.view ||
 			state.selection !== nextState.selection ||
 			state.pointer !== nextState.pointer ||
+			state.focused !== nextState.focused ||
 			state.copyarea !== nextState.copyarea ||
 			state.contextOpen !== nextState.contextOpen ||
 			// state.rowOffset !== nextState.rowOffset ||
@@ -133,6 +134,7 @@ var TabularPane = React.createClass ({
 	_onChange: function () {
 		var focused = (FocusStore.getFocus() == 'view')
 		if (!focused) this.blurPointer()
+		this.setState({focused: focused})
 		this.forceUpdate()
 		this.refs.tableWrapper.forceUpdate()
 		this.refs.cursors.forceUpdate()
@@ -268,10 +270,12 @@ var TabularPane = React.createClass ({
 		selectors.forEach(function (selector) {
 			modelActionCreators.deleteRecord(model, selector)
 		})
+
+
 		ptr.top = Math.min(ptr.top, numRows - numRowsDeleted)
-		ptr.bottom = Math.min(ptr.bottom, numRows - numRowsDeleted)
+		ptr.bottom = ptr.top
 		sel.top = Math.min(sel.top, numRows - numRowsDeleted)
-		sel.bottom = Math.min(sel.bottom, numRows - numRowsDeleted)
+		sel.bottom = sel.top
 		this.setState({copyarea: null, selection: sel, pointer: ptr})
 	},
 

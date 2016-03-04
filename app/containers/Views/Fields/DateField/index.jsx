@@ -17,6 +17,12 @@ import keyPressMixin from '../keyPressMixin'
 
 import DateDetail from "./detail"
 
+import AlignChoice from "../textFieldConfig/AlignChoice"
+import ColorChoice from "../textFieldConfig/ColorChoice"
+import TextChoice from "../textFieldConfig/TextChoice"
+import DateConfig from "./DateConfig"
+
+
 import TextFieldConfig from "../textFieldConfig"
 
 var dateField = {
@@ -36,70 +42,29 @@ var dateField = {
 		return config
 	},
 
-	configA: TextFieldConfig,
-
-	configB: React.createClass({
-
-		getInitialState: function () {
-			var config = this.props.config;
-			return {dateFormat: (config.dateFormat || 'DD/MM/YYYY')}
-		},
-
-		onFormatChange: function (event) {
-			var config = this.props.config
-			var column_id = config.column_id
-			var view = this.props.view
-			var data = view.data
-			var col = data.columns[column_id]
-			var value = event.target.value
-			col.dateFormat = value
-
-			this.setState({dateFormat: value})
-		},
-
-		onBlur: function (event) {
-			var config = this.props.config
-			var view = this.props.view
-			var column_id = config.column_id
-			var data = view.data
-			var col = data.columns[column_id]
-
-			col.dateFormat = this.state.dateFormat
-			modelActionCreators.createView(view, false, true)
-		},
-
-		handleFocus: function () {
-			modelActionCreators.setFocus('view-config')
-		},
-
-		render: function () {
-			var config = this.props.config
-			var key = "attr-" + config.id
-			var style = this.props.style
-
-			return <span>
-				<input type = "text"
-					className = "menu-input text-input"
-					spellCheck = "false"
-					value = {this.state.dateFormat}
-					onFocus = {this.handleFocus}
-					onBlur = {this.onBlur}
-					onChange = {this.onFormatChange}/>
-			</span>
-		}
-	}),
-
-
+	configParts: [AlignChoice, ColorChoice, TextChoice, DateConfig],
 
 	element: React.createClass({
 
-		mixins: [editableInputMixin, DateValidatorMixin, commitMixin, selectableMixin, keyPressMixin],
+		mixins: [editableInputMixin, commitMixin, selectableMixin, keyPressMixin],
 
 		format: function (value) {
 			var config = this.props.config || {}
 			var format = config.dateFormat || "DD MMMM YYYY";
 			var prettyDate = value ? moment(value).format(format) : ''
 			return prettyDate
+		},
+
+		validator: function (input) {
+			var config = this.props.config || {}
+			var format = config.dateFormat || "YYYY-MM-DD";
+			var date = moment(input, format)
+			if (!date.isValid()) date = moment(input, "YYYY-MM-DD")
+				return date.isValid() ? date : null
+		},
+
+		parser: function (input) {
+			return input
 		},
 
 		detailIcon: 'icon-calendar-selected',

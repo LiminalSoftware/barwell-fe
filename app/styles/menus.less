@@ -117,6 +117,10 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	float: right;
 }
 
+.menu--green, .menu--green {
+	border: 1px solid @newgreen1;
+}
+
 .pop-down-menu, .pop-up-menu {
 	min-width: 250px;
 	position: absolute;
@@ -137,10 +141,6 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	font-family: @bodyFont;
 	color: @headerFontColor;
 	font-size: 15px;
-
-	&.green {
-		border: 1px solid @newgreen1;
-	}
 
 	transform: translateZ(12px);
 	pointer-events: auto;
@@ -183,6 +183,9 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	min-width: 150px;
 	padding: 0 10px;
 	border-right: 1px solid @headerMenuBorderColor;
+	&:last-child {
+		border-right: none;
+	}
 }
 
 .double.header-section {

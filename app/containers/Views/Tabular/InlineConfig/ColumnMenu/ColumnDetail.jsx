@@ -52,18 +52,6 @@ var ColumnDetail = React.createClass({
 	    var config = this.props.config
 		var fieldType = fieldTypes[config.type] || {}
 		var editing = this.props.editing
-		var configPartA = ('configA' in fieldType) ?
-			React.createElement(fieldType.configA, {
-				view: view,
-				config: config,
-				classes: ""
-			}) : <span className = ""/>;
-		var configPartB = ('configB' in fieldType) ?
-			 React.createElement(fieldType.configB, {
-				view: view,
-				config: config,
-				classes: " "
-			}) : <span className = " "/>;
 
 	    return <div className={"menu-item menu-sub-item" +
 				(this.props.singleton ? " singleton " : "") +
@@ -84,9 +72,20 @@ var ColumnDetail = React.createClass({
 					: <span>{config.name}</span>
 					}
 				</span>
-
-				{editing ? null : configPartA}
-				{editing ? null : configPartB}
+				
+				{editing ? null :
+					<span>
+					{
+						(fieldType.configParts || []).map(function (part) {
+						return React.createElement(part, {
+							view: view,
+							config: config,
+							classes: ""
+						});
+					})
+					}
+					</span>
+				}
 
 				{
 				editing ? 

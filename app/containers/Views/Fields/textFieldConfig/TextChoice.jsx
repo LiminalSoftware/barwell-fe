@@ -6,6 +6,8 @@ import AttributeStore from "../../../../stores/AttributeStore"
 
 var blurOnClickMixin = require('../../../../blurOnClickMixin')
 
+import PopDownMenu from '../../../../components/PopDownMenu'
+
 var TextChoice = React.createClass({
 
   mixins: [blurOnClickMixin],
@@ -56,13 +58,7 @@ var TextChoice = React.createClass({
           + (this.state.open ? " open " : (this.state.italic || this.state.bold ? " active" : ""))}
         onClick = {this.handleOpen}>
         {
-          this.state.open ? <ul className = "pop-down-menu" style = {{
-            top: "100%"
-          }}>
-
-          <span className = "pop-down-pointer-outer"/>
-          <span className = "pop-down-pointer-inner"/>
-
+          this.state.open ? <PopDownMenu>
           {
           boolAttrs.length > 0 ?
             <li className = "bottom-divider" >
@@ -116,7 +112,7 @@ var TextChoice = React.createClass({
             No font style
           </li>
 
-        </ul> : null
+        </PopDownMenu> : null
         }
     </span>;
   }

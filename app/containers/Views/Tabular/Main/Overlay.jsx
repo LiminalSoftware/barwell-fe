@@ -13,7 +13,8 @@ var Overlay = React.createClass ({
             this.props.view !== nextProps.view ||
             this.props.hiddenCols !== nextProps.hiddenCols ||
             this.props.className !== nextProps.className ||
-            this.props.children !== nextProps.children
+            this.props.children !== nextProps.children ||
+            this.props.focused !== nextProps.focused
   },
 
 	render: function () {

@@ -23,7 +23,7 @@ var commitMixin = {
 	},
 
 	commitChanges: function () {
-		var value = this.validator(this.props.value)
+		var value = this.validator(this.parser(this.props.value))
 		if (!this.state.editing) return;
 		this.commitValue(this.state.value)
 	},

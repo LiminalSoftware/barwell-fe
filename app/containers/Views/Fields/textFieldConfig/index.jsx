@@ -18,7 +18,7 @@ var textFieldConfig = React.createClass({
       background: null
     }
   },
-
+  
   toggleVisibility: function (event) {
 		var config = this.props.config
 		this.commitChanges({visible: !config.visible})
@@ -44,10 +44,6 @@ var textFieldConfig = React.createClass({
   },
 
   render: function () {
-    var config = this.props.config
-    var key = "attr-" + config.id
-    var style = this.props.style
-
     return <span className = {this.props.classes}>
       <AlignChoice {...this.props}/>
       <ColorChoice {...this.props}/>

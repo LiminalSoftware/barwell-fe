@@ -13,21 +13,31 @@ import commitMixin from '../commitMixin'
 import editableInputMixin from '../editableInputMixin'
 import selectableMixin from '../selectableMixin'
 import keyPressMixin from '../keyPressMixin'
-// import TextFieldConfig from "../textFieldConfig"
 
 import AlignChoice from "../textFieldConfig/AlignChoice"
 import ColorChoice from "../textFieldConfig/ColorChoice"
 import TextChoice from "../textFieldConfig/TextChoice"
 
-var textField = {
-	configParts: [AlignChoice, ColorChoice, TextChoice],
+var integerField = {
 	sortable: true,
+	defaultWidth: 50,
+	configParts: [AlignChoice, ColorChoice, TextChoice],
 	element: React.createClass({
 		mixins: [editableInputMixin, commitMixin, selectableMixin, keyPressMixin],
-    	detailIcon: 'icon-maximise-2',
-    	validator: _.identity,
-		parser: _.identity
+
+		validator: function (input) {
+			if (_.isNumber(input) )
+				return Math.floor(input)
+			if (!(/^\d+$/).test(input))
+				return null
+			return parseInt(input)
+		},
+
+		parser: function (input) {
+			input = '' + input
+			return input.match(/^(\d*)/)[0]
+		}
 	})
 }
 
-export default textField
+export default integerField

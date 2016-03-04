@@ -1,7 +1,7 @@
 import React from "react"
 import _ from "underscore"
 import $ from "jquery"
-import moment from "moment"
+import numeral from "numeral"
 
 import AttributeStore from "../../../../stores/AttributeStore"
 import ModelStore from "../../../../stores/ModelStore"
@@ -14,46 +14,63 @@ import editableInputMixin from '../editableInputMixin'
 import selectableMixin from '../selectableMixin'
 import keyPressMixin from '../keyPressMixin'
 
+import displayStyles from './displayStyles'
+
+import AlignChoice from "../textFieldConfig/AlignChoice"
+import ColorChoice from "../textFieldConfig/ColorChoice"
+import TextChoice from "../textFieldConfig/TextChoice"
+import NumberFormatChoice from './NumberFormatChoice'
+
+var blurOnClickMixin = require('../../../../blurOnClickMixin')
+
 import TextFieldConfig from "../textFieldConfig"
 
 var decimalField = {
-	configA: TextFieldConfig,
+
 	defaultAlign: 'right',
+
+	configCleanser: function (config) {
+		var style = config.displayStyle
+		if (!(config.displayStyle in displayStyles))
+			config.displayStyle = "DECIMAL"
+		if (!config.formatString)
+			config.formatString = displayStyles[config.displayStyle].formatString
+		return config
+	},
+
+	configParts: [AlignChoice, ColorChoice, TextChoice, NumberFormatChoice],
+
+	
+
 	element: React.createClass({
 		mixins: [editableInputMixin, commitMixin, selectableMixin, keyPressMixin],
 
 		sortable: true,
 
-		configA: TextFieldConfig,
-
-		configB: {
-			getInitialState: function () {
-				return {
-					commas: true
-				}
-			},
-
-			handleToggleCommas: function () {
-				this.setState({commas: !this.state.commas})
-			},
-
-			render: function () {
-				return <span>
-					<span className={"pop-down clickable  " + (this.state.commas ? " selected " : "")}
-			        onMouseDown = {this.handleToggleCommas}>,</span>
-				</span>
-			},
+		format: function (value) {
+			var config = this.props.config || {}
+			
+			var prettyVal = numeral(value).format(config.formatString)
+			if (config.displayStyle === 'PIE') {
+				var parts = Math.round(value/8, 0);
+				var icon;
+				if (parts < 1) icon = 'icon-pie2';
+				if (parts >= 1 && parts <= 7) icon = ('icon-pie2-' + parts);
+				if (parts > 7) icon = 'icon-pie';
+				return <span className = {"icon " + icon}/>
+			}
+			return prettyVal
 		},
 
 		validator: function (input) {
-			if (!(/^\d*(\.\d*)?$/).test(input))
-				return null
-			return parseFloat(input)
+			var config = this.props.config || {}
+			if (_.isNumber(input)) return input
 		},
 
 		parser: function (input) {
-			return input.match(/^(\d*\.?\d*)/)[0]
+			return numeral().unformat(input)
 		}
+
 	})
 }
 

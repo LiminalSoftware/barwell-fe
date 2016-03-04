@@ -140,6 +140,7 @@ var editableInputMixin = {
 				ref = "input"
 				className = "input-editor"
 				value = {this.state.value}
+				style = {{textAlign: config.align}}
 				autoFocus
 				onClick = {e => e.stopPropagation() && e.nativeEvent.stopPropagation()}
 				onBlur = {this.revert}

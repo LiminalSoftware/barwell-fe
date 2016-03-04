@@ -3,6 +3,7 @@ import _ from "underscore"
 
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import AttributeStore from "../../../../stores/AttributeStore"
+import PopDownMenu from '../../../../components/PopDownMenu'
 
 var blurOnClickMixin = require('../../../../blurOnClickMixin')
 
@@ -67,12 +68,7 @@ var ColorChoice = React.createClass({
           + (this.state.open ? " open" : (this.state.colorAttr || this.state.color ? " active" : ""))}
         onClick = {this.handleOpen}>
         {
-          this.state.open ? <ul className = "pop-down-menu" style = {{
-            top: "100%"
-          }}>
-
-          <span className = "pop-down-pointer-outer"/>
-          <span className = "pop-down-pointer-inner"/>
+          this.state.open ? <PopDownMenu {...this.props}>
 
           {
             boolAttrs.length > 0 ?
@@ -155,7 +151,7 @@ var ColorChoice = React.createClass({
           </li>
 
 
-        </ul> : null
+        </PopDownMenu> : null
         }
     </span>;
   }

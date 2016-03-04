@@ -155,7 +155,7 @@ var ModelLink = React.createClass ({
 			className={(this.props.active ? "active " : "") + (this.props.editing ? " editmode" : "")}
 			onClick = {util.clickTrap}>
 
-			<Link to = {`/workspace/${workspace_id}/model/${model_id}`}
+			<Link to = {this.props.active ? '' : `/workspace/${workspace_id}/model/${model_id}`}
 				onContextMenu = {this.handleContext}
 				onDoubleClick = {this.handleEdit}>
 				{modelDisplay}

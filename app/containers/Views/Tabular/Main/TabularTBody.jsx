@@ -49,6 +49,7 @@ var TabularTBody = React.createClass ({
 	},
 
 	updateOffset: function (target, scrollDirection) {
+		var store = this.props.store
 		var fetchStart = this.props.fetchStart
 		var fetchEnd = this.props.fetchEnd
 
