@@ -118,24 +118,48 @@ var ColumnMenu = React.createClass({
 	},
 
 	renderButtonBar: function () {
-		return <div
-			className="menu-item menu-config-row"
-			key="detail-menu-items">
+		var editing = this.state.editing;
+		return <div>
+			{
+				editing ?
+				<div className="menu-item menu-config-row">
+					<div className = "menu-sub-item">
+					<span className = "icon icon-plus"/> Add column
+					</div>
+				</div> : null
+			}
+			<div className="menu-item menu-config-row" key="detail-menu-items">
 			{
 				this.state.editing ?
 				<div className = "menu-sub-item"
 					onClick = {this.handleDoneEdit}>
+					<span className = "icon icon-check"/>
 					Save changes
 				</div>
 				:
 				<div className = "menu-sub-item"
 					onClick = {this.handleEdit}>
-					Edit attributes
+					<span className = "icon icon-pencil"/> 
+					Edit columns
 				</div>
 			}
-			<div className="menu-sub-item">
-				Add new attribute
-			</div>
+			{
+				this.state.editing ?
+				<div className = "menu-sub-item"
+					onClick = {this.handleDoneEdit}>
+					<span className = "icon icon-cross2"/>
+					Cancel changes
+				</div>
+				:
+				<div className = "menu-sub-item"
+					onClick = {this.handleDoneEdit}>
+					<span className = "icon icon-plus"/>
+					Add column
+				</div>
+			}
+		</div>
+
+
 		</div>
 	},
 
@@ -177,11 +201,6 @@ var ColumnMenu = React.createClass({
 						this.state.open ?
 							<div className = "dropdown-menu" style = {{minWidth: '500px'}}>
 								{sections}
-								{this.state.editing ?
-									<div className="menu-item menu-sub-item warning-item">
-										<span className = "icon icon-kub-warning"/>Warning: making changes here will affect all views for this model
-									</div> : null
-								}
 								{this.renderButtonBar()}
 							</div>
 							:

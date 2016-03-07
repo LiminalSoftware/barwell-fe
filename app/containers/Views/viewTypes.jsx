@@ -13,7 +13,7 @@ import CubeGroomer from "./Cube/groom"
 var viewTypes = {
 	Tabular: {
 		type: "Tabular",
-		icon: "icon-db-datasheet",
+		icon: "icon-grid",
 		groomer: TabularGroomer,
 		mainElement: TabularMain,
 		inlineConfigElement: TabularInlineConfig,
@@ -22,7 +22,7 @@ var viewTypes = {
 	},
 	Cube: {
 		type: "Cube",
-		icon: "icon-db-datacube-02",
+		icon: "icon-cube",
 		groomer: CubeGroomer,
 		mainElement: CubeMain,
 		inlineConfigElement: CubeInlineConfig,
@@ -31,7 +31,7 @@ var viewTypes = {
 	},
 	Calendar: {
 		type: "Calendar",
-		icon: "icon-calendar-empty",
+		icon: "icon-calendar-full",
 		mainElement: CalendarMain,
 		groomer: CalendarGroomer,
 		category: "Dates and Times",
@@ -39,7 +39,7 @@ var viewTypes = {
 	},
 	Timeline : {
 		type: "Timeline",
-		icon: "icon-chart-bars-6",
+		icon: "icon-road",
 		category: "Dates and Times",
 		description: "Also called a Gannt chart.  Shows events and activities along a horizontal time axis."
 	}

@@ -45,21 +45,21 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 }
 
 .pop-down-pointer-outer {
-	border-left: @pointerSize/2 solid @headerMenuBorderColor;
+	border-left: @pointerSize/2 solid transparent;
 	border-bottom: @pointerSize/2 solid @headerMenuBorderColor;
 	border-right: @pointerSize/2 solid transparent;
 	border-top: @pointerSize/2 solid transparent;
-	left: @pointerSize;
+	left: @pointerSize/2;
 	margin-top: -1 * @pointerSize;
 	top: 0;
 }
 
 .pop-down-pointer-inner {
-	border-left: @pointerSize/2  solid white;
+	border-left: @pointerSize/2  solid transparent;
 	border-bottom: @pointerSize/2 solid white;
 	border-right: @pointerSize/2 solid transparent;
 	border-top: @pointerSize/2 solid transparent;
-	left: @pointerSize + 1px;
+	left: @pointerSize/2;
 	margin-top: -1 * @pointerSize + 2px;
 	top: 0;
 }
@@ -67,7 +67,7 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 .pop-up-pointer-outer {
 	border-left: @pointerSize/2 solid transparent;
 	border-bottom: @pointerSize/2 solid transparent;
-	border-right: @pointerSize/2 solid @headerMenuBorderColor;
+	border-right: @pointerSize/2 solid transparent;
 	border-top: @pointerSize/2 solid @headerMenuBorderColor;
 	left: @pointerSize;
 	margin-bottom: -1 * @pointerSize;
@@ -77,9 +77,9 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 .pop-up-pointer-inner {
 	border-left: @pointerSize/2  solid transparent;
 	border-bottom: @pointerSize/2 solid transparent;
-	border-right: @pointerSize/2 solid white;
+	border-right: @pointerSize/2 solid transparent;
 	border-top: @pointerSize/2 solid white;
-	left: @pointerSize - 1px;
+	left: @pointerSize;
 	margin-bottom: -1 * @pointerSize + 2px;
 	bottom: 0;
 }
@@ -99,13 +99,13 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 .pop-up-menu {
 	bottom: 100%;
 	flex-direction: column-reverse;
-	margin-bottom: @pointerSize - 2;
+	margin-bottom: @pointerSize/2 - 2;
 }
 
 .pop-down-menu {
 	top: 100%;
 	flex-direction: column;
-	margin-top: @pointerSize - 2;
+	margin-top: @pointerSize/2 - 2;
 }
 
 .pop-down-menu--green, .pop-up-menu--green {
@@ -232,9 +232,9 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 .dropdown {
 	background: @headerMenuBgColor;
 	display: flex;
-	height: 40px;
-	line-height: 40px;
-	padding: 5px;
+	height: 30px;
+	line-height: 30px;
+	padding: 10px;
 	text-align: center;
 
 	margin: 0 !important;
@@ -295,12 +295,11 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 }
 
 .menu-sub-item {
-	height: 40px;
-	line-height: 40px;
-	padding: 0;
+	height: 30px;
+	line-height: 30px;
+	padding: 10px;
 	margin: 0;
-	padding-left: 8px;
-	padding-right: 8px;
+	
 
 	&.no-left-padding {
 		padding-left: 0;
@@ -315,8 +314,8 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 		flex: 1 1;
 		white-space: nowrap;
 		margin: 0 5px;
-		height: 40px;
-		line-height: 40px;
+		min-height: 30px;
+		line-height: 30px;
 		position: relative;
 
 		&.ellipsis {
@@ -363,7 +362,7 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 .menu-config-row {
   	border-top: 1px solid @headerMenuBorderColor;
   	.menu-sub-item {
-		text-align: center;
+		// text-align: center;
 		border-left: 1px solid @headerMenuBorderColor;
 		&:hover {
 			background: @headerMenuBgColor;

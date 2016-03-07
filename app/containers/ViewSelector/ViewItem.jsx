@@ -45,7 +45,6 @@ var ViewItem = React.createClass({
 
 	saveChanges: function () {
 		var view = this.props.view
-		view.type = this.refs.viewTypeMenu.state.type
 		view.view = this.state.name
 		if (this.state.deleting)
 			modelActionCreators.destroyView(view);
@@ -58,8 +57,8 @@ var ViewItem = React.createClass({
 
 		if (view && this.props.editing)
 			return <div className = "menu-item menu-sub-item no-left-padding">
-				<span className = "draggable icon grayed icon-Layer_2"/>
-				<ViewTypeMenu ref = "viewTypeMenu" type = {view.type} editing = {this.state.editing} deleting = {this.state.deleting}/>
+				<span className = "draggable gray icon icon-menu"/>
+				<span className = {"icon " + viewTypes[view.type].icon}></span>
 				<span className = "double ellipsis">
 					{this.state.editing ?
 						<input className = "menu-input text-input"
@@ -69,12 +68,12 @@ var ViewItem = React.createClass({
 						: view.view}
 				</span>
 				{this.props.editing && !this.state.deleting && !this.state.editing?
-						<span className = "icon icon-pencil-2"
+						<span className = "icon icon-pencil"
 							onClick = {this.handleClickEdit}/> : null}
 				{this.props.editing && this.state.deleting ?
-						<span className = "icon icon-tl-undo"
+						<span className = "icon icon-undo2"
 							onClick = {this.handleClickRestore}/> :
-						<span className = "icon icon-cr-delete"
+						<span className = "icon icon-cross-circle"
 							onClick = {this.handleClickDelete}/>}
 			</div>
 		else if (view)
@@ -85,16 +84,16 @@ var ViewItem = React.createClass({
 				{
 				this.props.singleton ? 
 					null :
-					<span className = {"small icon icon-geo-circle " +
+					<span className = {"small icon icon-chevron-right " +
 					(this.props.selected ? 'green' : 'hovershow')}/>
 				}
-				<ViewTypeMenu type = {view.type} editing = {false}/>
+				<span className = {"icon " + viewTypes[view.type].icon}></span>
 				<span className = "double ellipsis">
 					{view.view}
 				</span>
 			</Link>
 		else return <div className = "singleton menu-item menu-sub-item no-left-padding">
-			<span className = "large icon icon-tl-toolbox"></span>
+			<span className = "large icon icon-pencil-ruler"></span>
 			<span className = "double-column-config">Database Configuration</span>
 		</div>
 	}

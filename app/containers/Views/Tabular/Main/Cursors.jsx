@@ -145,11 +145,11 @@ var Cursors = React.createClass ({
                   top: rowCount, bottom: rowCount}}
                 fudge = {{left: -1}}
                 numHiddenCols = {this.props.hiddenCols}
-                className = "add-new-row">
+                className = {"add-new-row add-new-row--" + (focused ? "focused " : "blurred ")}>
               <div className = "table-cell-inner" style={{cursor: 'pointer', lineHeight: (geo.rowHeight + 'px')}} 
                 onClick = {this.props._addRecord}>
-                <span className = "small grayed icon icon-plus"></span>
-                Add new record
+                <span className = "small icon icon-plus"></span>
+                <span>Add new record</span>
               </div>
           </Overlay>
 
@@ -158,7 +158,8 @@ var Cursors = React.createClass ({
             {...this.props}
             numHiddenCols = {this.props.hiddenCols}
             className = {"pointer " + (focused ? " focused" : " ") + 
-            (this.props.expanded ? " pointer--expanded " : "")}
+              (focused ? " " : " gray-out ") +
+              (this.props.expanded ? " pointer--expanded " : "")}
             ref = "pointer"
             fudge = {pointerFudge}
             position = {ptr}
@@ -176,7 +177,9 @@ var Cursors = React.createClass ({
             className = {"selection-border selection-border--" + (focused ? "focused" : "blurred")}
             ref = "selectionBorder"
             position = {sel}
-            fudge = {{left: -2.25, top: -0.25, height: 2.5, width: 3.5}}/>
+            fudge = {{left: -2.25, top: -0.25, height: 2.5, width: 3.5}}>
+            <div className = {"selection-drag-box selection-drag-box--" + (focused ? "focused" : "blurred")} />
+          </Overlay>
 
           <Overlay
             {...this.props}
@@ -184,7 +187,8 @@ var Cursors = React.createClass ({
             className = "selection-outer"
             ref = "selectionOuter"
             position = {sel}
-            fudge = {{left: -3.75, top: -2.75, height: 7.5, width: 6.5}}/>
+            fudge = {{left: -3.75, top: -2.75, height: 7.5, width: 6.5}}>
+          </Overlay>
           
           {
           showJaggedEdge ? 

@@ -12,6 +12,28 @@
 	
 }
 
+.selection-drag-box {
+	position: absolute;
+	right: -3px;
+	bottom: -3px;
+	width: 5px;
+	height: 5px;
+	margin: 0;
+	padding: 0;
+	
+	background: white;
+	z-index: 7;
+	cursor: crosshair !important;
+}
+
+.selection-drag-box--blurred {
+	border: 1px solid @gray3;
+}
+
+.selection-drag-box--focused {
+	border: 1px solid @newgreen1;
+}
+
 .jagged-edge {
 	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAGCAYAAAD+Bd/7AAAAOklEQVQIW2Nkn2rx/0fWcQYQYGRkZAQzkADj/////3NMs2TApQisAKQBlyKwkSBFIOOxWUfYBEJuAADs9CgHgHfuFwAAAABJRU5ErkJggg==) repeat-y;
 	z-index: 6;

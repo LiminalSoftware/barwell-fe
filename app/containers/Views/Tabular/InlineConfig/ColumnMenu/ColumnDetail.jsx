@@ -5,7 +5,7 @@ import _ from 'underscore';
 import fieldTypes from "../../../fields"
 import $ from 'jquery'
 
-import constant from '../../../../../constants/MetasheetConstants'
+import constants from '../../../../../constants/MetasheetConstants'
 
 import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 import PureRenderMixin from 'react-addons-pure-render-mixin';
@@ -19,7 +19,8 @@ var ColumnDetail = React.createClass({
 			yOffset: 0,
 			dragging: false,
 			rel: null,
-			name: config.name
+			name: config.name,
+			type: config.type
 		}
 	},
 
@@ -33,17 +34,21 @@ var ColumnDetail = React.createClass({
 		modelActionCreators.createView(view, true, true)
 	},
 
-	handleDrag: function (event) {
-		this.props._startDrag(event, this.props.config)
+	handleDrag: function (e) {
+		this.props._startDrag(e, this.props.config)
 		event.preventDefault()
 	},
 
-	handleDelete: function (event) {
+	handleDelete: function (e) {
 
 	},
 
 	handleNameChange: function (e) {
-		this.setState(e.target.value)
+		this.setState({name: e.target.value})
+	},
+
+	handleBlurName: function (e) {
+		this.commitUpdate({attribute: this.state.attribute})
 	},
 
 	render: function() {
@@ -53,6 +58,13 @@ var ColumnDetail = React.createClass({
 		var fieldType = fieldTypes[config.type] || {}
 		var editing = this.props.editing
 
+		var typeFieldChoices = Object.keys(constants.fieldTypes)
+			.filter(type => (type !== 'PRIMARY_KEY')).map(function (type) {
+	  			return <option value={type} key={type}>
+	  				{constants.fieldTypes[type]}
+	  			</option>;
+			});
+
 	    return <div className={"menu-item menu-sub-item" +
 				(this.props.singleton ? " singleton " : "") +
 				(this.props.dragging ? " dragging " : "")}>
@@ -60,7 +72,7 @@ var ColumnDetail = React.createClass({
 					{
 					this.props.open ? 
 					<span onMouseDown = {_this.handleDrag}
-					      className="draggable icon grayed icon-Layer_2"/>
+					      className="draggable icon grayed icon-menu"/>
 					: null
 					}
 
@@ -73,7 +85,15 @@ var ColumnDetail = React.createClass({
 					}
 				</span>
 				
-				{editing ? null :
+				{editing ? 
+					<span>
+						<select className = "menu-input selector"
+							name="type" value={this.state.type} 
+							onChange={this.handleTypeChange}>
+							{typeFieldChoices}
+						</select>
+					</span>
+					:
 					<span>
 					{
 						(fieldType.configParts || []).map(function (part) {
@@ -88,11 +108,8 @@ var ColumnDetail = React.createClass({
 				}
 
 				{
-				editing ? 
-				<span className="half-column-config "
-				      onMouseDown = {this.handleDelete}>
-					<span className = "icon red icon-cr-remove"></span>
-				</span>
+				editing ?       
+				<span onMouseDown = {this.handleDelete} className = "icon icon-cross-circle"></span>
 				: null
 				}
 			</div>

@@ -271,15 +271,12 @@ var TabularPane = React.createClass ({
 			modelActionCreators.deleteRecord(model, selector)
 		})
 
-
-		ptr.top = Math.min(ptr.top, numRows - numRowsDeleted)
-		ptr.bottom = ptr.top
-		sel.top = Math.min(sel.top, numRows - numRowsDeleted)
-		sel.bottom = sel.top
+		ptr.top = ptr.bottom = Math.min(ptr.top, numRows - numRowsDeleted)
+		sel.bottom = sel.top = Math.min(sel.top, numRows - numRowsDeleted)
 		this.setState({copyarea: null, selection: sel, pointer: ptr})
 	},
 
-	copySelection: function () {
+	copySelection: function (format) {
 		var clipboard = ""
 		var view = this.props.view
 		var sel = this.state.selection
@@ -297,6 +294,35 @@ var TabularPane = React.createClass ({
 		}
 		copyTextToClipboard(clipboard)
 		this.setState({copyarea: sel})
+	},
+
+	getSelection: function (format) {
+		var json = [];
+		var text = '';
+		var view = this.props.view;
+		var sel = this.state.selection;
+
+		for (var r = sel.top; r <= sel.bottom; r++) {
+			var data = {}
+			var obj = this.store.getObject(r)
+			for (var c = sel.left; c <= sel.right; c++) {
+				var column = view.data.visibleCols[c]
+				if (format === 'JSON') 
+					obj[column.column_id] = obj[column.column_id];
+				else if (format === 'prettyJSON') 
+					obj[column.name] = obj[column.column_id];
+				else if (format === 'text') 
+					text += (value === null ? "" : value) + (c == sel.right ? "" : "\t");
+			}
+			if (format === 'JSON' || format === 'prettyJSON') json.push(data);
+			if (format === 'text') text += (r == sel.bottom ? "" : "\n");
+		}
+		if (format === 'text') return text;
+		if (format === 'prettyJSON' || format === 'prettyJSON') return json;
+	},
+
+	putSelection: function (data) {
+		
 	},
 
 	pasteSelection: function (e) {
@@ -433,11 +459,10 @@ var TabularPane = React.createClass ({
 	updatePointer: function (pos) {
 		var oldPos = this.state.pointer
 		var view = this.props.view
-		var geo = view.data.geometry
 		var numCols = this.getNumberCols()
 		var numRows = this.getNumberRows()
-		var rowOffset = this.state.rowOffset
-		var visibleRows = this.state.visibleRows
+		
+		
 
 		pos.left = Math.max(Math.min(pos.left, numCols), 0)
 		pos.top = Math.max(Math.min(pos.top, numRows), 0)
@@ -451,11 +476,7 @@ var TabularPane = React.createClass ({
 			contextOpen: false
 		})
 
-
-		if (pos.top < rowOffset) 
-			this.refs.verticalScrollBar.scroll(pos.top * geo.rowHeight)
-		if (pos.top > (rowOffset + visibleRows - 1)) 
-			this.refs.verticalScrollBar.scroll((pos.top - visibleRows) * geo.rowHeight)
+		this.scrollTo(pos)
 
 		// focus the paste area just in case
 		document.getElementById("copy-paste-dummy").focus()
@@ -472,6 +493,18 @@ var TabularPane = React.createClass ({
 		}
 	},
 
+	scrollTo: function (pos) {
+		var rowOffset = this.state.rowOffset
+		var view = this.props.view
+		var geo = view.data.geometry
+		var visibleRows = this.state.visibleRows
+
+		if (pos.top < rowOffset) 
+			this.refs.verticalScrollBar.scroll(pos.top * geo.rowHeight)
+		if (pos.top > (rowOffset + visibleRows - 1)) 
+			this.refs.verticalScrollBar.scroll((pos.top - visibleRows) * geo.rowHeight)
+	},
+
 	updateSelect: function (pos, shift) {
 		var sel = this.state.selection
 		var ptr = this.state.pointer
@@ -480,12 +513,14 @@ var TabularPane = React.createClass ({
 		var numRows = this.getNumberRows()
 
 		if (shift) {
+			this.scrollTo(pos)
 			sel = {
 				left: Math.min(ptr.left, pos.left, numCols),
 				right: Math.max(ptr.left, pos.left, pos.right || 0, 0),
 				top: Math.min(ptr.top, pos.top, pos.bottom || numRows, numRows),
 				bottom: Math.max(ptr.top, pos.top, 0)
 			}
+			
 		} else {
 			ptr = pos
 			sel = {
@@ -494,8 +529,9 @@ var TabularPane = React.createClass ({
 				top: pos.top,
 				bottom: pos.top
 			}
+			this.updatePointer(ptr)
 		}
-		this.updatePointer(ptr)
+		
 		this.setState({
 			selection: sel,
 			contextOpen: false

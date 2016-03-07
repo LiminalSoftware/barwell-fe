@@ -66,7 +66,7 @@ var NumberFormatChoice = React.createClass({
             return <li 
               key = {ds.displayStyle} className = "selectable"
               onClick = {_this.chooseDisplayStyle.bind(_this, ds.displayStyle)}>
-              <span className = {'small icon icon-geo-circle ' +
+              <span className = {'small icon icon-chevron-right ' +
                 (config.displayStyle === k ? 'green' : 'hovershow')}/>
               <span className = {"icon " + ds.icon}/>
               {ds.description}

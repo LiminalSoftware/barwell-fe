@@ -27,7 +27,96 @@ module.exports = {
     'TEXT': 'Text',
     'LOCATION': 'Location',
     'REGION': 'Region',
-    'PRIMARY_KEY': 'Primary id'
+    'PRIMARY_KEY': 'Primary id',
+    'HAS_ONE': 'Has One',
+    'HAS_MANY': 'Has Many',
+    'MANY_TO_MANY': 'Has Many',
+    'HIERARCHY': 'Hierarchy'
+  },
+
+  colTypes: {
+    'INTEGER': {
+      id: 'INTEGER',
+      label: 'Integer',
+      category: 'Numbers'
+    },
+
+    'BOOLEAN': {
+      id: 'BOOLEAN',
+      label: 'Yes/No',
+      category: 'Others'
+    },
+    
+    'COLOR': {
+      id: 'COLOR',
+      description: 'Color',
+      category: 'Others'
+    },
+
+    'DECIMAL': {
+      id: 'DECIMAL',
+      description: 'Decimal',
+      category: 'Numbers'
+    },
+
+    'DATE_TIME': {
+      id: 'DATE_TIME',
+      description: 'Date/Time',
+      category: 'Dates and Times'
+    },
+
+    'DATE': {
+      id: 'DATE',
+      description: 'Date',
+      category: 'Dates and Times'
+    },
+
+    'TEXT': {
+      id: 'TEXT',
+      description: 'Text',
+      category: 'Text'
+    },
+
+    'LOCATION': {
+      id: 'LOCATION',
+      description: 'Location',
+      category: 'Geographic'
+    },
+
+    'REGION': {
+      id: 'REGION',
+      description: 'Region',
+      category: 'Geographic'
+    },
+
+    'HAS_ONE': {
+      id: 'HAS_ONE',
+      description: 'Has One',
+      category: 'Relationships'
+    },
+
+    'HAS_MANY': {
+      id: 'HAS_MANY',
+      description: 'Has Many',
+      category: 'Relationships'
+    },
+
+    'MANY_TO_MANY': {
+      id: 'MANY_TO_MANY',
+      description: 'Many to Many',
+      category : 'Relationships'
+    },
+
+    'HIERARCHY': {
+      id: 'HIERARCHY',
+      description: 'Hierarchy',
+      category: 'Relationships'
+    },
+
+    'PRIMARY_KEY': {
+      id: 'PRIMARY_KEY',
+      description: 'Primary id',
+    }
   },
 
   dates: [

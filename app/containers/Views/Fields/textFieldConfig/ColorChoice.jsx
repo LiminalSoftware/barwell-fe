@@ -14,7 +14,7 @@ var ColorChoice = React.createClass({
   getInitialState: function () {
     return {
       colorAttr: this.props.config.colorAttr || null,
-      conditionAttr: this.props.config.conditionAttr || null,
+      colorConditionAttr: this.props.config.colorConditionAttr || null,
       color: this.props.config.color,
       adjustColor: !(this.props.config.adjustColor === false),
       open: false
@@ -44,7 +44,7 @@ var ColorChoice = React.createClass({
   },
 
   chooseCondition: function (attributeId) {
-    this.commitChanges({conditionAttr: attributeId, adjustColor: this.state.adjustColor})
+    this.commitChanges({colorConditionAttr: attributeId, adjustColor: this.state.adjustColor})
     // this.setState({open: false})
   },
 
@@ -64,7 +64,7 @@ var ColorChoice = React.createClass({
     var boolAttrs = AttributeStore.query({type: 'BOOLEAN', model_id: view.model_id})
 
     return <span
-        className={"pop-down clickable icon icon-tl-brush "
+        className={"pop-down clickable icon icon-paint-roller "
           + (this.state.open ? " open" : (this.state.colorAttr || this.state.color ? " active" : ""))}
         onClick = {this.handleOpen}>
         {
@@ -84,9 +84,9 @@ var ColorChoice = React.createClass({
           boolAttrs.map(function (attr) {
             return <li key = {attr.attribute_id} className = "selectable"
               onClick = {_this.chooseCondition.bind(_this, attr.attribute_id)}>
-              <span className = {'small icon icon-geo-circle ' +
-                (_this.state.conditionAttr === attr.attribute_id ? 'green' : 'hovershow')}/>
-              <span className = "icon icon-checkbox-full  ">
+              <span className = {'icon icon-chevron-right ' +
+                (_this.state.colorConditionAttr === attr.attribute_id ? 'green' : 'hovershow')}/>
+              <span className = "icon icon-check-square  ">
               </span>
               {attr.attribute}
             </li>
@@ -97,9 +97,9 @@ var ColorChoice = React.createClass({
             boolAttrs.length > 0 ?
             <li key = "no-condition" className="selectable"
               onClick = {_this.chooseCondition.bind(_this, null)}>
-              <span className = {'small icon icon-geo-circle ' +
-                (_this.state.conditionAttr === null ? 'green' : 'hovershow')}/>
-              <span className = "icon icon-checkbox-empty"/>
+              <span className = {'icon  icon-chevron-right ' +
+                (_this.state.colorConditionAttr === null ? 'green' : 'hovershow')}/>
+              <span className = "icon icon-square"/>
               No condition
             </li>
             :
@@ -107,7 +107,7 @@ var ColorChoice = React.createClass({
           }
 
           <li key = "color-divider" className = {boolAttrs.length > 0 ? "top-divider bottom-divider" : ""}>
-            Color
+            Background Color
           </li>
 
           {
@@ -115,10 +115,9 @@ var ColorChoice = React.createClass({
             return <li key = {attr.attribute_id} className = "selectable"
               onClick = {_this.chooseColor.bind(_this, attr.attribute_id)}
               >
-              <span className = {'small icon icon-geo-circle ' +
+              <span className = {'icon icon-chevron-right ' +
                 (_this.state.colorAttr === attr.attribute_id ? 'green' : 'hovershow')}/>
-              <span className = "icon icon-tl-tint  ">
-              </span>
+              <span className = "icon icon-color-sampler  "/>
               {attr.attribute}
             </li>
           })
@@ -129,18 +128,18 @@ var ColorChoice = React.createClass({
             ['red','orange','yellow','green','blue','violet'].map(function (fcolor) {
               return <li className = "selectable" key={fcolor}
                 onClick = {_this.chooseFixedColor.bind(_this, fcolor)}>
-                <span className = {'small icon icon-geo-circle ' +
+                <span className = {'icon icon-chevron-right ' +
                   (_this.state.color === fcolor ? 'green' : 'hovershow')}/>
-                <span className = "icon icon-tl-tint" style={{color: fcolor}}/>{fcolor}
+                <span className = "icon icon-color-sampler" style={{color: fcolor}}/>{fcolor}
               </li>
             })
           }
 
           <li className = "selectable"
             onClick = {_this.chooseColor.bind(_this, null)}>
-            <span className = {'small icon icon-geo-circle ' +
+            <span className = {'small icon icon-chevron-right ' +
               ((_this.state.colorAttr === null && _this.state.color === null) ? 'green' : 'hovershow')}/>
-            <span className = "icon icon-tl-forecolour"/>
+            <span className = "icon icon-color-sampler"/>
             No cell color
           </li>
 

@@ -67,7 +67,7 @@ var dateField = {
 			return input
 		},
 
-		detailIcon: 'icon-calendar-selected',
+		detailIcon: 'icon-calendar-31',
 
 	})
 

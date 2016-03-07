@@ -38,14 +38,14 @@ var SortDetail = React.createClass({
 	    return <div className="menu-item tight menu-sub-item">
 			{this.props.editing ? <span
 				onMouseDown = {this.handleDrag}
-				className="draggable half-column-config tight icon grayed icon-Layer_2"/> : null }
+				className="draggable half-column-config tight icon grayed icon-menu"/> : null }
       		<span className = "ellipsis">{attr.attribute}</span>
 
 			<span onClick={this.switch}
-				className={"half-column-config tight icon grayed icon-sort-az-" + (spec.ascending ? 'high' : 'low')}>
+				className={"half-column-config tight icon icon-sort-alpha-" + (spec.ascending ? 'asc' : 'desc')}>
 			</span>
 			<span onClick={this.remove} 
-				className="half-column-config tight icon grayed icon-cr-remove"></span>
+				className="half-column-config tight icon icon-cross-circle"></span>
 		</div>
 	}
 });

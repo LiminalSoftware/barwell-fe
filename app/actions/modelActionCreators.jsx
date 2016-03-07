@@ -318,11 +318,6 @@ var modelActions = {
 		if (persist) return webUtils.persist(subject, 'DESTROY', obj)	
 		else return Promise.resolve(obj)
 	},
-
-	handleDateChange: function (event) {
-		console.log('event.target.value: '+ JSON.stringify(event.target.value, null, 2));
-	},
-
 	// relations
 
 	createRelation: function (relation) {

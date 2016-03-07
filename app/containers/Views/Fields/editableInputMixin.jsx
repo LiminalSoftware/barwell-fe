@@ -28,7 +28,6 @@ var editableInputMixin = {
 
 	setValue: function (value) {
 		value = value || ''
-		value = (this.parser) ? this.parser(value) : value;
 		this.setState({value: value})
 	},
 
@@ -101,7 +100,7 @@ var editableInputMixin = {
 		var fontColor = null
 		var cellStyle = _.clone(defaultCellStyle)
 		var editorIconStyle
-		var conditional = (!config.conditionAttr || obj['a' + config.conditionAttr])
+		var conditional = (!config.colorConditionAttr || obj['a' + config.colorConditionAttr])
 
 		if (showDetail) {
 			editorIconStyle = {
@@ -114,11 +113,13 @@ var editableInputMixin = {
 			}
 			if (config.align === 'right') editorIconStyle.left = 0
 			else editorIconStyle.right = 0
-		} 
+		}
 
 		cellStyle.textAlign = config.align
-		if (this.props.selected && config.align !== 'right') cellStyle.paddingRight = '22px'
-		if (this.props.selected && config.align === 'right') cellStyle.paddingLeft = '22px'
+		if (this.props.selected && this.detailIcon && config.align !== 'right') 
+			cellStyle.paddingRight = '25px'
+		if (this.props.selected && this.detailIcon && config.align === 'right') 
+			cellStyle.paddingLeft = '25px'
 		cellStyle.lineHeight = this.props.rowHeight + 'px'
 		
 		if (this.props.selected) bg = "white"

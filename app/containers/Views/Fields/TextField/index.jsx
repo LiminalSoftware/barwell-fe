@@ -24,7 +24,7 @@ var textField = {
 	sortable: true,
 	element: React.createClass({
 		mixins: [editableInputMixin, commitMixin, selectableMixin, keyPressMixin],
-    	detailIcon: 'icon-maximise-2',
+    	detailIcon: 'icon-expand',
     	validator: _.identity,
 		parser: _.identity
 	})

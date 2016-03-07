@@ -63,7 +63,7 @@ var CheckboxElement = React.createClass({
 
 		var checkStyle = {
 			position: 'absolute',
-			left: '0px',
+			left: '2px',
 			top: '-3px'
 		}
 
@@ -77,7 +77,7 @@ var CheckboxElement = React.createClass({
 				}>
 				<span className = {"checkbox-surround " + (this.state.selected ? ' checkbox-surround-selected' : '')}
 					 onClick={this.handleClick}>
-					<span className={"check green icon " + (this.state.value ? "icon-kub-approve" : "")}>
+					<span className={"check green icon " + (this.state.value ? "icon-check" : "")}>
 					</span>
 				</span>
 			</span>

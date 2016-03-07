@@ -31,7 +31,6 @@ var HAS_3D = util.has3d()
 
 import TabularTBody from "./TabularTBody"
 import TabularTHead from "./TabularTHead"
-import FakeLines from "./FakeLines"
 import RowResizer from "./RowResizer"
 
 var TabularBodyWrapper = React.createClass ({

@@ -1,48 +1,21 @@
 @import "./colors.less";
+@import "./iconVendor.css";
 
 .icon {
-	position: relative;
-	font-weight: 400;
-	text-align: center;
 	.noselect;
-	font-size: 17px;
-	min-width: 25 px;
 	margin-right: 8px;
-
-	&.decorator {
-		position: absolute !important;
-		left: 0; top: 0;
-		margin-left: -8px;
-		margin-top: -4px;
-		font-size: 13px !important;
+	
+	&.grayed {
+	color: @gray3;
 	}
 
-	&.right-align {
-		float: right;
+	&.green {
+	color: @newgreen1;
 	}
 
-	&.small {
-		font-size: 11px;
-		margin-right: 6px;
+	&.red {
+	color: @red-bright;
 	}
-
-	&.large {
-		font-size: 24px;
-    margin-right: 12px;
-	}
-
-
-  &.grayed {
-    color: @gray3;
-  }
-
-
-
-  &.green {
-    color: @newgreen1;
-  }
-
-  &.red {
-    color: @red-bright;
-  }
 }
+
+

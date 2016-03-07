@@ -41,7 +41,7 @@ var ColorElement = React.createClass({
 		var value = this.props.value
 		var cellStyle = _.clone(defaultCellStyle)
 		var blockStyle = {
-			right: this.props.selected ? '25px': '5px',
+			right: this.props.selected ? '28px': '5px',
 			background: this.state.value,
 		}
 		var iconStyle = {
@@ -64,7 +64,7 @@ var ColorElement = React.createClass({
 				{this.props.selected ?
 					 <span
 					 	style = {iconStyle}
-						className = "editor-icon icon icon-tl-paint"
+						className = "editor-icon icon icon-palette"
 						onClick = {this.showPicker}/>
 					: null}
 				{this.state.open ? 

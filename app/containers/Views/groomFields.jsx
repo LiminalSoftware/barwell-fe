@@ -48,6 +48,7 @@ var groomFields = function (view) {
 		col.related_relation_id = relation.related_relation_id
 		col.related_key_id = relation.related_key_id
 		col.key_id = relation.key_id
+		if (relatedModel) col.label = col.label || ('a' + relatedModel.label_attribute_id)
 		// col.label = col.label || ('a' + attrs[0].attribute_id)
 		col.relation_id = relation.relation_id;
 		col.type = relation.type

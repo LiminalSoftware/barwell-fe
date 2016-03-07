@@ -59,9 +59,9 @@ var RelationDetail = React.createClass({
 
 	getUpdatedName: function (relation) {
 		var relatedModel = ModelStore.get(relation.related_model_id) || {}
-		return (relation.type === 'Has one' ? relatedModel.model : relatedModel.plural)
+		return (relation.type === 'HAS_ONE' ? relatedModel.model : relatedModel.plural)
 	},
-
+	
 	commit: function (relation) {
 		this.setState({name: relation.relation})
 		modelActionCreators.create('relation', false, relation)

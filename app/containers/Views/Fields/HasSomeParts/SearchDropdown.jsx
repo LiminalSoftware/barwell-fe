@@ -20,7 +20,7 @@ var SEARCH_RECORD_COUNT = 50;
 var SEARCH_RECORDS_VISIBLE = 10
 
 var SearchDropdown = React.createClass({
-
+	
 	mixins: [MenuKeysMixin],
 
 	componentWillMount: function () {

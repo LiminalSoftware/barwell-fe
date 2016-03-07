@@ -1,14 +1,5 @@
 @import "../../../../../global.less";
 
-// z-index
-// table-cell
-// .selection: 112
-// .scroll-overlay: 120
-// .table-cell.selected > .table-cell-inner: 125
-// .input-editor: 150
-// .add-new-row: 200
-
-
 .loader-overlay, .notification-overlay, .error-overlay {
 	position: absolute;
 	bottom: 50px;
@@ -99,7 +90,7 @@
 	position: absolute;
 	cursor: pointer;
 	text-align: center;
-	border: 1px solid @purple4;
+	color: @gray3;
 	padding: 0;
 	margin: 0;
 
@@ -107,7 +98,14 @@
 	z-index: 3;
 	background: white;
 	pointer-events: auto;
+}
 
+.add-new-row--blurred {
+	border: 1px solid @gray2;
+}
+
+.add-new-row--focused {
+	border: 1px solid @purple4;
 	&:hover {
 		color: @newgreen1 !important;
 		border: 1px solid @newgreen1;

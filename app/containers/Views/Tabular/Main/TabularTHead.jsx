@@ -47,7 +47,7 @@ var TabularTHead = React.createClass ({
 
 			{
 			_this.props.columns.map(function (col, idx) {
-				var el = <TabularTH key={"th-" + col.attribute_id}
+				var el = <TabularTH key={"th-" + col.column_id}
 					scrollTop = {_this.props.scrollTop}
 					column = {col}
 					sorted = {col.attribute_id && (col.attribute_id in view.data.sortIndex)}

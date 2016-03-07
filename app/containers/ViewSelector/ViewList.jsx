@@ -65,37 +65,20 @@ var ViewList = React.createClass({
 			)}
 			<Link to={`/workspace/${model.workspace_id}/model/${model.model_id}/config`}
 				className = "menu-item menu-sub-item no-left-padding" key="model-editor">
-				<span className = {"small icon icon-geo-circle " + (!view ? " green" : " hovershow")}/>
-				<span className = "large icon icon-tl-toolbox"></span>
+				<span className = {"icon icon-chevron-right " + (!view ? " green" : " hovershow")}/>
+				<span className = "icon icon-pencil-ruler"></span>
 				<span className = "double-column-config">Database Configuration</span>
 			</Link>
-			<div className="menu-item menu-config-row" key="detail-menu-items">
-				{
-					this.state.editing ?
-					<div className = {"menu-sub-item padded " + (this.state.adding ? "border-bottom" : "")}
-						onClick = {this.handleDoneEdit}>
-						Save changes
+			{
+				this.state.editing ?
+				<div className = "menu-item menu-config-row">
+					<div className="menu-sub-item padded" 
+						onClick = {this.handleAddNewChoices}>
+						<span className = "icon icon-plus"/> Add view
 					</div>
-					:
-					<div className = "menu-sub-item padded"
-						onClick = {this.handleEdit}>
-						Edit views
-					</div>
-				}
-				{
-					this.state.editing ?
-					<div className = {"menu-sub-item padded " + (this.state.adding ? "border-bottom" : "")}
-						onClick = {this.handleCancelEdit}>
-						Cancel changes
-					</div>
-					:
-					null
-				}
-				<div className="menu-sub-item padded" 
-					onClick = {this.handleAddNewChoices}>
-					Add view
 				</div>
-			</div>
+				: null
+			}
 			{
 				this.state.adding ? 
 				_.map(viewTypes, function (type, typeKey) {
@@ -109,6 +92,33 @@ var ViewList = React.createClass({
 				:
 				null
 			}
+			<div className="menu-item menu-config-row" key="detail-menu-items">
+				{
+					this.state.editing ?
+					<div className = {"menu-sub-item padded " + (this.state.adding ? "border-bottom" : "")}
+						onClick = {this.handleDoneEdit}>
+						<span className = "icon icon-check"/> Save changes
+					</div>
+					:
+					<div className = "menu-sub-item padded"
+						onClick = {this.handleEdit}>
+						<span className = "icon icon-pencil"/> Edit views
+					</div>
+				}
+				{
+					this.state.editing ?
+					<div className = {"menu-sub-item padded " + (this.state.adding ? "border-bottom" : "")}
+						onClick = {this.handleCancelEdit}>
+						<span className = "icon icon-cross2"/>Cancel changes
+					</div>
+					:
+					<div className="menu-sub-item padded" 
+						onClick = {this.handleAddNewChoices}>
+						<span className = "icon icon-plus"/> Add view
+					</div>
+				}
+				
+			</div>
 		</div>
 	}
 })
