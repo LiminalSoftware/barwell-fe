@@ -38,7 +38,7 @@ var dateField = {
 	},
 
 	configCleanser: function (config) {
-		config.dateFormat = config.dateFormat || "MM/DD/YYYY"
+		config.formatString = config.formatString || "MM/DD/YYYY"
 		return config
 	},
 
@@ -50,14 +50,14 @@ var dateField = {
 
 		format: function (value) {
 			var config = this.props.config || {}
-			var format = config.dateFormat || "DD MMMM YYYY";
+			var format = config.formatString || "DD MMMM YYYY";
 			var prettyDate = value ? moment(value).format(format) : ''
 			return prettyDate
 		},
 
 		validator: function (input) {
 			var config = this.props.config || {}
-			var format = config.dateFormat || "YYYY-MM-DD";
+			var format = config.formatString || "YYYY-MM-DD";
 			var date = moment(input, format)
 			if (!date.isValid()) date = moment(input, "YYYY-MM-DD")
 				return date.isValid() ? date : null

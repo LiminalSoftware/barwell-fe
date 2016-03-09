@@ -15,6 +15,7 @@ var ViewItem = React.createClass({
 			return {
 				name: view.view,
 				editing: false,
+				editTransition: false,
 				deleting: false
 			}
 	},
@@ -26,6 +27,13 @@ var ViewItem = React.createClass({
 	handleClickEdit: function (e) {
 		this.setState({editing: true})
 		util.clickTrap(e)
+	},
+
+	componentDidUpdate: function (prevProps, prevState) {
+		var _this = this
+		if (!prevState.editing && this.state.editing) setTimeout(function () {
+			_this.setState({editTransition: true})
+		}, 50)
 	},
 
 	handleClickDelete: function (e) {
@@ -57,7 +65,8 @@ var ViewItem = React.createClass({
 
 		if (view && this.props.editing)
 			return <div className = "menu-item menu-sub-item no-left-padding">
-				<span className = "draggable gray icon icon-menu"/>
+				<span className = {"draggable gray icon icon-menu " + 
+					(this.state.editTransition ? "" : "")}/>
 				<span className = {"icon " + viewTypes[view.type].icon}></span>
 				<span className = "double ellipsis">
 					{this.state.editing ?
@@ -68,7 +77,8 @@ var ViewItem = React.createClass({
 						: view.view}
 				</span>
 				{this.props.editing && !this.state.deleting && !this.state.editing?
-						<span className = "icon icon-pencil"
+						<span className = {"icon icon-pencil " + 
+						(this.state.editTransition ? "" : "")}
 							onClick = {this.handleClickEdit}/> : null}
 				{this.props.editing && this.state.deleting ?
 						<span className = "icon icon-undo2"

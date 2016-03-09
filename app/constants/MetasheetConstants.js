@@ -34,16 +34,24 @@ module.exports = {
     'HIERARCHY': 'Hierarchy'
   },
 
+  colTypeCategories: [
+    'Numbers',
+    'Others',
+    'Dates and Times',
+    'Geographic',
+    'Relationships'
+  ],
+
   colTypes: {
     'INTEGER': {
       id: 'INTEGER',
-      label: 'Integer',
+      description: 'Integer',
       category: 'Numbers'
     },
 
     'BOOLEAN': {
       id: 'BOOLEAN',
-      label: 'Yes/No',
+      description: 'Yes/No',
       category: 'Others'
     },
     

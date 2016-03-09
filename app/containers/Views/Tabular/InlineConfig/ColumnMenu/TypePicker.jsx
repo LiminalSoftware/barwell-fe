@@ -4,7 +4,7 @@ import fieldTypes from "../../../fields"
 
 import constants from '../../../../../constants/MetasheetConstants'
 import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
-
+import PopDownMenu from '../../../../../components/PopDownMenu'
 var TypePicker = React.createClass({
 
 	getInitialState: function () {
@@ -25,18 +25,40 @@ var TypePicker = React.createClass({
 	    var config = this.props.config
 		var fieldType = fieldTypes[config.type] || {}
 		var editing = this.props.editing
+		var active = constants.colTypes[this.state.type]
+		var rows = []
 
+		constants.colTypeCategories.forEach(function (category) {
+			rows.push(<li key={category + '-label'} className = "bottom-divider top-divider">{category}</li>)
+			_.forEach(constants.colTypes, function (type, key) {
+				if (type.category === category) rows.push(<li key={type.id} className = "selectable">
+  					{type.description}
+  				</li>);
+			})
+		})
 
 	    return <span>
-			{
-				constants.colTypes.map(function () {
-					return <option value={type} key={type}>
-	  					{constants.fieldTypes[type]}
-	  				</option>;
-				})
-			}
+	    	<span className = "pop-down" style = {{width: '100px'}} onClick = {this.handleOpen}>
+	    		{active.description}
+		    	{
+		    		this.state.open ?
+		    		<PopDownMenu>
+		    		{rows}
+		    		</PopDownMenu>
+		    		:
+		    		null
+		    	}
+	    	</span>
 		</span>
 	}
 });
+
+var TypeChoice = React.createClass({
+	render: function () {
+		return <span>
+
+		</span>
+	}
+})
 
 export default TypePicker;

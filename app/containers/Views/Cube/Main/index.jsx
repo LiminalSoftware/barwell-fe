@@ -48,15 +48,15 @@ var CubePane = React.createClass ({
 	componentWillMount: function () {
 		document.body.addEventListener('keydown', this.onKey)
 		FocusStore.addChangeListener(this._onChange)
-		this.store = createCubeStore(this.props.view)
-		this.store.addChangeListener(this._onChange)
+		// this.store = createCubeStore(this.props.view)
+		// this.store.addChangeListener(this._onChange)
 	},
 
 	componentWillUnmount: function () {
 		document.body.removeEventListener('keydown', this.onKey)
 		FocusStore.removeChangeListener(this._onChange)
-		if (this.store) this.store.removeChangeListener(this._onChange)
-		this.store.unregister()
+		// if (this.store) this.store.removeChangeListener(this._onChange)
+		// this.store.unregister()
 	},
 
 	_onChange: function () {
@@ -310,72 +310,14 @@ var CubePane = React.createClass ({
 		var numAggregates = view.row_aggregates.length + view.column_aggregates.length
 
 		if (numAggregates === 0)
-			return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper"></div>
-
-		return <div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">
+			return <div className = "model-panes"></div>
+		
+		return <div className = "model-panes">
+			<div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">
 				<div id="main-data-table" className="header data-table">
-					{/*
-					<CubeColTHead
-						key = {"cube-col-thead-" + view.view_id}
-						clicker = {_this.onMouseDown}
-						dimension = 'column'
-						store = {this.store}
-						hStart = {hStart}
-						scrollTop = {scrollTop}
-						handleBlur = {_this.handleBlur}
-						openContextMenu = {_this.openContextMenu}
-						model = {model}
-						view = {view} />
-					<CubeRowTHead
-						ref = 'rowhead'
-						key = {"cube-row-thead-" + view.view_id}
-						clicker = {_this.onMouseDown}
-						dimension = 'row'
-						store = {this.store}
-						vStart = {vStart}
-						scrollLeft = {scrollLeft}
-						handleBlur = {_this.handleBlur}
-						openContextMenu = {_this.openContextMenu}
-						actRowHt = {height}
-						model = {model}
-						view = {view} />
-					<CubeTBody
-						key = {"cube-body-" + view.view_id}
-						ref = 'tbody'
-						clicker = {_this.onMouseDown}
-						view = {view}
-						model = {model}
-						scrollLeft = {scrollLeft}
-						scrollTop = {scrollTop}
-						handleBlur = {_this.handleBlur}
-						openContextMenu = {_this.openContextMenu}
-						actRowHt = {height}
-						vStart = {vStart}
-						hStart = {hStart}
-						store = {this.store}
-					/>*/}
+					
 				</div>
-				{/*<div
-					className={"pointer" + (_this.isFocused() ? " focused" : "")}
-					ref = "anchor"
-					onDoubleClick = {this.startEdit}
-					style = {_this.getPointerStyle()}>
-				</div>
-				<div
-					className={"selection" + (_this.isFocused() ? " focused" : "")}
-					ref="selection"
-					style={_this.getSelectorStyle()}>
-				</div>
-				{_this.state.contextOpen ?
-					<ContextMenu
-						x = {_this.state.contextX} y = {_this.state.contextY}
-						handleContextBlur = {_this.handleContextBlur}
-						addNewRecord = {_this.insertRecord}
-						deleteRecords = {_this.deleteRecords}
-						copySelection = {_this.copySelection}
-						/>
-					: null}
-				*/}
+			</div>
 		</div>
 	}
 })
@@ -386,3 +328,67 @@ export default CubePane
 						// scrollLeft = {_this.state.scrollLeft}
 						// scrollTop = {_this.state.scrollTop}
 						// view = {view} />
+
+
+// {<div
+// 					className={"pointer" + (_this.isFocused() ? " focused" : "")}
+// 					ref = "anchor"
+// 					onDoubleClick = {this.startEdit}
+// 					style = {_this.getPointerStyle()}>
+// 				</div>
+// 				<div
+// 					className={"selection" + (_this.isFocused() ? " focused" : "")}
+// 					ref="selection"
+// 					style={_this.getSelectorStyle()}>
+// 				</div>
+// 				{_this.state.contextOpen ?
+// 					<ContextMenu
+// 						x = {_this.state.contextX} y = {_this.state.contextY}
+// 						handleContextBlur = {_this.handleContextBlur}
+// 						addNewRecord = {_this.insertRecord}
+// 						deleteRecords = {_this.deleteRecords}
+// 						copySelection = {_this.copySelection}
+// 						/>
+// 					: null}
+// 				}
+
+					// 	{
+					// <CubeColTHead
+					// 	key = {"cube-col-thead-" + view.view_id}
+					// 	clicker = {_this.onMouseDown}
+					// 	dimension = 'column'
+					// 	store = {this.store}
+					// 	hStart = {hStart}
+					// 	scrollTop = {scrollTop}
+					// 	handleBlur = {_this.handleBlur}
+					// 	openContextMenu = {_this.openContextMenu}
+					// 	model = {model}
+					// 	view = {view} />
+					// <CubeRowTHead
+					// 	ref = 'rowhead'
+					// 	key = {"cube-row-thead-" + view.view_id}
+					// 	clicker = {_this.onMouseDown}
+					// 	dimension = 'row'
+					// 	store = {this.store}
+					// 	vStart = {vStart}
+					// 	scrollLeft = {scrollLeft}
+					// 	handleBlur = {_this.handleBlur}
+					// 	openContextMenu = {_this.openContextMenu}
+					// 	actRowHt = {height}
+					// 	model = {model}
+					// 	view = {view} />
+					// <CubeTBody
+					// 	key = {"cube-body-" + view.view_id}
+					// 	ref = 'tbody'
+					// 	clicker = {_this.onMouseDown}
+					// 	view = {view}
+					// 	model = {model}
+					// 	scrollLeft = {scrollLeft}
+					// 	scrollTop = {scrollTop}
+					// 	handleBlur = {_this.handleBlur}
+					// 	openContextMenu = {_this.openContextMenu}
+					// 	actRowHt = {height}
+					// 	vStart = {vStart}
+					// 	hStart = {hStart}
+					// 	store = {this.store}
+					// />}

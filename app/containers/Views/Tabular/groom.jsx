@@ -15,13 +15,6 @@ var comparator = function (a, b) {
 		- (a.fixed + a.visible - a.order/1000))
 }
 
-var enumerate = function (list) {
-	list.sort(comparator)
-	return list.map(function(item, i) {
-		item.order = i
-		return item
-	})
-}
 
 var limit = function (thing, view) {
 	var numCols = view.data.visibleCols.length
@@ -40,7 +33,7 @@ var groomView = function (view) {
 	var iter =  BIG_NUM;
 
   	var columns = groomFields(view)
-	var columnList = enumerate(_.values(columns))
+	var columnList = util.enumerate(_.values(columns), comparator)
 
 	data.columns = columns
 	data.columnList = columnList

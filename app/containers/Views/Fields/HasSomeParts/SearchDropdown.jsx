@@ -97,7 +97,6 @@ var SearchDropdown = React.createClass({
 	},
 
 	chooseItem: function (hasManyObj) {
-		console.log('abc')
 		var model = this.props.model
 		var config = this.props.config
 		var hasOneObj = this.props.object
@@ -131,10 +130,12 @@ var SearchDropdown = React.createClass({
 			rec => (rec[config.label] || '').toLowerCase().indexOf(searchTerm) >= 0
 		).slice(this.state.page * SEARCH_RECORDS_VISIBLE, SEARCH_RECORDS_VISIBLE);
 		var count = filteredRecords.length;
+		var lowerDivider = shouldOpenDown ? "bottom-divider" : "top-divider"
+		var upperDivider = shouldOpenDown ? "top-divider" : "bottom-divider"
 
 		return <PopDownMenu {...this.props}>
           	
-			<li key = "search-li" className = {this.state.count > 0 ? (shouldOpenDown ? "bottom-divider" : "top-divider") : ""}
+			<li key = "search-li" className = {this.state.count > 0 ? lowerDivider : ""}
 				style = {{height: '30px', position: 'relative'}}>
 				<input className = "input-editor" autoFocus
 					onChange = {this.updateSearchValue}
@@ -144,8 +145,7 @@ var SearchDropdown = React.createClass({
 					filteredRecords.map(function (rec, idx) {
 						var pk = rec[oppModel._pk]
 						return <li key = {pk} onClick = {_this.chooseItem}
-							className = {"selectable " + ((idx === _this.state.selection) ? ' hilite' : '')}
-							>
+							className = {"selectable " + ((idx === _this.state.selection) ? ' hilite' : '')}>
 							<span className = "has-many-bubble">{rec[config.label]}</span>
 						</li>
 					})
@@ -161,8 +161,11 @@ var SearchDropdown = React.createClass({
 					(this.state.count > SEARCH_RECORDS_VISIBLE) ? 
 					<li key="loader-li" >Show more</li>
 					:
-					filteredRecords.length === 0 ? 
-					<li key="loader-li" >No records found</li> 
+					filteredRecords.length === 0 && searchTerm.length > 0 ? 
+					<li>
+						<span className = "icon icon-notification-circle"/>
+						No records found...
+					</li>
 					: null
 				}
 

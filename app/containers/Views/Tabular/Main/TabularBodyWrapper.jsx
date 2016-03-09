@@ -69,10 +69,6 @@ var TabularBodyWrapper = React.createClass ({
 		this.fetch(true)
 	},
 
-	componentWillUnmount: function () {
-		
-	},
-
 	componentWillUpdate: function (nextProps, nextState) {
 		var renderSide = this.state.renderSide === 'lhs' ? 'rhs' : 'lhs';
 		// if (this.__timer) clearTimeout(this.__timer);
@@ -85,16 +81,6 @@ var TabularBodyWrapper = React.createClass ({
 
 	componentWillReceiveProps: function (nextProps) {
 		this.debounceFetch(false, nextProps);
-	},
-
-	componentDidUpdate: function () {
-		// var renderSide = this.state.renderSide === 'lhs' ? 'rhs' : 'lhs';
-		// var side = this.refs[renderSide];
-		
-		// if (side.isUnpainted(side.state)) {
-		// 	setTimeout(this.forceUpdate.bind(this), 0)
-		// }
-
 	},
 
 	finishFetch: function () {
@@ -146,19 +132,6 @@ var TabularBodyWrapper = React.createClass ({
 			this.state.fetching !== nextState.fetching
 	},
 
-	handleDetail: function (e) {
-		var coords = this.props._getRCCoords(e)
-		this.setState({
-			detailOpen: true,
-			detailX: coords.left,
-			detailY: coords.top
-		})
-	},
-
-	hideDetailBar: function () {
-		this.setState({detailOpen: false})
-	},
-
 	render: function () {
 		var view = this.props.view
 		var model = this.props.model
@@ -197,13 +170,13 @@ var TabularBodyWrapper = React.createClass ({
 
 			{
 				this.state.fetching ? 
-					<div 
-						className = "loader-overlay"
-						style = {{width: 250 + 'px'}}>
-						<div className="three-quarters-loader three-quarters-loader--green"></div>
-						Loading...
-					</div>
-					: null
+				<div 
+					className = "loader-overlay"
+					style = {{width: 250 + 'px'}}>
+					<div className="three-quarters-loader three-quarters-loader--green"></div>
+					Loading...
+				</div>
+				: null
 			}
 			
 			<RowResizer {...this.props} adjustedWidth = {adjustedWidth} />

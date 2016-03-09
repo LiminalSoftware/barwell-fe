@@ -12,20 +12,24 @@ import CommitMixin from '../commitMixin'
 import ColorValidationMixin from './ColorValidationMixin'
 import MenuKeysMixin from '../MenuKeysMixin'
 
-var NUM_HUES = 10
-
-var ColorPicker = React.createClass({
+var DatePicker = React.createClass({
 
 	mixins: [ColorValidationMixin, CommitMixin, MenuKeysMixin],
 
 	getInitialState: function () {
-		return {selection: -1}
+		var config = this.props.config
+		var val = this.props.value ? moment(this.props.value) : moment()
+		return {
+			year: val.year(),
+			month: val.month(),
+			date: val
+		}
 	},
 
-	getNumberOptions: function () {
-		return NUM_HUES
+	onChange: function (e) {
+		this.setState({year: e.target.value})
 	},
-
+	
 	clickChoice: function (event) {
 		var color = event.target.style.background
 		this.setState({value: color})
@@ -38,24 +42,25 @@ var ColorPicker = React.createClass({
     	var view = this.props.view
 		var obj = this.props.object
 		var config = this.props.config
+		var weeks = []
+		var month = this.state.month
+		var year = this.state.year
 
-		var hue = util.sequence(0, 360, 12).map(Math.round)
-		var sat = [0.6].map(e => Math.round(e*100) + '%')
-		var lit = [0.5].map(e => Math.round(e*100)  + '%')
-		
-		var color = tinycolor(obj[config.column_id]).toRgbString()
+		var firstDay = moment(`${year}-${month}-01`).startOf('month')
+
+		for (var w = ; w < 5; w++) {
+
+		}
 
 		return <PopDownMenu {...this.props}>
-			{
-				['red','orange','yellow','green','blue','violet'].map(function (fcolor) {
-	              return <li className = "selectable" key={fcolor}
-	                onClick = {_this.clickChoice.bind(_this, fcolor)}>
-	                <span className = {'icon icon-chevron-right ' +
-	                  (_this.state.color === fcolor ? 'green' : 'hovershow')}/>
-	                <span className = "icon icon-color-sampler" style={{color: fcolor}}/>{fcolor}
-	              </li>
-	            })
-			}
+			<li>
+				<input 
+					value={this.state.year}
+					onChange = {this.onChange}/>
+			</li>
+			<li>
+				
+			</li>
 		</PopDownMenu>
 	}
 });

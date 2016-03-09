@@ -4,20 +4,22 @@ import modelActionCreators from "../../../../actions/modelActionCreators"
 import PopDownMenu from '../../../../components/PopDownMenu'
 
 import displayStyles from './displayStyles'
-
-var blurOnClickMixin = require('../../../../blurOnClickMixin')
+import configCommitMixin from '../configCommitMixin'
+import blurOnClickMixin from '../../../../blurOnClickMixin'
 
 var NumberFormatChoice = React.createClass({
 
-  mixins: [blurOnClickMixin],
+  mixins: [blurOnClickMixin, configCommitMixin],
 
   _timer: null,
 
   getInitialState: function () {
     var config = this.props.config
+    var custom = !_.any(displayStyles, ds => ds.formatString === config.formatString)
     return {
       formatString: config.formatString,
-      open: false
+      open: false,
+      custom: custom
     }
   },
 
@@ -30,24 +32,34 @@ var NumberFormatChoice = React.createClass({
     this.setState({formatString: val})
   },
 
-  blurInput: function () {
-    this.commitChanges(this.state)
+  chooseDisplayStyle: function (value, e) {
+    console.log('chooseDisplayStyle: ' + JSON.stringify(value))
+		this.commitChanges({
+      displayStyle: value.displayStyle,
+      formatString: value.formatString,
+      custom: false
+    });
+	},
+
+  onBlur: function (event) {
+    var config = this.props.config
+    var view = this.props.view
+    var column_id = config.column_id
+    var data = view.data
+    var col = data.columns[column_id]
+
+    col.formatString = this.state.formatString
+    modelActionCreators.createView(view, false, true)
   },
 
-  commitChanges: function (colProps) {
-		var view = this.props.view
-		var column_id = this.props.config.column_id
-		var col = view.data.columns[column_id]
+  handleFormatChange: function (e) {
+    var value = e.target.value
+    this.setState({formatString: value})
+  },
 
-		col = _.extend(col, colProps)
-		view.data.columns[column_id] = col;
-    this.setState(colProps)
-		modelActionCreators.createView(view, true, true)
-	},
-
-  chooseDisplayStyle: function (value, e) {
-		this.commitChanges(_.pick(displayStyles[value], 'displayStyle', 'formatString'))
-	},
+  handleChooseCustom: function () {
+    this.setState({custom: true})
+  },
 
   render: function () {
     var _this = this
@@ -65,22 +77,32 @@ var NumberFormatChoice = React.createClass({
           _.map(displayStyles, function (ds, k) {
             return <li 
               key = {ds.displayStyle} className = "selectable"
-              onClick = {_this.chooseDisplayStyle.bind(_this, ds.displayStyle)}>
-              <span className = {'small icon icon-chevron-right ' +
+              onClick = {_this.chooseDisplayStyle.bind(_this, ds)}>
+              <span className = {'icon icon-chevron-right ' +
                 (config.displayStyle === k ? 'green' : 'hovershow')}/>
               <span className = {"icon " + ds.icon}/>
               {ds.description}
             </li>
           })
           }
-          <li key="format-header" className = "top-divider">Format</li>
-          <li key="format-string-input">
-            <input 
-            className = "menu-input text-input" 
-            value={this.state.formatString}
-            onChange = {this.updateFormatString}
-            onBlur = {this.blurInput}/>
+          <li key="format-header" className = "top-divider" onClick = {this.handleChooseCustom}>
+            <span className = {"icon green icon-chevron-right " + 
+              (this.state.custom ? 'green' : 'hovershow')}/>
+            <span className="icon icon-code"/>
+            Custom
           </li>
+          {
+            this.state.custom ?
+            <li>
+                <input
+                  style = {{textAlign: 'center'}}
+                  className = "menu-input text-input" 
+                  
+                  value = {this.state.formatString}
+                  onChange = {_this.handleFormatChange}/> 
+            </li>
+            : null
+          }
         </PopDownMenu> : null
         }
     </span>

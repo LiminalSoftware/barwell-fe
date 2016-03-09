@@ -14,6 +14,7 @@ import groomView from '../../groomView'
 
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import ViewSelector from '../../../ViewSelector'
+import CubeColumnMenu from './CubeColumnMenu'
 
 var CubeViewInlineConfig = React.createClass({
 
@@ -41,6 +42,7 @@ var CubeViewInlineConfig = React.createClass({
 
     return <div className = "view-config" onClick={this.focus}>
 			<ViewSelector view = {view} model = {model}/>
+			<CubeColumnMenu view = {view} model = {model}/>
 		</div>
 	}
 });

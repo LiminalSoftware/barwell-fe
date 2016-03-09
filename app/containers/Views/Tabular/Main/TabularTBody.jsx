@@ -98,16 +98,9 @@ var TabularTBody = React.createClass ({
 	},
 
 	shouldComponentUpdate: function (nextProps, nextState) {
-
 		if (nextProps.view !== this.props.view) return true
 		if (nextProps.focused !== this.props.focused) return true
-		// if (!nextProps.shouldPaint) return false
-		// if (now - this._lastUpdate < MIN_CYCLE) return false
 		return this.isUnpainted(nextState)
-	},
-
-	componentDidUpdate: function (prev) {
-		// this.updateOffset(this.state.target, this.state.scrollDirection)
 	},
 
 	_onChange: function () {
@@ -115,10 +108,8 @@ var TabularTBody = React.createClass ({
 	},
 
 	componentWillMount: function () {
-		// if (this.props.prefix === 'lhs') gTbodyHistory = []
 		ViewStore.addChangeListener(this._onChange)
 		this.props.store.addChangeListener(this._onChange)
-		// this.worker = new Worker('/_assets/js/scrollWorker.js');
 	},
 
 	componentDidMount: function () {

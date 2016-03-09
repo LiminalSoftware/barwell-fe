@@ -2,7 +2,7 @@ var displayStyles = {
   'DECIMAL': {
     displayStyle: 'DECIMAL',
   	description: 'Decimal', 
-  	icon: 'icon-calculator', 
+  	icon: 'icon-calculator2', 
   	formatString: '0,0.00'
   },
   'PERCENTAGE': {
@@ -16,11 +16,6 @@ var displayStyles = {
   	description: 'Currency', 
   	icon: 'icon-coin-dollar',
   	formatString: '$0,0.00'
-  },
-  'PIE': {
-    displayStyle: 'PIE',
-  	description: 'Mini-pie', 
-  	icon: 'icon-pie-chart'
   },
 }
 export default displayStyles

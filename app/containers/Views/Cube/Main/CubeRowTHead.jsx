@@ -36,10 +36,6 @@ var CubeRowTHead = React.createClass ({
 		var elements = groupAttrs.map(attr => (fieldTypes[attr.type] || fieldTypes.TEXT).element)
 		var levels = store.getLevels('rows', vStart, vEnd)
 
-
-
-
-
 		return <div
 			id="cube-row-view-header"
 			ref="rowhead"

@@ -95,15 +95,24 @@ var hasOneField = {
 			var config = this.props.config || {}
 			var relatedModel = ModelStore.get(config.related_model_id)
 			var style = this.props.style || {}
-			var showDetail = this.state.selected && !this.state.editing
+			var showDetail = this.props.selected && !this.state.editing
 			var value = (array instanceof Array ? array[0][config.label] : '')
 			var cellStyle = {
 				lineHeight: this.props.rowHeight + 'px',
 				background: this.props.selected ? 'white' : null
 			}
-			var editorIconStyle = {
-				lineHeight: this.props.rowHeight + 'px',
-				right: 0
+			var editorIconStyle 
+			if (showDetail) {
+				editorIconStyle = {
+					position: 'absolute',
+					top: 0, 
+					bottom: 0,
+					width: '25px',
+					lineHeight: this.props.rowHeight + 'px',
+					zIndex: 251
+				}
+				if (config.align === 'right') editorIconStyle.left = 0
+				else editorIconStyle.right = 0
 			}
 
 			return <span
@@ -120,7 +129,7 @@ var hasOneField = {
 					: null
 				}
 				{showDetail ? <span
-					className = "editor-icon icon icon-search"
+					className = "editor-icon icon icon-magnifier"
 					style = {editorIconStyle}
 					onClick = {this.handleEdit}/>
 					: null}

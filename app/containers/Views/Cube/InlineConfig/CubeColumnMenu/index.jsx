@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router";
-import styles from "./style.less";
 import _ from 'underscore';
 import fieldTypes from "../../../fields"
 
@@ -16,7 +15,7 @@ import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 var blurOnClickMixin = require('../../../../../blurOnClickMixin')
 
-var ColumnMenu = React.createClass({
+var CubeColumnMenu = React.createClass({
 
 	itemHeight: 35,
 
@@ -63,7 +62,7 @@ var ColumnMenu = React.createClass({
 		var data = view.data
 		var columns = view.data.columnList
 		columns = columns.filter(col => col.visible)
-		return columns[data.pointer.left]
+		return columns[0]
 	},
 
 	sections : [
@@ -85,7 +84,7 @@ var ColumnMenu = React.createClass({
 			emptyText: "No column groups defined...",
 			icon: "icon-layer-3",
 			selector: function (columns) {
-				return columns.filter(c => _.contains(c.attribute_id).sort(util.orderSort)
+				return columns.filter(c => _.contains(c.attribute_id)).sort(util.orderSort)
 			},
 			enterTransform: function (col) {
 				col.visible = true
@@ -94,7 +93,7 @@ var ColumnMenu = React.createClass({
 			}
 		},
 		{
-			label: "Row Groupings Attributes",
+			label: "Row Groupings",
 			emptyText: "No row groups defined...",
 			icon: "icon-layer-3",
 			selector: function (columns) {
@@ -106,7 +105,7 @@ var ColumnMenu = React.createClass({
 				return col
 			}
 		},
-    {
+    	{
 			label: "Table Body Attributes",
 			emptyText: "No table body attributes defined...",
 			icon: "icon-layer-3",
@@ -203,4 +202,4 @@ var ColumnMenu = React.createClass({
 	}
 });
 
-export default ColumnMenu;
+export default CubeColumnMenu;

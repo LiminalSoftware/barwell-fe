@@ -7,6 +7,8 @@ import $ from 'jquery'
 
 import constants from '../../../../../constants/MetasheetConstants'
 
+import TypePicker from './TypePicker'
+
 import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
@@ -87,11 +89,7 @@ var ColumnDetail = React.createClass({
 				
 				{editing ? 
 					<span>
-						<select className = "menu-input selector"
-							name="type" value={this.state.type} 
-							onChange={this.handleTypeChange}>
-							{typeFieldChoices}
-						</select>
+						<TypePicker {...this.props}/>
 					</span>
 					:
 					<span>
@@ -106,10 +104,9 @@ var ColumnDetail = React.createClass({
 					}
 					</span>
 				}
-
 				{
 				editing ?       
-				<span onMouseDown = {this.handleDelete} className = "icon icon-cross-circle"></span>
+				<span onMouseDown = {this.openDetail} className = "icon icon-cog"></span>
 				: null
 				}
 			</div>

@@ -9,58 +9,109 @@ import ModelStore from "../../../../stores/ModelStore"
 import constant from "../../../../constants/MetasheetConstants"
 import modelActionCreators from "../../../../actions/modelActionCreators"
 
+import PopDownMenu from '../../../../components/PopDownMenu'
+
 import commitMixin from '../commitMixin'
 import editableInputMixin from '../editableInputMixin'
 import selectableMixin from '../selectableMixin'
 import DateValidatorMixin from './dateValidatorMixin'
 import keyPressMixin from '../keyPressMixin'
+import blurOnClickMixin from '../../../../blurOnClickMixin'
+import configCommitMixin from '../configCommitMixin'
+
+import dateStyles from './dateStyles'
 
 
 var DateConfig = React.createClass({
 
+	mixins: [blurOnClickMixin, configCommitMixin],
+
 	getInitialState: function () {
 		var config = this.props.config;
-		return {dateFormat: (config.dateFormat || 'DD/MM/YYYY')}
+		var custom = !_.any(dateStyles, ds => ds.formatString === config.formatString)
+		return {
+			open: false,
+			formatString: (config.formatString || 'DD/MM/YYYY'),
+			custom: custom
+		}
 	},
 
-	onFormatChange: function (event) {
-		var config = this.props.config
-		var column_id = config.column_id
-		var view = this.props.view
-		var data = view.data
-		var col = data.columns[column_id]
-		var value = event.target.value
-		col.dateFormat = value
-
-		this.setState({dateFormat: value})
+	handleFormatChange: function (e) {
+		var value = e.target.value
+		this.setState({formatString: value})
 	},
 
-	onBlur: function (event) {
+	onBlur: function (e) {
 		var config = this.props.config
 		var view = this.props.view
 		var column_id = config.column_id
 		var data = view.data
 		var col = data.columns[column_id]
 
-		col.dateFormat = this.state.dateFormat
+		col.formatString = this.state.formatString
 		modelActionCreators.createView(view, false, true)
 	},
 
-	handleFocus: function () {
-		modelActionCreators.setFocus('view-config')
+	handleChooseCustom: function () {
+		this.setState({custom: true})
+	},
+
+	chooseFormat: function (format, e) {
+		this.commitChanges({
+			custom: false, 
+			open: false, 
+			formatString: format.formatString
+		})
 	},
 
 	render: function () {
+		var _this = this
 		var config = this.props.config
 		var key = "attr-" + config.id
 
-		return <input type = "text"
+		return <span className = "clickable pop-down icon icon-calendar-31"
+		onClick = {this.handleOpen}>
+		{
+			this.state.open ? 
+			<PopDownMenu {...this.props}>
+			{
+				_.map(dateStyles, function (dateStyle, dateStyleId) {
+					var active = (_this.state.formatString === dateStyle.formatString)
+					return <li className = "selectable"
+						key = {dateStyle.id}
+						onClick = {_this.chooseFormat.bind(_this, dateStyle)}>
+						<span className = {"icon icon-chevron-right " + 
+							(active ? 'green' : 'hovershow')}/>
+						<span className = "icon icon-calendar-31"/>
+						{dateStyle.description}
+					</li>
+				})
+			}
+			
+			<li className = "top-divider selectable" onClick = {this.handleChooseCustom}>
+				<span className = {"icon icon-chevron-right " + 
+					(this.state.custom ? 'green' : 'hovershow')}/>
+				<span className="icon icon-code"/>
+				Custom
+			</li>
+
+			{
+			this.state.custom ? <li><input type = "text"
 				className = "menu-input text-input"
+				style = {{textAlign: 'center'}}
 				spellCheck = "false"
-				value = {this.state.dateFormat}
-				onFocus = {this.handleFocus}
+				value = {this.state.formatString}
 				onBlur = {this.onBlur}
-				onChange = {this.onFormatChange}/>
+				onChange = {this.handleFormatChange}/></li>
+			: null
+			}
+
+			
+			</PopDownMenu>
+			:
+			null
+		}
+		</span>
 	}
 })
 
