@@ -5,11 +5,12 @@ import modelActionCreators from "../../../../actions/modelActionCreators"
 import AttributeStore from "../../../../stores/AttributeStore"
 import PopDownMenu from '../../../../components/PopDownMenu'
 
-var blurOnClickMixin = require('../../../../blurOnClickMixin')
+import configCommitMixin from '../configCommitMixin'
+import blurOnClickMixin from '../../../../blurOnClickMixin'
 
 var ColorChoice = React.createClass({
 
-  mixins: [blurOnClickMixin],
+  mixins: [blurOnClickMixin, configCommitMixin],
 
   getInitialState: function () {
     return {
@@ -24,19 +25,6 @@ var ColorChoice = React.createClass({
   componentWillReceiveProps: function (nextProps) {
     this.setState({colorAttr: this.props.config.colorAttr})
   },
-
-  commitChanges: function (colProps) {
-		var view = this.props.view
-		var column_id = this.props.config.column_id
-		var col = view.data.columns[column_id]
-
-		col = _.extend(col, colProps)
-		view.data.columns[column_id] = col;
-
-    colProps.open = false
-    this.setState(colProps)
-		modelActionCreators.createView(view, true, true)
-	},
 
   chooseColor: function (attributeId) {
     this.commitChanges({colorAttr: attributeId, color: null, adjustColor: this.state.adjustColor})

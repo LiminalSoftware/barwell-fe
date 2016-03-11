@@ -72,7 +72,7 @@ var NumberFormatChoice = React.createClass({
         onMouseDown = {this.handleOpen}>
         {
         this.state.open ? <PopDownMenu>
-          <li className="bottom-divider">Display Styles</li>
+          <li className="bottom-divider">Number Format</li>
           {
           _.map(displayStyles, function (ds, k) {
             return <li 

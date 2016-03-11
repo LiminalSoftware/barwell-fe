@@ -117,6 +117,11 @@ var TabularPane = React.createClass ({
 		})
 	},
 
+	componentWillUpdate: function (nextProps) {
+		if (this.props.view.data.rowHeight !== nextProps.view.data.rowHeight)
+			this.calibrateHeight()
+	},
+
 	shouldComponentUpdate: function (nextProps, nextState) {
 		var props = this.props
 		var state = this.state

@@ -10,12 +10,6 @@ import groomFields from '../groomFields'
 
 var BIG_NUM = 10000000;
 
-var comparator = function (a, b) {
-	return ((b.fixed + b.visible - b.order/1000)
-		- (a.fixed + a.visible - a.order/1000))
-}
-
-
 var limit = function (thing, view) {
 	var numCols = view.data.visibleCols.length
 	thing.left = Math.min(thing.left, numCols - 1)
@@ -33,7 +27,7 @@ var groomView = function (view) {
 	var iter =  BIG_NUM;
 
   	var columns = groomFields(view)
-	var columnList = util.enumerate(_.values(columns), comparator)
+	var columnList = util.enumerate(_.values(columns), util.sortByOrder)
 
 	data.columns = columns
 	data.columnList = columnList

@@ -21,7 +21,7 @@ var ColumnMenuSection = React.createClass({
 			columns: this.props.columns
 		}
 	},
-
+	
 	componentWillReceiveProps: function (nextProps) {
 		this.setState({columns: nextProps.columns})
 	},
@@ -144,6 +144,7 @@ var ColumnMenuSection = React.createClass({
 					config = {col}
 					open = {true}
 					editing = {editing}
+					viewConfigParts = {_this.props.viewConfigParts}
 					dragging = {col === _this.state.dragItem}
 					view= {view}/>
 				})

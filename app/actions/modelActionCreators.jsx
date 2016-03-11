@@ -210,13 +210,13 @@ var modelActions = {
 		var view_id = view.view_id
 		var model_id = view.model_id
 		var url = 'https://api.metasheet.io/v' + view_id + '_' + dimension;
-		var aggregates = view[dimension.slice(0,-1) + '_aggregates']
+		var aggregates = view[dimension.slice(0, -1) + '_aggregates']
 
 		if (aggregates.length === 0) return
 
 		url += '?order=' + aggregates.map(function (grouping) {
-			var sortDirection = !!(view.data.sorting[grouping])
-			return 'a' + grouping + (sortDirection ? '.asc' : '.desc')
+			var column = view.data.columns['a' + grouping]
+			return column.column_id + (column.ascending ? '.asc' : '.desc')
 		}).join(',')
 
 		var header = {
@@ -224,7 +224,7 @@ var modelActions = {
 			'Range': (offset + '-' + (offset + limit))
 		}
 
-		webUtils.ajax('GET', url, null, header).then(function (results) {
+		return webUtils.ajax('GET', url, null, header).then(function (results) {
 			var message = {}
 			var range = results.xhr.getResponseHeader('Content-Range')
 			var rangeParts = range.split(/[-/]/)
@@ -391,7 +391,7 @@ var modelActions = {
 	// views
 	createView: function(view, persist, update, safe) {
 		view = _.clone(view)
-		modelActions.create('view', persist, view, update, safe)
+		modelActions.create('view', persist, groomView(view), update, safe)
 	},
 
 	updatePointer: function(view, pointer) {

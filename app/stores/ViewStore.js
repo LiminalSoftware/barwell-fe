@@ -27,16 +27,15 @@ var ViewStore = storeFactory({
         if (!(view instanceof Object)) return;
         view = view
         view._dirty = false
-        this.create(groomView(view))
+        this.create(view)
         this.emitChange()
         break;
-
 
       case 'MODEL_RECEIVE':
         var model = payload.model
         if(!('views' in model)) return;
         this.purge({model_id: model.model_id});
-        (model.views || []).map(groomView).map(util.clean).map(this.create)
+        (model.views || []).map(util.clean).map(this.create)
         this.emitChange()
         break;
     }

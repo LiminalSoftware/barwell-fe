@@ -61,6 +61,10 @@ module.exports.enumerate = function (list, comparator) {
 	})
 }
 
+var magLimit = module.exports.magLimit = function (limit, value) {
+  return (value > 0 ? 1 : -1) * Math.min(Math.abs(value), limit)
+}
+
 var limit = module.exports.limit = function (min, max, value) {
 	if (value < min) return min
 	if (value > max) return max

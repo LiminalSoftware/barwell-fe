@@ -12,6 +12,9 @@ import util from '../../../../../util/util'
 
 import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 
+import AggregatePicker from './AggregatePicker'
+import GroupSortPicker from './GroupSortPicker'
+
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 var blurOnClickMixin = require('../../../../../blurOnClickMixin')
 
@@ -40,13 +43,11 @@ var CubeColumnMenu = React.createClass({
 	},
 
 	commitChanges: function (column) {
-		var view = this.props.view
-		var columns = this.state.columns
-		view.data.columns = _.indexBy(columns, 'column_id')
-		view.data.columns[column.column_id] = column
+		var view = this.props.view;
+		view.data.columns[column.column_id] = column;
 
 		modelActionCreators.createView(view, true, true);
-		this.setState({dragItem: null})
+		this.setState({dragItem: null, committing: true});
 	},
 
 	handleEdit: function () {
@@ -61,21 +62,23 @@ var CubeColumnMenu = React.createClass({
 		var view = this.props.view
 		var data = view.data
 		var columns = view.data.columnList
-		columns = columns.filter(col => col.visible)
 		return columns[0]
 	},
 
 	sections : [
 		{
-			label: "Hidden Attributes",
-			emptyText: "No hidden attributes...",
-			icon: "icon-eye-4",
-			selector: function (columns) {
-				return columns.filter(c => !c.visible).sort(util.orderSort)
+			label: "Row Groupings",
+			emptyText: "No row groups defined...",
+			icon: "icon-layer-3",
+			configParts: [GroupSortPicker],
+			selector: function (view) {
+				return view.data.columnList.filter(c => c.groupByRow).sort(util.orderSort)
 			},
 			enterTransform: function (col) {
-				col.visible = false
-				col.fixed = false
+				col.groupByColumn = false;
+				col.groupByRow = true;
+				col.inTableBody = false;
+				col.visible = true;
 				return col
 			}
 		},
@@ -83,25 +86,15 @@ var CubeColumnMenu = React.createClass({
 			label: "Column Groupings",
 			emptyText: "No column groups defined...",
 			icon: "icon-layer-3",
-			selector: function (columns) {
-				return columns.filter(c => _.contains(c.attribute_id)).sort(util.orderSort)
+			configParts: [GroupSortPicker],
+			selector: function (view) {
+				return view.data.columnList.filter(c => c.groupByColumn).sort(util.orderSort)
 			},
 			enterTransform: function (col) {
-				col.visible = true
-				col.fixed = true
-				return col
-			}
-		},
-		{
-			label: "Row Groupings",
-			emptyText: "No row groups defined...",
-			icon: "icon-layer-3",
-			selector: function (columns) {
-				return columns.filter(c => c.visible && !c.fixed).sort(util.orderSort)
-			},
-			enterTransform: function (col) {
-				col.visible = true
-				col.fixed = false
+				col.groupByColumn = true;
+				col.groupByRow = false;
+				col.inTableBody = false;
+				col.visible = true;
 				return col
 			}
 		},
@@ -109,24 +102,47 @@ var CubeColumnMenu = React.createClass({
 			label: "Table Body Attributes",
 			emptyText: "No table body attributes defined...",
 			icon: "icon-layer-3",
-			selector: function (columns) {
-				return columns.filter(c => c.visible && !c.fixed).sort(util.orderSort)
+			configParts: [AggregatePicker],
+			selector: function (view) {
+				return view.data.columnList.filter(c => c.inTableBody).sort(util.orderSort)
 			},
 			enterTransform: function (col) {
-				col.visible = true
-				col.fixed = false
+				col.groupByColumn = false;
+				col.groupByRow = false;
+				col.inTableBody = true;
+				col.visible = true;
+				return col
+			}
+		},
+		{
+			label: "Hidden Attributes",
+			emptyText: "No hidden attributes...",
+			icon: "icon-eye-4",
+			selector: function (view) {
+				return view.data.columnList.filter(c => !c.inTableBody && !c.groupByRow && !c.groupByColumn).sort(util.orderSort)
+			},
+			enterTransform: function (col) {
+				col.groupByColumn = false;
+				col.groupByRow = false;
+				col.inTableBody = false;
+				col.visible = false;
 				return col
 			}
 		}
 	],
 
 	moveToSection: function (e, item, sectionIdx, direction) {
+		var view = this.props.view
 		var section = this.sections[sectionIdx]
 		var el = this.refs["section-" + (sectionIdx)]
 		if (!el) return false
 
 		item = section.enterTransform(item)
+		view.data.columns[item.column_id] = item
 		el.dragInto(e, item, direction)
+		console.log('====')
+		console.log(view)
+		console.log('====')
 		return true
 	},
 
@@ -165,8 +181,9 @@ var CubeColumnMenu = React.createClass({
 				ref = {"section-" + idx}
 				icon = {section.icon}
 				index = {idx}
+				viewConfigParts = {section.configParts}
 				emptyText = {section.emptyText}
-				columns = {section.selector(columns)}
+				columns = {section.selector(view)}
 				editing = {_this.state.editing}
 				_startDrag = {_this.handleDragStart}
 				_commitChanges = {_this.commitChanges}

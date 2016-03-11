@@ -11,31 +11,22 @@ import calcSpans from './calcSpans'
 import util from '../../../../util/util'
 
 
-
-
 var CubeRowTHead = React.createClass ({
 
-	getCalibration: function () {
-		if (!this.isMounted()) return;
-		return ($(React.findDOMNode(this.refs.rowhead)).get(0).scrollHeight /
-				$(React.findDOMNode(this.refs.rowhead)).children().length)
+	getInitialState: function () {
+		return {
+			fetched: false,
+			rowOffset: 0,
+			colOffset: 0,
+		}
+	},
+
+	fetch: function () {
+		
 	},
 
 	render: function () {
-		var _this = this
-		var view = this.props.view
-		var geo = view.data.geometry
-		var rowHeight = geo.rowHeight + 'px'
-		var width = geo.columnWidth
-		var vStart = this.props.vStart
-		var vEnd = vStart + geo.renderBufferRows
-		var hStart = this.props.hStart
-		var store = this.props.store
-		var groups = view.row_aggregates.map(g => 'a' + g)
-		var groupAttrs = view.row_aggregates.map(g => AttributeStore.get(g))
-		var elements = groupAttrs.map(attr => (fieldTypes[attr.type] || fieldTypes.TEXT).element)
-		var levels = store.getLevels('rows', vStart, vEnd)
-
+		
 		return <div
 			id="cube-row-view-header"
 			ref="rowhead"
@@ -54,14 +45,10 @@ var CubeRowTHead = React.createClass ({
 				var selector = {}
 				return <div key={'cell-' + r}>
 
-
-
 				{ groups.map(function (group, c) {
 					var thStyle = {
-						minWidth: width + 'px',
-						maxWidth: width + 'px',
-						minHeight: (geo.rowHeight * level.spans[group]) + 'px',
-						maxHeight: (geo.rowHeight * level.spans[group]) + 'px',
+						width: width + 'px',
+						height: (geo.rowHeight * level.spans[group]) + 'px',
 						left: (c * width) + 'px',
 						top: ((r + view.column_aggregates.length) * (geo.rowHeight)) + 'px'
 					}

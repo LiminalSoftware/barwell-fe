@@ -11,15 +11,28 @@ import modelActionCreators from "../../../../actions/modelActionCreators"
 
 import selectableMixin from '../selectableMixin'
 
-import hasSomeConfigA from '../HasSomeParts/hasSomeConfigA'
+import LabelChoice from '../HasSomeParts/LabelChoice'
+import BubbleColorchoice from '../HasSomeParts/BubbleColorchoice'
 import SearchDropdown from '../HasSomeParts/SearchDropdown'
+import AlignChoice from '../textFieldConfig/AlignChoice'
 import Bubble from '../HasSomeParts/Bubble'
 
 var hasManyField = {
 	
-	defaultWidth: 150,
+	defaultWidth: 200,
 
-	configA: hasSomeConfigA,
+	configParts: [AlignChoice, LabelChoice, BubbleColorchoice],
+
+	configCleanser: function (config) {
+		var label = config.label
+		var model_id = config.related_model_id
+		var model = ModelStore.get(model_id)
+		var attribute_id = label.substring(1)
+		var attribute = AttributeStore.get(attribute_id)
+		if (!attribute) config.label = ModelStore.label_attribute_id
+		if (!config.align) config.align = 'left'
+		return config
+	},
 
 	element: React.createClass({
 		mixins: [selectableMixin],
@@ -125,6 +138,7 @@ var hasManyField = {
 							key = {obj.cid || obj[relatedModel._pk]}
 							obj = {obj}
 							model = {relatedModel}
+							color = {config.bubbleColor}
 							label = {config.label}/>
 					})
 				}

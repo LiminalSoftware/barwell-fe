@@ -1,13 +1,13 @@
-import React from "react"
-import _ from "underscore"
-import modelActionCreators from "../../../../actions/modelActionCreators"
-var blurOnClickMixin = require('../../../../blurOnClickMixin')
+import React from "react";
+import _ from "underscore";
+import modelActionCreators from "../../../../actions/modelActionCreators";
+import PopDownMenu from '../../../../components/PopDownMenu';
+import configCommitMixin from '../configCommitMixin';
+import blurOnClickMixin from '../../../../blurOnClickMixin';
 
 var AlignChoice = React.createClass({
 
-  mixins: [blurOnClickMixin],
-
-  _timer: null,
+  mixins: [blurOnClickMixin, configCommitMixin],
 
   getInitialState: function () {
     return {
@@ -19,17 +19,6 @@ var AlignChoice = React.createClass({
   componentWillReceiveProps: function (nextProps) {
     this.setState({align: this.props.config.align})
   },
-
-  commitChanges: function (colProps) {
-		var view = this.props.view
-		var column_id = this.props.config.column_id
-		var col = view.data.columns[column_id]
-
-		col = _.extend(col, colProps)
-		view.data.columns[column_id] = col;
-    this.setState(colProps)
-		modelActionCreators.createView(view, true, true)
-	},
 
   toggleAlign: function (event) {
 		var align = this.props.config.align
@@ -59,9 +48,7 @@ var AlignChoice = React.createClass({
         className={"pop-down clickable icon icon-text-align-" + this.state.align}
         onMouseDown = {this.handleOpen}>
         {
-        this.state.open ? <ul className = "pop-down-menu">
-          <span className = "pop-down-pointer-outer"/>
-          <span className = "pop-down-pointer-inner"/>
+        this.state.open ? <PopDownMenu {...this.props}>
           <li className = "bottom-divider">Text Alignment</li>
           <li onClick = {this.alignLeft} className = "selectable">
             <span className = "icon icon-text-align-left"/>
@@ -75,7 +62,7 @@ var AlignChoice = React.createClass({
             <span className = "icon icon-text-align-right"/>
             Align right
           </li>
-        </ul> : null
+        </PopDownMenu> : null
         }
     </span>;
   }

@@ -15,7 +15,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 var ColumnDetail = React.createClass({
 
 	getInitialState: function () {
-		var config = this.props.config
+		var config = this.props.config || {}
 		return {
 			open: false,
 			yOffset: 0,
@@ -53,12 +53,23 @@ var ColumnDetail = React.createClass({
 		this.commitUpdate({attribute: this.state.attribute})
 	},
 
+	blurSubMenus: function () {
+		var i = 0;
+		while (true) {
+			var el = this.refs['config-part-' + i]
+			if (!el) break;
+			el.setState({open: false})
+		}
+	},
+
 	render: function() {
 		var _this = this
 	    var view = this.props.view
+	    var model = this.props.model
 	    var config = this.props.config
 		var fieldType = fieldTypes[config.type] || {}
 		var editing = this.props.editing
+		// var labelAttrId = model.label_attribute_id
 
 		var typeFieldChoices = Object.keys(constants.fieldTypes)
 			.filter(type => (type !== 'PRIMARY_KEY')).map(function (type) {
@@ -94,9 +105,11 @@ var ColumnDetail = React.createClass({
 					:
 					<span>
 					{
-						(fieldType.configParts || []).map(function (part) {
+						(fieldType.configParts || []).concat(_this.props.viewConfigParts || []).map(function (part, idx) {
 						return React.createElement(part, {
+							key: 'config-part-' + idx,
 							view: view,
+							model: model,
 							config: config,
 							classes: ""
 						});

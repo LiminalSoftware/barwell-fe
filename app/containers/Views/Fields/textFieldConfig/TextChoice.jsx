@@ -4,13 +4,14 @@ import _ from "underscore"
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import AttributeStore from "../../../../stores/AttributeStore"
 
-var blurOnClickMixin = require('../../../../blurOnClickMixin')
+import configCommitMixin from '../configCommitMixin'
+import blurOnClickMixin from '../../../../blurOnClickMixin'
 
 import PopDownMenu from '../../../../components/PopDownMenu'
 
 var TextChoice = React.createClass({
 
-  mixins: [blurOnClickMixin],
+  mixins: [blurOnClickMixin, configCommitMixin],
 
   getInitialState: function () {
     var config = this.props.config
@@ -21,18 +22,6 @@ var TextChoice = React.createClass({
       open: false
     }
   },
-
-  commitChanges: function (colProps) {
-		var view = this.props.view
-		var column_id = this.props.config.column_id
-		var col = view.data.columns[column_id]
-
-		col = _.extend(col, colProps)
-		view.data.columns[column_id] = col;
-
-    this.setState(colProps)
-		modelActionCreators.createView(view, true, true)
-	},
 
   choosetextConditionAttr: function (attributeId) {
     this.commitChanges({textConditionAttr: attributeId, bold: false})

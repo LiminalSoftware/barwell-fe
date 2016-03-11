@@ -14,7 +14,7 @@ import selectableMixin from '../selectableMixin'
 import blurOnClickMixin from '../../../../blurOnClickMixin'
 import keyPressMixin from '../keyPressMixin'
 
-import hasSomeConfigA from '../HasSomeParts/hasSomeConfigA'
+import LabelChoice from '../HasSomeParts/LabelChoice'
 import SearchDropdown from '../HasSomeParts/SearchDropdown'
 import Bubble from '../HasSomeParts/Bubble'
 
@@ -27,10 +27,13 @@ var hasOneField = {
 		var attribute_id = label.substring(1)
 		var attribute = AttributeStore.get(attribute_id)
 		if (!attribute) config.label = ModelStore.label_attribute_id
+		if (!config.align) config.align = 'left'
 		return config
 	},
 
-	configA: hasSomeConfigA,
+	defaultWidth: 150,
+
+	configParts: [LabelChoice],
 
 	element: React.createClass({
 
@@ -99,7 +102,8 @@ var hasOneField = {
 			var value = (array instanceof Array ? array[0][config.label] : '')
 			var cellStyle = {
 				lineHeight: this.props.rowHeight + 'px',
-				background: this.props.selected ? 'white' : null
+				background: this.props.selected ? 'white' : null,
+				
 			}
 			var editorIconStyle 
 			if (showDetail) {

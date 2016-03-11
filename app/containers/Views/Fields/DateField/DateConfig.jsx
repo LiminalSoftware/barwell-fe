@@ -74,6 +74,9 @@ var DateConfig = React.createClass({
 		{
 			this.state.open ? 
 			<PopDownMenu {...this.props}>
+			<li className = "bottom-divider">
+              Date Format
+        	</li>
 			{
 				_.map(dateStyles, function (dateStyle, dateStyleId) {
 					var active = (_this.state.formatString === dateStyle.formatString)

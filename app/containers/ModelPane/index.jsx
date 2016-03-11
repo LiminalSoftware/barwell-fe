@@ -5,6 +5,7 @@ import detailStyles from "./detail.less"
 import ModelDefinition from "../ModelDefinition"
 import ModelStore from "../../stores/ModelStore"
 import ViewStore from "../../stores/ViewStore"
+import groomView from '../../containers/Views/groomView'
 
 import ViewSelector from '../ViewSelector'
 
@@ -72,41 +73,42 @@ var ModelPane = React.createClass({
 
 		var activePane = this.state.activePane
 
-		if (view && view.model_id != model_id) view = null
-			if (!view) activePane = 'model-def'
-				if (!!view && (view.type in viewTypes)) {
-					var type = viewTypes[view.type]
-					var bodyElement = type.mainElement
-					var configElement = type.inlineConfigElement
+		if (view && view.model_id != model_id) view = null;
+		if (!view) activePane = 'model-def';
+		if (view) {
+			var type = viewTypes[view.type]
+			var bodyElement = type.mainElement
+			var configElement = type.inlineConfigElement
 
-					view = viewTypes[view.type].groomer(view)
+			// view = viewTypes[view.type].groomer(view)
+			// view = groomView(view)
 
-					bodyContent = React.createElement(bodyElement, {
-						model: model,
-						view: view,
-						key: "view-pane-" + (view.cid || view.view_id)
-					})
+			bodyContent = React.createElement(bodyElement, {
+				model: model,
+				view: view,
+				key: "view-pane-" + (view.cid || view.view_id)
+			})
 
-					configElement = React.createElement(configElement, {
-						model: model,
-						view: view
-					})
-				}
+			configElement = React.createElement(configElement, {
+				model: model,
+				view: view
+			})
+		}
 
-				else {
-					bodyContent = <ModelDefinition model={model}/>
-					configElement = <div className = "view-config">
-						<ViewSelector view = {view} model = {model}/>
-					</div>;
-				}
+		else {
+			bodyContent = <ModelDefinition model={model}/>
+			configElement = <div className = "view-config">
+				<ViewSelector view = {view} model = {model}/>
+			</div>;
+		}
 
-				return <div className="model-views">
-					<div className="view-bar" >
-						{configElement}
-					</div>
-					{bodyContent}
-				</div>
-			}
-		});
+		return <div className="model-views">
+			<div className="view-bar" >
+				{configElement}
+			</div>
+			{bodyContent}
+		</div>
+	}
+});
 
 export default ModelPane

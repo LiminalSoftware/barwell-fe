@@ -20,14 +20,8 @@ import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 
 import createCubeStore from './CubeStore.jsx'
-
 import fieldTypes from "../../fields"
-import CubeColTHead from "./CubeColTHead"
-import CubeRowTHead from "./CubeRowTHead"
-import CubeTBody from "./CubeTBody"
-import OverflowHider from "./OverflowHider"
-
-import ContextMenu from './CubeContextMenu'
+import CubeBodyWrapper from "./CubeBodyWrapper"
 
 import TableMixin from '../../TableMixin.jsx'
 
@@ -307,16 +301,9 @@ var CubePane = React.createClass ({
 		var hStart = this.getHStart()
 		var vStart = this.getVStart()
 
-		var numAggregates = view.row_aggregates.length + view.column_aggregates.length
-
-		if (numAggregates === 0)
-			return <div className = "model-panes"></div>
-		
 		return <div className = "model-panes">
-			<div className="view-body-wrapper" onScroll={this.onScroll} ref="wrapper">
-				<div id="main-data-table" className="header data-table">
-					
-				</div>
+			<div className="view-body-wrapper" ref="wrapper">
+				<CubeBodyWrapper {...this.props}/>
 			</div>
 		</div>
 	}

@@ -35,14 +35,16 @@ var ColumnMenu = React.createClass({
 		}
 	},
 
+	componentWillMount: function () {
+		
+	},
+
 	componentWillReceiveProps: function (nextProps) {
 		this.setState({columns: nextProps.view.data.columnList})
 	},
 
 	commitChanges: function (column) {
 		var view = this.props.view
-		var columns = this.state.columns
-		view.data.columns = _.indexBy(columns, 'column_id')
 		view.data.columns[column.column_id] = column
 
 		modelActionCreators.createView(view, true, true);
@@ -62,29 +64,16 @@ var ColumnMenu = React.createClass({
 		var data = view.data
 		var columns = view.data.columnList.filter(col => col.visible)
 		return columns[data.pointer.left]
-
 	},
 
 	sections : [
 		{
-			label: "Hidden Attributes",
-			emptyText: "No hidden attributes...",
-			icon: "icon-eye-4",
-			selector: function (columns) {
-				return columns.filter(c => !c.visible).sort(util.orderSort)
-			},
-			enterTransform: function (col) {
-				col.visible = false
-				col.fixed = false
-				return col
-			}
-		},
-		{
+			section: "fixed",
 			label: "Fixed Attributes",
 			emptyText: "No fixed attributes...",
 			icon: "icon-pin-3",
-			selector: function (columns) {
-				return columns.filter(c => c.visible && c.fixed).sort(util.orderSort)
+			selector: function (view) {
+				return view.data.columnList.filter(c => c.visible && c.fixed).sort(util.orderSort)
 			},
 			enterTransform: function (col) {
 				col.visible = true
@@ -93,14 +82,30 @@ var ColumnMenu = React.createClass({
 			}
 		},
 		{
+			section: "visible",
 			label: "Visible Attributes",
 			emptyText: "No visible attributes...",
 			icon: "icon-eye-3",
-			selector: function (columns) {
-				return columns.filter(c => c.visible && !c.fixed).sort(util.orderSort)
+			selector: function (view) {
+				return view.data.columnList.filter(c => c.visible && !c.fixed).sort(util.orderSort)
 			},
 			enterTransform: function (col) {
 				col.visible = true
+				col.fixed = false
+				console.log('enterVisible')
+				return col
+			}
+		},
+		{
+			section: "hidden",
+			label: "Hidden Attributes",
+			emptyText: "No hidden attributes...",
+			icon: "icon-eye-4",
+			selector: function (view) {
+				return view.data.columnList.filter(c => !c.visible).sort(util.orderSort)
+			},
+			enterTransform: function (col) {
+				col.visible = false
 				col.fixed = false
 				return col
 			}
@@ -108,18 +113,19 @@ var ColumnMenu = React.createClass({
 	],
 
 	moveToSection: function (e, item, sectionIdx, direction) {
+		var view = this.props.view
 		var section = this.sections[sectionIdx]
 		var el = this.refs["section-" + (sectionIdx)]
 		if (!el) return false
 
-		item = section.enterTransform(item)
+		item = section.enterTransform(item, view)
 		el.dragInto(e, item, direction)
 		return true
 	},
 
 	renderButtonBar: function () {
 		var editing = this.state.editing;
-		return <div>
+		return <div key = "buttons">
 			{
 				editing ?
 				<div className="menu-item menu-config-row">
@@ -178,7 +184,7 @@ var ColumnMenu = React.createClass({
 				icon = {section.icon}
 				index = {idx}
 				emptyText = {section.emptyText}
-				columns = {section.selector(columns, view)}
+				columns = {section.selector(view)}
 				editing = {_this.state.editing}
 				_startDrag = {_this.handleDragStart}
 				_commitChanges = {_this.commitChanges}

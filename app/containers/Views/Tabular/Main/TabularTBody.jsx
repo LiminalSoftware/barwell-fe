@@ -16,7 +16,7 @@ var VISIBLE_ROWS = 45
 var MAX_ROWS = 45
 var SLOW_SKIP = 2
 var FAST_SKIP = 3
-var FASTER_SKIP = 6
+var FASTER_SKIP = 4
 var FAST_THRESHOLD = 5
 var FASTER_THRESHOLD = 25
 var CYCLE = 30
@@ -56,33 +56,40 @@ var TabularTBody = React.createClass ({
 		var buffer = 0 - BACKWARD_BUFFER  + (BUFFER_SIZE * scrollDirection)
 		var adjTarget = util.limit(fetchStart, fetchEnd - 10, target + buffer)
 
+		if (this.props.prefix === 'rhs' ) window.msAdjTarget = adjTarget
+
 		var start = this.state.start
 		var end = this.state.end
 		var visibleRows = (end - start)
 		var lag = Math.abs(target - start)
-		var skip = (lag >= FAST_THRESHOLD || !this.state.scrolling) ? (lag >= FASTER_THRESHOLD ? FASTER_SKIP : FAST_SKIP) : SLOW_SKIP
+		var skip = (lag >= FAST_THRESHOLD || !this.state.scrolling) ? 
+			(lag >= FASTER_THRESHOLD ? FASTER_SKIP : FAST_SKIP) : SLOW_SKIP
 		var startTarget = adjTarget
 		var endTarget = adjTarget + VISIBLE_ROWS
 		
 		// advance or retreat the begining of the range as appropriate
-		if (start > startTarget && scrollDirection === -1 && start < endTarget) start -= Math.min(skip, start - startTarget)
-		else if ((end === target + VISIBLE_ROWS && visibleRows > VISIBLE_ROWS) || visibleRows >= MAX_ROWS) 
-			start += Math.min(skip, visibleRows - VISIBLE_ROWS)
+
+		if (start > endTarget || end < startTarget) {
+			start += Math.min(FAST_SKIP, end - start)
+		} else {
+			if (start !== startTarget) start += util.magLimit(skip, startTarget - start)
+			if (end !== endTarget) end += util.magLimit(skip, endTarget - end)
+		}
+		
 		
 		// advance or retreat the end of the range as appropriate
-		if (end < endTarget && scrollDirection === 1 && end > startTarget) end += Math.min(skip, endTarget - end + 1)
-		else if ((start === target && visibleRows > VISIBLE_ROWS) || visibleRows >= MAX_ROWS) 
-			end -= Math.min(skip, visibleRows - VISIBLE_ROWS)
+		// if (end < endTarget && scrollDirection === 1 && end > startTarget) end += Math.min(skip, endTarget - end + 1)
+		// else if (end > endTarget || start > endTarget || end < startTarget) end -= Math.min(skip, visibleRows - VISIBLE_ROWS)
 
 		// if the render range is totally out of the visible range, then just wind it down and start over
-		if (start > endTarget || end < startTarget) end -= Math.min(FASTER_SKIP, end - start)
-		if (end === start && end < startTarget) {
-			start = startTarget
-			end = startTarget + skip
-		} else if (end === start) {
-			start = endTarget - skip
-			end = endTarget
-		}
+		// if (start > endTarget || end < startTarget) end -= Math.min(FASTER_SKIP, end - start)
+		// if (end === start && end < startTarget) {
+		// 	start = startTarget
+		// 	end = startTarget + skip
+		// } else if (end === start) {
+		// 	start = endTarget - skip
+		// 	end = endTarget
+		// }
 
 		this.setState({
 			start: start,

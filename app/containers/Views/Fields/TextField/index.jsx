@@ -22,6 +22,7 @@ import TextChoice from "../textFieldConfig/TextChoice"
 var textField = {
 	configParts: [AlignChoice, ColorChoice, TextChoice],
 	sortable: true,
+	canBeLabel: true,
 	element: React.createClass({
 		mixins: [editableInputMixin, commitMixin, selectableMixin, keyPressMixin],
     	detailIcon: 'icon-expand',

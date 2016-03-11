@@ -5,7 +5,7 @@ import AttributeStore from "../../../../stores/AttributeStore"
 import ModelStore from "../../../../stores/ModelStore"
 
 import modelActionCreators from "../../../../actions/modelActionCreators"
-
+import tinycolor from "tinycolor2"
 
 var Bubble = React.createClass({
 
@@ -22,9 +22,18 @@ var Bubble = React.createClass({
 
 	render: function () {
 		var obj = this.props.obj
-		var label = this.props.label
+		var label = obj[this.props.label]
 		var model = this.props.model
+		var color = obj[this.props.color]
 		var style = {}
+
+		if (color) {
+			// var c = tinycolor(color)
+			// console.log('color:' + color)
+			style.background = color
+			style.color = 'white'
+		}
+
 		return <span key={obj[model._pk]}
 			className="has-many-bubble"
 			style = {style}
@@ -33,7 +42,7 @@ var Bubble = React.createClass({
 			onDragStart = {this.handleDragStart}
 			onMouseDown = {this.handleMousedown}
 			>
-			{obj[label]}
+			{label}
 		</span>
 	}
 
