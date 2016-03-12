@@ -17,7 +17,7 @@ import reducers from './reducers'
 
 import calcSpans from './calcSpans'
 
-var DELIMITER = constants.delimiter
+const DELIMITER = constants.delimiter
 
 var createCubeStore = function (view, dimensions) {
     var model = ModelStore.get (view.model_id)

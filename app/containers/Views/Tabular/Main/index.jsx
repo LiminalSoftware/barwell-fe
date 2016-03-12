@@ -581,7 +581,6 @@ var TabularPane = React.createClass ({
 		var hiddenCols = 0;
 		var rhsHorizontalOffsetter = this.refs.tableWrapper.refs.rhsHorizontalOffsetter;
 
-		
 		floatCols.some(function (col) {
 			if (hOffset > col.width + hiddenColWidth) {
 				hiddenColWidth += col.width
@@ -607,9 +606,7 @@ var TabularPane = React.createClass ({
 		var view = this.props.view;
 		var geo = view.data.geometry;
 		var rowOffset = Math.floor(vOffset / geo.rowHeight);
-		var previousOffset = this.state.rowOffset;
-		var delta = rowOffset - previousOffset;
-		var direction = delta > 0 ? 1 : delta < 0 ? -1 : 0;
+		
 		var lhsOffsetter = this.refs.tableWrapper.refs.lhsOffsetter;
 		var rhsOffsetter = this.refs.tableWrapper.refs.rhsOffsetter;
 		var underlay = this.refs.cursors.refs.underlayInner;
@@ -621,29 +618,31 @@ var TabularPane = React.createClass ({
 		ReactDOM.findDOMNode(rhsOffsetter).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 0)"
 		ReactDOM.findDOMNode(underlay).style.transform = "translate3d(0, " + ( -1 * rowOffset * geo.rowHeight + 2 ) + "px, 0)"
 		ReactDOM.findDOMNode(overlay).style.transform = "translate3d(0, " + ( -1 * rowOffset * geo.rowHeight + 2 ) + "px, 0)"
-		this.setState({rowOffset: rowOffset, direction: direction})
+
+		this.setState({
+			rowOffset: rowOffset
+		})
 		
 		if (!this._timer) this._timer = getFrame(this.refreshTable, CYCLE)
 	},
 
 	refreshTable: function () {
 		var now = Date.now()
-		// if (now - this._lastUpdate < MIN_CYCLE) return;
-
 		var side = this.state.renderSide
 		var body = this.refs.tableWrapper.refs[side]
 		var alt = this.refs.tableWrapper.refs[side === 'lhs' ? 'rhs' : 'lhs']
 		var isUnpainted = body.isUnpainted()
+		var delta = this.state.rowOffset - this.state.previousOffset
+		var direction = delta > 0 ? 1 : delta < 0 ? -1 : 0;
 
-		// console.log('refresh: ' + side)
-
-		body.updateOffset(this.state.rowOffset, this.state.direction)
+		body.updateOffset(this.state.rowOffset, direction)
 		this._lastUpdate = now
-		
 		if (isUnpainted) this._timer = getFrame(this.refreshTable, CYCLE)
 		else this._timer = null
 
 		this.setState({
+			previousOffset: this.state.rowOffset,
+			direction: direction,
 			renderSide: (side === 'lhs' ? 'rhs' : 'lhs'),
 			frame: (this.state.frame || 0) + 1,	
 		})

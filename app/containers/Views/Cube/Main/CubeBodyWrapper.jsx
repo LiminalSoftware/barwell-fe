@@ -13,6 +13,8 @@ import createCubeStore from './CubeStore.jsx'
 import Overlay from '../../Tabular/Main/Overlay'
 import DetailBar from '../../../DetailBar'
 
+import CubeRowTHead from './CubeRowTHead'
+
 import util from '../../../../util/util'
 
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
@@ -101,15 +103,104 @@ var CubeBodyWrapper = React.createClass ({
 
 	render: function () {
 		var view = this.props.view
+		var getColumns = (c => view.data.columns['a' + c])
 		var model = this.props.model
 		var store = this.props.store
 		var geo = view.data.geometry
 		var focused = this.props.focused
-
+		var rowHeaderCols = view.row_aggregates.map(getColumns)
+		var rowHeaderWidth = util.sum(rowHeaderCols, 'width')
+		var numColumns = store.getCount('columns')
+		var adjustedWidth = rowHeaderWidth + numColumns * geo.colWidth
+		var headerHeight = view.column_aggregates.length * geo.rowHeight
+		var rowCount = store.getCount('rows')
+		var marginTop = 0
 		// console.log('render wrapper')
 		
-		return <div className = {"tabular-body-wrapper force-layer " + (focused ? "focused" : "blurred")}
-			ref="tbodyWrapper">
+		return <div
+			className = {"tabular-body-wrapper force-layer " + (focused ? "focused" : "blurred")}
+			ref="tbodyWrapper"
+			style = {{
+				left: 0,
+				width: (adjustedWidth + 3) + 'px',
+				transformStyle: 'preserve-3d'
+			}}>
+
+			{/*LHS TABLE BODY
+			<div className = "lhs-outer wrapper"
+				style = {{
+					left: geo.leftGutter + 'px',
+					top: 0,
+					bottom: 0,
+					width: (fixedWidth + geo.labelWidth) + 'px',
+					transformStyle: 'preserve-3d'
+				}}>
+
+			groups.map(function (group, idx) {
+				if (idx === 0) left = 0
+				else left += groups[idx - 1].width
+				return <span className="table-cell table-header-cell"
+					style = {{
+						left: left + 'px', 
+						width: groups[idx].width + 'px', 
+						height: geo.rowHeight
+					}}>
+					<span className="table-cell-inner">{group.name}</span>
+				</span>
+			})
+			LHS TABLE BODY*/}
+			<div className = "wrapper outer-table-wrapper "
+				style = {{
+					top: headerHeight + 'px',
+					transform: 'translateZ(1px)',
+					overflow: 'hidden',
+				}}>
+				<div className = "wrapper force-layer"
+					ref = "lhsOffsetter"
+					style = {{
+						top: 0,
+						height: (rowCount * geo.rowHeight) + 'px',
+						marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
+						transform: 'translateZ(0) translateY(' + marginTop + 'px)'
+					}}>
+					<CubeRowTHead {...this.props}
+						dimension = {'rows'}
+						store = {store}
+						groups = {rowHeaderCols} />
+					
+				</div>
+			</div>
+			{/*END LHS TABLE BODY*/}
+
+			{/*LHS HEADER
+			<TabularTHead
+				ref = "lhsHead"
+				totalWidth = {fixedWidth +  geo.labelWidth + 1}
+				leftOffset = {0}
+				side = {'lhs'}
+				hasRowLabel = {true}
+				columns = {view.data.fixedCols}
+				focused = {focused}
+				view = {view} />
+			END LHS HEADER*/}
+			{/*LHS OUTER*/}
+			
+
+
+			{/*RHS OUTER
+			<div className = {"wrapper " + " rhs-h-scroll-outer--" + (focused ? "focused" : "blurred")}
+				style = {{
+					top: 0,
+					bottom: 0,
+					left: (view.data.fixedWidth + geo.labelWidth) + 'px',
+					width:  view.data.floatWidth + geo.colAddWidth + 'px',
+					transform: 'translateZ(1px)',
+					overflow: 'hidden'
+				}}>
+
+			</div>
+			*/}
+			
 		</div>;
 	}
 });

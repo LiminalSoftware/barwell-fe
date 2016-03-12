@@ -10,7 +10,6 @@ import calcSpans from './calcSpans'
 
 import util from '../../../../util/util'
 
-
 var CubeRowTHead = React.createClass ({
 
 	getInitialState: function () {
@@ -21,58 +20,68 @@ var CubeRowTHead = React.createClass ({
 		}
 	},
 
-	fetch: function () {
-		
-	},
-
 	render: function () {
-		
+		var _this = this
+		var view = this.props.view
+		var geo = view.data.geometry
+		var groups = this.props.groups
+		var left = 0
+		var store = this.props.store
+		var levels = store.getLevels('rows', 0, 100) || []
+		var spans = groups.map(g => 0)
+
 		return <div
-			id="cube-row-view-header"
-			ref="rowhead"
-			className = "cube-rowhead"
-			onMouseDown = {this.props.clicker}
-			key={"cube-row-thead-" + view.view_id} >
+			id = "cube-row-view-header"
+			ref = "rowHead"
+			className = "tabular-body force-layer wrapper"
+			key = {"cube-row-thead-" + view.view_id} >
 
-			{groups.map(function (group, c) {
-				return <span className="table-cell table-header-cell"
-					style={{left: (c * width) + 'px', width: width + 'px', height: geo.rowHeight}}>
-					<span className="table-cell-inner">{group}</span>
-				</span>
-			})}
-
-			{levels.map(function (level, r) {
+			{
+			levels.map(function (level, r) {
 				var selector = {}
-				return <div key={'cell-' + r}>
+				var left = 0
+				
+				return groups.map(function (group, c) {
+					var column_id = group.column_id
+					var width = group.width
+					var cellKey = 'cell-' + r + '-' + group.column_id
 
-				{ groups.map(function (group, c) {
-					var thStyle = {
-						width: width + 'px',
-						height: (geo.rowHeight * level.spans[group]) + 'px',
-						left: (c * width) + 'px',
-						top: ((r + view.column_aggregates.length) * (geo.rowHeight)) + 'px'
+					selector[column_id] = level[column_id]
+					spans[c] ++
+					
+					if (r === levels.length - 1 || level[column_id] !== levels[r + 1][column_id]) {
+						var fieldType = fieldTypes[group.type].element
+						var height = spans[c] * geo.rowHeight
+						var thStyle = {
+							width: width + 'px',
+							height: height + 'px',
+							lineHeight: (height - 1) + 'px',
+							left: left + 'px',
+							top: ((r - spans[c]) * geo.rowHeight) + 'px'
+						}
+						left += width
+						spans[c] = 0
+						return React.createElement(fieldType, {
+							config: group,
+							model: _this.props.model,
+							view: _this.props.view,
+							selector: _.clone(selector),
+							value: level[column_id],
+							column_id: group.column_id,
+							key: cellKey,
+							cellKey: cellKey,
+							ref: cellKey,
+							style: thStyle,
+							className: 'table-cell'
+						})
+					
+					} else {
+						left += width
 					}
-
-					selector[group] = level[group]
-					var cellKey = 'cell-' + r + '-' + group
-					if (level.spans[group] === 0)	return null
-
-					else return React.createElement(elements[c], {
-						config: {},
-						model: _this.props.model,
-						view: _this.props.view,
-						selector: _.clone(selector),
-						value: level[group],
-						column_id: group,
-						handleBlur: _this.props.handleBlur,
-						key: cellKey,
-						cellKey: cellKey,
-						ref: cellKey,
-						style: thStyle,
-						className: 'table-cell'
-					})
-				}) } </div>
-			})}
+				})
+				
+			})
+			}
 		</div>;
 	},
 

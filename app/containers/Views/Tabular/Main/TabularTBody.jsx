@@ -13,7 +13,7 @@ import TabularTR from './TabularTR'
 
 
 var VISIBLE_ROWS = 45
-var MAX_ROWS = 45
+var MAX_ROWS = 55
 var SLOW_SKIP = 2
 var FAST_SKIP = 3
 var FASTER_SKIP = 4
@@ -21,8 +21,8 @@ var FAST_THRESHOLD = 5
 var FASTER_THRESHOLD = 25
 var CYCLE = 30
 var MIN_CYCLE = 15
-var BACKWARD_BUFFER = 5
-var BUFFER_SIZE = 0
+var BACKWARD_BUFFER = 10
+var BUFFER_SIZE = 5
 var PAGE_SIZE = SLOW_SKIP
 var BAILOUT = SLOW_SKIP
 
@@ -43,20 +43,15 @@ var TabularTBody = React.createClass ({
 		}
 	},
 
-	componentWillUpdate: function () {
-		//we shouldn't have a timer set, but if we do clear it
-		if (this.__timer) clearTimeout(this.__timer)
-	},
-
 	updateOffset: function (target, scrollDirection) {
 		var store = this.props.store
 		var fetchStart = this.props.fetchStart
 		var fetchEnd = this.props.fetchEnd
 
 		var buffer = 0 - BACKWARD_BUFFER  + (BUFFER_SIZE * scrollDirection)
-		var adjTarget = util.limit(fetchStart, fetchEnd - 10, target + buffer)
+		var adjTarget = util.limit(fetchStart, fetchEnd - 1, target + buffer)
 
-		if (this.props.prefix === 'rhs' ) window.msAdjTarget = adjTarget
+		// if (this.props.prefix === 'rhs' ) window.msAdjTarget = adjTarget
 
 		var start = this.state.start
 		var end = this.state.end
@@ -65,31 +60,27 @@ var TabularTBody = React.createClass ({
 		var skip = (lag >= FAST_THRESHOLD || !this.state.scrolling) ? 
 			(lag >= FASTER_THRESHOLD ? FASTER_SKIP : FAST_SKIP) : SLOW_SKIP
 		var startTarget = adjTarget
-		var endTarget = adjTarget + VISIBLE_ROWS
+		var endTarget = Math.min(adjTarget + VISIBLE_ROWS, fetchEnd)
 		
 		// advance or retreat the begining of the range as appropriate
 
-		if (start > endTarget || end < startTarget) {
-			start += Math.min(FAST_SKIP, end - start)
-		} else {
-			if (start !== startTarget) start += util.magLimit(skip, startTarget - start)
-			if (end !== endTarget) end += util.magLimit(skip, endTarget - end)
-		}
+		if (
+			// if scrolling up, then advance the start preferentially
+			(start > startTarget && scrollDirection === -1) || 
+			// but if we have too many rows, then bring it in
+			(start !== startTarget && visibleRows > MAX_ROWS) ||
+			// if we are at rest then take the opportunity to bring it in
+			(start !== startTarget && scrollDirection === 0)
+		) start += util.magLimit(skip, startTarget - start)
 		
-		
-		// advance or retreat the end of the range as appropriate
-		// if (end < endTarget && scrollDirection === 1 && end > startTarget) end += Math.min(skip, endTarget - end + 1)
-		// else if (end > endTarget || start > endTarget || end < startTarget) end -= Math.min(skip, visibleRows - VISIBLE_ROWS)
-
-		// if the render range is totally out of the visible range, then just wind it down and start over
-		// if (start > endTarget || end < startTarget) end -= Math.min(FASTER_SKIP, end - start)
-		// if (end === start && end < startTarget) {
-		// 	start = startTarget
-		// 	end = startTarget + skip
-		// } else if (end === start) {
-		// 	start = endTarget - skip
-		// 	end = endTarget
-		// }
+		if (
+			// if scrolling down, then advance the end preferentially
+			(end < endTarget && scrollDirection === 1) || 
+			// but if we have exceeded our max rows then advance the end too
+			(end !== endTarget && visibleRows > MAX_ROWS) ||
+			// and if we are at rest then also bring in the end
+			(end !== endTarget && scrollDirection === 0)
+		) end += util.magLimit(skip, endTarget - end)
 
 		this.setState({
 			start: start,
@@ -174,7 +165,7 @@ var TabularTBody = React.createClass ({
 		var style = this.props.style
 		style.transform = "translate3d(0, " + (-1 * this.state.rowOffset * geo.rowHeight ) + "px, 0)"
 
-		// console.log('tbody render.  ' + this.props.prefix)
+		// if (this.props.prefix === 'rhs') console.log('render tbody, target: ' + this.state.target + ', start: ' + this.state.start + ', end: ' + this.state.end)
 
 		return <div
 			className = {"tabular-body force-layer " + (this.props.focused ? ' focused ' : ' gray-out ')}

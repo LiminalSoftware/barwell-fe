@@ -34,6 +34,7 @@ var Overlay = React.createClass ({
     if (pos && (pos.left === pos.right) && (pos.top === pos.bottom))
       classes += ' singleton';
 
+
     if (!pos) return null
 
     visibleCols.forEach(function (col, idx) {
@@ -43,11 +44,16 @@ var Overlay = React.createClass ({
       else if (idx <= (pos.right || pos.left) )
         width += col.width
     })
+    
+    
 
     style.top = (pos.top * geo.rowHeight + (fudge.top || 0)) + 'px'
     style.left = (left + (fudge.left || 0)) + 'px'
     style.height = (geo.rowHeight * ((pos.bottom || pos.top) - pos.top + 1) + (fudge.height || 0)) + 'px'
     style.width = (width + (fudge.width || 0)) + 'px'
+
+    if (pos.left >= numFixed && (pos.right || pos.left) < numFixed + hiddenCols)
+      style.display = 'none'
 
 		return <div
       {...this.props}

@@ -39,9 +39,7 @@ var decimalField = {
 	},
 
 	configParts: [AlignChoice, ColorChoice, TextChoice, NumberFormatChoice],
-
 	
-
 	element: React.createClass({
 		mixins: [editableInputMixin, commitMixin, selectableMixin, keyPressMixin],
 

@@ -42,15 +42,15 @@ var CubePane = React.createClass ({
 	componentWillMount: function () {
 		document.body.addEventListener('keydown', this.onKey)
 		FocusStore.addChangeListener(this._onChange)
-		// this.store = createCubeStore(this.props.view)
-		// this.store.addChangeListener(this._onChange)
+		this.store = createCubeStore(this.props.view)
+		this.store.addChangeListener(this._onChange)
 	},
 
 	componentWillUnmount: function () {
 		document.body.removeEventListener('keydown', this.onKey)
 		FocusStore.removeChangeListener(this._onChange)
-		// if (this.store) this.store.removeChangeListener(this._onChange)
-		// this.store.unregister()
+		if (this.store) this.store.removeChangeListener(this._onChange)
+		this.store.unregister()
 	},
 
 	_onChange: function () {
@@ -303,7 +303,7 @@ var CubePane = React.createClass ({
 
 		return <div className = "model-panes">
 			<div className="view-body-wrapper" ref="wrapper">
-				<CubeBodyWrapper {...this.props}/>
+				<CubeBodyWrapper {...this.props} store = {this.store}/>
 			</div>
 		</div>
 	}

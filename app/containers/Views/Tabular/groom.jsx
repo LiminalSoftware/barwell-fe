@@ -67,8 +67,6 @@ var groomView = function (view) {
 		colAddWidth: 100
 	}, {})
 
-
-
 	view.data = data;
 	return view
 }
