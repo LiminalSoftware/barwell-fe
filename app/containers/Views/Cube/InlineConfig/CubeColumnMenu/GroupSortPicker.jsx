@@ -23,14 +23,14 @@ var GroupSortPicker = React.createClass({
 
 	handleInvert: function () {
 		var config = this.props.config;
-		this.commitChanges({ascending: !config.ascending});
+		this.commitChanges({descending: !config.descending});
 	},	
 
 	render: function() {
 		var _this = this
 		var config = this.props.config
 
-		return <span className={"pop-down icon icon-sort-alpha-" + (config.ascending ? 'asc' : 'desc')}
+		return <span className={"pop-down icon icon-sort-alpha-" + (config.descending ? 'desc' : 'asc')}
         	onMouseDown = {this.handleInvert}>
 		</span>
 	}

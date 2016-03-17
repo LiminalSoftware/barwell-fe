@@ -6,7 +6,8 @@ import RelationStore from '../stores/RelationStore'
 import groomView from '../containers/Views/groomView'
 
 
-var BASE_URL = 'https://api.metasheet.io/m'
+var BASE_URL = 'https://api.metasheet.io'
+
 
 var modelActions = {
 
@@ -39,7 +40,7 @@ var modelActions = {
 		var model_id = model.model_id
 		var message = {}
 		var json = JSON.stringify(obj)
-		var url = BASE_URL + model.model_id;
+		var url = BASE_URL + '/m' + model.model_id;
 
 		message.actionType = 'M' + model.model_id + '_CREATE'
 		message.index = position
@@ -59,7 +60,7 @@ var modelActions = {
 	deleteRecord: function (model, selector) {
 		var model_id = model.model_id
 		var message = {}
-		var url = BASE_URL + model.model_id;
+		var url = BASE_URL + '/m' + model.model_id;
 		if (!selector instanceof Object) throw new Error ('Delete without qualifier is not permitted')
 		else url += '?' + _.map(selector, function (value, key) {
 			return key + '=eq.' + value;
@@ -84,7 +85,7 @@ var modelActions = {
 		message = _.extend(message, extras)
 		MetasheetDispatcher.dispatch(message)
 
-		var url = BASE_URL + model.model_id;
+		var url = BASE_URL + '/m' + model.model_id;
 		if (!selector instanceof Object) throw new Error ('Patch without qualifier is not permitted')
 		else url += '?' + _.map(selector, function (value, key) {
 			return key + '=eq.' + value;
@@ -154,7 +155,7 @@ var modelActions = {
 		var url = 'https://api.metasheet.io/v' + view_id;
 		if (sortSpec) {
 			url = url + '?order=' + _.map(sortSpec, function (comp) {
-				return 'a' + comp.attribute_id + '.' + (comp.ascending ? 'asc' : 'desc')
+				return 'a' + comp.attribute_id + '.' + (comp.descending ? 'desc' : 'asc')
 			}).join(",")
 		}
 		var header = {
@@ -176,17 +177,15 @@ var modelActions = {
 			MetasheetDispatcher.dispatch(message)
 
 			return message;
-		}).catch(function () {
-
 		});
 	},
 
-	fetchSearchRecords: function (relationId, label, term, _offset, _limit) {
+	fetchSearchRecords: function (relationId, label, term, offset, limit) {
 		var relation = RelationStore.get(relationId)
 		var oppModel = ModelStore.get(relation.related_model_id)
-		var offset = _offset || 0
-		var limit = _limit || 20
-		var url = BASE_URL + oppModel.model_id + '?' + label + '=ilike.*' + term + '*';
+		var url = BASE_URL + '/m' + oppModel.model_id + '?' + label + '=ilike.*' + term + '*';
+		offset = offset || 0
+		limit = limit || 20
 
 		var header = {
 			'Range-Unit': 'items',
@@ -209,14 +208,14 @@ var modelActions = {
 	fetchLevels: function (view, dimension, offset, limit) {
 		var view_id = view.view_id
 		var model_id = view.model_id
-		var url = 'https://api.metasheet.io/v' + view_id + '_' + dimension;
-		var aggregates = view[dimension.slice(0, -1) + '_aggregates']
+		var url = 'https://api.metasheet.io/v' + view_id + '_' + dimension + 's';
+		var aggregates = view[dimension + '_aggregates']
 
 		if (aggregates.length === 0) return
 
 		url += '?order=' + aggregates.map(function (grouping) {
 			var column = view.data.columns['a' + grouping]
-			return column.column_id + (column.ascending ? '.asc' : '.desc')
+			return column.column_id + (column.descending ? '.desc' : '.asc')
 		}).join(',')
 
 		var header = {
@@ -241,27 +240,50 @@ var modelActions = {
 		})
 	},
 
-	fetchCubeValues: function (view, filter) {
+	fetchCubeValues: function (view, store, vOffset, vLimit, hOffset, hLimit) {
 		var offset = 0
 		var limit = 1000
 		var view_id = view.view_id
-		var url = 'https://api.metasheet.io/v' + view_id
-		url += '?' + filter.join('&')
+		var url = BASE_URL + '/v' + view_id
+		var sort = 'order=' + view.data.sortSpec.map(function(s) {
+			var column = view.data.columns['a' + s.attribute_id]
+			return 'a' + column.attribute_id + (column.descending ? '.desc' : '.asc')
+		}).join(',')
+		var filter = []
+		var makeFilterStr = function (agg, dimension, pos, invert) {
+			var obj = store.getLevel(dimension, pos) || {}
+			var val = obj['a' + agg]
+			var dir = (view.data.columns['a' + agg].descending)
+			if (invert) dir = !dir
+			if (val) filter.push(
+				'a' + agg + '=' + (dir ? 'lte.' : 'gte.')  + val
+			)
+		}
+		
+		// the current filter only uses the highest-level aggregator
+		// going deeper would require "or" conditions in the request or multiple requests
+		if (view.column_aggregates.length) {
+			makeFilterStr(view.column_aggregates[0], 'column', hOffset, false)
+			makeFilterStr(view.column_aggregates[0], 'column', hOffset + hLimit, true)
+		} if (view.row_aggregates.length) {
+			makeFilterStr(view.row_aggregates[0], 'row', vOffset, false)
+			makeFilterStr(view.row_aggregates[0], 'row', vOffset + vLimit, true)	
+		}
+		
+		url += '?' + filter.concat(sort || []).join('&')
 
 		var header = {
 			'Range-Unit': 'items',
-			'Range': (offset + '-' + (offset + limit))
+			'Range': ((hOffset + vOffset) + '-' + (hOffset + vOffset + hLimit, vLimit))
 		}
 
-		console.log('url: ' + url)
 		webUtils.ajax('GET', url, null, header).then(function (results) {
-			var message ={}
+			var message = {}
 			var range = results.xhr.getResponseHeader('Content-Range')
 			var rangeParts = range.split(/[-/]/)
 			message.numberResults = parseInt(rangeParts[2])
 			message.actionType = ('V' + view_id + '_RECEIVEVALUES').toUpperCase()
 			message.values = results.data
-
 			MetasheetDispatcher.dispatch(message)
 		});
 	},

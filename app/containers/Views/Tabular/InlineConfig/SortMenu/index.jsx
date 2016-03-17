@@ -31,7 +31,7 @@ var SortMenu = React.createClass({
 	chooseItem: function (e) {
 		var choice = e.target.value
 		var sortList = _.clone(this.state.sortList)
-		var attr = {attribute_id: choice, ascending: true}
+		var attr = {attribute_id: choice, descending: true}
 		if (choice == 0) return
 		sortList.push(attr)
 		this.setState({sortList: sortList})

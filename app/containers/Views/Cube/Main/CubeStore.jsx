@@ -15,11 +15,10 @@ import util from '../../../../util/util'
 import constants from '../../../../constants/MetasheetConstants'
 import reducers from './reducers'
 
-import calcSpans from './calcSpans'
-
 const DELIMITER = constants.delimiter
 
 var createCubeStore = function (view, dimensions) {
+
     var model = ModelStore.get (view.model_id)
     var label = 'v' + view.view_id
     var upperLabel = label.toUpperCase ()
@@ -27,31 +26,32 @@ var createCubeStore = function (view, dimensions) {
     var modelUpperLabel = modelLabel.toUpperCase()
 
     var _dimensions = {
-        rows: view.row_aggregates,
-        columns: view.column_aggregates
+        row: view.row_aggregates,
+        column: view.column_aggregates,
     }
+    var _sortSpec = view.data.sortSpec
     var _levels = {
-        rows: [],
-        columns: []
+        row: [],
+        column: []
     }
     var _count = {
-        rows: null,
-        columns: null
+        row: null,
+        column: null
     }
     var _startIndex = {
-        rows: null,
-        columns: null
+        row: null,
+        column: null
     }
     var _requestedStartIndex = {
-        rows: null,
-        columns: null
+        row: null,
+        column: null
     }
     var _isCurrent = {
-        rows: false,
-        columns: false
+        row: false,
+        column: false
     }
     var _dirty = true
-    var _values = {}
+    var _values = []
     var _rowDimensions
     var _colDimensions
 
@@ -71,7 +71,7 @@ var createCubeStore = function (view, dimensions) {
         },
 
         getCount: function (dimension) {
-            return _count[dimension]
+            return _count[dimension] || 0
         },
 
         getDimensions: function (dimension) {
@@ -107,31 +107,31 @@ var createCubeStore = function (view, dimensions) {
             return (_isCurrent.rows && _isCurrent.columns)
         },
 
-        getValues: function (row_indices, column_indices) {
-            var indices = _.extend(row_indices, column_indices)
-
-            var dimensions = _dimensions.rows.concat(_dimensions.columns).filter(_.identity)
-            var key = dimensions.map(function (dim) {
-                return indices['a' + dim]
-            }).join(DELIMITER)
-
-            return _values[key]
+        getValue: function (i, j) {
+            var row = _values[i]
+            if (!(row instanceof Array)) return null
+            return _values[i][j]
         },
 
         unregister: function () {
           dispatcher.unregister(this.dispatchToken)
         },
 
+
+
         dispatchToken: dispatcher.register(function (payload) {
             var type = payload.actionType
 
             if (type === 'VIEW_CREATE' && payload.view.view_id === view.view_id) {
-                _dirty = payload.view._dirty
-                _values = {}
-                _dimensions.rows = payload.view.row_aggregates
-                _dimensions.columns = payload.view.column_aggregates
-                _isCurrent.rows = false
-                _isCurrent.columns = false
+                console.log('view_create')
+                _dirty = payload.view._dirty;
+                _values = [];
+                _dimensions.row = payload.view.row_aggregates;
+                _dimensions.column = payload.view.column_aggregates;
+                _sortSpec = view.data.sortSpec
+
+                _isCurrent.row = false;
+                _isCurrent.column = false;
             }
 
             if (type === (modelUpperLabel + '_UPDATE') || type === (modelUpperLabel + '_RECEIVEUPDATE')) {
@@ -143,8 +143,8 @@ var createCubeStore = function (view, dimensions) {
                   _dirty: (type === (upperLabel + '_UPDATE'))
               }
               var values = _.values(_values)
-              var rows = _levels.rows
-              var cols = _levels.columns
+              var rows = _levels.row
+              var cols = _levels.column
               var matcher = _.matcher(selector)
               var reducer = reducers[view.aggregator + 'ReducerFactory']('a' + view.value)
 
@@ -179,7 +179,7 @@ var createCubeStore = function (view, dimensions) {
                     return val['a' + dim]
                 }).join(DELIMITER)
 
-                console.log('key: ' + key)
+                
 
                 if (key in _values) _values[key] = reducer(_values[key], val)
                 else _values[key] = val
@@ -190,9 +190,10 @@ var createCubeStore = function (view, dimensions) {
             if (type === upperLabel + '_RECEIVELEVELS') {
                 var _this = this
                 var dimension  = payload.dimension
-                var groups = _dimensions[dimension].map(g=>'a'+g)
-                _levels[dimension] = calcSpans(payload.levels, groups)
+                var groups = _dimensions[dimension].map(g => 'a' + g)
+                _levels[dimension] = payload.levels
                 _count[dimension] = payload.numberLevels
+                // console.log('payload.numberLevels: ' + payload.numberLevels)
                 _isCurrent[dimension] = true
 
                 CubeStore.emitChange()
@@ -204,17 +205,25 @@ var createCubeStore = function (view, dimensions) {
             }
 
             if (type === upperLabel + '_RECEIVEVALUES') {
-                console.log('receivevalues')
                 var _this = this
                 var values = payload.values
-                var dimensions = _dimensions.rows.concat(_dimensions.columns).filter(_.identity)
+                var idx = 0
+                var current = {}
+                _values = new Array(_levels.row.length)
 
-                _values = _.indexBy(values, function (val) {
-                    var key = dimensions.map(function (dim) {
-                        return val['a' + dim]
-                    }).join(DELIMITER)
-                    return key
-                })
+                
+                for (var i = 0; i < _levels.row.length && idx < values.length; i++) {
+                    Object.assign(current, _levels.row[i])
+                    var column = new Array(_levels.column.length)
+                    for (var j = 0; j < _levels.column.length && idx < values.length; j++) {
+                        Object.assign(current, _levels.column[j])
+                        var cmp = util.compare(current, values[idx], _sortSpec)
+                        if (cmp >= 0) column[j] = values[idx++]
+                        else column[j] = null
+                    }
+                    _values[i] = column
+                }
+                
                 CubeStore.emitChange()
             }
 

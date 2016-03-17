@@ -1,10 +1,8 @@
 import React from "react"
 import ReactDOM from "react-dom"
-import { RouteHandler } from "react-router"
-import styles from "./style.less"
-
 import _ from 'underscore'
-import $ from 'jquery'
+
+import './style.less'
 
 import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
 
@@ -310,72 +308,3 @@ var CubePane = React.createClass ({
 })
 
 export default CubePane
-
-// <OverflowHider
-						// scrollLeft = {_this.state.scrollLeft}
-						// scrollTop = {_this.state.scrollTop}
-						// view = {view} />
-
-
-// {<div
-// 					className={"pointer" + (_this.isFocused() ? " focused" : "")}
-// 					ref = "anchor"
-// 					onDoubleClick = {this.startEdit}
-// 					style = {_this.getPointerStyle()}>
-// 				</div>
-// 				<div
-// 					className={"selection" + (_this.isFocused() ? " focused" : "")}
-// 					ref="selection"
-// 					style={_this.getSelectorStyle()}>
-// 				</div>
-// 				{_this.state.contextOpen ?
-// 					<ContextMenu
-// 						x = {_this.state.contextX} y = {_this.state.contextY}
-// 						handleContextBlur = {_this.handleContextBlur}
-// 						addNewRecord = {_this.insertRecord}
-// 						deleteRecords = {_this.deleteRecords}
-// 						copySelection = {_this.copySelection}
-// 						/>
-// 					: null}
-// 				}
-
-					// 	{
-					// <CubeColTHead
-					// 	key = {"cube-col-thead-" + view.view_id}
-					// 	clicker = {_this.onMouseDown}
-					// 	dimension = 'column'
-					// 	store = {this.store}
-					// 	hStart = {hStart}
-					// 	scrollTop = {scrollTop}
-					// 	handleBlur = {_this.handleBlur}
-					// 	openContextMenu = {_this.openContextMenu}
-					// 	model = {model}
-					// 	view = {view} />
-					// <CubeRowTHead
-					// 	ref = 'rowhead'
-					// 	key = {"cube-row-thead-" + view.view_id}
-					// 	clicker = {_this.onMouseDown}
-					// 	dimension = 'row'
-					// 	store = {this.store}
-					// 	vStart = {vStart}
-					// 	scrollLeft = {scrollLeft}
-					// 	handleBlur = {_this.handleBlur}
-					// 	openContextMenu = {_this.openContextMenu}
-					// 	actRowHt = {height}
-					// 	model = {model}
-					// 	view = {view} />
-					// <CubeTBody
-					// 	key = {"cube-body-" + view.view_id}
-					// 	ref = 'tbody'
-					// 	clicker = {_this.onMouseDown}
-					// 	view = {view}
-					// 	model = {model}
-					// 	scrollLeft = {scrollLeft}
-					// 	scrollTop = {scrollTop}
-					// 	handleBlur = {_this.handleBlur}
-					// 	openContextMenu = {_this.openContextMenu}
-					// 	actRowHt = {height}
-					// 	vStart = {vStart}
-					// 	hStart = {hStart}
-					// 	store = {this.store}
-					// />}

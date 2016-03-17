@@ -1,5 +1,5 @@
 var _ = require('underscore')
-import tinycolor from "tinycolor2"
+var tinycolor = require("tinycolor2")
 
 // fix javascript modulo bug
 Number.prototype.mod = function(n) {
@@ -19,6 +19,16 @@ var stripInternalVars = module.exports.stripInternalVars = function (obj) {
     if (key.slice(0,1) !== '_') newObj[key] = obj[key];
   });
   return newObj;
+}
+
+module.exports.compare = function (a, b, sortSpec) {
+    for (var i = 0; i < sortSpec.length; i++) {
+        var key = 'a' + sortSpec[i].attribute_id
+        var inversion = sortSpec[i].descending ? 1 : -1
+        if (a[key] < b[key]) return (1 * inversion)
+        if (a[key] > b[key]) return (-1 * inversion)
+    }
+    return 0
 }
 
 module.exports.encode = function (str) {

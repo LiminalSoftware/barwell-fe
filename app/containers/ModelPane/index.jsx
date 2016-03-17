@@ -81,7 +81,7 @@ var ModelPane = React.createClass({
 			var configElement = type.inlineConfigElement
 
 			// view = viewTypes[view.type].groomer(view)
-			// view = groomView(view)
+			view = groomView(view)
 
 			bodyContent = React.createElement(bodyElement, {
 				model: model,

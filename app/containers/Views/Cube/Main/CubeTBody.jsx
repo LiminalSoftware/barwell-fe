@@ -9,39 +9,28 @@ import ModelStore from "../../../../stores/ModelStore"
 import ViewStore from "../../../../stores/ViewStore"
 import FocusStore from "../../../../stores/FocusStore"
 import AttributeStore from "../../../../stores/AttributeStore"
+// import ViewDataStores from "../../../../stores/ViewDataStores"
 
-import ViewDataStores from "../../../../stores/ViewDataStores"
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 
-
-import createCubeStore from './CubeStore.jsx'
+const VISIBLE_ROWS = 40
+const VISIBLE_COLUMNS = 20
 
 var CubeTBody = React.createClass ({
 
-	shouldComponentUpdate: function (props, state) {
-		var old = this.props
-		return props.vStart !== old.vStart ||
-			   props.hStart !== old.hStart
+	shouldComponentUpdate: function (newProps) {
+		return newProps.view !== this.props.view
 	},
 
 	getInitialState: function () {
 		var view = this.props.view
 		var geo = view.data.geometry
 		return {
-			actRowHt: geo.rowHeight + geo.rowPadding,
-			scrollTop: 0,
-			window: {
-				hOffset: 0,
-				vOffset: 0,
-				hLimit: 100,
-				vLimit: 20,
-				windowSize: 40
-			}
+			
 		}
 	},
 
 	_onChange: function () {
-		this.fetch()
 		this.forceUpdate()
 	},
 
@@ -49,10 +38,6 @@ var CubeTBody = React.createClass ({
 		var view = this.props.view
 		var model = ModelStore.get(view.model_id)
 		this.props.store.addChangeListener(this._onChange)
-	},
-
-	componentDidMount: function () {
-		this.fetch(true)
 	},
 
 	componentWillUnmount: function () {
@@ -65,124 +50,53 @@ var CubeTBody = React.createClass ({
 		var view = this.props.view
 		var store = this.props.store
 		var geo = view.data.geometry
-		var actRowHt = geo.rowHeight + 'px'
-		var width = geo.columnWidth + geo.widthPadding
-		var vStart = this.props.vStart
-		var hStart = this.props.hStart
-		var levels = store.getLevels('rows', vStart, vStart + geo.renderBufferRows)
-		var element = (fieldTypes[attribute.type] || fieldTypes.TEXT).element
+		var vOffset = this.props.verticalOffset
+		var hOffset = this.props.horizontalOffset
+		var rowLevels = store.getLevels('row', 0, 100) || []
+		var colLevels = store.getLevels('column', 0, 100) || []
+		var column = view.data.columns['a' + view.value]	
+		var selector = {}
+		var element = (fieldTypes[column.type]).element
 
+		var cells = new Array(VISIBLE_ROWS * VISIBLE_COLUMNS)
+
+		for (var i = 0; i < Math.min(VISIBLE_ROWS, rowLevels.length); i++) {
+			Object.assign(selector, rowLevels[i])
+			for (var j = 0; j < Math.min(VISIBLE_COLUMNS, colLevels.length); j++) {
+				var obj = store.getValue(i,j)
+				var value = obj ? obj[[column.column_id]] : null
+				var style = {
+					width: geo.columnWidth + 'px',
+					height : geo.rowHeight + 'px',
+					left: (geo.columnWidth * j) + 'px',
+					top: (geo.rowHeight * i) + 'px'
+				}
+				Object.assign(selector, colLevels[j])
+				// console.log('value: ' + store.getValue(i,j))
+				cells[i * VISIBLE_COLUMNS + j] = React.createElement(element, {
+					config: column,
+					model: model,
+					view: view,
+					selector: _.clone(selector),
+					value: value,
+					column_id: column.column_id,
+					key: 'cell-' + i + '-' + j,
+					style: style,
+					className: 'table-cell',
+					rowHeight: geo.rowHeight,
+				})
+			}
+		}
+		
 		return <div ref = "cube-tbody"
-			className = "cube-main-tbody"
+			className = "wrapper cube-main-tbody"
 			onMouseDown = {_this.props.clicker}
 			onContextMenu={_this.props.openContextMenu}
 			onDoubleClick = {_this.editCell}>
-
-		} </div>;
+			{cells}
+		</div>;
 	},
 
-	fetch: function (force) {
-		if (!this.props.store.isLevelCurrent()) return
-
-		var view = this.props.view
-		var geo = view.data.geometry
-		var store = this.props.store
-		var vStart = this.props.vStart
-		var vEnd = vStart + geo.renderBufferRows
-		var hStart = this.props.hStart
-		var hEnd = hStart + geo.renderBufferCols
-		var filter = []
-
-		var curVStart = store.getStart('rows')
-		var curHStart = store.getStart('columns')
-
-		if (Math.abs(curVStart - vStart) < geo.bfrTol &&
-			Math.abs(curHStart - hStart) < geo.bfrTol &&
-			curVStart !== null && curHStart  !== null) {
-			return; // if scroll is within tolerances, do nothing
-		}
-
-		var makeFilterStr = function (agg, dimension, pos, invert) {
-			var obj = store.getLevel(dimension, pos)
-
-			var val = (obj !== null) ? obj['a' + agg] : null
-			var dir = !!(view.data.sorting[agg])
-			if (invert) dir = !dir
-			if (val) filter.push(
-				'a' + agg + '=' + (dir ? 'gte.' : 'lte.')  + val
-			)
-		}
-
-		// the current filter only uses the highest-level aggregator
-		// going deeper would require "or" conditions in the request or multiple requests
-		makeFilterStr(view.column_aggregates[0], 'columns', hStart, false)
-		makeFilterStr(view.column_aggregates[0], 'columns', hEnd, true)
-		makeFilterStr(view.row_aggregates[0], 'rows', vStart, false)
-		makeFilterStr(view.row_aggregates[0], 'rows', vEnd, true)
-
-		modelActionCreators.fetchCubeValues(view, filter, hStart, vStart)
-		store.setStart('rows', vStart)
-		store.setStart('columns', hStart)
-	}
 })
 
-// export default CubeTBody
-//
-// var CubeTR = React.createClass({
-//
-// 	render: function () {
-// 		var _this = this
-// 		var model = this.props.model
-// 		var view = this.props.view
-// 		var store = this.props.store
-// 		var geo = view.data.geometry
-// 		var width = geo.columnWidth
-// 		var rowHeight = geo.rowHeight + 'px'
-// 		var rowLevel = this.props.rowLevel
-// 		var attribute = AttributeStore.get(view.value)
-// 		var element = (fieldTypes[attribute.type] || fieldTypes.TEXT).element
-// 		var actRowHt = this.props.actRowHt
-//
-// 		var hLength = geo.renderBufferCols
-// 		var hStart = this.props.hStart
-//
-//
-// 		return <div> { store.getLevels('rows', vStart, vLength + vStart).map(function (rowLevel, i) {
-// 			store.getLevels('columns', hStart, hLength + hStart).map(function (colLevel, j) {
-//
-// 				var cellKey = 'cell-' + i + '-' + j
-// 				var obj = store.getValues(rowLevel, colLevel)
-// 				if (!obj) return null
-// 				var count = present ? obj._count : 0
-// 				var value = present ? obj['a' + attribute.attribute_id] : null
-// 				var selector = _.omit(_.extend({}, rowLevel, colLevel),'spans')
-//
-// 				var tdStyle = {
-// 					minWidth: width + 'px',
-// 					maxWidth: width + 'px',
-// 					height: geo.rowHeight + 'px',
-// 					maxHeight: (geo.rowHeight) + 'px',
-// 					minHeight: (geo.rowHeight) + 'px',
-// 					left: ((j + view.row_aggregates.length + hStart) * width) + 'px',
-// 					top: ((view.column_aggregates.length + vStart + i) * geo.rowHeight) + 'px'
-// 				}
-//
-// 				return React.createElement(element, {
-// 					config: {},
-// 					model: _this.props.model,
-// 					view: _this.props.view,
-// 					selector: selector,
-// 					value: value,
-// 					column_id: ('a' + attribute.attribute_id),
-// 					handleBlur: _this.props.handleBlur,
-// 					key: cellKey,
-// 					cellKey: cellKey,
-// 					ref: cellKey,
-// 					className: "table-cell " + (present ? "present" : "empty") +
-// 						(count > 1 ? " uneditable " : ""),
-// 					style: tdStyle
-// 				})
-// 			})}
-// 				</div>
-// 	}
-// })
+export default CubeTBody

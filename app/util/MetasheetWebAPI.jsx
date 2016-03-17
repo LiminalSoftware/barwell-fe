@@ -27,13 +27,13 @@ var wait = module.exports.wait = function () {
 }
 
 
-var ajax = module.exports.ajax  = function (method, url, json, retry, headers) {
-  return wait().then(function () {
-    return ajaxActual(method, url, json, retry, headers)
-  })
-}
+// var ajax = module.exports.ajax  = function (method, url, json, retry, headers) {
+//   return wait().then(function () {
+//     return ajaxActual(method, url, json, retry, headers)
+//   })
+// }
 
-var ajaxActual = function (method, url, json, retry, headers) {
+var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
   console.log(method + '->' + url)
   console.log(JSON.parse(json))
 

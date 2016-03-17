@@ -21,11 +21,14 @@ var groomView = function (view) {
 	view.value = _.first(columnList.filter(c => c.inTableBody).map(c => c.attribute_id))
 	// view.aggregator = view.aggregator ? view.aggregator.toLowerCase() : null;
 
-	data.geometry = data.geometry || {}
+	data.sortSpec = view.row_aggregates.concat(view.column_aggregates).map(function (d) {
+        return {'attribute_id': d, 'descending': columns['a' + d].descending}
+    })
+	
 	data.geometry = _.extend({
 		labelWidth: 30,
 		rowHeight: Math.min(Math.max(data.geometry.rowHeight || 25, 20), 80),
-		colWidth: 100
+		columnWidth: 100
 	}, {})
 	return view
 }

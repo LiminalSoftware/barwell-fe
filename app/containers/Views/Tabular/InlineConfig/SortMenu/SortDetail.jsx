@@ -15,8 +15,9 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 var SortDetail = React.createClass({
 
 	getInitialState: function () {
+		var spec = this.props.sortSpec
 		return {
-			ascending: this.props.ascending
+			descending: spec.descending
 		}
 	},
 
@@ -26,7 +27,7 @@ var SortDetail = React.createClass({
 
 	switch: function () {
 		var spec = this.props.sortSpec
-		spec.ascending = !spec.ascending
+		spec.descending = !spec.descending
 		this.props._updateItem(spec)
 	},
 
@@ -42,7 +43,7 @@ var SortDetail = React.createClass({
       		<span className = "ellipsis">{attr.attribute}</span>
 
 			<span onClick={this.switch}
-				className={"half-column-config tight icon icon-sort-alpha-" + (spec.ascending ? 'asc' : 'desc')}>
+				className={"half-column-config tight icon icon-sort-alpha-" + (spec.descending ? 'desc' : 'asc')}>
 			</span>
 			<span onClick={this.remove} 
 				className="half-column-config tight icon icon-cross-circle"></span>

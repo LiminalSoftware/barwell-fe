@@ -26,7 +26,7 @@ var TabularTHead = React.createClass ({
 
 		var style = {
 			marginLeft: this.props.leftOffset + 'px',
-			height: (geo.headerHeight + 1) + 'px',
+			height: (this.props.height || (geo.headerHeight + 1)) + 'px',
 			width: (this.props.totalWidth ) -1 + 'px',
 			transform: 'translateZ(1px)'
 		}
@@ -50,7 +50,7 @@ var TabularTHead = React.createClass ({
 				var el = <TabularTH key={"th-" + col.column_id}
 					scrollTop = {_this.props.scrollTop}
 					column = {col}
-					sorted = {col.attribute_id && (col.attribute_id in view.data.sortIndex)}
+					sorted = {col.attribute_id && (col.attribute_id in (view.data.sortIndex || {}))}
 					view = {view}
 					idx = {idx}
 					left = {left}/>;

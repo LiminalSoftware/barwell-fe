@@ -13,21 +13,25 @@ import createCubeStore from './CubeStore.jsx'
 import Overlay from '../../Tabular/Main/Overlay'
 import DetailBar from '../../../DetailBar'
 
-import CubeRowTHead from './CubeRowTHead'
+import TabularTHead from "../../Tabular/Main/TabularTHead"
+import CubeTHead from './CubeTHead'
+import CubeTBody from './CubeTBody'
 
 import util from '../../../../util/util'
 
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-var OFFSET_TOLERANCE = 100
-var WINDOW_ROWS = 50
-var FETCH_DEBOUNCE = 500
-var MAX_LEVELS = 5000
-var RHS_PADDING = 100
-var CYCLE = 60
+const FETCH_DEBOUNCE = 500
 
-var HAS_3D = util.has3d()
+const MAX_LEVELS = 5000
+const WINDOW_ROWS = 50
+const WINDOW_COLS = 20
+
+const RHS_PADDING = 100
+const CYCLE = 60
+
+const HAS_3D = util.has3d()
 
 
 var CubeBodyWrapper = React.createClass ({
@@ -39,7 +43,8 @@ var CubeBodyWrapper = React.createClass ({
 		var view = this.props.view
 		var geo = view.data.geometry
 		return {
-			
+			verticalOffset: 0,
+			horizontalOffset: 0
 		}
 	},
 
@@ -53,52 +58,61 @@ var CubeBodyWrapper = React.createClass ({
 	},
 
 	componentWillMount: function () {
-		this.debounceFetch = _.debounce(this.fetch, FETCH_DEBOUNCE)
-		this.fetchRows()
-	},
-
-	componentWillUpdate: function (nextProps, nextState) {
-		// var renderSide = this.state.renderSide === 'lhs' ? 'rhs' : 'lhs';
-		// // if (this.__timer) clearTimeout(this.__timer);
-		// this.debounceFetch(false, nextProps, nextState);
-		// this.setState({
-		// 	renderSide: renderSide,
-		// 	frameNum: this.state.frameNum + 1
-		// });
+		this.debounceFetch = _.debounce(this.fetchBody, FETCH_DEBOUNCE)
+		this.fetch()
 	},
 
 	componentWillReceiveProps: function (nextProps) {
-		this.debounceFetch(false, nextProps);
+		// this.debounceFetch(false, nextProps);
 	},
 
-	finishFetch: function () {
-		this.setState({
-			fetchingRows: false
-		})
+	fetch: function () {
+		var _this = this
+		return Promise.all([
+			this.fetchLevels('row'),
+			this.fetchLevels('column')
+		]).then(function () {
+			return _this.fetchBody()
+		});
 	},
 
-	fetchColumns: function () {
-
-	},
-
-	fetchRows: function () {
+	fetchLevels: function (dimension) {
 		var view = this.props.view
-		this.setState({fetchingRows: true})
-		modelActionCreators.fetchLevels(
+		var _this = this
+		this.setState({['fetching' + dimension]: true})
+		return modelActionCreators.fetchLevels(
 			view,
-			'rows',
-			MAX_LEVELS
+			dimension,
+			0, MAX_LEVELS
 		).then(function () {
 			_this.setState({
-				fetchingRows: false
+				['fetching' + dimension]: false
 			})
 		})
 	},
 
-	fetch: function (force, nextProps, nextState) {
-		var _this = this
+	fetchBody: function () {
 		var view = this.props.view
+		var geo = view.data.geometry
+		var store = this.props.store
+		var vOffset = this.state.verticalOffset
+		var hOffset = this.state.horizontalOffset
+		var filter = []
+
+		// var curVStart = store.getStart('row')
+		// var curHStart = store.getStart('column')
+
+		// if (Math.abs(curVStart - vStart) < geo.bfrTol &&
+		// 	Math.abs(curHStart - hStart) < geo.bfrTol &&
+		// 	curVStart !== null && curHStart  !== null) {
+		// 	return; // if scroll is within tolerances, do nothing
+		// }
 		
+
+		return modelActionCreators.fetchCubeValues(view, store, hOffset, WINDOW_ROWS, vOffset, WINDOW_COLS).then(function () {
+			store.setStart('row', vOffset)
+			store.setStart('column', hOffset)
+		})
 	},
 
 	render: function () {
@@ -108,17 +122,23 @@ var CubeBodyWrapper = React.createClass ({
 		var store = this.props.store
 		var geo = view.data.geometry
 		var focused = this.props.focused
-		var rowHeaderCols = view.row_aggregates.map(getColumns)
-		var rowHeaderWidth = util.sum(rowHeaderCols, 'width')
-		var numColumns = store.getCount('columns')
-		var adjustedWidth = rowHeaderWidth + numColumns * geo.colWidth
-		var headerHeight = view.column_aggregates.length * geo.rowHeight
-		var rowCount = store.getCount('rows')
+
+		var rowHeaders = view.row_aggregates.map(getColumns)
+		var rowHeaderWidth = util.sum(rowHeaders, 'width')
+
+		var columnHeaders = view.column_aggregates.map(getColumns)
+		var columnHeaderHeight = columnHeaders.length * geo.rowHeight
+
+		var numColumns = store.getCount('column')
+		var numRows = store.getCount('row')
+		
+		var bodyWidth = numColumns * geo.columnWidth
+		var adjustedWidth = rowHeaderWidth + bodyWidth
+
 		var marginTop = 0
-		// console.log('render wrapper')
 		
 		return <div
-			className = {"tabular-body-wrapper force-layer " + (focused ? "focused" : "blurred")}
+			className = {"wrapper force-layer " + (focused ? "focused" : "blurred")}
 			ref="tbodyWrapper"
 			style = {{
 				left: 0,
@@ -126,81 +146,88 @@ var CubeBodyWrapper = React.createClass ({
 				transformStyle: 'preserve-3d'
 			}}>
 
-			{/*LHS TABLE BODY
-			<div className = "lhs-outer wrapper"
-				style = {{
-					left: geo.leftGutter + 'px',
-					top: 0,
-					bottom: 0,
-					width: (fixedWidth + geo.labelWidth) + 'px',
-					transformStyle: 'preserve-3d'
-				}}>
-
-			groups.map(function (group, idx) {
-				if (idx === 0) left = 0
-				else left += groups[idx - 1].width
-				return <span className="table-cell table-header-cell"
-					style = {{
-						left: left + 'px', 
-						width: groups[idx].width + 'px', 
-						height: geo.rowHeight
-					}}>
-					<span className="table-cell-inner">{group.name}</span>
-				</span>
-			})
-			LHS TABLE BODY*/}
+			{/* LHS TABLE BODY */}
 			<div className = "wrapper outer-table-wrapper "
 				style = {{
-					top: headerHeight + 'px',
+					top: columnHeaderHeight + 'px',
 					transform: 'translateZ(1px)',
 					overflow: 'hidden',
+					position: 'absolute'
 				}}>
 				<div className = "wrapper force-layer"
 					ref = "lhsOffsetter"
 					style = {{
 						top: 0,
-						height: (rowCount * geo.rowHeight) + 'px',
+						height: (numRows * geo.rowHeight) + 'px',
 						marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
 						transform: 'translateZ(0) translateY(' + marginTop + 'px)'
 					}}>
-					<CubeRowTHead {...this.props}
-						dimension = {'rows'}
+					<CubeTHead {...this.props}
+						dimension = {'row'}
 						store = {store}
-						groups = {rowHeaderCols} />
-					
+						groups = {rowHeaders} />
 				</div>
 			</div>
 			{/*END LHS TABLE BODY*/}
 
-			{/*LHS HEADER
+			{/*LHS HEADER*/}
 			<TabularTHead
 				ref = "lhsHead"
-				totalWidth = {fixedWidth +  geo.labelWidth + 1}
+				totalWidth = {rowHeaderWidth}
 				leftOffset = {0}
 				side = {'lhs'}
-				hasRowLabel = {true}
-				columns = {view.data.fixedCols}
+				hasRowLabel = {false}
+				columns = {rowHeaders}
 				focused = {focused}
+				height = {columnHeaderHeight}
 				view = {view} />
-			END LHS HEADER*/}
 			{/*LHS OUTER*/}
 			
-
-
-			{/*RHS OUTER
+			{/*RHS OUTER*/}
 			<div className = {"wrapper " + " rhs-h-scroll-outer--" + (focused ? "focused" : "blurred")}
 				style = {{
 					top: 0,
 					bottom: 0,
-					left: (view.data.fixedWidth + geo.labelWidth) + 'px',
-					width:  view.data.floatWidth + geo.colAddWidth + 'px',
+					left: rowHeaderWidth + 'px',
+					width:  bodyWidth + 'px',
 					transform: 'translateZ(1px)',
-					overflow: 'hidden'
+					overflow: 'hidden',
 				}}>
-
+				<div className = "rhs-h-scroll wrapper force-layer"
+					ref = "rhsHorizontalOffsetter"
+					style = {{
+						marginLeft: (-1) + 'px'
+					}}>
+					<div className = "wrapper"
+						style = {{
+							top: 0,
+							height: columnHeaderHeight + 'px',
+							left: 0,
+							right: 0,
+							transform: 'translateZ(2px)',
+							background: 'white'
+						}}>
+						<CubeTHead {...this.props}
+							dimension = {'column'}
+							store = {store}
+							groups = {columnHeaders} />
+					</div>
+					<div className = "wrapper"
+						style = {{
+							left: 0,
+							top: columnHeaderHeight + 'px',
+							width: (bodyWidth) + 'px',
+							bottom: 0,
+							overflow: 'hidden'
+						}}>
+						<CubeTBody
+							{...this.props}
+							verticalOffset = {0}
+							horizontalOffset = {0}/>
+					</div>
+					
+				</div>
 			</div>
-			*/}
-			
 		</div>;
 	}
 });
