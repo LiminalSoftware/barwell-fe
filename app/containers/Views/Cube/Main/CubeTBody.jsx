@@ -82,7 +82,7 @@ var CubeTBody = React.createClass ({
 					column_id: column.column_id,
 					key: 'cell-' + i + '-' + j,
 					style: style,
-					className: 'table-cell',
+					className: 'table-cell ' + (obj ? '' : 'null-cell'),
 					rowHeight: geo.rowHeight,
 				})
 			}

@@ -104,7 +104,7 @@ var createCubeStore = function (view, dimensions) {
         },
 
         isLevelCurrent: function () {
-            return (_isCurrent.rows && _isCurrent.columns)
+            return (_isCurrent.row && _isCurrent.column)
         },
 
         getValue: function (i, j) {
@@ -135,7 +135,7 @@ var createCubeStore = function (view, dimensions) {
             }
 
             if (type === (modelUpperLabel + '_UPDATE') || type === (modelUpperLabel + '_RECEIVEUPDATE')) {
-              var dimensions = _dimensions.rows.concat(_dimensions.columns).filter(_.identity)
+              var dimensions = _dimensions.row.concat(_dimensions.column).filter(_.identity)
               var _this = this
               var update = payload.update
               var selector = payload.selector
@@ -153,10 +153,10 @@ var createCubeStore = function (view, dimensions) {
               });
 
               _.filter(rows, matcher).map(rec => _.extend(rec, update, dirty))
-              _levels.rows = rows
+              _levels.row = row
 
               _.filter(cols, matcher).map(rec => _.extend(rec, update, dirty))
-              _levels.columns = cols
+              _levels.column = cols
 
               _values = {}
               values.forEach(function (val) {
@@ -171,7 +171,7 @@ var createCubeStore = function (view, dimensions) {
             }
 
             if (type === modelUpperLabel + '_CREATE') {
-                var dimensions = _dimensions.rows.concat(_dimensions.columns).filter(_.identity)
+                var dimensions = _dimensions.row.concat(_dimensions.column).filter(_.identity)
                 var val = payload.record
                 var index = payload.index
 
@@ -200,8 +200,8 @@ var createCubeStore = function (view, dimensions) {
             }
 
             if (type === upperLabel + '_REQUESTVALUES') {
-                _startIndex.rows = payload.startIndex.rows
-                _startIndex.columns = payload.startIndex.columns
+                _startIndex.row = payload.startIndex.row
+                _startIndex.column = payload.startIndex.column
             }
 
             if (type === upperLabel + '_RECEIVEVALUES') {

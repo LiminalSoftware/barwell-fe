@@ -326,6 +326,38 @@ var TabularPane = React.createClass ({
 		if (format === 'prettyJSON' || format === 'prettyJSON') return json;
 	},
 
+	getRangeStyle: function (pos, fudge) {
+		var view = this.props.view
+	    var hiddenCols = this.state.hiddenCols
+	    var visibleCols = view.data.visibleCols
+	    var fixedCols = view.data.fixedCols
+	    var numFixed = fixedCols.length
+	    var geo = view.data.geometry
+	    var width = 0
+	    var left = geo.leftGutter + geo.labelWidth + 1
+	    var style = this.props.style || {}
+	    pos = pos || {}
+	    fudge = fudge || {}
+
+		visibleCols.forEach(function (col, idx) {
+	      if (idx >= numFixed && idx < numFixed + hiddenCols) return
+	      if (idx < pos.left)
+	        left += col.width
+	      else if (idx <= (pos.right || pos.left) )
+	        width += col.width
+	    })
+
+	    style.top = (pos.top * geo.rowHeight + (fudge.top || 0)) + 'px'
+	    style.left = (left + (fudge.left || 0)) + 'px'
+	    style.height = (geo.rowHeight * ((pos.bottom || pos.top) - pos.top + 1) + (fudge.height || 0)) + 'px'
+	    style.width = (width + (fudge.width || 0)) + 'px'
+
+	    if (pos.left >= numFixed && (pos.right || pos.left) < numFixed + hiddenCols)
+	      style.display = 'none'
+
+	  	return style
+	},
+
 	putSelection: function (data) {
 		
 	},
@@ -544,12 +576,9 @@ var TabularPane = React.createClass ({
 	},
 
 	onMouseDown: function (e) {
-		var isRight
-		if ("which" in e)  // Gecko (Firefox), WebKit (Safari/Chrome) & Opera
-        	isRight = e.which === 3; 
-    	else if ("button" in e)  // IE, Opera 
-        	isRight = e.button === 2; 
-        if (isRight) {
+		// if right click then dont bother
+		if (("which" in e && e.which === 3) || 
+    		("button" in e && e.button === 2)) {
         	e.preventDefault()
         	return;
         }
@@ -669,6 +698,7 @@ var TabularPane = React.createClass ({
 			_handleEdit: this.editCell,
 			_updatePointer: this.updatePointer,
 			_getRCCoords: this.getRCCoords,
+			_getRangeStyle: this.getRangeStyle,
 
 			hiddenColWidth: this.state.hiddenColWidth,
 			hiddenCols: this.state.hiddenCols,

@@ -135,7 +135,7 @@ var editableInputMixin = {
 			cellStyle.background = tinycolor(hsl).toRgbString()
 		}
 
-		return <span {...this.props} className = {"table-cell " + (this.state.selected ? " table-cell-selected" : "")}>
+		return <span {...this.props} className = {"table-cell " + (this.state.selected ? " table-cell-selected" : "") + this.props.className}>
 			{this.state.editing ?
 			<input
 				ref = "input"

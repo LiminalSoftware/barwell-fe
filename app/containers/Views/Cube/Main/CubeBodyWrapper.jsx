@@ -117,23 +117,10 @@ var CubeBodyWrapper = React.createClass ({
 
 	render: function () {
 		var view = this.props.view
-		var getColumns = (c => view.data.columns['a' + c])
 		var model = this.props.model
 		var store = this.props.store
 		var geo = view.data.geometry
 		var focused = this.props.focused
-
-		var rowHeaders = view.row_aggregates.map(getColumns)
-		var rowHeaderWidth = util.sum(rowHeaders, 'width')
-
-		var columnHeaders = view.column_aggregates.map(getColumns)
-		var columnHeaderHeight = columnHeaders.length * geo.rowHeight
-
-		var numColumns = store.getCount('column')
-		var numRows = store.getCount('row')
-		
-		var bodyWidth = numColumns * geo.columnWidth
-		var adjustedWidth = rowHeaderWidth + bodyWidth
 
 		var marginTop = 0
 		
@@ -142,14 +129,14 @@ var CubeBodyWrapper = React.createClass ({
 			ref="tbodyWrapper"
 			style = {{
 				left: 0,
-				width: (adjustedWidth + 3) + 'px',
+				width: (this.props.adjustedWidth + 3) + 'px',
 				transformStyle: 'preserve-3d'
 			}}>
 
 			{/* LHS TABLE BODY */}
 			<div className = "wrapper outer-table-wrapper "
 				style = {{
-					top: columnHeaderHeight + 'px',
+					top: this.props.columnHeaderHeight + 'px',
 					transform: 'translateZ(1px)',
 					overflow: 'hidden',
 					position: 'absolute'
@@ -158,14 +145,14 @@ var CubeBodyWrapper = React.createClass ({
 					ref = "lhsOffsetter"
 					style = {{
 						top: 0,
-						height: (numRows * geo.rowHeight) + 'px',
+						height: (this.props.numRows * geo.rowHeight) + 'px',
 						marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
 						transform: 'translateZ(0) translateY(' + marginTop + 'px)'
 					}}>
 					<CubeTHead {...this.props}
 						dimension = {'row'}
 						store = {store}
-						groups = {rowHeaders} />
+						groups = {this.props.rowHeaders} />
 				</div>
 			</div>
 			{/*END LHS TABLE BODY*/}
@@ -173,13 +160,13 @@ var CubeBodyWrapper = React.createClass ({
 			{/*LHS HEADER*/}
 			<TabularTHead
 				ref = "lhsHead"
-				totalWidth = {rowHeaderWidth}
+				totalWidth = {this.props.rowHeaderWidth}
 				leftOffset = {0}
 				side = {'lhs'}
 				hasRowLabel = {false}
-				columns = {rowHeaders}
+				columns = {this.props.rowHeaders}
 				focused = {focused}
-				height = {columnHeaderHeight}
+				height = {this.props.columnHeaderHeight}
 				view = {view} />
 			{/*LHS OUTER*/}
 			
@@ -188,8 +175,8 @@ var CubeBodyWrapper = React.createClass ({
 				style = {{
 					top: 0,
 					bottom: 0,
-					left: rowHeaderWidth + 'px',
-					width:  bodyWidth + 'px',
+					left: this.props.rowHeaderWidth + 'px',
+					width:  this.props.bodyWidth + 'px',
 					transform: 'translateZ(1px)',
 					overflow: 'hidden',
 				}}>
@@ -201,7 +188,7 @@ var CubeBodyWrapper = React.createClass ({
 					<div className = "wrapper"
 						style = {{
 							top: 0,
-							height: columnHeaderHeight + 'px',
+							height: this.props.columnHeaderHeight + 'px',
 							left: 0,
 							right: 0,
 							transform: 'translateZ(2px)',
@@ -210,13 +197,13 @@ var CubeBodyWrapper = React.createClass ({
 						<CubeTHead {...this.props}
 							dimension = {'column'}
 							store = {store}
-							groups = {columnHeaders} />
+							groups = {this.props.columnHeaders} />
 					</div>
 					<div className = "wrapper"
 						style = {{
 							left: 0,
-							top: columnHeaderHeight + 'px',
-							width: (bodyWidth) + 'px',
+							top: this.props.columnHeaderHeight + 'px',
+							width: (this.props.bodyWidth) + 'px',
 							bottom: 0,
 							overflow: 'hidden'
 						}}>

@@ -2,6 +2,8 @@ import React from "react"
 import ReactDOM from "react-dom"
 import _ from 'underscore'
 
+import util from '../../../../util/util'
+
 import './style.less'
 
 import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
@@ -20,6 +22,7 @@ import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 import createCubeStore from './CubeStore.jsx'
 import fieldTypes from "../../fields"
 import CubeBodyWrapper from "./CubeBodyWrapper"
+import Cursors from './Cursors'
 
 import TableMixin from '../../TableMixin.jsx'
 
@@ -60,53 +63,6 @@ var CubePane = React.createClass ({
 		this.setState({
 			scrollTop: wrapper.scrollTop,
 			scrollLeft: wrapper.scrollLeft
-		})
-	},
-
-	getNumberCols: function () {
-		return this.store.getCount('columns') - 1
-	},
-
-	getNumberRows: function () {
-		return this.store.getCount('rows') - 1
-	},
-
-	getColumns: function () {
-		var view = this.props.view
-		if (!this.colLevelStore) return []
-		return this.store.getLevels('columns').map(function () {
-			return {width: view.data.columnWidth}
-		})
-	},
-
-	getSelectorStyle: function () {
-		var sel = this.state.selection
-
-		return this.getOverlayStyle({
-			left: sel.left,
-			right: sel.right,
-			top: sel.top,
-			bottom: sel.bottom
-		}, {
-			left: -1,
-			top: -2,
-			height: 0,
-			width: 0
-		})
-	},
-
-	getPointerStyle: function () {
-		var ptr = this.state.pointer
-		return this.getOverlayStyle({
-			left: ptr.left,
-			right: ptr.left,
-			top: ptr.top,
-			bottom: (('bottom' in ptr) ? ptr.bottom : ptr.top)
-		}, {
-			left: 0,
-			top: -1,
-			height: 0,
-			width: -1
 		})
 	},
 
@@ -274,34 +230,161 @@ var CubePane = React.createClass ({
 		})
 	},
 
-	getVStart: function () {
-		var scrollTop = this.state.scrollTop
-		var geo = this.props.view.data.geometry
-		var vStart = scrollTop / this.state.actRowHt - (geo.renderBufferRows - geo.screenRows) / 2
-		return Math.max(0, Math.floor(vStart))
+	onMouseDown: function (e) {
+		// if right click then dont bother
+		if (("which" in e && e.which === 3) || 
+    		("button" in e && e.button === 2)) {
+        	e.preventDefault()
+        	return;
+        }
+
+		if (FocusStore.getFocus() !== 'view')
+			modelActionCreators.setFocus('view')
+		this.updateSelect(this.getRCCoords(e), e.shiftKey)
+		addEventListener('selectstart', util.returnFalse)
+		addEventListener('mousemove', this.onSelectMouseMove)
+		addEventListener('mouseup', this.onMouseUp)
 	},
 
-	getHStart: function () {
-		var scrollLeft = this.state.scrollLeft
-		var geo = this.props.view.data.geometry
-		var hStart = scrollLeft / geo.columnWidth - (geo.renderBufferCols - geo.screenCols) / 2
-		return Math.max(0, Math.floor(hStart))
+	onSelectMouseMove: function (e) {
+		this.updateSelect(this.getRCCoords(e), true)
+	},
+
+	onMouseUp: function (e) {
+		removeEventListener('selectstart', util.returnFalse);
+		removeEventListener('mousemove', this.onSelectMouseMove);
+		removeEventListener('mouseup', this.onMouseUp);
+		document.getElementById("copy-paste-dummy").focus();
+	},
+
+
+	getRCCoords: function (e) {
+		var store = this.store;
+		var wrapper = ReactDOM.findDOMNode(this.refs.wrapper)
+		var view = this.props.view
+		var geo = view.data.geometry
+
+		var numColumns = store.getCount('column');
+		var numRows = store.getCount('row');
+
+		var getColumns = (c => view.data.columns['a' + c]);
+		
+		var columnHeaders = view.column_aggregates.map(getColumns);
+		var columnHeaderHeight = columnHeaders.length * geo.rowHeight;
+
+		var rowHeaders = view.row_aggregates.map(getColumns);
+		var rowHeaderWidth = util.sum(rowHeaders, 'width');
+		
+		var offset = $(wrapper).offset()
+		var y = e.pageY - offset.top
+		var x = e.pageX - offset.left - geo.labelWidth
+		var xx = x
+		var r = Math.floor((y) / geo.rowHeight, 1)
+		var c
+
+		if (x > 0) {
+			c = Math.floor((x - rowHeaderWidth) / geo.rowHeight, 1)
+			c = Math.min(numColumns - 1, c)
+		} 
+		if (y > 0) {
+			r = Math.floor((y - columnHeaderHeight) / geo.columnWidth, 1)
+			r = Math.min(numRows - 1, r)
+		}
+
+		if (r < 0 && c < 0) r = 0
+
+		return {top: r, left: c}
+	},
+
+	getRangeStyle: function (pos, fudge) {
+		var store = this.store;
+		var view = this.props.view;
+	    var geo = view.data.geometry;
+	    
+	    // repetitive, not sure what to do
+	    var numColumns = store.getCount('column');
+		var numRows = store.getCount('row');
+
+		var getColumns = (c => view.data.columns['a' + c]);
+		
+		var columnHeaders = view.column_aggregates.map(getColumns);
+		var columnHeaderHeight = columnHeaders.length * geo.rowHeight;
+
+		var rowHeaders = view.row_aggregates.map(getColumns);
+		var rowHeaderWidth = util.sum(rowHeaders, 'width');
+		
+	    var style = this.props.style || {}
+
+	    pos = pos || {}
+	    fudge = fudge || {}
+	    if (pos.top >= 0) {
+	    	style.top = (columnHeaderHeight + pos.top * geo.rowHeight + (fudge.top || 0)) + 'px'
+	    	style.height = (geo.rowHeight * ((pos.bottom || pos.top) - pos.top + 1) + (fudge.height || 0)) + 'px'
+	    } 
+	    if (pos.left >= 0) {
+	    	style.left = (rowHeaderWidth + pos.left * geo.columnWidth + (fudge.left || 0)) + 'px'
+	    	style.width = (geo.columnWidth + (fudge.width || 0)) + 'px'
+	    }
+	    
+
+	  //   if (pos.left >= 0 && (pos.right || pos.left) < this.state.hOffset)
+	  //     style.display = 'none'
+	 	// if (pos.top >= 0 && (pos.top || pos.bottom) < this.state.vOffset)
+	  //     style.display = 'none'
+
+	  	return style
 	},
 
 	render: function () {
-		var _this = this
-		var model = this.props.model
-		var view = this.props.view
-		var geo = view.data.geometry
-		var scrollLeft = this.state.scrollLeft
-		var scrollTop = this.state.scrollTop
-		var height = this.state.actRowHt
-		var hStart = this.getHStart()
-		var vStart = this.getVStart()
+		var _this = this;
+		var store = this.store;
+		var model = this.props.model;
+		var view = this.props.view;
+		var geo = view.data.geometry;
+		var scrollLeft = this.state.scrollLeft;
+		var scrollTop = this.state.scrollTop;
+		var height = this.state.actRowHt;
+		var childProps = _.clone(this.props);
+		var numColumns = store.getCount('column');
+		var numRows = store.getCount('row');
+		var getColumns = (c => view.data.columns['a' + c]);
+		var rowHeaders = view.row_aggregates.map(getColumns);
+		var columnHeaders = view.column_aggregates.map(getColumns);
+		var rowHeaderWidth = util.sum(rowHeaders, 'width');
+		var bodyWidth = numColumns * geo.columnWidth;
+
+		Object.assign(childProps, {
+			_getRangeStyle: this.getRangeStyle,
+			_handleClick: this.onMouseDown,
+			
+			store: this.store,
+
+			hOffset: this.state.hOffset,
+			vOffset: this.state.vOffset,
+			scrollTop: scrollTop,
+			scrollLeft: scrollLeft,
+
+			rowHeaders: rowHeaders,
+			rowHeaderWidth: util.sum(rowHeaders, 'width'),
+			columnHeaders: columnHeaders,
+			columnHeaderHeight: columnHeaders.length * geo.rowHeight,
+
+			numColumns: numColumns,
+			numRows: numRows,
+
+			rowHeaderWidth: rowHeaderWidth,
+			bodyWidth: bodyWidth,
+			adjustedWidth: rowHeaderWidth + bodyWidth,
+
+			pointer: this.state.pointer,
+			selection: this.state.selection,
+			copyarea: this.state.copyarea
+		});
 
 		return <div className = "model-panes">
 			<div className="view-body-wrapper" ref="wrapper">
-				<CubeBodyWrapper {...this.props} store = {this.store}/>
+				<CubeBodyWrapper {...childProps} store = {this.store}/>
+				<Cursors {...childProps} ref = "cursors"/>
 			</div>
 		</div>
 	}

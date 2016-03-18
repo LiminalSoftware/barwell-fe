@@ -26,6 +26,12 @@ var TableMixin = {
 				left: 0,
 				top: 0
 			}, view.data.pointer),
+			copyarea: ({
+				left: 0,
+				top: 0,
+				right: 0,
+				bottom: 0
+			}, view.data.copyarea),
 			editing: false
 		}
 	},
