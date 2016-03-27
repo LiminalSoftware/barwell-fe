@@ -22,7 +22,9 @@ import configCommitMixin from '../configCommitMixin'
 import dateStyles from './dateStyles'
 
 
-var DateConfig = React.createClass({
+var DateFormatChoice = React.createClass({
+
+	partName: 'DateFormatChoice',
 
 	mixins: [blurOnClickMixin, configCommitMixin],
 
@@ -118,4 +120,4 @@ var DateConfig = React.createClass({
 	}
 })
 
-export default DateConfig
+export default DateFormatChoice

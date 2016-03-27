@@ -12,6 +12,8 @@ import blurOnClickMixin from '../../../../../blurOnClickMixin'
 
 var GroupSortPicker = React.createClass({
 
+	partName: 'GroupSortPicker',
+
 	mixins: [blurOnClickMixin, configCommitMixin],
 
 	getInitialState: function () {

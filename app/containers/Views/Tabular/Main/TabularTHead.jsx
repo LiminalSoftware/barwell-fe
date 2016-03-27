@@ -13,7 +13,7 @@ var TabularTHead = React.createClass ({
 
 	shouldComponentUpdate: function (nextProps) {
 		return (nextProps.leftOffset !== this.props.leftOffset ||
-			nextProps.view !== this.props.view)
+			nextProps.view !== this.props.view || this.props.focused !== nextProps.focused)
 	},
 
 	render: function () {

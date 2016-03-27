@@ -27,7 +27,11 @@ var textField = {
 		mixins: [editableInputMixin, commitMixin, selectableMixin, keyPressMixin],
     	detailIcon: 'icon-expand',
     	validator: _.identity,
-		parser: _.identity
+		parser: function (input) {
+			input = String(input);
+			input = input.replace(/[\r\n]/g, '');
+			return input;
+		}
 	})
 }
 

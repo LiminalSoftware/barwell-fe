@@ -93,7 +93,8 @@ var editableInputMixin = {
 
 	render: function () {
 		var config = this.props.config
-		var prettyValue = this.format ? this.format(this.props.value) : this.props.value
+		var isNull = this.props.isNull
+		var prettyValue = isNull ? '' : this.format ? this.format(this.props.value) : this.props.value
 		var showDetail = this.detailIcon && this.props.selected && !this.state.editing
 		var obj = this.props.object
 		var bg = null
@@ -101,6 +102,7 @@ var editableInputMixin = {
 		var cellStyle = _.clone(defaultCellStyle)
 		var editorIconStyle
 		var conditional = (!config.colorConditionAttr || obj['a' + config.colorConditionAttr])
+		
 
 		if (showDetail) {
 			editorIconStyle = {
@@ -122,7 +124,8 @@ var editableInputMixin = {
 			cellStyle.paddingLeft = '25px'
 		cellStyle.lineHeight = this.props.rowHeight + 'px'
 		
-		if (this.props.selected) bg = "white"
+		if (isNull) bg = null
+		else if (this.props.selected) bg = "white"
 		else if (config.color && conditional) bg = config.color
 		else if (config.colorAttr && conditional) bg = obj['a' + config.colorAttr]
 
@@ -135,7 +138,9 @@ var editableInputMixin = {
 			cellStyle.background = tinycolor(hsl).toRgbString()
 		}
 
-		return <span {...this.props} className = {"table-cell " + (this.state.selected ? " table-cell-selected" : "") + this.props.className}>
+		return <span {...this.props} className = {"table-cell " + (this.props.selected ? 
+				(isNull ? "table-cell-selected-null" : "table-cell-selected") : 
+				(isNull ? "table-cell-null" : "") )}>
 			{this.state.editing ?
 			<input
 				ref = "input"
@@ -148,7 +153,7 @@ var editableInputMixin = {
 				onChange = {this.handleChange} />
 			:
 			<span style = {cellStyle} className = {"table-cell-inner " + 
-				(this.state.selected ? " table-cell-inner-selected" : "") +
+				((this.props.selected && !isNull) ? " table-cell-inner-selected" : "") +
 				(this.props.sorted ? "table-cell-inner-sorted" : "")
 				}
 				onContextMenu = {this._handleContextMenu}

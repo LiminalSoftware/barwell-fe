@@ -11,6 +11,8 @@ import PopDownMenu from '../../../../components/PopDownMenu'
 
 var TextChoice = React.createClass({
 
+  partName: 'TextChoice',
+
   mixins: [blurOnClickMixin, configCommitMixin],
 
   getInitialState: function () {

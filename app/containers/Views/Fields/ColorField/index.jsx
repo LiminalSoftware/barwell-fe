@@ -40,6 +40,7 @@ var ColorElement = React.createClass({
 		var config = this.props.config
 		var value = this.props.value
 		var cellStyle = _.clone(defaultCellStyle)
+		var isNull = this.props.isNull
 		var blockStyle = {
 			right: this.props.selected ? '28px': '5px',
 			background: this.state.value,
@@ -57,9 +58,16 @@ var ColorElement = React.createClass({
 			cellStyle.background = 'white'
 		}
 		
-		return <span {...this.props} onMouseDown = {this.props.handleClick}>
+		return <span {...this.props} 
+				className = {this.props.className + " table-cell " + (isNull ? " table-cell-null " : "")}
+				onMouseDown = {this.props.handleClick}>
 				<span style = {cellStyle} className = "special-cell-inner ">
-					<span style = {blockStyle} className = "color-block"></span>
+					
+					{isNull ? 
+						null :
+						<span style = {blockStyle} className = "color-block"></span>
+					}
+
 				</span>
 				{this.props.selected ?
 					 <span

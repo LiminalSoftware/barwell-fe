@@ -23,6 +23,7 @@
 	
 	background: white;
 	z-index: 7;
+	pointer-events: auto;
 	cursor: crosshair !important;
 }
 
@@ -76,10 +77,14 @@
 	transform: translateZ(3px);
 	.transition(all cubic-bezier(.1,.85,.5,1) 100ms);
 	z-index: 3;
+	cursor: move !important;
+	
 }
 .selection-border {
 	.transition(all cubic-bezier(.1,.85,.5,1) 100ms);
 	z-index: 5;
+	cursor: move !important;
+
 }
 
 .selection-border--blurred {

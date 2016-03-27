@@ -4,21 +4,60 @@
 	position: absolute;
 	bottom: 50px;
 	left: 50px;
-	height: 30px;
-	line-height: 30px;
 	font-style: 15px;
 	font-family: @bodyFont;
 	color: white;
 	border-radius: 3px;
-	z-index: 220;
 	transform: translateZ(1px);
-	text-align: center;
+	z-index: 200;
+	line-height: 40px;
+	height: 40px;
 	.noselect;
 }
 
 .loader-overlay {
-	background: @newgreen1;
+	padding-left: 20px;
+	border: 1px solid @newgreen1;
+	color: @newgreen1;
+	background: white;
 }
+
+.spin {
+	-webkit-animation-name: spin;
+    -webkit-animation-duration: 1000ms;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+    -moz-animation-name: spin;
+    -moz-animation-duration: 1000ms;
+    -moz-animation-iteration-count: infinite;
+    -moz-animation-timing-function: linear;
+    -ms-animation-name: spin;
+    -ms-animation-duration: 1000ms;
+    -ms-animation-iteration-count: infinite;
+    -ms-animation-timing-function: linear;
+
+    animation-name: spin;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+@-moz-keyframes spin {
+    from { -moz-transform: rotate(0deg); }
+    to { -moz-transform: rotate(360deg); }
+}
+@-webkit-keyframes spin {
+    from { -webkit-transform: rotate(0deg); }
+    to { -webkit-transform: rotate(360deg); }
+}
+@keyframes spin {
+    from {transform:rotate(0deg);}
+    to {transform:rotate(360deg);}
+}
+
+
+
+
 
 .notification-overlay {
 	background: @gray2;

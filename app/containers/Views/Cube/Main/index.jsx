@@ -1,6 +1,7 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import _ from 'underscore'
+import $ from 'jquery'
 
 import util from '../../../../util/util'
 
@@ -45,6 +46,7 @@ var CubePane = React.createClass ({
 		FocusStore.addChangeListener(this._onChange)
 		this.store = createCubeStore(this.props.view)
 		this.store.addChangeListener(this._onChange)
+		this._debounceCreateView = _.debounce(this.createView, 500)
 	},
 
 	componentWillUnmount: function () {
@@ -58,6 +60,10 @@ var CubePane = React.createClass ({
 		this.forceUpdate()
 	},
 
+	createView: function (view) {
+		modelActionCreators.createView(view, false, false, true)
+	},
+
 	onScroll: function (event) {
 		var wrapper = ReactDOM.findDOMNode(this.refs.wrapper)
 		this.setState({
@@ -66,115 +72,28 @@ var CubePane = React.createClass ({
 		})
 	},
 
-	getRCCoords: function (event, isDrag) {
-		var tableBody = ReactDOM.findDOMNode(this.refs.tbody)
-		var view = this.props.view
-		var geo = view.data.geometry
-		var columnWidth = geo.columnWidth + geo.widthPadding
-		var offset = $(tableBody).offset()
-		var y = event.pageY - offset.top
-		var x = event.pageX - offset.left
-		var r = Math.floor(y / this.state.actRowHt, 1)
-		var c = Math.floor(x / columnWidth, 1)
-
-		var coords = {top: r, left: c, x: x, y: y}
-		return coords
-	},
-
-	getFieldAt: function (pos) {
-		var tbody = this.refs.tbody
-		var view = this.props.view
-		var rowKey = 'cell-' + row
-		var cellKey
-		var attribute
-
-		if (pos.left >= 0 && pos.top >= 0) {
-			cellKey = rowKey + '-' + col
-			return this.refs.tbody.refs[rowKey].refs[cellKey]
-		} else if (col < 0) {
-			attribute = 'a' + view.row_aggregates[view.row_aggregates.length + left]
-			cellKey = rowKey + '-' + attribute
-			return this.refs.rowhead.refs[cellKey]
-		}
-	},
-
-	editCell: function (event) {
-		var tbody = this.refs.tbody
+	editCell: function (e) {
+		var pos = this.state.pointer;
+		var field = this.refs.cursors.refs.pointerCell;
+		if (!field.handleEdit) return;
+		
 		this.setState({
 			editing: true,
 			copyarea: null
-		})
-		tbody.setState({
-			editing: true
-		})
-		// var field = this.refs.tbody.refs[rowKey].refs[cellKey]
-		this.getFieldAt(this.state.pointer).handleEdit(event);
+		});
+		field.handleEdit(e);
 	},
 
-	updateSelect: function (row, col, shift, direction) {
-		var numCols = this.getNumberCols()
-		var numRows = this.getNumberRows()
-		var sel = this.state.selection
-		var anc = this.state.anchor
-		var ptr = {left: col, top: row}
-		var view = this.props.view
+	getNumberCols: function () {
+		return this.store.getCount('column');
+	},
 
-		if (shift && anc.left >= 0 && anc.top >= 0 && row >= 0 && col >= 0) {
-			col = Math.min(col, numCols)
-			row = Math.min(row, numRows)
-			if (!anc) anc = {left: col, top: row}
-			sel = {
-				left: Math.max(Math.min(anc.left, ptr.left, numCols), 0),
-				right: Math.min(Math.max(anc.left, ptr.left, 0), numCols),
-				top: Math.max(Math.min(anc.top, ptr.top, numRows), 0),
-				bottom: Math.min(Math.max(anc.top, ptr.top, 0), numRows)
-			}
-			ptr.left = col
-			ptr.top = row
-		} else if (ptr.left < 0) {
-			ptr.left = Math.max(-1 * view.row_aggregates.length, ptr.left)
-			// TODO: functionalize this and harmonize rows/cols
-			var attribute = 'a' + view.row_aggregates[view.row_aggregates.length + ptr.left]
-			var row
-			for(; ptr.top >= 0 && ptr.top < numRows; ptr.top += (direction === 'down' ? 1 : -1) ) {
-				row = this.store.getLevel('rows', ptr.top)
-				if (row.spans[attribute] > 0) break;
-			}
-			ptr.bottom = ptr.top + row.spans[attribute] - 1
-			sel = ptr
-			sel.right = numCols
-		} else if (ptr.top < 0) {
-			ptr.top = Math.max(-1 * view.column_aggregates.length, ptr.top)
-			var attribute = 'a' + view.column_aggregates[view.column_aggregates.length + ptr.top]
-			var col
-			for(; ptr.left >= 0 && ptr.right < numCols; ptr.left += (direction === 'right' ? 1 : -1) ) {
-				col = this.store.getLevel('columns', ptr.left)
-				if (col.spans[attribute] > 0) break;
-			}
-			ptr.right = ptr.left + col.spans[attribute] - 1
-			sel = ptr
-			sel.bottom = numRows
-		} else {
-			col = Math.min(col, numCols)
-			row = Math.min(row, numRows)
+	getNumberRows: function () {
+		return this.store.getCount('row');
+	},
 
-			ptr = anc = {
-				left: col,
-				top: row
-			}
-			sel = {
-				left: col,
-				right: col,
-				top: row,
-				bottom: row
-			}
-		}
+	scrollTo: function () {
 
-		this.setState({
-			pointer: ptr,
-			selection: sel,
-			anchor: anc
-		})
 	},
 
 	selectRow: function () {
@@ -213,7 +132,6 @@ var CubePane = React.createClass ({
 	},
 
 	openContextMenu: function (event) {
-
 		event.preventDefault();
 		var rc = this.getRCCoords(event)
 		var sel = this.state.selection
@@ -230,37 +148,9 @@ var CubePane = React.createClass ({
 		})
 	},
 
-	onMouseDown: function (e) {
-		// if right click then dont bother
-		if (("which" in e && e.which === 3) || 
-    		("button" in e && e.button === 2)) {
-        	e.preventDefault()
-        	return;
-        }
-
-		if (FocusStore.getFocus() !== 'view')
-			modelActionCreators.setFocus('view')
-		this.updateSelect(this.getRCCoords(e), e.shiftKey)
-		addEventListener('selectstart', util.returnFalse)
-		addEventListener('mousemove', this.onSelectMouseMove)
-		addEventListener('mouseup', this.onMouseUp)
-	},
-
-	onSelectMouseMove: function (e) {
-		this.updateSelect(this.getRCCoords(e), true)
-	},
-
-	onMouseUp: function (e) {
-		removeEventListener('selectstart', util.returnFalse);
-		removeEventListener('mousemove', this.onSelectMouseMove);
-		removeEventListener('mouseup', this.onMouseUp);
-		document.getElementById("copy-paste-dummy").focus();
-	},
-
-
 	getRCCoords: function (e) {
 		var store = this.store;
-		var wrapper = ReactDOM.findDOMNode(this.refs.wrapper)
+		var wrapper = ReactDOM.findDOMNode(this.refs.wrapper.refs.tbodyWrapper)
 		var view = this.props.view
 		var geo = view.data.geometry
 
@@ -277,22 +167,39 @@ var CubePane = React.createClass ({
 		
 		var offset = $(wrapper).offset()
 		var y = e.pageY - offset.top
-		var x = e.pageX - offset.left - geo.labelWidth
-		var xx = x
-		var r = Math.floor((y) / geo.rowHeight, 1)
+		var x = e.pageX - offset.left
+
+		var left = 0
+		var top = 0
+		
+		var r
 		var c
 
-		if (x > 0) {
-			c = Math.floor((x - rowHeaderWidth) / geo.rowHeight, 1)
+		if (x < rowHeaderWidth) {
+			rowHeaders.some(function (header, idx) {
+				left += header.width
+				if (left < x) return false
+				c = idx - rowHeaders.length
+				return true
+			});
+		} else  { // (x >= rowHeaderWidth)
+			c = Math.floor((x - rowHeaderWidth) / geo.columnWidth, 1)
 			c = Math.min(numColumns - 1, c)
-		} 
-		if (y > 0) {
-			r = Math.floor((y - columnHeaderHeight) / geo.columnWidth, 1)
+		}
+
+		if (y < columnHeaderHeight) {
+			columnHeaders.some(function (header, idx) {
+				top += geo.rowHeight
+				if (top < y) return false
+				r = idx - columnHeaders.length
+				return true
+			});
+		} else { // (y >= columnHeaderHeight)
+			r = Math.floor((y - columnHeaderHeight) / geo.rowHeight, 1)
 			r = Math.min(numRows - 1, r)
 		}
 
 		if (r < 0 && c < 0) r = 0
-
 		return {top: r, left: c}
 	},
 
@@ -301,15 +208,13 @@ var CubePane = React.createClass ({
 		var view = this.props.view;
 	    var geo = view.data.geometry;
 	    
-	    // repetitive, not sure what to do
+	    // this is repetitive, not sure what to do about it though
 	    var numColumns = store.getCount('column');
-		var numRows = store.getCount('row');
-
 		var getColumns = (c => view.data.columns['a' + c]);
-		
 		var columnHeaders = view.column_aggregates.map(getColumns);
 		var columnHeaderHeight = columnHeaders.length * geo.rowHeight;
 
+		var numRows = store.getCount('row');
 		var rowHeaders = view.row_aggregates.map(getColumns);
 		var rowHeaderWidth = util.sum(rowHeaders, 'width');
 		
@@ -317,22 +222,167 @@ var CubePane = React.createClass ({
 
 	    pos = pos || {}
 	    fudge = fudge || {}
+
 	    if (pos.top >= 0) {
 	    	style.top = (columnHeaderHeight + pos.top * geo.rowHeight + (fudge.top || 0)) + 'px'
 	    	style.height = (geo.rowHeight * ((pos.bottom || pos.top) - pos.top + 1) + (fudge.height || 0)) + 'px'
-	    } 
+	    } else {
+	    	var top = 0;
+	    	var height = 0;
+	    	columnHeaders.forEach(function (header, idx) {
+	    		var headerIdx = idx - columnHeaders.length
+				if (pos.top > headerIdx) top += geo.rowHeight
+				if (pos.top <= headerIdx && pos.bottom >= headerIdx) height += geo.rowHeight
+			})
+			style.top = top + (fudge.top || 0) + 'px'
+			style.height = height + (fudge.height || 0) + (Math.max(pos.bottom, 0) * geo.rowHeight) + 'px'
+	    }
+
 	    if (pos.left >= 0) {
 	    	style.left = (rowHeaderWidth + pos.left * geo.columnWidth + (fudge.left || 0)) + 'px'
-	    	style.width = (geo.columnWidth + (fudge.width || 0)) + 'px'
-	    }
-	    
+	    	style.width = (geo.columnWidth * ((pos.right || pos.left) - pos.left + 1) + (fudge.width || 0)) + 'px'
+	    } else  {
+	    	var left = 0;
+	    	var width = 0;
+	    	rowHeaders.forEach(function (header, idx) {
+	    		var headerIdx = idx - rowHeaders.length
+				if (pos.left > headerIdx) left += header.width
+				if (pos.left <= headerIdx && pos.right >= headerIdx) width += header.width
+			})
+			style.left = left + (fudge.left || 0) + 'px'
+			style.width = width + (fudge.width || 0) + (Math.max(pos.right, 0) * geo.columnWidth) + 'px'
+		} 
 
-	  //   if (pos.left >= 0 && (pos.right || pos.left) < this.state.hOffset)
-	  //     style.display = 'none'
-	 	// if (pos.top >= 0 && (pos.top || pos.bottom) < this.state.vOffset)
-	  //     style.display = 'none'
+	  	return style;
+	},
 
-	  	return style
+	updatePointer: function (pos) {
+		var oldPos = this.state.pointer;
+		var view = this.props.view;
+		var numCols = this.getNumberCols();
+		var numRows = this.getNumberRows();
+		var store = this.store
+		
+		var columnHeaders = store.getDimensions('column');
+    	var rowHeaders = store.getDimensions('row');
+		var numColumnHeaders = columnHeaders.length;
+		var numRowHeaders = rowHeaders.length;
+
+		pos.left = Math.max(Math.min(pos.left, numCols), -1 * numRowHeaders);
+		pos.top = Math.max(Math.min(pos.top, numRows), -1 * numColumnHeaders);
+		pos.bottom = pos.bottom || pos.top
+		pos.right = pos.right || pos.left
+
+		if (pos.left !== oldPos.left ||pos.top !== oldPos.top)
+			this.blurPointer();
+		// save the new values to state
+		
+		this.setState({
+			pointer: pos,
+			expanded: false,
+			contextOpen: false
+		});
+		this.scrollTo(pos);
+		
+		// focus the paste area just in case
+		document.getElementById("copy-paste-dummy").focus()
+
+		// commit the pointer position to the view object, but debounce
+		view.data.pointer = pos
+
+		this._debounceCreateView(view, false, false, true)
+	},
+
+	updateSelect: function (pos, shift) {
+		var sel = this.state.selection
+		var ptr = this.state.pointer
+		var view = this.props.view
+		var store = this.store
+
+		var numCols = this.getNumberCols()
+		var numRows = this.getNumberRows()
+		var columnHeaders = view.column_aggregates;
+    	var rowHeaders = view.row_aggregates;
+		var numColumnHeaders = columnHeaders.length;
+		var numRowHeaders = rowHeaders.length;
+
+		if (pos.left < 0) {
+			var top = pos.top;
+			var bottom = pos.top;
+			pos.bottom = pos.top;
+
+			var sortSpec = rowHeaders.slice(0, pos.left + numRowHeaders + 1).map(function(k) {
+				return {attribute_id: k}
+			});
+			
+			while (top > 0 && util.compare(
+				store.getLevel('row', top - 1),
+				store.getLevel('row', pos.top),
+				sortSpec) === 0) top--;
+			while (bottom < numRows - 1 && util.compare (
+				store.getLevel('row', bottom + 1), 
+				store.getLevel('row', pos.bottom), 
+				sortSpec) === 0) bottom++;
+			pos.top = top
+			pos.bottom = bottom
+			pos.right = pos.left
+			sel = {
+				left: Math.max(Math.min(ptr.left, pos.left, numCols), -1 * numRowHeaders),
+				right: numCols,
+				top: Math.max(Math.min(pos.top, numRows), -1 * numColumnHeaders),
+				bottom: pos.bottom
+			}
+			this.updatePointer(pos);
+		} else if (pos.top < 0) {
+			var left = pos.left;
+			var right = pos.left;
+			pos.right = pos.left;
+
+			var sortSpec = columnHeaders.slice(0, pos.top + numColumnHeaders + 1).map(function(k) {
+				return {attribute_id: k}
+			});
+			
+			while (left > 0 && util.compare(
+				store.getLevel('column', left - 1),
+				store.getLevel('column', pos.left),
+				sortSpec) === 0) left--;
+			while (right < numCols - 1 && util.compare (
+				store.getLevel('column', right + 1), 
+				store.getLevel('column', pos.right), 
+				sortSpec) === 0) right++;
+			pos.left = left
+			pos.right = right
+			pos.bottom = pos.top
+			sel = {
+				top: Math.max(Math.min(ptr.top, pos.top, numRows), -1 * numColumnHeaders),
+				bottom: numRows,
+				left: Math.max(Math.min(pos.left, numCols), -1 * numRowHeaders),
+				right: pos.right
+			}
+			this.updatePointer(pos);
+		} else if (shift) {
+			this.scrollTo(pos)
+			sel = {
+				left: Math.max(Math.min(ptr.left, pos.left, numCols), -1 * numRowHeaders),
+				right: Math.min(Math.max(ptr.left, pos.left, 0), numCols),
+				top: Math.max(Math.min(ptr.top, pos.top, numRows), -1 * numColumnHeaders),
+				bottom: Math.min(Math.max(ptr.top, pos.top, 0), numRows)
+			}
+		} else {
+			ptr = pos
+			sel = {
+				left: Math.max(Math.min(pos.left, numCols), -1 * numRowHeaders),
+				right: Math.max(Math.min(pos.left, numCols), -1 * numRowHeaders),
+				top: Math.max(Math.min(pos.top, numRows), -1 * numColumnHeaders),
+				bottom: Math.max(Math.min(pos.top, numRows), -1 * numColumnHeaders)
+			}
+			this.updatePointer(ptr)
+		}
+		
+		this.setState({
+			selection: sel,
+			contextOpen: false
+		})
 	},
 
 	render: function () {
@@ -352,10 +402,21 @@ var CubePane = React.createClass ({
 		var columnHeaders = view.column_aggregates.map(getColumns);
 		var rowHeaderWidth = util.sum(rowHeaders, 'width');
 		var bodyWidth = numColumns * geo.columnWidth;
+		var focused = (FocusStore.getFocus(0) == 'view')
 
 		Object.assign(childProps, {
 			_getRangeStyle: this.getRangeStyle,
 			_handleClick: this.onMouseDown,
+			_handleBlur: this.handleBlur,
+			_handlePaste: this.pasteSelection,
+			_copySelection: this.copySelection,
+			_addRecord: this.addRecord,
+			_deleteRecords: this.deleteRecords,
+			_insertRecord: this.insertRecord,
+			_handleContextMenu: this.showContext,
+			_hideContextMenu: this.hideContext,
+			_handleWheel: this.handleMouseWheel,
+			_handleEdit: this.editCell,
 			
 			store: this.store,
 
@@ -376,14 +437,16 @@ var CubePane = React.createClass ({
 			bodyWidth: bodyWidth,
 			adjustedWidth: rowHeaderWidth + bodyWidth,
 
+			focused: focused,
+
 			pointer: this.state.pointer,
 			selection: this.state.selection,
 			copyarea: this.state.copyarea
 		});
 
 		return <div className = "model-panes">
-			<div className="view-body-wrapper" ref="wrapper">
-				<CubeBodyWrapper {...childProps} store = {this.store}/>
+			<div className="view-body-wrapper">
+				<CubeBodyWrapper {...childProps} store = {this.store} ref = "wrapper"/>
 				<Cursors {...childProps} ref = "cursors"/>
 			</div>
 		</div>

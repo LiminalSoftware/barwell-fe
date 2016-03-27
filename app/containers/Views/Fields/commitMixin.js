@@ -14,11 +14,14 @@ var commitMixin = {
 		var selector = this.props.selector
 		var patch = {}
 
+		if (this.parser) value = this.parser(value)
 		value = this.validator(value)
 		this.setState({value: value})
 		patch[column_id] = value
 
-		if (selector) modelActionCreators.patchRecords(model, patch, selector)
+		if (this.props.isNull) modelActionCreators.insertRecord(model, _.extend(patch, selector, 0))
+		else if (selector) modelActionCreators.patchRecords(model, patch, selector)
+		
 		if (this.revert) this.revert();
 	},
 

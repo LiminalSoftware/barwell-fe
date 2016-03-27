@@ -21,6 +21,13 @@ var ColumnMenuSection = React.createClass({
 			columns: this.props.columns
 		}
 	},
+
+	blurChildren: function () {
+		var _this = this
+		this.state.columns.forEach(function (column) {
+			_this.refs['detail' + column.column_id].blurSubMenus();
+		});
+	},
 	
 	componentWillReceiveProps: function (nextProps) {
 		this.setState({columns: nextProps.columns})
@@ -141,6 +148,7 @@ var ColumnMenuSection = React.createClass({
 					return <ColumnDetail
 					_startDrag = {_this.handleDragStart}
 					key = {"detail-" + col.column_id}
+					ref = {"detail" + col.column_id}
 					config = {col}
 					open = {true}
 					editing = {editing}

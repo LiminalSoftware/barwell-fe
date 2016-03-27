@@ -54,12 +54,13 @@ var ColumnDetail = React.createClass({
 	},
 
 	blurSubMenus: function () {
-		var i = 0;
-		while (true) {
-			var el = this.refs['config-part-' + i]
-			if (!el) break;
-			el.setState({open: false})
-		}
+		var _this = this;
+		var config = this.props.config
+		var fieldType = fieldTypes[config.type] || {}
+		fieldType.configParts.forEach(function (el) {
+			// console.log('el.partName:' + el.partName)
+			_this.refs[el.prototype.partName].handleBlur();
+		})
 	},
 
 	render: function() {
@@ -107,7 +108,9 @@ var ColumnDetail = React.createClass({
 					{
 						(fieldType.configParts || []).concat(_this.props.viewConfigParts || []).map(function (part, idx) {
 						return React.createElement(part, {
-							key: 'config-part-' + idx,
+							_blurSiblings: _this.blurSubMenus,
+							key: part.prototype.partName,
+							ref: part.prototype.partName,
 							view: view,
 							model: model,
 							config: config,

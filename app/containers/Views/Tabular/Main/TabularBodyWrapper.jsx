@@ -169,12 +169,12 @@ var TabularBodyWrapper = React.createClass ({
 			}}>
 
 			{
-				this.state.fetching ? 
+				this.state.fetching ?
 				<div 
 					className = "loader-overlay"
-					style = {{width: 250 + 'px'}}>
-					<div className="three-quarters-loader three-quarters-loader--green"></div>
-					Loading...
+					style = {{width: 250 + 'px', marginBottom: '-3px'}}>
+					<div style = {{display: 'inline-block'}} className="icon icon-sync spin"/>
+					<span>Loading...</span>
 				</div>
 				: null
 			}

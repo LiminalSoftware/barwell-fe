@@ -20,14 +20,14 @@ import ViewSelector from '../../../ViewSelector'
 import ColumnMenu from './ColumnMenu/index'
 import SortMenu from './SortMenu/index'
 import FilterMenu from './FilterMenu'
+import sections from './ColumnMenu/sections'
 
 var TabularViewInlineConfig = React.createClass({
 
 	mixins: [PureRenderMixin],
 
 	_onChange: function () {
-		var view = ViewStore.get(this.props.view.view_id || this.props.view.cid)
-		this.setState(view.data)
+		
 	},
 
 	getInitialState: function () {
@@ -36,20 +36,31 @@ var TabularViewInlineConfig = React.createClass({
 	},
 
 	focus: function () {
-		modelActionCreators.setFocus('view-config')
+		modelActionCreators.setFocus('view-config', this.props.focusLevel);
+	},
+
+	blurSiblings: function () {
+		this.refs.viewSelector.handleBlur()
+		this.refs.columnMenu.handleBlur()
+		this.refs.sortMenu.handleBlur()
 	},
 
 	render: function() {
 		var _this = this
 		var view = this.props.view
 		var model = this.props.model
-		var data = this.state
 
-    return <div className = "view-config" onClick={this.focus}>
-			<ViewSelector view = {view} model = {model}/>
-			<ColumnMenu view = {view} model = {model}/>
-			<SortMenu view = {view} model = {model}/>
-			<FilterMenu view = {view} model = {model}/>
+		var childProps = {
+			view: this.props.view,
+			model: this.props.model,
+			_blurSiblings: this.blurSiblings
+		}
+
+    	return <div className = "view-config" onClick={this.focus}>
+			<ViewSelector {...childProps} ref="viewSelector"/>
+			<ColumnMenu {...childProps} ref="columnMenu" sections = {sections}/>
+			<SortMenu {...childProps} ref="sortMenu"/>
+			<FilterMenu {...childProps} ref="filterMenu"/>
 		</div>
 	}
 });

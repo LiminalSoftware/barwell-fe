@@ -7,18 +7,20 @@ import modelActionCreators from "./actions/modelActionCreators.jsx"
 
 var BlurOnClickMixin = {
 
-  handleBlur: function (e) {
+  handleBlur: function () {
     this.setState({
       open: false,
       editing: false,
       context: false
-    })
+    });
   },
 
   handleOpen: function (e) {
+    // this.clickTrap();
+    if (this.props._blurSiblings) this.props._blurSiblings();
     this.setState({open: true})
     modelActionCreators.setFocus('view-config')
-    e.preventDefault()
+    
   },
 
   componentWillUpdate: function (nextProps, nextState) {
@@ -48,7 +50,11 @@ var BlurOnClickMixin = {
     if (e.keyCode === constant.keycodes.ENTER && this.handleCommit) this.handleCommit()
   },
 
-  clickTrap: util.clickTrap
+  clickTrap: function (e) {
+    e.stopPropagation()
+    e.nativeEvent.stopImmediatePropagation();
+    if (this.props._blurChildren) this.props._blurChildren();
+  }
 
 }
 

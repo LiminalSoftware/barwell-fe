@@ -10,6 +10,8 @@ import blurOnClickMixin from '../../../../blurOnClickMixin'
 
 var ColorChoice = React.createClass({
 
+  partName: 'ColorChoice',
+
   mixins: [blurOnClickMixin, configCommitMixin],
 
   getInitialState: function () {

@@ -19,7 +19,7 @@ var Overlay = React.createClass ({
     var classes = this.props.className || ""
     var pos = this.props.position
     var view = this.props.view
-    var style = this.props._getRangeStyle(pos, this.props.fudge)
+    var style = this.props._getRangeStyle(pos, this.props.fudge, this.props.showHiddenHack)
 
     if (pos && (pos.left === pos.right) && (pos.top === pos.bottom))
       classes += ' singleton';

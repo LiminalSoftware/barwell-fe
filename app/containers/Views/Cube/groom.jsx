@@ -15,21 +15,34 @@ var groomView = function (view) {
 	var columnList = data.columnList = util.enumerate(_.values(columns), util.sortByOrder)
 	var fields = AttributeStore.query({model_id: view.model_id});
 	var relations = RelationStore.query({model_id: view.model_id});
-	
+	var ptr = data.pointer
+
 	view.row_aggregates = columnList.filter(c => c.groupByRow).map(c => c.attribute_id);
 	view.column_aggregates = columnList.filter(c => c.groupByColumn).map(c => c.attribute_id);
 	view.value = _.first(columnList.filter(c => c.inTableBody).map(c => c.attribute_id))
 	// view.aggregator = view.aggregator ? view.aggregator.toLowerCase() : null;
 
-	data.sortSpec = view.row_aggregates.concat(view.column_aggregates).map(function (d) {
+	data.rowSortSpec = view.row_aggregates.map(function (d) {
         return {'attribute_id': d, 'descending': columns['a' + d].descending}
-    })
-	
+    });
+    data.columnSortSpec = view.column_aggregates.map(function (d) {
+        return {'attribute_id': d, 'descending': columns['a' + d].descending}
+    });
+	if(!(data.geometry instanceof Object)) data.geometry = {}
 	data.geometry = _.extend({
 		labelWidth: 30,
 		rowHeight: Math.min(Math.max(data.geometry.rowHeight || 25, 20), 80),
 		columnWidth: 100
 	}, {})
+	
+	if (ptr.left < 0) data.currentColumn = 
+		columns['a' + view.row_aggregates[view.row_aggregates.length + ptr.left]];
+	else if (ptr.top < 0) data.currentColumn = 
+		columns['a' + view.column_aggregates[view.column_aggregates.length + ptr.top]];
+	else data.currentColumn = columns['a' + view.value];
+
+	view.data = data
+
 	return view
 }
 

@@ -8,7 +8,9 @@ import PopDownMenu from '../../../../components/PopDownMenu'
 import configCommitMixin from '../configCommitMixin'
 import blurOnClickMixin from '../../../../blurOnClickMixin'
 
-var LabelChoice = React.createClass({
+var BubbleColorChoice = React.createClass({
+
+  partName: 'BubbleColorChoice',
 
   mixins: [blurOnClickMixin, configCommitMixin],
 
@@ -60,4 +62,4 @@ var LabelChoice = React.createClass({
   }
 })
 
-export default LabelChoice
+export default BubbleColorChoice

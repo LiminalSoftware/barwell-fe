@@ -12,6 +12,8 @@ import blurOnClickMixin from '../../../../../blurOnClickMixin'
 
 var AggregatePicker = React.createClass({
 
+	partName: 'AggregatePicker',
+
 	mixins: [blurOnClickMixin, configCommitMixin],
 
 	getInitialState: function () {
@@ -21,20 +23,62 @@ var AggregatePicker = React.createClass({
 		}
 	},
 
+	handleChooseAggregate: function (agg) {
+		var config = this.props.config;
+		this.commitChanges({aggregator: agg});
+	},
+
+	aggregates: [
+		{
+			label: 'Sum',
+			id: 'sum'
+		},
+		{
+			label: 'Count',
+			id: 'count'
+		},
+		{
+			label: 'Max',
+			id: 'max'
+		},
+		{
+			label: 'Min',
+			id: 'min'
+		},
+		{
+			label: 'Average',
+			id: 'average'
+		},
+		{
+			label: 'Median',
+			id: 'median'
+		},
+		{
+			label: 'Standard deviation',
+			id: 'stddev'
+		}
+	],
+
 	render: function() {
 		var _this = this
+		var config = this.props.config;
+		var selected = this.props.config.aggregator;
 
 		return <span className={"pop-down clickable icon icon-sigma"}
         	onMouseDown = {this.handleOpen}>
 	        {
 	        this.state.open ?
 				<PopDownMenu>
-					<li className = "selectable">Sum</li>
-					<li className = "selectable">Count</li>
-					<li className = "selectable">Max</li>
-					<li className = "selectable">Min</li>
-					<li className = "selectable">Average</li>
-					<li className = "selectable">Median</li>
+					<li className = "bottom-divider">Aggregator</li>
+					{
+					this.aggregates.map(function (agg) {
+						return <li className = "selectable" key = {agg.id} 
+						onClick = {_this.handleChooseAggregate.bind(_this, agg.id)}>
+						<span className = {"icon icon-chevron-right " + (agg.id === selected ? " green" : " hovershow")}/>
+						{agg.label}
+						</li>
+					})
+					}
 				</PopDownMenu>
 				: null
 			}

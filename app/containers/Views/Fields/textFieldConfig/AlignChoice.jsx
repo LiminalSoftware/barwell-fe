@@ -7,6 +7,8 @@ import blurOnClickMixin from '../../../../blurOnClickMixin';
 
 var AlignChoice = React.createClass({
 
+  partName: 'AlignChoice',
+
   mixins: [blurOnClickMixin, configCommitMixin],
 
   getInitialState: function () {

@@ -137,7 +137,7 @@ var TabularPane = React.createClass ({
 	},
 
 	_onChange: function () {
-		var focused = (FocusStore.getFocus() == 'view')
+		var focused = (FocusStore.getFocus(0) == 'view')
 		if (!focused) this.blurPointer()
 		this.setState({focused: focused})
 		this.forceUpdate()
@@ -326,7 +326,7 @@ var TabularPane = React.createClass ({
 		if (format === 'prettyJSON' || format === 'prettyJSON') return json;
 	},
 
-	getRangeStyle: function (pos, fudge) {
+	getRangeStyle: function (pos, fudge, showHiddenHack) {
 		var view = this.props.view
 	    var hiddenCols = this.state.hiddenCols
 	    var visibleCols = view.data.visibleCols
@@ -352,7 +352,7 @@ var TabularPane = React.createClass ({
 	    style.height = (geo.rowHeight * ((pos.bottom || pos.top) - pos.top + 1) + (fudge.height || 0)) + 'px'
 	    style.width = (width + (fudge.width || 0)) + 'px'
 
-	    if (pos.left >= numFixed && (pos.right || pos.left) < numFixed + hiddenCols)
+	    if (!showHiddenHack && pos.left >= numFixed && (pos.right || pos.left) < numFixed + hiddenCols)
 	      style.display = 'none'
 
 	  	return style
@@ -391,155 +391,33 @@ var TabularPane = React.createClass ({
 		}
 	},
 
-	toggleExpand: function () {
-		this.setState({expanded: !this.state.expanded})
-	},
-
-	showContext: function (e) {
-		var pos = this.getRCCoords(e)
-		var sel = this.state.selection
-		if (pos.left >= sel.left && pos.left <= sel.right &&
-			pos.top >= sel.top && pos.top <= sel.bottom) this.updatePointer(pos)
-		else this.updateSelect(pos, false)
-		this.setState({
-			contextOpen: true
-		})
-		e.preventDefault()
-	},
-
-	hideContext: function (e) {
-		this.setState({
-			contextOpen: false
-		})
-	},
-
-	handleMouseWheel: function (e) {
-		this.refs.verticalScrollBar.handleMouseWheel(e)
-		this.refs.horizontalScrollBar.handleMouseWheel(e)
-	},
-
-	move: function (direction, shift) {
-		var sel = _.clone(this.state.selection)
-		var ptr = _.clone(this.state.pointer)
-		var numCols = this.props.view.data.visibleCols.length - 1
-		var numRows = this.getNumberRows()
-		var singleCell = (sel.left === sel.right && sel.top === sel.bottom)
-		var outline = singleCell ? {left: 0, right: numCols, top: 0, bottom: numRows} : sel ;
-
-		// Tab ----------------------
-		if (direction === 'TAB') {
-			var lilMod = (outline.right - outline.left + 1)
-			var bigMod = lilMod * (outline.bottom - outline.top + 1)
-			var index = (ptr.top - outline.top) * lilMod + ptr.left - outline.left
-			index += (shift ? -1 : 1)
-			if (index < 0) index += bigMod
-			index = index % bigMod
-			ptr.left = (index % lilMod) + outline.left
-			ptr.top = Math.floor(index / lilMod) + outline.top
-			if (singleCell) this.setState({selection: {left: ptr.left, right: ptr.left,
-				top: ptr.top, bottom: ptr.top}})
-			this.updatePointer(ptr)
-		}
-		// Enter ---------------------
-		else if (direction === 'ENTER') {
-			var lilMod = (outline.bottom - outline.top + 1)
-			var bigMod = lilMod * (outline.right - outline.left + 1)
-			var index = (ptr.left - outline.left) * lilMod + ptr.top - outline.top
-			index += (shift ? -1 : 1)
-			if (index < 0) index += bigMod
-			index = index % bigMod
-			ptr.left = Math.floor(index / lilMod) + outline.left
-			ptr.top = (index % lilMod) + outline.top
-			if (singleCell) this.setState({selection: {left: ptr.left, right: ptr.left,
-				top: ptr.top, bottom: ptr.top}})
-			this.updatePointer(ptr)
-		}
-		// Right ------------------------
-		else if (direction === 'RIGHT' && shift) {
-			if (sel.left === ptr.left && sel.right < numCols) sel.right += 1
-			else if (sel.left < ptr.left) sel.left += 1
-			this.setState({selection: sel})
-		} else if (direction === 'RIGHT') {
-			if (ptr.left < numCols) ptr.left = (ptr.left + 1)
-			this.updateSelect(ptr, shift)
-		}
-		// Left --------------------------
-		else if (direction === 'LEFT' && shift) {
-			if (sel.right > ptr.left) sel.right -= 1
-			else if (sel.left > 0) sel.left -= 1
-			this.setState({selection: sel})
-		} else if (direction === 'LEFT') {
-			if (ptr.left > 0) ptr.left -= 1
-			this.updateSelect(ptr, false)
-		}
-
-		// down ---------------------------
-		else if (direction === 'DOWN' && shift) {
-			if (sel.top < ptr.top) sel.top += 1
-			else if (sel.bottom < numRows) sel.bottom += 1
-			this.setState({selection: sel})
-		} else if (direction === 'DOWN') {
-			if (ptr.top < numRows) ptr.top = (ptr.top + 1)
-			this.updateSelect(ptr, shift)
-		}
-		// up
-		else if (direction === 'UP' && shift) {
-			if (sel.bottom > ptr.top) sel.bottom -= 1
-			else if (sel.top > 0) sel.top -= 1
-			this.setState({selection: sel})
-		} else if (direction === 'UP') {
-			if (ptr.top > 0) ptr.top -= 1
-			this.updateSelect(ptr, false)
-		}
-	},
-
 	updatePointer: function (pos) {
 		var oldPos = this.state.pointer
 		var view = this.props.view
 		var numCols = this.getNumberCols()
 		var numRows = this.getNumberRows()
 		
-		
-
 		pos.left = Math.max(Math.min(pos.left, numCols), 0)
 		pos.top = Math.max(Math.min(pos.top, numRows), 0)
 		
 		if (pos.left !== oldPos.left ||pos.top !== oldPos.top)
 			this.blurPointer()
 		// save the new values to state
+		
 		this.setState({
 			pointer: pos,
 			expanded: false,
 			contextOpen: false
 		})
-
+		
 		this.scrollTo(pos)
-
+		
 		// focus the paste area just in case
 		document.getElementById("copy-paste-dummy").focus()
 
 		// commit the pointer position to the view object, but debounce
 		view.data.pointer = pos
 		this._debounceCreateView(view, false, false, true)
-	},
-
-	blurPointer: function () {
-		var current = this.refs.cursors.refs.pointerCell
-		if (current) {
-			if (current.commitChanges) current.commitChanges()
-		}
-	},
-
-	scrollTo: function (pos) {
-		var rowOffset = this.state.rowOffset
-		var view = this.props.view
-		var geo = view.data.geometry
-		var visibleRows = this.state.visibleRows
-
-		if (pos.top < rowOffset) 
-			this.refs.verticalScrollBar.scroll(pos.top * geo.rowHeight)
-		if (pos.top > (rowOffset + visibleRows - 1)) 
-			this.refs.verticalScrollBar.scroll((pos.top - visibleRows) * geo.rowHeight)
 	},
 
 	updateSelect: function (pos, shift) {
@@ -549,15 +427,19 @@ var TabularPane = React.createClass ({
 		var numCols = this.getNumberCols()
 		var numRows = this.getNumberRows()
 
+
+		// console.log('b pos: ' + JSON.stringify(pos))
+		// console.log('b pointer: ' + JSON.stringify(this.state.pointer))
+		// console.log('b selection: ' + JSON.stringify(this.state.selection))
+
 		if (shift) {
 			this.scrollTo(pos)
 			sel = {
-				left: Math.min(ptr.left, pos.left, numCols),
-				right: Math.max(ptr.left, pos.left, pos.right || 0, 0),
-				top: Math.min(ptr.top, pos.top, pos.bottom || numRows, numRows),
-				bottom: Math.max(ptr.top, pos.top, 0)
+				left: Math.max(Math.min(ptr.left, pos.left, numCols), 0),
+				right: Math.min(Math.max(ptr.left, pos.left, 0), numCols),
+				top: Math.max(Math.min(ptr.top, pos.top, numRows), 0),
+				bottom: Math.min(Math.max(ptr.top, pos.top, 0), numRows)
 			}
-			
 		} else {
 			ptr = pos
 			sel = {
@@ -574,32 +456,18 @@ var TabularPane = React.createClass ({
 			contextOpen: false
 		})
 	},
+	
 
-	onMouseDown: function (e) {
-		// if right click then dont bother
-		if (("which" in e && e.which === 3) || 
-    		("button" in e && e.button === 2)) {
-        	e.preventDefault()
-        	return;
-        }
+	scrollTo: function (pos) {
+		var rowOffset = this.state.rowOffset
+		var view = this.props.view
+		var geo = view.data.geometry
+		var visibleRows = this.state.visibleRows
 
-		if (FocusStore.getFocus() !== 'view')
-			modelActionCreators.setFocus('view')
-		this.updateSelect(this.getRCCoords(e), e.shiftKey)
-		addEventListener('selectstart', util.returnFalse)
-		addEventListener('mousemove', this.onSelectMouseMove)
-		addEventListener('mouseup', this.onMouseUp)
-	},
-
-	onSelectMouseMove: function (e) {
-		this.updateSelect(this.getRCCoords(e), true)
-	},
-
-	onMouseUp: function (e) {
-		removeEventListener('selectstart', util.returnFalse);
-		removeEventListener('mousemove', this.onSelectMouseMove);
-		removeEventListener('mouseup', this.onMouseUp);
-		document.getElementById("copy-paste-dummy").focus();
+		if (pos.top < rowOffset) 
+			this.refs.verticalScrollBar.scroll(pos.top * geo.rowHeight)
+		if (pos.top > (rowOffset + visibleRows - 1)) 
+			this.refs.verticalScrollBar.scroll((pos.top - visibleRows) * geo.rowHeight)
 	},
 
 	setHorizontalScrollOffset: function (hOffset) {

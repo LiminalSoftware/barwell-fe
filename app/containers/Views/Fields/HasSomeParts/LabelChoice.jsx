@@ -10,6 +10,8 @@ import blurOnClickMixin from '../../../../blurOnClickMixin'
 
 var LabelChoice = React.createClass({
 
+  partName: 'LabelChoice',
+
   mixins: [blurOnClickMixin, configCommitMixin],
 
   getInitialState: function () {

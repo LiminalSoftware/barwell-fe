@@ -213,9 +213,8 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	.menu-item {
 		color: @headerFontColor;
 	}
+
 }
-
-
 
 .model-views-menu-inner {
 	display: flex;
@@ -226,6 +225,7 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	margin: 0 !important;
 	border: 1px solid @headerBorderColor;
 	overflow: visible;
+
 }
 
 .dropdown {
@@ -316,6 +316,10 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 		min-height: 30px;
 		line-height: 30px;
 		position: relative;
+
+		&.strike-through {
+			text-decoration: line-through;
+		}
 
 		&.ellipsis {
 			.ellipsis;

@@ -196,6 +196,7 @@ var Cursors = React.createClass ({
             {...this.props}
             className = " jagged-edge "
             ref = "jaggedEdge"
+            showHiddenHack = {true}
             position = {{
               left: view.data.fixedCols.length,
               width: '10px',

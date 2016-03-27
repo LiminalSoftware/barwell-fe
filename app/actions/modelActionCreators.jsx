@@ -58,32 +58,32 @@ var modelActions = {
 	},
 
 	deleteRecord: function (model, selector) {
-		var model_id = model.model_id
-		var message = {}
+		var model_id = model.model_id;
+		var message = {};
 		var url = BASE_URL + '/m' + model.model_id;
 		if (!selector instanceof Object) throw new Error ('Delete without qualifier is not permitted')
 		else url += '?' + _.map(selector, function (value, key) {
 			return key + '=eq.' + value;
-		}).join('&')
+		}).join('&');
 
-		message.actionType = 'M' + model.model_id + '_DESTROY'
-		message.selector = selector
-		MetasheetDispatcher.dispatch(message)
+		message.actionType = 'M' + model.model_id + '_DESTROY';
+		message.selector = selector;
+		MetasheetDispatcher.dispatch(message);
 
 		webUtils.ajax('DELETE', url, null, {"Prefer": 'return=representation'}).then(function (results) {
 		})
 	},
 
 	patchRecords: function (model, patch, selector, extras) {
-		var model_id = model.model_id
-		var message = {}
-		var rx = /^a\d+$/i
+		var model_id = model.model_id;
+		var message = {};
+		var rx = /^a\d+$/i;
 
-		message.actionType = 'M' + model.model_id + '_UPDATE'
-		message.update = _.clone(patch)
-		message.selector = selector
-		message = _.extend(message, extras)
-		MetasheetDispatcher.dispatch(message)
+		message.actionType = 'M' + model.model_id + '_UPDATE';
+		message.update = _.clone(patch);
+		message.selector = selector;
+		message = _.extend(message, extras);
+		MetasheetDispatcher.dispatch(message);
 
 		var url = BASE_URL + '/m' + model.model_id;
 		if (!selector instanceof Object) throw new Error ('Patch without qualifier is not permitted')
@@ -233,6 +233,7 @@ var modelActions = {
 			message.numberLevels = parseInt(rangeParts[2])
 
 			message.dimension = dimension
+			message.aggregates = aggregates
 			message.levels = results.data
 			message.actionType = ('V' + view_id + '_RECEIVELEVELS').toUpperCase()
 
@@ -245,29 +246,32 @@ var modelActions = {
 		var limit = 1000
 		var view_id = view.view_id
 		var url = BASE_URL + '/v' + view_id
-		var sort = 'order=' + view.data.sortSpec.map(function(s) {
+		var sortSpec = view.data.rowSortSpec.concat(view.data.columnSortSpec);
+		var sort = 'order=' + sortSpec.map(function(s) {
 			var column = view.data.columns['a' + s.attribute_id]
 			return 'a' + column.attribute_id + (column.descending ? '.desc' : '.asc')
-		}).join(',')
-		var filter = []
+		}).join(',');
+		
+		var filter = [];
 		var makeFilterStr = function (agg, dimension, pos, invert) {
 			var obj = store.getLevel(dimension, pos) || {}
 			var val = obj['a' + agg]
 			var dir = (view.data.columns['a' + agg].descending)
 			if (invert) dir = !dir
-			if (val) filter.push(
+			if (val !== null) filter.push(
 				'a' + agg + '=' + (dir ? 'lte.' : 'gte.')  + val
-			)
+			);
 		}
 		
 		// the current filter only uses the highest-level aggregator
 		// going deeper would require "or" conditions in the request or multiple requests
+		if (view.row_aggregates.length) {
+			makeFilterStr(view.row_aggregates[0], 'row', vOffset, false)
+			makeFilterStr(view.row_aggregates[0], 'row', vOffset + vLimit, true)	
+		}
 		if (view.column_aggregates.length) {
 			makeFilterStr(view.column_aggregates[0], 'column', hOffset, false)
 			makeFilterStr(view.column_aggregates[0], 'column', hOffset + hLimit, true)
-		} if (view.row_aggregates.length) {
-			makeFilterStr(view.row_aggregates[0], 'row', vOffset, false)
-			makeFilterStr(view.row_aggregates[0], 'row', vOffset + vLimit, true)	
 		}
 		
 		url += '?' + filter.concat(sort || []).join('&')
@@ -277,7 +281,7 @@ var modelActions = {
 			'Range': ((hOffset + vOffset) + '-' + (hOffset + vOffset + hLimit, vLimit))
 		}
 
-		webUtils.ajax('GET', url, null, header).then(function (results) {
+		return webUtils.ajax('GET', url, null, header).then(function (results) {
 			var message = {}
 			var range = results.xhr.getResponseHeader('Content-Range')
 			var rangeParts = range.split(/[-/]/)

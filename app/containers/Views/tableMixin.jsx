@@ -37,7 +37,7 @@ var TableMixin = {
 	},
 	
 	isFocused: function () {
-		return (FocusStore.getFocus() === 'view')
+		return (FocusStore.getFocus(0) === 'view')
 	},
 
 	isCopied: function () {
@@ -52,7 +52,39 @@ var TableMixin = {
 		this.setState({contextOpen: false})
 	},
 
-	
+	toggleExpand: function () {
+		this.setState({expanded: !this.state.expanded})
+	},
+
+	showContext: function (e) {
+		var pos = this.getRCCoords(e)
+		var sel = this.state.selection
+		if (pos.left >= sel.left && pos.left <= sel.right &&
+			pos.top >= sel.top && pos.top <= sel.bottom) this.updatePointer(pos)
+		else this.updateSelect(pos, false)
+		this.setState({
+			contextOpen: true
+		})
+		e.preventDefault()
+	},
+
+	hideContext: function (e) {
+		this.setState({
+			contextOpen: false
+		})
+	},
+
+	handleMouseWheel: function (e) {
+		this.refs.verticalScrollBar.handleMouseWheel(e)
+		this.refs.horizontalScrollBar.handleMouseWheel(e)
+	},
+
+	blurPointer: function () {
+		var current = this.refs.cursors.refs.pointerCell
+		if (current) {
+			if (current.commitChanges) current.commitChanges()
+		}
+	},
 
 	onKey: function (e) {
 		var sel = this.state.selection
@@ -147,7 +179,114 @@ var TableMixin = {
 			) && !ctrlKey) {
 			return this.editCell(e);
 		}
-	}
+	},
+
+
+	
+
+	onMouseDown: function (e) {
+		// if right click then dont bother
+		if (("which" in e && e.which === 3) || 
+    		("button" in e && e.button === 2)) {
+        	e.preventDefault()
+        	return;
+        }
+
+		if (FocusStore.getFocus(0) !== 'view')
+			modelActionCreators.setFocus('view')
+		this.updateSelect(this.getRCCoords(e), e.shiftKey)
+		addEventListener('selectstart', util.returnFalse)
+		addEventListener('mousemove', this.onSelectMouseMove)
+		addEventListener('mouseup', this.onMouseUp)
+	},
+
+	onSelectMouseMove: function (e) {
+		this.updateSelect(this.getRCCoords(e), true)
+	},
+
+	onMouseUp: function (e) {
+		removeEventListener('selectstart', util.returnFalse);
+		removeEventListener('mousemove', this.onSelectMouseMove);
+		removeEventListener('mouseup', this.onMouseUp);
+		document.getElementById("copy-paste-dummy").focus();
+	},
+
+
+	move: function (direction, shift) {
+		var sel = _.clone(this.state.selection);
+		var ptr = _.clone(this.state.pointer);
+		var numCols = this.getNumberCols();
+		var numRows = this.getNumberRows();
+		var singleCell = (sel.left === sel.right && sel.top === sel.bottom)
+		var outline = singleCell ? {left: 0, right: numCols, top: 0, bottom: numRows} : sel ;
+
+		// Tab ----------------------
+		if (direction === 'TAB') {
+			var lilMod = (outline.right - outline.left + 1)
+			var bigMod = lilMod * (outline.bottom - outline.top + 1)
+			var index = (ptr.top - outline.top) * lilMod + ptr.left - outline.left
+			index += (shift ? -1 : 1)
+			if (index < 0) index += bigMod
+			index = index % bigMod
+			ptr.left = (index % lilMod) + outline.left
+			ptr.top = Math.floor(index / lilMod) + outline.top
+			if (singleCell) this.setState({selection: {left: ptr.left, right: ptr.left,
+				top: ptr.top, bottom: ptr.top}})
+			this.updatePointer(ptr)
+		}
+		// Enter ---------------------
+		else if (direction === 'ENTER') {
+			var lilMod = (outline.bottom - outline.top + 1)
+			var bigMod = lilMod * (outline.right - outline.left + 1)
+			var index = (ptr.left - outline.left) * lilMod + ptr.top - outline.top
+			index += (shift ? -1 : 1)
+			if (index < 0) index += bigMod
+			index = index % bigMod
+			ptr.left = Math.floor(index / lilMod) + outline.left
+			ptr.top = (index % lilMod) + outline.top
+			if (singleCell) this.setState({selection: {left: ptr.left, right: ptr.left,
+				top: ptr.top, bottom: ptr.top}})
+			this.updatePointer(ptr)
+		}
+		// Right ------------------------
+		else if (direction === 'RIGHT' && shift) {
+			if (sel.left === ptr.left && sel.right < numCols) sel.right += 1
+			else if (sel.left < ptr.left) sel.left += 1
+			this.setState({selection: sel})
+		} else if (direction === 'RIGHT') {
+			if (ptr.left < numCols) ptr.left = (ptr.left + 1)
+			this.updateSelect(ptr, shift)
+		}
+		// Left --------------------------
+		else if (direction === 'LEFT' && shift) {
+			if (sel.right > ptr.left) sel.right -= 1
+			else if (sel.left > 0) sel.left -= 1
+			this.setState({selection: sel})
+		} else if (direction === 'LEFT') {
+			if (ptr.left > 0) ptr.left -= 1
+			this.updateSelect(ptr, false)
+		}
+
+		// down ---------------------------
+		else if (direction === 'DOWN' && shift) {
+			if (sel.top < ptr.top) sel.top += 1
+			else if (sel.bottom < numRows) sel.bottom += 1
+			this.setState({selection: sel})
+		} else if (direction === 'DOWN') {
+			if (ptr.top < numRows) ptr.top = (ptr.top + 1)
+			this.updateSelect(ptr, shift)
+		}
+		// up
+		else if (direction === 'UP' && shift) {
+			if (sel.bottom > ptr.top) sel.bottom -= 1
+			else if (sel.top > 0) sel.top -= 1
+			this.setState({selection: sel})
+		} else if (direction === 'UP') {
+			if (ptr.top > 0) ptr.top -= 1
+			this.updateSelect(ptr, false)
+		}
+	},
+
 
 }
 

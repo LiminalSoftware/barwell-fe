@@ -23,12 +23,17 @@ var stripInternalVars = module.exports.stripInternalVars = function (obj) {
 
 module.exports.compare = function (a, b, sortSpec) {
     for (var i = 0; i < sortSpec.length; i++) {
-        var key = 'a' + sortSpec[i].attribute_id
-        var inversion = sortSpec[i].descending ? 1 : -1
-        if (a[key] < b[key]) return (1 * inversion)
-        if (a[key] > b[key]) return (-1 * inversion)
+        var key = 'a' + sortSpec[i].attribute_id;
+        var inversion = sortSpec[i].descending ? 1 : -1;
+
+        if ((a[key] === null || a[key] === undefined) && 
+          (b[key] === null || b[key] === undefined)) continue;
+        if (a[key] === null || a[key] === undefined) return (1 * inversion);
+        if (b[key] === null || b[key] === undefined) return (-1 * inversion);
+        if (a[key] < b[key]) return (1 * inversion);
+        if (a[key] > b[key]) return (-1 * inversion);
     }
-    return 0
+    return 0;
 }
 
 module.exports.encode = function (str) {

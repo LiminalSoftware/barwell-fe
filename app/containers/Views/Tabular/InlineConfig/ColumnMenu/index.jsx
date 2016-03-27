@@ -35,8 +35,11 @@ var ColumnMenu = React.createClass({
 		}
 	},
 
-	componentWillMount: function () {
-		
+	blurChildren: function () {
+		var _this = this;
+		this.sections.forEach(function (section) {
+			_this.refs[section].blurChildren();
+		})
 	},
 
 	componentWillReceiveProps: function (nextProps) {
@@ -59,62 +62,9 @@ var ColumnMenu = React.createClass({
 		this.setState({editing: false})
 	},
 
-	getCurrentCol: function () {
-		var view = this.props.view
-		var data = view.data
-		var columns = view.data.columnList.filter(col => col.visible)
-		return columns[data.pointer.left]
-	},
-
-	sections : [
-		{
-			section: "fixed",
-			label: "Fixed Attributes",
-			emptyText: "No fixed attributes...",
-			icon: "icon-pin-3",
-			selector: function (view) {
-				return view.data.columnList.filter(c => c.visible && c.fixed).sort(util.orderSort)
-			},
-			enterTransform: function (col) {
-				col.visible = true
-				col.fixed = true
-				return col
-			}
-		},
-		{
-			section: "visible",
-			label: "Visible Attributes",
-			emptyText: "No visible attributes...",
-			icon: "icon-eye-3",
-			selector: function (view) {
-				return view.data.columnList.filter(c => c.visible && !c.fixed).sort(util.orderSort)
-			},
-			enterTransform: function (col) {
-				col.visible = true
-				col.fixed = false
-				console.log('enterVisible')
-				return col
-			}
-		},
-		{
-			section: "hidden",
-			label: "Hidden Attributes",
-			emptyText: "No hidden attributes...",
-			icon: "icon-eye-4",
-			selector: function (view) {
-				return view.data.columnList.filter(c => !c.visible).sort(util.orderSort)
-			},
-			enterTransform: function (col) {
-				col.visible = false
-				col.fixed = false
-				return col
-			}
-		}
-	],
-
 	moveToSection: function (e, item, sectionIdx, direction) {
 		var view = this.props.view
-		var section = this.sections[sectionIdx]
+		var section = this.props.sections[sectionIdx]
 		var el = this.refs["section-" + (sectionIdx)]
 		if (!el) return false
 
@@ -170,17 +120,17 @@ var ColumnMenu = React.createClass({
 	},
 
 	render: function() {
-		var _this = this
-		var view = this.props.view
-		var data = view.data
-		var columns = view.data.columnList
-		var currentCol = this.getCurrentCol()
-		var sections = this.sections.map(function (section, idx) {
+		var _this = this;
+		var view = this.props.view;
+		var data = view.data;
+		var columns = view.data.columnList;
+		var currentCol = view.data.currentColumn;
+		var sections = this.props.sections.map(function (section, idx) {
 			return <ColumnMenuSection
 				view = {view}
-				key = {"section-" + idx}
+				key = {section.section}
 				label = {section.label}
-				ref = {"section-" + idx}
+				ref = {section.section}
 				icon = {section.icon}
 				index = {idx}
 				emptyText = {section.emptyText}
@@ -211,7 +161,9 @@ var ColumnMenu = React.createClass({
 							</div>
 							:
 							currentCol ? 
-							<ColumnDetail singleton = {true} key = {currentCol.column_id} config = {currentCol} view = {view}/>
+							<ColumnDetail 
+								singleton = {true} key = {currentCol.column_id} 
+								config = {currentCol} view = {view}/>
 							:
 							<div className="singleton menu-item menu-sub-item">No selection...</div>
 						}

@@ -91,7 +91,8 @@ var ModelPane = React.createClass({
 
 			configElement = React.createElement(configElement, {
 				model: model,
-				view: view
+				view: view,
+				focusDepth: 0
 			})
 		}
 

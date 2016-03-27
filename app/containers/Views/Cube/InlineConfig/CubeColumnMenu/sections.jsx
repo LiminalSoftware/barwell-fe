@@ -1,0 +1,72 @@
+import fieldTypes from "../../../fields"
+import AggregatePicker from './AggregatePicker'
+import GroupSortPicker from './GroupSortPicker'
+import util from '../../../../../util/util'
+
+var sections = [
+	{
+		label: "Row Groupings",
+		emptyText: "No row groups defined...",
+		icon: "icon-layer-3",
+		configParts: [GroupSortPicker],
+		selector: function (view) {
+			return view.data.columnList.filter(c => c.groupByRow).sort(util.orderSort)
+		},
+		enterTransform: function (col) {
+			col.groupByColumn = false;
+			col.groupByRow = true;
+			col.inTableBody = false;
+			col.visible = true;
+			return col
+		}
+	},
+	{
+		label: "Column Groupings",
+		emptyText: "No column groups defined...",
+		icon: "icon-layer-3",
+		configParts: [GroupSortPicker],
+		selector: function (view) {
+			return view.data.columnList.filter(c => c.groupByColumn).sort(util.orderSort)
+		},
+		enterTransform: function (col) {
+			col.groupByColumn = true;
+			col.groupByRow = false;
+			col.inTableBody = false;
+			col.visible = true;
+			return col
+		}
+	},
+	{
+		label: "Table Body Attributes",
+		emptyText: "No table body attributes defined...",
+		icon: "icon-layer-3",
+		configParts: [AggregatePicker],
+		selector: function (view) {
+			return view.data.columnList.filter(c => c.inTableBody).sort(util.orderSort)
+		},
+		enterTransform: function (col) {
+			col.groupByColumn = false;
+			col.groupByRow = false;
+			col.inTableBody = true;
+			col.visible = true;
+			return col
+		}
+	},
+	{
+		label: "Hidden Attributes",
+		emptyText: "No hidden attributes...",
+		icon: "icon-eye-4",
+		selector: function (view) {
+			return view.data.columnList.filter(c => !c.inTableBody && !c.groupByRow && !c.groupByColumn).sort(util.orderSort)
+		},
+		enterTransform: function (col) {
+			col.groupByColumn = false;
+			col.groupByRow = false;
+			col.inTableBody = false;
+			col.visible = false;
+			return col
+		}
+	}
+]
+
+export default sections;

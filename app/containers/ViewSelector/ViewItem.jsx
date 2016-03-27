@@ -46,17 +46,16 @@ var ViewItem = React.createClass({
 		util.clickTrap(e)
 	},
 
-	componentWillReceiveProps: function (nextProps) {
-		var props = this.props
-		if (props.editing && !nextProps.editing) this.saveChanges()
-	},
-
 	saveChanges: function () {
 		var view = this.props.view
 		view.view = this.state.name
 		if (this.state.deleting)
 			modelActionCreators.destroyView(view);
 		else modelActionCreators.createView(view, true, true);
+	},
+
+	revertChanges: function () {
+		this.setState({editing: false, deleting: false});
 	},
 
 	render: function () {
@@ -68,7 +67,7 @@ var ViewItem = React.createClass({
 				<span className = {"draggable gray icon icon-menu " + 
 					(this.state.editTransition ? "" : "")}/>
 				<span className = {"icon " + viewTypes[view.type].icon}></span>
-				<span className = "double ellipsis">
+				<span className = {"double ellipsis " + (this.state.deleting ? " strike-through" : "")}>
 					{this.state.editing ?
 						<input className = "menu-input text-input"
 								value = {this.state.name}

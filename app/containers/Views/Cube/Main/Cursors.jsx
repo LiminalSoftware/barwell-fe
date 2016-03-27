@@ -22,14 +22,50 @@ var Cursors = React.createClass ({
     var geo = view.data.geometry
     var store = this.props.store
     var ptr = this.props.pointer
-    var col = view.data.visibleCols[ptr.left]
-    var obj = store.getObject(ptr.top)
-    var element = col ? (fieldTypes[col.type]).element : null
+    var columnHeaders = view.column_aggregates;
+    var rowHeaders = view.row_aggregates;
+    var col 
+    var obj
+    var isNull
+    var value
+    var element
     var selector = {}
     
-    if (!obj) return ;
+    if (ptr.left < 0 && ptr.top >= 0) {
+      var pointerKey = 'a' + rowHeaders[rowHeaders.length + ptr.left]; // ptr.left is negative
+      var level = store.getLevel('row', ptr.top)
+      col = view.data.columns[pointerKey]
+      value = level ? level[pointerKey] : null
+      rowHeaders.forEach(function (rh, idx) {
+        if (idx - rowHeaders.length >= ptr.left) {
+          var key = 'a' + rowHeaders[idx]
+          selector[key] = level ? level[key] : null
+        }
+      })
+      isNull = false
+    } else if (ptr.top < 0 && ptr.left >= 0) {
+      var pointerKey = 'a' + columnHeaders[columnHeaders.length + ptr.top];
+      var level = store.getLevel('column', ptr.left)
+      col = view.data.columns[pointerKey]
+      value = level ? level[pointerKey] : null
+      columnHeaders.forEach(function (rh, idx) {
+        if (idx - columnHeaders.length >= ptr.top) {
+          var key = 'a' + columnHeaders[idx]
+          selector[key] = level ? level[key] : null
+        }
+      })
+      isNull = false
+    } else if (ptr.left >= 0 && ptr.top >= 0) {
+      Object.assign(selector, store.getLevel('row', ptr.top));
+      Object.assign(selector, store.getLevel('column', ptr.left));
 
-    selector[model._pk] = obj[model._pk]
+      obj = store.getValue(ptr.top, ptr.left);
+      col = view.data.columns['a' + view.value]
+      value = obj ? obj[col.column_id] : null;
+      isNull = !obj
+    }
+    
+    element = col ? (fieldTypes[col.type]).element : null
 
     if (element) return React.createElement(element, {
       config: col,
@@ -44,9 +80,10 @@ var Cursors = React.createClass ({
       selector: selector,
       object: obj,
       pointer: ptr,
-      rowHeight: geo.rowHeight,
+      rowHeight: geo.rowHeight * (ptr.bottom - ptr.top + 1),
 
-      value: obj[col.column_id],
+      value: value,
+      isNull: isNull,
       column_id: col.column_id,
 
       _handleBlur: this.props._handleBlur,
@@ -83,12 +120,9 @@ var Cursors = React.createClass ({
     var ptr = this.props.pointer
     var sel = this.props.selection
     var cpy = this.props.copyarea
-    var showJaggedEdge = (sel.right >= view.data.fixedCols.length
-      && sel.left <= view.data.fixedCols.length && this.props.hiddenCols > 0)
 
-    var detailColumn = view.data.visibleCols[ptr.left]
-    // var detailObject = store.getValue(ptr.top, ptr.left)
-    
+    var numCols = store.getCount('column');
+    var numRows = store.getCount('row');
 
     var pointerFudge = this.props.expanded ? {
       left: -30,
@@ -101,7 +135,7 @@ var Cursors = React.createClass ({
       top: 0,
       left: 0,
       right: 0,
-      height: ((rowCount + 1) * geo.rowHeight) + 'px',
+      height: (this.props.columnHeaderHeight + (rowCount) * geo.rowHeight) + 'px',
       transformStyle: 'preserve-3d'
     }
 
@@ -109,17 +143,17 @@ var Cursors = React.createClass ({
     else style.marginTop = marginTop + 2 + 'px'
 
     return <div className = "wrapper" style = {{
-        left: 0,
-        top: 0,
+        left: '0',
+        top: '-1px',
         bottom: 0,
         width: (this.props.adjustedWidth + RIGHT_FRINGE) + 'px',
         transformStyle: 'preserve-3d'
       }}>
       <div className = "wrapper overlay "
         style = {{
-          top: geo.headerHeight - 1 - 2 + 'px',
+          top: 0 + 'px',
           bottom: 0,
-          left: geo.leftGutter + 'px',
+          left: 0 + 'px',
           width: (this.props.adjustedWidth + RIGHT_FRINGE) + 'px',
           pointerEvents: 'none',
           overflow: 'hidden',
@@ -141,7 +175,7 @@ var Cursors = React.createClass ({
             onDoubleClick = {this.props._handleEdit}
             onContextMenu = {this.props._handleContextMenu}
             onWheel = {this.props._handleWheel}>
-            {/*this.getPointerElement()*/}
+            {this.getPointerElement()}
             {this.props.context ? <ContextMenu {...this.props}/> : null}
           </Overlay>
 
@@ -164,7 +198,6 @@ var Cursors = React.createClass ({
             fudge = {{left: -3.75, top: -2.75, height: 7.5, width: 6.5}}>
           </Overlay>
           
-
           <Overlay
             columns = {view.data.visibleCols}
             numHiddenCols = {this.props.hiddenCols}
@@ -179,11 +212,11 @@ var Cursors = React.createClass ({
 
       <div className = {"force-layer wrapper underlay underlay--" + (focused ? "focused" : "blurred")}
         style = {{
-          top: geo.headerHeight - 1 - 2 + 'px',
+          top: 0,
           bottom: 0,
-          maxHeight: rowCount * geo.rowHeight + 'px',
+          height: (rowCount) * geo.rowHeight + this.props.columnHeaderHeight + 'px',
           left: geo.leftGutter + 'px',
-          width: (this.props.adjustedWidth - this.props.hOffset * geo.columnWidth) + 'px',
+          width: (this.props.adjustedWidth) + 'px',
           overflow: 'hidden',
           transform: 'translateZ(-1px)'
         }}>

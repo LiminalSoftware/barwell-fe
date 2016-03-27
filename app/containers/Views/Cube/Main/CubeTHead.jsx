@@ -11,6 +11,10 @@ import util from '../../../../util/util'
 
 var CubeTHead = React.createClass ({
 
+	shouldComponentUpdate: function (newProps) {
+		return newProps.view !== this.props.view
+	},
+
 	getInitialState: function () {
 		return {
 			fetched: false,
@@ -43,20 +47,24 @@ var CubeTHead = React.createClass ({
 	// },
 
 	render: function () {
-		var _this = this
-		var view = this.props.view
-		var dimension = this.props.dimension
-		var geo = view.data.geometry
-		var groups = this.props.groups
-		var store = this.props.store
-		var levels = store.getLevels(dimension, 0, 100) || []
-		var spans = groups.map(g => 0)
-		var isBroken
+		var _this = this;
+		var view = this.props.view;
+		var dimension = this.props.dimension;
+		var geo = view.data.geometry;
+		var store = this.props.store;
+		var getColumns = (c => view.data.columns['a' + c]);
+		var groups = store.getDimensions(dimension).map(getColumns);
+		var levels = store.getLevels(dimension, 0, 100) || [];
+		var spans = groups.map(g => 0);
+		var isBroken;
 
 		return <div
 			id = {'cube-' + dimension + '-header'}
 			ref = {dimension + 'Header'}
 			style = {this.props.style}
+			onMouseDown = {this.props._handleClick}
+			
+			onDoubleClick = {this.props._handleEdit}
 			className = "tabular-body force-layer wrapper">
 			{
 			levels.map(function (level, r) {
@@ -67,7 +75,7 @@ var CubeTHead = React.createClass ({
 				return groups.map(function (group, c) {
 					var column_id = group.column_id
 					var transverse = dimension === 'row' ? group.width : geo.rowHeight
-					var cellKey = 'cell-' + r + '-' + group.column_id
+					
 
 					selector[column_id] = level[column_id]
 					spans[c] ++
@@ -77,6 +85,7 @@ var CubeTHead = React.createClass ({
 						var fieldType = fieldTypes[group.type].element
 						var cellLength = dimension === 'row' ? geo.rowHeight : geo.columnWidth
 						var length = spans[c] * cellLength
+						var cellKey = dimension + '-head-' + _.values(selector).join('%&');
 						var thStyle = {
 							[dimension === 'row' ? 'width' : 'height']: transverse + 'px',
 							[dimension === 'row' ? 'height' : 'width']: length + 'px',
@@ -87,6 +96,8 @@ var CubeTHead = React.createClass ({
 						offset += transverse
 						isBroken = true
 						spans[c] = 0
+						
+
 						return React.createElement(fieldType, {
 							config: group,
 							model: _this.props.model,

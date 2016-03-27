@@ -9,6 +9,8 @@ import blurOnClickMixin from '../../../../blurOnClickMixin'
 
 var NumberFormatChoice = React.createClass({
 
+  partName: 'NumberFormatChoice',
+
   mixins: [blurOnClickMixin, configCommitMixin],
 
   _timer: null,

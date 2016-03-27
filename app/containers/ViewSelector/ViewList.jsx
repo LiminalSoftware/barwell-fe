@@ -28,8 +28,18 @@ var ViewList = React.createClass({
 		this.setState({editing: true})
 	},
 
-	handleDoneEdit: function () {
-		this.setState({editing: false})
+	handleSave: function () {
+		var _this = this
+		var model = this.props.model
+		var views = ViewStore.query({model_id: model.model_id})
+		views.forEach(function (v) {
+			_this.refs['view-' + v.view_id].saveChanges()
+		})
+		this.setState({editing: false, adding: false})
+	},
+
+	handleCancelEdit: function () {
+		this.setState({editing: false, adding: false})
 	},
 
 	handleAddNewView: function (type, e) {
@@ -58,6 +68,7 @@ var ViewList = React.createClass({
 					style = {{minWidth: "400px"}}>
 			{views.map( v =>
 				<ViewItem {...this.props}
+					ref = {'view-' + v.view_id}
 					key = {v.view_id}
 					selected = {(view || {}).view_id === v.view_id}
 					view = {v}
@@ -84,7 +95,7 @@ var ViewList = React.createClass({
 				_.map(viewTypes, function (type, typeKey) {
 		        	return <div className = "menu-item menu-item menu-sub-item"
 		            	onClick = {_this.handleAddNewView.bind(_this, type)}
-		            	key ={typeKey}>
+		            	key = {typeKey}>
 		            	<span className = {"large icon view-icon " + type.icon}/>
 		            	{type.type}
 		            </div>
@@ -96,7 +107,7 @@ var ViewList = React.createClass({
 				{
 					this.state.editing ?
 					<div className = {"menu-sub-item padded " + (this.state.adding ? "border-bottom" : "")}
-						onClick = {this.handleDoneEdit}>
+						onClick = {this.handleSave}>
 						<span className = "icon icon-check"/> Save changes
 					</div>
 					:

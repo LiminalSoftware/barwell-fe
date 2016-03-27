@@ -2,6 +2,8 @@ import React from "react"
 import fieldTypes from "../../fields"
 import _ from "underscore"
 
+import constants from '../../../../constants/MetasheetConstants'
+
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import ViewStore from "../../../../stores/ViewStore"
 import FocusStore from "../../../../stores/FocusStore"
@@ -22,7 +24,7 @@ import util from '../../../../util/util'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-const FETCH_DEBOUNCE = 500
+const FETCH_DEBOUNCE = 1000
 
 const MAX_LEVELS = 5000
 const WINDOW_ROWS = 50
@@ -58,16 +60,20 @@ var CubeBodyWrapper = React.createClass ({
 	},
 
 	componentWillMount: function () {
-		this.debounceFetch = _.debounce(this.fetchBody, FETCH_DEBOUNCE)
+		this.debounceFetch = _.debounce(this.fetch, FETCH_DEBOUNCE)
 		this.fetch()
 	},
 
 	componentWillReceiveProps: function (nextProps) {
-		// this.debounceFetch(false, nextProps);
+		this.debounceFetch(false, nextProps);
 	},
 
 	fetch: function () {
 		var _this = this
+		var view = this.props.view
+
+		if (view._dirty) return;
+
 		return Promise.all([
 			this.fetchLevels('row'),
 			this.fetchLevels('column')
@@ -77,16 +83,25 @@ var CubeBodyWrapper = React.createClass ({
 	},
 
 	fetchLevels: function (dimension) {
+		var store = this.props.store
 		var view = this.props.view
 		var _this = this
-		this.setState({['fetching' + dimension]: true})
+		var aggregates = view[dimension + '_aggregates']
+
+		if (aggregates.length === 0 || _.isEqual(store.getDimensions(dimension), aggregates)){
+			return Promise.resolve()
+		}
+		this.setState({
+			[dimension + '_fetching']: true
+		})
+		
 		return modelActionCreators.fetchLevels(
 			view,
 			dimension,
 			0, MAX_LEVELS
 		).then(function () {
 			_this.setState({
-				['fetching' + dimension]: false
+				[dimension + '_fetching']: false
 			})
 		})
 	},
@@ -98,17 +113,13 @@ var CubeBodyWrapper = React.createClass ({
 		var vOffset = this.state.verticalOffset
 		var hOffset = this.state.horizontalOffset
 		var filter = []
+		var rowAggregates = store.getDimensions('row')
+		var columnAggregates = store.getDimensions('row')
 
-		// var curVStart = store.getStart('row')
-		// var curHStart = store.getStart('column')
-
-		// if (Math.abs(curVStart - vStart) < geo.bfrTol &&
-		// 	Math.abs(curHStart - hStart) < geo.bfrTol &&
-		// 	curVStart !== null && curHStart  !== null) {
-		// 	return; // if scroll is within tolerances, do nothing
-		// }
 		
-
+		if (!(rowAggregates.length + columnAggregates.length > 0)) return Promise.resolve();
+		if (store.isCurrent('body')) return Promise.resolve();
+		
 		return modelActionCreators.fetchCubeValues(view, store, hOffset, WINDOW_ROWS, vOffset, WINDOW_COLS).then(function () {
 			store.setStart('row', vOffset)
 			store.setStart('column', hOffset)
@@ -121,8 +132,9 @@ var CubeBodyWrapper = React.createClass ({
 		var store = this.props.store
 		var geo = view.data.geometry
 		var focused = this.props.focused
-
 		var marginTop = 0
+		var numCols = store.getCount('column');
+		var numRows = store.getCount('row');
 		
 		return <div
 			className = {"wrapper force-layer " + (focused ? "focused" : "blurred")}
@@ -145,13 +157,14 @@ var CubeBodyWrapper = React.createClass ({
 					ref = "lhsOffsetter"
 					style = {{
 						top: 0,
-						height: (this.props.numRows * geo.rowHeight) + 'px',
+						height: (numRows * geo.rowHeight) + 'px',
 						marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
 						transform: 'translateZ(0) translateY(' + marginTop + 'px)'
 					}}>
 					<CubeTHead {...this.props}
 						dimension = {'row'}
 						store = {store}
+						focused = {focused}
 						groups = {this.props.rowHeaders} />
 				</div>
 			</div>
@@ -176,6 +189,7 @@ var CubeBodyWrapper = React.createClass ({
 					top: 0,
 					bottom: 0,
 					left: this.props.rowHeaderWidth + 'px',
+					marginLeft: '-1px',
 					width:  this.props.bodyWidth + 'px',
 					transform: 'translateZ(1px)',
 					overflow: 'hidden',
@@ -185,14 +199,13 @@ var CubeBodyWrapper = React.createClass ({
 					style = {{
 						marginLeft: (-1) + 'px'
 					}}>
-					<div className = "wrapper"
+					<div className = {"wrapper cube-column-head cube-column-head--"  + (focused ? "focused" : "blurred")}
 						style = {{
 							top: 0,
 							height: this.props.columnHeaderHeight + 'px',
 							left: 0,
 							right: 0,
-							transform: 'translateZ(2px)',
-							background: 'white'
+							transform: 'translateZ(2px)'
 						}}>
 						<CubeTHead {...this.props}
 							dimension = {'column'}
@@ -207,10 +220,14 @@ var CubeBodyWrapper = React.createClass ({
 							bottom: 0,
 							overflow: 'hidden'
 						}}>
+						{
+						view.value ?
 						<CubeTBody
 							{...this.props}
 							verticalOffset = {0}
 							horizontalOffset = {0}/>
+						: null
+						}
 					</div>
 					
 				</div>

@@ -61,11 +61,16 @@ var decimalField = {
 		},
 
 		validator: function (input) {
+			// console.log('validator input: ' + input)
 			var config = this.props.config || {}
 			if (_.isNumber(input)) return input
 		},
 
 		parser: function (input) {
+			var config = this.props.config || {}
+			var format = config.formatString || ''
+			input = String(input).trim()
+			if (format.slice(-1) === '%' && input.slice(-1) !== '%') input = input + '%'; 
 			return numeral().unformat(input)
 		}
 

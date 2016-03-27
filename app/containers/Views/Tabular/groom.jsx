@@ -67,6 +67,8 @@ var groomView = function (view) {
 		colAddWidth: 100
 	}, {})
 
+	data.currentColumn = data.visibleCols[data.pointer.left];
+
 	view.data = data;
 	return view
 }
