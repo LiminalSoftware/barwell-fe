@@ -22,33 +22,33 @@ var ColumnMenu = React.createClass({
 	mixins: [blurOnClickMixin],
 
 	_onChange: function () {
-		this.forceUpdate()
+		this.forceUpdate();
 	},
 
 	getInitialState: function () {
-		var view = this.props.view
-		var columns = view.data.columnList
+		var view = this.props.view;
+		var columns = view.data.columnList;
 		return {
 			open: false,
 			editing: false,
 			columns: view.data.columnList
-		}
+		};
 	},
 
 	blurChildren: function () {
 		var _this = this;
 		this.sections.forEach(function (section) {
 			_this.refs[section].blurChildren();
-		})
+		});
 	},
 
 	componentWillReceiveProps: function (nextProps) {
-		this.setState({columns: nextProps.view.data.columnList})
+		this.setState({columns: nextProps.view.data.columnList});
 	},
 
 	commitChanges: function (column) {
-		var view = this.props.view
-		view.data.columns[column.column_id] = column
+		var view = this.props.view;
+		view.data.columns[column.column_id] = column;
 
 		modelActionCreators.createView(view, true, true);
 		this.setState({dragItem: null})
@@ -142,7 +142,7 @@ var ColumnMenu = React.createClass({
 		})
 
     	return <div className = "double header-section" >
-				<div className="header-label">Columns</div>
+			<div className="header-label">Columns</div>
 				<div className = "model-views-menu">
 					<ReactCSSTransitionGroup 
 						component = "div"

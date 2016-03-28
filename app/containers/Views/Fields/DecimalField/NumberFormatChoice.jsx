@@ -78,18 +78,18 @@ var NumberFormatChoice = React.createClass({
           {
           _.map(displayStyles, function (ds, k) {
             return <li 
-              key = {ds.displayStyle} className = "selectable"
+              key = {ds.displayStyle} 
+              className = {"selectable " + 
+              (config.displayStyle === k ? 'menu-selected' : '')}
               onClick = {_this.chooseDisplayStyle.bind(_this, ds)}>
-              <span className = {'icon icon-chevron-right ' +
-                (config.displayStyle === k ? 'green' : 'hovershow')}/>
               <span className = {"icon " + ds.icon}/>
               {ds.description}
             </li>
           })
           }
-          <li key="format-header" className = "top-divider" onClick = {this.handleChooseCustom}>
-            <span className = {"icon green icon-chevron-right " + 
-              (this.state.custom ? 'green' : 'hovershow')}/>
+          <li key="format-header" className = {"top-divider " +
+            (this.state.custom ? ' menu-selected' : '')}
+            onClick = {this.handleChooseCustom}>
             <span className="icon icon-code"/>
             Custom
           </li>

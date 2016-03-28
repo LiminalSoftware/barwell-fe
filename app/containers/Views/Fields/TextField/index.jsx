@@ -25,7 +25,6 @@ var textField = {
 	canBeLabel: true,
 	element: React.createClass({
 		mixins: [editableInputMixin, commitMixin, selectableMixin, keyPressMixin],
-    	detailIcon: 'icon-expand',
     	validator: _.identity,
 		parser: function (input) {
 			input = String(input);

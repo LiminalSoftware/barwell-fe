@@ -22,8 +22,14 @@ var PopDownMenu = React.createClass({
 	componentDidMount: function () {
 		// setTimeout(t => this.setState({mounted: true}), 0)
 	},
-
+	
 	shouldOpenUp: function () {
+		if (this.props.parentEl) {
+			var pos = $(this.props.parentEl).offset();
+			var windowHeight = document.body.offsetHeight();
+			var windowHeight = document.body.offsetHeight();
+			return (pos.top > windowHeight - pos.bottom)
+		}
 		return (this.props.spaceTop > this.props.spaceBottom)
 	},
 

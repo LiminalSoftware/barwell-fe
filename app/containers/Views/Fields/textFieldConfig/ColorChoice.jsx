@@ -7,6 +7,7 @@ import PopDownMenu from '../../../../components/PopDownMenu'
 
 import configCommitMixin from '../configCommitMixin'
 import blurOnClickMixin from '../../../../blurOnClickMixin'
+import makeColorPickerRows from '../ColorField/makeColorPickerRows'
 
 var ColorChoice = React.createClass({
 
@@ -39,8 +40,18 @@ var ColorChoice = React.createClass({
   },
 
   chooseFixedColor: function (color) {
+    this.setState({custom: false})
     this.commitChanges({colorAttr: null, color: color, adjustColor: this.state.adjustColor})
     // this.setState({open: false})
+  },
+
+  chooseCustom: function () {
+    this.setState({custom: true})
+  },
+
+  chooseNone: function () {
+    this.setState({custom: false})
+    this.commitChanges({colorAttr: null, color: null, custom: false})
   },
 
   handleAdjustCheck: function () {
@@ -72,10 +83,9 @@ var ColorChoice = React.createClass({
 
           {
           boolAttrs.map(function (attr) {
-            return <li key = {attr.attribute_id} className = "selectable"
+            return <li key = {attr.attribute_id} className = {"selectable " + 
+            (_this.state.colorConditionAttr === attr.attribute_id ? ' menu-selected' : '')}
               onClick = {_this.chooseCondition.bind(_this, attr.attribute_id)}>
-              <span className = {'icon icon-chevron-right ' +
-                (_this.state.colorConditionAttr === attr.attribute_id ? 'green' : 'hovershow')}/>
               <span className = "icon icon-check-square  ">
               </span>
               {attr.attribute}
@@ -85,10 +95,9 @@ var ColorChoice = React.createClass({
 
            {
             boolAttrs.length > 0 ?
-            <li key = "no-condition" className="selectable"
+            <li key = "no-condition" className = {"selectable" + 
+              (_this.state.colorConditionAttr === null  ? ' menu-selected' : '')}
               onClick = {_this.chooseCondition.bind(_this, null)}>
-              <span className = {'icon  icon-chevron-right ' +
-                (_this.state.colorConditionAttr === null ? 'green' : 'hovershow')}/>
               <span className = "icon icon-square"/>
               No condition
             </li>
@@ -102,36 +111,35 @@ var ColorChoice = React.createClass({
 
           {
           colorAttrs.map(function (attr) {
-            return <li key = {attr.attribute_id} className = "selectable"
-              onClick = {_this.chooseColor.bind(_this, attr.attribute_id)}
-              >
-              <span className = {'icon icon-chevron-right ' +
-                (_this.state.colorAttr === attr.attribute_id ? 'green' : 'hovershow')}/>
+            return <li key = {attr.attribute_id} className = {"selectable "
+              + (_this.state.colorAttr === attr.attribute_id ? ' menu-selected' : '')}
+              onClick = {_this.chooseColor.bind(_this, attr.attribute_id)}>
               <span className = "icon icon-color-sampler  "/>
               {attr.attribute}
             </li>
           })
           }
 
-          
-          {
-            ['red','orange','yellow','green','blue','violet'].map(function (fcolor) {
-              return <li className = "selectable" key={fcolor}
-                onClick = {_this.chooseFixedColor.bind(_this, fcolor)}>
-                <span className = {'icon icon-chevron-right ' +
-                  (_this.state.color === fcolor ? 'green' : 'hovershow')}/>
-                <span className = "icon icon-color-sampler" style={{color: fcolor}}/>{fcolor}
-              </li>
-            })
-          }
-
-          <li className = "selectable"
-            onClick = {_this.chooseColor.bind(_this, null)}>
-            <span className = {'small icon icon-chevron-right ' +
-              ((_this.state.colorAttr === null && _this.state.color === null) ? 'green' : 'hovershow')}/>
+          <li className = {"selectable " +
+            ((_this.state.colorAttr === null && _this.state.color === null) ? ' menu-selected' : '')}
+            onClick = {_this.chooseNone}>
             <span className = "icon icon-color-sampler"/>
             No cell color
           </li>
+
+          <li className = "selectable"
+            onClick = {_this.chooseCustom}>
+            <span className = "icon icon-code"/>
+            Custom color
+          </li>
+          
+          {
+            this.state.custom ?
+            makeColorPickerRows(_this.state.color, null)
+            : null
+          }
+
+          
 
           <li className = "top-divider">
           Auto-lighten colors: <input type="checkbox"

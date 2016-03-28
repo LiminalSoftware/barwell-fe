@@ -11,6 +11,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import CommitMixin from '../commitMixin'
 import ColorValidationMixin from './ColorValidationMixin'
 import MenuKeysMixin from '../MenuKeysMixin'
+import makeColorPickerRows from './makeColorPickerRows'
 
 var NUM_HUES = 10
 
@@ -27,9 +28,9 @@ var ColorPicker = React.createClass({
 	},
 
 	clickChoice: function (event) {
-		var color = event.target.style.background
-		this.setState({value: color})
-		this.commitValue(color)
+		var color = event.target.style.background;
+		this.setState({value: color, open: false});
+		this.commitValue(color);
 	},
 
 	render: function() {
@@ -43,19 +44,10 @@ var ColorPicker = React.createClass({
 		var sat = [0.6].map(e => Math.round(e*100) + '%')
 		var lit = [0.5].map(e => Math.round(e*100)  + '%')
 		
-		var color = tinycolor(obj[config.column_id]).toRgbString()
+		var current = obj[config.column_id]
 
 		return <PopDownMenu {...this.props}>
-			{
-				['red','orange','yellow','green','blue','violet'].map(function (fcolor) {
-	              return <li className = "selectable" key={fcolor}
-	                onClick = {_this.clickChoice.bind(_this, fcolor)}>
-	                <span className = {'icon icon-chevron-right ' +
-	                  (_this.state.color === fcolor ? 'green' : 'hovershow')}/>
-	                <span className = "icon icon-color-sampler" style={{color: fcolor}}/>{fcolor}
-	              </li>
-	            })
-			}
+			{makeColorPickerRows(current, this.clickChoice)}
 		</PopDownMenu>
 	}
 });

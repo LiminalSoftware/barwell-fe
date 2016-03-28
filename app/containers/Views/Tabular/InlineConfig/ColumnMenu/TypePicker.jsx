@@ -5,6 +5,8 @@ import fieldTypes from "../../../fields"
 import constants from '../../../../../constants/MetasheetConstants'
 import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 import PopDownMenu from '../../../../../components/PopDownMenu'
+import ReactDOM from "react-dom"
+
 var TypePicker = React.createClass({
 
 	getInitialState: function () {
@@ -37,12 +39,12 @@ var TypePicker = React.createClass({
 			})
 		})
 
-	    return <span>
+	    return <span ref = "picker">
 	    	<span className = "pop-down" style = {{width: '100px'}} onClick = {this.handleOpen}>
 	    		{active.description}
 		    	{
 		    		this.state.open ?
-		    		<PopDownMenu>
+		    		<PopDownMenu parentElement = {element}>
 		    		{rows}
 		    		</PopDownMenu>
 		    		:

@@ -30,21 +30,15 @@ var AlignChoice = React.createClass({
 		this.commitChanges({align: align})
 	},
 
-  alignLeft: function () {
-    this.commitChanges({align: "left"})
-    this.handleBlur()
-  },
-  alignCenter: function () {
-    this.commitChanges({align: "center"})
-    this.handleBlur()
-  },
-  alignRight: function () {
-    this.commitChanges({align: "right"})
+  align: function (align) {
+    this.commitChanges({align: align})
     this.handleBlur()
   },
 
   render: function () {
-    var align = this.state.align
+    var _this = this;
+    var config = this.props.config;
+    var currentAlignment = config.align;
 
     return <span
         className={"pop-down clickable icon icon-text-align-" + this.state.align}
@@ -52,18 +46,15 @@ var AlignChoice = React.createClass({
         {
         this.state.open ? <PopDownMenu {...this.props}>
           <li className = "bottom-divider">Text Alignment</li>
-          <li onClick = {this.alignLeft} className = "selectable">
-            <span className = "icon icon-text-align-left"/>
-            Align left
-          </li>
-          <li onClick = {this.alignCenter} className = "selectable">
-            <span className = "icon icon-text-align-center"/>
-            Align center
-          </li>
-          <li onClick = {this.alignRight} className = "selectable">
-            <span className = "icon icon-text-align-right"/>
-            Align right
-          </li>
+          {
+            ['left', 'center', 'right'].map(function (alignment) {
+              return <li key = {alignment} onClick = {_this.align.bind(this, alignment)} 
+                className = {"selectable " + (alignment === currentAlignment ? ' menu-selected' : '')}>
+                <span className = {"icon icon-text-align-" + alignment}/>
+                Align {alignment}
+              </li>
+            })
+          }
         </PopDownMenu> : null
         }
     </span>;

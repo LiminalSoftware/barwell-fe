@@ -203,7 +203,7 @@ var createCubeStore = function (view, dimensions) {
                 var _this = this
                 var dimension  = payload.dimension
                 var groups = _dimensions[dimension].map(g => 'a' + g)
-
+                
                 _dimensions[dimension] = payload.aggregates;
                 _levels[dimension] = payload.levels
                 _count[dimension] = payload.numberLevels

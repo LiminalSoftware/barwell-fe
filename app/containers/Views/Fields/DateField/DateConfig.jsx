@@ -82,20 +82,17 @@ var DateFormatChoice = React.createClass({
 			{
 				_.map(dateStyles, function (dateStyle, dateStyleId) {
 					var active = (_this.state.formatString === dateStyle.formatString)
-					return <li className = "selectable"
+					return <li className = {"selectable " + (active ? 'menu-selected' : '')}
 						key = {dateStyle.id}
 						onClick = {_this.chooseFormat.bind(_this, dateStyle)}>
-						<span className = {"icon icon-chevron-right " + 
-							(active ? 'green' : 'hovershow')}/>
 						<span className = "icon icon-calendar-31"/>
 						{dateStyle.description}
 					</li>
 				})
 			}
 			
-			<li className = "top-divider selectable" onClick = {this.handleChooseCustom}>
-				<span className = {"icon icon-chevron-right " + 
-					(this.state.custom ? 'green' : 'hovershow')}/>
+			<li className = {"top-divider selectable " + (this.state.custom ? 'menu-selected' : '')}
+				onClick = {this.handleChooseCustom}>
 				<span className="icon icon-code"/>
 				Custom
 			</li>

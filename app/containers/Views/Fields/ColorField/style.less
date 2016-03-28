@@ -2,55 +2,34 @@
 
 // field
 
-.color-block {
-	z-index: 150;
-	display: block;
-	position: absolute;
-	left: 5px;
-	right: 5px;
-	top: 3px;
-	bottom: 5px;
-	border: 1px solid white;
-	border-radius: 3px;
-}
 
 // detail pane
-
 .color-row {
-  flex-direction: column;
+  display: flex !important;
+  flex-direction: row;
+  flex-wrap: wrap;
+  height: 20px !important;
 }
 
 .color-choice {
+  height: 20px;
+  line-height: 20px;
   display: flex;
+  flex-direction: row;
   flex: 1 1;
-  border-radius: 3px;
-
-  min-width: 50px;
-  min-height: 20px;
+  border-radius: 2px;
+  padding: 0;
   border: 1px solid white;
-  margin: 3px;
+  margin: 1px;
+
   cursor: pointer;
+  text-align: center;
 }
 
 .color-check {
-  padding-left: 12px;
-}
-
-.color-detail-inner {
-  display: flex;
-  flex: 1 1;
-  flex-direction: column;
-  margin: 0;
-  padding: 0;
-}
-
-.color-detail-scroll {
-  display: flex;
-  margin-top: 8px;
-  flex: 1 1;
-  flex-direction: row;
-  flex-wrap: wrap;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  border: 1px solid @headerBorderColor;
+  font-size: 12px;
+  color: white;
+  line-height: 20px;
+  padding: 0 !important;
+  margin: 0 !important;
 }

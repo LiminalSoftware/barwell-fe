@@ -30,6 +30,10 @@ module.exports.compare = function (a, b, sortSpec) {
           (b[key] === null || b[key] === undefined)) continue;
         if (a[key] === null || a[key] === undefined) return (1 * inversion);
         if (b[key] === null || b[key] === undefined) return (-1 * inversion);
+        if (_.isString(a[key]) && _.isString(b[key])) {
+          var strCmp = String(a[key]).localeCompare(b[key]);
+          if (strCmp !== 0) return strCmp;
+        }
         if (a[key] < b[key]) return (1 * inversion);
         if (a[key] > b[key]) return (-1 * inversion);
     }
