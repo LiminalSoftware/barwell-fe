@@ -48,7 +48,7 @@ var AlignChoice = React.createClass({
           <li className = "bottom-divider">Text Alignment</li>
           {
             ['left', 'center', 'right'].map(function (alignment) {
-              return <li key = {alignment} onClick = {_this.align.bind(this, alignment)} 
+              return <li key = {alignment} onClick = {_this.align.bind(_this, alignment)} 
                 className = {"selectable " + (alignment === currentAlignment ? ' menu-selected' : '')}>
                 <span className = {"icon icon-text-align-" + alignment}/>
                 Align {alignment}

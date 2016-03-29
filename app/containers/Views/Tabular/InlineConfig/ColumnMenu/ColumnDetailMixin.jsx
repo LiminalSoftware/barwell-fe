@@ -13,9 +13,7 @@ import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import sortable from 'react-sortable-mixin';
 
-var ColumnDetail = React.createClass({
-
-	mixins: [sortable.ItemMixin],
+var ColumnDetailMixin = {
 
 	getInitialState: function () {
 		var config = this.props.config || {}
@@ -124,6 +122,6 @@ var ColumnDetail = React.createClass({
 				}
 			</div>
 	}
-});
+}
 
-export default ColumnDetail;
+export default ColumnDetailMixin;

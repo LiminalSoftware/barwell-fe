@@ -26,7 +26,6 @@ var sections = [
 		enterTransform: function (col) {
 			col.visible = true
 			col.fixed = false
-			console.log('enterVisible')
 			return col
 		}
 	},

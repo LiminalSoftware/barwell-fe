@@ -5,6 +5,7 @@ import util from '../../../../../util/util'
 
 var sections = [
 	{
+		section: 'rows',
 		label: "Row Groupings",
 		emptyText: "No row groups defined...",
 		icon: "icon-layer-3",
@@ -21,6 +22,7 @@ var sections = [
 		}
 	},
 	{
+		section: 'columns',
 		label: "Column Groupings",
 		emptyText: "No column groups defined...",
 		icon: "icon-layer-3",
@@ -37,6 +39,7 @@ var sections = [
 		}
 	},
 	{
+		section: 'body',
 		label: "Table Body Attributes",
 		emptyText: "No table body attributes defined...",
 		icon: "icon-layer-3",
@@ -53,6 +56,7 @@ var sections = [
 		}
 	},
 	{
+		section: 'hidden',
 		label: "Hidden Attributes",
 		emptyText: "No hidden attributes...",
 		icon: "icon-eye-4",
