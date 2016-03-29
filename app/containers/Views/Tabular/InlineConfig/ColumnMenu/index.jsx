@@ -5,6 +5,7 @@ import styles from "./style.less";
 import _ from 'underscore';
 import fieldTypes from "../../../fields"
 
+import ColumnList from "./ColumnList"
 import ColumnDetail from "./ColumnDetail"
 import ColumnMenuSection from "./ColumnMenuSection"
 import constant from '../../../../../constants/MetasheetConstants'
@@ -13,13 +14,16 @@ import util from "../../../../../util/util"
 import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-var blurOnClickMixin = require('../../../../../blurOnClickMixin')
+import blurOnClickMixin from '../../../../../blurOnClickMixin';
+import sortable from 'react-sortable-mixin';
+
 
 var ColumnMenu = React.createClass({
 
-	itemHeight: 35,
-
-	mixins: [blurOnClickMixin],
+	mixins: [
+		blurOnClickMixin, 
+		sortable.ListMixin
+	],
 
 	_onChange: function () {
 		this.forceUpdate();
@@ -33,6 +37,33 @@ var ColumnMenu = React.createClass({
 			editing: false,
 			columns: view.data.columnList
 		};
+	},
+
+	componentDidMount: function() {
+	    // Set items' data, key name `items` required
+		this.setState({ items: this.getItemsList() });
+	},
+
+	getItemsList: function () {
+		var items = []
+		var view = this.props.view
+		var columns = view.data.columns
+
+		this.props.sections.forEach(function (section) {
+			var sectionItems = section.selector(view)
+			items.push({
+				isSection: true, 
+				label: section.label, 
+				section: section.section,
+				emptyText: section.emptyText
+			});
+			sectionItems.forEach(function (col) {
+				col.viewConfigParts = section.configParts;
+				items.push(col)
+			})
+		});
+
+		return items;
 	},
 
 	blurChildren: function () {
@@ -141,6 +172,27 @@ var ColumnMenu = React.createClass({
 				_moveToSection = {_this.moveToSection}/>
 		})
 
+		var items = this.state.items.map(function (item, idx) {
+			var itemProps = Object.assign({
+				item: item,
+				index: idx,
+			}, _this.movableProps);
+
+			if (item.isSection) return <div 
+					className="menu-item menu-sub-item menu-divider" 
+					key = {'section-' + item.section}
+					ref = {'section' + item.section}
+					{...itemProps}>{item.label}</div>
+			else return <ColumnDetail
+				key = {'detail-' + item.column_id}
+				ref = {"detail" + item.column_id}
+				config = {item}
+				open = {true}
+				editing = {false}
+				view= {view}
+				{...itemProps}/>
+		})
+
     	return <div className = "double header-section" >
 			<div className="header-label">Columns</div>
 				<div className = "model-views-menu">
@@ -156,7 +208,7 @@ var ColumnMenu = React.createClass({
 						{
 						this.state.open ?
 							<div className = "dropdown-menu" style = {{minWidth: '500px'}}>
-								{sections}
+								{items}
 								{this.renderButtonBar()}
 							</div>
 							:

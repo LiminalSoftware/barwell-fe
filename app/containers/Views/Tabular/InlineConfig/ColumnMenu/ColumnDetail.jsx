@@ -11,8 +11,11 @@ import TypePicker from './TypePicker'
 
 import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import sortable from 'react-sortable-mixin';
 
 var ColumnDetail = React.createClass({
+
+	mixins: [sortable.ItemMixin],
 
 	getInitialState: function () {
 		var config = this.props.config || {}
@@ -34,11 +37,6 @@ var ColumnDetail = React.createClass({
 		col = _.extend(col, colProps)
 		view.data.columns[column_id] = col;
 		modelActionCreators.createView(view, true, true)
-	},
-
-	handleDrag: function (e) {
-		this.props._startDrag(e, this.props.config)
-		event.preventDefault()
 	},
 
 	handleDelete: function (e) {
@@ -80,12 +78,11 @@ var ColumnDetail = React.createClass({
 			});
 
 	    return <div className={"menu-item menu-sub-item" +
-				(this.props.singleton ? " singleton " : "") +
-				(this.props.dragging ? " dragging " : "")}>
+				(this.props.singleton ? " singleton " : "")}>
 		      	<span className = "ellipsis">
 					{
 					this.props.open ? 
-					<span onMouseDown = {_this.handleDrag}
+					<span 
 					      className="draggable icon grayed icon-menu"/>
 					: null
 					}
