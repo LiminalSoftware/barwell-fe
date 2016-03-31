@@ -11,8 +11,14 @@ import KeycompStore from "../../../../../stores/KeycompStore"
 
 import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import sortable from 'react-sortable-mixin';
+
 
 var SortDetail = React.createClass({
+
+	mixins: [sortable.ItemMixin],
+
+	dragRef: "grabber",
 
 	getInitialState: function () {
 		var spec = this.props.sortSpec
@@ -38,7 +44,7 @@ var SortDetail = React.createClass({
 
 	    return <div className="menu-item tight menu-sub-item">
 			{this.props.editing ? <span
-				onMouseDown = {this.handleDrag}
+				ref = "grabber"
 				className="draggable half-column-config tight icon grayed icon-menu"/> : null }
       		<span className = "ellipsis">{attr.attribute}</span>
 

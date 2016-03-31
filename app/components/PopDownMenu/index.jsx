@@ -1,11 +1,8 @@
 import React from "react"
 import _ from "underscore"
+import util from "../../util/util"
 
 var PopDownMenu = React.createClass({
-
-	// handleKeyPress: function (e) {
-	// 	if (e.keyCode === constant.keycodes.ESC) this.props._revert()
-	// },
 
 	getInitialState: function () {
 		return {mounted: true}
@@ -18,10 +15,6 @@ var PopDownMenu = React.createClass({
 	componentWillUnmount: function () {
 		removeEventListener('keyup', this.handleKeyPress)
 	},
-
-	componentDidMount: function () {
-		// setTimeout(t => this.setState({mounted: true}), 0)
-	},
 	
 	shouldOpenUp: function () {
 		if (this.props.parentEl) {
@@ -33,6 +26,8 @@ var PopDownMenu = React.createClass({
 		return (this.props.spaceTop > this.props.spaceBottom)
 	},
 
+	clickTrap: util.clickTrap,
+
 	render: function () {
 		var _this = this
 		var model = this.props.model;
@@ -42,7 +37,7 @@ var PopDownMenu = React.createClass({
 			marginLeft: '-1px',
 			marginRight: '0',
 			pointerEvents: 'auto',
-			maxHeight: this.state.mounted ? ((40 * _.flatten(this.props.children).length) + 'px') : 0
+			// maxHeight: this.state.mounted ? ((40 * _.flatten(this.props.children).length) + 'px') : 0
 		};
 		var shouldOpenUp = this.shouldOpenUp()
 

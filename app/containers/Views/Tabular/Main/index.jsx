@@ -147,19 +147,19 @@ var TabularPane = React.createClass ({
 
 	getTotalWidth: function () {
     var view = this.props.view
-		return util.sum(view.data.visibleCols, 'width')
+		return util.sum(view.data.visibleCols, 'width');
 	},
 
 	getNumberCols: function () {
-		return this.props.view.data.visibleCols.length - 1
+		return this.props.view.data.visibleCols.length - 1;
 	},
 
 	getNumberRows: function () {
-		return this.store.getRecordCount() - 1
+		return this.store.getRecordCount() - 1;
 	},
 
 	getValueAt: function (idx) {
-		return this.store.getObject(idx)
+		return this.store.getObject(idx);
 	},
 
 	selectRow: function () {

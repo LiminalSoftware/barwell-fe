@@ -94,6 +94,10 @@ var ColumnMenu = React.createClass({
 		</div>
 	},
 
+	blurChildren: function () {
+		if (this.refs.list) this.refs.list.blurChildren()
+	},
+
 	render: function() {
 		var _this = this;
 		var view = this.props.view;
@@ -126,7 +130,7 @@ var ColumnMenu = React.createClass({
 								<div className="menu-item menu-sub-item menu-divider" >
 									{firstSection.label}
 								</div>
-								<ColumnList {...this.props} editing = {this.state.editing}/>
+								<ColumnList {...this.props} ref = "list" editing = {this.state.editing}/>
 								{this.renderButtonBar()}
 							</div>
 							:

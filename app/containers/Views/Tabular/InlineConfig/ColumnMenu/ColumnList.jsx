@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from "react-dom"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { Link } from "react-router";
 import styles from "./style.less";
@@ -21,30 +22,41 @@ var ColumnList = React.createClass({
 	mixins: [sortable.ListMixin],
 
 	componentDidMount: function() {
-	    // Set items' data, key name `items` required
-		this.setState({items: this.getItemsList()});
+		this.setState(this.getItemState());
 	},
 
-	getItemsList: function () {
+	onResorted: function () {
+		var view = this.props.view;
+		var section = this.props.sections[0];
+		var items = this.state.items.map(function (item, idx) {
+			if (item.isSection) section = item
+			else {
+				item.order = idx;
+				item = section.enterTransform(item);
+				view.data.columns[item.column_id] = item
+			}
+		});
+		modelActionCreators.createView(view, true, true);
+	},
+
+	getItemState: function () {
 		var items = [];
+		var breaks = [];
+		var lastBreak = 0;
 		var view = this.props.view;
 		var columns = view.data.columns;
 
 		this.props.sections.forEach(function (section, idx) {
-			var sectionItems = section.selector(view)
-			if (idx > 0) items.push({
-				isSection: true, 
-				label: section.label, 
-				section: section.section,
-				emptyText: section.emptyText
-			});
-			sectionItems.forEach(function (col) {
-				col.viewConfigParts = section.configParts;
+			
+			if (idx > 0) items.push(_.extend(section, {isSection: true}))
+			section.selector(view).forEach(function (col) {
+				if (section.configParts) col.viewConfigParts = section.configParts;
 				items.push(col)
 			})
+			breaks.push(lastBreak);
 		});
 
-		return items;
+		return {items: items, breaks: breaks};
 	},
 
 	blurChildren: function () {
@@ -54,8 +66,8 @@ var ColumnList = React.createClass({
 		});
 	},
 
-	componentWillReceiveProps: function (nextProps) {
-		this.setState({items: this.getItemsList()});
+	componentDidReceiveProps: function (nextProps) {
+		this.setState(this.getItemState());
 	},
 
 	render: function() {

@@ -53,7 +53,8 @@ var BlurOnClickMixin = {
   clickTrap: function (e) {
     e.stopPropagation()
     e.nativeEvent.stopImmediatePropagation();
-    if (this.props._blurChildren) this.props._blurChildren();
+    // if (this.blurChildren) this.blurChildren();
+    // if (this.props._blurSiblings) this.props._blurSiblings();
   }
 
 }

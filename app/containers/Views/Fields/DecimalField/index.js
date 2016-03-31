@@ -27,6 +27,8 @@ import TextFieldConfig from "../textFieldConfig"
 
 var decimalField = {
 
+	sortable: true,
+
 	defaultAlign: 'right',
 
 	configCleanser: function (config) {

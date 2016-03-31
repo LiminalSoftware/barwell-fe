@@ -17,6 +17,7 @@ import ColumnDetailMixin from './ColumnDetailMixin';
 import sortable from 'react-sortable-mixin';
 
 var ColumnDetailListable = React.createClass({
+
 	mixins: [sortable.ItemMixin],
 
 	dragRef: "grabber",
@@ -59,8 +60,7 @@ var ColumnDetailListable = React.createClass({
 		var _this = this;
 		var config = this.props.config
 		var fieldType = fieldTypes[config.type] || {}
-		
-		(fieldType.configParts || []).forEach(function (el) {
+		if (fieldType.configParts) fieldType.configParts.forEach(function (el) {
 			// console.log('el.partName:' + el.partName)
 			_this.refs[el.prototype.partName].handleBlur();
 		})
@@ -109,7 +109,9 @@ var ColumnDetailListable = React.createClass({
 					:
 					<span>
 					{
-						(fieldType.configParts || []).concat(_this.props.viewConfigParts || []).map(function (part, idx) {
+						(fieldType.configParts || []) /* config parts associated with the field type*/
+						
+						.map(function (part, idx) {
 						return React.createElement(part, {
 							_blurSiblings: _this.props._blurChildren,
 							key: part.prototype.partName,

@@ -21,6 +21,8 @@ var hasManyField = {
 	
 	defaultWidth: 200,
 
+	defaultAlign: 'center',
+
 	configParts: [AlignChoice, LabelChoice, BubbleColorchoice],
 
 	configCleanser: function (config) {

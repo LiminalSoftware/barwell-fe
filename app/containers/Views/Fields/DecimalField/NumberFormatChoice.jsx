@@ -15,6 +15,8 @@ var NumberFormatChoice = React.createClass({
 
   _timer: null,
 
+  // LIFECYCLE ==============================================================
+
   getInitialState: function () {
     var config = this.props.config
     var custom = !_.any(displayStyles, ds => ds.formatString === config.formatString)
@@ -26,22 +28,15 @@ var NumberFormatChoice = React.createClass({
   },
 
   componentWillReceiveProps: function (nextProps) {
-    this.setState({align: this.props.config.align})
+    this.setState({align: this.props.config.align});
   },
 
-  updateFormatString: function (e) {
-    var val = e.target.value
-    this.setState({formatString: val})
-  },
+  // HANDLERS ===============================================================
 
-  chooseDisplayStyle: function (value, e) {
-    console.log('chooseDisplayStyle: ' + JSON.stringify(value))
-		this.commitChanges({
-      displayStyle: value.displayStyle,
-      formatString: value.formatString,
-      custom: false
-    });
-	},
+  handleFormatChange: function (e) {
+    var value = e.target.value
+    this.setState({formatString: value})
+  },
 
   onBlur: function (event) {
     var config = this.props.config
@@ -54,14 +49,20 @@ var NumberFormatChoice = React.createClass({
     modelActionCreators.createView(view, false, true)
   },
 
-  handleFormatChange: function (e) {
-    var value = e.target.value
-    this.setState({formatString: value})
-  },
-
   handleChooseCustom: function () {
     this.setState({custom: true})
   },
+
+  chooseFormat: function (format, e) {
+    console.log('chooseFormat: ' + JSON.stringify(format))
+    this.commitChanges({
+      custom: false, 
+      open: false, 
+      formatString: format.formatString
+    });
+  },
+
+  // RENDER =================================================================
 
   render: function () {
     var _this = this
@@ -71,40 +72,46 @@ var NumberFormatChoice = React.createClass({
     
     return <span><span
         className={"pop-down clickable icon " + displayObj.icon}
-        onMouseDown = {this.handleOpen}>
+        onClick = {this.handleOpen}>
         {
-        this.state.open ? <PopDownMenu>
-          <li className="bottom-divider">Number Format</li>
+        this.state.open ? <PopDownMenu {...this.props}>
+          <li className="bottom-divider">
+            Number Format
+          </li>
           {
           _.map(displayStyles, function (ds, k) {
             return <li 
               key = {ds.displayStyle} 
               className = {"selectable " + 
               (config.displayStyle === k ? 'menu-selected' : '')}
-              onClick = {_this.chooseDisplayStyle.bind(_this, ds)}>
+              onClick = {_this.chooseFormat.bind(_this, ds)}>
               <span className = {"icon " + ds.icon}/>
               {ds.description}
             </li>
           })
           }
+
           <li key="format-header" className = {"top-divider " +
             (this.state.custom ? ' menu-selected' : '')}
             onClick = {this.handleChooseCustom}>
             <span className="icon icon-code"/>
             Custom
           </li>
+          
           {
             this.state.custom ?
             <li>
                 <input
+                  type = "text"
                   style = {{textAlign: 'center'}}
                   className = "menu-input text-input" 
-                  
                   value = {this.state.formatString}
+                  onBlur = {this.onBlur}
                   onChange = {_this.handleFormatChange}/> 
             </li>
             : null
           }
+          
         </PopDownMenu> : null
         }
     </span>

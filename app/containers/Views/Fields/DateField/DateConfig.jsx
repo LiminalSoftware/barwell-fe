@@ -28,6 +28,8 @@ var DateFormatChoice = React.createClass({
 
 	mixins: [blurOnClickMixin, configCommitMixin],
 
+	// LIFECYCLE ==============================================================
+
 	getInitialState: function () {
 		var config = this.props.config;
 		var custom = !_.any(dateStyles, ds => ds.formatString === config.formatString)
@@ -37,6 +39,8 @@ var DateFormatChoice = React.createClass({
 			custom: custom
 		}
 	},
+
+	// HANDLERS ===============================================================
 
 	handleFormatChange: function (e) {
 		var value = e.target.value
@@ -65,6 +69,8 @@ var DateFormatChoice = React.createClass({
 			formatString: format.formatString
 		})
 	},
+
+	// RENDER =================================================================
 
 	render: function () {
 		var _this = this
@@ -104,7 +110,8 @@ var DateFormatChoice = React.createClass({
 				spellCheck = "false"
 				value = {this.state.formatString}
 				onBlur = {this.onBlur}
-				onChange = {this.handleFormatChange}/></li>
+				onChange = {this.handleFormatChange}/>
+			</li>
 			: null
 			}
 

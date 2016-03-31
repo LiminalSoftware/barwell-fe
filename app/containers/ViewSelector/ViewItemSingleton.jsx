@@ -1,0 +1,29 @@
+import React from "react";
+import { Link } from "react-router"
+import viewTypes from "../Views/viewTypes"
+
+var ViewItemSingleton =  React.createClass({
+
+	render: function () {
+		var view = this.props.view
+		var model = this.props.model
+
+		if (view)
+			return <Link
+				to = {`/workspace/${model.workspace_id}/model/${view.model_id}/view/${view.view_id}`}
+				className = {"menu-item menu-sub-item  " + (this.props.selected ? " menu-selected " : "")}>
+				
+				<span className = {"icon " + viewTypes[view.type].icon}></span>
+				<span className = "double ellipsis">
+					{view.view}
+				</span>
+			</Link>
+		else return <div className = "singleton menu-item menu-sub-item no-left-padding">
+			<span className = "large icon icon-pencil-ruler"></span>
+			<span className = "double-column-config">Database Configuration</span>
+		</div>
+	}
+
+})
+
+export default ViewItemSingleton

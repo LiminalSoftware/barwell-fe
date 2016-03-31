@@ -33,6 +33,8 @@ var hasOneField = {
 
 	defaultWidth: 150,
 
+	defaultAlign: 'center',
+
 	configParts: [LabelChoice],
 
 	element: React.createClass({
