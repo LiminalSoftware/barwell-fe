@@ -110,7 +110,7 @@ var ColumnDetailListable = React.createClass({
 					<span>
 					{
 						(fieldType.configParts || []) /* config parts associated with the field type*/
-						
+						.concat(this.props.viewConfigParts || []) /* config parts passed down from the view*/
 						.map(function (part, idx) {
 						return React.createElement(part, {
 							_blurSiblings: _this.props._blurChildren,

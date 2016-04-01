@@ -10,20 +10,20 @@ import { Link } from "react-router"
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import blurOnClickMixin from '../../blurOnClickMixin'
 
-import ViewItem from './ViewItem'
-import ViewList from './ViewList'
+import ViewItemSingleton from './ViewItemSingleton'
+import ViewMenu from './ViewMenu'
 
 var ViewSelector = React.createClass({
 
 	mixins: [PureRenderMixin, blurOnClickMixin],
-
+	
 	getInitialState: function () {
 		return {open: false}
 	},
 
 	render: function() {
-    var model = this.props.model
-    var view = this.props.view
+    var model = this.props.model;
+    var view = (this.props.view || {});
 	if (!model) return null
 
 	return <div className = "header-section ">
@@ -39,11 +39,11 @@ var ViewSelector = React.createClass({
 				transitionLeaveTimeout={500}
 				transitionAppearTimeout={500}>
 				
-				{this.state.open ? 
-					<ViewList {...this.props}/> 
+				{
+					this.state.open ? 
+					<ViewMenu {...this.props} key = "menu" /> 
 					: 
-					<ViewItem {...this.props} key = {model.model_id + '-' + (view ? view.view_id : 'null')} 
-						singleton = {true}/>
+					<ViewItemSingleton {...this.props} key = "singleton" />
 				}
 			</ReactCSSTransitionGroup>
 			

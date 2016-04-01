@@ -12,8 +12,7 @@ import util from "../../../util/util"
 import tinycolor from "tinycolor2"
 
 import defaultCellStyle from './defaultCellStyle'
-
-var MIN_LIGHTNESS = 0.85
+import bgColorMixin from './bgColorMixin'
 
 var editableInputMixin = {
 
@@ -84,10 +83,10 @@ var editableInputMixin = {
 	handleKeyPress: function (e) {
 		if (e.keyCode === constant.keycodes.ESC) this.cancelChanges()
 		if (e.keyCode === constant.keycodes.ENTER) {
-			this.commitChanges()
+			this.commitChanges();
 		}
 		if (e.keyCode === constant.keycodes.TAB) {
-			this.commitChanges()
+			this.commitChanges();
 		}
 	},
 
@@ -97,13 +96,12 @@ var editableInputMixin = {
 		var prettyValue = isNull ? '' : this.format ? this.format(this.props.value) : this.props.value
 		var showDetail = this.detailIcon && this.props.selected && !this.state.editing
 		var obj = this.props.object
-		var bg = null
-		var fontColor = null
-		var cellStyle = _.clone(defaultCellStyle)
-		var editorIconStyle
-		var conditional = (!config.colorConditionAttr || obj['a' + config.colorConditionAttr])
+		var bg = null;
+		var fontColor = null;
+		var cellStyle = {};
+		var editorIconStyle;
 		
-
+		
 		if (showDetail) {
 			editorIconStyle = {
 				position: 'absolute',
@@ -113,30 +111,18 @@ var editableInputMixin = {
 				lineHeight: this.props.rowHeight + 'px',
 				zIndex: 251
 			}
-			if (config.align === 'right') editorIconStyle.left = 0
-			else editorIconStyle.right = 0
+			if (config.align === 'right') editorIconStyle.left = 0;
+			else editorIconStyle.right = 0;
 		}
 
 		cellStyle.textAlign = config.align
-		if (this.props.selected && this.detailIcon && config.align !== 'right') 
+		if (this.props.selected && this.detailIcon && config.align !== 'right')
 			cellStyle.paddingRight = '25px'
-		if (this.props.selected && this.detailIcon && config.align === 'right') 
+		if (this.props.selected && this.detailIcon && config.align === 'right')
 			cellStyle.paddingLeft = '25px'
 		cellStyle.lineHeight = this.props.rowHeight + 'px'
 		
-		if (isNull) bg = null
-		else if (this.props.selected) bg = "white"
-		else if (config.color && conditional) bg = config.color
-		else if (config.colorAttr && conditional) bg = obj['a' + config.colorAttr]
-
-		if (bg) {
-			var c = tinycolor(bg)
-			var hsl = c.toHsl()
-			if (config.adjustColor) hsl.l = 
-				Math.max(hsl.l, MIN_LIGHTNESS)
-			else if (c.isDark()) cellStyle.color = 'white'
-			cellStyle.background = tinycolor(hsl).toRgbString()
-		}
+		Object.assign(cellStyle, this.getBgColor());
 
 		return <span {...this.props} className = {"table-cell " + (this.props.selected ? 
 				(isNull ? "table-cell-selected-null" : "table-cell-selected") : 
@@ -171,5 +157,7 @@ var editableInputMixin = {
 		</span>
 	}
 }
+
+Object.assign(editableInputMixin, bgColorMixin)
 
 export default editableInputMixin;

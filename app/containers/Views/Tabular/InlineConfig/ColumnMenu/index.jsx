@@ -29,19 +29,22 @@ var ColumnMenu = React.createClass({
 		return {
 			open: false,
 			editing: false,
+			dirty: false
 		};
 	},
 
-	commitChanges: function (column) {
-		var view = this.props.view;
-		view.data.columns[column.column_id] = column;
-		modelActionCreators.createView(view, true, true);
-		this.setState({dragItem: null})
+	markDirty: function (isDirty) {
+		this.setState({dirty: (isDirty === false) ? false : true})
+	},
+
+	commitUpdates: function () {
+		this.setState({dirty: false})
+		this.refs.list.commitUpdates();
 	},
 
 	handleEdit: function () {
-		// console.log('edit')
-		this.setState({editing: true})
+		if (this.refs.list.revertChanges) this.refs.list.revertChanges()
+		this.setState({editing: true, dirty: false})
 	},
 
 	handleDoneEdit: function () {
@@ -51,6 +54,14 @@ var ColumnMenu = React.createClass({
 	renderButtonBar: function () {
 		var editing = this.state.editing;
 		return <div key = "buttons">
+			{
+				this.props.confirmChanges && this.state.dirty ?
+				<div className="menu-item menu-config-row">
+					<div className = "menu-sub-item" onClick = {this.commitUpdates}>
+					<span className = "icon icon-check"/> Update cube
+					</div>
+				</div> : null
+			}
 			{
 				editing ?
 				<div className="menu-item menu-config-row">
@@ -88,7 +99,7 @@ var ColumnMenu = React.createClass({
 					Add column
 				</div>
 			}
-		</div>
+			</div>
 
 
 		</div>
@@ -130,7 +141,10 @@ var ColumnMenu = React.createClass({
 								<div className="menu-item menu-sub-item menu-divider" >
 									{firstSection.label}
 								</div>
-								<ColumnList {...this.props} ref = "list" editing = {this.state.editing}/>
+								<ColumnList 
+									{...this.props} ref = "list" 
+									_markDirty = {this.markDirty}
+									editing = {this.state.editing}/>
 								{this.renderButtonBar()}
 							</div>
 							:

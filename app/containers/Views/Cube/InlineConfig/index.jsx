@@ -50,7 +50,10 @@ var CubeViewInlineConfig = React.createClass({
 
     	return <div className = "view-config" onClick={this.focus}>
 			<ViewSelector {...childProps} ref = "viewSelector"/>
-			<ColumnMenu {...childProps} sections = {sections} ref = "columnMenu"/>
+			<ColumnMenu {...childProps} 
+				confirmChanges = {true}
+				sections = {sections} 
+				ref = "columnMenu"/>
 		</div>;
 	}
 });

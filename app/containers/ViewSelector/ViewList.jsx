@@ -5,131 +5,86 @@ import styles from "./style.less"
 import viewTypes from "../Views/viewTypes"
 import { Link } from "react-router"
 
-import ViewItem from './ViewItem'
+import ViewItemMovable from './ViewItemMovable'
+import ViewItemSingleton from './ViewItemSingleton'
 import modelActionCreators from "../../actions/modelActionCreators.jsx"
+import sortable from 'react-sortable-mixin';
 
 var ViewList = React.createClass({
+
+	// mixins: [sortable.ListMixin],
+
+	// LIFECYCLE ==============================================================
+
 	getInitialState: function () {
-		return {
-			editing: false,
-			adding: false
-		}
+		return {items: []};
 	},
 
 	componentDidMount: function () {
-		this.setState({mounted: true})
-	},
-	
-	handleAddNewChoices: function () {
-		this.setState({adding: true, editing: true})
+		this.setState({items: this.props.items});
 	},
 
-	handleEdit: function () {
-		this.setState({editing: true})
-	},
+	// UTILITY ================================================================
 
-	handleSave: function () {
+	saveChanges: function () {
 		var _this = this
 		var model = this.props.model
-		var views = ViewStore.query({model_id: model.model_id})
-		views.forEach(function (v) {
+		
+		this.state.items.forEach(function (v) {
 			_this.refs['view-' + v.view_id].saveChanges()
 		})
 		this.setState({editing: false, adding: false})
 	},
 
-	handleCancelEdit: function () {
-		this.setState({editing: false, adding: false})
+	cancelChanges: function () {
+		this.setState({
+			items: this.props.items
+		});
 	},
 
-	handleAddNewView: function (type, e) {
-		var model = this.props.model
-		var name = 'New ' + type.type
-		var iter = 1
+	addNewView: function (type) {
+		var model = this.props.model;
+		var name = 'New ' + type.type;
+		var iter = 1;
+		var items = _.clone(this.state.items);
+		var view;
+		console.log('aa add new view');
 		while (ViewStore.query({model_id: model.model_id, view: name}).length > 0)
-			name = 'New ' + type.type + ' ' + (iter++)
-
-		modelActionCreators.createView({
+			name = 'New ' + type.type + ' ' + (iter++);
+		view = {
 			view: name,
 			model_id: model.model_id,
 			type: type.type,
 			data: {}
-		})
-		this.setState({adding: false, editing: true})
+		};
+		items.push(view)
+		this.setState({
+			items: items
+		});
 	},
 
+	// RENDER =================================================================
+
 	render: function () {
-		var _this = this
-		var model = this.props.model
-		var view = this.props.view
-		var views = ViewStore.query({model_id: model.model_id})
-		var editing = this.state.editing
-		return <div className = "dropdown-menu "
-					style = {{minWidth: "400px"}}>
-			{views.map( v =>
-				<ViewItem {...this.props}
-					ref = {'view-' + v.view_id}
-					key = {v.view_id}
-					selected = {(view || {}).view_id === v.view_id}
-					view = {v}
-					editing = {editing}/>
-			)}
-			<Link to={`/workspace/${model.workspace_id}/model/${model.model_id}/config`}
-				className = "menu-item menu-sub-item no-left-padding" key="model-editor">
-				<span className = {"icon icon-chevron-right " + (!view ? " green" : " hovershow")}/>
-				<span className = "icon icon-pencil-ruler"></span>
-				<span className = "double-column-config">Database Configuration</span>
-			</Link>
-			{
-				this.state.editing ?
-				<div className = "menu-item menu-config-row">
-					<div className="menu-sub-item padded" 
-						onClick = {this.handleAddNewChoices}>
-						<span className = "icon icon-plus"/> Add view
-					</div>
-				</div>
-				: null
-			}
-			{
-				this.state.adding ? 
-				_.map(viewTypes, function (type, typeKey) {
-		        	return <div className = "menu-item menu-item menu-sub-item"
-		            	onClick = {_this.handleAddNewView.bind(_this, type)}
-		            	key = {typeKey}>
-		            	<span className = {"large icon view-icon " + type.icon}/>
-		            	{type.type}
-		            </div>
-		        })
-				:
-				null
-			}
-			<div className="menu-item menu-config-row" key="detail-menu-items">
-				{
-					this.state.editing ?
-					<div className = {"menu-sub-item padded " + (this.state.adding ? "border-bottom" : "")}
-						onClick = {this.handleSave}>
-						<span className = "icon icon-check"/> Save changes
-					</div>
-					:
-					<div className = "menu-sub-item padded"
-						onClick = {this.handleEdit}>
-						<span className = "icon icon-pencil"/> Edit views
-					</div>
-				}
-				{
-					this.state.editing ?
-					<div className = {"menu-sub-item padded " + (this.state.adding ? "border-bottom" : "")}
-						onClick = {this.handleCancelEdit}>
-						<span className = "icon icon-cross2"/>Cancel changes
-					</div>
-					:
-					<div className="menu-sub-item padded" 
-						onClick = {this.handleAddNewChoices}>
-						<span className = "icon icon-plus"/> Add view
-					</div>
-				}
-				
-			</div>
+		var _this = this;
+		var view = this.props.view || {};
+
+		return <div className = "dropdown-list">
+			{this.state.items.map(function(v, idx) {
+
+				var itemProps = _.extend({
+					ref: 'view-' + v.view_id,
+					key: v.view_id,
+					index: idx,
+					item: v,
+					selected: (view.view_id === v.view_id),
+					view: v,
+					model: _this.props.model,
+					editing: _this.props.editing
+				}, _this.movableProps);
+
+				return <ViewItemMovable {...itemProps}/>;
+			})}
 		</div>
 	}
 })

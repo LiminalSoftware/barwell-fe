@@ -282,44 +282,50 @@ var TabularPane = React.createClass ({
 	},
 
 	copySelection: function (format) {
-		var clipboard = ""
-		var view = this.props.view
-		var sel = this.state.selection
+		var text = this.getSelection('text');
+		var json = this.getSelection('json');
+
+		copyTextToClipboard(text);
+		this.setState({
+			copyarea: this.state.selection,
+			copydata: json
+		});
+	},
+
+	copySelectionAsJSON: function (format) {
+		var json = this.getSelection('JSON');
+
+		copyTextToClipboard(json);
+		this.setState({
+			copyarea: this.state.selection,
+			copydata: json
+		});
+	},
+
+	getSelection: function (format) {
+		var sel = this.state.selection;
+		var json = new Array(sel.bottom - sel.top + 1);
+		var text = '';
+		var view = this.props.view;
+		
+
 		for (var r = sel.top; r <= sel.bottom; r++) {
-			var obj = this.store.getObject(r)
+			var data = {};
+			var obj = this.store.getObject(r);
+			json[r] = {}
+
 			for (var c = sel.left; c <= sel.right; c++) {
 				var column = view.data.visibleCols[c]
 				var type = fieldTypes[column.type]
 				var value = obj[column.column_id]
 
-				if (type.stringify) value = type.stringify(value)
-				clipboard += (value === null ? "" : value) + (c == sel.right ? "" : "\t")
-			}
-			clipboard += (r == sel.bottom ? "" : "\n")
-		}
-		copyTextToClipboard(clipboard)
-		this.setState({copyarea: sel})
-	},
-
-	getSelection: function (format) {
-		var json = [];
-		var text = '';
-		var view = this.props.view;
-		var sel = this.state.selection;
-
-		for (var r = sel.top; r <= sel.bottom; r++) {
-			var data = {}
-			var obj = this.store.getObject(r)
-			for (var c = sel.left; c <= sel.right; c++) {
-				var column = view.data.visibleCols[c]
 				if (format === 'JSON') 
-					obj[column.column_id] = obj[column.column_id];
+					json[r][column.column_id] = obj[column.column_id];
 				else if (format === 'prettyJSON') 
-					obj[column.name] = obj[column.column_id];
+					json[r][column.name] = obj[column.column_id];
 				else if (format === 'text') 
-					text += (value === null ? "" : value) + (c == sel.right ? "" : "\t");
+					text += (value === null ? "" : type.stringify ? type.stringify(value) : value) + (c == sel.right ? "" : "\t");
 			}
-			if (format === 'JSON' || format === 'prettyJSON') json.push(data);
 			if (format === 'text') text += (r == sel.bottom ? "" : "\n");
 		}
 		if (format === 'text') return text;
@@ -418,6 +424,34 @@ var TabularPane = React.createClass ({
 		// commit the pointer position to the view object, but debounce
 		view.data.pointer = pos
 		this._debounceCreateView(view, false, false, true)
+	},
+
+	extendSelect: function (pos, shift) {
+		var sel = _.clone(this.state.selection);
+		var ptr = _.clone(this.state.pointer);
+		var numCols = this.getNumberCols();
+		var numRows = this.getNumberRows();
+
+		if (direction === 'RIGHT') {
+			if (sel.left === ptr.left && sel.right < numCols) sel.right += 1
+			else if (sel.left < ptr.left) sel.left += 1
+			this.setState({selection: sel})
+		}
+		if (direction === 'LEFT') {
+			if (sel.right > ptr.left) sel.right -= 1
+			else if (sel.left > 0) sel.left -= 1
+			this.setState({selection: sel})
+		}
+		if (direction === 'DOWN') {
+			if (sel.top < ptr.top) sel.top += 1
+			else if (sel.bottom < numRows) sel.bottom += 1
+			this.setState({selection: sel})
+		} 
+		if (direction === 'UP') {
+			if (sel.bottom > ptr.top) sel.bottom -= 1
+			else if (sel.top > 0) sel.top -= 1
+			this.setState({selection: sel})
+		}
 	},
 
 	updateSelect: function (pos, shift) {
@@ -557,6 +591,7 @@ var TabularPane = React.createClass ({
 			_handleClick: this.onMouseDown,
 			_handlePaste: this.pasteSelection,
 			_copySelection: this.copySelection,
+			_copySelectionAsJSON: this.copySelectionAsJSON,
 			_addRecord: this.addRecord,
 			_deleteRecords: this.deleteRecords,
 			_insertRecord: this.insertRecord,

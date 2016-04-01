@@ -113,10 +113,12 @@ var SortMenu = React.createClass({
 					<div className = "menu-item menu-config-row">
 						<div className = "menu-sub-item"
 							onClick = {this.handleSave}>
+							<span className = "icon icon-check"/>
 							Sort
 						</div>
 						<div className = "menu-sub-item"
 							onClick = {this.handleCancel}>
+							<span className = "icon icon-cross2"/>
 							Cancel
 						</div>
 					</div>

@@ -27,8 +27,8 @@ var ColorPicker = React.createClass({
 		return NUM_HUES
 	},
 
-	clickChoice: function (event) {
-		var color = event.target.style.background;
+	clickChoice: function (e) {
+		var color = e.target.style.background;
 		this.setState({value: color, open: false});
 		this.commitValue(color);
 	},

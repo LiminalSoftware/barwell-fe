@@ -218,10 +218,10 @@ var CubePane = React.createClass ({
 		var rowHeaders = view.row_aggregates.map(getColumns);
 		var rowHeaderWidth = util.sum(rowHeaders, 'width');
 		
-	    var style = this.props.style || {}
+	    var style = this.props.style || {};
 
-	    pos = pos || {}
-	    fudge = fudge || {}
+	    pos = pos || {};
+	    fudge = fudge || {};
 
 	    if (pos.top >= 0) {
 	    	style.top = (columnHeaderHeight + pos.top * geo.rowHeight + (fudge.top || 0)) + 'px'
@@ -230,9 +230,9 @@ var CubePane = React.createClass ({
 	    	var top = 0;
 	    	var height = 0;
 	    	columnHeaders.forEach(function (header, idx) {
-	    		var headerIdx = idx - columnHeaders.length
-				if (pos.top > headerIdx) top += geo.rowHeight
-				if (pos.top <= headerIdx && pos.bottom >= headerIdx) height += geo.rowHeight
+	    		var headerIdx = idx - columnHeaders.length;
+				if (pos.top > headerIdx) top += geo.rowHeight;
+				if (pos.top <= headerIdx && pos.bottom >= headerIdx) height += geo.rowHeight;
 			})
 			style.top = top + (fudge.top || 0) + 'px'
 			style.height = height + (fudge.height || 0) + (Math.max(pos.bottom, 0) * geo.rowHeight) + 'px'
@@ -270,8 +270,8 @@ var CubePane = React.createClass ({
 
 		pos.left = Math.max(Math.min(pos.left, numCols), -1 * numRowHeaders);
 		pos.top = Math.max(Math.min(pos.top, numRows), -1 * numColumnHeaders);
-		pos.bottom = pos.bottom || pos.top
-		pos.right = pos.right || pos.left
+		pos.bottom = pos.bottom || pos.top;
+		pos.right = pos.right || pos.left;
 
 		if (pos.left !== oldPos.left ||pos.top !== oldPos.top)
 			this.blurPointer();
@@ -285,22 +285,22 @@ var CubePane = React.createClass ({
 		this.scrollTo(pos);
 		
 		// focus the paste area just in case
-		document.getElementById("copy-paste-dummy").focus()
+		document.getElementById("copy-paste-dummy").focus();
 
 		// commit the pointer position to the view object, but debounce
-		view.data.pointer = pos
+		view.data.pointer = pos;
 
-		this._debounceCreateView(view, false, false, true)
+		this._debounceCreateView(view, false, false, true);
 	},
 
 	updateSelect: function (pos, shift) {
-		var sel = this.state.selection
-		var ptr = this.state.pointer
-		var view = this.props.view
-		var store = this.store
+		var sel = this.state.selection;
+		var ptr = this.state.pointer;
+		var view = this.props.view;
+		var store = this.store;
 
-		var numCols = this.getNumberCols()
-		var numRows = this.getNumberRows()
+		var numCols = this.getNumberCols();
+		var numRows = this.getNumberRows();
 		var columnHeaders = view.column_aggregates;
     	var rowHeaders = view.row_aggregates;
 		var numColumnHeaders = columnHeaders.length;
@@ -312,7 +312,7 @@ var CubePane = React.createClass ({
 			pos.bottom = pos.top;
 
 			var sortSpec = rowHeaders.slice(0, pos.left + numRowHeaders + 1).map(function(k) {
-				return {attribute_id: k}
+				return {attribute_id: k};
 			});
 			
 			while (top > 0 && util.compare(
@@ -323,11 +323,11 @@ var CubePane = React.createClass ({
 				store.getLevel('row', bottom + 1), 
 				store.getLevel('row', pos.bottom), 
 				sortSpec) === 0) bottom++;
-			pos.top = top
-			pos.bottom = bottom
-			pos.right = pos.left
+			pos.top = top;
+			pos.bottom = bottom;
+			pos.right = pos.left;
 			sel = {
-				left: Math.max(Math.min(ptr.left, pos.left, numCols), -1 * numRowHeaders),
+				left: Math.max(Math.min(pos.left, numCols), -1 * numRowHeaders),
 				right: numCols,
 				top: Math.max(Math.min(pos.top, numRows), -1 * numColumnHeaders),
 				bottom: pos.bottom
@@ -354,7 +354,7 @@ var CubePane = React.createClass ({
 			pos.right = right
 			pos.bottom = pos.top
 			sel = {
-				top: Math.max(Math.min(ptr.top, pos.top, numRows), -1 * numColumnHeaders),
+				top: Math.max(Math.min(pos.top, numRows), -1 * numColumnHeaders),
 				bottom: numRows,
 				left: Math.max(Math.min(pos.left, numCols), -1 * numRowHeaders),
 				right: pos.right

@@ -52,6 +52,10 @@ var TabularContextMenu = React.createClass ({
 		this.props._copySelection()
 	},
 
+	clickJSONCopySelection: function (e) {
+		this.props._copySelectionAsJSON()
+	},
+
 	render: function () {
 		return <PopDownMenu {...this.props}>
 			<li onClick={this.clickAddNewRow} className = "selectable">
@@ -69,6 +73,11 @@ var TabularContextMenu = React.createClass ({
 		</PopDownMenu>
 	}
 })
+
+// <li onClick={this.clickCopySelection} className = "selectable">
+// 	Copy selection as JSON  
+// 	<span className="key-shortcut">ctrl+shift+c</span>
+// </li>
 
 
 export default TabularContextMenu

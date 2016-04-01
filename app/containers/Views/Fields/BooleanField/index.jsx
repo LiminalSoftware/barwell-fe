@@ -10,15 +10,16 @@ import ModelStore from "../../../../stores/ModelStore"
 import constant from "../../../../constants/MetasheetConstants"
 import modelActionCreators from "../../../../actions/modelActionCreators"
 
-import defaultCellStyle from '../defaultCellStyle'
+import ColorChoice from "../textFieldConfig/ColorChoice"
 
 import commitMixin from '../commitMixin'
 import editableInputMixin from '../editableInputMixin'
 import selectableMixin from '../selectableMixin'
+import bgColorMixin from '../bgColorMixin'
 
 var CheckboxElement = React.createClass({
 
-	mixins: [commitMixin, selectableMixin],
+	mixins: [commitMixin, selectableMixin, bgColorMixin],
 
 	revert: _.noop,
 
@@ -58,9 +59,8 @@ var CheckboxElement = React.createClass({
 		var config = this.props.config
 		var value = this.props.value
 		var style = this.props.style
-
-		var cellStyle = _.clone(defaultCellStyle)
-
+		var isNull = this.props.isNull
+		var cellStyle = {};
 		var checkStyle = {
 			position: 'absolute',
 			left: '2px',
@@ -69,17 +69,23 @@ var CheckboxElement = React.createClass({
 
 		cellStyle.lineHeight = this.props.rowHeight + 'px'
 		cellStyle.textAlign = 'center'
+		Object.assign(cellStyle, this.getBgColor());
 
-		return <span {...this.props} >
+		return <span {...this.props} className = {"table-cell " + (this.props.selected ? 
+				(isNull ? "table-cell-selected-null" : "table-cell-selected") : 
+				(isNull ? "table-cell-null" : "") )}>
 			<span style = {cellStyle} className = {"table-cell-inner " + 
-				(this.props.selected ? " table-cell-inner-selected " : "") +
+				((this.props.selected && !isNull) ? " table-cell-inner-selected " : "") +
 				(this.props.sorted ? " table-cell-inner-sorted" : "")
 				}>
+				{!isNull ?
 				<span className = {"checkbox-surround " + (this.state.selected ? ' checkbox-surround-selected' : '')}
-					 onClick={this.handleClick}>
+					 onClick=  {this.handleClick}>
 					<span className={"check green icon " + (this.state.value ? "icon-check" : "")} >
 					</span>
 				</span>
+				: null
+				}
 			</span>
 		</span>
 	}
@@ -88,6 +94,7 @@ var CheckboxElement = React.createClass({
 var booleanField = {
 	defaultWidth: 50,
 	sortable: true,
+	configParts: [ColorChoice],
 	expandable: false,
 	defaultAlign: 'center',
 	element: CheckboxElement,

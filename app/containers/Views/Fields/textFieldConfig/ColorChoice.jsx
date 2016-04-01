@@ -20,6 +20,7 @@ var ColorChoice = React.createClass({
       colorAttr: this.props.config.colorAttr || null,
       colorConditionAttr: this.props.config.colorConditionAttr || null,
       color: this.props.config.color,
+      custom: !!this.props.config.color,
       adjustColor: !(this.props.config.adjustColor === false),
       open: false
     }
@@ -39,9 +40,14 @@ var ColorChoice = React.createClass({
     // this.setState({open: false})
   },
 
-  chooseFixedColor: function (color) {
+  chooseFixedColor: function (e) {
+    var color = e.target.style.background;
     this.setState({custom: false})
-    this.commitChanges({colorAttr: null, color: color, adjustColor: this.state.adjustColor})
+    this.commitChanges({
+      colorAttr: null, 
+      color: color, 
+      adjustColor: this.state.adjustColor
+    })
     // this.setState({open: false})
   },
 
@@ -135,7 +141,7 @@ var ColorChoice = React.createClass({
           
           {
             this.state.custom ?
-            makeColorPickerRows(_this.state.color, null)
+            makeColorPickerRows(_this.state.color, _this.chooseFixedColor)
             : null
           }
 

@@ -26,6 +26,10 @@ var ColumnList = React.createClass({
 	},
 
 	onResorted: function () {
+		this.props._markDirty()
+	},
+
+	commitUpdates: function () {
 		var view = this.props.view;
 		var section = this.props.sections[0];
 		var items = this.state.items.map(function (item, idx) {
@@ -39,10 +43,12 @@ var ColumnList = React.createClass({
 		modelActionCreators.createView(view, true, true);
 	},
 
+	revertChanges: function () {
+		this.setState(this.getItemState());
+	},
+
 	getItemState: function () {
 		var items = [];
-		var breaks = [];
-		var lastBreak = 0;
 		var view = this.props.view;
 		var columns = view.data.columns;
 
@@ -50,13 +56,11 @@ var ColumnList = React.createClass({
 			
 			if (idx > 0) items.push(_.extend(section, {isSection: true}))
 			section.selector(view).forEach(function (col) {
-				if (section.configParts) col.viewConfigParts = section.configParts;
 				items.push(col)
-			})
-			breaks.push(lastBreak);
+			});
 		});
 
-		return {items: items, breaks: breaks};
+		return {items: items};
 	},
 
 	blurChildren: function () {
@@ -75,6 +79,7 @@ var ColumnList = React.createClass({
 		var view = this.props.view;
 		var data = view.data;
 		var columns = view.data.columnList;
+		var section
 
 		var items = this.state.items.map(function (item, idx) {
 			var itemProps = Object.assign({
@@ -82,16 +87,18 @@ var ColumnList = React.createClass({
 				index: idx,
 			}, _this.movableProps);
 
+			if (item.isSection) section = item;
 			if (item.isSection) return <div 
-					className="menu-item menu-sub-item menu-divider" 
-					key = {'section-' + item.section}
-					ref = {'section' + item.section}
-					{...itemProps}>{item.label}</div>
+				className="menu-item menu-sub-item menu-divider" 
+				key = {'section-' + item.section}
+				ref = {'section' + item.section}
+				{...itemProps}>{item.label}</div>
 			else return <ColumnDetail
 				key = {item.column_id}
 				ref = {item.column_id}
 				config = {item}
 				open = {true}
+				viewConfigParts = {section ? section.configParts : null}
 				editing = {_this.props.editing}
 				view= {view}
 				_blurChildren = {_this.blurChildren}
