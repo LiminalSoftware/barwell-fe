@@ -31,8 +31,9 @@ var GroupSortPicker = React.createClass({
 	render: function() {
 		var _this = this
 		var config = this.props.config
+		var fieldType = fieldTypes[config.type]
 
-		return <span className={"pop-down icon icon-sort-alpha-" + (config.descending ? 'desc' : 'asc')}
+		return <span className={"pop-down icon icon-" + fieldType.sortIcon + (config.descending ? 'desc' : 'asc')}
         	onMouseDown = {this.handleInvert}>
 		</span>
 	}

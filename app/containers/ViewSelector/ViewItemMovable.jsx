@@ -21,6 +21,30 @@ var ViewItemMovable = React.createClass({
 			}
 	},
 
+	// UTILITY ================================================================
+
+	saveChanges: function () {
+		var view = this.props.view || {};
+
+		console.log('saveChanges')
+		// var view = ViewStore.get(item.view_id);
+		// if (!viewview.view !== item.view) modelActionCreators.createView(view, true, true);
+
+		view.view = this.state.name;
+		if (this.state.deleting && view.view_id)
+			modelActionCreators.destroyView(view);
+		else if (!view.view_id || view.view !== this.state.name) {
+			view.view = this.state.name
+			modelActionCreators.createView(view, true, true);
+		}
+	},
+
+	revertChanges: function () {
+		this.setState({editing: false, deleting: false});
+		if (!view.view_id) modelActionCreators.deleteView(view, false, false)
+	},
+
+
 	// HANDLERS ===============================================================
 
 	handleNameChange: function (e) {
@@ -49,19 +73,6 @@ var ViewItemMovable = React.createClass({
 			name: view.view
 		});
 		util.clickTrap(e);
-	},
-
-	saveChanges: function () {
-		var view = this.props.view;
-		view.view = this.state.name;
-		if (this.state.deleting && view.view_id)
-			modelActionCreators.destroyView(view);
-		else if (view.name !== this.state.name) 
-			modelActionCreators.createView(view, true, true);
-	},
-
-	revertChanges: function () {
-		this.setState({editing: false, deleting: false});
 	},
 
 	// RENDER =================================================================

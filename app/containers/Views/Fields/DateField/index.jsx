@@ -2,6 +2,7 @@ import React from "react"
 import _ from "underscore"
 import $ from "jquery"
 import moment from "moment"
+
 import styles from "./style.less"
 import AttributeStore from "../../../../stores/AttributeStore"
 import ModelStore from "../../../../stores/ModelStore"
@@ -12,10 +13,10 @@ import modelActionCreators from "../../../../actions/modelActionCreators"
 import commitMixin from '../commitMixin'
 import editableInputMixin from '../editableInputMixin'
 import selectableMixin from '../selectableMixin'
-import DateValidatorMixin from './dateValidatorMixin'
+import DateValidatorMixin from './DateValidatorMixin'
 import keyPressMixin from '../keyPressMixin'
 
-import DateDetail from "./detail"
+import DatePicker from './DatePicker'
 
 import AlignChoice from "../textFieldConfig/AlignChoice"
 import ColorChoice from "../textFieldConfig/ColorChoice"
@@ -27,9 +28,11 @@ import TextFieldConfig from "../textFieldConfig"
 
 var dateField = {
 
-	detail: DateDetail,
+	detail: DatePicker,
 
 	sortable: true,
+
+	sortIcon: 'sort-time-',
 
 	stringify: function (value) {
 		var val = moment(value)

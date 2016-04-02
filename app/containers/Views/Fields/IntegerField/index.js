@@ -20,6 +20,7 @@ import TextChoice from "../textFieldConfig/TextChoice"
 
 var integerField = {
 	sortable: true,
+	sortIcon: 'sort-numeric-',
 	defaultWidth: 50,
 	configParts: [AlignChoice, ColorChoice, TextChoice],
 	element: React.createClass({

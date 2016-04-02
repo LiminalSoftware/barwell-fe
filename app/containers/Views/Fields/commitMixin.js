@@ -27,6 +27,7 @@ var commitMixin = {
 
 	commitChanges: function () {
 		var value = this.validator(this.parser(this.props.value))
+		this.setState({open: false});
 		if (!this.state.editing) return;
 		this.commitValue(this.state.value)
 	},

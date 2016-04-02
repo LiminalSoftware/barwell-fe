@@ -1,13 +1,10 @@
 import React from "react"
 import _ from "underscore"
 
-
 import styles from "./style.less";
 
 import constant from "../../../../constants/MetasheetConstants"
 import modelActionCreators from "../../../../actions/modelActionCreators"
-
-import ColorDetail from "./detail"
 
 import CommitMixin from '../commitMixin'
 import editableInputMixin from '../editableInputMixin'
@@ -83,8 +80,7 @@ var ColorElement = React.createClass({
 });
 
 var colorField = {
-	element: ColorElement,
-	detail: ColorDetail
+	element: ColorElement	
 }
 
 export default colorField;

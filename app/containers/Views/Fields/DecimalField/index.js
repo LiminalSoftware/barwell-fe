@@ -29,6 +29,8 @@ var decimalField = {
 
 	sortable: true,
 
+	sortIcon: 'sort-numeric-',
+
 	defaultAlign: 'right',
 
 	configCleanser: function (config) {

@@ -41,6 +41,7 @@ var SortDetail = React.createClass({
 	    var view = this.props.view
 	    var spec = this.props.sortSpec
 		var attr = AttributeStore.get(spec.attribute_id)
+		var fieldType = fieldTypes[attr.type];
 
 	    return <div className="menu-item tight menu-sub-item">
 			{this.props.editing ? <span
@@ -49,7 +50,7 @@ var SortDetail = React.createClass({
       		<span className = "ellipsis">{attr.attribute}</span>
 
 			<span onClick={this.switch}
-				className={"half-column-config tight icon icon-sort-alpha-" + (spec.descending ? 'desc' : 'asc')}>
+				className={"half-column-config tight icon icon-" + fieldType.sortIcon + (spec.descending ? 'desc' : 'asc')}>
 			</span>
 			<span onClick={this.remove} 
 				className="half-column-config tight icon icon-cross-circle"></span>

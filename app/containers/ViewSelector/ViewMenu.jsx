@@ -29,6 +29,7 @@ var ViewMenu = React.createClass({
 	handleAddNewView: function (type, e) {
 		console.log('handleAddNewView')
 		this.refs.viewList.addNewView(type);
+		this.setState({adding: false});
 	},
 
 	handleAddNewChoices: function () {
@@ -115,11 +116,20 @@ var ViewMenu = React.createClass({
 				<span className = "double-column-config">Database Configuration</span>
 			</Link>
 			{
-				this.state.editing ?
+				this.state.editing && !this.state.adding ?
 				<div className = "menu-item menu-config-row">
 					<div className="menu-sub-item padded" 
 						onClick = {this.handleAddNewChoices}>
 						<span className = "icon icon-plus"/> Add view
+					</div>
+				</div>
+				: null
+			}
+			{
+				this.state.adding ?
+				<div className = "menu-item menu-config-row">
+					<div className="menu-sub-item padded">
+						Select type for new view:
 					</div>
 				</div>
 				: null

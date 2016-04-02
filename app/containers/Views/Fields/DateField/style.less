@@ -1,46 +1,16 @@
 @import "../../../../global.less";
 
-.calendar-table {
-  border-collapse: collapse;
-}
+.date-choice {
+  height: 20px;
+  line-height: 20px;
+  display: flex;
+  flex-direction: row;
+  flex: 1 1;
+  padding: 0;
+  border-right: 1px solid @gray4;
 
-.month-label {
-  font-size: 12px;
-  color: @headerFontColor;
-  border: 1px double @headerFontColor;
-  border-left: none;
-}
+  margin: 1px;
 
-.week-box {
-  font-size: 12px;
-  &:first-child {
-    border-top: none;
-  }
-}
-
-.day-box {
-  font-size: 12px;
-  color: @headerFontColor;
-  border-right: 1px solid @headerBgDark;
-  border-bottom: 1px solid @headerBgDark;
-
-  padding: 3px;
-  text-align: center;
   cursor: pointer;
-
-  &.last-week {
-    border-bottom: 1px double @headerFontColor;
-  }
-  &.last-day {
-    border-right: 1px double @headerFontColor;
-  }
-  &.first-day {
-    border-left: 1px solid @headerFontColor;
-  }
-  &.selected {
-    border: 1px double @newgreen1;
-    color: @newgreen1;
-  }
-  &.different-year {
-  }
+  text-align: center;
 }

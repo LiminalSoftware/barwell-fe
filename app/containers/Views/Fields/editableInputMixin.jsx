@@ -14,6 +14,8 @@ import tinycolor from "tinycolor2"
 import defaultCellStyle from './defaultCellStyle'
 import bgColorMixin from './bgColorMixin'
 
+import fieldTypes from '../fields'
+
 var editableInputMixin = {
 
 	shouldComponentUpdate: function (nextProps, nextState) {
@@ -22,6 +24,7 @@ var editableInputMixin = {
 			nextState.searchValue !== this.state.searchValue ||
 			nextProps.config !== this.props.config ||
 			nextState.selected !== this.state.selected ||
+			nextState.open !== this.state.open ||
 			nextState.editing !== this.state.editing
 	},
 
@@ -48,14 +51,16 @@ var editableInputMixin = {
 
 	cancelChanges: function () {
 		this.setState({
-			value: this.props.value
+			value: this.props.value,
+			open: false
 		})
 		this.revert()
 	},
 
 	revert: function () {
 		this.setState({
-			editing: false
+			editing: false,
+			open: false
 		})
 		this.props._handleBlur()
 	},
@@ -74,8 +79,9 @@ var editableInputMixin = {
 		this.setValue(event.target.value)
 	},
 
-	handleDetail: function (event) {
-		this.props._handleDetail()
+	handleDetail: function (e) {
+		console.log('handleDetail')
+		this.setState({open: true})
 		event.preventDefault()
 		event.stopPropagation()
 	},
@@ -90,19 +96,24 @@ var editableInputMixin = {
 		}
 	},
 
+
+
 	render: function () {
 		var config = this.props.config
 		var isNull = this.props.isNull
 		var prettyValue = isNull ? '' : this.format ? this.format(this.props.value) : this.props.value
-		var showDetail = this.detailIcon && this.props.selected && !this.state.editing
+		var showIcon = this.detailIcon && this.props.selected && !this.state.editing
 		var obj = this.props.object
 		var bg = null;
 		var fontColor = null;
 		var cellStyle = {};
 		var editorIconStyle;
+		var fieldType = fieldTypes[config.type]
+		var detail = fieldType.detail;
+		var showDetail = this.state.open;
 		
 		
-		if (showDetail) {
+		if (showIcon) {
 			editorIconStyle = {
 				position: 'absolute',
 				top: 0, 
@@ -147,11 +158,15 @@ var editableInputMixin = {
 				{prettyValue}
 			</span>
 		}
-		{showDetail ?
+		{showIcon ?
 			<span
 				style = {editorIconStyle}
 				className = {"editor-icon icon " + this.detailIcon}
-				onClick = {this.props._handleDetail}/>
+				onClick = {this.handleDetail}/>
+			: null
+		}
+		{this.state.open ?
+			React.createElement(detail, Object.assign({value: this.state.value}, this.props) )
 			: null
 		}
 		</span>

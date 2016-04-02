@@ -71,7 +71,7 @@ class TabularTR extends React.Component {
 			}
 
 			{_this.props.columns.map(function (col, j) {
-				var element = (fieldTypes[col.type] || fieldTypes.TEXT).element
+				var element = (fieldTypes[col.type]).element
 				var cellKey = rowKey + '-' + col.column_id
 				
 

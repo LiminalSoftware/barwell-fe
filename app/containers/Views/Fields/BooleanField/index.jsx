@@ -94,6 +94,7 @@ var CheckboxElement = React.createClass({
 var booleanField = {
 	defaultWidth: 50,
 	sortable: true,
+	sortIcon: 'sort-numeric-',
 	configParts: [ColorChoice],
 	expandable: false,
 	defaultAlign: 'center',
