@@ -10,20 +10,20 @@ var makeColorPickerRows = function(current, handleChange) {
 	var lit = [0.7, 0.5];
 	
 	var color = tinycolor.fromRatio({ }).toRgbString()
-
+	
 	return hue.map(function (h, idx) {
 			var choices = []
 			lit.forEach(function (l) {
 				sat.forEach(function (s) {
 					var color = tinycolor({h: h, s: s, l: l}).toRgbString();
 					choices.push(<span key = {color} 
-						className = "color-choice" style = {{background: color}}
+						className = "menu-choice menu-choice--color" style = {{background: color}}
 						onClick = {handleChange}>
 						{current === color ? <span className = "white icon color-check icon-check"/> : null}
 					</span>)
 				})
 			})
-			return <li key = {idx} className = "color-row" >{choices}</li>
+			return <li key = {idx} className = "menu-row" >{choices}</li>
         });
 	
 	

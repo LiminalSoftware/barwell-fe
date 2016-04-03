@@ -24,6 +24,18 @@ var ViewMenu = React.createClass({
 		}
 	},
 
+	// componentWillMount: function () {
+	// 	ViewStore.addChangeListener(this._onChange);
+	// },
+
+	// componentWillUnmunt: function () {
+	// 	ViewStore.removeChangeListener(this._onChange);
+	// },
+
+	// _onChange: function () {
+	// 	this.forceUpdate();
+	// },
+
 	// HANDLERS ===============================================================
 	
 	handleAddNewView: function (type, e) {

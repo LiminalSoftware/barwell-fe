@@ -24,8 +24,8 @@ var ViewList = React.createClass({
 		this.setState({items: this.props.items});
 	},
 
-	componentWillReceiveProps: function (nextProps) {
-		this.setState({items: this.props.items});
+	componentWillReceiveProps: function (next) {
+		this.setState({items: next.items});
 	},
 
 	componentWillUnmount: function () {
@@ -35,22 +35,21 @@ var ViewList = React.createClass({
 	// UTILITY ================================================================
 
 	saveChanges: function () {
-		var _this = this
-		var model = this.props.model
+		var _this = this;
+		var model = this.props.model;
 		
 		this.setState({editing: false, adding: false});
 
-		this.state.items.map(function (v) {
-			return _this.refs['view-' + (v.cid || v.view_id)].saveChanges()
-		})
-		
+		this.state.items.map(function (item) {
+			return _this.refs['view-' + (item.cid || item.view_id)].saveChanges()
+		});
 	},
 
 	cancelChanges: function () {
 		var _this = this
 		this.state.items.map(function (item) {
-			if (!item.view_id) 
-			return _this.refs['view-' + (v.cid || v.view_id)].saveChanges()
+			// if (!item.view_id) 
+			return _this.refs['view-' + (item.cid || item.view_id)].revertChanges()
 		})
 		this.setState({
 			items: this.props.items
@@ -90,7 +89,7 @@ var ViewList = React.createClass({
 			{this.state.items.map(function(v, idx) {
 
 				var itemProps = _.extend({
-					ref: 'view-' + v.view_id,
+					ref: 'view-' + (v.cid || v.view_id),
 					key: v.cid || v.view_id,
 					index: idx,
 					item: v,

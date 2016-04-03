@@ -4,26 +4,35 @@
 
 
 // detail pane
-.color-row {
+.menu-row {
   display: flex !important;
   flex-direction: row;
   flex-wrap: wrap;
   height: 20px !important;
+  & > span {
+    height: 20px;
+    line-height: 20px;
+    display: flex;
+    flex-direction: row;
+    flex: 1 1;
+  }
 }
 
-.color-choice {
-  height: 20px;
-  line-height: 20px;
-  display: flex;
-  flex-direction: row;
-  flex: 1 1;
+// .menu-choice {
+//   flex: 1 1;
+// }
+
+.menu-choice--double {
+  flex-grow: 2 !important;
+}
+
+.menu-choice--color {
   border-radius: 2px;
   padding: 0;
   border: 1px solid white;
   margin: 1px;
-
   cursor: pointer;
-  text-align: center;
+  text-align: center !important;
 }
 
 .color-check {

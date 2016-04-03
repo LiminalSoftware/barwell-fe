@@ -9,6 +9,7 @@ import modelActionCreators from '../../actions/modelActionCreators'
 import MetasheetDispatcher from '../../dispatcher/MetasheetDispatcher'
 
 import ModelStore from "../../stores/ModelStore"
+import ModelConfigStore from "../../stores/ModelConfigStore";
 import ViewStore from "../../stores/ViewStore"
 import MetasheetConst from '../../constants/MetasheetConstants'
 
@@ -89,7 +90,7 @@ var ModelList = React.createClass ({
 					{..._this.movableProps} />;
 			})
 		}
-		<li className="clickable add-new"><a onClick = {this.handleAddModel}>+</a></li>
+		<li className="clickable add-new"><a onClick = {this.handleAddModel}><span className = "icon icon-plus" style={{fontSize: '14px'}}/></a></li>
 		</ul>
 	}
 })

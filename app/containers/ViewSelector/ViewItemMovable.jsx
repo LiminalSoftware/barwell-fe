@@ -40,8 +40,9 @@ var ViewItemMovable = React.createClass({
 	},
 
 	revertChanges: function () {
+		var view = this.props.view || {};
 		this.setState({editing: false, deleting: false});
-		if (!view.view_id) modelActionCreators.deleteView(view, false, false)
+		if (!view.view_id) modelActionCreators.destroyView(view, false, false)
 	},
 
 

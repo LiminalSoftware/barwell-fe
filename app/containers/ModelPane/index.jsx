@@ -5,6 +5,7 @@ import detailStyles from "./detail.less"
 import ModelDefinition from "../ModelDefinition"
 import ModelStore from "../../stores/ModelStore"
 import ViewStore from "../../stores/ViewStore"
+import ModelConfigStore from '../../stores/ModelConfigStore'
 import groomView from '../../containers/Views/groomView'
 
 import ViewSelector from '../ViewSelector'
@@ -63,9 +64,12 @@ var ModelPane = React.createClass({
 		var _this = this
 		var workspace_id = this.props.params.workspaceId
 		var model_id = this.props.params.modelId
-		var view_id = this.props.params.viewId
-		var view = ViewStore.get(view_id)
+		
+		
 		var model = ModelStore.get(model_id)
+		var modelConfig = ModelConfigStore.get(model_id) || {}
+		var view_id = this.props.params.viewId || modelConfig.selected_view_id
+		var view = ViewStore.get(view_id)
 
 		// var viewDetailContent
 		// var detailContent

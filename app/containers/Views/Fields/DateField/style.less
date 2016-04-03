@@ -1,16 +1,22 @@
 @import "../../../../global.less";
 
-.date-choice {
-  height: 20px;
-  line-height: 20px;
-  display: flex;
-  flex-direction: row;
-  flex: 1 1;
-  padding: 0;
-  border-right: 1px solid @gray4;
-
+.menu-choice--date {
+  padding: 3px;
   margin: 1px;
-
   cursor: pointer;
-  text-align: center;
+  text-align: center !important;
+  // font-size: 10px;
+}
+
+.date-out-of-month {
+  color: @gray3;
+}
+
+.date-selected {
+  padding: 1px;
+  width: 20px;
+  height: 20px;
+  border: 1px solid @newgreen1;
+  border-radius: 15px;
+  color: @newgreen1;
 }

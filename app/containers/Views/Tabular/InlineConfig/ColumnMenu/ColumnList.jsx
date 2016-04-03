@@ -26,7 +26,8 @@ var ColumnList = React.createClass({
 	},
 
 	onResorted: function () {
-		this.props._markDirty()
+		if (this.props.confirmChanges) this.props._markDirty()
+		else this.commitUpdates();
 	},
 
 	commitUpdates: function () {

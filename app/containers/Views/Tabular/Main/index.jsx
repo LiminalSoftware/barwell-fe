@@ -73,26 +73,26 @@ var TabularPane = React.createClass ({
 	componentWillMount: function () {
 		var copyPasteDummy = document.getElementById('copy-paste-dummy')
 
-		document.body.addEventListener('keydown', this.onKey)
-		copyPasteDummy.addEventListener('paste', this.pasteSelection)
-		FocusStore.addChangeListener(this._onChange)
-		ViewStore.addChangeListener(this._onChange)
-		this.store = createTabularStore(this.props.view)
-		this.store.addChangeListener(this._onChange)
-		this._debounceCalibrateHeight = _.debounce(this.calibrateHeight, 500)
-		this._debounceCreateView = _.debounce(this.createView, 500)
+		document.body.addEventListener('keydown', this.onKey);
+		copyPasteDummy.addEventListener('paste', this.pasteSelection);
+		FocusStore.addChangeListener(this._onChange);
+		ViewStore.addChangeListener(this._onChange);
+		this.store = createTabularStore(this.props.view);
+		this.store.addChangeListener(this._onChange);
+		this._debounceCalibrateHeight = _.debounce(this.calibrateHeight, 500);
+		this._debounceCreateView = _.debounce(this.createView, 500);
 
 	},
 
 	componentWillUnmount: function () {
-		var copyPasteDummy = document.getElementById('copy-paste-dummy')
-		document.body.removeEventListener('keydown', this.onKey)
-		FocusStore.removeChangeListener(this._onChange)
-		ViewStore.removeChangeListener(this._onChange)
-		copyPasteDummy.removeEventListener('paste', this.pasteSelection)
-		removeEventListener('resize', this._debounceCalibrateHeight)
-		this.store.removeChangeListener(this._onChange)
-		this.store.unregister()
+		var copyPasteDummy = document.getElementById('copy-paste-dummy');
+		document.body.removeEventListener('keydown', this.onKey);
+		FocusStore.removeChangeListener(this._onChange);
+		ViewStore.removeChangeListener(this._onChange);
+		copyPasteDummy.removeEventListener('paste', this.pasteSelection);
+		removeEventListener('resize', this._debounceCalibrateHeight);
+		this.store.removeChangeListener(this._onChange);
+		this.store.unregister();
 	},
 
 	componentDidMount: function () {

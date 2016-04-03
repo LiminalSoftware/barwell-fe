@@ -81,7 +81,12 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 
 .pop-up-menu {
 	bottom: 100%;
-	flex-direction: column-reverse;
+	
+	&.invert {
+		flex-direction: column-reverse;
+	} &:not(.invert) {
+		flex-direction: column;
+	}
 	margin-bottom: @pointerSize/2 - 2;
 }
 

@@ -31,9 +31,11 @@ var groomView = function (view) {
 
 	data.columns = columns
 	data.columnList = columnList
-	data.visibleCols = columnList.filter(c => c.visible)
+	
 	data.floatCols = columnList.filter(c => !c.fixed && c.visible)
 	data.fixedCols = columnList.filter(c => c.fixed && c.visible)
+	data.visibleCols = _.clone(data.fixedCols).concat(data.floatCols)
+
 	data.floatWidth = util.sum(data.floatCols, 'width')
 	data.fixedWidth = util.sum(data.fixedCols, 'width')
 	data.columns = _.indexBy(data.columnList, 'column_id');
@@ -49,11 +51,11 @@ var groomView = function (view) {
 	data.sortIndex = _.indexBy(data.sorting, 'attribute_id')
 
 	data.selection = _.extend({'left': 0, 'top': 0, 'right': 0, 'bottom': 0}, (data.selection || {}) );
-	data.selection = limit(data.selection, view)
+	data.selection = limit(data.selection, view);
 	data.anchor = _.extend({"left": 0, "top": 0}, data.anchor || {});
-	data.anchor = limit(data.anchor, view)
+	data.anchor = limit(data.anchor, view);
 	data.pointer = _.extend({"left": 0, "top": 0}, data.pointer || {});
-	data.pointer = limit(data.pointer, view)
+	data.pointer = limit(data.pointer, view);
 	data.scrollTop = data.scrollTop || 0;
 
 	data.geometry = data.geometry || {}
