@@ -51,6 +51,14 @@ var dateField = {
 
 		mixins: [editableInputMixin, commitMixin, selectableMixin, keyPressMixin],
 
+		// revert: function () {
+		// 	this.setState({
+		// 		editing: false,
+		// 		open: false
+		// 	})
+		// 	this.props._handleBlur()
+		// },
+
 		format: function (value) {
 			var config = this.props.config || {}
 			var format = config.formatString || "DD MMMM YYYY";

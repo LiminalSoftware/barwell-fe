@@ -21,7 +21,7 @@ var TabularTH = React.createClass ({
 		var col = this.props.column
 		var left = this.props.left
 		var cellStyle = {
-			width: (col.width - 1) + 'px',
+			width: (col.width) + 'px',
 			left: left + 'px',
 		}
 		var sortArrow

@@ -166,7 +166,7 @@ var editableInputMixin = {
 			: null
 		}
 		{this.state.open ?
-			React.createElement(detail, Object.assign({value: this.state.value}, this.props) )
+			React.createElement(detail, Object.assign({value: this.state.value, _revert: this.revert}, this.props) )
 			: null
 		}
 		</span>

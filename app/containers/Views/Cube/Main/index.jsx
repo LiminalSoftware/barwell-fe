@@ -25,6 +25,7 @@ import fieldTypes from "../../fields"
 import CubeBodyWrapper from "./CubeBodyWrapper"
 import Cursors from './Cursors'
 
+import ScrollBar from '../../Tabular/Main/ScrollBar'
 import TableMixin from '../../TableMixin.jsx'
 
 var CubePane = React.createClass ({
@@ -150,7 +151,7 @@ var CubePane = React.createClass ({
 
 	getRCCoords: function (e) {
 		var store = this.store;
-		var wrapper = ReactDOM.findDOMNode(this.refs.wrapper.refs.tbodyWrapper)
+		var wrapper = ReactDOM.findDOMNode(this.refs.tableWrapper.refs.tbodyWrapper)
 		var view = this.props.view
 		var geo = view.data.geometry
 
@@ -385,6 +386,34 @@ var CubePane = React.createClass ({
 		})
 	},
 
+	setHorizontalScrollOffset: function (hOffset) {
+		
+	},
+
+	setVerticalScrollOffset: function (vOffset) {
+		var view = this.props.view;
+		var geo = view.data.geometry;
+		var rowOffset = Math.floor(vOffset / geo.rowHeight);
+		
+		var rowHeaderOffsetter = this.refs.tableWrapper.refs.rowHeaderOffsetter;
+		var rhsOffsetter = this.refs.tableWrapper.refs.bodyOffsetter;
+		var underlay = this.refs.cursors.refs.underlayInner;
+		var overlay = this.refs.cursors.refs.overlayInner;
+
+		if (rowOffset === this.state.rowOffset) return;
+
+		ReactDOM.findDOMNode(rowHeaderOffsetter).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight) + "px, 0)"
+		ReactDOM.findDOMNode(rhsOffsetter).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight) + "px, 0)"
+		ReactDOM.findDOMNode(underlay).style.transform = "translate3d(0, " + ( -1 * rowOffset * geo.rowHeight) + "px, 0)"
+		ReactDOM.findDOMNode(overlay).style.transform = "translate3d(0, " + ( -1 * rowOffset * geo.rowHeight) + "px, 0)"
+
+		this.setState({
+			rowOffset: rowOffset
+		})
+		
+		// if (!this._timer) this._timer = getFrame(this.refreshTable, CYCLE)
+	},
+
 	render: function () {
 		var _this = this;
 		var store = this.store;
@@ -402,7 +431,8 @@ var CubePane = React.createClass ({
 		var columnHeaders = view.column_aggregates.map(getColumns);
 		var rowHeaderWidth = util.sum(rowHeaders, 'width');
 		var bodyWidth = numColumns * geo.columnWidth;
-		var focused = (FocusStore.getFocus(0) == 'view')
+		var focused = (FocusStore.getFocus(0) == 'view');
+
 
 		Object.assign(childProps, {
 			_getRangeStyle: this.getRangeStyle,
@@ -426,7 +456,7 @@ var CubePane = React.createClass ({
 			scrollLeft: scrollLeft,
 
 			rowHeaders: rowHeaders,
-			rowHeaderWidth: util.sum(rowHeaders, 'width'),
+			rowHeaderWidth: rowHeaderWidth,
 			columnHeaders: columnHeaders,
 			columnHeaderHeight: columnHeaders.length * geo.rowHeight,
 
@@ -446,8 +476,30 @@ var CubePane = React.createClass ({
 
 		return <div className = "model-panes">
 			<div className="view-body-wrapper">
-				<CubeBodyWrapper {...childProps} store = {this.store} ref = "wrapper"/>
-				<Cursors {...childProps} ref = "cursors"/>
+				<CubeBodyWrapper 
+					{...childProps} 
+					store = {this.store} 
+					ref = "tableWrapper"/>
+
+				<Cursors 
+					{...childProps} 
+					ref = "cursors"/>
+
+				<ScrollBar
+					innerDimension = {(numRows + 1) * geo.rowHeight}
+					offset = {columnHeaders.length * geo.rowHeight}
+					ref = "verticalScrollBar"
+					axis = "vertical"
+					_setScrollOffset = {this.setVerticalScrollOffset}
+					view = {view}/>
+				
+				<ScrollBar
+					innerDimension = {bodyWidth}
+					offset = {rowHeaderWidth + 100}
+					ref = "horizontalScrollBar"
+					axis = "horizontal"
+					_setScrollOffset = {this.setHorizontalScrollOffset}
+					view = {view}/>
 			</div>
 		</div>
 	}

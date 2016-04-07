@@ -256,7 +256,8 @@ var TabularBodyWrapper = React.createClass ({
 				<div className = "rhs-h-scroll wrapper force-layer"
 					ref = "rhsHorizontalOffsetter"
 					style = {{
-						marginLeft: (-1 * this.props.hiddenColWidth - 1) + 'px'
+						marginLeft: HAS_3D ? 0 :(-1 * this.props.hiddenColWidth - 1) + 'px',
+						transform: 'translate3d(' + (-1 * this.props.hiddenColWidth - 1) + 'px, 0, 0)',
 					}}>
 
 					{/*RHS TABLE BODY WRAPPER*/}

@@ -53,7 +53,7 @@ var ColumnDetailMixin = {
 		var _this = this;
 		var config = this.props.config
 		var fieldType = fieldTypes[config.type] || {}
-		fieldType.configParts.forEach(function (el) {
+		if (fieldType.configParts) fieldType.configParts.forEach(function (el) {
 			// console.log('el.partName:' + el.partName)
 			_this.refs[el.prototype.partName].handleBlur();
 		})
@@ -76,11 +76,12 @@ var ColumnDetailMixin = {
 			});
 
 	    return <div className={"menu-item menu-sub-item" +
-				(this.props.singleton ? " singleton " : "")}>
+				(this.singleton ? " singleton " : "")}
+				>
 		      	<span className = "ellipsis">
 					{
 					this.props.open ? 
-					<span 
+					<span ref = "grabber"
 					      className="draggable icon grayed icon-menu"/>
 					: null
 					}
@@ -101,9 +102,11 @@ var ColumnDetailMixin = {
 					:
 					<span>
 					{
-						(fieldType.configParts || []).concat(_this.props.viewConfigParts || []).map(function (part, idx) {
+						(fieldType.configParts || []) /* config parts associated with the field type*/
+						.concat(this.props.viewConfigParts || []) /* config parts passed down from the view*/
+						.map(function (part, idx) {
 						return React.createElement(part, {
-							_blurSiblings: _this.blurSubMenus,
+							_blurSiblings: _this.props._blurChildren,
 							key: part.prototype.partName,
 							ref: part.prototype.partName,
 							view: view,

@@ -57,7 +57,7 @@ var ColumnList = React.createClass({
 			
 			if (idx > 0) items.push(_.extend(section, {isSection: true}))
 			section.selector(view).forEach(function (col) {
-				items.push(col)
+				items.push(col);
 			});
 		});
 

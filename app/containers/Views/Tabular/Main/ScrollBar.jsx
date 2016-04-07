@@ -3,7 +3,6 @@ import ReactDOM from "react-dom"
 import $ from "jquery"
 
 import _ from 'underscore'
-import FocusStore from "../../../../stores/FocusStore"
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 var RHS_PADDING = 100
@@ -14,7 +13,6 @@ var ScrollBar = React.createClass ({
 		var scrollVar = this.props.axis === 'vertical' ? 'scrollTop' : 'scrollLeft';
 		var outerEl = this.refs.overlay;
 		var view = this.props.view;
-		var geo = view.data.geometry;
 		var offset = outerEl[scrollVar];
 
 		this.props._setScrollOffset(offset);
@@ -34,11 +32,13 @@ var ScrollBar = React.createClass ({
 	},
 
 	render: function () {
-		var view = this.props.view
-		var geo = view.data.geometry
-		var axis = this.props.axis
-		var store = this.props.store
-		var rowCount = store ? this.props.store.getRecordCount() : 0
+		var view = this.props.view;
+		var geo = view.data.geometry;
+		var axis = this.props.axis;
+		var rowCount = this.props.rowCount;
+		var inner = this.props.innerDimension;
+		var offset = this.props.offset;
+		// var outer = this.props.outerDimension;
 		
 		var innerStyle = (axis === 'vertical') ? {
 			top: 0,
@@ -54,7 +54,7 @@ var ScrollBar = React.createClass ({
 
 		var style =  (axis === 'vertical') ? {
 			position: 'absolute',
-			top: geo.headerHeight + 'px',
+			top: offset + 'px',
 			width: '10px',
 			right: 0,
 			bottom: 0
@@ -62,17 +62,17 @@ var ScrollBar = React.createClass ({
 			position: 'absolute',
 			bottom: 0,
 			right: 0,
-			left: 0,
+			left: offset,
 			height: '10px'
 		};
 		
 		// hack! - need something clickable before the rows load
 		if (axis === 'vertical') {
-			if (rowCount == 0) innerStyle.bottom = 0
-			else innerStyle.height = ((rowCount + 1) * geo.rowHeight + geo.headerHeight) + 'px'	
+			innerStyle.height = inner + 'px';
+			// if (rowCount == 0) innerStyle.bottom = 0
+			// else innerStyle.height = ((rowCount + 1) * geo.rowHeight + geo.headerHeight) + 'px'	
 		} else {
-			var extra = view.data.floatCols.length ? _.last(view.data.floatCols).width : 100
-			innerStyle.width = (view.data.floatWidth + view.data.fixedWidth + geo.labelWidth + extra) + 'px'
+			innerStyle.width = inner  + 'px'
 		}
 		
 

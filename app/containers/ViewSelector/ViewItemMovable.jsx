@@ -24,18 +24,15 @@ var ViewItemMovable = React.createClass({
 	// UTILITY ================================================================
 
 	saveChanges: function () {
+		console.log('saveChanges ViewItemMovable')
 		var view = this.props.view || {};
-
-		console.log('saveChanges')
-		// var view = ViewStore.get(item.view_id);
-		// if (!viewview.view !== item.view) modelActionCreators.createView(view, true, true);
-
-		view.view = this.state.name;
-		if (this.state.deleting && view.view_id)
-			modelActionCreators.destroyView(view);
-		else if (!view.view_id || view.view !== this.state.name) {
+		
+		if (!this.state.deleting && (!view.view_id || view.view !== this.state.name)) {
 			view.view = this.state.name
 			modelActionCreators.createView(view, true, true);
+		}
+		if (this.state.deleting) {
+			modelActionCreators.destroy("view", !!view.view_id, view);
 		}
 	},
 
@@ -83,7 +80,7 @@ var ViewItemMovable = React.createClass({
 		var model = this.props.model
 
 		if (view)
-			return <div className = "menu-item menu-sub-item">
+			return <div className = "menu-item menu-sub-item" style = {{minWidth: "300px"}}>
 				<span className = {"draggable gray icon icon-menu " + 
 					(this.state.editTransition ? "" : "")} ref = "grabber"/>
 				<span className = {"icon " + viewTypes[view.type].icon}></span>

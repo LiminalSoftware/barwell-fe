@@ -14,7 +14,9 @@ var ModelConfigStore = storeFactory({
         break;
 
       case 'MODELCONFIG_CREATE':
-        this.create(payload.modelconfig);
+        var config = this.get(payload.modelconfig.model_id) || {};
+        Object.assign(config, payload.modelconfig);
+        this.create(config);
         this.emitChange();
         break;
 

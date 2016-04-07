@@ -1,27 +1,31 @@
-import _ from "underscore"
-import React from "react"
-import ViewStore from "../../stores/ViewStore"
-import styles from "./style.less"
-import viewTypes from "../Views/viewTypes"
-import { Link } from "react-router"
+import _ from "underscore";
+import React from "react";
+import ViewStore from "../../stores/ViewStore";
+import ModelConfigStore from "../../stores/ModelConfigStore";
+import styles from "./style.less";
+import viewTypes from "../Views/viewTypes";
+import { Link } from "react-router";
 
-import ViewItemMovable from './ViewItemMovable'
-import ViewItemSingleton from './ViewItemSingleton'
-import modelActionCreators from "../../actions/modelActionCreators.jsx"
+import ViewItemMovable from './ViewItemMovable';
+import ViewItemSingleton from './ViewItemSingleton';
+import sortItems from './sortItems';
+
+import modelActionCreators from "../../actions/modelActionCreators.jsx";
 import sortable from 'react-sortable-mixin';
 
 var ViewList = React.createClass({
 
-	// mixins: [sortable.ListMixin],
+	mixins: [sortable.ListMixin],
 
 	// LIFECYCLE ==============================================================
 
 	getInitialState: function () {
-		return {items: []};
+		return {};
 	},
 
 	componentDidMount: function () {
-		this.setState({items: this.props.items});
+		var model = this.props.model
+		this.setState({items: sortItems(model, this.props.items)});
 	},
 
 	componentWillReceiveProps: function (next) {
@@ -32,21 +36,36 @@ var ViewList = React.createClass({
 		this.cancelChanges();
 	},
 
+	// HANDLERS ===============================================================
+
+	onResorted: function () {
+		// var model = this.props.model;
+		
+	},
+
 	// UTILITY ================================================================
 
 	saveChanges: function () {
 		var _this = this;
 		var model = this.props.model;
-		
-		this.setState({editing: false, adding: false});
+		var items = this.state.items;
+		var ordering = {}
 
-		this.state.items.map(function (item) {
-			return _this.refs['view-' + (item.cid || item.view_id)].saveChanges()
+		items.forEach(function (item, ord) {
+			_this.refs['view-' + (item.cid || item.view_id)].saveChanges()
+			ordering[item.view_id] = ord;
+			// if (item.view_id) _this.refs['view-' + item.view_id].saveChanges();
 		});
+		
+		modelActionCreators.create('modelconfig', false, {
+			model_id: model.model_id,
+			ordering: ordering
+		});
+		this.setState({editing: false, adding: false});
 	},
 
 	cancelChanges: function () {
-		var _this = this
+		var _this = this;
 		this.state.items.map(function (item) {
 			// if (!item.view_id) 
 			return _this.refs['view-' + (item.cid || item.view_id)].revertChanges()
@@ -88,7 +107,7 @@ var ViewList = React.createClass({
 		return <div className = "dropdown-list">
 			{this.state.items.map(function(v, idx) {
 
-				var itemProps = _.extend({
+				var itemProps = {
 					ref: 'view-' + (v.cid || v.view_id),
 					key: v.cid || v.view_id,
 					index: idx,
@@ -97,9 +116,9 @@ var ViewList = React.createClass({
 					view: v,
 					model: _this.props.model,
 					editing: _this.props.editing
-				}, _this.movableProps);
+				};
 
-				return <ViewItemMovable {...itemProps}/>;
+				return <ViewItemMovable {...itemProps} {..._this.movableProps}/>;
 			})}
 		</div>
 	}

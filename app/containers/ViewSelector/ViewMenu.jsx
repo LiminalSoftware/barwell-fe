@@ -12,6 +12,7 @@ import sortable from 'react-sortable-mixin';
 import ViewList from './ViewList'
 import ViewItemSingleton from './ViewItemSingleton';
 
+import sortItems from './sortItems';
 
 var ViewMenu = React.createClass({
 
@@ -24,22 +25,9 @@ var ViewMenu = React.createClass({
 		}
 	},
 
-	// componentWillMount: function () {
-	// 	ViewStore.addChangeListener(this._onChange);
-	// },
-
-	// componentWillUnmunt: function () {
-	// 	ViewStore.removeChangeListener(this._onChange);
-	// },
-
-	// _onChange: function () {
-	// 	this.forceUpdate();
-	// },
-
 	// HANDLERS ===============================================================
 	
 	handleAddNewView: function (type, e) {
-		console.log('handleAddNewView')
 		this.refs.viewList.addNewView(type);
 		this.setState({adding: false});
 	},
@@ -105,6 +93,8 @@ var ViewMenu = React.createClass({
 		var view = this.props.view || {};
 		var views = ViewStore.query({model_id: model.model_id});
 		var editing = this.state.editing;
+
+		views = sortItems(model, views);
 
 		return <div className = "dropdown-menu "
 					style = {{minWidth: "400px"}}>

@@ -15,7 +15,7 @@ var groomView = function (view) {
 	var columnList = data.columnList = util.enumerate(_.values(columns), util.sortByOrder)
 	var fields = AttributeStore.query({model_id: view.model_id});
 	var relations = RelationStore.query({model_id: view.model_id});
-	var ptr = data.pointer
+	var ptr = data.pointer || {};
 
 	view.row_aggregates = columnList.filter(c => c.groupByRow).map(c => c.attribute_id);
 	view.column_aggregates = columnList.filter(c => c.groupByColumn).map(c => c.attribute_id);

@@ -6,7 +6,9 @@ import _ from 'underscore';
 import fieldTypes from "../../../fields"
 
 import ColumnList from "./ColumnList"
-import ColumnDetail from "./ColumnDetailListable"
+import ColumnDetail from "./ColumnDetailSingleton"
+
+import AttributeStore from "../../../../../stores/AttributeStore"
 import constant from '../../../../../constants/MetasheetConstants'
 import util from "../../../../../util/util"
 
@@ -21,6 +23,14 @@ var ColumnMenu = React.createClass({
 
 	mixins: [blurOnClickMixin],
 
+	componentWillMount: function () {
+		AttributeStore.addChangeListener(this._onChange);
+	},
+
+	componentWillUnmount: function () {
+		AttributeStore.removeChangeListener(this._onChange);
+	},
+
 	_onChange: function () {
 		this.forceUpdate();
 	},
@@ -29,7 +39,8 @@ var ColumnMenu = React.createClass({
 		return {
 			open: false,
 			editing: false,
-			dirty: false
+			dirty: false,
+			newColumns: []
 		};
 	},
 
@@ -51,6 +62,18 @@ var ColumnMenu = React.createClass({
 		this.setState({editing: false})
 	},
 
+	handleAddColumn: function () {
+		var view = this.props.view;
+		var model = this.props.model;
+		var idx = 0;
+		var attr = {attribute: 'New attribute', model_id: model.model_id, type: 'TEXT'};
+		while (AttributeStore.query({attribute: attr.attribute}).length > 0) {
+			attr.attribute = 'New attribute ' + idx++;
+		}
+		modelActionCreators.create('attribute', false, attr);
+		modelActionCreators.createView(view, false, false);
+	},
+
 	renderButtonBar: function () {
 		var editing = this.state.editing;
 		return <div key = "buttons">
@@ -64,7 +87,8 @@ var ColumnMenu = React.createClass({
 			}
 			{
 				editing ?
-				<div className="menu-item menu-config-row">
+				<div className="menu-item menu-config-row"
+					onClick = {this.handleAddColumn}>
 					<div className = "menu-sub-item">
 					<span className = "icon icon-plus"/> Add column
 					</div>
@@ -110,6 +134,7 @@ var ColumnMenu = React.createClass({
 	},
 
 	render: function() {
+		console.log('render column menu')
 		var _this = this;
 		var view = this.props.view;
 		var data = view.data;
@@ -150,7 +175,10 @@ var ColumnMenu = React.createClass({
 							:
 							currentCol ? 
 							<ColumnDetail
-								singleton = {true} key = {currentCol.column_id}
+								ref = 'columnDetail'
+								key = {currentCol.column_id}
+								
+								_blurChildren = {e => _this.refs.columnDetail.blurSubMenus()}
 								config = {currentCol} view = {view}/>
 							:
 							<div className="singleton menu-item menu-sub-item">

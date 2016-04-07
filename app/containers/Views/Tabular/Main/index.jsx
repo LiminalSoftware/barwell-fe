@@ -14,7 +14,6 @@ import ViewStore from "../../../../stores/ViewStore"
 import KeycompStore from "../../../../stores/KeycompStore"
 import AttributeStore from "../../../../stores/AttributeStore"
 import FocusStore from "../../../../stores/FocusStore"
-
 import util from "../../../../util/util"
 import copyTextToClipboard from "../../../../util/copyTextToClipboard"
 
@@ -582,9 +581,10 @@ var TabularPane = React.createClass ({
 	render: function () {
 		var model = this.props.model
 		var view = this.props.view
-
+		var rowCount = this.getNumberRows()
 		var focused = (FocusStore.getFocus() == 'view')
 		var totalWidth = this.getTotalWidth()
+		var geo = view.data.geometry
 
 		var childProps = {
 			_handleBlur: this.handleBlur,
@@ -638,14 +638,18 @@ var TabularPane = React.createClass ({
 					ref = "cursors"/>
 
 				<ScrollBar
-					store = {this.store}
+					innerDimension = {(rowCount + 2) * geo.rowHeight + geo.headerHeight}	
+					rowCount = {rowCount}
+					offset = {geo.headerHeight}
 					ref = "verticalScrollBar"
 					axis = "vertical"
 					_setScrollOffset = {this.setVerticalScrollOffset}
 					view = {view}/>
 				
 				<ScrollBar
-					store = {this.store}
+					innerDimension = {view.data.floatWidth + view.data.fixedWidth + geo.labelWidth}
+					rowCount = {rowCount}
+					offset = {0}
 					ref = "horizontalScrollBar"
 					axis = "horizontal"
 					_setScrollOffset = {this.setHorizontalScrollOffset}

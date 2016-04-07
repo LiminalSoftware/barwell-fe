@@ -124,6 +124,12 @@ var Cursors = React.createClass ({
     var numCols = store.getCount('column');
     var numRows = store.getCount('row');
 
+    var isRowSelection = sel.left < 0;
+    var isColumnSelection = sel.top < 0;
+
+    var rowOffset = isRowSelection ? 0 : this.props.rowHeaderWidth
+    var columnOffset = isColumnSelection ? 0 : this.props.columnHeaderHeight
+
     var pointerFudge = this.props.expanded ? {
       left: -30,
       width: 60,
@@ -132,10 +138,10 @@ var Cursors = React.createClass ({
     } : {width: -1, top: 1, height: -1};
 
     var style = {
-      top: 0,
-      left: 0,
+      top: 0 - rowOffset,
+      left: 0 - columnOffset,
       right: 0,
-      height: (this.props.columnHeaderHeight + (rowCount) * geo.rowHeight) + 'px',
+      height: (rowOffset + (rowCount) * geo.rowHeight) + 'px',
       transformStyle: 'preserve-3d'
     }
 
@@ -151,10 +157,10 @@ var Cursors = React.createClass ({
       }}>
       <div className = "wrapper overlay "
         style = {{
-          top: 0 + 'px',
+          top: columnOffset + 'px',
           bottom: 0,
-          left: 0 + 'px',
-          width: (this.props.adjustedWidth + RIGHT_FRINGE) + 'px',
+          left: rowOffset + 'px',
+          right: 0,
           pointerEvents: 'none',
           overflow: 'hidden',
           transform: 'translateZ(3px)'
