@@ -24,16 +24,15 @@ var ViewList = React.createClass({
 	},
 
 	componentDidMount: function () {
-		var model = this.props.model
-		this.setState({items: sortItems(model, this.props.items)});
+		this.setState({items: sortItems(this.props.model, this.props.items)});
 	},
 
 	componentWillReceiveProps: function (next) {
-		this.setState({items: next.items});
+		this.setState({items: sortItems(next.model, next.items)});
 	},
 
 	componentWillUnmount: function () {
-		this.cancelChanges();
+		if (this.state.editing) this.cancelChanges();
 	},
 
 	// HANDLERS ===============================================================
@@ -49,12 +48,12 @@ var ViewList = React.createClass({
 		var _this = this;
 		var model = this.props.model;
 		var items = this.state.items;
-		var ordering = {}
+		var ordering = {};
 
 		items.forEach(function (item, ord) {
-			_this.refs['view-' + (item.cid || item.view_id)].saveChanges()
-			ordering[item.view_id] = ord;
-			// if (item.view_id) _this.refs['view-' + item.view_id].saveChanges();
+			var element = _this.refs[(item.cid || item.view_id)]
+			if (element) element.saveChanges();
+			ordering[item.view_id] = ord + 1;
 		});
 		
 		modelActionCreators.create('modelconfig', false, {
@@ -67,8 +66,8 @@ var ViewList = React.createClass({
 	cancelChanges: function () {
 		var _this = this;
 		this.state.items.map(function (item) {
-			// if (!item.view_id) 
-			return _this.refs['view-' + (item.cid || item.view_id)].revertChanges()
+			var element = _this.refs[(item.cid || item.view_id)]
+			if (element) element.revertChanges();
 		})
 		this.setState({
 			items: this.props.items
@@ -79,23 +78,16 @@ var ViewList = React.createClass({
 		var model = this.props.model;
 		var name = 'New ' + type.type;
 		var iter = 1;
-		var items = _.clone(this.state.items);
 		var view;
 		
 		while (ViewStore.query({model_id: model.model_id, view: name}).length > 0)
 			name = 'New ' + type.type + ' ' + (iter++);
-		view = {
+		modelActionCreators.createView({
 			view: name,
 			model_id: model.model_id,
 			type: type.type,
 			data: {}
-		};
-		modelActionCreators.createView(view, false, false);
-		// items.push(view)
-		// this.setState({
-		// 	items: items
-		// });
-
+		}, false, false);
 	},
 
 	// RENDER =================================================================
@@ -108,17 +100,19 @@ var ViewList = React.createClass({
 			{this.state.items.map(function(v, idx) {
 
 				var itemProps = {
-					ref: 'view-' + (v.cid || v.view_id),
-					key: v.cid || v.view_id,
+					ref: (v.cid || v.view_id),
+					key: (v.cid || v.view_id),
 					index: idx,
-					item: v,
 					selected: (view.view_id === v.view_id),
 					view: v,
 					model: _this.props.model,
 					editing: _this.props.editing
 				};
 
-				return <ViewItemMovable {...itemProps} {..._this.movableProps}/>;
+				return _this.props.editing ?
+					<ViewItemMovable {...itemProps} {..._this.movableProps}/>
+					:
+					<ViewItemSingleton {...itemProps}/>;
 			})}
 		</div>
 	}

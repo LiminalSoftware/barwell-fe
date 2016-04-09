@@ -18,6 +18,14 @@ var ViewMenu = React.createClass({
 
 	// LIFECYCLE ==============================================================
 
+	componentWillMount: function () {
+		ViewStore.addChangeListener(this._onChange);
+	},
+
+	componentWillUnmount: function () {
+		ViewStore.removeChangeListener(this._onChange);
+	},
+
 	getInitialState: function () {
 		return {
 			editing: false,
@@ -27,6 +35,10 @@ var ViewMenu = React.createClass({
 
 	// HANDLERS ===============================================================
 	
+	_onChange: function () {
+		this.forceUpdate()
+	},
+
 	handleAddNewView: function (type, e) {
 		this.refs.viewList.addNewView(type);
 		this.setState({adding: false});
@@ -87,6 +99,18 @@ var ViewMenu = React.createClass({
 
 	// RENDER =================================================================
 
+	// <div key="fixed-list" className = "dropdown-list">
+	// 			{
+	// 				views.map((v, idx) =>
+	// 					<ViewItemSingleton 
+	// 						selected = {v.view_id === view.view_id}
+	// 						key = {'singleton-' + (v.cid || v.view_id)} 
+	// 						view = {v} model = {model}/>
+	// 				)
+	// 			}
+	// 			</div>
+
+
 	render: function () {
 		var _this = this;
 		var model = this.props.model;
@@ -97,20 +121,19 @@ var ViewMenu = React.createClass({
 		views = sortItems(model, views);
 
 		return <div className = "dropdown-menu "
+					key = "list-wrapper"
 					style = {{minWidth: "400px"}}>
 			{
-				this.state.editing ? 
+				
 				<ViewList ref = "viewList"
-					items = {views} editing = {this.state.editing} {..._this.props}/>
-				:
-				views.map((v,idx) =>
-					<ViewItemSingleton 
-						selected = {v.view_id === view.view_id}
-						key = {v.view_id} view = {v} model = {model}/>
-				)
+					items = {views}
+					editing = {this.state.editing} 
+					{..._this.props}
+					key = "orderable-list"/>
+				
 			}
 			
-			<Link to = {`/workspace/${model.workspace_id}/model/${model.model_id}/config`}
+			<Link to = {`/workspace/${model.workspace_id}/model/${model.model_id}/view/config`}
 				className = {"menu-item menu-sub-item " + 
 					(!view ? " menu-selected " : " ")}
 				 key="model-editor">
@@ -119,7 +142,7 @@ var ViewMenu = React.createClass({
 			</Link>
 			{
 				this.state.editing && !this.state.adding ?
-				<div className = "menu-item menu-config-row">
+				<div className = "menu-item menu-config-row" key = "config-row">
 					<div className="menu-sub-item padded" 
 						onClick = {this.handleAddNewChoices}>
 						<span className = "icon icon-plus"/> Add view
@@ -129,7 +152,7 @@ var ViewMenu = React.createClass({
 			}
 			{
 				this.state.adding ?
-				<div className = "menu-item menu-config-row">
+				<div className = "menu-item menu-config-row" key = "add-row">
 					<div className="menu-sub-item padded">
 						Select type for new view:
 					</div>

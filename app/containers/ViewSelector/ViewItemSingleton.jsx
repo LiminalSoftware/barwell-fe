@@ -5,14 +5,18 @@ import modelActionCreators from "../../actions/modelActionCreators.jsx"
 
 var ViewItemSingleton =  React.createClass({
 
+	// HANDLERS ===============================================================
+
 	handleClick: function (e) {
 		var model = this.props.model;
 		var view = this.props.view;
-		modelActionCreators.create('modelconfig', false, {
-			model_id: model.model_id,
-			selected_view_id: view.view_id
-		});
+		// modelActionCreators.create('modelconfig', false, {
+		// 	model_id: model.model_id,
+		// 	selected_view_id: view.view_id
+		// });
 	},
+
+	// RENDER =================================================================
 
 	render: function () {
 		var view = this.props.view
@@ -24,7 +28,7 @@ var ViewItemSingleton =  React.createClass({
 				to = {`/workspace/${model.workspace_id}/model/${view.model_id}/view/${view.view_id}`}
 				className = {"menu-item menu-sub-item  " + (this.props.selected ? " menu-selected " : "")}>
 				
-				<span className = {"icon " + viewTypes[view.type].icon}></span>
+				<span className = {"icon " + viewTypes[view.type].icon}/>
 				<span className = "double ellipsis">
 					{view.view}
 				</span>

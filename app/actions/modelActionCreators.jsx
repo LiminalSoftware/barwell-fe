@@ -297,18 +297,16 @@ var modelActions = {
 		message.selector = selector
 	},
 
-	create: function (subject, persist, obj, update, safe) {
-		var message = {}
-		if (update !== false) update = true
-		obj._dirty = true
-		obj._destroy = false
-		message[subject] = obj
-		message.actionType = subject.toUpperCase() + '_CREATE'
-		message.safe = !!safe
-		MetasheetDispatcher.dispatch(message)
+	create: function (subject, persist, obj) {
+		var message = {};
+		obj._dirty = true;
+		obj._destroy = false;
+		message[subject] = obj;
+		message.actionType = subject.toUpperCase() + '_CREATE';
+		MetasheetDispatcher.dispatch(message);
 
-		if (persist) return webUtils.persist(subject, 'CREATE', obj, update);
-		else return Promise.resolve(obj)
+		if (persist) return webUtils.persist(subject, 'CREATE', obj);
+		else return Promise.resolve(obj);
 	},
 
 	undestroy: function (subject, obj) {
@@ -415,9 +413,9 @@ var modelActions = {
 	},
 
 	// views
-	createView: function(view, persist, update, safe) {
+	createView: function(view, persist) {
 		view = _.clone(view)
-		modelActions.create('view', persist, groomView(view), update, safe)
+		modelActions.create('view', persist, groomView(view))
 	},
 
 	updatePointer: function(view, pointer) {

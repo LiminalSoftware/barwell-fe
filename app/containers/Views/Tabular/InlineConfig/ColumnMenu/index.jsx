@@ -134,7 +134,7 @@ var ColumnMenu = React.createClass({
 	},
 
 	render: function() {
-		console.log('render column menu')
+		
 		var _this = this;
 		var view = this.props.view;
 		var data = view.data;

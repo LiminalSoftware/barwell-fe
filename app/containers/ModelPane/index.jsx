@@ -66,10 +66,10 @@ var ModelPane = React.createClass({
 		var model_id = this.props.params.modelId
 		
 		
-		var model = ModelStore.get(model_id)
-		var modelConfig = ModelConfigStore.get(model_id) || {}
-		var view_id = this.props.params.viewId || modelConfig.selected_view_id
-		var view = ViewStore.get(view_id)
+		var model = ModelStore.get(model_id);
+		var modelConfig = ModelConfigStore.get(model_id) || {};
+		var view_id = this.props.params.viewId || modelConfig.selected_view_id;
+		var view = view_id === 'config' ? null : ViewStore.get(view_id)
 
 		// var viewDetailContent
 		// var detailContent
@@ -99,7 +99,6 @@ var ModelPane = React.createClass({
 				focusDepth: 0
 			})
 		}
-
 		else {
 			bodyContent = <ModelDefinition model={model}/>
 			configElement = <div className = "view-config">

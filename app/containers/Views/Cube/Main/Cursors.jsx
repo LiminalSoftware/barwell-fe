@@ -17,19 +17,19 @@ var RIGHT_FRINGE = '200px'
 var Cursors = React.createClass ({
 
   getPointerElement: function () {
-    var view = this.props.view
-    var model = this.props.model
-    var geo = view.data.geometry
-    var store = this.props.store
-    var ptr = this.props.pointer
+    var view = this.props.view;
+    var model = this.props.model;
+    var geo = view.data.geometry;
+    var store = this.props.store;
+    var ptr = this.props.pointer;
     var columnHeaders = view.column_aggregates;
     var rowHeaders = view.row_aggregates;
-    var col 
-    var obj
-    var isNull
-    var value
-    var element
-    var selector = {}
+    var col ;
+    var obj;
+    var isNull;
+    var value;
+    var element;
+    var selector = {};
     
     if (ptr.left < 0 && ptr.top >= 0) {
       var pointerKey = 'a' + rowHeaders[rowHeaders.length + ptr.left]; // ptr.left is negative
@@ -138,7 +138,7 @@ var Cursors = React.createClass ({
     } : {width: -1, top: 1, height: -1};
 
     var style = {
-      top: 0 - rowOffset,
+      top: 0 ,
       left: 0 - columnOffset,
       right: 0,
       height: (rowOffset + (rowCount) * geo.rowHeight) + 'px',

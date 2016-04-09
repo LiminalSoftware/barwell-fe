@@ -530,8 +530,6 @@ var TabularPane = React.createClass ({
 				(-1 * hiddenColWidth - 1) + 'px';
 	},
 
-	_lastUpdate: 0,
-
 	setVerticalScrollOffset: function (vOffset) {
 		var view = this.props.view;
 		var geo = view.data.geometry;

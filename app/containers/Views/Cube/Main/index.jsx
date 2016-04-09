@@ -98,18 +98,18 @@ var CubePane = React.createClass ({
 	},
 
 	selectRow: function () {
-		var view = this.props.view
-		var numGroupCols = view.row_aggregates.length
-		var ptr = this.state.pointer
-		ptr.left = ((Math.min(ptr.left, 0)) % numGroupCols) - 1
-		this.updateSelect(ptr.top, ptr.left)
+		var view = this.props.view;
+		var numGroupCols = view.row_aggregates.length;
+		var ptr = this.state.pointer;
+		ptr.left = ((Math.min(ptr.left, 0)) % numGroupCols) - 1;
+		this.updateSelect(ptr.top, ptr.left);
 	},
 
 	insertRecord: function () {
-		var obj = {}
-		var model = this.props.model
-		var rowLevel = this.store.getLevel('rows', this.state.pointer.top)
-		var colLevel = this.store.getLevel('columns', this.state.pointer.left)
+		var obj = {};
+		var model = this.props.model;
+		var rowLevel = this.store.getLevel('rows', this.state.pointer.top);
+		var colLevel = this.store.getLevel('columns', this.state.pointer.left);
 
 		// initialize the new record with default values
 		AttributeStore.query({model_id: (model.model_id || model.cid)}).forEach(function(attr) {
@@ -119,7 +119,7 @@ var CubePane = React.createClass ({
 		})
 		// override defaults based on the location in the cube
 		obj = _.omit(_.extend(obj, rowLevel, colLevel), 'spans')
-
+ 
 		modelActionCreators.insertRecord(this.props.model, obj)
 		this.setState({copyarea: null})
 	},

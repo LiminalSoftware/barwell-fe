@@ -26,16 +26,9 @@ var wait = module.exports.wait = function () {
   })
 }
 
-
-// var ajax = module.exports.ajax  = function (method, url, json, retry, headers) {
-//   return wait().then(function () {
-//     return ajaxActual(method, url, json, retry, headers)
-//   })
-// }
-
 var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
-  console.log(method + '->' + url)
-  console.log(JSON.parse(json))
+  console.log(method + '->' + url);
+  console.log(JSON.parse(json));
 
   retry = retry || 1;
   return new Promise(function (resolve, reject) {
@@ -80,7 +73,7 @@ var issueReceipt = function (subject, obj) {
   MetasheetDispatcher.dispatch(message)
 }
 
-var persist = module.exports.persist = function (subject, action, data, update, split) {
+var persist = module.exports.persist = function (subject, action, data) {
   action = action.toUpperCase()
   var identifier = (subject + '_id')
   var url = 'https://api.metasheet.io/' + subject;
@@ -102,7 +95,7 @@ var persist = module.exports.persist = function (subject, action, data, update, 
 
   
   return ajax(method, url, json).then(function (results) {
-    if (update === false || method=='DELETE') return;  // temporary hack until I refactor model push
+    // if (update === false || method=='DELETE') return;  // temporary hack until I refactor model push
     (results.data instanceof Array ? results.data : [results.data]).forEach(function (obj) {
       issueReceipt(subject, obj)
     })
