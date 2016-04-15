@@ -62,7 +62,7 @@
 }
 
 .pointer {
-	// transform: translateZ(6px);
+	// transform: translateZ(10px) !important;
 	z-index: 6;
 	pointer-events: auto;
 }
@@ -74,7 +74,7 @@
 
 .selection-outer {
 	border: 6px solid white;
-	transform: translateZ(3px);
+	transform: translateZ(2px);
 	.transition(all cubic-bezier(.1,.85,.5,1) 100ms);
 	z-index: 3;
 	cursor: move !important;
@@ -84,7 +84,7 @@
 	.transition(all cubic-bezier(.1,.85,.5,1) 100ms);
 	z-index: 5;
 	cursor: move !important;
-
+	transform: translateZ(5px);
 }
 
 .selection-border--blurred {

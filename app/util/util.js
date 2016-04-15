@@ -21,6 +21,24 @@ var stripInternalVars = module.exports.stripInternalVars = function (obj) {
   return newObj;
 }
 
+module.exports.addOffset = function (a, b) {
+  return {
+    left: a.left + (b.left || 0),
+    width: a.width + (b.width || 0),
+    top: a.top + (b.top || 0),
+    height: a.height + (b.height || 0),
+  }
+}
+
+module.exports.subtractOffset = function (a, b) {
+  return {
+    left: a.left - (b.left || 0),
+    width: a.width - (b.width || 0),
+    top: a.top - (b.top || 0),
+    height: a.height - (b.height || 0),
+  }
+}
+
 module.exports.compare = function (a, b, sortSpec) {
     for (var i = 0; i < sortSpec.length; i++) {
         var key = 'a' + sortSpec[i].attribute_id;
@@ -28,8 +46,8 @@ module.exports.compare = function (a, b, sortSpec) {
 
         if ((a[key] === null || a[key] === undefined) && 
           (b[key] === null || b[key] === undefined)) continue;
-        if (a[key] === null || a[key] === undefined) return (1 * inversion);
-        if (b[key] === null || b[key] === undefined) return (-1 * inversion);
+        if (a[key] === null || a[key] === undefined) return (-1 * inversion);
+        if (b[key] === null || b[key] === undefined) return (1 * inversion);
         if (_.isString(a[key]) && _.isString(b[key])) {
           var strCmp = String(a[key]).localeCompare(b[key]);
           if (strCmp !== 0) return strCmp;

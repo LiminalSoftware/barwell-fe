@@ -91,11 +91,10 @@ var createCubeStore = function (view, dimensions) {
     };
 
     var _getImpactedGroup = function (selector) {
-        if (_dimensions.row.some(d => d.slice(1) in selector)) return 'row';
-        else if (_dimensions.column.some(d => d.slice(1) in selector)) return 'column';
+        if (_dimensions.row.some(d => ('a' + d) in selector)) return 'row';
+        else if (_dimensions.column.some(d => ('a' + d) in selector)) return 'column';
         return null
     };
-
 
     var CubeStore = assign({}, EventEmitter.prototype, {
 
@@ -146,12 +145,12 @@ var createCubeStore = function (view, dimensions) {
 
         getValue: function (i, j) {
             var row = _values[i]
-            if (!(row instanceof Array)) return null
-            return _values[i][j]
+            if (!(row instanceof Array)) return null;
+            return _values[i][j];
         },
 
         unregister: function () {
-          dispatcher.unregister(this.dispatchToken)
+          dispatcher.unregister(this.dispatchToken);
         },
 
         dispatchToken: dispatcher.register(function (payload) {
@@ -162,7 +161,7 @@ var createCubeStore = function (view, dimensions) {
             }
 
             if (type === (modelUpperLabel + '_UPDATE') || type === (modelUpperLabel + '_RECEIVEUPDATE')) {
-                var dimensions = _dimensions.row.concat(_dimensions.column).filter(_.identity)
+                var dimensions = _dimensions.row.concat(_dimensions.column).filter(_.identity);
                 var _this = this
                 var update = payload.update
                 var selector = payload.selector
@@ -172,9 +171,9 @@ var createCubeStore = function (view, dimensions) {
                 var matcher = _.matcher(selector)
                 var levels
                 var impactedDim = _getImpactedGroup(selector)
-                var newLevels = []
-                var matchedLevels = []
-                var newValues = []
+                var newLevels = [];
+                var matchedLevels = [];
+                var newValues = [];
 
                 /***
                 see which group is impacted (if any).  If any of the 
@@ -183,49 +182,48 @@ var createCubeStore = function (view, dimensions) {
                 
                 _values = _values.map(function(row) {
                     return row.map(function (rec, idx) {
-                        if (matcher(rec)) return _.extend(rec, update, dirty)
-                        else return rec
-                    })
-                })
+                        if (matcher(rec)) return _.extend(rec, update, dirty);
+                        else return rec;
+                    });
+                });
                 
-                CubeStore.emitChange()
+                CubeStore.emitChange();
             }
 
             if (type === modelUpperLabel + '_CREATE') {
-                var dimensions = _dimensions.row.concat(_dimensions.column).filter(_.identity)
-                var val = payload.record
-                var index = payload.index
+                var dimensions = _dimensions.row.concat(_dimensions.column).filter(_.identity);
+                var val = payload.record;
+                var index = payload.index;
 
-                CubeStore.emitChange()
+                CubeStore.emitChange();
             }
 
             if (type === upperLabel + '_RECEIVELEVELS') {
-                var _this = this
-                var dimension  = payload.dimension
-                var groups = _dimensions[dimension].map(g => 'a' + g)
+                var _this = this;
+                var dimension  = payload.dimension;
+                var groups = _dimensions[dimension].map(g => 'a' + g);
                 
                 _dimensions[dimension] = payload.aggregates;
-                _levels[dimension] = payload.levels
-                _count[dimension] = payload.numberLevels
-                _isCurrent.body = false
-                _isCurrent[dimension] = true
+                _levels[dimension] = payload.levels;
+                _count[dimension] = payload.numberLevels;
+                _isCurrent.body = false;
+                _isCurrent[dimension] = true;
 
-                CubeStore.emitChange()
+                CubeStore.emitChange();
             }
 
             if (type === upperLabel + '_REQUESTVALUES') {
-                _startIndex.row = payload.startIndex.row
-                _startIndex.column = payload.startIndex.column
+                _startIndex.row = payload.startIndex.row;
+                _startIndex.column = payload.startIndex.column;
             }
 
             if (type === upperLabel + '_RECEIVEVALUES') {
-                var _this = this
-                var values = payload.values
-                var idx = 0
-                var current = {}
-                var sortSpec = _sortSpec.row.concat(_sortSpec.column)
-                _values = new Array(_levels.row.length)
-                
+                var _this = this;
+                var values = payload.values;
+                var idx = 0;
+                var current = {};
+                var sortSpec = _sortSpec.row.concat(_sortSpec.column);
+                _values = new Array(_levels.row.length);
                 
                 for (var i = 0; i < _levels.row.length && idx < values.length; i++) {
                     Object.assign(current, _levels.row[i])
@@ -233,8 +231,8 @@ var createCubeStore = function (view, dimensions) {
                     for (var j = 0; j < _levels.column.length && idx < values.length; j++) {
                         Object.assign(current, _levels.column[j])
                         var cmp = util.compare(current, values[idx], sortSpec)
-                        if (cmp >= 0) column[j] = values[idx++]
-                        else column[j] = null
+                        if (cmp >= 0) column[j] = values[idx++];
+                        else column[j] = null;
                     }
                     _values[i] = column
                 }

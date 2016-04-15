@@ -48,12 +48,13 @@ var modelActions = {
 		message.selector = {cid: obj.cid}
 		MetasheetDispatcher.dispatch(message)
 
-		webUtils.ajax('POST', url, json, {"Prefer": 'return=representation'}).then(function (results) {
-			var updt_message = {}
-			updt_message.actionType = 'M' + model.model_id + '_RECEIVEUPDATE'
-			updt_message.update = results.data || {}
-			updt_message.selector = {cid: obj.cid}
-			MetasheetDispatcher.dispatch (updt_message)
+		return webUtils.ajax('POST', url, json, {"Prefer": 'return=representation'}).then(function (results) {
+			var updt_message = {};
+			updt_message.actionType = 'M' + model.model_id + '_RECEIVEUPDATE';
+			updt_message.update = results.data || {};
+			updt_message.selector = {cid: obj.cid};
+			MetasheetDispatcher.dispatch (updt_message);
+			return results.data
 		})
 	},
 

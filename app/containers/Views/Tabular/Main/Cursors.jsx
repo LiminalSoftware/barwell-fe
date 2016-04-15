@@ -218,7 +218,7 @@ var Cursors = React.createClass ({
         </div>
       </div>
 
-      <div className = {"force-layer wrapper underlay underlay--" + (focused ? "focused" : "blurred")}
+      <div className = {"force-layer wrapper underlay table-backing table-backing--" + (focused ? "focused" : "blurred")}
         style = {{
           top: geo.headerHeight - 1 - 2 + 'px',
           bottom: 0,

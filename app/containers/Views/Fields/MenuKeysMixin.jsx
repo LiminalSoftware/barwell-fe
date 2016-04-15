@@ -10,14 +10,14 @@ var MenuKeysMixin = {
 	handleKeyPress: function (e) {
 		if (e.keyCode === constant.keycodes.ESC) this.props._revert()
 		if (e.keyCode === constant.keycodes.ENTER) {
-			this.chooseSelection(e)
+			this.chooseSelection(e.ctrlKey)
 		}
 		if (e.keyCode === constant.keycodes.TAB) {
-			this.chooseSelection(e)
+			this.chooseSelection(e.ctrlKey)
 		}
 		if (e.keyCode === constant.keycodes.ARROW_UP || 
 			e.keyCode === constant.keycodes.ARROW_DOWN) {
-			var increment = (e.keyCode === constant.keycodes.ARROW_DOWN ? 1 : -1) * (this.shouldOpenDown() ? 1 : -1)
+			var increment = (e.keyCode === constant.keycodes.ARROW_DOWN ? 1 : -1)
 			this.setState({selection: 
 				Math.max(Math.min(this.state.selection + increment, this.getNumberOptions() - 1), -1)
 			})

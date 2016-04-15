@@ -186,7 +186,7 @@ var ColumnMenu = React.createClass({
 							</div>
 						}
 					</ReactCSSTransitionGroup>
-				<div className="dropdown small grayed icon icon-chevron-down" onClick = {this.handleOpen}/>
+				<div className="dropdown icon--small icon icon-chevron-down" onClick = {this.handleOpen}/>
 			</div>
 		</div>
 	}

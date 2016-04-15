@@ -61,8 +61,8 @@ var hasOneField = {
 			return {editing: false}
 		},
 
-		commitChanges: function () {
-			if (this.state.editing) this.refs.search.chooseSelection({})
+		commitChanges: function (e) {
+			if (this.state.editing) this.refs.search.chooseSelection(e)
 			this.revert()
 		},
 

@@ -11,8 +11,9 @@ import ContextMenu from './CubeContextMenu'
 import PopDownMenu from '../../../../components/PopDownMenu'
 import util from '../../../../util/util'
 
-var HAS_3D = util.has3d()
-var RIGHT_FRINGE = '200px'
+const HAS_3D = util.has3d()
+const RIGHT_FRINGE = 200;
+const CLIPPING_FUDGE = 3;
 
 var Cursors = React.createClass ({
 
@@ -98,10 +99,10 @@ var Cursors = React.createClass ({
       ref: 'pointerCell',
       sorted: false,
       style: {
-        left: '0px',
-        bottom: '0px',
-        top: '0px',
-        right: '0px',
+        left: 0,
+        bottom: 0,
+        top: 0,
+        right: 0,
         border: 'none'
       }
     })
@@ -115,7 +116,8 @@ var Cursors = React.createClass ({
     var geo = view.data.geometry
     var focused = this.props.focused
 
-    var marginTop = this.props.vOffset * geo.rowHeight + 'px'
+    var marginTop = this.props.vOffset * geo.rowHeight;
+    var marginLeft = this.props.hOffset * geo.columnWidth;
 
     var ptr = this.props.pointer
     var sel = this.props.selection
@@ -127,34 +129,40 @@ var Cursors = React.createClass ({
     var isRowSelection = sel.left < 0;
     var isColumnSelection = sel.top < 0;
 
-    var rowOffset = isRowSelection ? 0 : this.props.rowHeaderWidth
-    var columnOffset = isColumnSelection ? 0 : this.props.columnHeaderHeight
+    var rowOffset = isRowSelection ? 0 : (this.props.rowHeaderWidth - CLIPPING_FUDGE)
+    var columnOffset = isColumnSelection ? 0 : (this.props.columnHeaderHeight - CLIPPING_FUDGE)
+    var overlayHeight = isColumnSelection ? 
+      (rowCount * geo.rowHeight + this.props.columnHeaderHeight - marginTop) : 
+      this.props.columnHeaderHeight
 
-    var pointerFudge = this.props.expanded ? {
-      left: -30,
-      width: 60,
-      top: -15,
-      height: 30,
-    } : {width: -1, top: 1, height: -1};
-
-    var style = {
-      top: 0 ,
-      left: 0 - columnOffset,
-      right: 0,
-      height: (rowOffset + (rowCount) * geo.rowHeight) + 'px',
-      transformStyle: 'preserve-3d'
-    }
-
-    if (HAS_3D) style.transform = 'translateY(' + (marginTop + 2) + 'px)'
-    else style.marginTop = marginTop + 2 + 'px'
+    // var style = {
+    //   top: 0,
+    //   left:  0,
+    //   right: 0,
+    //   bottom: 0,
+    //   transformStyle: 'preserve-3d',
+    //   transform: 'translate3d(' + (isRowSelection ? 0 : (marginLeft) + 'px, ' + (isColumnSelection ? 0 : (marginTop)) + 'px, 0)',
+    //   marginTop: !HAS_3D ? (isColumnSelection ? 0 : (marginTop + 2)) : 0,
+    // };
 
     return <div className = "wrapper" style = {{
         left: '0',
-        top: '-1px',
+        top: '0',
         bottom: 0,
         width: (this.props.adjustedWidth + RIGHT_FRINGE) + 'px',
-        transformStyle: 'preserve-3d'
+        transform: 'translate3d(' +
+          (isRowSelection ? 0 : (marginLeft)) + 'px, ' + 
+          (isColumnSelection ? 0 : (marginTop)) + 'px, 0)',
+        transformStyle: 'preserve-3d',
       }}>
+      <div className = {"wrapper table-backing table-backing--" + (focused ? "focused" : "blurred") }
+        style = {{
+          top: 0,
+          left: 0,
+          right: RIGHT_FRINGE + 'px',
+          bottom: 0,
+          transform: 'translateZ(-2px)'
+        }}/>
       <div className = "wrapper overlay "
         style = {{
           top: columnOffset + 'px',
@@ -167,7 +175,15 @@ var Cursors = React.createClass ({
         }}>
         <div className = "wrapper force-layer"
           ref = "overlayInner"
-          style = {style}>
+          style = {{
+            top: 0,
+            left:  0,
+            right: 0,
+            bottom: 0,
+            transformStyle: 'preserve-3d',
+            transform: 'translate3d(0, ' + (isColumnSelection ? 0 : (marginTop + 2)) + 'px, 0)',
+            // marginTop: !HAS_3D ? (marginTop + 2 + 'px') : 0
+          }}>
           
           <Overlay
             {...this.props}
@@ -175,7 +191,7 @@ var Cursors = React.createClass ({
               (focused ? " " : " gray-out ") +
               (this.props.expanded ? " pointer--expanded " : "")}
             ref = "pointer"
-            fudge = {pointerFudge}
+            fudge = {{width: -1, top: 1, height: -1}}
             position = {ptr}
             
             onDoubleClick = {this.props._handleEdit}
@@ -216,19 +232,26 @@ var Cursors = React.createClass ({
         </div>
       </div>
 
-      <div className = {"force-layer wrapper underlay underlay--" + (focused ? "focused" : "blurred")}
+      <div className = {"force-layer wrapper underlay"}
         style = {{
-          top: 0,
+          top: columnOffset + 'px',
           bottom: 0,
-          height: (rowCount) * geo.rowHeight + this.props.columnHeaderHeight + 'px',
-          left: geo.leftGutter + 'px',
-          width: (this.props.adjustedWidth) + 'px',
+          left: rowOffset + 'px',
+          right: RIGHT_FRINGE + 'px',
           overflow: 'hidden',
           transform: 'translateZ(-1px)'
         }}>
         <div className = "wrapper underlay-inner force-layer"
           ref = "underlayInner"
-          style = {style}>
+          style = {{
+            top: 0,
+            left:  0,
+            right: 0,
+            bottom: 0,
+            transformStyle: 'preserve-3d',
+            transform: 'translate3d(0, ' + (isColumnSelection ? 0 : (marginTop + 2)) + 'px, 0)',
+            // marginTop: !HAS_3D ? (marginTop + 2 + 'px') : 0
+          }}>
 
           <Overlay
                 numHiddenCols = {this.props.hOffset}

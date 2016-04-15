@@ -47,7 +47,7 @@ var ViewSelector = React.createClass({
 				}
 			</ReactCSSTransitionGroup>
 			
-			<div className="dropdown small grayed icon icon-chevron-down"
+			<div className="dropdown icon icon--small icon-chevron-down"
 				onClick = {this.handleOpen}></div>
 		</div>
 

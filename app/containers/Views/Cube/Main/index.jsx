@@ -28,6 +28,8 @@ import Cursors from './Cursors'
 import ScrollBar from '../../Tabular/Main/ScrollBar'
 import TableMixin from '../../TableMixin.jsx'
 
+var CLIPPING_FUDGE = 3;
+
 var CubePane = React.createClass ({
 
 	mixins: [TableMixin],
@@ -36,29 +38,33 @@ var CubePane = React.createClass ({
 		var view = this.props.view
 		var geometry = view.data.geometry
 		return {
-			scrollTop: 0,
-			scrollLeft: 0,
-			actRowHt: geometry.rowHeight
+			rowOffset: 0,
+			columnOffset: 0,
 		}
 	},
 
 	componentWillMount: function () {
 		document.body.addEventListener('keydown', this.onKey)
-		FocusStore.addChangeListener(this._onChange)
-		this.store = createCubeStore(this.props.view)
-		this.store.addChangeListener(this._onChange)
-		this._debounceCreateView = _.debounce(this.createView, 500)
+		FocusStore.addChangeListener(this._onChange);
+		ViewStore.addChangeListener(this._onChange);
+		this.store = createCubeStore(this.props.view);
+		this.store.addChangeListener(this._onChange);
+
+		this._debounceCreateView = _.debounce(this.createView, 500);
+		this._throttleSetCSSOffset = _.throttle(this.setCSSOffset, 15);
 	},
 
 	componentWillUnmount: function () {
 		document.body.removeEventListener('keydown', this.onKey)
 		FocusStore.removeChangeListener(this._onChange)
+		ViewStore.removeChangeListener(this._onChange);
+
 		if (this.store) this.store.removeChangeListener(this._onChange)
 		this.store.unregister()
 	},
 
 	_onChange: function () {
-		this.forceUpdate()
+		this.forceUpdate();
 	},
 
 	createView: function (view) {
@@ -116,7 +122,7 @@ var CubePane = React.createClass ({
 			if(('a' + attr.attribute_id) != model._pk) {
 				obj['a' + attr.attribute_id] = attr.default_value
 			}
-		})
+		});
 		// override defaults based on the location in the cube
 		obj = _.omit(_.extend(obj, rowLevel, colLevel), 'spans')
  
@@ -166,15 +172,15 @@ var CubePane = React.createClass ({
 		var rowHeaders = view.row_aggregates.map(getColumns);
 		var rowHeaderWidth = util.sum(rowHeaders, 'width');
 		
-		var offset = $(wrapper).offset()
-		var y = e.pageY - offset.top
-		var x = e.pageX - offset.left
+		var offset = $(wrapper).offset();
+		var y = e.pageY - offset.top;
+		var x = e.pageX - offset.left;
 
-		var left = 0
-		var top = 0
+		var left = 0;
+		var top = 0;
 		
-		var r
-		var c
+		var r;
+		var c;
 
 		if (x < rowHeaderWidth) {
 			rowHeaders.some(function (header, idx) {
@@ -225,7 +231,7 @@ var CubePane = React.createClass ({
 	    fudge = fudge || {};
 
 	    if (pos.top >= 0) {
-	    	style.top = (columnHeaderHeight + pos.top * geo.rowHeight + (fudge.top || 0)) + 'px'
+	    	style.top = (pos.top * geo.rowHeight + (fudge.top || 0) + CLIPPING_FUDGE - 1) + 'px'
 	    	style.height = (geo.rowHeight * ((pos.bottom || pos.top) - pos.top + 1) + (fudge.height || 0)) + 'px'
 	    } else {
 	    	var top = 0;
@@ -236,11 +242,11 @@ var CubePane = React.createClass ({
 				if (pos.top <= headerIdx && pos.bottom >= headerIdx) height += geo.rowHeight;
 			})
 			style.top = top + (fudge.top || 0) + 'px'
-			style.height = height + (fudge.height || 0) + (Math.max(pos.bottom, 0) * geo.rowHeight) + 'px'
+			style.height = height + (fudge.height || 0) + 'px'
 	    }
 
 	    if (pos.left >= 0) {
-	    	style.left = (rowHeaderWidth + pos.left * geo.columnWidth + (fudge.left || 0)) + 'px'
+	    	style.left = (pos.left * geo.columnWidth + (fudge.left || 0) + CLIPPING_FUDGE + 1) + 'px'
 	    	style.width = (geo.columnWidth * ((pos.right || pos.left) - pos.left + 1) + (fudge.width || 0)) + 'px'
 	    } else  {
 	    	var left = 0;
@@ -251,7 +257,7 @@ var CubePane = React.createClass ({
 				if (pos.left <= headerIdx && pos.right >= headerIdx) width += header.width
 			})
 			style.left = left + (fudge.left || 0) + 'px'
-			style.width = width + (fudge.width || 0) + (Math.max(pos.right, 0) * geo.columnWidth) + 'px'
+			style.width = width + (fudge.width || 0) + 'px'
 		} 
 
 	  	return style;
@@ -294,6 +300,36 @@ var CubePane = React.createClass ({
 		this._debounceCreateView(view, false, false, true);
 	},
 
+	coalesceCells: function (pos) {
+		var view = this.props.view;
+		var store = this.store;
+		var dimension = pos.left < 0 ? 'row' : pos.top ? 'column' : 'body';
+		var header = dimension === 'row' ? view.row_aggregates : view.column_aggregates;
+		var loLabel = dimension === 'row' ? 'left' : 'top';
+		var hiLabel = dimension === 'row' ? 'right' : 'bottom';
+		var lo = pos[loLabel];
+		var hi = pos[hiLabel] || lo;
+
+		if (pos.left >= 0 && pos.top >= 0) return pos;
+
+		var sortSpec = header.slice(0, lo + header.length + 1).map(function(k) {
+			return {attribute_id: k};
+		});
+		while (lo > 0 && util.compare(
+			store.getLevel(dimension, lo - 1),
+			store.getLevel(dimension, lo),
+			sortSpec) === 0) lo--;
+		while (hi > 0 && util.compare(
+			store.getLevel(dimension, hi + 1),
+			store.getLevel(dimension, hi),
+			sortSpec) === 0) hi++;
+
+		pos[loLabel] = lo;
+		pos[hiLabel] = hi;
+
+		return pos;
+	},
+
 	updateSelect: function (pos, shift) {
 		var sel = this.state.selection;
 		var ptr = this.state.pointer;
@@ -306,6 +342,9 @@ var CubePane = React.createClass ({
     	var rowHeaders = view.row_aggregates;
 		var numColumnHeaders = columnHeaders.length;
 		var numRowHeaders = rowHeaders.length;
+
+		// if (pos.left < 0 || pos.top < 0)
+		// 	sel = this.coalesceCells(pos);
 
 		if (pos.left < 0) {
 			var top = pos.top;
@@ -361,7 +400,8 @@ var CubePane = React.createClass ({
 				right: pos.right
 			}
 			this.updatePointer(pos);
-		} else if (shift) {
+		} 
+		else if (shift) {
 			this.scrollTo(pos)
 			sel = {
 				left: Math.max(Math.min(ptr.left, pos.left, numCols), -1 * numRowHeaders),
@@ -387,31 +427,46 @@ var CubePane = React.createClass ({
 	},
 
 	setHorizontalScrollOffset: function (hOffset) {
-		
+		var view = this.props.view;
+		var geo = view.data.geometry;
+		var columnOffset = Math.floor(hOffset / geo.columnWidth);
+
+		if (columnOffset === this.state.columnOffset) return;
+
+		this.setState({columnOffset: columnOffset});
+		this._throttleSetCSSOffset(undefined, columnOffset);
 	},
 
 	setVerticalScrollOffset: function (vOffset) {
 		var view = this.props.view;
 		var geo = view.data.geometry;
 		var rowOffset = Math.floor(vOffset / geo.rowHeight);
-		
+
+		if (rowOffset === this.state.rowOffset) return;
+
+		this.setState({rowOffset: rowOffset});
+		this._throttleSetCSSOffset(rowOffset);
+	},
+
+	setCSSOffset: function (_rowOffset, _columnOffset) {
+		var view = this.props.view;
+		var geo = view.data.geometry;
+		var columnOffset = (_columnOffset === undefined) ? this.state.columnOffset : _columnOffset;
+		var rowOffset = (_rowOffset === undefined) ? this.state.rowOffset : _rowOffset;
+
 		var rowHeaderOffsetter = this.refs.tableWrapper.refs.rowHeaderOffsetter;
 		var rhsOffsetter = this.refs.tableWrapper.refs.bodyOffsetter;
 		var underlay = this.refs.cursors.refs.underlayInner;
 		var overlay = this.refs.cursors.refs.overlayInner;
 
-		if (rowOffset === this.state.rowOffset) return;
+		var translateCss = "translate3d("
+			+ (-1 * columnOffset * geo.columnWidth) + "px,"
+			+ (-1 * rowOffset * geo.rowHeight) + "px, 0)";
 
-		ReactDOM.findDOMNode(rowHeaderOffsetter).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight) + "px, 0)"
-		ReactDOM.findDOMNode(rhsOffsetter).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight) + "px, 0)"
-		ReactDOM.findDOMNode(underlay).style.transform = "translate3d(0, " + ( -1 * rowOffset * geo.rowHeight) + "px, 0)"
-		ReactDOM.findDOMNode(overlay).style.transform = "translate3d(0, " + ( -1 * rowOffset * geo.rowHeight) + "px, 0)"
-
-		this.setState({
-			rowOffset: rowOffset
-		})
-		
-		// if (!this._timer) this._timer = getFrame(this.refreshTable, CYCLE)
+		ReactDOM.findDOMNode(rowHeaderOffsetter).style.transform = translateCss;
+		ReactDOM.findDOMNode(rhsOffsetter).style.transform = translateCss;
+		ReactDOM.findDOMNode(underlay).style.transform = translateCss;
+		ReactDOM.findDOMNode(overlay).style.transform = translateCss;
 	},
 
 	render: function () {
@@ -495,7 +550,7 @@ var CubePane = React.createClass ({
 				
 				<ScrollBar
 					innerDimension = {bodyWidth}
-					offset = {rowHeaderWidth + 100}
+					offset = {rowHeaderWidth}
 					ref = "horizontalScrollBar"
 					axis = "horizontal"
 					_setScrollOffset = {this.setHorizontalScrollOffset}

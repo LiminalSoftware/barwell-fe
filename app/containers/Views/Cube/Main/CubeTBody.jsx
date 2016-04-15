@@ -23,6 +23,7 @@ var CubeTBody = React.createClass ({
 
 	shouldComponentUpdate: function (newProps) {
 		return newProps.view !== this.props.view
+		// return false;
 	},
 
 	getInitialState: function () {
@@ -101,6 +102,7 @@ var CubeTBody = React.createClass ({
 		return <div ref = "cube-tbody"
 			className = "wrapper cube-main-tbody"
 			onMouseDown = {this.props._handleClick}
+			onWheel = {this.props._handleWheel}
 			
 			onDoubleClick = {this.props._handleEdit}>
 			{cells}

@@ -12,7 +12,8 @@ import util from '../../../../util/util'
 var CubeTHead = React.createClass ({
 
 	shouldComponentUpdate: function (newProps) {
-		return newProps.view !== this.props.view
+		return newProps.view !== this.props.view;
+		// return false;
 	},
 
 	getInitialState: function () {
@@ -20,21 +21,21 @@ var CubeTHead = React.createClass ({
 			fetched: false,
 			rowOffset: 0,
 			colOffset: 0,
-		}
+		};
 	},
 
 	_onChange: function () {
-		this.forceUpdate()
+		this.forceUpdate();
 	},
 
 	componentWillMount: function () {
-		var store = this.props.store
-		if (store) store.addChangeListener(this._onChange)
+		var store = this.props.store;
+		if (store) store.addChangeListener(this._onChange);
 	},
 
 	componentWillUnmount: function () {
-		var store = this.props.store
-		if (store) store.removeChangeListener(this._onChange)
+		var store = this.props.store;
+		if (store) store.removeChangeListener(this._onChange);
 	},
 
 	// shouldComponentUpdate: function (newProps, newState) {
@@ -63,23 +64,20 @@ var CubeTHead = React.createClass ({
 			ref = {dimension + 'Header'}
 			style = {this.props.style}
 			onMouseDown = {this.props._handleClick}
-			
 			onDoubleClick = {this.props._handleEdit}
-			className = "tabular-body force-layer wrapper">
+			className = {"cube-" + dimension + "-header tabular-body force-layer wrapper "}>
 			{
-			levels.map(function (level, r) {
-				var selector = {}
-				var offset = 0
-				isBroken = false
+			levels.map (function (level, r) {
+				var selector = {};
+				var offset = 0;
+				isBroken = false;
 				
 				return groups.map(function (group, c) {
 					var column_id = group.column_id
 					var transverse = dimension === 'row' ? group.width : geo.rowHeight
 					
-
-					selector[column_id] = level[column_id]
-					spans[c] ++
-					
+					selector[column_id] = level[column_id];
+					spans[c] ++;
 					
 					if (r === levels.length - 1 || level[column_id] !== levels[r + 1][column_id] || isBroken) {
 						var fieldType = fieldTypes[group.type].element
@@ -92,7 +90,8 @@ var CubeTHead = React.createClass ({
 							lineHeight: (length - 1) + 'px',
 							[dimension === 'row' ? 'left' : 'top']: offset + 'px',
 							[dimension === 'row' ? 'top' : 'left']: ((r - spans[c] + 1) * cellLength) + 'px'
-						}
+						};
+						if (dimension === 'column' && c === groups.length - 1) thStyle.borderBottom = 'none';
 						offset += transverse
 						isBroken = true
 						spans[c] = 0
@@ -109,7 +108,7 @@ var CubeTHead = React.createClass ({
 							cellKey: cellKey,
 							ref: cellKey,
 							style: thStyle,
-							className: 'table-cell',
+							className: 'table-cell ',
 							rowHeight: dimension === 'row' ? length : transverse
 						})
 					

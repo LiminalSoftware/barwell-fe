@@ -10,10 +10,10 @@ var ViewItemSingleton =  React.createClass({
 	handleClick: function (e) {
 		var model = this.props.model;
 		var view = this.props.view;
-		// modelActionCreators.create('modelconfig', false, {
-		// 	model_id: model.model_id,
-		// 	selected_view_id: view.view_id
-		// });
+		modelActionCreators.create('modelconfig', false, {
+			model_id: model.model_id,
+			selected_view_id: view.view_id
+		});
 	},
 
 	// RENDER =================================================================

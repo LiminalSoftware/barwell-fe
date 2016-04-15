@@ -8,11 +8,11 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 var commitMixin = {
 
 	commitValue: function (value) {
-		var config = this.props.config
-		var column_id = config.column_id
-		var model = this.props.model
-		var selector = this.props.selector
-		var patch = {}
+		var config = this.props.config;
+		var column_id = config.column_id;
+		var model = this.props.model;
+		var selector = this.props.selector;
+		var patch = {};
 
 		if (this.parser) value = this.parser(value)
 		value = this.validator(value)

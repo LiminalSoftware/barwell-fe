@@ -21,6 +21,7 @@ var TextChoice = React.createClass({
       textConditionAttr: config.textConditionAttr,
       bold: config.bold,
       italic: config.italic,
+      underline: config.underline,
       open: false
     }
   },

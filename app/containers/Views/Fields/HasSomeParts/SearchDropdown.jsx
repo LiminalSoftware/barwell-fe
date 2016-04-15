@@ -63,9 +63,9 @@ var SearchDropdown = React.createClass({
 		var fetchedTerm = this.state.fetchedTerm
 
 		// bailout if the search term is too short, or we already queried
-		if (term.length < 3 || this.state.searching) return;
+		// if (term.length < 3 || this.state.searching) return;
 
-		// also bail out if its a subset of the old term (filter client-side)
+		// also bail out if its a subset of the old term (we can filter client-side)
 		if (fetchedTerm && term.indexOf(fetchedTerm) >= 0 
 			&& this.state.count < this.state.limit) return;
 
@@ -84,31 +84,53 @@ var SearchDropdown = React.createClass({
 		});
 	},
 
-	chooseSelection: function (e) {
-		var selection = this.state.selection
-		var index = this.state.page * SEARCH_RECORDS_VISIBLE + selection
-		var obj
-
-		if (selection < 0 && e.ctrlKey) return // create new record
-		else if (selection < 0) return
-		
-		obj = this.state.searchRecords[index]
-		this.chooseItem(obj)
+	selectItem: function (num) {
+		this.setState({selection: num})
 	},
 
-	chooseItem: function (hasManyObj) {
-		var model = this.props.model
+	chooseItem: function (num) {
+		var index = this.state.page * SEARCH_RECORDS_VISIBLE + num;
+		var obj = this.state.searchRecords[num];
+		this.commit(obj);
+		this.props._revert();
+	},
+
+	chooseSelection: function (e) {
+		var selection = this.state.selection;
+		var index = this.state.page * SEARCH_RECORDS_VISIBLE + selection;
+		var obj;
+
+		// if (selection < 0 && e.ctrlKey) this.createNewItem(); 
+		if (selection < 0) return;
+		obj = this.state.searchRecords[index];
+		this.commit(obj);
+	},
+
+	commit: function (hasManyObj) {
+		console.log(hasManyObj)
+		var model = this.props.model;
+		var config = this.props.config;
+		var hasOneObj = this.props.object;
+		var hasManyKeyId = config.related_key_id;
+		var hasOneKeyId = config.key_id;
+		modelActionCreators.moveHasMany(config.relation_id, hasOneObj, hasManyObj);
+	},
+
+	createNewItem: function () {
+		console.log("create new item")
 		var config = this.props.config
-		var hasOneObj = this.props.object
-		var hasManyKeyId = config.related_key_id
-		var hasOneKeyId = config.key_id
-		modelActionCreators.moveHasMany(config.relation_id, hasOneObj, hasManyObj)
+		var model = ModelStore.get(config.related_model_id);
+		var label = config.label;
+		var obj = {[label]: this.state.searchTerm};
+		modelActionCreators.insertRecord(model, obj, 0).then(this.commit);
 	},
 
 	shouldOpenDown: function () {
 		return this.props.spaceBottom > 5 
 			&& (this.props.spaceBottom > this.props.spaceTop)
 	},
+
+
 
 	render: function () {
 		var _this = this
@@ -130,12 +152,10 @@ var SearchDropdown = React.createClass({
 			rec => (rec[config.label] || '').toLowerCase().indexOf(searchTerm) >= 0
 		).slice(this.state.page * SEARCH_RECORDS_VISIBLE, SEARCH_RECORDS_VISIBLE);
 		var count = filteredRecords.length;
-		var lowerDivider = shouldOpenDown ? "bottom-divider" : "top-divider"
-		var upperDivider = shouldOpenDown ? "top-divider" : "bottom-divider"
 
 		return <PopDownMenu {...this.props}>
           	
-			<li key = "search-li" className = {this.state.count > 0 ? lowerDivider : ""}
+			<li key = "search-li" className = {this.state.count > 0 ? "top-divider" : ""}
 				style = {{height: '30px', position: 'relative'}}>
 				<input className = "input-editor" autoFocus
 					onChange = {this.updateSearchValue}
@@ -144,7 +164,9 @@ var SearchDropdown = React.createClass({
 				{
 					filteredRecords.map(function (rec, idx) {
 						var pk = rec[oppModel._pk]
-						return <li key = {pk} onClick = {_this.chooseItem}
+						return <li key = {pk} 
+							onClick = {_this.chooseItem.bind(_this, idx)}
+							onMouseOver = {_this.selectItem.bind(_this, idx)}
 							className = {"selectable " + ((idx === _this.state.selection) ? ' hilite' : '')}>
 							<span className = "has-many-bubble">{rec[config.label]}</span>
 						</li>
@@ -172,7 +194,8 @@ var SearchDropdown = React.createClass({
 				{
 					this.state.searchTerm.length > 0 ?
 					<li key="create-li"
-						className={"selectable " + (shouldOpenDown ? "top-divider" : "bottom-divider")}>
+						onClick = {this.createNewItem}
+						className={"selectable top-divider"}>
 						<span className="small icon green icon-plus"/>Create new {oppModel.model}
 					</li>
 					: null

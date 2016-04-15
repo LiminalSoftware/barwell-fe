@@ -50,6 +50,11 @@ var CubeBodyWrapper = React.createClass ({
 		}
 	},
 
+	shouldComponentUpdate: function (newProps) {
+		return newProps.view !== this.props.view
+		// return false;
+	},
+
 	_onChange: function () {
 		// this.setState({contextOpen: false, detailOpen: false})
 		// this.forceUpdate()
@@ -205,25 +210,25 @@ var CubeBodyWrapper = React.createClass ({
 					}}>
 
 					{/*RHS TABLE BODY WRAPPER*/}
-					<div className = {"wrapper cube-column-head cube-column-head--"  + (focused ? "focused" : "blurred")}
+					
+					<CubeTHead {...this.props}
 						style = {{
 							top: 0,
 							height: this.props.columnHeaderHeight + 'px',
 							left: 0,
 							right: 0,
 							transform: 'translateZ(2px)'
-						}}> 
-						<CubeTHead {...this.props}
-							dimension = {'column'}
-							store = {store}
-							groups = {this.props.columnHeaders} />
-					</div>
+						}}
+						dimension = 'column'
+						store = {store}
+						groups = {this.props.columnHeaders} />
+					
 					<div className = "wrapper body-container"
 						ref = "bodyContainer"
 						style = {{
 							left: 0,
 							top: this.props.columnHeaderHeight + 'px',
-							width: (this.props.bodyWidth - this.props.hOffset) + 'px',
+							right: 0,
 							bottom: 0,
 							overflow: 'hidden'
 						}}>

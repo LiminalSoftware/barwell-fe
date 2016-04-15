@@ -170,9 +170,6 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 		&.hilite, &.selectable:hover {
 			background: @gray4;
 		}
-		&.menu-selected {
-			color: @newgreen1;
-		}
 	}
 }
 
@@ -284,10 +281,10 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 		right: 30px !important;
 		margin: 0;
 	}
-
-	&.menu-selected {
-		color: @newgreen1;
-	}
+}
+.menu-selected {
+	color: @newgreen1 !important;
+	font-family: @headerFont;
 }
 
 .menu-item-light {
