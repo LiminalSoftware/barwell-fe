@@ -25,7 +25,7 @@ var editableInputMixin = {
 			nextProps.config !== this.props.config ||
 			nextState.selected !== this.state.selected ||
 			nextState.open !== this.state.open ||
-			nextState.editing !== this.state.editing
+			nextState.editing !== this.state.editing;
 	},
 
 	setValue: function (value) {
@@ -111,7 +111,8 @@ var editableInputMixin = {
 		var fieldType = fieldTypes[config.type]
 		var detail = fieldType.detail;
 		var showDetail = this.state.open;
-		
+		var textConditional = (!config.textConditionAttr || obj['a' + config.textConditionAttr]);
+		var boldClass = textConditional ? config.bold ? ' bolded ' : '' : '';
 		
 		if (showIcon) {
 			editorIconStyle = {
@@ -122,8 +123,8 @@ var editableInputMixin = {
 				lineHeight: this.props.rowHeight + 'px',
 				zIndex: 251
 			}
-			if (config.align === 'right') editorIconStyle.left = 0;
-			else editorIconStyle.right = 0;
+			if (config.align === 'right') editorIconStyle.left = '3px';
+			else editorIconStyle.right = '3px';
 		}
 
 		cellStyle.textAlign = config.align
@@ -149,7 +150,7 @@ var editableInputMixin = {
 				onBlur = {this.revert}
 				onChange = {this.handleChange} />
 			:
-			<span style = {cellStyle} className = {"table-cell-inner " + 
+			<span style = {cellStyle} className = {"table-cell-inner " +  boldClass +
 				((this.props.selected && !isNull) ? " table-cell-inner-selected" : "") +
 				(this.props.sorted ? "table-cell-inner-sorted" : "")
 				}

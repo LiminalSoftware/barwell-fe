@@ -65,7 +65,7 @@ var TableMixin = {
 		this.setState({
 			contextOpen: true
 		})
-		e.preventDefault()
+		e.preventDefault();
 	},
 
 	hideContext: function (e) {
@@ -79,10 +79,10 @@ var TableMixin = {
 		this.refs.horizontalScrollBar.handleMouseWheel(e)
 	},
 
-	blurPointer: function () {
+	blurPointer: function (e) {
 		var current = this.refs.cursors.refs.pointerCell
 		if (current) {
-			if (current.commitChanges) current.commitChanges()
+			if (current.commitChanges) current.commitChanges(e)
 		}
 	},
 
@@ -128,8 +128,8 @@ var TableMixin = {
 		// 	return;
 		// }
 		else if (e.keyCode == keycodes.PLUS && ctrlKey && e.shiftKey) {
-			this.insertRecord()
-			e.preventDefault()
+			this.insertRecord();
+			e.preventDefault();
 			return;
 		}
 		else if (e.keyCode == keycodes.MINUS && ctrlKey && e.shiftKey) {
@@ -139,11 +139,11 @@ var TableMixin = {
 		}
 		else if (e.keyCode == keycodes.TAB) {
 			this.move('TAB', e.shiftKey)
-			e.preventDefault()
+			e.preventDefault();
 			return;
 		} else if (e.keyCode == keycodes.ENTER) {
 			this.move('ENTER', e.shiftKey)
-			e.preventDefault()
+			e.preventDefault();
 			return;
 		}
 		else if (e.keyCode == keycodes.F2) return this.editCell(e);
@@ -230,8 +230,10 @@ var TableMixin = {
 			index = index % bigMod
 			ptr.left = (index % lilMod) + outline.left
 			ptr.top = Math.floor(index / lilMod) + outline.top
-			if (singleCell) this.setState({selection: {left: ptr.left, right: ptr.left,
-				top: ptr.top, bottom: ptr.top}})
+			// if (singleCell) this.setState({selection: {left: ptr.left, right: ptr.left,
+			// 	top: ptr.top, bottom: ptr.top}})
+			if (singleCell) this.updateSelect({left: ptr.left, right: ptr.left,
+				top: ptr.top, bottom: ptr.top})
 			this.updatePointer(ptr)
 		}
 		// Enter ---------------------
@@ -244,8 +246,10 @@ var TableMixin = {
 			index = index % bigMod
 			ptr.left = Math.floor(index / lilMod) + outline.left
 			ptr.top = (index % lilMod) + outline.top
-			if (singleCell) this.setState({selection: {left: ptr.left, right: ptr.left,
-				top: ptr.top, bottom: ptr.top}})
+			// if (singleCell) this.setState({selection: {left: ptr.left, right: ptr.left,
+			// 	top: ptr.top, bottom: ptr.top}})
+			if (singleCell) this.updateSelect({left: ptr.left, right: ptr.left,
+				top: ptr.top, bottom: ptr.top})
 			this.updatePointer(ptr)
 		}
 		// Right ------------------------
