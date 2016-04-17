@@ -57,7 +57,7 @@ class TabularTR extends React.Component {
 		selector[model._pk] = obj[model._pk]
 
 		return <div id={rowKey}
-			className = {"table-row " +  (obj._dirty ? " dirty " : "") + (obj._error ? " row-error " : "")}
+			className = {"table-row force-layer " +  (obj._dirty ? " dirty " : "") + (obj._error ? " row-error " : "")}
 			style = {rowStyle}>
 			{_this.props.hasRowLabel ?
 				<span className = {"table-cell" + (obj._dirty ? " dirty-label " : "")}  

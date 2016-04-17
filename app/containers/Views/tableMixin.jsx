@@ -1,4 +1,6 @@
 import React from "react"
+import ReactDOM from "react-dom"
+
 import $ from "jquery"
 import fieldTypes from "./fields.jsx"
 import FocusStore from '../../stores/FocusStore'
@@ -15,23 +17,19 @@ var TableMixin = {
 
 	getInitialState: function () {
 		var view = this.props.view
+		var viewconfig = this.props.viewconfig;
+
 		return {
 			selection: _.extend({
 				left: 0,
 				top: 0,
 				right: 0,
 				bottom: 0
-			}, view.data.selection),
+			}, viewconfig.selection),
 			pointer: _.extend({
 				left: 0,
 				top: 0
-			}, view.data.pointer),
-			copyarea: ({
-				left: 0,
-				top: 0,
-				right: 0,
-				bottom: 0
-			}, view.data.copyarea),
+			}, viewconfig.pointer),
 			editing: false
 		}
 	},
@@ -200,8 +198,8 @@ var TableMixin = {
 		addEventListener('mouseup', this.onMouseUp)
 	},
 
-	onSelectMouseMove: function (e) {
-		this.updateSelect(this.getRCCoords(e), true)
+	onSelectMouseMove: function (e) {;
+		this.updateSelect(this.getRCCoords(e), true);
 	},
 
 	onMouseUp: function (e) {
@@ -291,6 +289,55 @@ var TableMixin = {
 		}
 	},
 
+	// ========================================================================
+	// scrolling
+	// ========================================================================
+
+
+	// setCSSOffset: function (_vOffset, _hOffset) {
+	// 	var view = this.props.view;
+	// 	var geo = view.data.geometry;
+	// 	var hOffset = (_hOffset === undefined) ? this.state.hOffset : _hOffset;
+	// 	var vOffset = (_vOffset === undefined) ? this.state.vOffset : _vOffset;
+
+	// 	var lhsOffsetter = this.refs.tableWrapper.refs.lhsOffsetter;
+	// 	var rhsOffsetter = this.refs.tableWrapper.refs.rhsOffsetter;
+	// 	var underlay = this.refs.cursors.refs.underlayInner;
+	// 	var overlay = this.refs.cursors.refs.overlayInner;
+
+	// 	var translateCss = "translate3d("
+	// 		+ (-1 * hOffset) + "px,"
+	// 		+ (-1 * vOffset) + "px, 0)";
+
+	// 	ReactDOM.findDOMNode(lhsOffsetter).style.transform = translateCss;
+	// 	ReactDOM.findDOMNode(rhsOffsetter).style.transform = translateCss;
+	// 	ReactDOM.findDOMNode(underlay).style.transform = translateCss;
+	// 	ReactDOM.findDOMNode(overlay).style.transform = translateCss;
+	// },
+
+	componentWillMount: function () {
+		this._debounceCreateView = _.debounce(this.createView, 500);
+		this._debounceCreateViewconfig = _.debounce(this.createViewconfig, 500);
+		this._debounceCalibrateHeight = _.debounce(this.calibrateHeight, 500);
+	},
+
+	createViewconfig: function (viewconfig) {
+		modelActionCreators.create('viewconfig', false, viewconfig);
+	},
+
+	createView: function (view) {
+		modelActionCreators.createView(view, false, false, true)
+	},
+
+	calibrateHeight: function () {
+		var wrapper = ReactDOM.findDOMNode(this.refs.tableWrapper)
+		var view = this.props.view
+		var geo = view.data.geometry
+		this.setState({
+			visibleHeight: wrapper.offsetHeight,
+			visibleRows: Math.floor((wrapper.offsetHeight - geo.headerHeight) / geo.rowHeight)
+		})
+	}
 
 }
 

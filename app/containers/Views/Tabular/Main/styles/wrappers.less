@@ -70,14 +70,19 @@
 
 .scroll-bar-outer {
 	position: absolute;
-	z-index: 10;
+	
 	background: none;
 	overflow-x: scroll;
 	overflow-y: scroll;
 	-webkit-user-drag: none;
 	
 	transform: translateZ(10px);
+	z-index: 10;
 	.noselect;
+}
+
+.scroll-bar-inner {
+	transform: translateZ(1px);
 }
 
 
@@ -98,6 +103,7 @@
 	position: absolute;
 	margin: 0;
 	padding: 0;
+	transform-style: preserve-3d;
 
 	top: 0;
 	bottom: 0;

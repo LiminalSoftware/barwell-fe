@@ -41,11 +41,26 @@ var CubeViewInlineConfig = React.createClass({
 		this.refs.columnMenu.handleBlur();
 	},
 
+	getColumnAt: function (pos) {
+		var view = this.props.view;
+		var columns = view.data.columns;
+		var pos = pos || {left: 0, top: 0};
+
+		if (pos.left < 0)
+			return columns['a' + view.row_aggregates[view.row_aggregates.length + pos.left]];
+		else if (pos.top < 0)
+			return columns['a' + view.column_aggregates[view.column_aggregates.length + pos.top]];
+		else 
+			return columns['a' + view.value];
+	},
+
 	render: function () {
 		var childProps = {
 			view: this.props.view,
 			model: this.props.model,
-			_blurSiblings: this.blurSiblings
+			viewconfig: this.props.viewconfig,
+			_blurSiblings: this.blurSiblings,
+			_getColumnAt: this.getColumnAt
 		};
 
     	return <div className = "view-config" onClick={this.focus}>

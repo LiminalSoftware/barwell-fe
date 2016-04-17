@@ -3,16 +3,16 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { Link } from "react-router";
 import styles from "./style.less";
 import _ from 'underscore';
-import fieldTypes from "../../../fields"
+import fieldTypes from "../../../fields";
 
-import ColumnList from "./ColumnList"
-import ColumnDetail from "./ColumnDetailSingleton"
+import ColumnList from "./ColumnList";
+import ColumnDetail from "./ColumnDetailSingleton";
 
-import AttributeStore from "../../../../../stores/AttributeStore"
-import constant from '../../../../../constants/MetasheetConstants'
-import util from "../../../../../util/util"
+import AttributeStore from "../../../../../stores/AttributeStore";
+import constant from '../../../../../constants/MetasheetConstants';
+import util from "../../../../../util/util";
 
-import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
+import modelActionCreators from "../../../../../actions/modelActionCreators.jsx";
 
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import blurOnClickMixin from '../../../../../blurOnClickMixin';
@@ -137,9 +137,11 @@ var ColumnMenu = React.createClass({
 		
 		var _this = this;
 		var view = this.props.view;
+		var viewconfig = this.props.viewconfig || {};
 		var data = view.data;
 		var columns = view.data.columnList;
-		var currentCol = view.data.currentColumn;
+
+		var currentCol = this.props._getColumnAt(viewconfig.pointer);
 
 		//set the first section separately so you can't drag on top of it
 		var firstSection = this.props.sections[0]; 

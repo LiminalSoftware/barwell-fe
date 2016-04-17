@@ -34,12 +34,6 @@ var groomView = function (view) {
 		rowHeight: Math.min(Math.max(data.geometry.rowHeight || 25, 20), 80),
 		columnWidth: 100
 	}, {})
-	
-	if (ptr.left < 0) data.currentColumn = 
-		columns['a' + view.row_aggregates[view.row_aggregates.length + ptr.left]];
-	else if (ptr.top < 0) data.currentColumn = 
-		columns['a' + view.column_aggregates[view.column_aggregates.length + ptr.top]];
-	else data.currentColumn = columns['a' + view.value];
 
 	view.data = data
 

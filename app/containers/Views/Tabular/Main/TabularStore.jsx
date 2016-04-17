@@ -10,7 +10,6 @@ import RelationStore from "../../../../stores/RelationStore"
 
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import choose from "../../../../util/util"
-import ViewDataStores from "../../../../stores/ViewDataStores"
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 

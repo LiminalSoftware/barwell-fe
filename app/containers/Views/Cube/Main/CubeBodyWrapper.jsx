@@ -7,7 +7,6 @@ import constants from '../../../../constants/MetasheetConstants'
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import ViewStore from "../../../../stores/ViewStore"
 import FocusStore from "../../../../stores/FocusStore"
-import ViewDataStores from "../../../../stores/ViewDataStores"
 
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
@@ -162,7 +161,7 @@ var CubeBodyWrapper = React.createClass ({
 					position: 'absolute'
 				}}>
 				<div className = "wrapper force-layer"
-					ref = "rowHeaderOffsetter"
+					ref = "lhsOffsetter"
 					style = {{
 						top: 0,
 						height: (numRows * geo.rowHeight) + 'px',
@@ -233,7 +232,7 @@ var CubeBodyWrapper = React.createClass ({
 							overflow: 'hidden'
 						}}>
 						<div className = "wrapper body-offsetter"
-							ref = "bodyOffsetter"
+							ref = "rhsOffsetter"
 							style = {{
 								left: 0,
 								top: 0,

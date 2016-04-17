@@ -7,7 +7,6 @@ import styles from "./styles/wrappers.less"
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import ViewStore from "../../../../stores/ViewStore"
 import FocusStore from "../../../../stores/FocusStore"
-import ViewDataStores from "../../../../stores/ViewDataStores"
 
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
@@ -44,7 +43,7 @@ var TabularBodyWrapper = React.createClass ({
 		return {
 			fetchOffset: 0,
 			requestedOffset: 0,
-			hiddenCols: 0,
+			columnOffset: 0,
       		hiddenColWidth: 0,
 			rowOffset: 0,
 			colOffset: 0,
@@ -256,8 +255,8 @@ var TabularBodyWrapper = React.createClass ({
 				<div className = "rhs-h-scroll wrapper force-layer"
 					ref = "rhsHorizontalOffsetter"
 					style = {{
-						marginLeft: HAS_3D ? 0 :(-1 * this.props.hiddenColWidth - 1) + 'px',
-						transform: 'translate3d(' + (-1 * this.props.hiddenColWidth - 1) + 'px, 0, 0)',
+						marginLeft: (-1 * this.props.hiddenColWidth - 1) + 'px', 
+						// use marginLeft instead of translate here because translate will clobber the other offset
 					}}>
 
 					{/*RHS TABLE BODY WRAPPER*/}

@@ -203,7 +203,7 @@ var Cursors = React.createClass ({
 
           <Overlay
             {...this.props}
-            numHiddenCols = {this.props.hiddenCols}
+            numHiddenCols = {this.props.columnOffset}
             className = {"selection-border selection-border--" + (focused ? "focused" : "blurred")}
             ref = "selectionBorder"
             position = {sel}
@@ -213,7 +213,7 @@ var Cursors = React.createClass ({
 
           <Overlay
             {...this.props}
-            numHiddenCols = {this.props.hiddenCols}
+            numHiddenCols = {this.props.columnOffset}
             className = "selection-outer"
             ref = "selectionOuter"
             position = {sel}
@@ -222,7 +222,7 @@ var Cursors = React.createClass ({
           
           <Overlay
             columns = {view.data.visibleCols}
-            numHiddenCols = {this.props.hiddenCols}
+            numHiddenCols = {this.props.columnOffset}
             rowOffset = {this.props.vOffset}
             className = {" copyarea running marching-ants " + (focused ? " focused" : "")}
             ref = "copyarea"

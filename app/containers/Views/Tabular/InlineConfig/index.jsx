@@ -45,15 +45,25 @@ var TabularViewInlineConfig = React.createClass({
 		this.refs.sortMenu.handleBlur()
 	},
 
+	getColumnAt: function (pos) {
+		var view = this.props.view;
+		var data = view.data;
+		var left = (pos || {}).left || 0
+		return data.visibleCols[left];
+	},
+
 	render: function() {
 		var _this = this
 		var view = this.props.view
+		var viewconfig = this.props.viewconfig
 		var model = this.props.model
 
 		var childProps = {
 			view: this.props.view,
+			viewconfig: this.props.viewconfig,
 			model: this.props.model,
-			_blurSiblings: this.blurSiblings
+			_getColumnAt: this.getColumnAt,
+			_blurSiblings: this.blurSiblings,
 		}
 
     	return <div className = "view-config" onClick={this.focus}>

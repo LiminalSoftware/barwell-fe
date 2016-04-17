@@ -11,7 +11,6 @@ import ModelStore from "../../../../stores/ModelStore"
 import ViewStore from "../../../../stores/ViewStore"
 import FocusStore from "../../../../stores/FocusStore"
 import AttributeStore from "../../../../stores/AttributeStore"
-// import ViewDataStores from "../../../../stores/ViewDataStores"
 
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 

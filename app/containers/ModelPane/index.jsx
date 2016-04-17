@@ -5,6 +5,7 @@ import detailStyles from "./detail.less"
 import ModelDefinition from "../ModelDefinition"
 import ModelStore from "../../stores/ModelStore"
 import ViewStore from "../../stores/ViewStore"
+import ViewConfigStore from "../../stores/ViewConfigStore"
 import ModelConfigStore from '../../stores/ModelConfigStore'
 import groomView from '../../containers/Views/groomView'
 
@@ -35,11 +36,13 @@ var ModelPane = React.createClass({
 	componentWillUnmount: function () {
 		ModelStore.removeChangeListener(this._onChange)
 		ViewStore.removeChangeListener(this._onChange)
+		ViewConfigStore.removeChangeListener(this._onChange)
 	},
 
 	componentWillMount: function () {
 		ModelStore.addChangeListener(this._onChange)
 		ViewStore.addChangeListener(this._onChange)
+		ViewConfigStore.addChangeListener(this._onChange)
 	},
 
 	_onChange: function () {
@@ -70,6 +73,7 @@ var ModelPane = React.createClass({
 		var modelConfig = ModelConfigStore.get(model_id) || {};
 		var view_id = this.props.params.viewId || modelConfig.selected_view_id;
 		var view = view_id === 'config' ? null : ViewStore.get(view_id)
+		var viewconfig =  (view_id === 'config' ? null : ViewConfigStore.get(view_id)) || {}
 
 		// var viewDetailContent
 		// var detailContent
@@ -90,12 +94,14 @@ var ModelPane = React.createClass({
 			bodyContent = React.createElement(bodyElement, {
 				model: model,
 				view: view,
+				viewconfig: viewconfig,
 				key: "view-pane-" + (view.cid || view.view_id)
 			})
 
 			configElement = React.createElement(configElement, {
 				model: model,
 				view: view,
+				viewconfig: viewconfig,
 				focusDepth: 0
 			})
 		}

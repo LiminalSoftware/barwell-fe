@@ -25,9 +25,9 @@ var ModelConfigStore = storeFactory({
         this.emitChange();
         break;
 
-      case 'MODEL_RECEIVE':
-        this.emitChange()
-        break;
+      // case 'MODEL_RECEIVE':
+      //   this.emitChange();
+      //   break;
     }
   }
 })

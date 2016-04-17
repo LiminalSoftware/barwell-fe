@@ -17,6 +17,21 @@ var RIGHT_FRINGE = '200px'
 
 var Cursors = React.createClass ({
 
+  // getInitialState: function () {
+  //   return {
+  //     selection: _.extend({
+  //       left: 0,
+  //       top: 0,
+  //       right: 0,
+  //       bottom: 0
+  //     }, viewconfig.selection),
+  //     pointer: _.extend({
+  //       left: 0,
+  //       top: 0
+  //     }, viewconfig.pointer),
+  //   }
+  // },
+
   getPointerElement: function () {
     var view = this.props.view
     var model = this.props.model
@@ -92,7 +107,7 @@ var Cursors = React.createClass ({
     var sel = this.props.selection
     var cpy = this.props.copyarea
     var showJaggedEdge = (sel.right >= view.data.fixedCols.length
-      && sel.left <= view.data.fixedCols.length && this.props.hiddenCols > 0)
+      && sel.left <= view.data.fixedCols.length && this.props.columnOffset > 0)
 
     var detailColumn = view.data.visibleCols[ptr.left]
     var detailObject = store.getObject(ptr.top)
@@ -144,7 +159,7 @@ var Cursors = React.createClass ({
                 position = {{left: 0, right: view.data.visibleCols.length + view.data.fixedCols.length, 
                   top: rowCount, bottom: rowCount}}
                 fudge = {{left: -1}}
-                numHiddenCols = {this.props.hiddenCols}
+                numHiddenCols = {this.props.columnOffset}
                 className = {"add-new-row add-new-row--" + (focused ? "focused " : "blurred ")}>
               <div className = "table-cell-inner" style={{cursor: 'pointer', lineHeight: (geo.rowHeight + 'px')}} 
                 onClick = {this.props._addRecord}>
@@ -156,7 +171,7 @@ var Cursors = React.createClass ({
           
           <Overlay
             {...this.props}
-            numHiddenCols = {this.props.hiddenCols}
+            numHiddenCols = {this.props.columnOffset}
             className = {"pointer " + (focused ? " focused" : " ") + 
               (focused ? " " : " gray-out ") +
               (this.props.expanded ? " pointer--expanded " : "")}
@@ -173,7 +188,7 @@ var Cursors = React.createClass ({
 
           <Overlay
             {...this.props}
-            numHiddenCols = {this.props.hiddenCols}
+            numHiddenCols = {this.props.columnOffset}
             className = {"selection-border selection-border--" + (focused ? "focused" : "blurred")}
             ref = "selectionBorder"
             position = {sel}
@@ -183,7 +198,7 @@ var Cursors = React.createClass ({
 
           <Overlay
             {...this.props}
-            numHiddenCols = {this.props.hiddenCols}
+            numHiddenCols = {this.props.columnOffset}
             className = "selection-outer"
             ref = "selectionOuter"
             position = {sel}
@@ -208,7 +223,7 @@ var Cursors = React.createClass ({
 
           <Overlay
             columns = {view.data.visibleCols}
-              numHiddenCols = {this.props.hiddenCols}
+              numHiddenCols = {this.props.columnOffset}
             rowOffset = {this.props.rowOffset}
             className = {" copyarea running marching-ants " + (focused ? " focused" : "")}
             ref="copyarea"
@@ -233,7 +248,7 @@ var Cursors = React.createClass ({
           style = {style}>
 
           <Overlay
-                numHiddenCols = {this.props.hiddenCols}
+                numHiddenCols = {this.props.columnOffset}
             className = {" selection " + (focused ? " focused" : "")}
             ref = "selection"
             {...this.props}

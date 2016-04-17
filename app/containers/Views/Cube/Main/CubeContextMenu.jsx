@@ -6,7 +6,6 @@ import modelActionCreators from "../../../../actions/modelActionCreators"
 
 import PopDownMenu from "../../../../components/PopDownMenu"
 
-import ViewDataStores from "../../../../stores/ViewDataStores"
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 

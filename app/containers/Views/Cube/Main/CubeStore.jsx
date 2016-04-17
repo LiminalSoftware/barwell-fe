@@ -8,7 +8,6 @@ import RelationStore from "../../../../stores/RelationStore"
 
 import modelActionCreators from "../../../../actions/modelActionCreators"
 
-import ViewDataStores from "../../../../stores/ViewDataStores"
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 import util from '../../../../util/util'
@@ -92,7 +91,7 @@ var createCubeStore = function (view, dimensions) {
 
     var _getImpactedGroup = function (selector) {
         if (_dimensions.row.some(d => ('a' + d) in selector)) return 'row';
-        else if (_dimensions.column.some(d => ('a' + d) in selector)) return 'column';
+        else if (_dimensions.column.some(d => ('a' + d)  in selector)) return 'column';
         return null
     };
 

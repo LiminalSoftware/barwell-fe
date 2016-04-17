@@ -9,7 +9,7 @@ var Overlay = React.createClass ({
   shouldComponentUpdate: function (nextProps, nextState) {
     return  this.props.position !== nextProps.position || 
             this.props.view !== nextProps.view ||
-            this.props.hiddenCols !== nextProps.hiddenCols ||
+            this.props.columnOffset !== nextProps.columnOffset ||
             this.props.className !== nextProps.className ||
             this.props.children !== nextProps.children ||
             this.props.focused !== nextProps.focused

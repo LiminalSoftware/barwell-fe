@@ -17,7 +17,7 @@ import FocusStore from "../../../../stores/FocusStore"
 import util from "../../../../util/util"
 import copyTextToClipboard from "../../../../util/copyTextToClipboard"
 
-import ViewDataStores from "../../../../stores/ViewDataStores"
+import ViewConfigStore from "../../../../stores/ViewConfigStore"
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 import createTabularStore from './TabularStore.jsx'
@@ -53,15 +53,19 @@ var TabularPane = React.createClass ({
 	mixins: [TableMixin],
 
 	getInitialState: function () {
+		var viewconfig = this.props.viewconfig;
 		return {
 			sorting: null,
 			contextOpen: false,
 			detailOpen: false,
 			detailWidth: 300,
 			contextPosition: {left: 0, top: 0},
-			hiddenCols: 0,
+			ViewConfigStore: 0,
 			hiddenColWidth: 0,
-			rowOffset: 0,
+
+			rowOffset: viewconfig.rowOffset || 0,
+			columnOffset: viewconfig.columnOffset || 0,
+
 			expanded: false,
 			context: false,
 			renderSide: 'lhs'
@@ -78,8 +82,6 @@ var TabularPane = React.createClass ({
 		ViewStore.addChangeListener(this._onChange);
 		this.store = createTabularStore(this.props.view);
 		this.store.addChangeListener(this._onChange);
-		this._debounceCalibrateHeight = _.debounce(this.calibrateHeight, 500);
-		this._debounceCreateView = _.debounce(this.createView, 500);
 
 	},
 
@@ -95,25 +97,14 @@ var TabularPane = React.createClass ({
 	},
 
 	componentDidMount: function () {
+		var viewconfig = this.props.viewconfig;
 		var copyPasteDummy = document.getElementById('copy-paste-dummy')
 		copyPasteDummy.addEventListener('paste', this.pasteSelection)
 		addEventListener('resize', this._debounceCalibrateHeight)
-		copyPasteDummy.focus()
-		this.calibrateHeight()
-	},
+		copyPasteDummy.focus();
 
-	createView: function (view) {
-		modelActionCreators.createView(view, false, false, true)
-	},
-
-	calibrateHeight: function () {
-		var wrapper = ReactDOM.findDOMNode(this.refs.tableWrapper)
-		var view = this.props.view
-		var geo = view.data.geometry
-		this.setState({
-			visibleHeight: wrapper.offsetHeight,
-			visibleRows: Math.floor((wrapper.offsetHeight - geo.headerHeight) / geo.rowHeight)
-		})
+		this.calibrateHeight();
+		// this.scrollTo(viewconfig.rowOffset || 0);
 	},
 
 	componentWillUpdate: function (nextProps) {
@@ -174,7 +165,7 @@ var TabularPane = React.createClass ({
 		var view = this.props.view
 		var geo = view.data.geometry
 		var visibleCols = view.data.visibleCols
-		var scrolledCols = this.state.hiddenCols
+		var scrolledCols = this.state.columnOffset
 		var numFixed = view.data.fixedCols.length
 		var offset = $(lhs).offset()
 		var y = e.pageY - offset.top
@@ -333,7 +324,7 @@ var TabularPane = React.createClass ({
 
 	getRangeStyle: function (pos, fudge, showHiddenHack) {
 		var view = this.props.view
-	    var hiddenCols = this.state.hiddenCols
+	    var columnOffset = this.state.columnOffset
 	    var visibleCols = view.data.visibleCols
 	    var fixedCols = view.data.fixedCols
 	    var numFixed = fixedCols.length
@@ -345,7 +336,7 @@ var TabularPane = React.createClass ({
 	    fudge = fudge || {}
 
 		visibleCols.forEach(function (col, idx) {
-	      if (idx >= numFixed && idx < numFixed + hiddenCols) return
+	      if (idx >= numFixed && idx < numFixed + columnOffset) return
 	      if (idx < pos.left)
 	        left += col.width
 	      else if (idx <= (pos.right || pos.left) )
@@ -357,7 +348,7 @@ var TabularPane = React.createClass ({
 	    style.height = (geo.rowHeight * ((pos.bottom || pos.top) - pos.top + 1) + (fudge.height || 0)) + 'px'
 	    style.width = (width + (fudge.width || 0)) + 'px'
 
-	    if (!showHiddenHack && pos.left >= numFixed && (pos.right || pos.left) < numFixed + hiddenCols)
+	    if (!showHiddenHack && pos.left >= numFixed && (pos.right || pos.left) < numFixed + columnOffset)
 	      style.display = 'none'
 
 	  	return style
@@ -415,42 +406,18 @@ var TabularPane = React.createClass ({
 			contextOpen: false
 		})
 		
-		this.scrollTo(pos)
+		// this.scrollTo(pos)
 		
 		// focus the paste area just in case
 		document.getElementById("copy-paste-dummy").focus()
 
 		// commit the pointer position to the view object, but debounce
 		view.data.pointer = pos
-		this._debounceCreateView(view, false, false, true)
-	},
-
-	extendSelect: function (pos, shift) {
-		var sel = _.clone(this.state.selection);
-		var ptr = _.clone(this.state.pointer);
-		var numCols = this.getNumberCols();
-		var numRows = this.getNumberRows();
-
-		if (direction === 'RIGHT') {
-			if (sel.left === ptr.left && sel.right < numCols) sel.right += 1
-			else if (sel.left < ptr.left) sel.left += 1
-			this.setState({selection: sel})
-		}
-		if (direction === 'LEFT') {
-			if (sel.right > ptr.left) sel.right -= 1
-			else if (sel.left > 0) sel.left -= 1
-			this.setState({selection: sel})
-		}
-		if (direction === 'DOWN') {
-			if (sel.top < ptr.top) sel.top += 1
-			else if (sel.bottom < numRows) sel.bottom += 1
-			this.setState({selection: sel})
-		} 
-		if (direction === 'UP') {
-			if (sel.bottom > ptr.top) sel.bottom -= 1
-			else if (sel.top > 0) sel.top -= 1
-			this.setState({selection: sel})
-		}
+		// this._debounceCreateViewconfig(view, false, false, true)
+		this._debounceCreateViewconfig({
+			view_id: view.view_id, 
+			pointer: pos
+		});
 	},
 
 	updateSelect: function (pos, shift) {
@@ -466,7 +433,7 @@ var TabularPane = React.createClass ({
 		// console.log('b selection: ' + JSON.stringify(this.state.selection))
 
 		if (shift) {
-			this.scrollTo(pos)
+			// this.scrollTo(pos)
 			sel = {
 				left: Math.max(Math.min(ptr.left, pos.left, numCols), 0),
 				right: Math.min(Math.max(ptr.left, pos.left, 0), numCols),
@@ -508,20 +475,20 @@ var TabularPane = React.createClass ({
 		var columns = view.data.columnList;
 		var floatCols = view.data.floatCols;
 		var hiddenColWidth = 0;
-		var hiddenCols = 0;
+		var columnOffset = 0;
 		var rhsHorizontalOffsetter = this.refs.tableWrapper.refs.rhsHorizontalOffsetter;
 
 		floatCols.some(function (col) {
 			if (hOffset > col.width + hiddenColWidth) {
 				hiddenColWidth += col.width
-				hiddenCols ++
+				columnOffset ++
 			}
 			// break when we exceed hOffset
 			return (col.width + hiddenColWidth > hOffset)
 		});
 
 		this.setState({
-			hiddenCols: hiddenCols,
+			columnOffset: columnOffset,
 			hiddenColWidth: hiddenColWidth
 		});
 		
@@ -549,9 +516,10 @@ var TabularPane = React.createClass ({
 
 		this.setState({
 			rowOffset: rowOffset
-		})
+		});
 		
 		if (!this._timer) this._timer = getFrame(this.refreshTable, CYCLE)
+		this._debounceCreateViewconfig({view_id: view.view_id, rowOffset: rowOffset});
 	},
 
 	refreshTable: function () {
@@ -602,7 +570,7 @@ var TabularPane = React.createClass ({
 			_getRangeStyle: this.getRangeStyle,
 
 			hiddenColWidth: this.state.hiddenColWidth,
-			hiddenCols: this.state.hiddenCols,
+			columnOffset: this.state.columnOffset,
 			rowOffset: this.state.rowOffset,
 			visibleRows: this.state.visibleRows,
 			visibleHeight: this.state.visibleHeight,
@@ -625,7 +593,7 @@ var TabularPane = React.createClass ({
 
 		return <div className = "model-panes">
 			<div ref="wrapper"
-				className = "view-body-wrapper"
+				className = "wrapper"
 				
 				beforePaste = {this.beforePaste}>
 

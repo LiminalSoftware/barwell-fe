@@ -16,7 +16,7 @@ import KeycompStore from "../../../../stores/KeycompStore"
 import AttributeStore from "../../../../stores/AttributeStore"
 import FocusStore from "../../../../stores/FocusStore"
 
-import ViewDataStores from "../../../../stores/ViewDataStores"
+import ViewConfigStore from "../../../../stores/ViewConfigStore"
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 
@@ -50,7 +50,6 @@ var CubePane = React.createClass ({
 		this.store = createCubeStore(this.props.view);
 		this.store.addChangeListener(this._onChange);
 
-		this._debounceCreateView = _.debounce(this.createView, 500);
 		this._throttleSetCSSOffset = _.throttle(this.setCSSOffset, 15);
 	},
 
@@ -67,10 +66,7 @@ var CubePane = React.createClass ({
 		this.forceUpdate();
 	},
 
-	createView: function (view) {
-		modelActionCreators.createView(view, false, false, true)
-	},
-
+	
 	onScroll: function (event) {
 		var wrapper = ReactDOM.findDOMNode(this.refs.wrapper)
 		this.setState({
@@ -92,11 +88,11 @@ var CubePane = React.createClass ({
 	},
 
 	getNumberCols: function () {
-		return this.store.getCount('column');
+		return this.store.getCount('column') - 1;
 	},
 
 	getNumberRows: function () {
-		return this.store.getCount('row');
+		return this.store.getCount('row') - 1;
 	},
 
 	scrollTo: function () {
@@ -241,7 +237,7 @@ var CubePane = React.createClass ({
 				if (pos.top > headerIdx) top += geo.rowHeight;
 				if (pos.top <= headerIdx && pos.bottom >= headerIdx) height += geo.rowHeight;
 			})
-			style.top = top + (fudge.top || 0) + 'px'
+			style.top = top + (fudge.top || 0) - 1 + 'px'
 			style.height = height + (fudge.height || 0) + 'px'
 	    }
 
@@ -297,35 +293,50 @@ var CubePane = React.createClass ({
 		// commit the pointer position to the view object, but debounce
 		view.data.pointer = pos;
 
-		this._debounceCreateView(view, false, false, true);
+		// this._debounceCreateView(view, false, false, true);
+		this._debounceCreateViewconfig({
+			view_id: view.view_id, 
+			pointer: pos
+		});
+		// modelActionCreators.create('modelconfig', false, {
+		// 	model_id: model.model_id,
+		// 	ordering: ordering
+		// });
 	},
 
-	coalesceCells: function (pos) {
+	coalesceCells: function (pos, expand) {
 		var view = this.props.view;
 		var store = this.store;
-		var dimension = pos.left < 0 ? 'row' : pos.top ? 'column' : 'body';
+		var dimension = pos.left < 0 ? 'row' : pos.top < 0 ? 'column' : 'body';
+		var limit = dimension === 'row' ? this.getNumberRows() : this.getNumberCols();
 		var header = dimension === 'row' ? view.row_aggregates : view.column_aggregates;
-		var loLabel = dimension === 'row' ? 'left' : 'top';
-		var hiLabel = dimension === 'row' ? 'right' : 'bottom';
+		
+		var loLabel = dimension === 'row' ? 'top' : 'left';
+		var hiLabel = dimension === 'row' ? 'bottom' : 'right';
+		var transLoLabel = dimension === 'row' ? 'left' : 'top';
+		var transHiLabel = dimension === 'row' ? 'right' : 'bottom';
+
 		var lo = pos[loLabel];
 		var hi = pos[hiLabel] || lo;
 
 		if (pos.left >= 0 && pos.top >= 0) return pos;
+		if (lo < 0 || hi < 0) throw new Error('Miscalulated cell areas');
 
-		var sortSpec = header.slice(0, lo + header.length + 1).map(function(k) {
+		var sortSpec = header.slice(0, pos[(dimension === 'row' ? 'left' : 'top')] + header.length + 1).map(function(k) {
 			return {attribute_id: k};
 		});
 		while (lo > 0 && util.compare(
 			store.getLevel(dimension, lo - 1),
 			store.getLevel(dimension, lo),
 			sortSpec) === 0) lo--;
-		while (hi > 0 && util.compare(
+		while (hi < limit  && util.compare(
 			store.getLevel(dimension, hi + 1),
 			store.getLevel(dimension, hi),
 			sortSpec) === 0) hi++;
 
 		pos[loLabel] = lo;
 		pos[hiLabel] = hi;
+		pos[transHiLabel] = pos[transLoLabel];
 
 		return pos;
 	},
@@ -343,66 +354,11 @@ var CubePane = React.createClass ({
 		var numColumnHeaders = columnHeaders.length;
 		var numRowHeaders = rowHeaders.length;
 
-		// if (pos.left < 0 || pos.top < 0)
-		// 	sel = this.coalesceCells(pos);
-
-		if (pos.left < 0) {
-			var top = pos.top;
-			var bottom = pos.top;
-			pos.bottom = pos.top;
-
-			var sortSpec = rowHeaders.slice(0, pos.left + numRowHeaders + 1).map(function(k) {
-				return {attribute_id: k};
-			});
-			
-			while (top > 0 && util.compare(
-				store.getLevel('row', top - 1),
-				store.getLevel('row', pos.top),
-				sortSpec) === 0) top--;
-			while (bottom < numRows - 1 && util.compare (
-				store.getLevel('row', bottom + 1), 
-				store.getLevel('row', pos.bottom), 
-				sortSpec) === 0) bottom++;
-			pos.top = top;
-			pos.bottom = bottom;
-			pos.right = pos.left;
-			sel = {
-				left: Math.max(Math.min(pos.left, numCols), -1 * numRowHeaders),
-				right: numCols,
-				top: Math.max(Math.min(pos.top, numRows), -1 * numColumnHeaders),
-				bottom: pos.bottom
-			}
+		if (pos.left < 0 || pos.top < 0) {
+			sel = this.coalesceCells(pos);
 			this.updatePointer(pos);
-		} else if (pos.top < 0) {
-			var left = pos.left;
-			var right = pos.left;
-			pos.right = pos.left;
-
-			var sortSpec = columnHeaders.slice(0, pos.top + numColumnHeaders + 1).map(function(k) {
-				return {attribute_id: k}
-			});
-			
-			while (left > 0 && util.compare(
-				store.getLevel('column', left - 1),
-				store.getLevel('column', pos.left),
-				sortSpec) === 0) left--;
-			while (right < numCols - 1 && util.compare (
-				store.getLevel('column', right + 1), 
-				store.getLevel('column', pos.right), 
-				sortSpec) === 0) right++;
-			pos.left = left
-			pos.right = right
-			pos.bottom = pos.top
-			sel = {
-				top: Math.max(Math.min(pos.top, numRows), -1 * numColumnHeaders),
-				bottom: numRows,
-				left: Math.max(Math.min(pos.left, numCols), -1 * numRowHeaders),
-				right: pos.right
-			}
-			this.updatePointer(pos);
-		} 
-		else if (shift) {
-			this.scrollTo(pos)
+		} else if (shift) {
+			this.scrollTo(pos);
 			sel = {
 				left: Math.max(Math.min(ptr.left, pos.left, numCols), -1 * numRowHeaders),
 				right: Math.min(Math.max(ptr.left, pos.left, 0), numCols),
@@ -417,13 +373,13 @@ var CubePane = React.createClass ({
 				top: Math.max(Math.min(pos.top, numRows), -1 * numColumnHeaders),
 				bottom: Math.max(Math.min(pos.top, numRows), -1 * numColumnHeaders)
 			}
-			this.updatePointer(ptr)
+			this.updatePointer(ptr);
 		}
 		
 		this.setState({
 			selection: sel,
 			contextOpen: false
-		})
+		});
 	},
 
 	setHorizontalScrollOffset: function (hOffset) {
@@ -454,8 +410,8 @@ var CubePane = React.createClass ({
 		var columnOffset = (_columnOffset === undefined) ? this.state.columnOffset : _columnOffset;
 		var rowOffset = (_rowOffset === undefined) ? this.state.rowOffset : _rowOffset;
 
-		var rowHeaderOffsetter = this.refs.tableWrapper.refs.rowHeaderOffsetter;
-		var rhsOffsetter = this.refs.tableWrapper.refs.bodyOffsetter;
+		var lhsOffsetter = this.refs.tableWrapper.refs.lhsOffsetter;
+		var rhsOffsetter = this.refs.tableWrapper.refs.rhsOffsetter;
 		var underlay = this.refs.cursors.refs.underlayInner;
 		var overlay = this.refs.cursors.refs.overlayInner;
 
@@ -463,7 +419,7 @@ var CubePane = React.createClass ({
 			+ (-1 * columnOffset * geo.columnWidth) + "px,"
 			+ (-1 * rowOffset * geo.rowHeight) + "px, 0)";
 
-		ReactDOM.findDOMNode(rowHeaderOffsetter).style.transform = translateCss;
+		ReactDOM.findDOMNode(lhsOffsetter).style.transform = translateCss;
 		ReactDOM.findDOMNode(rhsOffsetter).style.transform = translateCss;
 		ReactDOM.findDOMNode(underlay).style.transform = translateCss;
 		ReactDOM.findDOMNode(overlay).style.transform = translateCss;
