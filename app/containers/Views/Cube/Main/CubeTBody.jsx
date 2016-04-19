@@ -21,7 +21,7 @@ const DELIMITER = '#'; //constants.delimiter
 var CubeTBody = React.createClass ({
 
 	shouldComponentUpdate: function (newProps) {
-		return newProps.view !== this.props.view
+		return newProps.view !== this.props.view;
 		// return false;
 	},
 
@@ -48,21 +48,19 @@ var CubeTBody = React.createClass ({
 	},
 
 	render: function () {
-		var _this = this
-		var model = this.props.model
-		var view = this.props.view
-		var store = this.props.store
-		var geo = view.data.geometry
-		var vOffset = this.props.verticalOffset
-		var hOffset = this.props.horizontalOffset
-		var rowLevels = store.getLevels('row', 0, 100) || []
-		var colLevels = store.getLevels('column', 0, 100) || []
-		var column = view.data.columns['a' + view.value]
-		var selector = {}
-		var element = (fieldTypes[column.type]).element
-		var cells = new Array(VISIBLE_ROWS * VISIBLE_COLUMNS)
-
-		console.log('render cube tbody');
+		var _this = this;
+		var model = this.props.model;
+		var view = this.props.view;
+		var store = this.props.store;
+		var geo = view.data.geometry;
+		var vOffset = this.props.verticalOffset;
+		var hOffset = this.props.horizontalOffset;
+		var rowLevels = store.getLevels('row', 0, 100) || [];
+		var colLevels = store.getLevels('column', 0, 100) || [];
+		var column = view.data.columns['a' + view.value];
+		var selector = {};
+		var element = (fieldTypes[column.type]).element;
+		var cells = new Array(VISIBLE_ROWS * VISIBLE_COLUMNS);
 
 		for (var i = 0; i < Math.min(VISIBLE_ROWS, rowLevels.length); i++) {
 			Object.assign(selector, rowLevels[i])

@@ -50,7 +50,7 @@ var CubeBodyWrapper = React.createClass ({
 	},
 
 	shouldComponentUpdate: function (newProps) {
-		return newProps.view !== this.props.view
+		return newProps.view !== this.props.view;
 		// return false;
 	},
 

@@ -13,15 +13,15 @@ describe("compare()", function () {
 	var b = {a: 1, b: 3};
 	it('should return 0 if items are equivalent according to sort spec', function () {
 		var spec = [{attribute_id: 'a', descending: true}]
-		assert.equal(util.compare(a, b, spec), 0)
+		assert.equal(util.compare(spec, a, b), 0)
 	});
 	it('should return 1 if items are descending according to sort spec', function () {
 		var spec = [{attribute_id: 'a', descending: true}, {attribute_id: 'b', descending: true}]
-		assert.equal(util.compare(a, b, spec), 0)
+		assert.equal(util.compare(spec, a, b), 0)
 	});
 	it('should return -1 if items are ascending according to sort spec', function () {
 		var spec = [{attribute_id: 'a', descending: true}, {attribute_id: 'b', descending: false}]
-		assert.equal(util.compare(a, b, spec), 0)
+		assert.equal(util.compare(spec, a, b), 0)
 	});
 })
 

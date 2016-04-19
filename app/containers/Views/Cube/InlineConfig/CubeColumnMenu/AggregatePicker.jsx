@@ -18,7 +18,7 @@ var AggregatePicker = React.createClass({
 
 	getInitialState: function () {
 		return {
-			choice: null,
+			choice: 'values',
 			open: false
 		}
 	},
@@ -29,6 +29,14 @@ var AggregatePicker = React.createClass({
 	},
 
 	aggregates: [
+		{
+			label: 'Values (where consistent)',
+			id: 'values'
+		},
+		{
+			label: 'Values (list)',
+			id: 'list'
+		},
 		{
 			label: 'Sum',
 			id: 'sum'
@@ -72,9 +80,8 @@ var AggregatePicker = React.createClass({
 					<li className = "bottom-divider">Aggregator</li>
 					{
 					this.aggregates.map(function (agg) {
-						return <li className = "selectable" key = {agg.id} 
+						return <li className = {"selectable " + (agg.id === selected ? " menu-selected " : "")} key = {agg.id} 
 						onClick = {_this.handleChooseAggregate.bind(_this, agg.id)}>
-						<span className = {"icon icon-chevron-right " + (agg.id === selected ? " green" : " hovershow")}/>
 						{agg.label}
 						</li>
 					})

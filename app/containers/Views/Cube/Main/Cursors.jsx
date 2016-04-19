@@ -38,7 +38,7 @@ var Cursors = React.createClass ({
       col = view.data.columns[pointerKey]
       value = level ? level[pointerKey] : null
       rowHeaders.forEach(function (rh, idx) {
-        if (idx - rowHeaders.length >= ptr.left) {
+        if (idx - rowHeaders.length <= ptr.left) {
           var key = 'a' + rowHeaders[idx]
           selector[key] = level ? level[key] : null
         }
@@ -50,7 +50,7 @@ var Cursors = React.createClass ({
       col = view.data.columns[pointerKey]
       value = level ? level[pointerKey] : null
       columnHeaders.forEach(function (rh, idx) {
-        if (idx - columnHeaders.length >= ptr.top) {
+        if (idx - columnHeaders.length <= ptr.top) {
           var key = 'a' + columnHeaders[idx]
           selector[key] = level ? level[key] : null
         }

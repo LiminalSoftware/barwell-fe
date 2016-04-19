@@ -43,10 +43,8 @@ var LabelChoice = React.createClass({
             var fieldType = fieldTypes[attr.type]
             if (fieldType.canBeLabel) return <li 
               key = {attr.attribute_id} 
-              className = "selectable"
+              className = {"selectable " + (config.label ===  ('a' + attr.attribute_id) ? ' menu-selected ' : '')}
               onClick = {_this.handleLabelChange.bind(_this, 'a' + attr.attribute_id)}>
-              <span className = {'icon  icon-chevron-right ' +
-                (config.label ===  ('a' + attr.attribute_id ) ? 'green' : 'hovershow')}/>
               {attr.attribute}
             </li>
           })}

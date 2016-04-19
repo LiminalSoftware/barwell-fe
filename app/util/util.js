@@ -39,7 +39,7 @@ module.exports.subtractOffset = function (a, b) {
   }
 }
 
-module.exports.compare = function (a, b, sortSpec) {
+var compare = module.exports.compare = function (sortSpec, a, b) {
     for (var i = 0; i < sortSpec.length; i++) {
         var key = 'a' + sortSpec[i].attribute_id;
         var inversion = sortSpec[i].descending ? 1 : -1;
@@ -56,6 +56,29 @@ module.exports.compare = function (a, b, sortSpec) {
         if (a[key] > b[key]) return (-1 * inversion);
     }
     return 0;
+}
+
+var merge = module.exports.merge = function (sortSpec, reducer, a, b) {
+    var result = [];
+    var i = 0;
+    var j = 0;
+
+    while (i < a.length && j < b.length) {
+      if (compare(sortSpec, a[i], b[j]) < 0)
+        result.push(a[i++]);
+      else if (compare(sortSpec, a[i], b[j]) > 0)
+        result.push(b[j++]);
+      else
+        result.push(reducer(a[i++], b[j++]));
+    }
+
+    while (i < a.length)  
+        result.push(a[i++]);
+
+    while (j < b.length)    
+        result.push(b[j++]);
+
+    return result;
 }
 
 module.exports.encode = function (str) {

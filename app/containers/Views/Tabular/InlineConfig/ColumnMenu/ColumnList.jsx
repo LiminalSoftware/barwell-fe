@@ -54,11 +54,12 @@ var ColumnList = React.createClass({
 		var columns = view.data.columns;
 
 		this.props.sections.forEach(function (section, idx) {
-			
-			if (idx > 0) items.push(_.extend(section, {isSection: true}))
-			section.selector(view).forEach(function (col) {
+			var attrs = section.selector(view);
+			if (idx > 0) items.push(_.extend({isSection: true}, section))
+			attrs.forEach(function (col) {
 				items.push(col);
 			});
+			// if (attrs.length === 0) items.push(_.extend({isEmpty: true}, section));
 		});
 
 		return {items: items};
@@ -80,7 +81,7 @@ var ColumnList = React.createClass({
 		var view = this.props.view;
 		var data = view.data;
 		var columns = view.data.columnList;
-		var section
+		var section = this.props.sections[0];
 
 		var items = this.state.items.map(function (item, idx) {
 			var itemProps = Object.assign({
@@ -94,6 +95,10 @@ var ColumnList = React.createClass({
 				key = {'section-' + item.section}
 				ref = {'section' + item.section}
 				{...itemProps}>{item.label}</div>
+			else if (item.isEmpty) return <div
+				className="menu-item menu-sub-item menu-divider empty-item"
+				key = {'section-' + item.section + '-empty'}
+				{...itemProps}>{item.emptyText}</div>
 			else return <ColumnDetail
 				key = {item.column_id}
 				ref = {item.column_id}

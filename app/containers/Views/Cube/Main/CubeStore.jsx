@@ -13,6 +13,8 @@ import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 import util from '../../../../util/util'
 import constants from '../../../../constants/MetasheetConstants'
 import reducers from './reducers'
+import denormalize from './denormalize'
+import normalize from './normalize'
 
 var createCubeStore = function (view, dimensions) {
 
@@ -69,7 +71,7 @@ var createCubeStore = function (view, dimensions) {
         lo = 0;
         while (cmp <= 0) {
             mid = lo + (hi - lo) / 2
-            cmp = util.compare(levels[mid], selector, _sortSpec);
+            cmp = util.compare(_sortSpec, levels[mid], selector);
             if (cmp >= 0) hi = mid - 1;
             else lo = mid + 1;
         }
@@ -80,7 +82,7 @@ var createCubeStore = function (view, dimensions) {
         hi = levels.length;
         while (cmp >= 0) {
             mid = lo + (hi - lo) / 2
-            cmp = util.compare(levels[mid], selector, _sortSpec);
+            cmp = util.compare(_sortSpec, levels[mid], selector);
             if (cmp <= 0) hi = mid - 1;
             else lo = mid + 1;
         }
@@ -161,30 +163,43 @@ var createCubeStore = function (view, dimensions) {
 
             if (type === (modelUpperLabel + '_UPDATE') || type === (modelUpperLabel + '_RECEIVEUPDATE')) {
                 var dimensions = _dimensions.row.concat(_dimensions.column).filter(_.identity);
-                var _this = this
-                var update = payload.update
-                var selector = payload.selector
-                var dirty = {
-                    _dirty: (type === (upperLabel + '_UPDATE'))
-                }
-                var matcher = _.matcher(selector)
-                var levels
-                var impactedDim = _getImpactedGroup(selector)
-                var newLevels = [];
-                var matchedLevels = [];
-                var newValues = [];
-
+                var _this = this;
+                var update = payload.update;
+                var selector = payload.selector;
+                var dirty = {dirty: (type === (upperLabel + '_UPDATE'))};
+                var matcher = _.matcher(selector);
+                var levels;
+                
                 /***
                 see which group is impacted (if any).  If any of the 
                 dimensions are in the selector, then it is impacted
                 ***/
-                
-                _values = _values.map(function(row) {
-                    return row.map(function (rec, idx) {
-                        if (matcher(rec)) return _.extend(rec, update, dirty);
-                        else return rec;
-                    });
+                var impactedDim = _getImpactedGroup(selector);
+                var impactedLevels = [];
+                var combinedLevels = [];
+                var unimpactedLevels = [];
+
+                // normalize the values array so that we can reduce similar entries
+                var values = normalize(_values, _levels, _sortSpec).map(function (rec, idx) {
+                    if (matcher(rec)) return _.extend(rec, update, dirty);
+                    else return rec;
                 });
+
+                // pull any impacted levels out of the main level array and apply the update
+                _levels[impactedDim].forEach(function (level) {
+                    if (matcher(level)) {
+                        level = _.extend(level, update);
+                        impactedLevels.push(level);
+                    } else unimpactedLevels.push(level);
+                });
+
+                // sort the impacted levels
+                impactedLevels.sort(util.compare.bind(_sortSpec[impactedDim]));
+
+                // merge the impacted levels back into the original levels array
+                _levels[impactedDim] = util.merge(_sortSpec[impactedDim], (a,b) => a, unimpactedLevels, impactedLevels);
+
+                _values = denormalize(values, _levels, _sortSpec);
                 
                 CubeStore.emitChange();
             }
@@ -219,25 +234,10 @@ var createCubeStore = function (view, dimensions) {
             if (type === upperLabel + '_RECEIVEVALUES') {
                 var _this = this;
                 var values = payload.values;
-                var idx = 0;
-                var current = {};
-                var sortSpec = _sortSpec.row.concat(_sortSpec.column);
-                _values = new Array(_levels.row.length);
+                _values = denormalize(values, _levels, _sortSpec);
+                _isCurrent.body = true;
                 
-                for (var i = 0; i < _levels.row.length && idx < values.length; i++) {
-                    Object.assign(current, _levels.row[i])
-                    var column = new Array(_levels.column.length)
-                    for (var j = 0; j < _levels.column.length && idx < values.length; j++) {
-                        Object.assign(current, _levels.column[j])
-                        var cmp = util.compare(current, values[idx], sortSpec)
-                        if (cmp >= 0) column[j] = values[idx++];
-                        else column[j] = null;
-                    }
-                    _values[i] = column
-                }
-                _isCurrent.body = true
-                
-                CubeStore.emitChange()
+                CubeStore.emitChange();
             }
 
         })

@@ -54,7 +54,6 @@ var ColumnDetailMixin = {
 		var config = this.props.config
 		var fieldType = fieldTypes[config.type] || {}
 		if (fieldType.configParts) fieldType.configParts.forEach(function (el) {
-			// console.log('el.partName:' + el.partName)
 			_this.refs[el.prototype.partName].handleBlur();
 		})
 	},

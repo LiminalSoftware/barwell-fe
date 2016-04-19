@@ -96,7 +96,6 @@ var CubeTHead = React.createClass ({
 						isBroken = true
 						spans[c] = 0
 						
-
 						return React.createElement(fieldType, {
 							config: group,
 							model: _this.props.model,

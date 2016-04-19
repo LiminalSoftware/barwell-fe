@@ -259,7 +259,7 @@ var CubePane = React.createClass ({
 	  	return style;
 	},
 
-	updatePointer: function (pos) {
+	updatePointer: function (pos, isMove) {
 		var oldPos = this.state.pointer;
 		var view = this.props.view;
 		var numCols = this.getNumberCols();
@@ -276,10 +276,11 @@ var CubePane = React.createClass ({
 		pos.bottom = pos.bottom || pos.top;
 		pos.right = pos.right || pos.left;
 
+		// if the pointer has actually moved, then blur the old pointer
 		if (pos.left !== oldPos.left ||pos.top !== oldPos.top)
 			this.blurPointer();
+
 		// save the new values to state
-		
 		this.setState({
 			pointer: pos,
 			expanded: false,
@@ -291,17 +292,10 @@ var CubePane = React.createClass ({
 		document.getElementById("copy-paste-dummy").focus();
 
 		// commit the pointer position to the view object, but debounce
-		view.data.pointer = pos;
-
-		// this._debounceCreateView(view, false, false, true);
 		this._debounceCreateViewconfig({
 			view_id: view.view_id, 
 			pointer: pos
 		});
-		// modelActionCreators.create('modelconfig', false, {
-		// 	model_id: model.model_id,
-		// 	ordering: ordering
-		// });
 	},
 
 	coalesceCells: function (pos, expand) {
@@ -326,13 +320,15 @@ var CubePane = React.createClass ({
 			return {attribute_id: k};
 		});
 		while (lo > 0 && util.compare(
+			sortSpec,
 			store.getLevel(dimension, lo - 1),
 			store.getLevel(dimension, lo),
-			sortSpec) === 0) lo--;
+			) === 0) lo--;
 		while (hi < limit  && util.compare(
+			sortSpec,
 			store.getLevel(dimension, hi + 1),
 			store.getLevel(dimension, hi),
-			sortSpec) === 0) hi++;
+			) === 0) hi++;
 
 		pos[loLabel] = lo;
 		pos[hiLabel] = hi;
@@ -403,7 +399,7 @@ var CubePane = React.createClass ({
 		this.setState({rowOffset: rowOffset});
 		this._throttleSetCSSOffset(rowOffset);
 	},
-
+	
 	setCSSOffset: function (_rowOffset, _columnOffset) {
 		var view = this.props.view;
 		var geo = view.data.geometry;

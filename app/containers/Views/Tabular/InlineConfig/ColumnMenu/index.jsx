@@ -155,7 +155,7 @@ var ColumnMenu = React.createClass({
 		};
 
     	return <div className = "double header-section" >
-			<div className="header-label">Columns</div>
+			<div className="header-label">Attributes</div>
 				<div className = "model-views-menu">
 					<ReactCSSTransitionGroup 
 						component = "div"
