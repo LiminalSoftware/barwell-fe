@@ -475,10 +475,11 @@ var CubePane = React.createClass ({
 			adjustedWidth: rowHeaderWidth + bodyWidth,
 
 			focused: focused,
+			context: this.state.contextOpen,
 
 			pointer: this.state.pointer,
 			selection: this.state.selection,
-			copyarea: this.state.copyarea
+			copyarea: this.state.copyarea,
 		});
 
 		return <div className = "model-panes">

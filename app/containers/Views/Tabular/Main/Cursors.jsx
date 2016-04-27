@@ -158,7 +158,7 @@ var Cursors = React.createClass ({
                 ref = "addNew"
                 position = {{left: 0, right: view.data.visibleCols.length + view.data.fixedCols.length, 
                   top: rowCount, bottom: rowCount}}
-                fudge = {{left: -1}}
+                fudge = {{left: -1, width: 1}}
                 numHiddenCols = {this.props.columnOffset}
                 className = {"add-new-row add-new-row--" + (focused ? "focused " : "blurred ")}>
               <div className = "table-cell-inner" style={{cursor: 'pointer', lineHeight: (geo.rowHeight + 'px')}} 
@@ -239,7 +239,7 @@ var Cursors = React.createClass ({
           bottom: 0,
           maxHeight: rowCount * geo.rowHeight + 'px',
           left: geo.leftGutter + 'px',
-          width: (fixedWidth + floatWidth + geo.labelWidth - this.props.hiddenColWidth) + 'px',
+          width: (fixedWidth + floatWidth + geo.labelWidth - this.props.hiddenColWidth + 1) + 'px',
           overflow: 'hidden',
           transform: 'translateZ(-1px)'
         }}>

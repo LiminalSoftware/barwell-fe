@@ -21,6 +21,8 @@ var ColorElement = React.createClass({
 
 	handleEdit: _.noop,
 
+	defaultWidth: 80,
+
 	showPicker: function () {
 		this.setState({open: true})
 	},

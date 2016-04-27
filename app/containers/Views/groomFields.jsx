@@ -31,10 +31,11 @@ var groomFields = function (view) {
     		if('defaultAlign' in fieldType) col.align = fieldType.defaultAlign
 			else col.align = 'left'
 		}
-		col.visible = existing ? (!!col.visible) : (!field.hidden)
-		col.fixed = existing ? (col.fixed && col.visible) : (!field.hidden && field.attribute_id === model.label_attribute_id)
-		col.width = existing ? Math.max(_.isNumber(col.width) ? col.width : 0, 50) : (fieldType.defaultWidth || 100)
-		columns[col.column_id] = col
+		col.visible = existing ? (!!col.visible) : (!field.hidden);
+		col.fixed = existing ? (col.fixed && col.visible) : (!field.hidden && field.attribute_id === model.label_attribute_id);
+		col.bold = existing ? (!!col.bold) : (field.attribute_id === model.label_attribute_id);
+		col.width = existing ? Math.max(_.isNumber(col.width) ? col.width : 0, 50) : (fieldType.defaultWidth || 100);
+		columns[col.column_id] = col;
 	})
 
 	relations.forEach(function (relation) {

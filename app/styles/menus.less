@@ -9,8 +9,10 @@
 	margin: 0;
 	margin-right: 5px;
 	background: @headerBgDark;
-	border-radius: @menuItemBorderRadius;
 	border: 1px solid @gray4;
+	&.green {
+		border: 1px solid @newgreen1;
+	}
 	overflow: visible;
 
 	&.active {
@@ -43,6 +45,9 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 .pop-down-pointer-outer {
 	border-left: @pointerSize/2 solid transparent;
 	border-bottom: @pointerSize/2 solid @headerMenuBorderColor;
+	&.green {
+		border-bottom: @pointerSize/2 solid @newgreen1;
+	}
 	border-right: @pointerSize/2 solid transparent;
 	border-top: @pointerSize/2 solid transparent;
 	left: @pointerSize/2;
@@ -65,6 +70,9 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	border-bottom: @pointerSize/2 solid transparent;
 	border-right: @pointerSize/2 solid transparent;
 	border-top: @pointerSize/2 solid @headerMenuBorderColor;
+	&.green {
+		border-top: @pointerSize/2 solid @newgreen1;
+	}
 	left: @pointerSize/2;
 	margin-bottom: -1 * @pointerSize;
 	bottom: 0;
@@ -102,24 +110,9 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	float: right;
 }
 
-.fly-in-left, .fly-in-right, .fly-in--done, .fly-in--done {
-	.transition(margin cubic-bezier(.1,.85,.5,1) 250ms);
+.pop-menu--green { 
+	border: 1px solid @newgreen1;
 }
-
-.fly-in-left {
-	margin-left: -50px !important;
-}
-
-.fly-in-right {
-	margin-right: -50px !important;
-}
-
-
-.fly-in-left--done, .fly-in-right--done, .fly-in--done {
-	margin-left: 0;
-	margin-right: 0;
-}
-
 
 .pop-down-menu, .pop-up-menu {
 	min-width: 250px;
@@ -127,11 +120,11 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	display: flex;
 
 	left: 0;
-	padding: 5px;
+	padding: 5px 0;
 	margin-left: -1px;
 	margin-right: -1px;
 	
-	border-radius: 0;
+	border-radius: 3px;
 	list-style: none;
 	border: 1px solid @headerMenuBorderColor;
 	.transition(max-height cubic-bezier(.1,.85,.5,1) 250ms);
@@ -150,6 +143,7 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 		display: block;
 		position: relative;
 		pointer-events: auto;
+		background: white;
 
 		padding: 3px 6px;
 		margin: 0;
@@ -160,10 +154,13 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 		line-height: 30px;
 
 		&.bottom-divider {
-			border-bottom: 1px dotted @headerMenuBorderColor;
+			border-bottom: 1px solid @headerMenuBorderColor;
+			background: white;
+			font-family: @headerFont;
 		}
 		&.top-divider {
-			border-top: 1px dotted @headerMenuBorderColor;
+			border-top: 1px solid @headerMenuBorderColor;
+			background: white;
 		}
 		&.top-line {
 			border-top: 1px solid @headerMenuBorderColor;
@@ -259,6 +256,8 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	border: 1px solid @headerMenuBorderColor;
 	background: @headerMenuBgColor;
 	color: @headerFontColor;
+
+	box-shadow: 0 0 0 3px @green-trans;
 }
 
 .dropdown-menu-light {

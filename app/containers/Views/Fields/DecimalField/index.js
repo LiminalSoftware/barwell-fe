@@ -33,6 +33,8 @@ var decimalField = {
 
 	defaultAlign: 'right',
 
+	defaultWidth: 100,
+
 	configCleanser: function (config) {
 		var style = config.displayStyle
 		if (!(config.displayStyle in displayStyles))

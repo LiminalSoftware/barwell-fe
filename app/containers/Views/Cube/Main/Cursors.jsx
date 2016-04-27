@@ -6,7 +6,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import Overlay from '../../Tabular/Main/Overlay'
-import ContextMenu from './CubeContextMenu'
+import ContextMenu from './ContextMenu'
 
 import PopDownMenu from '../../../../components/PopDownMenu'
 import util from '../../../../util/util'
@@ -160,7 +160,7 @@ var Cursors = React.createClass ({
           top: 0,
           left: 0,
           right: RIGHT_FRINGE + 'px',
-          bottom: 0,
+          height: columnOffset + rowCount*geo.rowHeight + 'px',
           transform: 'translateZ(-2px)'
         }}/>
       <div className = "wrapper overlay "

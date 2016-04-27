@@ -32,7 +32,7 @@ const WINDOW_COLS = 20
 const RHS_PADDING = 100
 const CYCLE = 60
 
-const HAS_3D = util.has3d()
+const HAS_3D = util.has3d();
 
 
 var CubeBodyWrapper = React.createClass ({
@@ -205,7 +205,7 @@ var CubeBodyWrapper = React.createClass ({
 				<div className = "rhs-h-scroll wrapper force-layer"
 					ref = "rhsHorizontalOffsetter"
 					style = {{
-						
+						// transform: 'translate3d(' + (-1 * this.props.hOffset - 1) + 'px ' + this.props.vOffset + 'px, 0)',
 					}}>
 
 					{/*RHS TABLE BODY WRAPPER*/}
@@ -239,9 +239,8 @@ var CubeBodyWrapper = React.createClass ({
 								width: (this.props.bodyWidth) + 'px',
 								bottom: 0,
 								marginTop: HAS_3D ? 0 : (this.props.vOffset + 2 + 'px'),
-								transform: 'translate3d(0, ' + this.props.vOffset + 'px, 0)',
-								marginLeft: HAS_3D ? 0 :(-1 * this.props.hOffset - 1) + 'px',
-								transform: 'translate3d(' + (-1 * this.props.hOffset - 1) + 'px, 0, 0)',
+								
+								// marginLeft: HAS_3D ? 0 :(-1 * this.props.hOffset - 1) + 'px'
 							}}>
 						{
 						view.value ?

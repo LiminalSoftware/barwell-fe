@@ -21,7 +21,8 @@ import TextChoice from "../textFieldConfig/TextChoice"
 var integerField = {
 	sortable: true,
 	sortIcon: 'sort-numeric-',
-	defaultWidth: 50,
+	defaultWidth: 80,
+	defaultAlign: 'right',
 	configParts: [AlignChoice, ColorChoice, TextChoice],
 	element: React.createClass({
 		mixins: [editableInputMixin, commitMixin, selectableMixin, keyPressMixin],

@@ -56,7 +56,7 @@ var TabularContextMenu = React.createClass ({
 	},
 
 	render: function () {
-		return <PopDownMenu {...this.props}>
+		return <PopDownMenu {...this.props} isgreen = {true}>
 			<li onClick={this.clickAddNewRow} className = "selectable">
 				Insert new record
 				<span className="key-shortcut">ctrl+shift+plus</span>

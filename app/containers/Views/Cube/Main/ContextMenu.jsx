@@ -51,23 +51,55 @@ var CubeContextMenu = React.createClass ({
 		this.props._copySelection()
 	},
 
+	clickJSONCopySelection: function (e) {
+		this.props._copySelectionAsJSON()
+	},
+
 	render: function () {
-		return <PopDownMenu {...this.props}>
-			<li onClick={this.clickAddNewRow} className = "selectable">
+		var pointer = this.props.pointer
+		var store = this.props.store
+		var showDeleteOption = (pointer.top > 0 && pointer.left > 0) ? !!store.getValue(pointer.top, pointer.left) : false;
+		var dimensions = (pointer.top < 0) ? store.getDimensions('column') : (pointer.left < 0) ? store.getDimensions('row') : null;
+
+
+		return <PopDownMenu {...this.props} isgreen = {true}>
+			{pointer.top < 0 || pointer.left < 0 ?
+			<li onClick = {this.clickAddNewRow} className = "selectable">
+				Add new record
+				<span className="key-shortcut">ctrl+shift+plus</span>
+			</li> : null}
+			{pointer.top < 0 || pointer.left < 0 ?
+			<li onClick = {this.clickAddNewRow} className = "selectable">
+				Add new value of ...
+				<span className="key-shortcut">ctrl+shift+plus</span>
+			</li>
+			:
+			<li onClick = {this.clickCopySelection} className = "selectable">
+				Copy selection 
+				<span className="key-shortcut">ctrl+c</span>
+			</li>
+			}
+			{(pointer.top > 0 && pointer.left > 0) ? showDeleteOption ?
+			<li onClick = {this.clickDeleteRow} className = "selectable">
+				Delete record(s)
+				<span className="key-shortcut">ctrl+shift+minus</span>
+			</li>
+			:
+			<li onClick = {this.clickDeleteRow} className = "selectable">
 				Insert new record
 				<span className="key-shortcut">ctrl+shift+plus</span>
 			</li>
-			<li onClick={this.clickCopySelection} className = "selectable">
-				Copy selection  
-				<span className="key-shortcut">ctrl+c</span>
-			</li>
-			<li onClick={this.clickDeleteRow} className = "selectable">
-				Delete record
-				<span className="key-shortcut">ctrl+shift+minus</span>
-			</li>
+			: 
+			null
+			}
 		</PopDownMenu>
 	}
 })
+
+// <li onClick={this.clickCopySelection} className = "selectable">
+// 	Copy selection as JSON  
+// 	<span className="key-shortcut">ctrl+shift+c</span>
+// </li>
 
 
 export default CubeContextMenu

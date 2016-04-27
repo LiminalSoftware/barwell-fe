@@ -23,6 +23,8 @@ var CheckboxElement = React.createClass({
 
 	revert: _.noop,
 
+	defaultWidth: 80,
+
 	// shouldComponentUpdate: function (nextProps, nextState) {
 	// 	return nextProps.value !== this.props.value ||
 	// 		nextProps.config !== this.props.config ||

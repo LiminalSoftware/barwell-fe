@@ -19,7 +19,13 @@ var groomView = function (view) {
 
 	view.row_aggregates = columnList.filter(c => c.groupByRow).map(c => c.attribute_id);
 	view.column_aggregates = columnList.filter(c => c.groupByColumn).map(c => c.attribute_id);
-	view.value = _.first(columnList.filter(c => c.inTableBody).map(c => c.attribute_id))
+	view.aggregate_values = columnList.filter(c => c.inTableBody).map(function(attr) {
+		if (!attr.aggregator) attr.aggregator = 'list';
+		return {
+			value: 'a' + attr.attribute_id,
+			aggregator: attr.aggregator
+		}
+	});
 	// view.aggregator = view.aggregator ? view.aggregator.toLowerCase() : null;
 
 	data.rowSortSpec = view.row_aggregates.map(function (d) {

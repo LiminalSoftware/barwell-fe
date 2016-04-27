@@ -32,6 +32,10 @@ var dateField = {
 
 	sortable: true,
 
+	defaultWidth: 100,
+
+	defaultAlign: 'center',
+
 	sortIcon: 'sort-time-',
 
 	stringify: function (value) {
