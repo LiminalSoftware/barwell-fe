@@ -17,12 +17,12 @@ var PopDownMenu = React.createClass({
 	},
 	
 	shouldOpenUp: function () {
-		if (this.props.parentEl) {
-			var pos = $(this.props.parentEl).offset();
-			var windowHeight = document.body.offsetHeight();
-			var windowHeight = document.body.offsetHeight();
-			return (pos.top > windowHeight - pos.bottom)
-		}
+		// if (this.props.parentEl) {
+		// 	var pos = $(this.props.parentEl).offset();
+		// 	var windowHeight = document.body.offsetHeight();
+		// 	var windowHeight = document.body.offsetHeight();
+		// 	return (pos.top > windowHeight - pos.bottom)
+		// }
 		return (this.props.spaceTop > this.props.spaceBottom)
 	},
 
@@ -41,8 +41,13 @@ var PopDownMenu = React.createClass({
 		};
 		var shouldOpenUp = this.shouldOpenUp()
 
+		if (this.props.width) style.width = this.props.width + 'px';
+
 		return <ul 
-			className = {shouldOpenUp ? " pop-up-menu " : " pop-down-menu"}
+			className = {
+				(shouldOpenUp ? " pop-up-menu " : " pop-down-menu") + 
+				(this.props.split ? " split-menu " : "")
+			}
 			style = {style}>
 			{
 			shouldOpenUp ? 

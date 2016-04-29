@@ -1,7 +1,9 @@
+import ModelStore from './ModelStore';
 import storeFactory from 'flux-store-factory';
-import dispatcher from '../dispatcher/MetasheetDispatcher'
-import _ from 'underscore'
-import util from '../util/util'
+import dispatcher from '../dispatcher/MetasheetDispatcher';
+
+import _ from 'underscore';
+import util from '../util/util';
 
 var AttributeStore = storeFactory({
   identifier: 'attribute_id',
@@ -32,6 +34,7 @@ var AttributeStore = storeFactory({
         break;
 
       case 'MODEL_RECEIVE':
+        dispatcher.waitFor([ModelStore.dispatchToken]);
         var model = payload.model
         this.purge({model_id: model.model_id})
         model.attributes.map(util.clean).map(this.create)
@@ -40,5 +43,7 @@ var AttributeStore = storeFactory({
     }
   }
 })
+
+console.log('AttributeStore.dispatchToken: ' + AttributeStore.dispatchToken)
 
 export default AttributeStore;

@@ -42,10 +42,10 @@ var AlignChoice = React.createClass({
 
     return <span
         className={"pop-down clickable icon icon-text-align-" + this.state.align}
-        onMouseDown = {this.handleOpen}>
+        onClick = {this.handleOpen}>
         {
         this.state.open ? <PopDownMenu {...this.props}>
-          <li className = "bottom-divider">Text Alignment</li>
+          <li className = "bottom-divider title">Text Alignment</li>
           {
             ['left', 'center', 'right'].map(function (alignment) {
               return <li key = {alignment} onClick = {_this.align.bind(_this, alignment)} 

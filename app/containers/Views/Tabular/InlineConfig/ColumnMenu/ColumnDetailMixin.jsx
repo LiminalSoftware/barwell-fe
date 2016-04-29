@@ -12,6 +12,7 @@ import TypePicker from './TypePicker'
 import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import sortable from 'react-sortable-mixin';
+import util from '../../../../../util/util'
 
 var ColumnDetailMixin = {
 
@@ -27,7 +28,7 @@ var ColumnDetailMixin = {
 		}
 	},
 
-	commitChanges: function (colProps) {
+	commitViewChanges: function (colProps) {
 		var view = this.props.view
 		var column_id = this.props.config.column_id
 		var col = view.data.columns[column_id]
@@ -35,10 +36,6 @@ var ColumnDetailMixin = {
 		col = _.extend(col, colProps)
 		view.data.columns[column_id] = col;
 		modelActionCreators.createView(view, true, true)
-	},
-
-	handleDelete: function (e) {
-
 	},
 
 	handleNameChange: function (e) {
@@ -49,21 +46,37 @@ var ColumnDetailMixin = {
 		this.commitUpdate({attribute: this.state.attribute})
 	},
 
+	handleDelete: function (event) {
+		var config = this.props.config
+		console.log('delete: ' + config.attribute_id)
+		modelActionCreators.destroy('attribute', false, {attribute_id: config.attribute_id})
+		event.preventDefault()
+	},
+
 	blurSubMenus: function () {
 		var _this = this;
 		var config = this.props.config
 		var fieldType = fieldTypes[config.type] || {}
 		if (fieldType.configParts) fieldType.configParts.forEach(function (el) {
-			_this.refs[el.prototype.partName].handleBlur();
+			var part = _this.refs[el.prototype.partName]
+			if (part) part.handleBlur();
+			
 		})
+		if (this.refs.typePicker) this.refs.typePicker.handleBlur();
+	},
+
+	chooseType: function (type) {
+		this.setState({
+			type: type
+		});
 	},
 
 	render: function() {
-		var _this = this
-	    var view = this.props.view
-	    var model = this.props.model
-	    var config = this.props.config
-		var fieldType = fieldTypes[config.type] || {}
+		var _this = this;
+	    var view = this.props.view;
+	    var model = this.props.model;
+	    var config = this.props.config;
+		var fieldType = fieldTypes[config.type] || {};
 		var editing = this.props.editing
 		// var labelAttrId = model.label_attribute_id
 
@@ -75,8 +88,7 @@ var ColumnDetailMixin = {
 			});
 
 	    return <div className={"menu-item menu-sub-item" +
-				(this.singleton ? " singleton " : "")}
-				>
+				(this.singleton ? " singleton " : "")}>
 		      	<span className = "ellipsis">
 					{
 					this.props.open ? 
@@ -96,7 +108,10 @@ var ColumnDetailMixin = {
 				
 				{editing ? 
 					<span>
-						<TypePicker {...this.props}/>
+						<TypePicker {...this.props} 
+							ref = "typePicker"
+							_chooseType = {_this.chooseType}
+							type = {this.state.type}/>
 					</span>
 					:
 					<span>
@@ -105,7 +120,7 @@ var ColumnDetailMixin = {
 						.concat(this.props.viewConfigParts || []) /* config parts passed down from the view*/
 						.map(function (part, idx) {
 						return React.createElement(part, {
-							_blurSiblings: _this.props._blurChildren,
+							_blurSiblings: _this.props._blurSiblings || _this.blurSubMenus,
 							key: part.prototype.partName,
 							ref: part.prototype.partName,
 							view: view,
@@ -119,7 +134,12 @@ var ColumnDetailMixin = {
 				}
 				{
 				editing ?       
-				<span onMouseDown = {this.openDetail} className = "icon icon-cog"></span>
+				<span  className = "icon icon-cross-circle" onClick = {this.handleDelete}/>
+				: null
+				}
+				{
+				editing ?       
+				<span  className = "icon icon-cog"></span>
 				: null
 				}
 			</div>

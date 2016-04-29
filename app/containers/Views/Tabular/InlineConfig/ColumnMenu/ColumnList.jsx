@@ -6,6 +6,7 @@ import styles from "./style.less";
 import _ from 'underscore';
 import fieldTypes from "../../../fields"
 
+import AttributeStore from "../../../../../stores/AttributeStore";
 import ColumnDetail from "./ColumnDetailListable"
 import constant from '../../../../../constants/MetasheetConstants'
 import util from "../../../../../util/util"
@@ -25,12 +26,17 @@ var ColumnList = React.createClass({
 		this.setState(this.getItemState());
 	},
 
-	onResorted: function () {
-		if (this.props.confirmChanges) this.props._markDirty()
-		else this.commitUpdates();
+	componentWillReceiveProps: function (next) {
+		console.log('componentWillReceiveProps')
+		this.setState(this.getItemState(next));
 	},
 
-	commitUpdates: function () {
+	onResorted: function () {
+		if (this.props.confirmChanges) this.props._markDirty()
+		else this.commitViewUpdates();
+	},
+
+	commitViewUpdates: function () {
 		var view = this.props.view;
 		var section = this.props.sections[0];
 		var items = this.state.items.map(function (item, idx) {
@@ -44,19 +50,45 @@ var ColumnList = React.createClass({
 		modelActionCreators.createView(view, true, true);
 	},
 
-	revertChanges: function () {
-		this.setState(this.getItemState());
+	commitSchemaUpdates: function () {
+		var view = this.props.view;
+		var items = this.state.items;
+		var attribute;
+
+		items.forEach(function (item) {
+			if (item.isSection) return;
+			else if (!item.attribute_id) {
+				modelActionCreators.createView(view, true, true);
+				if (attr._dirty) return modelActionCreators.create('attribute', true, item)
+			}
+			attribute = AttributeStore.get(item.attribute_id)
+			
+		});
 	},
 
-	getItemState: function () {
+	// revertChanges: function () {
+	// 	_this = this;
+	// 	return Promise.all(AttributeStore.query({model_id: (model.model_id || model.cid)}).map(function (attr) {
+	// 		if ((!attr.attribute_id) || (save && attr._destroy)) {
+	// 			return modelActionCreators.destroy('attribute', false, attr)
+	// 		} else {
+	// 			return modelActionCreators.restore('attribute', attr)
+	// 		}
+	// 	})).then(function () {
+	// 		_this.setState(this.getItemState());
+	// 	})
+	// },
+
+	getItemState: function (_props) {
 		var items = [];
-		var view = this.props.view;
+		var props = (_props || this.props)
+		var view = props.view;
 		var columns = view.data.columns;
 
-		this.props.sections.forEach(function (section, idx) {
+		props.sections.forEach(function (section, idx) {
 			var attrs = section.selector(view);
 			if (idx > 0) items.push(_.extend({isSection: true}, section))
-			attrs.forEach(function (col) {
+			attrs.forEach(function (col) {	
 				items.push(col);
 			});
 			// if (attrs.length === 0) items.push(_.extend({isEmpty: true}, section));
@@ -65,7 +97,7 @@ var ColumnList = React.createClass({
 		return {items: items};
 	},
 
-	blurChildren: function () {
+	_blurSiblings: function () {
 		var _this = this;
 		this.state.items.forEach(function (item) {
 			if (item.column_id) _this.refs[item.column_id].blurSubMenus()
@@ -74,6 +106,28 @@ var ColumnList = React.createClass({
 
 	componentDidReceiveProps: function (nextProps) {
 		this.setState(this.getItemState());
+	},
+
+	addItem: function () {
+		var _this = this;
+		var model = this.props.model;
+		var list = this.state.items;
+		var idx = 1;
+		var attr = {
+			attribute: 'New attribute', 
+			model_id: model.model_id, 
+			type: 'TEXT',
+			hidden: true
+		};
+		while (list.some(item => item.name === attr.attribute)) {
+			attr.attribute = 'New attribute ' + idx++;
+		}
+		// list.push(attr);
+		return modelActionCreators.create('attribute', false, attr).then(function (storeAttr) {
+			// var view = 
+			// list.push(storeAttr)
+			// _this.setState({items: list})
+		});
 	},
 
 	render: function() {
@@ -107,13 +161,13 @@ var ColumnList = React.createClass({
 				viewConfigParts = {section ? section.configParts : null}
 				editing = {_this.props.editing}
 				view= {view}
-				_blurChildren = {_this.blurChildren}
+				_blurSiblings = {_this._blurSiblings}
 				{...itemProps}/>
-		})
+		});
 
-    	return <div className = "dropdown-list" style = {{minWidth: '500px'}}>
+    	return <div className = "dropdown-list" style = {{minWidth: '500px'}} onClick = {this._blurSiblings}>
 			{items}
-		</div>	
+		</div>
 	}
 });
 

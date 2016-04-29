@@ -79,7 +79,7 @@ var ColorChoice = React.createClass({
 
           {
             boolAttrs.length > 0 ?
-            <li className="bottom-divider">
+            <li className="bottom-divider title">
               Condition
             </li>
             :
@@ -111,7 +111,7 @@ var ColorChoice = React.createClass({
             null
           }
 
-          <li key = "color-divider" className = {boolAttrs.length > 0 ? "top-divider bottom-divider" : "bottom-divider"}>
+          <li key = "color-divider " className = {'title ' + (boolAttrs.length > 0 ? "top-divider bottom-divider" : "bottom-divider")}>
             Background Color
           </li>
 

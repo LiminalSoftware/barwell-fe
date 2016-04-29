@@ -29,6 +29,12 @@ var ColumnMenu = React.createClass({
 
 	componentWillUnmount: function () {
 		AttributeStore.removeChangeListener(this._onChange);
+		this.handleCancelChanges()
+	},
+
+	componentWillUpdate: function (nextProps, nextState) {
+		if (this.state.open && !nextState.open)
+			this.handleCancelChanges()
 	},
 
 	_onChange: function () {
@@ -58,20 +64,37 @@ var ColumnMenu = React.createClass({
 		this.setState({editing: true, dirty: false})
 	},
 
-	handleDoneEdit: function () {
-		this.setState({editing: false})
+	handleCancelChanges: function () {
+		this.commitChanges(false)
 	},
 
-	handleAddColumn: function () {
-		var view = this.props.view;
+	handleSave: function () {
+		this.commitChanges(true);
+	},
+
+	commitChanges: function (save) {
+		var _this = this;
 		var model = this.props.model;
-		var idx = 0;
-		var attr = {attribute: 'New attribute', model_id: model.model_id, type: 'TEXT'};
-		while (AttributeStore.query({attribute: attr.attribute}).length > 0) {
-			attr.attribute = 'New attribute ' + idx++;
-		}
-		modelActionCreators.create('attribute', false, attr);
-		modelActionCreators.createView(view, false, false);
+		
+		return Promise.all(AttributeStore.query({model_id: model.model_id}).map(function (attr) {
+			if (!attr.attribute_id && !save) {
+				return modelActionCreators.destroy('attribute', false, attr);
+			} else if (!attr.attribute_id && save) {
+				return modelActionCreators.create('attribute', true, attr);
+			} else if (attr.attribute_id && attr._destroy && save) {
+				return modelActionCreators.destroy('attribute', true, attr);
+			} else if (attr.attribute_id && attr.destroy && !save) {
+				return modelActionCreators.create('attribute', false, attr);
+			}
+		})).then(function () {
+			_this.setState({editing: false});
+		})
+	},
+
+	
+	handleAddColumn: function () {
+		this.setState({editing: true})
+		this.refs.list.addItem()
 	},
 
 	renderButtonBar: function () {
@@ -112,13 +135,13 @@ var ColumnMenu = React.createClass({
 			{
 				this.state.editing ?
 				<div className = "menu-sub-item"
-					onClick = {this.handleDoneEdit}>
+					onClick = {this.handleCancelChanges}>
 					<span className = "icon icon-cross2"/>
 					Cancel changes
 				</div>
 				:
 				<div className = "menu-sub-item"
-					onClick = {this.handleDoneEdit}>
+					onClick = {this.handleAddColumn}>
 					<span className = "icon icon-plus"/>
 					Add column
 				</div>
@@ -144,7 +167,7 @@ var ColumnMenu = React.createClass({
 		var currentCol = this.props._getColumnAt(viewconfig.pointer);
 
 		//set the first section separately so you can't drag on top of it
-		var firstSection = this.props.sections[0]; 
+		var firstSection = this.props.sections[0];
 
 		var transitionProps = {
 			transitionName: "fade-in",

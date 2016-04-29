@@ -28,6 +28,11 @@
 	}
 }
 
+.split-menu {
+	flex-direction: row !important;
+	flex-wrap: wrap;
+}
+
 .pop-down-pointer-outer, .pop-down-pointer-inner, .pop-up-pointer-inner, .pop-up-pointer-outer {
 	position: absolute;
 	margin: 0; 
@@ -101,7 +106,12 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 
 .pop-down-menu {
 	top: 100%;
-	flex-direction: column;
+
+	&.invert {
+		flex-direction: column-reverse;
+	} &:not(.invert) {
+		flex-direction: column;
+	}
 	margin-top: @pointerSize/2 - 4px;
 }
 
@@ -115,14 +125,18 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 }
 
 .pop-down-menu, .pop-up-menu {
+	left: 0;
+	padding: 5px 0;
+	margin-left: 0;
+	margin-right: 0;
+	list-style: none;
+}
+
+.pop-down-menu, .pop-up-menu {
 	min-width: 250px;
 	position: absolute;
 	display: flex;
-
-	left: 0;
-	padding: 5px 0;
-	margin-left: -1px;
-	margin-right: -1px;
+	
 	
 	border-radius: 3px;
 	list-style: none;
@@ -144,19 +158,26 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 		position: relative;
 		pointer-events: auto;
 		background: white;
+		flex: 1 1;
 
 		padding: 3px 6px;
 		margin: 0;
 		text-align: left;
 		height: auto;
 		cursor: pointer;
-		height: 30px;
+		height: 26px;
 		line-height: 30px;
 
+		&.half-width-menu-item {
+			min-width: 90px;
+		}
+		&.title {
+			font-family: @headerFont;
+		}
 		&.bottom-divider {
+			min-width: 150px;
 			border-bottom: 1px solid @headerMenuBorderColor;
 			background: white;
-			font-family: @headerFont;
 		}
 		&.top-divider {
 			border-top: 1px solid @headerMenuBorderColor;
@@ -222,7 +243,7 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	background: @headerMenuBgColor;
 	margin: 0 !important;
 	border: 1px solid @headerBorderColor;
-	overflow: visible;
+	overflow: hidden;
 
 }
 
@@ -271,6 +292,7 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	display: flex;
 	flex-direction: row;
 	text-decoration: none;
+	min-width: 0 !important;
 	// border-top: 1px dotted @headerFontColor;
 	&.singleton {
 		border: none !important;

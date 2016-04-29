@@ -35,8 +35,7 @@ module.exports = {
   },
 
   colTypeCategories: [
-    'Numbers',
-    'Others',
+    'Basic',
     'Dates and Times',
     'Geographic',
     'Relationships'
@@ -46,84 +45,106 @@ module.exports = {
     'INTEGER': {
       id: 'INTEGER',
       description: 'Integer',
-      category: 'Numbers'
+      category: 'Basic',
+      icon: 'calculator2'
     },
 
     'BOOLEAN': {
       id: 'BOOLEAN',
-      description: 'Yes/No',
-      category: 'Others'
+      description: 'True/False',
+      category: 'Basic',
+      icon: 'check-square'
     },
     
     'COLOR': {
       id: 'COLOR',
       description: 'Color',
-      category: 'Others'
+      category: 'Basic',
+      icon: 'eye-dropper'
     },
 
     'DECIMAL': {
       id: 'DECIMAL',
       description: 'Decimal',
-      category: 'Numbers'
+      category: 'Basic',
+      icon: 'calculator2'
     },
 
     'DATE_TIME': {
       id: 'DATE_TIME',
       description: 'Date/Time',
-      category: 'Dates and Times'
+      category: 'Dates and Times',
+      icon: 'watch'
     },
 
     'DATE': {
       id: 'DATE',
       description: 'Date',
-      category: 'Dates and Times'
+      category: 'Dates and Times',
+      icon: 'calendar-31'
     },
+
+    'DURATION': {
+      id: 'DURATION',
+      description: 'Duration',
+      category: 'Dates and Times',
+      icon: 'timer'
+    },
+
 
     'TEXT': {
       id: 'TEXT',
       description: 'Text',
-      category: 'Text'
+      category: 'Basic',
+      icon: 'text-align-justify'
     },
 
     'LOCATION': {
       id: 'LOCATION',
       description: 'Location',
-      category: 'Geographic'
+      category: 'Geographic',
+      icon: 'map-marker'
     },
 
     'REGION': {
       id: 'REGION',
       description: 'Region',
-      category: 'Geographic'
+      category: 'Geographic',
+      icon: 'earth'
     },
 
     'HAS_ONE': {
       id: 'HAS_ONE',
       description: 'Has One',
-      category: 'Relationships'
+      category: 'Relationships',
+      icon: 'arrows-merge'
     },
 
     'HAS_MANY': {
       id: 'HAS_MANY',
       description: 'Has Many',
-      category: 'Relationships'
+      category: 'Relationships',
+      icon: 'arrows-split'
     },
 
     'MANY_TO_MANY': {
       id: 'MANY_TO_MANY',
       description: 'Many to Many',
-      category : 'Relationships'
+      category : 'Relationships',
+      icon: 'shuffle'
     },
 
     'HIERARCHY': {
       id: 'HIERARCHY',
       description: 'Hierarchy',
-      category: 'Relationships'
+      category: 'Relationships',
+      icon: 'site-map'
     },
 
     'PRIMARY_KEY': {
       id: 'PRIMARY_KEY',
       description: 'Primary id',
+      icon: 'key-hole'
     }
   },
 

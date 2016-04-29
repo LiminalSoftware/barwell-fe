@@ -30,6 +30,8 @@ var ModelStore = storeFactory({
         break;
     }
   }
-})
+});
+
+console.log('ModelStore.dispatchToken: ' + ModelStore.dispatchToken)
 
 export default ModelStore;

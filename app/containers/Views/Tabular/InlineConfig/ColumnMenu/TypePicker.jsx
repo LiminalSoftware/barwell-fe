@@ -6,19 +6,28 @@ import constants from '../../../../../constants/MetasheetConstants'
 import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 import PopDownMenu from '../../../../../components/PopDownMenu'
 import ReactDOM from "react-dom"
+import blurOnClickMixin from '../../../../../blurOnClickMixin'
 
 var TypePicker = React.createClass({
+
+	mixins: [blurOnClickMixin],
 
 	getInitialState: function () {
 		var config = this.props.config
 		return {
 			open: false,
-			type: config.type
+			type: config.type,
+			category: 'Basic'
 		}
 	},
 
-	handleOpen: function (e) {
-		this.setState({open: true})
+	handleChooseCategory: function (category, e) {
+		this.setState({category: category})
+	},
+
+	handleChooseType: function (type, e) {
+		this.setState({open: false});
+		this.props._chooseType(type)
 	},
 
 	render: function() {
@@ -27,28 +36,36 @@ var TypePicker = React.createClass({
 	    var config = this.props.config
 		var fieldType = fieldTypes[config.type] || {}
 		var editing = this.props.editing
-		var active = constants.colTypes[this.state.type]
+		var active = constants.colTypes[this.props.type]
 		var rows = []
+		var category = ''
 
-		constants.colTypeCategories.forEach(function (category) {
-			rows.push(<li key={category + '-label'} className = "bottom-divider top-divider">{category}</li>)
-			_.forEach(constants.colTypes, function (type, key) {
-				if (type.category === category) rows.push(<li key={type.id} className = "selectable">
-  					{type.description}
-  				</li>);
-			})
+
+		_.sortBy(_.values(constants.colTypes), 'category').forEach(function (type, key) {
+			if (category !== type.category && type.category)
+			rows.push(<li key = {type.category} 
+					onClick = {_this.handleChooseCategory.bind(_this, type.category)}
+					className = "bottom-divider">
+				{type.category}
+			</li>)
+			category = type.category
+			
+			if (type.category === _this.state.category) rows.push(<li key = {type.id} 
+				className = "selectable half-width-menu-item"
+				onClick = {_this.handleChooseType.bind(_this, type.id)}>
+				<span className = {"icon icon-" + type.icon}/>{type.description}
+			</li>)
 		})
 
 	    return <span ref = "picker">
 	    	<span className = "pop-down" style = {{width: '100px'}} onClick = {this.handleOpen}>
+	    		<span className = {"icon icon-" + active.icon}/>
 	    		{active.description}
 		    	{
-		    		this.state.open ?
-		    		<PopDownMenu parentElement = {element}>
-		    		{rows}
-		    		</PopDownMenu>
-		    		:
-		    		null
+		    		_this.state.open ?
+		    			<PopDownMenu width = {250} split = {true}> 
+		    				{rows} </PopDownMenu>
+		    			: null
 		    	}
 	    	</span>
 		</span>

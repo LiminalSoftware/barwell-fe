@@ -17,10 +17,11 @@ var BlurOnClickMixin = {
 
   handleOpen: function (e) {
     // this.clickTrap();
+    
     if (this.props._blurSiblings) this.props._blurSiblings();
     this.setState({open: true})
-    modelActionCreators.setFocus('view-config')
-    
+    modelActionCreators.setFocus('view-config');
+    this.clickTrap(e);
   },
 
   componentWillUpdate: function (nextProps, nextState) {
@@ -51,6 +52,7 @@ var BlurOnClickMixin = {
   },
 
   clickTrap: function (e) {
+
     e.stopPropagation()
     e.nativeEvent.stopImmediatePropagation();
     // if (this.blurChildren) this.blurChildren();

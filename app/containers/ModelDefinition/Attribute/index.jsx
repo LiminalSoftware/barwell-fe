@@ -34,12 +34,12 @@ var AttributeDetailList = React.createClass({
 	},
 
 	commitChanges: function () {
+		console.log('cancelChanges')
 		var _this = this
 		var model = this.props.model;
-		this.setState({committing: true})
-
 		return Promise.all(
 			AttributeStore.query({model_id: (model.cid || model.model_id)}).map(function (attr) {
+				console.log(attr)
 				if (attr._dirty) return modelActionCreators.create('attribute', true, attr)
 				if (attr._destroy) return modelActionCreators.destroy('attribute', true, attr)
 			})
@@ -50,21 +50,28 @@ var AttributeDetailList = React.createClass({
 	},
 
 	cancelChanges: function () {
-		this.clearEditMode(false)
-	},
-
-	clearEditMode: function (save) {
-		var _this = this;
-		var model = this.props.model;
-		return Promise.all(AttributeStore.query({model_id: (model.model_id || model.cid)}).map(function (attr) {
-			if ((!attr.attribute_id) || (save && attr._destroy)) {
+		var _this = this
+		console.log('cancelChanges')
+		return Promise.all(AttributeStore.query({model_id: model.model_id}).map(function (attr) {
+			if (!attr.attribute_id || (save && attr._destroy)) {
 				return modelActionCreators.destroy('attribute', false, attr)
 			} else {
 				return modelActionCreators.restore('attribute', attr)
 			}
 		})).then(function () {
-			_this.setState({editing: false, committing: false})
+			_this.clearEditMode(false);
 		})
+		
+	},
+
+	// componentWillUnmount: function () {
+	// 	this.clearEditMode(false);
+	// },
+
+	clearEditMode: function (save) {
+		console.log('clearEditMode')
+		var _this = this;
+		var model = this.props.model;
 	},
 
 	isDirty: function () {

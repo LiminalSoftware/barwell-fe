@@ -50,16 +50,17 @@ ul.model-bar-list {
 		max-width: 150px;
 		min-width: 50px;
 		background: @headerBgColor;
-		border-top: 1px solid transparent;
+		border-top: 1px solid @headerMenuBorderColor;
 		border-left: 1px solid @headerMenuBorderColor;
+
 	}
 
 	& > li:first-child {
 		border-left: none;
 	}
 
-	& > li:first-child {
-		
+	& > li:last-child > a {
+		border-right: 1px solid @headerMenuBorderColor;
 	}
 
 
@@ -100,6 +101,9 @@ ul.model-bar-list {
 	order: -2;
 	padding: 0;
 	overflow: visible;
-	background: @topBgColor;
+	// background: @topBgColor;
+	background:url(
+		data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVQIW2P8////f0YQYIACAD4dBAOyWWJYAAAAAElFTkSuQmCC
+    ) repeat;
 
 }

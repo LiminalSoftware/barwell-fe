@@ -53,7 +53,7 @@ var TextChoice = React.createClass({
           this.state.open ? <PopDownMenu>
           {
           boolAttrs.length > 0 ?
-            <li className = "bottom-divider" >
+            <li className = "bottom-divider title " >
               Condition
             </li>
             :
@@ -85,7 +85,7 @@ var TextChoice = React.createClass({
           }
 
 
-          <li className = "bottom-divider" >
+          <li className = "bottom-divider title " >
             Font style
           </li>
 
