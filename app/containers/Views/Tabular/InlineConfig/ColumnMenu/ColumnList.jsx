@@ -22,6 +22,8 @@ var ColumnList = React.createClass({
 
 	mixins: [sortable.ListMixin],
 
+	// LIFECYCLE ==============================================================
+
 	componentDidMount: function() {
 		this.setState(this.getItemState());
 	},
@@ -31,10 +33,16 @@ var ColumnList = React.createClass({
 		this.setState(this.getItemState(next));
 	},
 
+	componentDidReceiveProps: function (nextProps) {
+		this.setState(this.getItemState());
+	},
+
 	onResorted: function () {
 		if (this.props.confirmChanges) this.props._markDirty()
 		else this.commitViewUpdates();
 	},
+
+	// UTILITY ================================================================
 
 	commitViewUpdates: function () {
 		var view = this.props.view;
@@ -50,46 +58,20 @@ var ColumnList = React.createClass({
 		modelActionCreators.createView(view, true, true);
 	},
 
-	commitSchemaUpdates: function () {
-		var view = this.props.view;
-		var items = this.state.items;
-		var attribute;
-
-		items.forEach(function (item) {
-			if (item.isSection) return;
-			else if (!item.attribute_id) {
-				modelActionCreators.createView(view, true, true);
-				if (attr._dirty) return modelActionCreators.create('attribute', true, item)
-			}
-			attribute = AttributeStore.get(item.attribute_id)
-			
-		});
-	},
-
-	// revertChanges: function () {
-	// 	_this = this;
-	// 	return Promise.all(AttributeStore.query({model_id: (model.model_id || model.cid)}).map(function (attr) {
-	// 		if ((!attr.attribute_id) || (save && attr._destroy)) {
-	// 			return modelActionCreators.destroy('attribute', false, attr)
-	// 		} else {
-	// 			return modelActionCreators.restore('attribute', attr)
-	// 		}
-	// 	})).then(function () {
-	// 		_this.setState(this.getItemState());
-	// 	})
-	// },
-
 	getItemState: function (_props) {
 		var items = [];
-		var props = (_props || this.props)
+		var props = (_props || this.props);
 		var view = props.view;
 		var columns = view.data.columns;
 
 		props.sections.forEach(function (section, idx) {
 			var attrs = section.selector(view);
 			if (idx > 0) items.push(_.extend({isSection: true}, section))
-			attrs.forEach(function (col) {	
-				items.push(col);
+			attrs.forEach(function (col) {
+				var attribute = AttributeStore.get(col.attribute_id);
+				console.log(attribute)
+				if (attribute._destroy !== true)
+					items.push(col);
 			});
 			// if (attrs.length === 0) items.push(_.extend({isEmpty: true}, section));
 		});
@@ -104,17 +86,13 @@ var ColumnList = React.createClass({
 		});
 	},
 
-	componentDidReceiveProps: function (nextProps) {
-		this.setState(this.getItemState());
-	},
-
 	addItem: function () {
 		var _this = this;
 		var model = this.props.model;
 		var list = this.state.items;
 		var idx = 1;
 		var attr = {
-			attribute: 'New attribute', 
+			attribute: 'New attribute',
 			model_id: model.model_id, 
 			type: 'TEXT',
 			hidden: true
@@ -129,6 +107,8 @@ var ColumnList = React.createClass({
 			// _this.setState({items: list})
 		});
 	},
+
+	// RENDER ===================================================================
 
 	render: function() {
 		var _this = this;

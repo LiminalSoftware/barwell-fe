@@ -44,6 +44,4 @@ var AttributeStore = storeFactory({
   }
 })
 
-console.log('AttributeStore.dispatchToken: ' + AttributeStore.dispatchToken)
-
 export default AttributeStore;

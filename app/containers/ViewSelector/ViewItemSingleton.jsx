@@ -26,7 +26,7 @@ var ViewItemSingleton =  React.createClass({
 			return <Link
 				onClick = {this.handleClick}
 				to = {`/workspace/${model.workspace_id}/model/${view.model_id}/view/${view.view_id}`}
-				className = {"menu-item menu-sub-item  " + (this.props.selected ? " menu-selected " : "")}>
+				className = {"menu-item menu-sub-item " + (this.props.suppressHilite ? '' : 'menu-clickable ') + (this.props.selected ? " menu-selected " : "")}>
 				
 				<span className = {"icon " + viewTypes[view.type].icon}/>
 				<span className = "double ellipsis">

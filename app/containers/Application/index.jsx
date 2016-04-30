@@ -5,6 +5,8 @@ import styles from "./style.less";
 import modelActionCreators from "../../actions/modelActionCreators"
 import util from '../../util/util'
 
+import Notifier from '../Notifier'
+
 import ModelStore from "../../stores/ModelStore"
 
 var Application = React.createClass({
@@ -35,6 +37,7 @@ var Application = React.createClass({
 		<div className="application ">
 			<ModelBar {...this.props} workspaceId = {this.props.params.workspaceId}/>
 			{this.props.children}
+			<Notifier {...this.props}/>
 			<textarea style = {dummyStyle} id = "copy-paste-dummy" value=""></textarea>
 		</div>;
 	},
@@ -45,7 +48,13 @@ var Application = React.createClass({
 
 	componentDidMount: function () {
 	// 	ModelStore.addChangeListener(this._onChange)
-		this.fetchModels(this.props.params.workspaceId)
+		this.fetchModels(this.props.params.workspaceId);
+		modelActionCreators.createNotification({
+			copy: 'Fetching workspace details', 
+			type: 'loading',
+			icon: ' icon-sync spin ',
+			notification_key: 'workspaceLoad'
+		})
 	},
 
 	// componentWillUnmount: function () {
@@ -61,6 +70,10 @@ var Application = React.createClass({
 		console.log('workspaceId: ' + workspaceId)
 		modelActionCreators.fetchModels(workspaceId).then(function() {
 			_this.setState({loading: false})
+		}).then(function () {
+			modelActionCreators.clearNotification({
+				notification_key: 'workspaceLoad'
+			})
 		})
 	}
 

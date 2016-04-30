@@ -49,11 +49,19 @@ var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
       },
       error: function (xhr, error, status) {
         if (error === 'timeout') {
-          if (retry++ >= MAX_RETRIES) return
-          console.log('timeout, trying again: ' + retry)
+          if (retry++ >= MAX_RETRIES) {
+            modelActionCreators.createNotification({
+              copy: 'Error communicating with the server.  There may be a problem with the connection.', 
+              type: 'error',
+              icon: ' icon-warning ',
+              notification_key: 'workspaceLoad'
+            });
+            return
+          }
+          // console.log('timeout, trying again: ' + retry)
           $.ajax(this);
         } else {
-          console.log('xhr: '+ JSON.stringify(xhr, null, 2));
+          // console.log('xhr: '+ JSON.stringify(xhr, null, 2));
           reject(xhr.responseJSON)
         }
       }
@@ -101,8 +109,6 @@ var persist = module.exports.persist = function (subject, action, data) {
     })
     return results.data
   }).catch(function (error) {
-    console.log('error: ' + error)
-    console.log('trace: ' + error.trace)
-    modelActionCreators.createNotification('Connection problem!', error.message, 'error')
+    
   })
 }

@@ -71,24 +71,24 @@ var ViewMenu = React.createClass({
 		return <div className="menu-item menu-config-row" key="detail-menu-items">
 			{
 				this.state.editing ?
-				<div className = {"menu-sub-item padded " + (this.state.adding ? "border-bottom" : "")}
+				<div className = {"menu-sub-item padded menu-clickable " + (this.state.adding ? "border-bottom" : "")}
 					onClick = {this.handleSave}>
 					<span className = "icon icon-check"/> Save changes
 				</div>
 				:
-				<div className = "menu-sub-item padded"
+				<div className = "menu-sub-item padded menu-clickable"
 					onClick = {this.handleEdit}>
 					<span className = "icon icon-pencil"/> Edit views
 				</div>
 			}
 			{
 				this.state.editing ?
-				<div className = {"menu-sub-item padded " + (this.state.adding ? "border-bottom" : "")}
+				<div className = {"menu-sub-item padded menu-clickable " + (this.state.adding ? "border-bottom" : "")}
 					onClick = {this.handleCancelEdit}>
 					<span className = "icon icon-cross2"/>Cancel changes
 				</div>
 				:
-				<div className="menu-sub-item padded" 
+				<div className="menu-sub-item padded menu-clickable" 
 					onClick = {this.handleAddNewChoices}>
 					<span className = "icon icon-plus"/> Add view
 				</div>
@@ -132,18 +132,29 @@ var ViewMenu = React.createClass({
 					key = "orderable-list"/>
 				
 			}
+
+			
 			
 			<Link to = {`/workspace/${model.workspace_id}/model/${model.model_id}/view/config`}
-				className = {"menu-item menu-sub-item " + 
+				className = {"menu-item menu-sub-item menu-clickable" + 
 					(!view ? " menu-selected " : " ")}
 				 key="model-editor">
 				<span className = "icon icon-pencil-ruler"></span>
 				<span className = "double-column-config">Database Configuration</span>
 			</Link>
+
+			<Link to = {`/workspace/${model.workspace_id}/model/${model.model_id}/view/history`}
+				className = {"menu-item menu-sub-item menu-clickable " + 
+					(!view ? " menu-selected " : " ")}
+				 key="change-history">
+				<span className = "icon icon-library"></span>
+				<span className = "double-column-config">Change History</span>
+			</Link>
+
 			{
 				this.state.editing && !this.state.adding ?
 				<div className = "menu-item menu-config-row" key = "config-row">
-					<div className="menu-sub-item padded" 
+					<div className="menu-sub-item padded menu-clickable" 
 						onClick = {this.handleAddNewChoices}>
 						<span className = "icon icon-plus"/> Add view
 					</div>

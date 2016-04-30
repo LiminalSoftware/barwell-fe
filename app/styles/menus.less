@@ -32,6 +32,10 @@
 	flex-direction: row !important;
 	flex-wrap: wrap;
 }
+.menu-clickable:hover {
+	background: @headerMenuBgHilite !important;
+	.transition(background cubic-bezier(.1,.85,.5,1) 100ms);
+}
 
 .pop-down-pointer-outer, .pop-down-pointer-inner, .pop-up-pointer-inner, .pop-up-pointer-outer {
 	position: absolute;
@@ -306,7 +310,7 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 }
 .menu-selected {
 	color: @newgreen1 !important;
-	font-family: @headerFont;
+	// font-family: @headerFont;
 }
 
 .menu-item-light {

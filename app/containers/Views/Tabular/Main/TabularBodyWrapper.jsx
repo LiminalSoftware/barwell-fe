@@ -82,12 +82,6 @@ var TabularBodyWrapper = React.createClass ({
 		this.debounceFetch(false, nextProps);
 	},
 
-	finishFetch: function () {
-		this.setState({
-			fetching: false
-		})
-	},
-
 	fetch: function (force, nextProps, nextState) {
 		var _this = this
 		var view = this.props.view
@@ -104,12 +98,22 @@ var TabularBodyWrapper = React.createClass ({
 			|| !_.isEqual(sorting, this.state.sorting) 
 		) {
 			console.log('FETCH RECORDS, start: ' + boundedTarget + ', end: ' + (boundedTarget + MAX_ROWS))
+			
+			
+
 			this.setState({
 				requestedOffset: boundedTarget,
 				fetching: true,
 				sorting: sorting
 			})
 
+			// modelActionCreators.createNotification({
+			// 	header: 'Loading records', 
+			// 	copy: 'blah blah blah',
+			// 	type: 'info',
+			// 	notification_key: 'loadingRecords'
+			// });
+			
 			modelActionCreators.fetchRecords(
 				view,
 				boundedTarget,
@@ -119,6 +123,9 @@ var TabularBodyWrapper = React.createClass ({
 				_this.setState({
 					fetchOffset: boundedTarget,
 					fetching: false
+				});
+				modelActionCreators.clearNotification({
+					notification_key: 'loadingRecords'
 				})
 			})
 		}
@@ -127,8 +134,7 @@ var TabularBodyWrapper = React.createClass ({
 	shouldComponentUpdate: function (nextProps, nextState) {
 		var oldProps = this.props
 		return this.props.view !== nextProps.view ||
-			this.props.children !== nextProps.children ||
-			this.state.fetching !== nextState.fetching
+			this.props.children !== nextProps.children
 	},
 
 	render: function () {
@@ -166,17 +172,6 @@ var TabularBodyWrapper = React.createClass ({
 				width: (adjustedWidth + 3) + 'px',
 				transformStyle: 'preserve-3d'
 			}}>
-
-			{
-				this.state.fetching ?
-				<div 
-					className = "loader-overlay"
-					style = {{width: 250 + 'px', marginBottom: '-3px'}}>
-					<div style = {{display: 'inline-block'}} className="icon icon-sync spin"/>
-					<span>Loading...</span>
-				</div>
-				: null
-			}
 			
 			<RowResizer {...this.props} adjustedWidth = {adjustedWidth} />
 

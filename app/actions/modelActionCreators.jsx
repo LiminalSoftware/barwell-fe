@@ -11,13 +11,14 @@ var BASE_URL = 'https://api.metasheet.io'
 
 var modelActions = {
 
-	createNotification: function (header, copy, type) {
-		MetasheetDispatcher.dispatch({
-			actionType: 'NOTIFY',
-			header: header,
-			copy: copy,
-			type: type
-		});
+	createNotification: function (notification) {
+		notification.actionType = 'NOTIFY';
+		MetasheetDispatcher.dispatch(notification);
+	},
+
+	clearNotification: function (notification) {
+		notification.actionType = 'CLEAR_NOTIFICATION'
+		MetasheetDispatcher.dispatch(notification);
 	},
 
 	setWorkspace: function (workspaceId) {
@@ -101,6 +102,17 @@ var modelActions = {
 			message.selector = selector
 			MetasheetDispatcher.dispatch(message)
 		}).catch(function (error) {
+
+			console.log('theres an error!')
+
+			modelActionCreators.createNotification({
+              copy: 'This update violates an existing constraint: ', 
+              type: 'error',
+              icon: ' icon-warning ',
+              notification_key: 'updateRecordError',
+              notifyTime: 2000
+            });
+
 			MetasheetDispatcher.dispatch({
 				selector: selector,
 				actionType: 'M' + model.model_id + '_REVERT'

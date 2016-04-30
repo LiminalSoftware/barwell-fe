@@ -80,7 +80,7 @@ var ViewItemMovable = React.createClass({
 		var model = this.props.model
 
 		if (view)
-			return <div className = "menu-item menu-sub-item" style = {{minWidth: "300px"}}>
+			return <div className = "menu-item menu-sub-item menu-clickable "  style = {{minWidth: "300px"}}>
 				<span className = {"draggable gray icon icon-menu " + 
 					(this.state.editTransition ? "" : "")} ref = "grabber"/>
 				<span className = {"icon " + viewTypes[view.type].icon}></span>
@@ -105,7 +105,7 @@ var ViewItemMovable = React.createClass({
 					<span className = "icon icon-cross-circle"
 						onClick = {this.handleClickDelete}/>}
 			</div>
-		else return <div className = "singleton menu-item menu-sub-item no-left-padding">
+		else return <div className = "singleton menu-item menu-sub-item no-left-padding ">
 			<span className = "large icon icon-pencil-ruler"></span>
 			<span className = "double-column-config">Database Configuration</span>
 		</div>

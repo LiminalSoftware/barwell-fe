@@ -61,6 +61,4 @@ var ViewStore = storeFactory({
   }
 })
 
-console.log('ViewStore.dispatchToken: ' + ViewStore.dispatchToken)
-
 export default ViewStore;

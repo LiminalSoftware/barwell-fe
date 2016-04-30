@@ -205,6 +205,13 @@ var TabularPane = React.createClass ({
 		this.blurPointer()
 		modelActionCreators.insertRecord(this.props.model, obj, this.store.getRecordCount())
 		this.setState({copyarea: null})
+		modelActionCreators.createNotification({
+        	copy: 'New record created', 
+        	type: 'info',
+        	icon: 'icon-flare',
+			notification_key: 'createNewRecord',
+			notifyTime: 2000
+        })
 	},
 
 	insertRecord: function () {
@@ -219,6 +226,13 @@ var TabularPane = React.createClass ({
 		}
 		modelActionCreators.insertRecord(this.props.model, obj, pos)
 		this.setState({copyarea: null, selection: sel})
+		modelActionCreators.createNotification({
+        	copy: 'New record created', 
+        	type: 'info',
+        	icon: 'icon-flare',
+			notification_key: 'createNewRecord',
+			notifyTime: 2000
+        })
 	},
 
 	clearSelection: function () {
@@ -252,6 +266,7 @@ var TabularPane = React.createClass ({
 		var selectors = []
 		var numRows = this.getNumberRows()
 		var numRowsDeleted = (sel.bottom - sel.top + 1)
+		
 
 		this.blurPointer()
 
@@ -269,6 +284,13 @@ var TabularPane = React.createClass ({
 		ptr.top = ptr.bottom = Math.min(ptr.top, numRows - numRowsDeleted)
 		sel.bottom = sel.top = Math.min(sel.top, numRows - numRowsDeleted)
 		this.setState({copyarea: null, selection: sel, pointer: ptr})
+		modelActionCreators.createNotification({
+        	copy: (numRowsDeleted) + ' Records deleted', 
+        	type: 'info',
+        	icon: 'icon-broom ',
+			notification_key: 'deleteRecord',
+			notifyTime: 2000
+        })
 	},
 
 	copySelection: function (format) {
@@ -280,6 +302,13 @@ var TabularPane = React.createClass ({
 			copyarea: this.state.selection,
 			copydata: json
 		});
+		modelActionCreators.createNotification({
+        	copy: 'Selection copied to clipboard', 
+        	type: 'info',
+        	icon: ' icon-clipboard-text ',
+			notification_key: 'copySuccess',
+			notifyTime: 3000
+        })
 	},
 
 	copySelectionAsJSON: function (format) {

@@ -43,7 +43,7 @@ var ViewSelector = React.createClass({
 					this.state.open ? 
 					<ViewMenu {...this.props} key = "menu" /> 
 					: 
-					<ViewItemSingleton {...this.props} key = "singleton" />
+					<ViewItemSingleton {...this.props} suppressHilite = {true} key = "singleton" />
 				}
 			</ReactCSSTransitionGroup>
 			

@@ -6,38 +6,32 @@ import NotificationStore from "../../stores/NotificationStore"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 var Notifier = React.createClass({
+
+	// LIFECYCLE ==============================================================
+
 	componentWillMount: function () {
-		NotificationStore.addChangeListener(this._onChange)
+		NotificationStore.addChangeListener(this._onChange);
 	},
 
 	componentWillUnmount: function () {
-		NotificationStore.removeChangeListener(this._onChange)
+		NotificationStore.removeChangeListener(this._onChange);
 	},
 
 	_onChange: function () {
-		this.forceUpdate()
+		this.forceUpdate();
 	},
 
+	// RENDER =================================================================
+
 	render: function() {
-		var notifications = NotificationStore.getNotifications();
+		var notifications = NotificationStore.query();
 
 		return <ReactCSSTransitionGroup
 			transitionEnterTimeout={500} transitionLeaveTimeout={300}
-			component="ul" className="notifier" transitionName="flip">{
+			component="ul" className="notifier" transitionName="fade-in">{
 				notifications.map(function (note) {
-					var iconName;
-					switch(note.type) {
-						case "error":
-								iconName = 'icon-kub-warning';
-								break;
-						case "info":
-								iconName = 'icon-kub-info';
-								break;
-					}
-
-					return <li className={note.type} key={note.notificationId} style={{zIndex: note.notificationId}}>
-						<h3><span className={'icon ' + iconName}></span> {note.header}</h3>
-						<p>{note.copy}</p>
+					return <li className={note.type} key={note.notification_key} style={{zIndex: note.notificationId}}>
+						<span className={'icon ' + note.icon}/>{note.copy}
 					</li>
 				})
 		}</ReactCSSTransitionGroup>;

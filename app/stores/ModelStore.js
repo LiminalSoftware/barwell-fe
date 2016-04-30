@@ -6,7 +6,7 @@ import util from '../util/util'
 var ModelStore = storeFactory({
   identifier: 'model_id',
   dispatcher: dispatcher,
-  pivot: function(payload) {
+  pivot: function (payload) {
     switch (payload.actionType) {
       case 'MODEL_CREATE':
         this.create(payload.model)
@@ -31,7 +31,5 @@ var ModelStore = storeFactory({
     }
   }
 });
-
-console.log('ModelStore.dispatchToken: ' + ModelStore.dispatchToken)
 
 export default ModelStore;

@@ -6,6 +6,7 @@ import fieldTypes from "../../../fields"
 import $ from 'jquery'
 
 import constants from '../../../../../constants/MetasheetConstants'
+import AttributeStore from "../../../../../stores/AttributeStore";
 
 import TypePicker from './TypePicker'
 
@@ -15,6 +16,8 @@ import sortable from 'react-sortable-mixin';
 import util from '../../../../../util/util'
 
 var ColumnDetailMixin = {
+
+	// LIFECYCLE ==============================================================
 
 	getInitialState: function () {
 		var config = this.props.config || {}
@@ -28,14 +31,12 @@ var ColumnDetailMixin = {
 		}
 	},
 
-	commitViewChanges: function (colProps) {
-		var view = this.props.view
-		var column_id = this.props.config.column_id
-		var col = view.data.columns[column_id]
+	// HANDLERS ===============================================================
 
-		col = _.extend(col, colProps)
-		view.data.columns[column_id] = col;
-		modelActionCreators.createView(view, true, true)
+	chooseType: function (type) {
+		this.setState({
+			type: type
+		});
 	},
 
 	handleNameChange: function (e) {
@@ -48,9 +49,21 @@ var ColumnDetailMixin = {
 
 	handleDelete: function (event) {
 		var config = this.props.config
-		console.log('delete: ' + config.attribute_id)
-		modelActionCreators.destroy('attribute', false, {attribute_id: config.attribute_id})
+		var attr  = AttributeStore.get(config.attribute_id)
+		modelActionCreators.destroy('attribute', false, attr)
 		event.preventDefault()
+	},
+
+	// UTILITY ================================================================
+
+	commitViewChanges: function (colProps) {
+		var view = this.props.view
+		var column_id = this.props.config.column_id
+		var col = view.data.columns[column_id]
+
+		col = _.extend(col, colProps)
+		view.data.columns[column_id] = col;
+		modelActionCreators.createView(view, true, true)
 	},
 
 	blurSubMenus: function () {
@@ -65,11 +78,7 @@ var ColumnDetailMixin = {
 		if (this.refs.typePicker) this.refs.typePicker.handleBlur();
 	},
 
-	chooseType: function (type) {
-		this.setState({
-			type: type
-		});
-	},
+	// RENDER ===================================================================
 
 	render: function() {
 		var _this = this;
@@ -131,6 +140,9 @@ var ColumnDetailMixin = {
 					})
 					}
 					</span>
+				}
+				{
+					
 				}
 				{
 				editing ?       

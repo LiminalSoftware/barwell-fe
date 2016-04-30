@@ -58,7 +58,7 @@ var TypePicker = React.createClass({
 		})
 
 	    return <span ref = "picker">
-	    	<span className = "pop-down" style = {{width: '100px'}} onClick = {this.handleOpen}>
+	    	<span className = "pop-down" style = {{width: '100px'}} onClick = {this.props.type === 'PRIMARY_KEY' ? null : this.handleOpen}>
 	    		<span className = {"icon icon-" + active.icon}/>
 	    		{active.description}
 		    	{

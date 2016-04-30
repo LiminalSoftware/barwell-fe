@@ -23,6 +23,8 @@ var ColumnMenu = React.createClass({
 
 	mixins: [blurOnClickMixin],
 
+	// LIFECYCLE ==============================================================
+
 	componentWillMount: function () {
 		AttributeStore.addChangeListener(this._onChange);
 	},
@@ -37,10 +39,6 @@ var ColumnMenu = React.createClass({
 			this.handleCancelChanges()
 	},
 
-	_onChange: function () {
-		this.forceUpdate();
-	},
-
 	getInitialState: function () {
 		return {
 			open: false,
@@ -50,14 +48,12 @@ var ColumnMenu = React.createClass({
 		};
 	},
 
-	markDirty: function (isDirty) {
-		this.setState({dirty: (isDirty === false) ? false : true})
+	_onChange: function () {
+		this.forceUpdate();
 	},
 
-	commitUpdates: function () {
-		this.setState({dirty: false})
-		this.refs.list.commitUpdates();
-	},
+
+	// HANDLERS ===============================================================
 
 	handleEdit: function () {
 		if (this.refs.list.revertChanges) this.refs.list.revertChanges()
@@ -72,6 +68,26 @@ var ColumnMenu = React.createClass({
 		this.commitChanges(true);
 	},
 
+	handleAddColumn: function () {
+		this.setState({editing: true})
+		this.refs.list.addItem()
+	},
+
+	// UTILITY ================================================================
+
+	blurChildren: function () {
+		if (this.refs.list) this.refs.list.blurChildren()
+	},
+
+	markDirty: function (isDirty) {
+		this.setState({dirty: (isDirty === false) ? false : true})
+	},
+
+	commitUpdates: function () {
+		this.setState({dirty: false})
+		this.refs.list.commitUpdates();
+	},
+
 	commitChanges: function (save) {
 		var _this = this;
 		var model = this.props.model;
@@ -83,8 +99,8 @@ var ColumnMenu = React.createClass({
 				return modelActionCreators.create('attribute', true, attr);
 			} else if (attr.attribute_id && attr._destroy && save) {
 				return modelActionCreators.destroy('attribute', true, attr);
-			} else if (attr.attribute_id && attr.destroy && !save) {
-				return modelActionCreators.create('attribute', false, attr);
+			} else if (attr.attribute_id && attr._destroy && !save) {
+				return modelActionCreators.restore('attribute', attr);
 			}
 		})).then(function () {
 			_this.setState({editing: false});
@@ -92,10 +108,7 @@ var ColumnMenu = React.createClass({
 	},
 
 	
-	handleAddColumn: function () {
-		this.setState({editing: true})
-		this.refs.list.addItem()
-	},
+	// RENDER ===================================================================
 
 	renderButtonBar: function () {
 		var editing = this.state.editing;
@@ -103,7 +116,7 @@ var ColumnMenu = React.createClass({
 			{
 				this.props.confirmChanges && this.state.dirty ?
 				<div className="menu-item menu-config-row">
-					<div className = "menu-sub-item" onClick = {this.commitUpdates}>
+					<div className = "menu-sub-item menu-clickable" onClick = {this.commitUpdates}>
 					<span className = "icon icon-check"/> Update cube
 					</div>
 				</div> : null
@@ -112,7 +125,7 @@ var ColumnMenu = React.createClass({
 				editing ?
 				<div className="menu-item menu-config-row"
 					onClick = {this.handleAddColumn}>
-					<div className = "menu-sub-item">
+					<div className = "menu-sub-item  menu-clickable">
 					<span className = "icon icon-plus"/> Add column
 					</div>
 				</div> : null
@@ -120,13 +133,13 @@ var ColumnMenu = React.createClass({
 			<div className="menu-item menu-config-row" key="detail-menu-items">
 			{
 				this.state.editing ?
-				<div className = "menu-sub-item"
+				<div className = "menu-sub-item  menu-clickable"
 					onClick = {this.handleDoneEdit}>
 					<span className = "icon icon-check"/>
 					Save changes
 				</div>
 				:
-				<div className = "menu-sub-item"
+				<div className = "menu-sub-item  menu-clickable"
 					onClick = {this.handleEdit}>
 					<span className = "icon icon-pencil"/> 
 					Edit columns
@@ -134,13 +147,13 @@ var ColumnMenu = React.createClass({
 			}
 			{
 				this.state.editing ?
-				<div className = "menu-sub-item"
+				<div className = "menu-sub-item menu-clickable"
 					onClick = {this.handleCancelChanges}>
 					<span className = "icon icon-cross2"/>
 					Cancel changes
 				</div>
 				:
-				<div className = "menu-sub-item"
+				<div className = "menu-sub-item menu-clickable"
 					onClick = {this.handleAddColumn}>
 					<span className = "icon icon-plus"/>
 					Add column
@@ -150,10 +163,6 @@ var ColumnMenu = React.createClass({
 
 
 		</div>
-	},
-
-	blurChildren: function () {
-		if (this.refs.list) this.refs.list.blurChildren()
 	},
 
 	render: function() {
