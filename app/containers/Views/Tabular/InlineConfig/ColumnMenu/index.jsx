@@ -16,6 +16,7 @@ import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import blurOnClickMixin from '../../../../../blurOnClickMixin';
+
 import sortable from 'react-sortable-mixin';
 
 
@@ -64,7 +65,7 @@ var ColumnMenu = React.createClass({
 		this.commitChanges(false)
 	},
 
-	handleSave: function () {
+	handleSaveChanges: function () {
 		this.commitChanges(true);
 	},
 
@@ -134,7 +135,7 @@ var ColumnMenu = React.createClass({
 			{
 				this.state.editing ?
 				<div className = "menu-sub-item  menu-clickable"
-					onClick = {this.handleDoneEdit}>
+					onClick = {this.handleSaveChanges}>
 					<span className = "icon icon-check"/>
 					Save changes
 				</div>

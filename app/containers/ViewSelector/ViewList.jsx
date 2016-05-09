@@ -55,6 +55,14 @@ var ViewList = React.createClass({
 			if (element) element.saveChanges();
 			ordering[item.view_id] = ord + 1;
 		});
+
+		// modelActionCreators.createNotification({
+		// 	copy: 'Views updated',
+		// 	type: 'info',
+		// 	icon: ' icon-check ',
+		// 	notification_key: 'viewsSaved',
+		// 	notificationTime: 2000
+		// });
 		
 		modelActionCreators.create('modelconfig', false, {
 			model_id: model.model_id,
@@ -95,6 +103,7 @@ var ViewList = React.createClass({
 	render: function () {
 		var _this = this;
 		var view = this.props.view || {};
+		var model = this.props.model;
 
 		return <div className = "dropdown-list">
 			{this.state.items.map(function(v, idx) {
@@ -106,7 +115,8 @@ var ViewList = React.createClass({
 					selected: (view.view_id === v.view_id),
 					view: v,
 					model: _this.props.model,
-					editing: _this.props.editing
+					editing: _this.props.editing,
+					_blurMenu: _this.props._blurMenu
 				};
 
 				return _this.props.editing ?
@@ -114,6 +124,22 @@ var ViewList = React.createClass({
 					:
 					<ViewItemSingleton {...itemProps}/>;
 			})}
+
+			<Link to = {`/workspace/${model.workspace_id}/model/${model.model_id}/view/config`}
+				className = {"menu-item menu-sub-item menu-clickable" + 
+					(!view ? " menu-selected " : " ")}
+				 key="model-editor">
+				<span className = "icon icon-pencil-ruler"></span>
+				<span className = "double-column-config">Database Configuration</span>
+			</Link>
+
+			<Link to = {`/workspace/${model.workspace_id}/model/${model.model_id}/view/history`}
+				className = {"menu-item menu-sub-item menu-clickable " + 
+					(!view ? " menu-selected " : " ")}
+				 key="change-history">
+				<span className = "icon icon-library"></span>
+				<span className = "double-column-config">Change History</span>
+			</Link>
 		</div>
 	}
 })

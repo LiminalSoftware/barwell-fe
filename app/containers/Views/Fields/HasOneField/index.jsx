@@ -94,6 +94,14 @@ var hasOneField = {
 			this.setState({droppable: false})
 		},
 
+		getDisplayHTML: function (config, obj) {
+			var value = obj[config.column_id]
+			var token = value ? 
+				`<span class="has-many-bubble">${value[0][config.label]}</span>`
+				: '';
+			return `<span class = "table-cell-inner">${token}</span>`;
+		},
+
 		render: function () {
 			var array = this.props.value
 			var obj = (array instanceof Array ? array[0] : null)

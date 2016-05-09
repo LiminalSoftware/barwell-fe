@@ -13,10 +13,13 @@ import commitMixin from './commitMixin'
 import editableInputMixin from './editableInputMixin'
 import selectableMixin from './selectableMixin'
 
-import defaultCellStyle from './defaultCellStyle'
-
 var PrimaryKeyElement = React.createClass({
 	mixins: [selectableMixin],
+
+	getDisplayHTML: function (config, obj, isNull) {
+		var value = obj[config.column_id];
+		return `<span class = "pk-cell-inner table-cell-inner">${value}</span>`;
+	},
 	
 	render: function () {
 		var value = this.props.value

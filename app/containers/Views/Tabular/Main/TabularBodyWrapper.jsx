@@ -93,10 +93,10 @@ var TabularBodyWrapper = React.createClass ({
 		var delta = Math.abs(offset - target)
 		var sorting = nextProps ? nextProps.view.data.sorting : view.data.sorting
 
-		if ((force === true)
+		if (view.view_id && ((force === true)
 			|| (delta > OFFSET_TOLERANCE && offset !== boundedTarget)
 			|| !_.isEqual(sorting, this.state.sorting) 
-		) {
+		)) {
 			console.log('FETCH RECORDS, start: ' + boundedTarget + ', end: ' + (boundedTarget + MAX_ROWS))
 			
 			
@@ -108,10 +108,11 @@ var TabularBodyWrapper = React.createClass ({
 			})
 
 			// modelActionCreators.createNotification({
-			// 	header: 'Loading records', 
-			// 	copy: 'blah blah blah',
-			// 	type: 'info',
-			// 	notification_key: 'loadingRecords'
+			// 	copy: 'Loading view data',
+			// 	type: 'loading',
+			// 	icon: ' icon-sync spin ',
+			// 	notification_key: 'loadingRecords',
+			// 	notificationTime: 0
 			// });
 			
 			modelActionCreators.fetchRecords(
@@ -124,9 +125,9 @@ var TabularBodyWrapper = React.createClass ({
 					fetchOffset: boundedTarget,
 					fetching: false
 				});
-				modelActionCreators.clearNotification({
-					notification_key: 'loadingRecords'
-				})
+				// modelActionCreators.clearNotification({
+				// 	notification_key: 'loadingRecords'
+				// })
 			})
 		}
 	},
@@ -170,7 +171,9 @@ var TabularBodyWrapper = React.createClass ({
 			style = {{
 				left: 0,
 				width: (adjustedWidth + 3) + 'px',
-				transformStyle: 'preserve-3d'
+				transformStyle: 'preserve-3d',
+				zIndex: 5,
+        		// transform: 'translateZ(5)'
 			}}>
 			
 			<RowResizer {...this.props} adjustedWidth = {adjustedWidth} />
@@ -185,18 +188,19 @@ var TabularBodyWrapper = React.createClass ({
 				}}>
 			{/*LHS TABLE BODY*/}
 			<div className = "wrapper outer-table-wrapper "
+				ref = "lhsTableBody"
 				style = {{
 					top: geo.headerHeight + 'px',
-					transform: 'translateZ(1px)',
+					// transform: 'translateZ(1px)',
 					overflow: 'hidden',
 				}}>
 				<div className = "wrapper force-layer"
 					ref = "lhsOffsetter"
 					style = {{
-						top: 0,
+						top: '1px',
 						height: (rowCount * geo.rowHeight) + 'px',
 						marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
-						transform: 'translateZ(0) translateY(' + marginTop + 'px)'
+						transform: 'translateY(' + marginTop + 'px)'
 					}}>
 
 				<TabularTBody
@@ -214,7 +218,7 @@ var TabularBodyWrapper = React.createClass ({
 						left: 0,
 						top: 0,
 						width:  (view.data.fixedWidth + geo.labelWidth) + 'px',
-						height: (rowCount * geo.rowHeight) + 'px',
+						height: (rowCount * geo.rowHeight) + 'px'
 					}}
 					columns = {view.data.fixedCols}/>
 				</div>
@@ -239,12 +243,13 @@ var TabularBodyWrapper = React.createClass ({
 
 			{/*RHS OUTER*/}
 			<div className = {"wrapper " + " rhs-h-scroll-outer--" + (focused ? "focused" : "blurred")}
+				ref = "rhsTableBody"
 				style = {{
 					top: 0,
 					bottom: 0,
 					left: (view.data.fixedWidth + geo.labelWidth) + 'px',
 					width:  view.data.floatWidth + geo.colAddWidth + 'px',
-					transform: 'translateZ(1px)',
+					// transform: 'translateZ(1px)',
 					overflow: 'hidden'
 				}}>
 				<div className = "rhs-h-scroll wrapper force-layer"
@@ -263,14 +268,14 @@ var TabularBodyWrapper = React.createClass ({
 							bottom: 0,
 							overflow: 'hidden'
 						}}>
-					<div className = "wrapper force-layer"
+					<div className = "wrapper"
 						ref = "rhsOffsetter"
 						style = {{
-							top: 0,
+							top: '1px',
 							left: 0,
 							right: 0,
 							marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
-							transform: 'translate3d(0, ' + marginTop + 'px, 0)',
+							transform: 'translateY(' + marginTop + 'px)',
 							height: (rowCount * geo.rowHeight) + 'px',
 							width: (fixedWidth + floatWidth) + 'px',
 						}}>
@@ -289,7 +294,7 @@ var TabularBodyWrapper = React.createClass ({
 							style = {{
 								left: 0,
 								top: 0,
-								width:  view.data.floatWidth  + 'px',
+								width:  view.data.floatWidth + 1  + 'px',
 								height: (rowCount * geo.rowHeight) + 'px',
 							}} />
 					</div>
@@ -297,7 +302,7 @@ var TabularBodyWrapper = React.createClass ({
 					</div>
 					<TabularTHead
 						ref = "rhsHead"
-						totalWidth = {floatWidth + 1}
+						totalWidth = {floatWidth + 2}
 						leftOffset = {0}
 						side = "rhs"
 						columns = {view.data.floatCols}

@@ -470,7 +470,6 @@ var CubePane = React.createClass ({
 			numColumns: numColumns,
 			numRows: numRows,
 
-			rowHeaderWidth: rowHeaderWidth,
 			bodyWidth: bodyWidth,
 			adjustedWidth: rowHeaderWidth + bodyWidth,
 

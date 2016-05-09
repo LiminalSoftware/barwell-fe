@@ -3,23 +3,19 @@ import _ from "underscore"
 import util from "../../../util/util"
 import tinycolor from "tinycolor2"
 
-import defaultCellStyle from './defaultCellStyle'
-
 var MIN_LIGHTNESS = 0.85
 
 var bgColorMixin = {
 
-	getBgColor: function () {
-		var config = this.props.config;
+	getBgColor: function (config, object, isNull, isSelected) {
 		var bg = null;
-		var obj = this.props.object
 		var cellStyle = {};
-		var conditional = (!config.colorConditionAttr || obj['a' + config.colorConditionAttr])
+		var conditional = (!config.colorConditionAttr || object['a' + config.colorConditionAttr])
 
-		if (this.props.isNull) bg = null;
-		else if (this.props.selected) bg = "white";
+		if (isNull) bg = null;
+		else if (isSelected) bg = "white";
 		else if (config.color && conditional) bg = config.color;
-		else if (config.colorAttr && conditional) bg = obj['a' + config.colorAttr];
+		else if (config.colorAttr && conditional) bg = object['a' + config.colorAttr];
 
 		if (bg) {
 			var c = tinycolor(bg);
@@ -31,7 +27,6 @@ var bgColorMixin = {
 		}
 		return cellStyle;
 	}
-	
 }
 
 export default bgColorMixin

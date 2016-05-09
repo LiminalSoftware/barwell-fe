@@ -6,10 +6,9 @@
 	top: 0;
 	left: 0;
 	padding: 0;
-	pointer-events: none;
+	// pointer-events: none;
 	.noselect;
 	transform-style: preserve-3d;
-	
 }
 
 .selection-drag-box {
@@ -38,6 +37,7 @@
 .jagged-edge {
 	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAGCAYAAAD+Bd/7AAAAOklEQVQIW2Nkn2rx/0fWcQYQYGRkZAQzkADj/////3NMs2TApQisAKQBlyKwkSBFIOOxWUfYBEJuAADs9CgHgHfuFwAAAABJRU5ErkJggg==) repeat-y;
 	z-index: 6;
+	transform: translateZ(6px);
 }
 
 .copyarea {
@@ -63,8 +63,8 @@
 }
 
 .pointer {
-	// transform: translateZ(10px) !important;
-	z-index: 6;
+	transform: translateZ(10px) !important;
+	z-index: 5;
 	pointer-events: auto;
 }
 
@@ -78,7 +78,7 @@
 	transform: translateZ(2px);
 	z-index: 2;
 	// .transition(all cubic-bezier(.1,.85,.5,1) 100ms);
-	
+	background-color: @gray-trans;
 	cursor: move !important;
 	
 }
@@ -87,8 +87,8 @@
 	
 	cursor: move !important;
 	
-	transform: translateZ(5px);
-	z-index: 5;
+	transform: translateZ(4px);
+	z-index: 4;
 }
 
 .selection-border--blurred {

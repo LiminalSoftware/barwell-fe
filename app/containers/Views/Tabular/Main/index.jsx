@@ -36,7 +36,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 var THROTTLE_DELAY = 14
 var MIN_CYCLE = 10
-var CYCLE = 50
+var CYCLE = 25
 
 var getFrame = function (f, cycle) {
 	if (window.requestAnimationFrame) return window.requestAnimationFrame(f)
@@ -82,6 +82,8 @@ var TabularPane = React.createClass ({
 		ViewStore.addChangeListener(this._onChange);
 		this.store = createTabularStore(this.props.view);
 		this.store.addChangeListener(this._onChange);
+
+		this._throttleSetVerticalScrollOffset = _.throttle(this.setVerticalScrollOffset, 15);
 
 	},
 
@@ -200,35 +202,37 @@ var TabularPane = React.createClass ({
 	},
 
 	addRecord: function () {
-		var cid = this.store.getClientId()
-		var obj = {cid: cid}
-		this.blurPointer()
+		var cid = this.store.getClientId();
+		var obj = {cid: cid};
+		this.blurPointer();
 		modelActionCreators.insertRecord(this.props.model, obj, this.store.getRecordCount())
-		this.setState({copyarea: null})
-		modelActionCreators.createNotification({
-        	copy: 'New record created', 
-        	type: 'info',
-        	icon: 'icon-flare',
-			notification_key: 'createNewRecord',
-			notifyTime: 2000
-        })
+		this.setState({copyarea: null});
+		// modelActionCreators.createNotification({
+  //       	copy: 'New record created', 
+  //       	type: 'new-item',
+  //       	icon: 'icon-flare',
+		// 	notification_key: 'createNewRecord',
+		// 	notifyTime: 2000
+  //       })
 	},
 
 	insertRecord: function () {
-		var cid = this.store.getClientId()
-		var obj = {cid: cid}
+		var cid = this.store.getClientId();
+		var obj = {cid: cid};
 		var pos = pos || this.state.pointer.top;
-		var sel = this.state.selection
-		this.blurPointer()
+		var sel = this.state.selection;
+		var model = this.props.model;
+		this.blurPointer();
 		if (pos >= sel.top && pos <= sel.bottom) {
-			sel = _.clone(sel)
+			sel = _.clone(sel);
 			sel.bottom++;
 		}
 		modelActionCreators.insertRecord(this.props.model, obj, pos)
 		this.setState({copyarea: null, selection: sel})
 		modelActionCreators.createNotification({
-        	copy: 'New record created', 
-        	type: 'info',
+        	copy: 'New ' + model.model + ' created',
+        	pluralCopy: '%num% new ' + model.plural + ' created',
+        	type: 'new-item',
         	icon: 'icon-flare',
 			notification_key: 'createNewRecord',
 			notifyTime: 2000
@@ -285,9 +289,9 @@ var TabularPane = React.createClass ({
 		sel.bottom = sel.top = Math.min(sel.top, numRows - numRowsDeleted)
 		this.setState({copyarea: null, selection: sel, pointer: ptr})
 		modelActionCreators.createNotification({
-        	copy: (numRowsDeleted) + ' Records deleted', 
+        	copy: numRowsDeleted > 1 ? (numRowsDeleted + ' ' + model.plural + ' deleted') : (model.model + ' deleted'), 
         	type: 'info',
-        	icon: 'icon-broom ',
+        	icon: 'icon-trash3 ',
 			notification_key: 'deleteRecord',
 			notifyTime: 2000
         })
@@ -456,11 +460,6 @@ var TabularPane = React.createClass ({
 		var numCols = this.getNumberCols()
 		var numRows = this.getNumberRows()
 
-
-		// console.log('b pos: ' + JSON.stringify(pos))
-		// console.log('b pointer: ' + JSON.stringify(this.state.pointer))
-		// console.log('b selection: ' + JSON.stringify(this.state.selection))
-
 		if (shift) {
 			// this.scrollTo(pos)
 			sel = {
@@ -530,46 +529,50 @@ var TabularPane = React.createClass ({
 		var view = this.props.view;
 		var geo = view.data.geometry;
 		var rowOffset = Math.floor(vOffset / geo.rowHeight);
-		
-		var lhsOffsetter = this.refs.tableWrapper.refs.lhsOffsetter;
-		var rhsOffsetter = this.refs.tableWrapper.refs.rhsOffsetter;
-		var underlay = this.refs.cursors.refs.underlayInner;
-		var overlay = this.refs.cursors.refs.overlayInner;
 
 		if (rowOffset === this.state.rowOffset) return;
-
-		ReactDOM.findDOMNode(lhsOffsetter).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 0)"
-		ReactDOM.findDOMNode(rhsOffsetter).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 0)"
-		ReactDOM.findDOMNode(underlay).style.transform = "translate3d(0, " + ( -1 * rowOffset * geo.rowHeight + 2 ) + "px, 0)"
-		ReactDOM.findDOMNode(overlay).style.transform = "translate3d(0, " + ( -1 * rowOffset * geo.rowHeight + 2 ) + "px, 0)"
 
 		this.setState({
 			rowOffset: rowOffset
 		});
 		
 		if (!this._timer) this._timer = getFrame(this.refreshTable, CYCLE)
-		this._debounceCreateViewconfig({view_id: view.view_id, rowOffset: rowOffset});
+		// this._debounceCreateViewconfig({view_id: view.view_id, rowOffset: rowOffset});
+	},
+
+	updateVerticalOffset: function () {
+		var rowOffset = this.state.rowOffset;
+		var view = this.props.view;
+		var geo = view.data.geometry;
+		
+		var lhsOffsetter = this.refs.tableWrapper.refs.lhsOffsetter;
+		var rhsOffsetter = this.refs.tableWrapper.refs.rhsOffsetter;
+		var overlay = this.refs.cursors.refs.overlayInner;
+
+		ReactDOM.findDOMNode(lhsOffsetter).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 0)"
+		ReactDOM.findDOMNode(rhsOffsetter).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 0)"
+		ReactDOM.findDOMNode(overlay).style.transform = "translate3d(0, " + ( -1 * rowOffset * geo.rowHeight + 2 ) + "px, 0)"
 	},
 
 	refreshTable: function () {
 		var now = Date.now()
 		var side = this.state.renderSide
 		var body = this.refs.tableWrapper.refs[side]
-		var alt = this.refs.tableWrapper.refs[side === 'lhs' ? 'rhs' : 'lhs']
-		var isUnpainted = body.isUnpainted()
+		var alt = this.refs.tableWrapper.refs[side === 'lhs' ? 'rhs' : 'lhs'];
 		var delta = this.state.rowOffset - this.state.previousOffset
 		var direction = delta > 0 ? 1 : delta < 0 ? -1 : 0;
+		var isUnpainted = body.updateOffset(this.state.rowOffset, direction) || alt.isUnpainted()
 
-		body.updateOffset(this.state.rowOffset, direction)
+		this.updateVerticalOffset();
 		this._lastUpdate = now
-		if (isUnpainted) this._timer = getFrame(this.refreshTable, CYCLE)
+		if (isUnpainted || this.state.isUnpainted) this._timer = getFrame(this.refreshTable, CYCLE)
 		else this._timer = null
 
 		this.setState({
 			previousOffset: this.state.rowOffset,
 			direction: direction,
 			renderSide: (side === 'lhs' ? 'rhs' : 'lhs'),
-			frame: (this.state.frame || 0) + 1,	
+			isUnpainted: isUnpainted
 		})
 	},
 
@@ -597,6 +600,11 @@ var TabularPane = React.createClass ({
 			_updatePointer: this.updatePointer,
 			_getRCCoords: this.getRCCoords,
 			_getRangeStyle: this.getRangeStyle,
+
+			_setVericalScrollOffset: this._throttleSetVerticalScrollOffset,
+			_setHorizontalScrollOffset: this._throttleSetHorizontalScrollOffset,
+
+			_setScrollOffset: this.setHorizontalScrollOffset,
 
 			hiddenColWidth: this.state.hiddenColWidth,
 			columnOffset: this.state.columnOffset,
@@ -626,14 +634,16 @@ var TabularPane = React.createClass ({
 				
 				beforePaste = {this.beforePaste}>
 
+				
+
 				<TabularBodyWrapper {...childProps}
 					ref = "tableWrapper"/>
 				
 				<Cursors {...childProps}
 					ref = "cursors"/>
 
-				<ScrollBar
-					innerDimension = {(rowCount + 2) * geo.rowHeight + geo.headerHeight}	
+				<ScrollBar {...childProps}
+					innerDimension = {(rowCount + 4) * geo.rowHeight + geo.headerHeight}	
 					rowCount = {rowCount}
 					offset = {geo.headerHeight}
 					ref = "verticalScrollBar"
@@ -641,14 +651,15 @@ var TabularPane = React.createClass ({
 					_setScrollOffset = {this.setVerticalScrollOffset}
 					view = {view}/>
 				
-				<ScrollBar
-					innerDimension = {view.data.floatWidth + view.data.fixedWidth + geo.labelWidth}
+				<ScrollBar {...childProps}
+					innerDimension = {view.data.floatWidth + view.data.fixedWidth + geo.labelWidth + 200}
 					rowCount = {rowCount}
 					offset = {0}
 					ref = "horizontalScrollBar"
 					axis = "horizontal"
 					_setScrollOffset = {this.setHorizontalScrollOffset}
 					view = {view}/>
+
 			</div>
 		</div>
 			

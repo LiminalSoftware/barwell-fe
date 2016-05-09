@@ -2,6 +2,7 @@ import storeFactory from 'flux-store-factory';
 import dispatcher from '../dispatcher/MetasheetDispatcher'
 import _ from 'underscore'
 import util from '../util/util'
+import ViewStore from './ViewStore'
 
 var ViewConfigStore = storeFactory({
   identifier: 'view_id',
@@ -9,6 +10,7 @@ var ViewConfigStore = storeFactory({
   pivot: function(payload) {
     switch (payload.actionType) {
       case 'VIEW_CREATE':
+        dispatcher.waitFor([ViewStore.dispatchToken]);
         this.create({view_id: payload.view.view_id});
         this.emitChange();
         break;

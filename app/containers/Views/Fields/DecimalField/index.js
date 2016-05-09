@@ -13,6 +13,7 @@ import commitMixin from '../commitMixin'
 import editableInputMixin from '../editableInputMixin'
 import selectableMixin from '../selectableMixin'
 import keyPressMixin from '../keyPressMixin'
+import bgColorMixin from '../bgColorMixin';
 
 import displayStyles from './displayStyles'
 
@@ -47,22 +48,15 @@ var decimalField = {
 	configParts: [AlignChoice, ColorChoice, TextChoice, NumberFormatChoice],
 	
 	element: React.createClass({
-		mixins: [editableInputMixin, commitMixin, selectableMixin, keyPressMixin],
+		mixins: [editableInputMixin, bgColorMixin, commitMixin, selectableMixin, keyPressMixin],
 
 		sortable: true,
 
-		format: function (value) {
-			var config = this.props.config || {}
+		format: function (value, _config) {
+			// var config = this.props.config || {}
+			var config = _config || this.props.config || {}
 			
 			var prettyVal = numeral(value).format(config.formatString)
-			if (config.displayStyle === 'PIE') {
-				var parts = Math.round(value/8, 0);
-				var icon;
-				if (parts < 1) icon = 'icon-pie2';
-				if (parts >= 1 && parts <= 7) icon = ('icon-pie2-' + parts);
-				if (parts > 7) icon = 'icon-pie';
-				return <span className = {"icon " + icon}/>
-			}
 			return prettyVal
 		},
 

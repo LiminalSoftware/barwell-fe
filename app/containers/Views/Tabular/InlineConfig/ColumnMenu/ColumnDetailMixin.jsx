@@ -35,8 +35,13 @@ var ColumnDetailMixin = {
 
 	chooseType: function (type) {
 		this.setState({
-			type: type
+			type: type,
+			open: false
 		});
+		var config = this.props.config
+		var attr  = AttributeStore.get(config.attribute_id)
+		attr.type = type;
+		modelActionCreators.create('attribute', false, attr);
 	},
 
 	handleNameChange: function (e) {
@@ -44,7 +49,10 @@ var ColumnDetailMixin = {
 	},
 
 	handleBlurName: function (e) {
-		this.commitUpdate({attribute: this.state.attribute})
+		var config = this.props.config
+		var attr  = AttributeStore.get(config.attribute_id);
+		attr.attribute = this.refs.attributeNameInput.value
+		modelActionCreators.create('attribute', false, attr);
 	},
 
 	handleDelete: function (event) {
@@ -89,12 +97,12 @@ var ColumnDetailMixin = {
 		var editing = this.props.editing
 		// var labelAttrId = model.label_attribute_id
 
-		var typeFieldChoices = Object.keys(constants.fieldTypes)
-			.filter(type => (type !== 'PRIMARY_KEY')).map(function (type) {
-	  			return <option value={type} key={type}>
-	  				{constants.fieldTypes[type]}
-	  			</option>;
-			});
+			// var typeFieldChoices = Object.keys(constants.fieldTypes)
+			// 	.filter(type => (type !== 'PRIMARY_KEY')).map(function (type) {
+		 //  			return <option value={type} key={type}>
+		 //  				{constants.fieldTypes[type]}
+		 //  			</option>;
+			// 	});
 
 	    return <div className={"menu-item menu-sub-item" +
 				(this.singleton ? " singleton " : "")}>
@@ -108,8 +116,10 @@ var ColumnDetailMixin = {
 
 					{
 					editing ?
-					<input className = "menu-input
-						text-input" value={this.state.name}
+					<input className = "menu-input text-input" 
+						ref = "attributeNameInput"
+						value={this.state.name}
+						onBlur = {this.handleBlurName}
 						onChange = {this.handleNameChange}/>
 					: <span>{config.name}</span>
 					}
@@ -132,6 +142,8 @@ var ColumnDetailMixin = {
 							_blurSiblings: _this.props._blurSiblings || _this.blurSubMenus,
 							key: part.prototype.partName,
 							ref: part.prototype.partName,
+							spaceTop: _this.props.spaceTop,
+							spaceBottom: _this.props.spaceBottom,
 							view: view,
 							model: model,
 							config: config,

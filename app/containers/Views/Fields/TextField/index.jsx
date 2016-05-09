@@ -14,6 +14,7 @@ import editableInputMixin from '../editableInputMixin'
 import selectableMixin from '../selectableMixin'
 import keyPressMixin from '../keyPressMixin'
 // import TextFieldConfig from "../textFieldConfig"
+import bgColorMixin from '../bgColorMixin';
 
 import AlignChoice from "../textFieldConfig/AlignChoice"
 import ColorChoice from "../textFieldConfig/ColorChoice"
@@ -26,7 +27,7 @@ var textField = {
 	canBeLabel: true,
 	defaultWidth: 150,
 	element: React.createClass({
-		mixins: [editableInputMixin, commitMixin, selectableMixin, keyPressMixin],
+		mixins: [editableInputMixin, bgColorMixin, commitMixin, selectableMixin, keyPressMixin],
     	validator: _.identity,
 		parser: function (input) {
 			input = String(input);

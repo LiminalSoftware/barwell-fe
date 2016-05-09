@@ -16,20 +16,23 @@ import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import blurOnClickMixin from '../../../../../blurOnClickMixin';
 import sortable from 'react-sortable-mixin';
-
+import menuOverflowMixin from '../../../../../menuOverflowMixin'
 
 var ColumnList = React.createClass({
 
-	mixins: [sortable.ListMixin],
+	mixins: [sortable.ListMixin, menuOverflowMixin],
 
 	// LIFECYCLE ==============================================================
+
+	componentWillMount: function () {
+		this.calibrateHeight();
+	},
 
 	componentDidMount: function() {
 		this.setState(this.getItemState());
 	},
 
 	componentWillReceiveProps: function (next) {
-		console.log('componentWillReceiveProps')
 		this.setState(this.getItemState(next));
 	},
 
@@ -38,13 +41,15 @@ var ColumnList = React.createClass({
 	},
 
 	onResorted: function () {
-		if (this.props.confirmChanges) this.props._markDirty()
-		else this.commitViewUpdates();
+		if (this.props.confirmChanges) {
+			this.props._markDirty();
+		}
+		this.commitViewUpdates(this.props.confirmChanges);
 	},
 
 	// UTILITY ================================================================
 
-	commitViewUpdates: function () {
+	commitViewUpdates: function (commit) {
 		var view = this.props.view;
 		var section = this.props.sections[0];
 		var items = this.state.items.map(function (item, idx) {
@@ -55,24 +60,28 @@ var ColumnList = React.createClass({
 				view.data.columns[item.column_id] = item
 			}
 		});
-		modelActionCreators.createView(view, true, true);
+		if (commit) modelActionCreators.createView(view, true, true);
 	},
 
 	getItemState: function (_props) {
+		var oldItems = this.state.items;
 		var items = [];
 		var props = (_props || this.props);
 		var view = props.view;
 		var columns = view.data.columns;
-
+		
 		props.sections.forEach(function (section, idx) {
-			var attrs = section.selector(view);
+			var cols = section.selector(view);
 			if (idx > 0) items.push(_.extend({isSection: true}, section))
-			attrs.forEach(function (col) {
+			cols.forEach(function (col) {
 				var attribute = AttributeStore.get(col.attribute_id);
-				console.log(attribute)
-				if (attribute._destroy !== true)
-					items.push(col);
+				if (!attribute || attribute._destroy) 
+					return;
+				if (attribute.attribute_id) 
+					col.attribute_id = attribute.attribute_id
+				items.push(col);
 			});
+			
 			// if (attrs.length === 0) items.push(_.extend({isEmpty: true}, section));
 		});
 
@@ -102,9 +111,6 @@ var ColumnList = React.createClass({
 		}
 		// list.push(attr);
 		return modelActionCreators.create('attribute', false, attr).then(function (storeAttr) {
-			// var view = 
-			// list.push(storeAttr)
-			// _this.setState({items: list})
 		});
 	},
 
@@ -116,6 +122,7 @@ var ColumnList = React.createClass({
 		var data = view.data;
 		var columns = view.data.columnList;
 		var section = this.props.sections[0];
+		var numTotalItems = this.state.items.length;
 
 		var items = this.state.items.map(function (item, idx) {
 			var itemProps = Object.assign({
@@ -138,6 +145,8 @@ var ColumnList = React.createClass({
 				ref = {item.column_id}
 				config = {item}
 				open = {true}
+				spaceTop = {idx}
+				spaceBottom = {numTotalItems - idx}
 				viewConfigParts = {section ? section.configParts : null}
 				editing = {_this.props.editing}
 				view= {view}
@@ -145,7 +154,14 @@ var ColumnList = React.createClass({
 				{...itemProps}/>
 		});
 
-    	return <div className = "dropdown-list" style = {{minWidth: '500px'}} onClick = {this._blurSiblings}>
+    	return <div className = "dropdown-list" 
+    		style = {{
+    			minWidth: '500px', 
+    			maxHeight: (this.state.windowHeight - 300) + 'px',
+    			overflowY: 'scroll',
+    			marginRight: '-100px',
+    			paddingRight: '100px'
+    		}} onClick = {this._blurSiblings}>
 			{items}
 		</div>
 	}

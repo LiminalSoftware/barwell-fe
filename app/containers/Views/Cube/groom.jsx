@@ -21,6 +21,8 @@ var groomView = function (view) {
 	view.column_aggregates = columnList.filter(c => c.groupByColumn).map(c => c.attribute_id);
 	view.aggregate_values = columnList.filter(c => c.inTableBody).map(function(attr) {
 		if (!attr.aggregator) attr.aggregator = 'list';
+		// fields[attr.column_id].aggregator = 'list';
+		
 		return {
 			value: 'a' + attr.attribute_id,
 			aggregator: attr.aggregator

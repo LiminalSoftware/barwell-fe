@@ -50,7 +50,7 @@ var createTabularStore = function (view) {
         },
 
         getObject: function (at) {
-            return _.clone(_records[at - _startIndex]);
+            return _records[at - _startIndex];
         },
 
         getRecordCount: function () {

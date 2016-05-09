@@ -155,7 +155,7 @@ var SearchDropdown = React.createClass({
 
 		return <PopDownMenu {...this.props}>
           	
-			<li key = "search-li" className = {this.state.count > 0 ? "top-divider" : ""}
+			<li key = "search-li" className = {this.state.count > 0 ? "bottom-divider" : ""}
 				style = {{height: '30px', position: 'relative'}}>
 				<input className = "input-editor" autoFocus
 					onChange = {this.updateSearchValue}
@@ -176,7 +176,7 @@ var SearchDropdown = React.createClass({
 				{
 					this.state.searching ? 
 					<li key="loader-li">
-						<div className="three-quarters-loader three-quarters-loader--green"/>
+						<span className = " icon icon-sync spin" />
 						Searching...
 					</li>
 					:

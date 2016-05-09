@@ -96,6 +96,19 @@ var hasManyField = {
 			this.setState({droppable: false})
 		},
 
+		getDisplayHTML: function (config, obj) {
+			var value = obj[config.column_id]
+			var classes = 'table-cell-inner '; //+ (textConditional ? config.bold ? ' bolded ' : '' : '');
+			// var bgcolor = this.getBgColor(config, obj);
+
+			var tokens = (value || []).slice(0,5).map(function(relObj, idx) {
+				var label = relObj[config.label];
+				return `<span class="has-many-bubble">${label}</span>`;
+			}).join(" ");
+			
+			return `<span class = "table-cell-inner">${tokens}</span>`;
+		},
+
 		render: function () {
 			var model = this.props.model
 			var value = this.props.value

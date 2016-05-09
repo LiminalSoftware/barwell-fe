@@ -10,6 +10,7 @@ var ViewItemSingleton =  React.createClass({
 	handleClick: function (e) {
 		var model = this.props.model;
 		var view = this.props.view;
+		this.props._blurMenu();
 		modelActionCreators.create('modelconfig', false, {
 			model_id: model.model_id,
 			selected_view_id: view.view_id
@@ -25,7 +26,7 @@ var ViewItemSingleton =  React.createClass({
 		if (view)
 			return <Link
 				onClick = {this.handleClick}
-				to = {`/workspace/${model.workspace_id}/model/${view.model_id}/view/${view.view_id}`}
+				to = {`/workspace/${model.workspace_id}/model/${view.model_id}/view/${view.cid || view.view_id}`}
 				className = {"menu-item menu-sub-item " + (this.props.suppressHilite ? '' : 'menu-clickable ') + (this.props.selected ? " menu-selected " : "")}>
 				
 				<span className = {"icon " + viewTypes[view.type].icon}/>

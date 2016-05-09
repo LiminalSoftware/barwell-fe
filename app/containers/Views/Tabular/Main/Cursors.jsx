@@ -33,19 +33,19 @@ var Cursors = React.createClass ({
   // },
 
   getPointerElement: function () {
-    var view = this.props.view
-    var model = this.props.model
-    var geo = view.data.geometry
-    var store = this.props.store
-    var ptr = this.props.pointer
-    var col = view.data.visibleCols[ptr.left]
-    var obj = store.getObject(ptr.top)
-    var element = col ? (fieldTypes[col.type]).element : null
-    var selector = {}
+    var view = this.props.view;
+    var model = this.props.model;
+    var geo = view.data.geometry;
+    var store = this.props.store;
+    var ptr = this.props.pointer;
+    var col = view.data.visibleCols[ptr.left];
+    var obj = store.getObject(ptr.top);
+    var element = col ? (fieldTypes[col.type]).element : null;
+    var selector = {};
     
     if (!obj) return ;
 
-    selector[model._pk] = obj[model._pk]
+    selector[model._pk] = obj[model._pk];
 
     if (element) return React.createElement(element, {
       config: col,
@@ -66,12 +66,12 @@ var Cursors = React.createClass ({
       column_id: col.column_id,
 
       _handleBlur: this.props._handleBlur,
-      _handleDetail: this.props._handleDetail,
-      // _handleClick: this.props._handleClick,
-      _handleClick: (e => e.stopPropagation()),
-      _handleEdit: this.props._handleEdit,
+      // _handleDetail: this.props._handleDetail,
+      _handleClick: this.props._handleClick,
+      // _handleClick: (e => e.stopPropagation()),
+      // _handleEdit: this.props._handleEdit,
       _handleWheel: this.props._handleWheel,
-      _handlePaste: this.props._handlePaste,
+      // _handlePaste: this.props._handlePaste,
 
       className: 'table-cell',
       ref: 'pointerCell',
@@ -106,13 +106,11 @@ var Cursors = React.createClass ({
     var ptr = this.props.pointer
     var sel = this.props.selection
     var cpy = this.props.copyarea
-    var showJaggedEdge = (sel.right >= view.data.fixedCols.length
-      && sel.left <= view.data.fixedCols.length && this.props.columnOffset > 0)
+    var showJaggedEdge = ((sel.right >= view.data.fixedCols.length)
+      && (sel.left < view.data.fixedCols.length + this.props.columnOffset) && (this.props.columnOffset > 0));
 
     var detailColumn = view.data.visibleCols[ptr.left]
     var detailObject = store.getObject(ptr.top)
-
-    
 
     var pointerFudge = this.props.expanded ? {
       left: -30,
@@ -132,20 +130,26 @@ var Cursors = React.createClass ({
     if (HAS_3D) style.transform = 'translateY(' + (marginTop + 2) + 'px)'
     else style.marginTop = marginTop + 2 + 'px'
 
-    return <div className = "wrapper" style = {{
+    return <div className = "wrapper cursor-wrapper" style = {{
         left: 0,
-        top: 0,
+        top: '1px',
         bottom: 0,
         width: (adjustedWidth + RIGHT_FRINGE) + 'px',
-        transformStyle: 'preserve-3d'
-      }}>
+        transformStyle: 'preserve-3d',
+        pointerEvents: 'none'
+      }}
+      // onMouseDown = {this.props._handleClick}
+      // onDoubleClick = {this.props._handleEdit}
+      // onContextMenu = {this.props._handleContextMenu}
+      // onWheel = {this.props._handleWheel}
+      >
       <div className = "wrapper overlay "
         style = {{
           top: geo.headerHeight - 1 - 2 + 'px',
           bottom: 0,
           left: geo.leftGutter + 'px',
           width: (fixedWidth + floatWidth + geo.labelWidth + RIGHT_FRINGE) + 'px',
-          pointerEvents: 'none',
+          
           overflow: 'hidden',
           transform: 'translateZ(3px)'
         }}>
@@ -177,11 +181,7 @@ var Cursors = React.createClass ({
               (this.props.expanded ? " pointer--expanded " : "")}
             ref = "pointer"
             fudge = {pointerFudge}
-            position = {ptr}
-            
-            onDoubleClick = {this.props._handleEdit}
-            onContextMenu = {this.props._handleContextMenu}
-            onWheel = {this.props._handleWheel}>
+            position = {ptr}>
             {this.getPointerElement()}
             {this.props.context ? <ContextMenu {...this.props}/> : null}
           </Overlay>
@@ -233,33 +233,19 @@ var Cursors = React.createClass ({
         </div>
       </div>
 
-      <div className = {"force-layer wrapper underlay table-backing table-backing--" + (focused ? "focused" : "blurred")}
-        style = {{
-          top: geo.headerHeight - 1 - 2 + 'px',
-          bottom: 0,
-          maxHeight: rowCount * geo.rowHeight + 'px',
-          left: geo.leftGutter + 'px',
-          width: (fixedWidth + floatWidth + geo.labelWidth - this.props.hiddenColWidth + 1) + 'px',
-          overflow: 'hidden',
-          transform: 'translateZ(-1px)'
-        }}>
-        <div className = "wrapper underlay-inner force-layer"
-          ref = "underlayInner"
-          style = {style}>
-
-          <Overlay
-                numHiddenCols = {this.props.columnOffset}
-            className = {" selection " + (focused ? " focused" : "")}
-            ref = "selection"
-            {...this.props}
-            position = {sel}
-            fudge = {{left: -4.75, top: -2.75, height: 7.5, width: 8.5}}/>
-        </div>
-      </div>
+      
 
     </div>
   }
 });
+
+// <Overlay
+//                 numHiddenCols = {this.props.columnOffset}
+//             className = {" selection " + (focused ? " focused" : "")}
+//             ref = "selection"
+//             {...this.props}
+//             position = {sel}
+//             fudge = {{left: -4.75, top: -2.75, height: 7.5, width: 8.5}}/>
 
 
 export default Cursors

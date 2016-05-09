@@ -23,6 +23,7 @@
 }
 
 .spin {
+	display: inline-block;
 	-webkit-animation-name: spin;
     -webkit-animation-duration: 1000ms;
     -webkit-animation-iteration-count: infinite;
@@ -78,11 +79,13 @@
 	
 	transform: translateZ(10px);
 	z-index: 10;
-	.noselect;
+	pointer-events: auto;
+	// .noselect;
 }
 
 .scroll-bar-inner {
 	transform: translateZ(1px);
+	pointer-events: auto;
 }
 
 
@@ -92,10 +95,15 @@
 
 .tabular-body {
 	.wrapper;
+	background: white;
+}
+
+.tabular-body-rhs {
+	border-right: 1px solid @purple4;
 }
 
 .tabular-body-wrapper {
-	.wrapper
+	.wrapper;
 }
 
 .wrapper {
@@ -164,6 +172,8 @@
 
 .table-backing {
 	background: white;
+	transform: translateZ(-3px);
+	z-index: -3;
 }
 
 .table-backing--focused {

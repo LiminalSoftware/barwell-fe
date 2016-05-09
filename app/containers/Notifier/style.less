@@ -13,12 +13,18 @@ ul.notifier {
     padding: 10px 5px;
     margin-bottom: 2px;
     background: @headerMenuBgColor;
+    box-shadow: 0 0 0 2px white;
     
     display: block;
 
     &.error, &.prohibited {
       color: @red-bright;
       border: 1px solid @red-bright;
+    }
+
+    &.new-item {
+      color: @newgreen1;
+      border: 1px solid @newgreen1;
     }
 
     &.info, &.loading {

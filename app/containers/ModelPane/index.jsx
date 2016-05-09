@@ -67,28 +67,21 @@ var ModelPane = React.createClass({
 		var _this = this
 		var workspace_id = this.props.params.workspaceId
 		var model_id = this.props.params.modelId
-		
-		
 		var model = ModelStore.get(model_id);
 		var modelConfig = ModelConfigStore.get(model_id) || {};
 		var view_id = this.props.params.viewId || modelConfig.selected_view_id;
 		var view = view_id === 'config' ? null : ViewStore.get(view_id)
-		var viewconfig =  (view_id === 'config' ? null : ViewConfigStore.get(view_id)) || {}
-
-		// var viewDetailContent
-		// var detailContent
+		var viewconfig = {} // (view_id === 'config' ? null : ViewConfigStore.get(view_id)) || {}
 		var bodyContent
-
-		var activePane = this.state.activePane
+		
+		
 
 		if (view && view.model_id != model_id) view = null;
-		if (!view) activePane = 'model-def';
 		if (view) {
 			var type = viewTypes[view.type]
 			var bodyElement = type.mainElement
 			var configElement = type.inlineConfigElement
 
-			// view = viewTypes[view.type].groomer(view)
 			view = groomView(view)
 
 			bodyContent = React.createElement(bodyElement, {

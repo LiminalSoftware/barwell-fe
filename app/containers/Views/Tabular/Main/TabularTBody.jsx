@@ -1,4 +1,5 @@
 import React from "react"
+import ReactDOM from "react-dom"
 import fieldTypes from "../../fields"
 import _ from "underscore"
 import style from "./styles/tableCells.less"
@@ -13,13 +14,13 @@ import TabularTR from './TabularTR'
 
 
 var VISIBLE_ROWS = 45
-var MAX_ROWS = 55
+var MAX_ROWS = 45
 var SLOW_SKIP = 2
 var FAST_SKIP = 3
-var FASTER_SKIP = 4
+var FASTER_SKIP = 2
 var FAST_THRESHOLD = 5
 var FASTER_THRESHOLD = 25
-var CYCLE = 30
+var CYCLE = 25
 var MIN_CYCLE = 15
 var BACKWARD_BUFFER = 10
 var BUFFER_SIZE = 5
@@ -29,6 +30,8 @@ var BAILOUT = SLOW_SKIP
 var HAS_3D = util.has3d()
 
 var TabularTBody = React.createClass ({
+
+	// LIFECYCLE ==============================================================
 
 	getInitialState: function () {
 		return {
@@ -42,6 +45,33 @@ var TabularTBody = React.createClass ({
 			rowOffset: 0
 		}
 	},
+
+	shouldComponentUpdate: function (nextProps, nextState) {
+		if (nextProps.view !== this.props.view) return true;
+		if (nextProps.focused !== this.props.focused) return true;
+		return this.isUnpainted(nextState)
+	},
+
+	_onChange: function () {
+		this.forceUpdate()
+	},
+
+	componentWillMount: function () {
+		ViewStore.addChangeListener(this._onChange)
+		this.props.store.addChangeListener(this._onChange)
+	},
+
+	componentDidMount: function () {
+		this._lastUpdate = new Date().getTime()
+	},
+
+	componentWillUnmount: function () {
+		ViewStore.removeChangeListener(this._onChange)
+		this.props.store.removeChangeListener(this._onChange)
+	},
+
+
+	// UTILITY ================================================================
 
 	updateOffset: function (target, scrollDirection) {
 		var store = this.props.store
@@ -64,59 +94,41 @@ var TabularTBody = React.createClass ({
 		
 		// advance or retreat the begining of the range as appropriate
 
-		if (
-			// if scrolling up, then advance the start preferentially
-			(start > startTarget && scrollDirection === -1) || 
-			// but if we have too many rows, then bring it in
-			(start !== startTarget && visibleRows > MAX_ROWS) ||
-			// if we are at rest then take the opportunity to bring it in
-			(start !== startTarget && scrollDirection === 0)
-		) start += util.magLimit(skip, startTarget - start)
-		
-		if (
-			// if scrolling down, then advance the end preferentially
-			(end < endTarget && scrollDirection === 1) || 
-			// but if we have exceeded our max rows then advance the end too
-			(end !== endTarget && visibleRows > MAX_ROWS) ||
-			// and if we are at rest then also bring in the end
-			(end !== endTarget && scrollDirection === 0)
-		) end += util.magLimit(skip, endTarget - end)
+		if (start > endTarget) {
+			end = endTarget
+			start = endTarget - 2
+		} else if (end < startTarget) {
+			end = startTarget + 2
+			start = startTarget
+		} else {
+			if (start > startTarget || start < startTarget) 
+				start += util.magLimit(skip, startTarget - start);
+			if (end < endTarget || end > endTarget) 
+				end += util.magLimit(skip, endTarget - end);
+		}
 
+		// console.log('adjTarget: ' + adjTarget)
 		this.setState({
 			start: start,
 			target: adjTarget,
 			end: end
-		})
+		});
+
+		// return true if not yet completely painted, false if complete
+		// console.log(this.props.prefix + ' - ' + adjTarget + ', ' + start + ', ' + end)
+		return (start !== startTarget || end !== endTarget) 
+	},
+
+	formatRowKey: function (obj) {
+		var model = this.props.model;
+		var pk = model._pk;
+		return this.props.prefix + '-tr-' + (obj.cid || obj[pk]);
 	},
 
 	isUnpainted: function () {
 		var startTarget = Math.max(this.state.target, this.props.fetchStart)
 		var endTarget = Math.min(this.state.target + VISIBLE_ROWS, this.props.fetchEnd)
-		return Math.abs(this.state.start - startTarget) + Math.abs(this.state.end  - endTarget) > 3
-	},
-
-	shouldComponentUpdate: function (nextProps, nextState) {
-		if (nextProps.view !== this.props.view) return true
-		if (nextProps.focused !== this.props.focused) return true
-		return this.isUnpainted(nextState)
-	},
-
-	_onChange: function () {
-		this.forceUpdate()
-	},
-
-	componentWillMount: function () {
-		ViewStore.addChangeListener(this._onChange)
-		this.props.store.addChangeListener(this._onChange)
-	},
-
-	componentDidMount: function () {
-		this._lastUpdate = new Date().getTime()
-	},
-
-	componentWillUnmount: function () {
-		ViewStore.removeChangeListener(this._onChange)
-		this.props.store.removeChangeListener(this._onChange)
+		return Math.abs(this.state.start - startTarget) + Math.abs(this.state.end  - endTarget) > 0;
 	},
 
 	getNumberCols: function () {
@@ -131,16 +143,22 @@ var TabularTBody = React.createClass ({
 		return this.props.columns
 	},
 
+	// RENDER ================================================================
+
 	prepareRow: function (obj, index) {
 		var view = this.props.view
 		var model = this.props.model
 		var pk = model._pk
 		var ptr = this.props.pointer
 		var rowKey = this.props.prefix + '-tr-' + (obj.cid || obj[pk])
-		// var offset = this.state.offset
 		var offset = this.state.start
 
-		return <TabularTR  {...this.props}
+		return <TabularTR
+			view = {this.props.view}
+			model = {this.props.model}
+			focused = {this.props.focused}
+			hasRowLabel = {this.props.hasRowLabel}
+			columns = {this.props.columns}
 			obj = {obj}
 			row = {index + offset}
 			rowKey = {rowKey}
@@ -168,7 +186,7 @@ var TabularTBody = React.createClass ({
 		// if (this.props.prefix === 'rhs') console.log('render tbody, target: ' + this.state.target + ', start: ' + this.state.start + ', end: ' + this.state.end)
 
 		return <div
-			className = {"tabular-body force-layer " + (this.props.focused ? ' focused ' : ' gray-out ')}
+			className = {"tabular-body-" + this.props.prefix + " tabular-body force-layer " + (this.props.focused ? ' focused ' : ' gray-out ')}
 			
 			onMouseDown = {this.props._handleClick}
 			onDoubleClick = {this.props._handleEdit}

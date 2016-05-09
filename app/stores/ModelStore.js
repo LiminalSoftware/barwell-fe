@@ -19,13 +19,16 @@ var ModelStore = storeFactory({
         break;
 
       case 'MODEL_RECEIVE':
-        var model = payload.model
-        model._dirty = false
-        if (model.attributes instanceof Array) model._pk =
-          'a' + model.attributes.filter(attr => attr.type === 'PRIMARY_KEY')[0].attribute_id
-        model = _.pick(model, '_pk', 'model', 'model_id', 'cid', 'workspace_id', 'label_attribute_id', 'label_key_id',
-            'primary_key_key_id', 'plural', 'lock_user', '_dirty', '_destroy')
-        this.create(util.clean(model))
+        var _this = this;
+        var models = payload.model;
+        models.forEach(function (model) {
+          if (model.attributes instanceof Array) model._pk =
+            'a' + model.attributes.filter(attr => attr.type === 'PRIMARY_KEY')[0].attribute_id
+          model = _.pick(model, '_pk', 'model', 'model_id', 'cid', 'workspace_id', 'label_attribute_id', 'label_key_id',
+              'primary_key_key_id', 'plural', 'lock_user', '_dirty', '_destroy')
+          _this.create(util.clean(model))
+        });
+        
         this.emitChange()
         break;
     }

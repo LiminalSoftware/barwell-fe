@@ -3,6 +3,7 @@ import dispatcher from '../dispatcher/MetasheetDispatcher'
 import _ from 'underscore'
 import util from '../util/util'
 
+import ModelStore from "./ModelStore"
 import AttributeStore from "./AttributeStore"
 import KeycompStore from "./KeycompStore"
 
@@ -42,9 +43,16 @@ var KeyStore = storeFactory({
         break;
 
       case 'MODEL_RECEIVE':
-        var model = payload.model
-        this.purge({model_id: model.model_id});
-        (model.keys || []).map(util.clean).map(this.create)
+        dispatcher.waitFor([
+          AttributeStore.dispatchToken, 
+          ModelStore.dispatchToken
+        ]);
+        var _this = this;
+        var models = payload.model instanceof Array ? payload.model : [payload.model]
+        // this.purge();
+        models.forEach(function (model) {
+          (model.keys || []).map(util.clean).map(_this.create)
+        });
         this.emitChange()
         break;
     }

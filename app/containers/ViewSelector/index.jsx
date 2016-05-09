@@ -22,11 +22,11 @@ var ViewSelector = React.createClass({
 	},
 
 	render: function() {
-    var model = this.props.model;
-    var view = (this.props.view || {});
-	if (!model) return null
+	    var model = this.props.model;
+	    var view = (this.props.view || {});
+		if (!model) return null
 
-	return <div className = "header-section ">
+		return <div className = "header-section ">
 		<div className="header-label">Views</div>
 		<div className="model-views-menu" onClick = {this.clickTrap}>
 			<ReactCSSTransitionGroup 
@@ -41,7 +41,7 @@ var ViewSelector = React.createClass({
 				
 				{
 					this.state.open ? 
-					<ViewMenu {...this.props} key = "menu" /> 
+					<ViewMenu {...this.props} _blurMenu = {this.handleBlur} key = "menu" /> 
 					: 
 					<ViewItemSingleton {...this.props} suppressHilite = {true} key = "singleton" />
 				}
@@ -50,8 +50,7 @@ var ViewSelector = React.createClass({
 			<div className="dropdown icon icon--small icon-chevron-down"
 				onClick = {this.handleOpen}></div>
 		</div>
-
-	</div>
+		</div>
 	}
 });
 

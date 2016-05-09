@@ -11,10 +11,10 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 import util from "../../../util/util"
 import tinycolor from "tinycolor2"
 
-import defaultCellStyle from './defaultCellStyle'
 import bgColorMixin from './bgColorMixin'
 
 import fieldTypes from '../fields'
+
 
 var editableInputMixin = {
 
@@ -82,8 +82,8 @@ var editableInputMixin = {
 	handleDetail: function (e) {
 		console.log('handleDetail')
 		this.setState({open: true})
-		event.preventDefault()
-		event.stopPropagation()
+		event.preventDefault();
+		event.stopPropagation();
 	},
 
 	handleKeyPress: function (e) {
@@ -96,7 +96,15 @@ var editableInputMixin = {
 		}
 	},
 
+	getDisplayHTML: function (config, obj, isNull) {
+		var value = obj[config.column_id];
+		var textConditional = (!config.textConditionAttr || obj['a' + config.textConditionAttr]);
+		var prettyValue = isNull ? '' : this.format ? this.format(value, config) : value;
+		var classes = 'table-cell-inner ' + (textConditional ? config.bold ? ' bolded ' : '' : '');
+		var bg = this.getBgColor ? this.getBgColor(config, obj) : {};
 
+		return `<span class = "${classes}" style = "text-align: ${config.align}; background: ${bg.background || 'transparent'}; color: ${bg.color}">${prettyValue}</span>`;
+	},
 
 	render: function () {
 		var config = this.props.config
@@ -134,7 +142,7 @@ var editableInputMixin = {
 			cellStyle.paddingLeft = '25px'
 		cellStyle.lineHeight = this.props.rowHeight + 'px'
 		
-		Object.assign(cellStyle, this.getBgColor());
+		Object.assign(cellStyle, this.getBgColor(config, obj, false, this.props.selected));
 
 		return <span {...this.props} className = {"table-cell " + (this.props.selected ? 
 				(isNull ? "table-cell-selected-null" : "table-cell-selected") : 
@@ -153,9 +161,7 @@ var editableInputMixin = {
 			<span style = {cellStyle} className = {"table-cell-inner " +  boldClass +
 				((this.props.selected && !isNull) ? " table-cell-inner-selected" : "") +
 				(this.props.sorted ? "table-cell-inner-sorted" : "")
-				}
-				onContextMenu = {this._handleContextMenu}
-				onPaste = {this.props._handlePaste}>
+				}>
 				{prettyValue}
 			</span>
 		}
@@ -174,6 +180,6 @@ var editableInputMixin = {
 	}
 }
 
-Object.assign(editableInputMixin, bgColorMixin)
+// Object.assign(editableInputMixin, bgColorMixin)
 
 export default editableInputMixin;

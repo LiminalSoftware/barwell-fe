@@ -12,14 +12,19 @@ import sortable from 'react-sortable-mixin';
 import ViewList from './ViewList'
 import ViewItemSingleton from './ViewItemSingleton';
 
+import menuOverflowMixin from '../../menuOverflowMixin'
+
 import sortItems from './sortItems';
 
 var ViewMenu = React.createClass({
+
+	mixins: [menuOverflowMixin],
 
 	// LIFECYCLE ==============================================================
 
 	componentWillMount: function () {
 		ViewStore.addChangeListener(this._onChange);
+		this.calibrateHeight();
 	},
 
 	componentWillUnmount: function () {
@@ -122,7 +127,7 @@ var ViewMenu = React.createClass({
 
 		return <div className = "dropdown-menu "
 					key = "list-wrapper"
-					style = {{minWidth: "400px"}}>
+					style = {{minWidth: "400px", maxHeight: (this.state.windowHeight - 100) + 'px'}}>
 			{
 				
 				<ViewList ref = "viewList"
@@ -130,26 +135,9 @@ var ViewMenu = React.createClass({
 					editing = {this.state.editing} 
 					{..._this.props}
 					key = "orderable-list"/>
-				
 			}
 
 			
-			
-			<Link to = {`/workspace/${model.workspace_id}/model/${model.model_id}/view/config`}
-				className = {"menu-item menu-sub-item menu-clickable" + 
-					(!view ? " menu-selected " : " ")}
-				 key="model-editor">
-				<span className = "icon icon-pencil-ruler"></span>
-				<span className = "double-column-config">Database Configuration</span>
-			</Link>
-
-			<Link to = {`/workspace/${model.workspace_id}/model/${model.model_id}/view/history`}
-				className = {"menu-item menu-sub-item menu-clickable " + 
-					(!view ? " menu-selected " : " ")}
-				 key="change-history">
-				<span className = "icon icon-library"></span>
-				<span className = "double-column-config">Change History</span>
-			</Link>
 
 			{
 				this.state.editing && !this.state.adding ?
@@ -173,7 +161,7 @@ var ViewMenu = React.createClass({
 			{
 				this.state.adding ? 
 				_.map(viewTypes, function (type, typeKey) {
-		        	return <div className = "menu-item menu-item menu-sub-item"
+		        	return <div className = "menu-item menu-item menu-sub-item menu-clickable"
 		            	onClick = {_this.handleAddNewView.bind(_this, type)}
 		            	key = {typeKey}>
 		            	<span className = {"large icon view-icon " + type.icon}/>

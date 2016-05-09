@@ -295,19 +295,19 @@ var modelActions = {
 		}
 
 		return webUtils.ajax('GET', url, null, header).then(function (results) {
-			var message = {}
-			var range = results.xhr.getResponseHeader('Content-Range')
-			var rangeParts = range.split(/[-/]/)
-			message.numberResults = parseInt(rangeParts[2])
-			message.actionType = ('V' + view_id + '_RECEIVEVALUES').toUpperCase()
-			message.values = results.data
-			MetasheetDispatcher.dispatch(message)
+			var message = {};
+			var range = results.xhr.getResponseHeader('Content-Range');
+			var rangeParts = range.split(/[-/]/);
+			message.numberResults = parseInt(rangeParts[2]);
+			message.actionType = ('V' + view_id + '_RECEIVEVALUES').toUpperCase();
+			message.values = results.data;
+			MetasheetDispatcher.dispatch(message);
 		});
 	},
 
 	fetch: function (subject, selector) {
-		var message = {}
-		message.selector = selector
+		var message = {};
+		message.selector = selector;
 	},
 
 	create: function (subject, persist, obj) {
@@ -323,37 +323,37 @@ var modelActions = {
 	},
 
 	undestroy: function (subject, obj) {
-		var message = {}
-		obj._destroy = false
-		message[subject] = obj
-		message.actionType = subject.toUpperCase() + '_CREATE'
-		MetasheetDispatcher.dispatch(message)
-		return Promise.resolve(obj)
+		var message = {};
+		obj._destroy = false;
+		message[subject] = obj;
+		message.actionType = subject.toUpperCase() + '_CREATE';
+		MetasheetDispatcher.dispatch(message);
+		return Promise.resolve(obj);
 	},
 
 	restore: function (subject, obj) {
-		var message = {}
-		obj = _.extend(obj, obj._server || {}, {_clean: true, _destroy: false})
-		message[subject] = obj
-		message.actionType = subject.toUpperCase() + '_CREATE'
-		MetasheetDispatcher.dispatch(message)
-		return Promise.resolve(obj)
+		var message = {};
+		obj = _.extend(obj, obj._server || {}, {_clean: true, _destroy: false});
+		message[subject] = obj;
+		message.actionType = subject.toUpperCase() + '_CREATE';
+		MetasheetDispatcher.dispatch(message);
+		return Promise.resolve(obj);
 	},
 
 	destroy: function (subject, persist, obj) {
-		var message = {}
-		message[subject] = obj
+		var message = {};
+		message[subject] = obj;
 		if (!persist && ((subject+'_id') in obj)) {
 			// mark the object for destruction, but dont actually do it
-			message.actionType = subject.toUpperCase() + '_CREATE'
+			message.actionType = subject.toUpperCase() + '_CREATE';
 			obj._destroy = true
 		} else {
-			message.actionType = subject.toUpperCase() + '_DESTROY'
+			message.actionType = subject.toUpperCase() + '_DESTROY';
 		}
-		MetasheetDispatcher.dispatch(message)
+		MetasheetDispatcher.dispatch(message);
 		
-		if (persist) return webUtils.persist(subject, 'DESTROY', obj)	
-		else return Promise.resolve(obj)
+		if (persist) return webUtils.persist(subject, 'DESTROY', obj);
+		else return Promise.resolve(obj);
 	},
 	// relations
 
@@ -382,13 +382,13 @@ var modelActions = {
 	// models
 	fetchModels: function (workspace_id) {
 		var url = 'https://api.metasheet.io/model?workspace_id=eq.' + workspace_id;
-		return webUtils.ajax('GET', url, null, {"Prefer": 'return=representation'}).then(function (models) {
-			models.data.map(function (model) {				
+		return webUtils.ajax('GET', url, null, {"Prefer": 'return=representation'}).then(function (result) {
+			// models.data.map(function (model) {				
 				return MetasheetDispatcher.dispatch({
 					actionType: 'MODEL_RECEIVE',
-					model: model
+					model: result.data
 				})
-			})
+			// })
 		});
 	},
 

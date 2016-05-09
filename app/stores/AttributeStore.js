@@ -35,10 +35,12 @@ var AttributeStore = storeFactory({
 
       case 'MODEL_RECEIVE':
         dispatcher.waitFor([ModelStore.dispatchToken]);
-        var model = payload.model
-        this.purge({model_id: model.model_id})
-        model.attributes.map(util.clean).map(this.create)
-        this.emitChange()
+        var models = payload.model; //instanceof Array ? payload.model : [payload.model]
+        var _this = this;
+        models.forEach(function (model) {
+          model.attributes.map(util.clean).map(_this.create)
+        });
+        this.emitChange();
         break;
     }
   }

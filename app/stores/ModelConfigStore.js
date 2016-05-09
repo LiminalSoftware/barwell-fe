@@ -3,12 +3,17 @@ import dispatcher from '../dispatcher/MetasheetDispatcher'
 import _ from 'underscore'
 import util from '../util/util'
 
+import ModelStore from './ModelStore'
+
 var ModelConfigStore = storeFactory({
   identifier: 'model_id',
   dispatcher: dispatcher,
   pivot: function(payload) {
     switch (payload.actionType) {
       case 'MODEL_CREATE':
+        dispatcher.waitFor([
+          ModelStore.dispatchToken
+        ]);
         this.create({model_id: payload.model.model_id});
         this.emitChange();
         break;

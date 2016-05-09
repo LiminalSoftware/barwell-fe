@@ -13,8 +13,6 @@ import ColorValidationMixin from './ColorValidationMixin'
 
 import ColorPicker from './ColorPicker'
 
-import defaultCellStyle from '../defaultCellStyle'
-
 var ColorElement = React.createClass({
 
 	mixins: [CommitMixin, selectableMixin, ColorValidationMixin],
@@ -35,10 +33,16 @@ var ColorElement = React.createClass({
 		this.props._handleBlur()
 	},
 
+	getDisplayHTML: function (config, obj) {
+		var value = obj[config.column_id]
+
+		return `<span class="color-block" style="background: ${value}; right: 5px"></span>`;
+	},
+
 	render: function () {
 		var config = this.props.config
 		var value = this.props.value
-		var cellStyle = _.clone(defaultCellStyle)
+		var cellStyle = {};
 		var isNull = this.props.isNull
 		var blockStyle = {
 			right: this.props.selected ? '28px': '5px',

@@ -15,6 +15,7 @@ import editableInputMixin from '../editableInputMixin'
 import selectableMixin from '../selectableMixin'
 import DateValidatorMixin from './DateValidatorMixin'
 import keyPressMixin from '../keyPressMixin'
+import bgColorMixin from '../bgColorMixin';
 
 import DatePicker from './DatePicker'
 
@@ -53,7 +54,7 @@ var dateField = {
 
 	element: React.createClass({
 
-		mixins: [editableInputMixin, commitMixin, selectableMixin, keyPressMixin],
+		mixins: [editableInputMixin, bgColorMixin, commitMixin, selectableMixin, keyPressMixin],
 
 		// revert: function () {
 		// 	this.setState({
@@ -63,8 +64,8 @@ var dateField = {
 		// 	this.props._handleBlur()
 		// },
 
-		format: function (value) {
-			var config = this.props.config || {}
+		format: function (value, _config) {
+			var config = _config || this.props.config || {}
 			var format = config.formatString || "DD MMMM YYYY";
 			var prettyDate = value ? moment(value).format(format) : ''
 			return prettyDate

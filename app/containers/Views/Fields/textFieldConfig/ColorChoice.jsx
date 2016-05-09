@@ -125,7 +125,7 @@ var ColorChoice = React.createClass({
             </li>
           })
           }
-
+          
           <li className = {"selectable " +
             ((_this.state.colorAttr === null && _this.state.color === null) ? ' menu-selected' : '')}
             onClick = {_this.chooseNone}>
@@ -133,18 +133,19 @@ var ColorChoice = React.createClass({
             No cell color
           </li>
 
-          <li className = "selectable"
+          <li className = {"selectable " + (this.state.custom ? " bottom-divider " : " ")}
             onClick = {_this.chooseCustom}>
             <span className = "icon icon-code"/>
             Custom color
           </li>
           
+          <div style={{maxHeight: '60px', overflowY: 'scroll'}}>
           {
             this.state.custom ?
             makeColorPickerRows(_this.state.color, _this.chooseFixedColor)
             : null
           }
-
+          </div>
           
 
           <li className = "top-divider">

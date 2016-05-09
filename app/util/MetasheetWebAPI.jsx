@@ -41,6 +41,9 @@ var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
         })
       },
       success: function (data, status, xhr) {
+        modelActionCreators.clearNotification({
+            notification_key: 'connectivity'
+        });
         resolve({
           data: data,
           status: status,
@@ -50,18 +53,28 @@ var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
       error: function (xhr, error, status) {
         if (error === 'timeout') {
           if (retry++ >= MAX_RETRIES) {
+            console.log('timeout, trying again: ' + retry)
             modelActionCreators.createNotification({
               copy: 'Error communicating with the server.  There may be a problem with the connection.', 
               type: 'error',
               icon: ' icon-warning ',
-              notification_key: 'workspaceLoad'
+              notification_key: 'connectivity',
+              notifyTime: 0
             });
             return
           }
-          // console.log('timeout, trying again: ' + retry)
+          
           $.ajax(this);
-        } else {
-          // console.log('xhr: '+ JSON.stringify(xhr, null, 2));
+        } else {  
+          console.log('xhr: '+ JSON.stringify(xhr, null, 2));
+          modelActionCreators.createNotification({
+              copy: 'Looks like something went wrong: ' + xhr.statusText, 
+              type: 'error',
+              icon: ' icon-warning ',
+              notification_key: 'serverError',
+              notifyTime: 0
+            });
+          
           reject(xhr.responseJSON)
         }
       }

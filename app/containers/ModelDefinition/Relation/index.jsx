@@ -31,18 +31,18 @@ var RelationDetailList = React.createClass({
 		this.setState({editing: true})
 	},
 
-	cancelChanges: function () {
-		var model = this.props.model;
-		RelationStore.query({model_id: (model.model_id || model.cid)}).map(function (rel) {
-			if ((!rel.relation_id) || (save && rel._destroy)) {
-				modelActionCreators.destroy('relation', false, rel);
-			} else {
-				_.extend(rel, rel._server, {_destroy: false, _clean: true});
-				modelActionCreators.create('rel', false, rel);
-			}
-		})
-		this.setState({editing: false});
-	},
+	// cancelChanges: function () {
+	// 	var model = this.props.model;
+	// 	RelationStore.query({model_id: (model.model_id || model.cid)}).map(function (rel) {
+	// 		if ((!rel.relation_id) || (save && rel._destroy)) {
+	// 			modelActionCreators.destroy('relation', false, rel);
+	// 		} else {
+	// 			_.extend(rel, rel._server, {_destroy: false, _clean: true});
+	// 			modelActionCreators.create('rel', false, rel);
+	// 		}
+	// 	})
+	// 	this.setState({editing: false});
+	// },
 
 	commitChanges: function () {
 		var _this = this

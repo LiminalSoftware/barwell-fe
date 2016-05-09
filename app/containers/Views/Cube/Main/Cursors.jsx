@@ -145,7 +145,7 @@ var Cursors = React.createClass ({
     //   marginTop: !HAS_3D ? (isColumnSelection ? 0 : (marginTop + 2)) : 0,
     // };
 
-    return <div className = "wrapper" style = {{
+    return <div className = "cursor-wrapper wrapper" style = {{
         left: '0',
         top: '0',
         bottom: 0,
@@ -154,6 +154,7 @@ var Cursors = React.createClass ({
           (isRowSelection ? 0 : (marginLeft)) + 'px, ' + 
           (isColumnSelection ? 0 : (marginTop)) + 'px, 0)',
         transformStyle: 'preserve-3d',
+        pointerEvents: 'none'
       }}>
       <div className = {"wrapper table-backing table-backing--" + (focused ? "focused" : "blurred") }
         style = {{
@@ -161,7 +162,7 @@ var Cursors = React.createClass ({
           left: 0,
           right: RIGHT_FRINGE + 'px',
           height: columnOffset + rowCount*geo.rowHeight + 'px',
-          transform: 'translateZ(-2px)'
+          // transform: 'translateZ(-2px)'
         }}/>
       <div className = "wrapper overlay "
         style = {{
@@ -171,7 +172,7 @@ var Cursors = React.createClass ({
           right: 0,
           pointerEvents: 'none',
           overflow: 'hidden',
-          transform: 'translateZ(3px)'
+          // transform: 'translateZ(3px)'
         }}>
         <div className = "wrapper force-layer"
           ref = "overlayInner"
@@ -239,7 +240,7 @@ var Cursors = React.createClass ({
           left: rowOffset + 'px',
           right: RIGHT_FRINGE + 'px',
           overflow: 'hidden',
-          transform: 'translateZ(-1px)'
+          // transform: 'translateZ(-1px)'
         }}>
         <div className = "wrapper underlay-inner force-layer"
           ref = "underlayInner"

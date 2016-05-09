@@ -76,7 +76,7 @@ var AggregatePicker = React.createClass({
         	onMouseDown = {this.handleOpen}>
 	        {
 	        this.state.open ?
-				<PopDownMenu>
+				<PopDownMenu {...this.props}>
 					<li className = "bottom-divider">Aggregator</li>
 					{
 					this.aggregates.map(function (agg) {

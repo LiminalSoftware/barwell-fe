@@ -32,8 +32,8 @@ var CheckboxElement = React.createClass({
 	// },
 
 	handleEdit: function () {
-		this.toggle()
-		this.props._handleBlur()
+		this.toggle();
+		this.props._handleBlur();
 	},
 
 	validator: function (input) {
@@ -57,6 +57,17 @@ var CheckboxElement = React.createClass({
 		this.commitValue(!this.state.value)
 	},
 
+	getDisplayHTML: function (config, obj) {
+		var value = obj[config.column_id]
+		var classes = 'table-cell-inner '; //+ (textConditional ? config.bold ? ' bolded ' : '' : '');
+		// var bgcolor = this.getBgColor(config, obj);
+		var iconCheck = value ? 'icon-check' : '';
+		var checkbox = `<span class="check green icon ${iconCheck}"></span>`;
+		var bg = this.getBgColor ? this.getBgColor(config, obj) : {};
+		return `<span style = "text-align: center; background: ${bg.background}" class = "${classes}"><span class = "checkbox-surround ">${checkbox}</span></span>`;
+		// return '<span class="table-cell-inner"></span>'
+	},
+
 	render: function () {
 		var config = this.props.config
 		var value = this.props.value
@@ -71,7 +82,7 @@ var CheckboxElement = React.createClass({
 
 		cellStyle.lineHeight = this.props.rowHeight + 'px'
 		cellStyle.textAlign = 'center'
-		Object.assign(cellStyle, this.getBgColor());
+		Object.assign(cellStyle, this.getBgColor(config, this.props.object));
 
 		return <span {...this.props} className = {"table-cell " + (this.props.selected ? 
 				(isNull ? "table-cell-selected-null" : "table-cell-selected") : 
@@ -81,8 +92,7 @@ var CheckboxElement = React.createClass({
 				(this.props.sorted ? " table-cell-inner-sorted" : "")
 				}>
 				{!isNull ?
-				<span className = {"checkbox-surround " + (this.state.selected ? ' checkbox-surround-selected' : '')}
-					 onClick=  {this.handleClick}>
+				<span className = "checkbox-surround " onClick=  {this.handleClick}>
 					<span className={"check green icon " + (this.state.value ? "icon-check" : "")} >
 					</span>
 				</span>

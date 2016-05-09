@@ -100,7 +100,6 @@ var CubeTBody = React.createClass ({
 			className = "wrapper cube-main-tbody"
 			onMouseDown = {this.props._handleClick}
 			onWheel = {this.props._handleWheel}
-			
 			onDoubleClick = {this.props._handleEdit}>
 			{cells}
 		</div>;

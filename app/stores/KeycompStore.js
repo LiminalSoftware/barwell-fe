@@ -3,6 +3,10 @@ import dispatcher from '../dispatcher/MetasheetDispatcher';
 import _ from 'underscore';
 import util from '../util/util';
 
+import ModelStore from './ModelStore'
+import AttributeStore from './AttributeStore'
+import KeyStore from "./KeyStore"
+
 var KeycompStore = storeFactory({
   identifier: 'keycomp_id',
   dispatcher: dispatcher,
@@ -41,13 +45,19 @@ var KeycompStore = storeFactory({
         break;
 
       case 'MODEL_RECEIVE':
+        dispatcher.waitFor([
+          KeyStore.dispatchToken, 
+          AttributeStore.dispatchToken, 
+          ModelStore.dispatchToken
+        ]);
         var _this = this;
-        var model = payload.model;
-        if(!('keys' in model)) return;
-        model.keys.forEach(function (key) {
-          _this.purge({key_id: key.key_id});
-          (key.keycomps || []).map(util.clean).map(_this.create)
-        })
+        var models = payload.model instanceof Array ? payload.model : [payload.model];
+        models.forEach(function (model) {
+          if(!('keys' in model)) return;
+          model.keys.forEach(function (key) {
+            (key.keycomps || []).map(util.clean).map(_this.create)
+          })
+        });
         this.emitChange();
         break;
     }
