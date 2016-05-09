@@ -86,7 +86,7 @@ var ColumnMenu = React.createClass({
 
 	commitUpdates: function () {
 		this.setState({dirty: false})
-		this.refs.list.commitUpdates();
+		this.refs.list.commitViewUpdates();
 	},
 
 	commitChanges: function (save) {

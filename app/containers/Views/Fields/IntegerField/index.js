@@ -13,6 +13,7 @@ import commitMixin from '../commitMixin'
 import editableInputMixin from '../editableInputMixin'
 import selectableMixin from '../selectableMixin'
 import keyPressMixin from '../keyPressMixin'
+import bgColorMixin from '../bgColorMixin';
 
 import AlignChoice from "../textFieldConfig/AlignChoice"
 import ColorChoice from "../textFieldConfig/ColorChoice"
@@ -25,7 +26,13 @@ var integerField = {
 	defaultAlign: 'right',
 	configParts: [AlignChoice, ColorChoice, TextChoice],
 	element: React.createClass({
-		mixins: [editableInputMixin, commitMixin, selectableMixin, keyPressMixin],
+		mixins: [
+			editableInputMixin, 
+			bgColorMixin, 
+			commitMixin, 
+			selectableMixin, 
+			keyPressMixin
+		],
 
 		validator: function (input) {
 			if (_.isNumber(input) )

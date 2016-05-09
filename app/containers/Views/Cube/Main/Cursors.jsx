@@ -156,14 +156,7 @@ var Cursors = React.createClass ({
         transformStyle: 'preserve-3d',
         pointerEvents: 'none'
       }}>
-      <div className = {"wrapper table-backing table-backing--" + (focused ? "focused" : "blurred") }
-        style = {{
-          top: 0,
-          left: 0,
-          right: RIGHT_FRINGE + 'px',
-          height: columnOffset + rowCount*geo.rowHeight + 'px',
-          // transform: 'translateZ(-2px)'
-        }}/>
+      
       <div className = "wrapper overlay "
         style = {{
           top: columnOffset + 'px',
@@ -230,37 +223,6 @@ var Cursors = React.createClass ({
             {...this.props}
             position = {cpy}
             fudge = {{left: -1.25, top: 0, height: 1, width: 1.25}} />
-        </div>
-      </div>
-
-      <div className = {"force-layer wrapper underlay"}
-        style = {{
-          top: columnOffset + 'px',
-          bottom: 0,
-          left: rowOffset + 'px',
-          right: RIGHT_FRINGE + 'px',
-          overflow: 'hidden',
-          // transform: 'translateZ(-1px)'
-        }}>
-        <div className = "wrapper underlay-inner force-layer"
-          ref = "underlayInner"
-          style = {{
-            top: 0,
-            left:  0,
-            right: 0,
-            bottom: 0,
-            transformStyle: 'preserve-3d',
-            transform: 'translate3d(0, ' + (isColumnSelection ? 0 : (marginTop + 2)) + 'px, 0)',
-            // marginTop: !HAS_3D ? (marginTop + 2 + 'px') : 0
-          }}>
-
-          <Overlay
-                numHiddenCols = {this.props.hOffset}
-            className = {" selection " + (focused ? " focused" : "")}
-            ref = "selection"
-            {...this.props}
-            position = {sel}
-            fudge = {{left: -4.75, top: -2.75, height: 7.5, width: 8.5}}/>
         </div>
       </div>
 

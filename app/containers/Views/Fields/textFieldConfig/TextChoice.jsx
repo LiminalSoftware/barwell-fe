@@ -13,7 +13,10 @@ var TextChoice = React.createClass({
 
   partName: 'TextChoice',
 
-  mixins: [blurOnClickMixin, configCommitMixin],
+  mixins: [
+    blurOnClickMixin, 
+    configCommitMixin
+  ],
 
   getInitialState: function () {
     var config = this.props.config

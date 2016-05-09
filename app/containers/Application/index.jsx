@@ -63,26 +63,26 @@ var Application = React.createClass({
 	fetchModels: function (workspaceId) {
 		var _this = this
 
-		// modelActionCreators.createNotification({
-		// 	copy: 'Fetching workspace details', 
-		// 	type: 'loading',
-		// 	icon: ' icon-sync spin ',
-		// 	notification_key: 'workspaceLoad',
-		// 	notificationTime: 0
-		// });
+		modelActionCreators.createNotification({
+			copy: 'Fetching workspace details', 
+			type: 'loading',
+			icon: ' icon-sync spin ',
+			notification_key: 'workspaceLoad',
+			notificationTime: 0
+		});
 		modelActionCreators.fetchModels(workspaceId).then(function() {
 			_this.setState({loading: false})
 		}).then(function () {
-			// modelActionCreators.clearNotification({
-			// 	notification_key: 'workspaceLoad'
-			// })
+			modelActionCreators.clearNotification({
+				notification_key: 'workspaceLoad'
+			})
 		}).catch(function (error) {
-			// modelActionCreators.createNotification({
-			// 	copy: 'Error loading workspace details: ' + JSON.stringify(error), 
-			// 	type: 'error',
-			// 	icon: ' icon-warning ',
-			// 	notification_key: 'workspaceError'
-			// });
+			modelActionCreators.createNotification({
+				copy: 'Error loading workspace details: ' + JSON.stringify(error), 
+				type: 'error',
+				icon: ' icon-warning ',
+				notification_key: 'workspaceError'
+			});
 		});
 	}
 

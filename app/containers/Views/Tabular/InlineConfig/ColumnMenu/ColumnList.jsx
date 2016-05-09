@@ -37,27 +37,40 @@ var ColumnList = React.createClass({
 	},
 
 	componentDidReceiveProps: function (nextProps) {
-		this.setState(this.getItemState());
+		var nextView = nextProps.view
+		var cols = nextView.columnList
+		var items = this.state.items
+		var itemsIndex = _.indexBy(items, 'column_id')
+
+		cols.forEach(function (col) {
+			if (!(col.column_id in itemsIndex)) {
+				col.hidden = true;
+				items.push(col);
+			}
+		});
+		this.setState({items: items})
 	},
 
 	onResorted: function () {
 		if (this.props.confirmChanges) {
 			this.props._markDirty();
 		}
-		this.commitViewUpdates(this.props.confirmChanges);
+		this.commitViewUpdates(!this.props.confirmChanges);
 	},
 
 	// UTILITY ================================================================
 
 	commitViewUpdates: function (commit) {
+		// applies the section transformers to each item in the section
+		// if @commit is true, then commits  changes to the view and persists
 		var view = this.props.view;
 		var section = this.props.sections[0];
 		var items = this.state.items.map(function (item, idx) {
-			if (item.isSection) section = item
+			if (item.isSection) section = item;
 			else {
 				item.order = idx;
 				item = section.enterTransform(item);
-				view.data.columns[item.column_id] = item
+				if (commit) view.data.columns[item.column_id] = item;
 			}
 		});
 		if (commit) modelActionCreators.createView(view, true, true);

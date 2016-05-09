@@ -67,10 +67,10 @@ var Cursors = React.createClass ({
 
       _handleBlur: this.props._handleBlur,
       // _handleDetail: this.props._handleDetail,
-      _handleClick: this.props._handleClick,
+      // _handleClick: this.props._handleClick,
       // _handleClick: (e => e.stopPropagation()),
       // _handleEdit: this.props._handleEdit,
-      _handleWheel: this.props._handleWheel,
+      // _handleWheel: this.props._handleWheel,
       // _handlePaste: this.props._handlePaste,
 
       className: 'table-cell',
@@ -139,9 +139,9 @@ var Cursors = React.createClass ({
         pointerEvents: 'none'
       }}
       // onMouseDown = {this.props._handleClick}
-      // onDoubleClick = {this.props._handleEdit}
-      // onContextMenu = {this.props._handleContextMenu}
-      // onWheel = {this.props._handleWheel}
+      onDoubleClick = {this.props._handleEdit}
+      onContextMenu = {this.props._handleContextMenu}
+      onWheel = {this.props._handleWheel}
       >
       <div className = "wrapper overlay "
         style = {{
