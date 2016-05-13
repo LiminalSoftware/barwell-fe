@@ -29,6 +29,12 @@ var textField = {
 	element: React.createClass({
 		mixins: [editableInputMixin, bgColorMixin, commitMixin, selectableMixin, keyPressMixin],
     	validator: _.identity,
+
+    	format: function (value, _config) {
+			if (value === undefined || value === null) return '';
+			else return value
+		},
+
 		parser: function (input) {
 			input = String(input);
 			input = input.replace(/[\r\n]/g, '');

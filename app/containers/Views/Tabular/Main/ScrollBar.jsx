@@ -16,9 +16,7 @@ var ScrollBar = React.createClass ({
 	handleScroll: function (e) {
 		var scrollVar = this.props.axis === 'vertical' ? 'scrollTop' : 'scrollLeft';
 		var outerEl = this.refs.overlay;
-		var view = this.props.view;
 		var offset = outerEl[scrollVar];
-
 		this.props._setScrollOffset(offset);
 	},
 
@@ -36,45 +34,42 @@ var ScrollBar = React.createClass ({
 	},
 
 	render: function () {
-		var view = this.props.view;
-		var geo = view.data.geometry;
 		var axis = this.props.axis;
-		var rowCount = this.props.rowCount;
 		var inner = this.props.innerDimension;
 		var offset = this.props.offset;
-		// var outer = this.props.outerDimension;
+		var side = this.props.side || 'right'
 		
 		var innerStyle = {
 			top: 0,
 			left: 0,
 			position: 'absolute',
 			zIndex: 21,
-			// background: 'white'
+			display: 'block'
 		};
 
-		var style =  (axis === 'vertical') ? {
+		var style =  {
 			position: 'absolute',
-			display: 'block',
-			top: offset + 'px',
-			width: '10px',
-			// left: 0,
-			right: 0,
-			bottom: 0,
-		} : {
-			position: 'absolute',
-			bottom: 0,
-			right: 0,
-			left: offset,
-			height: '10px',
+			display: 'block'
 		};
-		
-		// hack! - need something clickable before the rows load
+
+		if (axis === 'vertical' && side === 'left') {
+			style.left = 0;
+		} else if (axis === 'vertical') {
+			style.right = 0
+		}
 		if (axis === 'vertical') {
+			style.top = offset + 'px'
+			style.bottom = 0
+			style.width = '10px'
+
 			innerStyle.height = inner + 'px';
 			innerStyle.width = '20px';
-			// if (rowCount == 0) innerStyle.bottom = 0
-			// else innerStyle.height = ((rowCount + 1) * geo.rowHeight + geo.headerHeight) + 'px'	
-		} else {
+		} else if (axis === 'horizontal') {
+			style.bottom = 0;
+			style.right = 0;
+			style.left = offset + 'px'
+			style.height = '10px'
+
 			innerStyle.width = inner  + 'px';
 			innerStyle.height = '20px';
 		}

@@ -30,9 +30,14 @@ var ModelConfigStore = storeFactory({
         this.emitChange();
         break;
 
-      // case 'MODEL_RECEIVE':
-      //   this.emitChange();
-      //   break;
+      case 'MODEL_RECEIVE':
+        var _this = this;
+        var models = payload.model;
+        models.forEach(function (model) {
+          _this.create({model_id: model.model_id});
+        });
+        this.emitChange();
+        break;
     }
   }
 })

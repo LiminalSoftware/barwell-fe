@@ -9,11 +9,6 @@ var ViewConfigStore = storeFactory({
   dispatcher: dispatcher,
   pivot: function(payload) {
     switch (payload.actionType) {
-      case 'VIEW_CREATE':
-        dispatcher.waitFor([ViewStore.dispatchToken]);
-        this.create({view_id: payload.view.view_id});
-        this.emitChange();
-        break;
 
       case 'VIEWCONFIG_CREATE':
         var config = this.get(payload.viewconfig.view_id) || {};

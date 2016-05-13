@@ -8,6 +8,7 @@ import groomView from '../containers/Views/groomView'
 
 var BASE_URL = 'https://api.metasheet.io'
 
+var _requestId = 0;
 
 var modelActions = {
 
@@ -312,13 +313,15 @@ var modelActions = {
 
 	create: function (subject, persist, obj) {
 		var message = {};
+		var requestId = _requestId++;
 		obj._dirty = true;
 		obj._destroy = false;
 		message[subject] = obj;
 		message.actionType = subject.toUpperCase() + '_CREATE';
+		message.requestId = requestId;
 		MetasheetDispatcher.dispatch(message);
 
-		if (persist) return webUtils.persist(subject, 'CREATE', obj);
+		if (persist) return webUtils.persist(subject, 'CREATE', obj, requestId);
 		else return Promise.resolve(obj);
 	},
 

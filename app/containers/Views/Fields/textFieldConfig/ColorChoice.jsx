@@ -7,13 +7,18 @@ import PopDownMenu from '../../../../components/PopDownMenu'
 
 import configCommitMixin from '../configCommitMixin'
 import blurOnClickMixin from '../../../../blurOnClickMixin'
+import popdownClickmodMixin from '../popdownClickmodMixin';
 import makeColorPickerRows from '../ColorField/makeColorPickerRows'
+
+import util from '../../../../util/util';
 
 var ColorChoice = React.createClass({
 
   partName: 'ColorChoice',
 
-  mixins: [blurOnClickMixin, configCommitMixin],
+  mixins: [blurOnClickMixin, popdownClickmodMixin, configCommitMixin],
+
+  // LIFECYCLE ==============================================================
 
   getInitialState: function () {
     return {
@@ -29,6 +34,8 @@ var ColorChoice = React.createClass({
   componentWillReceiveProps: function (nextProps) {
     this.setState({colorAttr: this.props.config.colorAttr})
   },
+
+  // HANDLERS ================================================================
 
   chooseColor: function (attributeId) {
     this.commitChanges({colorAttr: attributeId, color: null, adjustColor: this.state.adjustColor})
@@ -64,76 +71,80 @@ var ColorChoice = React.createClass({
     this.commitChanges({adjustColor: !this.state.adjustColor})
   },
 
-  render: function () {
+  // RENDER ===================================================================
+
+  renderConditionSection: function () {
+    var _this = this
+    var view = this.props.view
+    var boolAttrs = AttributeStore.query({type: 'BOOLEAN', model_id: view.model_id})
+
+    return <div className="popdown-section" key="condition">
+      {
+        boolAttrs.length > 0 ?
+        <li className="popdown-item bottom-divider title">
+          Conditional
+        </li>
+        :
+        null
+      }
+
+      {
+      boolAttrs.map(function (attr) {
+        return <li key = {attr.attribute_id} className = {"popdown-item selectable " + 
+          (_this.state.colorConditionAttr === attr.attribute_id ? ' menu-selected' : '')}
+            onClick = {_this.chooseCondition.bind(_this, attr.attribute_id)}>
+            <span className = "icon icon-check-square  ">
+            </span>
+            {attr.attribute}
+          </li>
+        })
+      }
+
+      {
+        boolAttrs.length > 0 ?
+        <li key = "no-condition" className = {"popdown-item selectable" + 
+          (_this.state.colorConditionAttr === null  ? ' menu-selected' : '')}
+          onClick = {_this.chooseCondition.bind(_this, null)}>
+          <span className = "icon icon-square"/>
+          No condition
+        </li>
+        :
+        null
+      }
+    </div>
+  },
+
+  renderColorSection: function () {
     var _this = this
     var view = this.props.view
     var colorAttrs = AttributeStore.query({type: 'COLOR', model_id: view.model_id})
-    var boolAttrs = AttributeStore.query({type: 'BOOLEAN', model_id: view.model_id})
 
-    return <span
-        className={"pop-down clickable icon icon-paint-roller "
-          + (this.state.open ? " open" : (this.state.colorAttr || this.state.color ? " active" : ""))}
-        onClick = {this.handleOpen}>
-        {
-          this.state.open ? <PopDownMenu {...this.props}>
+    return <div className = "popdown-section" key="color">
 
-          {
-            boolAttrs.length > 0 ?
-            <li className="bottom-divider title">
-              Condition
-            </li>
-            :
-            null
-          }
-
-
-          {
-          boolAttrs.map(function (attr) {
-            return <li key = {attr.attribute_id} className = {"selectable " + 
-            (_this.state.colorConditionAttr === attr.attribute_id ? ' menu-selected' : '')}
-              onClick = {_this.chooseCondition.bind(_this, attr.attribute_id)}>
-              <span className = "icon icon-check-square  ">
-              </span>
-              {attr.attribute}
-            </li>
-          })
-          }
-
-           {
-            boolAttrs.length > 0 ?
-            <li key = "no-condition" className = {"selectable" + 
-              (_this.state.colorConditionAttr === null  ? ' menu-selected' : '')}
-              onClick = {_this.chooseCondition.bind(_this, null)}>
-              <span className = "icon icon-square"/>
-              No condition
-            </li>
-            :
-            null
-          }
-
-          <li key = "color-divider " className = {'title ' + (boolAttrs.length > 0 ? "top-divider bottom-divider" : "bottom-divider")}>
+          <li key = "color-divider " 
+            className = 'popdown-item title bottom-divider'>
             Background Color
           </li>
 
           {
           colorAttrs.map(function (attr) {
-            return <li key = {attr.attribute_id} className = {"selectable "
+            return <li key = {attr.attribute_id} className = {"popdown-item selectable "
               + (_this.state.colorAttr === attr.attribute_id ? ' menu-selected' : '')}
               onClick = {_this.chooseColor.bind(_this, attr.attribute_id)}>
-              <span className = "icon icon-color-sampler  "/>
+              <span className = "icon icon-eye-dropper  "/>
               {attr.attribute}
             </li>
           })
           }
           
-          <li className = {"selectable " +
+          <li className = {"popdown-item selectable " +
             ((_this.state.colorAttr === null && _this.state.color === null) ? ' menu-selected' : '')}
             onClick = {_this.chooseNone}>
-            <span className = "icon icon-color-sampler"/>
+            <span className = "icon icon-square"/>
             No cell color
           </li>
 
-          <li className = {"selectable " + (this.state.custom ? " bottom-divider " : " ")}
+          <li className = {"popdown-item selectable " + (this.state.custom ? " bottom-divider " : " ")}
             onClick = {_this.chooseCustom}>
             <span className = "icon icon-code"/>
             Custom color
@@ -146,16 +157,39 @@ var ColorChoice = React.createClass({
             : null
           }
           </div>
-          
 
-          <li className = "top-divider">
+          <li className = "popdown-item top-divider">
           Auto-lighten colors: <input type="checkbox"
             onChange = {_this.handleAdjustCheck}
             checked = {_this.state.adjustColor} />
           </li>
+    </div>
+  },
 
+  renderMenu: function () {
+    return [
+      this.renderColorSection(),
+      this.renderConditionSection()
+    ]
+  },
 
+  render: function () {
+    if (!!this.props.menuInline) return <div className = "menu-sub-item-boxed"  onClick = {util.clickTrap}>
+      {this.renderMenu()}
+    </div>;
+    else return <span
+        className={"pop-down clickable icon icon-paint-roller "
+          + (this.state.open ? " open" : (this.state.colorAttr || this.state.color ? " active" : ""))}
+        onClick = {this.handleClick}>
+        {
+        this.state.open ? <PopDownMenu {...this.props}>
+          {this.renderMenu()}
         </PopDownMenu> : null
+        }
+        {
+          this.state.context ? 
+            <span className = "pop-down-overlay icon icon-paint-roller"/> 
+            : null
         }
     </span>;
   }

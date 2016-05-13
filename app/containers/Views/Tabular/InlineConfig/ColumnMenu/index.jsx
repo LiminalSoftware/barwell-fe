@@ -9,6 +9,7 @@ import ColumnList from "./ColumnList";
 import ColumnDetail from "./ColumnDetailSingleton";
 
 import AttributeStore from "../../../../../stores/AttributeStore";
+import ViewConfigStore from "../../../../../stores/ViewConfigStore";
 import constant from '../../../../../constants/MetasheetConstants';
 import util from "../../../../../util/util";
 
@@ -16,6 +17,8 @@ import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import blurOnClickMixin from '../../../../../blurOnClickMixin';
+
+import ScrollBar from '../../Main/ScrollBar'
 
 import sortable from 'react-sortable-mixin';
 
@@ -28,10 +31,12 @@ var ColumnMenu = React.createClass({
 
 	componentWillMount: function () {
 		AttributeStore.addChangeListener(this._onChange);
+		// ViewConfigStore.addChangeListener(this._onChange);
 	},
 
 	componentWillUnmount: function () {
 		AttributeStore.removeChangeListener(this._onChange);
+		// ViewConfigStore.removeChangeListener(this._onChange);
 		this.handleCancelChanges()
 	},
 
@@ -87,6 +92,11 @@ var ColumnMenu = React.createClass({
 	commitUpdates: function () {
 		this.setState({dirty: false})
 		this.refs.list.commitViewUpdates();
+	},
+
+	_setScrollOffset: function (offset) {
+		// ReactDOM.find columnList
+		console.log('scroll: ' + offset)
 	},
 
 	commitChanges: function (save) {
@@ -162,20 +172,18 @@ var ColumnMenu = React.createClass({
 			}
 			</div>
 
-
 		</div>
 	},
 
 	render: function() {
-		
 		var _this = this;
 		var view = this.props.view;
-		var viewconfig = this.props.viewconfig || {};
+		var viewconfig = ViewConfigStore.get(view.view_id)
 		var data = view.data;
 		var columns = view.data.columnList;
-
-		var currentCol = this.props._getColumnAt(viewconfig.pointer);
-
+		var currentCol = this.props._getColumnAt(viewconfig);
+		var numItems = view.data.columnList.length + this.props.sections.length
+		
 		//set the first section separately so you can't drag on top of it
 		var firstSection = this.props.sections[0];
 
@@ -206,6 +214,7 @@ var ColumnMenu = React.createClass({
 									_markDirty = {this.markDirty}
 									editing = {this.state.editing}/>
 								{this.renderButtonBar()}
+								
 							</div>
 							:
 							currentCol ? 

@@ -35,10 +35,13 @@ var ViewStore = storeFactory({
         break;
 
       case 'VIEW_CREATE':
-        var view = _.clone(payload.view)
-        if (!payload.safe) view = groomView(view)
-        this.create(payload.view)
-        this.emitChange()
+        var requestId = payload.requestId;
+        var view = payload.view;
+        if (!payload.safe)
+          view = groomView(view)
+        view._requestId = payload.requestId;
+        this.create(view);
+        this.emitChange();
         break;
 
       case 'VIEW_DESTROY':
@@ -54,9 +57,12 @@ var ViewStore = storeFactory({
           KeycompStore.dispatchToken
         ]);
         var view = _.clone(payload.view)
+        var requestId = payload.requestId
+        var oldView = this.get(view.view_id) || {};
         if (!(view instanceof Object)) return;
-        view = view
-        view._dirty = false
+        if (oldView._requestId > requestId && requestId) return;
+        view._requestId = requestId;
+        view._dirty = false;
         this.create(view);
         this.emitChange();
         break;

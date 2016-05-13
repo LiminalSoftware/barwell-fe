@@ -94,6 +94,7 @@ var TabularPane = React.createClass ({
 		ViewStore.removeChangeListener(this._onChange);
 		copyPasteDummy.removeEventListener('paste', this.pasteSelection);
 		removeEventListener('resize', this._debounceCalibrateHeight);
+		if (this._timer) cancelFrame(this._timer)
 		this.store.removeChangeListener(this._onChange);
 		this.store.unregister();
 	},
@@ -442,13 +443,12 @@ var TabularPane = React.createClass ({
 		// this.scrollTo(pos)
 		
 		// focus the paste area just in case
-		document.getElementById("copy-paste-dummy").focus()
+		document.getElementById("copy-paste-dummy").focus();
 
 		// commit the pointer position to the view object, but debounce
-		view.data.pointer = pos
-		// this._debounceCreateViewconfig(view, false, false, true)
+		// view.data.pointer = pos
 		this._debounceCreateViewconfig({
-			view_id: view.view_id, 
+			view_id: view.view_id,
 			pointer: pos
 		});
 	},
@@ -536,7 +536,7 @@ var TabularPane = React.createClass ({
 			rowOffset: rowOffset
 		});
 		
-		if (!this._timer) this._timer = getFrame(this.refreshTable, CYCLE)
+		if (!this._timer) this._timer = getFrame(this.refreshTable, CYCLE);
 		// this._debounceCreateViewconfig({view_id: view.view_id, rowOffset: rowOffset});
 	},
 

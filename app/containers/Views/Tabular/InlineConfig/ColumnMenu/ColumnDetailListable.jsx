@@ -10,6 +10,7 @@ import constants from '../../../../../constants/MetasheetConstants'
 import TypePicker from './TypePicker'
 
 import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
+import util from '../../../../../util/util'
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 
@@ -22,7 +23,12 @@ var ColumnDetailListable = React.createClass({
 
 	dragRef: "grabber",
 
-	singleton: false
+	singleton: false,
+	
+	handleConfigClick: function (part, e) {
+		this.setState({configPart: part})
+		util.clickTrap(e)
+	},
 
 });
 

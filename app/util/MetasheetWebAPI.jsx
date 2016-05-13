@@ -9,13 +9,13 @@ $.ajaxSetup({
     headers: {"Prefer": 'return=representation'}
 });
 
-var MAX_RETRIES = 5
+var MAX_RETRIES = 2
 var INITIAL_WAIT = 100
 
 var stripInternalVars = module.exports.stripInternalVars = function (obj) {
   var newObj = {}
   Object.keys(obj).forEach(function (key) {
-    if (key.slice(0,1) !== '_') newObj[key] = obj[key];
+    if (key.slice(0, 1) !== '_') newObj[key] = obj[key];
   });
   return newObj;
 }
@@ -26,9 +26,12 @@ var wait = module.exports.wait = function () {
   })
 }
 
+
 var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
   console.log(method + '->' + url);
   console.log(JSON.parse(json));
+
+  
 
   retry = retry || 1;
   return new Promise(function (resolve, reject) {
@@ -66,7 +69,10 @@ var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
           
           $.ajax(this);
         } else {  
-          console.log('xhr: '+ JSON.stringify(xhr, null, 2));
+          // console.log('error')
+          console.log(xhr);
+          console.log(status);
+          console.log(error)
           modelActionCreators.createNotification({
               copy: 'Looks like something went wrong: ' + xhr.statusText, 
               type: 'error',
@@ -87,14 +93,15 @@ var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
   })
 }
 
-var issueReceipt = function (subject, obj) {
+var issueReceipt = function (subject, obj, requestId) {
   var message = {}
   message.actionType = (subject.toUpperCase() + '_RECEIVE')
+  message.requestId = requestId
   message[subject] = obj
   MetasheetDispatcher.dispatch(message)
 }
 
-var persist = module.exports.persist = function (subject, action, data) {
+var persist = module.exports.persist = function (subject, action, data, requestId) {
   action = action.toUpperCase()
   var identifier = (subject + '_id')
   var url = 'https://api.metasheet.io/' + subject;
@@ -113,12 +120,11 @@ var persist = module.exports.persist = function (subject, action, data) {
   else return;
 
   if (method === 'PATCH' || method === 'DELETE') url = url + '?' + identifier + '=eq.' + data[identifier];
-
   
   return ajax(method, url, json).then(function (results) {
     // if (update === false || method=='DELETE') return;  // temporary hack until I refactor model push
     (results.data instanceof Array ? results.data : [results.data]).forEach(function (obj) {
-      issueReceipt(subject, obj)
+      issueReceipt(subject, obj, requestId)
     })
     return results.data
   }).catch(function (error) {

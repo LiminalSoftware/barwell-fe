@@ -10,15 +10,11 @@
 	margin-right: 5px;
 	background: @headerBgDark;
 	border: 1px solid @gray4;
+	border-radius: 3px;
 	&.green {
 		border: 1px solid @newgreen1;
 	}
 	overflow: visible;
-
-	&.active {
-		background: @headerFontColor;
-		color: @headerBgDark;
-	}
 
 	&.open {
 		z-index: 2;
@@ -26,6 +22,22 @@
 		border-bottom-left-radius: 0;
 		border-bottom-right-radius: 0;
 	}
+}
+
+.pop-down-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: white;
+	padding: 5px;
+	margin: -1px;
+	margin-bottom: -10px;
+	border: 1px solid @headerMenuBorderColor;
+	border-bottom: 1px solid white;
+	border-top-right-radius: 3px;
+	border-top-left-radius: 3px;
 }
 
 .split-menu {
@@ -44,6 +56,7 @@
 	width: 0;
 	height: 0;
 }
+
 
 
 
@@ -156,44 +169,49 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	transform: translateZ(12px);
 	pointer-events: auto;
 	z-index: 10;
+}
 
-	& > li {
-		display: block;
-		position: relative;
-		pointer-events: auto;
-		background: white;
-		flex: 1 1;
+.popdown-item {
+	display: block;
+	position: relative;
+	pointer-events: auto;
+	background: white;
+	flex: 1 1;
 
-		padding: 3px 6px;
-		margin: 0;
-		text-align: left;
-		height: auto;
-		cursor: pointer;
-		height: 26px;
-		line-height: 30px;
+	padding: 3px 6px;
+	margin: 0;
+	text-align: left;
+	height: auto;
+	cursor: pointer;
+	height: 26px;
+	line-height: 30px;
 
-		&.half-width-menu-item {
-			min-width: 90px;
-		}
-		&.title {
-			font-family: @headerFont;
-		}
-		&.bottom-divider {
-			min-width: 150px;
-			border-bottom: 1px solid @headerMenuBorderColor;
-			background: white;
-		}
-		&.top-divider {
-			border-top: 1px solid @headerMenuBorderColor;
-			background: white;
-		}
-		&.top-line {
-			border-top: 1px solid @headerMenuBorderColor;
-		}
-		&.hilite, &.selectable:hover {
-			background: @gray4;
-		}
+	&.half-width-menu-item {
+		min-width: 90px;
 	}
+	&.title {
+		font-family: @headerFont;
+	}
+	&.bottom-divider {
+		min-width: 150px;
+		border-bottom: 1px solid @headerMenuBorderColor;
+		background: white;
+	}
+	&.top-divider {
+		border-top: 1px solid @headerMenuBorderColor;
+		background: white;
+	}
+	&.top-line {
+		border-top: 1px solid @headerMenuBorderColor;
+	}
+	&.hilite, &.selectable:hover {
+		background: @gray4;
+	}
+}
+
+.popdown-section {
+	flex-grow: 1;
+	padding: 5px;
 }
 
 .header-section {
@@ -297,7 +315,7 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	flex-direction: row;
 	text-decoration: none;
 	min-width: 0 !important;
-	// border-top: 1px dotted @headerFontColor;
+	
 	&.singleton {
 		border: none !important;
 		position: absolute !important;
@@ -308,6 +326,11 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 		margin: 0;
 	}
 }
+
+.menu-item-stacked {
+	flex-direction: column !important;
+}
+
 .menu-selected {
 	color: @newgreen1 !important;
 	// font-family: @headerFont;
@@ -388,7 +411,18 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 
 
 .menu-divider {
-	border-top: 1px solid @headerBorderColor !important;
+	// border-top: 1px solid @headerBorderColor !important;
+	font-family: @headerFont;
+}
+
+.menu-sub-item-boxed {
+	display: flex;
+	flex-direction: row;
+	border: 1px solid @headerMenuBorderColor;
+	margin: 0 5px;
+	margin-left: 15px;
+	border-radius: 3px;
+	background: white;
 }
 
 .menu-section:first-child {

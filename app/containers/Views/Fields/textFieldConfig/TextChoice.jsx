@@ -6,8 +6,11 @@ import AttributeStore from "../../../../stores/AttributeStore"
 
 import configCommitMixin from '../configCommitMixin'
 import blurOnClickMixin from '../../../../blurOnClickMixin'
+import popdownClickmodMixin from '../popdownClickmodMixin';
 
-import PopDownMenu from '../../../../components/PopDownMenu'
+import PopDownMenu from '../../../../components/PopDownMenu';
+
+import util from '../../../../util/util'
 
 var TextChoice = React.createClass({
 
@@ -15,7 +18,8 @@ var TextChoice = React.createClass({
 
   mixins: [
     blurOnClickMixin, 
-    configCommitMixin
+    configCommitMixin,
+    popdownClickmodMixin
   ],
 
   getInitialState: function () {
@@ -43,68 +47,103 @@ var TextChoice = React.createClass({
     this.setState({open: false})
   },
 
-  render: function () {
+  renderFontStyleMenu: function () {
+    var _this = this
+    var view = this.props.view
+
+    return <div className = "popdown-section" key="fontstyle">
+      <li className = "popdown-item bottom-divider title " >
+        Font Style
+      </li>
+
+      <li className = {"popdown-item selectable " + (_this.state.bold ? 'menu-selected' : '')}
+      onClick = {_this.chooseBoldStyle}>
+        <span className = "icon icon-bold"/>
+        Bold text
+      </li>
+
+      <li className = {"popdown-item selectable" + (!_this.state.bold ? ' menu-selected' : '')}
+      onClick = {_this.chooseNoStyle.bind(_this, null)}>
+        <span className = "icon icon-text-format"/>
+        No font style
+      </li>
+    </div>
+  },
+
+  renderConditionMenu: function () {
     var _this = this
     var view = this.props.view
     var boolAttrs = AttributeStore.query({type: 'BOOLEAN', model_id: view.model_id})
 
-    return <span className={"pop-down clickable icon "
-          + (this.state.bold ? " icon-bold " : " icon-text-format ")
-          + (this.state.open ? " open " : (this.state.italic || this.state.bold ? " active" : ""))}
-        onClick = {this.handleOpen}>
+    return <div className = "popdown-section" key="condition">
+      {
+        boolAttrs.length > 0 ?
+          <li className = "popdown-item bottom-divider title " >
+            Conditional
+          </li>
+          :
+          null
+        }
+
+        {
+        boolAttrs.map(function (attr) {
+          return <li key = {attr.attribute_id} className = {"popdown-item  selectable "
+            + (_this.state.textConditionAttr === attr.attribute_id ? ' menu-selected' : '')}
+            onClick = {_this.choosetextConditionAttr.bind(_this, attr.attribute_id)}>
+            <span className = "icon icon-check-square"/>
+            {attr.attribute}
+          </li>
+        })
+        }
+
+        {
+        boolAttrs.length > 0 ?
+          <li className = {"popdown-item  selectable " + 
+            (!_this.state.textConditionAttr ? ' menu-selected' : '')}
+            onClick = {_this.choosetextConditionAttr.bind(_this, null)}>
+            
+            <span className = "icon icon-square"/>
+            No Condition
+          </li>
+          :
+          null
+        }
+    </div>
+  },
+
+  renderMenu: function () {
+    return [
+      this.renderFontStyleMenu(),
+      this.renderConditionMenu()
+    ]
+  },
+
+  render: function () {
+    var iconClass = " icon " + (this.state.bold ? " icon-bold " : " icon-text-format ");
+    if (!!this.props.menuInline) return <div className = "menu-sub-item-boxed"  onClick = {util.clickTrap}>
+      {this.renderMenu()}
+    </div>;
+    else return <span className={"pop-down clickable " + iconClass}
+        onClick = {this.handleClick}>
         {
           this.state.open ? <PopDownMenu>
-          {
-          boolAttrs.length > 0 ?
-            <li className = "bottom-divider title " >
-              Condition
-            </li>
-            :
-            null
-          }
-
-          {
-          boolAttrs.map(function (attr) {
-            return <li key = {attr.attribute_id} className = {"selectable "
-              + (_this.state.textConditionAttr === attr.attribute_id ? ' menu-selected' : '')}
-              onClick = {_this.choosetextConditionAttr.bind(_this, attr.attribute_id)}>
-              <span className = "icon icon-check-square"/>
-              {attr.attribute}
-            </li>
-          })
-          }
-
-          {
-          boolAttrs.length > 0 ?
-            <li className = {"bottom-divider selectable " + 
-              (!_this.state.textConditionAttr ? ' menu-selected' : '')}
-              onClick = {_this.choosetextConditionAttr.bind(_this, null)}>
-              
-              <span className = "icon icon-square"/>
-              No Condition
-            </li>
-            :
-            null
-          }
-
-
-          <li className = "bottom-divider title " >
-            Font style
-          </li>
-
-          <li className = {"selectable " + (_this.state.bold ? 'menu-selected' : '')}
-          onClick = {_this.chooseBoldStyle}>
-            <span className = "icon icon-bold"/>
-            Bold text
-          </li>
-
-          <li className = {"selectable" + (!_this.state.bold ? ' menu-selected' : '')}
-          onClick = {_this.chooseNoStyle.bind(_this, null)}>
-            <span className = "icon icon-text-format"/>
-            No font style
-          </li>
-
+          {this.renderMenu()}
         </PopDownMenu> : null
+        }
+        {
+          this.state.showPointer ? 
+            <div className="standalone-pointer-outer"/>
+            : null
+        }
+        {
+          this.state.showPointer ? 
+            <div className = "standalone-pointer-inner"/>
+            : null
+        }
+        {
+          this.state.context ? 
+            <span className = {"pop-down-overlay " + iconClass}/> 
+            : null
         }
     </span>;
   }

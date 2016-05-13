@@ -29,7 +29,7 @@ var TabularViewInlineConfig = React.createClass({
 	_onChange: function () {
 		
 	},
-
+	
 	getInitialState: function () {
 		var view = this.props.view
 		return view.data
@@ -45,10 +45,11 @@ var TabularViewInlineConfig = React.createClass({
 		this.refs.sortMenu.handleBlur()
 	},
 
-	getColumnAt: function (pos) {
+	getColumnAt: function (viewconifg) {
 		var view = this.props.view;
 		var data = view.data;
-		var left = (pos || {}).left || 0
+		var pos = (viewconifg instanceof Object) ? viewconifg.pointer : {};
+		var left = pos.left || 0;
 		return data.visibleCols[left];
 	},
 
