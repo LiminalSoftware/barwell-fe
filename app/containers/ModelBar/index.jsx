@@ -79,19 +79,23 @@ var ModelList = React.createClass ({
 	render: function () {
 		var _this = this
 
-		return <ul className="model-bar-list"> {
-			ModelStore.query(null, ['model']).map(function (model, idx) {
-				var modelId = "" + (model.model_id || model.cid);
-				return <ModelLink
-					index = {idx}
-					key = {'model-link-' + modelId}
-					model = {model}
-					active = {_this.props.curModelId === modelId}
-					{..._this.movableProps} />;
-			})
-		}
-		<li className="clickable add-new"><a onClick = {this.handleAddModel}><span className = "icon icon-plus" style={{fontSize: '14px'}}/></a></li>
-		</ul>
+		return <div className="model-bar-container"> 
+			<span className="model-bar-top"/>
+			<ul className = "model-bar-list">
+			{
+				ModelStore.query(null, ['model']).map(function (model, idx) {
+					var modelId = "" + (model.model_id || model.cid);
+					return <ModelLink
+						index = {idx}
+						key = {'model-link-' + modelId}
+						model = {model}
+						active = {_this.props.curModelId === modelId}
+						{..._this.movableProps} />;
+				})
+			}
+			<li className="clickable add-new-model"><a onClick = {this.handleAddModel}><span className = "icon icon-plus" style={{fontSize: '14px'}}/></a></li>
+			</ul>
+		</div>
 	}
 })
 

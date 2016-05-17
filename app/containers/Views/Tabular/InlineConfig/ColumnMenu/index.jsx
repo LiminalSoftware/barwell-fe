@@ -62,8 +62,9 @@ var ColumnMenu = React.createClass({
 	// HANDLERS ===============================================================
 
 	handleEdit: function () {
-		if (this.refs.list.revertChanges) this.refs.list.revertChanges()
-		this.setState({editing: true, dirty: false})
+		if (this.refs.list.revertChanges) this.refs.list.revertChanges();
+		this.refs.list._blurSiblings();
+		this.setState({editing: true, dirty: false, configPart: null});
 	},
 
 	handleCancelChanges: function () {

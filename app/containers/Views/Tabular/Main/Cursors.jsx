@@ -149,9 +149,9 @@ var Cursors = React.createClass ({
           bottom: 0,
           left: geo.leftGutter + 'px',
           width: (fixedWidth + floatWidth + geo.labelWidth + RIGHT_FRINGE) + 'px',
-          
           overflow: 'hidden',
-          transform: 'translateZ(3px)'
+          transform: 'translateZ(10px)',
+          zIndex: 10
         }}>
         <div className = "wrapper force-layer"
           ref = "overlayInner"

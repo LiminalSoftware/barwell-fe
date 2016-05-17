@@ -57,15 +57,15 @@ var TabularContextMenu = React.createClass ({
 
 	render: function () {
 		return <PopDownMenu {...this.props} isgreen = {true}>
-			<li onClick={this.clickAddNewRow} className = "selectable">
+			<li onClick={this.clickAddNewRow} className = "popdown-item selectable">
 				Insert new record
 				<span className="key-shortcut">ctrl+shift+plus</span>
 			</li>
-			<li onClick={this.clickCopySelection} className = "selectable">
+			<li onClick={this.clickCopySelection} className = "popdown-item selectable">
 				Copy selection  
 				<span className="key-shortcut">ctrl+c</span>
 			</li>
-			<li onClick={this.clickDeleteRow} className = "selectable">
+			<li onClick={this.clickDeleteRow} className = "popdown-item selectable">
 				Delete record
 				<span className="key-shortcut">ctrl+shift+minus</span>
 			</li>

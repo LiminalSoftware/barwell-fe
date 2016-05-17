@@ -62,25 +62,10 @@ var AlignChoice = React.createClass({
       </div>
   },
 
-  render: function () {
-    if (!!this.props.menuInline) return <div className = "menu-sub-item-boxed" onClick = {util.clickTrap}>
-      {this.renderMenu()}
-    </div>;
-    else return <span
-        className={"pop-down clickable icon icon-text-align-" + this.props.config.align}
-        onClick = {this.handleClick}>
-        {
-        this.state.open ? <PopDownMenu {...this.props}>
-          {this.renderMenu()}
-        </PopDownMenu> : null
-        }
-        {
-          this.state.context ? 
-            <span className = {"pop-down-overlay icon icon-text-align-" + this.props.config.align}/> 
-            : null
-        }
-    </span>;
-  }
+  getIcon: function () {
+    return " icon icon-text-align-" + this.props.config.align + " ";
+  },
+
 })
 
 export default AlignChoice

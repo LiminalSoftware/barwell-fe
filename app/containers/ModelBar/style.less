@@ -1,27 +1,25 @@
 @import "../../global.less";
 
+add-new-model {
+	width: 25px;
+	min-width: 25px;
+	a {
+		min-width: 25px;
+		font-weight: 800;
+		text-align: center;
+		border: none !important;
+	}
+}
+
 ul.model-bar-list {
 
 	.flex-display;
 	.flex(1);
 	list-style: none;
-	padding: 5px;
+	padding-bottom: 10px;
 	margin: 0;
-	
-	height: 30px;
+	height: 50px;
 	z-index: 100;
-
-	& > li.add-new {
-		width: 25px;
-		min-width: 25px;
-		a {
-			min-width: 25px;
-			
-			font-weight: 800;
-			text-align: center;
-			
-		}
-	}
 
 	& > li {
 		.flex-direction(row);
@@ -31,26 +29,25 @@ ul.model-bar-list {
 
 	& > li > a {
 		margin: 0;
-		text-align: center;
-		padding: 3px 15px;
+		height: 45px;
+		line-height: 30px;
+		padding: 5px 10px;
+		
 		display: block;
 		text-decoration: none;
-		position: relative;
-		color: @headerFontColor;
-		background: @headerBgColor;
 
 		font-size: 16px;
-		font-weight: 400;
 		font-family: @bodyFont;
+		text-align: center;
 
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		.ellipsis;
 
 		max-width: 150px;
 		min-width: 50px;
+
+		color: @headerFontColor;
 		background: @headerMenuBgColor;
-		border-top: 1px solid @headerMenuBorderColor;
+		border-bottom: 1px solid @headerMenuBorderColor;
 		border-left: 1px solid @headerMenuBorderColor;
 
 		&:hover {
@@ -63,28 +60,17 @@ ul.model-bar-list {
 		border-left: none;
 	}
 
-	& > li:last-child > a {
-		border-right: 1px solid @headerMenuBorderColor;
-	}
-
 
 
 	& > li.active {
 		z-index: 2;
 		a {
-			
-			border-left: 1px solid @headerMenuBorderColor;
-			border-right: 1px solid @headerMenuBorderColor;
-			margin-right: -1px;
-			
+			margin-top: -1px;
+			border-top: 1px solid white;
+			background: white;
 		}
 		
 	}
-
-	& > li:not(.active) > a {
-		
-	}
-
 
 }
 
@@ -100,14 +86,36 @@ ul.model-bar-list {
 	font-size: @headerFontSize !important;
 }
 
-.model-bar {
-	position: relative;
-	order: -2;
+.model-bar-container {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 50px;
 	padding: 0;
 	overflow: visible;
 	// background: @topBgColor;
 	background:url(
 		data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVQIW2P8////f0YQYIACAD4dBAOyWWJYAAAAAElFTkSuQmCC
     ) repeat;
+}
 
+.model-bar-list {
+	position: absolute;
+	top: 10px;
+	height: 40px;
+	left: 0;
+	right: 0;
+	padding-left: 5px;
+}
+
+.model-bar-top {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 8px;
+	border-top: 1px solid @headerMenuBorderColor;
+	border-bottom: 1px solid @headerMenuBorderColor;
+	background: white;
 }

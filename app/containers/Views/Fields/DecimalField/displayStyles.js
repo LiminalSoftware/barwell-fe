@@ -2,13 +2,13 @@ var displayStyles = {
   'DECIMAL': {
     displayStyle: 'DECIMAL',
   	description: 'Decimal', 
-  	icon: 'icon-calculator2', 
+  	icon: 'icon-dial', 
   	formatString: '0,0.00'
   },
   'PERCENTAGE': {
     displayStyle: 'PERCENTAGE',
   	description: 'Percentage', 
-  	icon: 'icon-percent',
+  	icon: 'icon-percent-square',
   	formatString: '0%'
   },
   'CURRENCY': {

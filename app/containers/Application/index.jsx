@@ -35,10 +35,10 @@ var Application = React.createClass({
 		</div> 
 		:
 		<div className="application " id="application">
-			<ModelBar {...this.props} workspaceId = {this.props.params.workspaceId}/>
+			<textarea style = {dummyStyle} id = "copy-paste-dummy" value=""></textarea>
 			{this.props.children}
 			<Notifier {...this.props}/>
-			<textarea style = {dummyStyle} id = "copy-paste-dummy" value=""></textarea>
+			<ModelBar {...this.props} workspaceId = {this.props.params.workspaceId}/>
 		</div>;
 	},
 

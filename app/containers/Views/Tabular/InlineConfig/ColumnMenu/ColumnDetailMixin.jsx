@@ -2,18 +2,20 @@ import React from "react";
 import { Link } from "react-router";
 import styles from "./style.less";
 import _ from 'underscore';
-import fieldTypes from "../../../fields"
-import $ from 'jquery'
+import fieldTypes from "../../../fields";
+import $ from 'jquery';
 
-import constants from '../../../../../constants/MetasheetConstants'
+import constants from '../../../../../constants/MetasheetConstants';
 import AttributeStore from "../../../../../stores/AttributeStore";
 
-import TypePicker from './TypePicker'
+import TypePicker from './TypePicker';
 
-import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
+import modelActionCreators from "../../../../../actions/modelActionCreators.jsx";
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import sortable from 'react-sortable-mixin';
-import util from '../../../../../util/util'
+import util from '../../../../../util/util';
+
+import AttributeConfig from './AttributeConfig';
 
 var ColumnDetailMixin = {
 
@@ -98,7 +100,8 @@ var ColumnDetailMixin = {
 		var editing = this.props.editing
 
 	    return <div className={"menu-item" +
-				(this.singleton ? " singleton " : " menu-item-stacked ")}>
+				(this.singleton ? " singleton " : " menu-item-stacked ")}
+				style = {{minWidth: this.minWidth}}>
 				<div className = "menu-sub-item">
 		      	<span className = "ellipsis">
 					{
@@ -123,6 +126,8 @@ var ColumnDetailMixin = {
 					<span>
 						<TypePicker {...this.props} 
 							ref = "typePicker"
+							_blurSiblings = {_this.props._blurSiblings}
+							_handleConfigClick = {_this.handleConfigClick.bind(_this, TypePicker)}
 							_chooseType = {_this.chooseType}
 							type = {this.state.type}/>
 					</span>
@@ -136,8 +141,6 @@ var ColumnDetailMixin = {
 								_blurSiblings: _this.props._blurSiblings || _this.blurSubMenus,
 								key: part.prototype.partName,
 								ref: part.prototype.partName,
-								spaceTop: _this.props.spaceTop,
-								spaceBottom: _this.props.spaceBottom,
 								_handleConfigClick: _this.handleConfigClick ? 
 									_this.handleConfigClick.bind(_this, part)
 									: null,
@@ -151,22 +154,20 @@ var ColumnDetailMixin = {
 					</span>
 				}
 				{
-					
-				}
-				{
-				(editing && this.state.type !== 'PRIMARY_KEY') ?       
-				<span  className = "icon icon-cross-circle" onClick = {this.handleDelete}/>
-				: null
-				}
-				{
 				editing ?       
-				<span  className = "icon icon-cog"></span>
+				<span  className = "pop-down clickable" onClick = {_this.handleConfigClick.bind(_this, AttributeConfig)}>
+					<span className = "icon icon-cog" style={{width: '30px', maxWidth: '30px', textAlign: 'center', marginRight: 0}}/>
+					{this.state.configPart === AttributeConfig ?
+						<span className = "pop-down-overlay icon-cog"/> 
+						: null
+					}
+				</span>
 				: null
 				}
 				</div>
 				{
 					this.state.configPart ? 
-					React.createElement(this.state.configPart, _.extend({menuInline: true}, _this.props))
+					React.createElement(this.state.configPart, _.extend({menuInline: true}, _this.props, {type: _this.state.type}))
 					: 
 					null
 				}

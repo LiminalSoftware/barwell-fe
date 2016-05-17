@@ -24,6 +24,8 @@ var ColumnDetailListable = React.createClass({
 	dragRef: "grabber",
 
 	singleton: false,
+
+	minWidth: '500px',
 	
 	handleConfigClick: function (part, e) {
 		this.setState({configPart: part})

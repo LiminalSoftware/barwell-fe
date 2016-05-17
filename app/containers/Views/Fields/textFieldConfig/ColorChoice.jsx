@@ -173,26 +173,10 @@ var ColorChoice = React.createClass({
     ]
   },
 
-  render: function () {
-    if (!!this.props.menuInline) return <div className = "menu-sub-item-boxed"  onClick = {util.clickTrap}>
-      {this.renderMenu()}
-    </div>;
-    else return <span
-        className={"pop-down clickable icon icon-paint-roller "
-          + (this.state.open ? " open" : (this.state.colorAttr || this.state.color ? " active" : ""))}
-        onClick = {this.handleClick}>
-        {
-        this.state.open ? <PopDownMenu {...this.props}>
-          {this.renderMenu()}
-        </PopDownMenu> : null
-        }
-        {
-          this.state.context ? 
-            <span className = "pop-down-overlay icon icon-paint-roller"/> 
-            : null
-        }
-    </span>;
+  getIcon: function () {
+    return " icon icon-paint-roller " + (this.state.active && !this.state.context ? " active " : "");
   }
+  
 })
 
 export default ColorChoice

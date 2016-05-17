@@ -118,35 +118,10 @@ var TextChoice = React.createClass({
     ]
   },
 
-  render: function () {
-    var iconClass = " icon " + (this.state.bold ? " icon-bold " : " icon-text-format ");
-    if (!!this.props.menuInline) return <div className = "menu-sub-item-boxed"  onClick = {util.clickTrap}>
-      {this.renderMenu()}
-    </div>;
-    else return <span className={"pop-down clickable " + iconClass}
-        onClick = {this.handleClick}>
-        {
-          this.state.open ? <PopDownMenu>
-          {this.renderMenu()}
-        </PopDownMenu> : null
-        }
-        {
-          this.state.showPointer ? 
-            <div className="standalone-pointer-outer"/>
-            : null
-        }
-        {
-          this.state.showPointer ? 
-            <div className = "standalone-pointer-inner"/>
-            : null
-        }
-        {
-          this.state.context ? 
-            <span className = {"pop-down-overlay " + iconClass}/> 
-            : null
-        }
-    </span>;
-  }
+  getIcon: function () {
+    return " icon " + (this.state.bold ? " icon-bold " : " icon-text-format ");
+  },
+
 })
 
 export default TextChoice

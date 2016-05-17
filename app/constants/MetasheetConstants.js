@@ -36,9 +36,8 @@ module.exports = {
 
   colTypeCategories: [
     'Basic',
-    'Numeric',
     'Dates and Times',
-    'Geographic',
+    // 'Geographic',
     'Relationships'
   ],
 
@@ -46,7 +45,7 @@ module.exports = {
     'INTEGER': {
       id: 'INTEGER',
       description: 'Integer',
-      category: 'Numeric',
+      category: 'Basic',
       icon: 'calculator2'
     },
 
@@ -67,8 +66,8 @@ module.exports = {
     'DECIMAL': {
       id: 'DECIMAL',
       description: 'Decimal',
-      category: 'Numeric',
-      icon: 'calculator2'
+      category: 'Basic',
+      icon: 'dial'
     },
 
     'DATE_TIME': {
