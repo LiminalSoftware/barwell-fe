@@ -39,6 +39,8 @@ var dateField = {
 
 	sortIcon: 'sort-time-',
 
+	icon: 'calendar-31',
+
 	stringify: function (value) {
 		var val = moment(value)
 		if (val.isValid()) return val.toISOString()

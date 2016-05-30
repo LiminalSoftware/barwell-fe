@@ -51,7 +51,7 @@ var TableMixin = {
 	},
 
 	toggleExpand: function () {
-		this.setState({expanded: !this.state.expanded})
+		// this.setState({expanded: !this.state.expanded})
 	},
 
 	showContext: function (e) {
@@ -179,11 +179,36 @@ var TableMixin = {
 		}
 	},
 
+	handleDragOver: function (e) {
+		var model = this.props.model
+		var pos = this.getRCCoords(e);
+		var config = this.getColumnAt(pos);
+		var relationId = config.relation_id;
+		var relatedModelId = config.related_model_id
+		
+		if (e.dataTransfer.types.includes('m' + relatedModelId)) {
+			e.preventDefault();
+		}		
+	},
 
-	
+	handleDrop: function (e)  {
+		var model = this.props.model
+		var pos = this.getRCCoords(e);
+		var config = this.getColumnAt(pos);
+		var relatedModelId = config.related_model_id
+		var relationId = config.relation_id
+		var thisObj = this.getValueAt(pos.top)
+		var relObj = JSON.parse(
+			e.dataTransfer.getData('m' + relatedModelId)
+		)
+		modelActionCreators.moveHasMany(relationId, thisObj, relObj);
+		
+		util.clickTrap(e);
+		// e.dataTransfer.dropEffect = 'move'
+	},
 
 	onMouseDown: function (e) {
-		// if right click then dont bother
+		// if right click then do not bother
 		if (("which" in e && e.which === 3) || 
     		("button" in e && e.button === 2)) {
         	e.preventDefault()

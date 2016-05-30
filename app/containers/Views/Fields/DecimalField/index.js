@@ -32,6 +32,8 @@ var decimalField = {
 
 	sortIcon: 'sort-numeric-',
 
+	icon: 'dial',
+
 	defaultAlign: 'right',
 
 	defaultWidth: 100,

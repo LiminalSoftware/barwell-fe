@@ -46,7 +46,7 @@ var ColorPicker = React.createClass({
 		
 		var current = obj[config.column_id]
 
-		return <PopDownMenu {...this.props}>
+		return <PopDownMenu {...this.props} green = {true}>
 			{makeColorPickerRows(current, this.clickChoice)}
 		</PopDownMenu>
 	}

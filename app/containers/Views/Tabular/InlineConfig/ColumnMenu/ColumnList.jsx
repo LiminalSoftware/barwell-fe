@@ -7,6 +7,7 @@ import _ from 'underscore';
 import fieldTypes from "../../../fields"
 
 import AttributeStore from "../../../../../stores/AttributeStore";
+import RelationStore from "../../../../../stores/RelationStore";
 import ColumnDetail from "./ColumnDetailListable"
 import constant from '../../../../../constants/MetasheetConstants'
 import util from "../../../../../util/util"
@@ -88,11 +89,14 @@ var ColumnList = React.createClass({
 			if (idx > 0) items.push(_.extend({isSection: true}, section))
 			cols.forEach(function (col) {
 				var attribute = AttributeStore.get(col.attribute_id);
-				if (!attribute || attribute._destroy) 
-					return;
-				if (attribute.attribute_id) 
-					col.attribute_id = attribute.attribute_id
-				items.push(col);
+				var relation = RelationStore.get(col.relation_id);
+
+				if (attribute && !attribute._destroy) 
+					// col.attribute_id = attribute.attribute_id;
+					items.push(col);
+				if (relation) 
+					// col.relation_id = relation.relation_id;
+					items.push(col);
 			});
 			
 			// if (attrs.length === 0) items.push(_.extend({isEmpty: true}, section));
@@ -101,7 +105,7 @@ var ColumnList = React.createClass({
 		return {items: items};
 	},
 
-	_blurSiblings: function () {
+	blurSiblings: function () {
 		var _this = this;
 		this.state.items.forEach(function (item) {
 			if (item.column_id) _this.refs[item.column_id].blurSubMenus()
@@ -148,7 +152,10 @@ var ColumnList = React.createClass({
 				className="menu-item menu-sub-item menu-divider" 
 				key = {'section-' + item.section}
 				ref = {'section' + item.section}
-				{...itemProps}>{item.label}</div>
+				{...itemProps}>
+				<span style = {{flexGrow: 0}}>{item.label}</span>
+				<span className = "menu-section-rule"/>
+				</div>
 			else if (item.isEmpty) return <div
 				className="menu-item menu-sub-item menu-divider empty-item"
 				key = {'section-' + item.section + '-empty'}
@@ -163,7 +170,7 @@ var ColumnList = React.createClass({
 				viewConfigParts = {section ? section.configParts : null}
 				editing = {_this.props.editing}
 				view= {view}
-				_blurSiblings = {_this._blurSiblings}
+				_blurSiblings = {_this.blurSiblings}
 				{...itemProps}/>
 		});
 
@@ -173,7 +180,7 @@ var ColumnList = React.createClass({
     			minWidth: '500px', 
     			maxHeight: (this.state.windowHeight - 250) + 'px',
     			overflowY: 'scroll'
-    		}} onClick = {this._blurSiblings}>
+    		}} onClick = {this.blurSiblings}>
 			{items}
 		</div>
 	}

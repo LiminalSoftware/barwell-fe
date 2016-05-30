@@ -32,7 +32,8 @@ var SearchDropdown = React.createClass({
 	},
 
 	getNumberOptions: function () {
-		return Math.min(this.state.count, SEARCH_RECORDS_VISIBLE) + 2 
+		return Math.min(this.state.count, SEARCH_RECORDS_VISIBLE) + 
+			(this.state.count > SEARCH_RECORDS_VISIBLE ? 2 : 1) + (this.state.searching ? 1 : 0);
 	},
 
 	getInitialState: function () {
@@ -40,8 +41,9 @@ var SearchDropdown = React.createClass({
 			searchTerm: '',
 			fetchedTerm: '',
 			searchRecords: [],
+			filteredRecords: [],
 			selection: -1,
-			count: null,
+			count: 0,
 			searching: false,
 			expanded: false,
 			offset: 0,
@@ -66,8 +68,11 @@ var SearchDropdown = React.createClass({
 		// if (term.length < 3 || this.state.searching) return;
 
 		// also bail out if its a subset of the old term (we can filter client-side)
-		if (fetchedTerm && term.indexOf(fetchedTerm) >= 0 
-			&& this.state.count < this.state.limit) return;
+		if (fetchedTerm && term.indexOf(fetchedTerm) >= 0
+			&& this.state.count < this.state.limit) {
+			this.filterResults();
+			return;
+		}
 
 		// set the state to indicate searching
 		this.setState({searching: true, fetchedTerm: term});
@@ -81,11 +86,21 @@ var SearchDropdown = React.createClass({
 			// update state with the results
 			results.searching = false;
 			_this.setState(results);
+			_this.filterResults(results.searchRecords);
 		});
 	},
 
+	filterResults: function (_searchRecords) {
+		var config = this.props.config;
+		var searchRecords = _searchRecords || this.state.searchRecords;
+		var filteredRecords = searchRecords.filter(
+			rec => (rec[config.label] || '').toLowerCase().indexOf(this.state.searchTerm) >= 0
+		).slice(this.state.page * SEARCH_RECORDS_VISIBLE, SEARCH_RECORDS_VISIBLE);
+		this.setState({filteredRecords: filteredRecords})
+	},
+
 	selectItem: function (num) {
-		this.setState({selection: num})
+		this.setState({selection: num});
 	},
 
 	chooseItem: function (num) {
@@ -107,7 +122,6 @@ var SearchDropdown = React.createClass({
 	},
 
 	commit: function (hasManyObj) {
-		console.log(hasManyObj)
 		var model = this.props.model;
 		var config = this.props.config;
 		var hasOneObj = this.props.object;
@@ -130,76 +144,74 @@ var SearchDropdown = React.createClass({
 			&& (this.props.spaceBottom > this.props.spaceTop)
 	},
 
-
-
 	render: function () {
 		var _this = this
 		var model = this.props.model;
 		var config = this.props.config;
-		var style = {
-			position: 'absolute',
-			minWidth: '160px',
-			left: '-3px !important',
-			right: '-3px !important',
-			pointerEvents: 'auto',
-			maxHeight: this.state.expanded ? (50 * (this.state.searchRecords.length + 3) + 'px') : 0
-		};
 		var shouldOpenDown = this.shouldOpenDown()
 		var relation = RelationStore.get(config.relation_id);
 		var oppModel = ModelStore.get(relation.related_model_id);
 		var searchTerm = this.state.searchTerm.toLowerCase();
-		var filteredRecords = this.state.searchRecords.filter(
-			rec => (rec[config.label] || '').toLowerCase().indexOf(searchTerm) >= 0
-		).slice(this.state.page * SEARCH_RECORDS_VISIBLE, SEARCH_RECORDS_VISIBLE);
-		var count = filteredRecords.length;
+		var filteredRecords = this.state.filteredRecords;
+		var showMoreIdx = this.getNumberOptions() - 2;
+		var addOneIdx = this.getNumberOptions() - 1;
 
-		return <PopDownMenu {...this.props}>
+		return <PopDownMenu {...this.props} green = {true} maxHeight = {(40 * (this.getNumberOptions() + 2) + 'px')}>
           	
-			<li key = "search-li" className = {this.state.count > 0 ? "bottom-divider" : ""}
+			<div key = "search-li" className = {"popdown-item " + (this.state.count > 0 ? "bottom-divider" : "")}
 				style = {{height: '30px', position: 'relative'}}>
 				<input className = "input-editor" autoFocus
 					onChange = {this.updateSearchValue}
 					value = {this.searchTerm}/>
-			</li>
-				{
-					filteredRecords.map(function (rec, idx) {
-						var pk = rec[oppModel._pk]
-						return <li key = {pk} 
-							onClick = {_this.chooseItem.bind(_this, idx)}
-							onMouseOver = {_this.selectItem.bind(_this, idx)}
-							className = {"selectable " + ((idx === _this.state.selection) ? ' hilite' : '')}>
-							<span className = "has-many-bubble">{rec[config.label]}</span>
-						</li>
-					})
-				}
+				<span className = "icon icon-magnifier" style = {{right: 0, width: '18px', top: 0, bottom: 0, zIndex: 20}}/>
+			</div>
+			{
+				filteredRecords.map(function (rec, idx) {
+					var pk = rec[oppModel._pk]
+					return <div key = {pk} 
+						onClick = {_this.chooseItem.bind(_this, idx)}
+						onMouseOver = {_this.selectItem.bind(_this, idx)}
+						className = {"popdown-item selectable " + ((idx === _this.state.selection) ? ' hilite' : '')}>
+						<span className = "has-many-bubble">{rec[config.label]}</span>
+					</div>
+				})
+			}	
+			
+			{
+				this.state.searching ? 
+				<div className = "popdown-item" key="loader-li">
+					<span className = " icon icon-sync spin" />
+					Searching...
+				</div>
+				:
+				(this.state.count > SEARCH_RECORDS_VISIBLE) ? 
+				<div
+				className={"popdown-item selectable top-divider" + (_this.state.selection === showMoreIdx ? ' hilite' : '')}
+				key="show-more"
+				onMouseOver = {_this.selectItem.bind(_this, showMoreIdx)}>
 				
-				{
-					this.state.searching ? 
-					<li key="loader-li">
-						<span className = " icon icon-sync spin" />
-						Searching...
-					</li>
-					:
-					(this.state.count > SEARCH_RECORDS_VISIBLE) ? 
-					<li key="loader-li" >Show more</li>
-					:
-					filteredRecords.length === 0 && searchTerm.length > 0 ? 
-					<li>
-						<span className = "icon icon-notification-circle"/>
-						No records found...
-					</li>
-					: null
-				}
+					Show more
+					<span className = "icon green icon-arrow-right" style = {{marginLeft: '5px'}}/>
+				</div>
+				:
+				filteredRecords.length === 0 && searchTerm.length > 0 ? 
+				<div className = "popdown-item">
+					<span className = "icon icon-notification-circle"/>
+					No records found...
+				</div>
+				: null
+			}
 
-				{
-					this.state.searchTerm.length > 0 ?
-					<li key="create-li"
-						onClick = {this.createNewItem}
-						className={"selectable top-divider"}>
-						<span className="small icon green icon-plus"/>Create new {oppModel.model}
-					</li>
-					: null
-				}
+			{
+				this.state.searchTerm.length > 0 ?
+				<div key="create-li"
+					onClick = {this.createNewItem}
+					onMouseOver = {_this.selectItem.bind(_this, addOneIdx)}
+					className={"popdown-item selectable top-divider" + (_this.state.selection === addOneIdx ? ' hilite' : '')}>
+					<span className="small icon green icon-plus"/>Create new {oppModel.model}
+				</div>
+				: null
+			}
 				
 			</PopDownMenu>
 	}

@@ -125,6 +125,7 @@ var editableInputMixin = {
 		if (showIcon) {
 			editorIconStyle = {
 				position: 'absolute',
+				background: 'white',
 				top: 0, 
 				bottom: 0,
 				width: '25px',

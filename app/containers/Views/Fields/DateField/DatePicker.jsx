@@ -23,6 +23,10 @@ var DatePicker = React.createClass({
 		this.setState(this.calculateState(next))
 	},
 
+	componentDidMount: function () {
+		this._debounceChooseYear = _.debounce(this.chooseYear, 500);
+	},
+
 	calculateState: function (props) {
 		var val = this.props.value ? moment(this.props.value) : moment();
 		var config = props.config
@@ -31,6 +35,14 @@ var DatePicker = React.createClass({
 			month: val.month(),
 			date: val.format(config.formatString)
 		}
+	},
+
+	chooseMonth: function (e) {
+		this.setState({month: e.target.value})
+	},
+
+	chooseYear: function (e) {
+		this.setState({year: e.target.year})
 	},
 
 	handleIncMonth: function (e) {
@@ -96,6 +108,13 @@ var DatePicker = React.createClass({
 		}</li>;
 		var weeks = [header];
 
+		var monthChoices = [];
+
+		for (var monthNum = 0; monthNum < 12; monthNum++) {
+			var monthName = moment('1999-' + (monthNum > 8 ? (monthNum + 1) : ('0' + (monthNum + 1))) + '-01').format('MMMM')
+			monthChoices.push(<option value = {monthNum}>{monthName}</option>)
+		}
+
 		while (firstDay.isBefore(stopDay)) {
 			var week = new Array(7);
 
@@ -107,26 +126,40 @@ var DatePicker = React.createClass({
 					className = {"menu-choice--date "}
 					onClick = {this.clickChoice.bind(this, firstDay.clone())}
 					key = {firstDay.format('MMDDYYYY')}>
-						<span className = {classes}>
+						<span className = {classes} >
 							{firstDay.format('D')}
 						</span>
 				</span>;
 
 				firstDay.add(1, 'd');
 			}
-			weeks.push(<li className = "menu-row" key = {firstDay.format('MMDDYYYY')}>{week}</li>);
+			weeks.push(<div className = "popdown-item menu-row" key = {firstDay.format('MMDDYYYY')}>{week}</div>);
 		}
 		
-		return <PopDownMenu {...this.props} onMouseDown = {util.clickTrap}>
-			<li className = "bottom-divider menu-row">
-				<span className = "menu-choice icon icon-chevron-left"
-					style = {{textAlign: 'left'}}
+		return <PopDownMenu {...this.props} green = {true} onMouseDown = {util.clickTrap} onDoubleClick = {util.clickTrap}>
+			<div className = "popdown-item bottom-divider menu-row gray">
+				<span className = "menu-choice">
+					<span className = "icon green icon-arrow-left"
+					style = {{float: 'left'}}
 					onClick = {this.handleDecMonth} />
-				<span className = "menu-choice menu-choice--double">{moment([year, month]).format('MMMM YYYY')}</span>
-				<span className = "menu-choice icon icon-chevron-right"
-					style = {{textAlign: 'right'}}
+				</span>
+				<span className = "menu-choice menu-choice--double">
+					<select className = "menu-input selector" value = {this.state.month} onChange = {this.chooseMonth}>
+						{monthChoices}
+					</select>
+				</span>
+				<span className = "menu-choice" style = {{position: 'relative'}}>
+					<input className = "input-editor" 
+						style = {{width: '50px'}} 
+						value = {_this.state.year} 
+						onChange = {_this._debounceChooseYear}/>
+				</span>
+				<span className = "menu-choice" style={{textAlign: 'right', float: 'right'}}>
+					<span className = "icon green icon-arrow-right"
+					style = {{float: 'right', textAlign: 'right'}}
 					onClick = {this.handleIncMonth} />
-			</li>
+				</span>
+			</div>
 			{weeks}
 		</PopDownMenu>
 	}

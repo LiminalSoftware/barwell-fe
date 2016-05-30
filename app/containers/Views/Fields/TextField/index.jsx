@@ -24,6 +24,7 @@ var textField = {
 	configParts: [AlignChoice, ColorChoice, TextChoice],
 	sortable: true,
 	sortIcon: 'sort-alpha-',
+	icon: 'text-align-justify',
 	canBeLabel: true,
 	defaultWidth: 150,
 	element: React.createClass({

@@ -178,7 +178,7 @@ var createTabularStore = function (view) {
               TabularStore.emitChange()
             }
 
-            // this is crazy, but for now, loop through all the relations and 
+            // this is crazy, but for now, loop through all the relations and update related items
             relations.forEach(function (rel) {
                 var relLabel = 'm' + rel.related_model_id
                 var relUpperLabel = relLabel.toUpperCase()
@@ -186,7 +186,7 @@ var createTabularStore = function (view) {
                 if (type === relUpperLabel + '_UPDATE') {
                     _records.forEach(function (rec) {
                         var pp = payload
-                        // filter the bubble out of its previous locaiton
+                        // filter the bubble out of its previous location
                         rec['r' + rel.relation_id] = _.reject(rec['r' + rel.relation_id], _.matcher(payload.selector))
                         // add it to its new home
                         if (_.isEqual(util.choose(rec, payload.hasManyKeyAttrs), util.choose(payload.update, payload.hasOneKeyAttrs))) {

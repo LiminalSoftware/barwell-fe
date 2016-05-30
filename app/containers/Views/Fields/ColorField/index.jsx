@@ -86,6 +86,7 @@ var ColorElement = React.createClass({
 });
 
 var colorField = {
+	icon: 'eye-dropper',
 	element: ColorElement	
 }
 

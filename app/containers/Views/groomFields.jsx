@@ -43,6 +43,7 @@ var groomFields = function (view) {
 		var attrs = AttributeStore.query({model_id: relation.related_model_id});
 		var relatedModel = ModelStore.get(relation.related_model_id)
 		var pk =  (relatedModel || {}).pk;
+		if (!col.align) col.align = 'left'
 		col.column_id = 'r' + relation.relation_id
 		col.related_model_id = relation.related_model_id
 		col.relation_id = relation.relation_id

@@ -14,9 +14,6 @@
 	background: @headerBgDark;
 	border: 1px solid @gray4;
 	border-radius: 3px;
-	&.green {
-		border: 1px solid @newgreen1;
-	}
 	overflow: visible;
 
 	&.open {
@@ -52,7 +49,7 @@
 	margin: -2px;
 	
 	margin-bottom: -10px;
-	border: 1px solid @headerMenuBorderColor;
+	border: 1px solid white;
 	border-bottom: 1px solid white;
 	border-top-right-radius: 3px;
 	border-top-left-radius: 3px;
@@ -158,7 +155,6 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 
 .pop-down-menu {
 	top: 100%;
-
 	&.invert {
 		flex-direction: column-reverse;
 	} &:not(.invert) {
@@ -170,10 +166,6 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 .key-shortcut {
 	color: @gray3;
 	float: right;
-}
-
-.pop-menu--green { 
-	border: 1px solid @newgreen1;
 }
 
 .pop-down-menu, .pop-up-menu {
@@ -193,9 +185,13 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	border-radius: 3px;
 	list-style: none;
 	border: 1px solid @headerMenuBorderColor;
-	.transition(max-height cubic-bezier(.1,.85,.5,1) 250ms);
+	.transition(all cubic-bezier(.1,.85,.5,1) 250ms);
 	background: white;
 	box-shadow: 0 0 0 2px white;
+
+	&.green {
+		border: 1px solid @newgreen1;
+	}
 	
 	font-family: @bodyFont;
 	color: @headerFontColor;
@@ -203,7 +199,7 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 
 	transform: translateZ(12px);
 	pointer-events: auto;
-	z-index: 10;
+	z-index: 1000;
 }
 
 .popdown-item {
@@ -227,14 +223,17 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	&.title {
 		font-family: @headerFont;
 	}
+	&.gray {
+		background: @gray4;
+	}
 	&.bottom-divider {
 		min-width: 150px;
 		border-bottom: 1px solid @headerMenuBorderColor;
-		background: white;
+		
 	}
 	&.top-divider {
 		border-top: 1px solid @headerMenuBorderColor;
-		background: white;
+		
 	}
 	&.top-line {
 		border-top: 1px solid @headerMenuBorderColor;
@@ -331,12 +330,12 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	right: 0;
 	min-height: 100;
 	z-index: 300;
-	border-radius: 0;
+	border-radius: 3px;
 	border: 1px solid @headerMenuBorderColor;
 	background: @headerMenuBgColor;
 	color: @headerFontColor;
 
-	box-shadow: 0 0 0 3px @green-trans;
+	box-shadow: 0 0 0 2px white;
 }
 
 .dropdown-menu-light {
@@ -388,8 +387,16 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	border-radius: @headerBorderRadius;
 }
 
+.menu-section-rule {
+	margin-top: 15px !important;
+	border-top: 1px solid @headerMenuBorderColor;
+	height: 1px;
+}
+
 .menu-sub-item {
+	display: relative;
 	height: 30px;
+	min-height: 30px;
 	line-height: 30px;
 	padding: 10px;
 	margin: 0;
@@ -455,8 +462,8 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 .menu-sub-item-boxed {
 	display: flex;
 	flex-direction: row;
-	border-top: 1px solid @headerMenuBorderColor;
-	border-bottom: 1px solid @headerMenuBorderColor;
+	border-top: 1px solid white;
+	border-bottom: 1px solid white;
 	margin: 0;
 	
 	background: white;

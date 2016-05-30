@@ -139,7 +139,7 @@
 	border: 1px solid white;
 }
 
-.editor-icon {
+.editor-icon, .sort-th-label-focused, .sort-th-label-blurred {
 	display: block;
 	position: absolute !important;
 	margin-right: 0 !important;
@@ -147,8 +147,27 @@
 	top: 0;
 	bottom: 0;
 	cursor: pointer;
-	color: @newgreen1 !important;
+	
 	z-index: 4;
+}
+.editor-icon {
+	color: @newgreen1 !important;
+}
+.sort-th-label-focused, .sort-th-label-blurred {
+	right: 5px;
+	top: 5px;
+}
+.type-th-label-focused, .type-th-label-blurred {
+	left: 5px;
+	top: 5px;
+}
+.sort-th-label-focused, .type-th-label-focused {
+	color: @purple4 !important;
+	font-size: 16px;
+}
+.sort-th-label-blurred, .type-th-label-blurred {
+	color: @gray2 !important;
+	font-size: 16px;
 }
 
 

@@ -1,7 +1,7 @@
 import React from "react";
 import _ from 'underscore';
 import fieldTypes from "../../../fields"
-
+ 
 import constants from '../../../../../constants/MetasheetConstants'
 import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 import PopDownMenu from '../../../../../components/PopDownMenu'
@@ -27,13 +27,8 @@ var TypePicker = React.createClass({
 
 	// HANDLERS ================================================================
 
-	handleChooseCategory: function (category, e) {
-		this.setState({category: category})
-	},
-
-	handleChooseType: function (type, e) {
-		this.setState({open: false});
-		this.props._chooseType(type)
+	handleChooseType: function (typeId) {
+		this.props._chooseType(typeId)
 	},
 
 	// RENDER ===================================================================
@@ -51,7 +46,7 @@ var TypePicker = React.createClass({
 				<div className = "popdown-item title bottom-divider">{category}</div>
 				{
 					types.map(function (type) {
-						return <div className = {"popdown-item selectable " + (type === config.type ? ' selected' : '')}
+						return <div className = {"popdown-item selectable " + (type === _this.props.type ? ' selected' : '')}
 						onClick = {_this.handleChooseType.bind(_this, type.id)}>
 							<span className = {"icon icon-" + type.icon}/>
 							{type.description}

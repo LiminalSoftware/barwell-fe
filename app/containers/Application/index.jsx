@@ -81,7 +81,7 @@ var Application = React.createClass({
 				copy: 'Error loading workspace details: ' + JSON.stringify(error), 
 				type: 'error',
 				icon: ' icon-warning ',
-				notification_key: 'workspaceError'
+				notification_key: 'error'
 			});
 		});
 	}

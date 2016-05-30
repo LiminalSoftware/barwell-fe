@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router";
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import styles from "./style.less";
 import _ from 'underscore';
 import fieldTypes from "../../../fields";
@@ -99,10 +100,17 @@ var ColumnDetailMixin = {
 		var fieldType = fieldTypes[config.type] || {};
 		var editing = this.props.editing
 
-	    return <div className={"menu-item" +
-				(this.singleton ? " singleton " : " menu-item-stacked ")}
-				style = {{minWidth: this.minWidth}}>
+	    return	<ReactCSSTransitionGroup
+					transitionEnterTimeout={500}
+					transitionLeaveTimeout={300} 
+					transitionName="slide-in"
+					className={"menu-item" +
+						(this.singleton ? " singleton " : " menu-item-stacked ")}
+					style = {{minWidth: this.minWidth}}
+					component = "div">
+
 				<div className = "menu-sub-item">
+
 		      	<span className = "ellipsis">
 					{
 					this.props.open ? 
@@ -118,7 +126,7 @@ var ColumnDetailMixin = {
 						value={this.state.name}
 						onBlur = {this.handleBlurName}
 						onChange = {this.handleNameChange}/>
-					: <span>{config.name}</span>
+					: <span><span className = {"icon icon-" + fieldType.icon}/>{config.name}</span>
 					}
 				</span>
 				
@@ -155,10 +163,10 @@ var ColumnDetailMixin = {
 				}
 				{
 				editing ?       
-				<span  className = "pop-down clickable" onClick = {_this.handleConfigClick.bind(_this, AttributeConfig)}>
+				<span  className = "pop-down clickable icon" onClick = {_this.handleConfigClick.bind(_this, AttributeConfig)}>
 					<span className = "icon icon-cog" style={{width: '30px', maxWidth: '30px', textAlign: 'center', marginRight: 0}}/>
 					{this.state.configPart === AttributeConfig ?
-						<span className = "pop-down-overlay icon-cog"/> 
+						<span className = "pop-down-overlay"><span className = "icon icon-cog" style = {{margin: 0}}/></span> 
 						: null
 					}
 				</span>
@@ -167,11 +175,11 @@ var ColumnDetailMixin = {
 				</div>
 				{
 					this.state.configPart ? 
-					React.createElement(this.state.configPart, _.extend({menuInline: true}, _this.props, {type: _this.state.type}))
+					React.createElement(this.state.configPart, _.extend({menuInline: true, _chooseType: _this.chooseType}, _this.props, {type: _this.state.type}))
 					: 
 					null
 				}
-			</div>
+			</ReactCSSTransitionGroup>
 	}
 }
 

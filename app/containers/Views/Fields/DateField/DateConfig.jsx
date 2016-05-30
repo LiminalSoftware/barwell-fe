@@ -12,7 +12,7 @@ import modelActionCreators from "../../../../actions/modelActionCreators"
 import PopDownMenu from '../../../../components/PopDownMenu'
 
 
-
+import popdownClickmodMixin from '../popdownClickmodMixin';	
 import blurOnClickMixin from '../../../../blurOnClickMixin'
 import configCommitMixin from '../configCommitMixin'
 
@@ -23,7 +23,7 @@ var DateFormatChoice = React.createClass({
 
 	partName: 'DateFormatChoice',
 
-	mixins: [blurOnClickMixin, configCommitMixin],
+	mixins: [blurOnClickMixin, configCommitMixin, popdownClickmodMixin],
 
 	// LIFECYCLE ==============================================================
 
@@ -69,23 +69,23 @@ var DateFormatChoice = React.createClass({
 
 	// RENDER =================================================================
 
-	render: function () {
+	getIcon: function () {
+		return 'icon icon-calendar-31';
+	},
+
+	renderMenu: function () {
 		var _this = this
 		var config = this.props.config
 		var key = "attr-" + config.id
 
-		return <span className = "clickable pop-down icon icon-calendar-31"
-		onClick = {this.handleOpen}>
-		{
-			this.state.open ? 
-			<PopDownMenu {...this.props}>
-			<li className = "bottom-divider">
+		return <div className = "popdown-section">
+			<li className = "popdown-item title bottom-divider">
               Date Format
         	</li>
 			{
 				_.map(dateStyles, function (dateStyle, dateStyleId) {
 					var active = (_this.state.formatString === dateStyle.formatString)
-					return <li className = {"selectable " + (active ? 'menu-selected' : '')}
+					return <li className = {"popdown-item selectable " + (active ? 'menu-selected' : '')}
 						key = {dateStyle.id}
 						onClick = {_this.chooseFormat.bind(_this, dateStyle)}>
 						<span className = "icon icon-calendar-31"/>
@@ -94,7 +94,7 @@ var DateFormatChoice = React.createClass({
 				})
 			}
 			
-			<li className = {"top-divider selectable " + (this.state.custom ? 'menu-selected' : '')}
+			<li className = {"popdown-item top-divider selectable " + (this.state.custom ? 'menu-selected' : '')}
 				onClick = {this.handleChooseCustom}>
 				<span className="icon icon-code"/>
 				Custom
@@ -111,14 +111,9 @@ var DateFormatChoice = React.createClass({
 			</li>
 			: null
 			}
-
-			
-			</PopDownMenu>
-			:
-			null
-		}
-		</span>
+		</div>
 	}
+
 })
 
 export default DateFormatChoice

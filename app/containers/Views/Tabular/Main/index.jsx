@@ -139,7 +139,7 @@ var TabularPane = React.createClass ({
 	},
 
 	getTotalWidth: function () {
-    var view = this.props.view
+    	var view = this.props.view
 		return util.sum(view.data.visibleCols, 'width');
 	},
 
@@ -153,6 +153,11 @@ var TabularPane = React.createClass ({
 
 	getValueAt: function (idx) {
 		return this.store.getObject(idx);
+	},
+
+	getColumnAt: function (pos) {
+		var left = pos.left || 0;
+		return this.props.view.data.visibleCols[left];
 	},
 
 	selectRow: function () {
@@ -208,13 +213,6 @@ var TabularPane = React.createClass ({
 		this.blurPointer();
 		modelActionCreators.insertRecord(this.props.model, obj, this.store.getRecordCount())
 		this.setState({copyarea: null});
-		// modelActionCreators.createNotification({
-  //       	copy: 'New record created', 
-  //       	type: 'new-item',
-  //       	icon: 'icon-flare',
-		// 	notification_key: 'createNewRecord',
-		// 	notifyTime: 2000
-  //       })
 	},
 
 	insertRecord: function () {
@@ -230,14 +228,6 @@ var TabularPane = React.createClass ({
 		}
 		modelActionCreators.insertRecord(this.props.model, obj, pos)
 		this.setState({copyarea: null, selection: sel})
-		modelActionCreators.createNotification({
-        	copy: 'New ' + model.model + ' created',
-        	pluralCopy: '%num% new ' + model.plural + ' created',
-        	type: 'new-item',
-        	icon: 'icon-flare',
-			notification_key: 'createNewRecord',
-			notifyTime: 2000
-        })
 	},
 
 	clearSelection: function () {
@@ -289,13 +279,7 @@ var TabularPane = React.createClass ({
 		ptr.top = ptr.bottom = Math.min(ptr.top, numRows - numRowsDeleted)
 		sel.bottom = sel.top = Math.min(sel.top, numRows - numRowsDeleted)
 		this.setState({copyarea: null, selection: sel, pointer: ptr})
-		modelActionCreators.createNotification({
-        	copy: numRowsDeleted > 1 ? (numRowsDeleted + ' ' + model.plural + ' deleted') : (model.model + ' deleted'), 
-        	type: 'info',
-        	icon: 'icon-trash3 ',
-			notification_key: 'deleteRecord',
-			notifyTime: 2000
-        })
+		
 	},
 
 	copySelection: function (format) {
@@ -564,7 +548,7 @@ var TabularPane = React.createClass ({
 		var isUnpainted = body.updateOffset(this.state.rowOffset, direction) || alt.isUnpainted()
 
 		this.updateVerticalOffset();
-		this._lastUpdate = now
+		this._lastUpdate = now;
 		if (isUnpainted || this.state.isUnpainted) this._timer = getFrame(this.refreshTable, CYCLE)
 		else this._timer = null
 
@@ -600,6 +584,9 @@ var TabularPane = React.createClass ({
 			_updatePointer: this.updatePointer,
 			_getRCCoords: this.getRCCoords,
 			_getRangeStyle: this.getRangeStyle,
+			_handleDrop: this.handleDrop,
+			_handleDragOver: this.handleDragOver,
+			// _handleStartDrag: this.handleStartDrag,
 
 			_setVericalScrollOffset: this._throttleSetVerticalScrollOffset,
 			_setHorizontalScrollOffset: this._throttleSetHorizontalScrollOffset,
@@ -628,13 +615,15 @@ var TabularPane = React.createClass ({
 			contextPosition: this.state.contextPosition
 		}
 
+		// Scrolling and the render cycle are handled in this element by the update*Offset and refreshTable methods
+		// Fetching and rendering of the actual table is handled by the TabularBodyWrapper element
+		// Curors is an overlay containing the selection, the highlighted cell and a few other items
+		// Scrollbars are... scrollbars
+
 		return <div className = "model-panes">
 			<div ref="wrapper"
-				className = "wrapper"
-				
+				className = "wrapper"				
 				beforePaste = {this.beforePaste}>
-
-				
 
 				<TabularBodyWrapper {...childProps}
 					ref = "tableWrapper"/>
@@ -661,7 +650,7 @@ var TabularPane = React.createClass ({
 					view = {view}/>
 
 			</div>
-		</div>
+		</div>;
 			
 	}
 })

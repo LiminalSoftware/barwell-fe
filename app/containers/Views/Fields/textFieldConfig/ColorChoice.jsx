@@ -81,33 +81,33 @@ var ColorChoice = React.createClass({
     return <div className="popdown-section" key="condition">
       {
         boolAttrs.length > 0 ?
-        <li className="popdown-item bottom-divider title">
+        <div className="popdown-item bottom-divider title">
           Conditional
-        </li>
+        </div>
         :
         null
       }
 
       {
       boolAttrs.map(function (attr) {
-        return <li key = {attr.attribute_id} className = {"popdown-item selectable " + 
+        return <div key = {attr.attribute_id} className = {"popdown-item selectable " + 
           (_this.state.colorConditionAttr === attr.attribute_id ? ' menu-selected' : '')}
             onClick = {_this.chooseCondition.bind(_this, attr.attribute_id)}>
             <span className = "icon icon-check-square  ">
             </span>
             {attr.attribute}
-          </li>
+          </div>
         })
       }
 
       {
         boolAttrs.length > 0 ?
-        <li key = "no-condition" className = {"popdown-item selectable" + 
+        <div key = "no-condition" className = {"popdown-item selectable" + 
           (_this.state.colorConditionAttr === null  ? ' menu-selected' : '')}
           onClick = {_this.chooseCondition.bind(_this, null)}>
           <span className = "icon icon-square"/>
           No condition
-        </li>
+        </div>
         :
         null
       }
@@ -121,48 +121,49 @@ var ColorChoice = React.createClass({
 
     return <div className = "popdown-section" key="color">
 
-          <li key = "color-divider " 
-            className = 'popdown-item title bottom-divider'>
-            Background Color
-          </li>
+      <div key = "color-divider " 
+        className = 'popdown-item title bottom-divider'>
+        Background Color
+      </div>
 
-          {
-          colorAttrs.map(function (attr) {
-            return <li key = {attr.attribute_id} className = {"popdown-item selectable "
-              + (_this.state.colorAttr === attr.attribute_id ? ' menu-selected' : '')}
-              onClick = {_this.chooseColor.bind(_this, attr.attribute_id)}>
-              <span className = "icon icon-eye-dropper  "/>
-              {attr.attribute}
-            </li>
-          })
-          }
-          
-          <li className = {"popdown-item selectable " +
-            ((_this.state.colorAttr === null && _this.state.color === null) ? ' menu-selected' : '')}
-            onClick = {_this.chooseNone}>
-            <span className = "icon icon-square"/>
-            No cell color
-          </li>
+      {
+      colorAttrs.map(function (attr) {
+        return <div key = {attr.attribute_id} className = {"popdown-item selectable "
+          + (_this.state.colorAttr === attr.attribute_id ? ' menu-selected' : '')}
+          onClick = {_this.chooseColor.bind(_this, attr.attribute_id)}>
+          <span className = "icon icon-eye-dropper  "/>
+          {attr.attribute}
+        </div>
+      })
+      }
+      
+      <div className = {"popdown-item selectable " +
+        ((_this.state.colorAttr === null && _this.state.color === null) ? ' menu-selected' : '')}
+        onClick = {_this.chooseNone}>
+        <span className = "icon icon-square"/>
+        No cell color
+      </div>
 
-          <li className = {"popdown-item selectable " + (this.state.custom ? " bottom-divider " : " ")}
-            onClick = {_this.chooseCustom}>
-            <span className = "icon icon-code"/>
-            Custom color
-          </li>
-          
-          <div style={{maxHeight: '60px', overflowY: 'scroll'}}>
-          {
-            this.state.custom ?
-            makeColorPickerRows(_this.state.color, _this.chooseFixedColor)
-            : null
-          }
-          </div>
+      <div className = {"popdown-item selectable " + 
+        (this.state.custom ? " menu-selected bottom-divider " : " ")}
+        onClick = {_this.chooseCustom}>
+        <span className = "icon icon-code"/>
+        Custom color
+      </div>
+      
+      <div style={{maxHeight: '60px', overflowY: 'scroll'}}>
+      {
+        this.state.custom ?
+        makeColorPickerRows(_this.state.color, _this.chooseFixedColor)
+        : null
+      }
+      </div>
 
-          <li className = "popdown-item top-divider">
-          Auto-lighten colors: <input type="checkbox"
-            onChange = {_this.handleAdjustCheck}
-            checked = {_this.state.adjustColor} />
-          </li>
+      <div className = "popdown-item top-divider">
+      Auto-lighten colors: <input type="checkbox"
+        onChange = {_this.handleAdjustCheck}
+        checked = {_this.state.adjustColor} />
+      </div>
     </div>
   },
 

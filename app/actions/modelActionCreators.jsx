@@ -13,6 +13,7 @@ var _requestId = 0;
 var modelActions = {
 
 	createNotification: function (notification) {
+		console.log('createNotification')
 		notification.actionType = 'NOTIFY';
 		MetasheetDispatcher.dispatch(notification);
 	},
@@ -56,6 +57,17 @@ var modelActions = {
 			updt_message.update = results.data || {};
 			updt_message.selector = {cid: obj.cid};
 			MetasheetDispatcher.dispatch (updt_message);
+
+			modelActions.createNotification({
+	        	copy: 'New ' + model.model + ' created',
+	        	pluralCopy: '%num% new ' + model.plural + ' created',
+	        	type: 'new-item',
+	        	icon: 'icon-flare',
+	        	sticky: true,
+				notification_key: 'createNewRecord',
+				notifyTime: 2000
+	        });
+
 			return results.data
 		})
 	},
@@ -74,6 +86,16 @@ var modelActions = {
 		MetasheetDispatcher.dispatch(message);
 
 		webUtils.ajax('DELETE', url, null, {"Prefer": 'return=representation'}).then(function (results) {
+
+			modelActions.createNotification({
+	        	copy:  model.plural + ' deleted',
+	        	type: 'info',
+	        	sticky: true,
+	        	icon: 'icon-trash3 ',
+				notification_key: 'deleteRecord',
+				notifyTime: 2000
+	        })
+
 		})
 	},
 
@@ -101,10 +123,21 @@ var modelActions = {
 			message.actionType = 'M' + model.model_id + '_RECEIVEUPDATE'
 			message.update = results.data
 			message.selector = selector
+			message.model = model
 			MetasheetDispatcher.dispatch(message)
-		}).catch(function (error) {
 
-			console.log('theres an error!')
+			modelActions.createNotification({
+              	copy: '' + model.model + ' updated',
+				pluralCopy: '%num% ' + model.plural + ' updated',
+				type: 'new-item',
+				sticky: true,
+				icon: 'icon-keyboard-up',
+				notification_key: 'updateRecordModel' + model.model_id,
+				notifyTime: 2000
+            });
+
+			
+		}).catch(function (error) {
 
 			modelActionCreators.createNotification({
               copy: 'This update violates an existing constraint: ', 
@@ -122,7 +155,7 @@ var modelActions = {
 			// if (error.code === "23505") {
 				
 			// }
-		})
+		});
 	},
 
 	moveHasMany: function (relationId, thisObj, relObj) {

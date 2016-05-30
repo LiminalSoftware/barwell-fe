@@ -2,10 +2,12 @@ import React from "react"
 import ReactDOM from "react-dom"
 import $ from "jquery"
 
+
 import _ from 'underscore'
 import fieldTypes from "../../fields"
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import FocusStore from "../../../../stores/FocusStore"
+import AttributeStore from "../../../../stores/AttributeStore"
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 var TabularTHContext = require('./TabularTHContext')
@@ -24,8 +26,13 @@ var TabularTH = React.createClass ({
 			width: (col.width) + 'px',
 			left: left + 'px',
 		}
+		var innerStyle = {}
 		var sortArrow
+		// var attr = AttributeStore.get(col.attribute_id)
+		var fieldType = fieldTypes[col.type];
 		var classes = []
+
+		if (this.props.sorting) innerStyle.paddingRight = '25px';
 		
 
 		return <span
@@ -33,8 +40,16 @@ var TabularTH = React.createClass ({
 				style = {cellStyle}
 				className = 'table-header-cell '>
 			<span className = {"table-cell-inner header-cell-inner " + 
-				(this.props.sorted ? ' table-cell-inner-sorted ' : '')}>
+				(this.props.sorting ? ' table-cell-inner-sorting ' : '')}
+				style = {innerStyle}>
+				<span className = {"type-th-label-" +
+				 (this.props.focused ? "focused" : "blurred") + " icon icon-" + fieldType.icon}/>
 			   {col.name}
+			   {this.props.sorting ? 
+			   		<span onClick={this.switch}
+						className={"sort-th-label-" + (this.props.focused ? "focused" : "blurred") + " icon icon-" + fieldType.sortIcon + (this.props.sortDirection ? 'desc' : 'asc')}/>
+						: null
+			   }
 			</span>
 			{
 				this.state.context ?

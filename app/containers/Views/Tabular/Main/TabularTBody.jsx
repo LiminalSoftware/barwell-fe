@@ -191,6 +191,8 @@ var TabularTBody = React.createClass ({
 			onMouseDown = {this.props._handleClick}
 			onDoubleClick = {this.props._handleEdit}
 			onWheel = {this.props._handleWheel}
+			onDrop = {this.props._handleDrop}
+			onDragOver = {this.props._handleDragOver}
 			onContextMenu = {this.props._handleContextMenu}
 			
 			ref = "tbody"

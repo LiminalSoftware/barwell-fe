@@ -11,7 +11,6 @@ import ContextMenu from './ContextMenu'
 import PopDownMenu from '../../../../components/PopDownMenu'
 import util from '../../../../util/util'
 
-
 var HAS_3D = util.has3d()
 var RIGHT_FRINGE = '200px'
 
@@ -183,7 +182,13 @@ var Cursors = React.createClass ({
             fudge = {pointerFudge}
             position = {ptr}>
             {this.getPointerElement()}
-            {this.props.context ? <ContextMenu {...this.props}/> : null}
+            <ReactCSSTransitionGroup
+              transitionEnterTimeout={500}
+              transitionLeaveTimeout={300} 
+              transitionName="none" 
+              component = "div">
+            {this.props.context ? <ContextMenu key="context" {...this.props}/> : null}
+            </ReactCSSTransitionGroup>
           </Overlay>
 
           <Overlay

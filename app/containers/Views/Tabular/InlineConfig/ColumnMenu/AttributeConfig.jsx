@@ -20,7 +20,10 @@ var AttributeConfig = React.createClass({
 		return <div className = "menu-sub-item-boxed"  onClick = {util.clickTrap}>
 			<div className = "popdown-section">
 		      <div className = "popdown-item bottom-divider title">Alter Attribute</div>
-		      <div className = "popdown-item bottom-divider title">Alter Attribute</div>
+		      <div className = "popdown-item"><span className = "icon icon-stamp"/>Default value: <input value = ""/></div>
+		      <div className = "popdown-item selectable"><span className = "icon icon-share2"/>Make this format default for this attribute</div>
+		      <div className = "popdown-item selectable"><span className = "icon icon-label"/>Use this attribute as label</div>
+		      <div className = "popdown-item selectable"><span className = "icon icon-cross-circle"/>Delete this attribute</div>
 		    </div>
 	    </div>;
 	}

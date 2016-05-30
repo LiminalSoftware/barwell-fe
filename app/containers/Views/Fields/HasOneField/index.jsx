@@ -15,6 +15,8 @@ import blurOnClickMixin from '../../../../blurOnClickMixin'
 import keyPressMixin from '../keyPressMixin'
 
 import LabelChoice from '../HasSomeParts/LabelChoice'
+import AlignChoice from '../textFieldConfig/AlignChoice'
+import BubbleColorchoice from '../HasSomeParts/BubbleColorchoice'
 import SearchDropdown from '../HasSomeParts/SearchDropdown'
 import Bubble from '../HasSomeParts/Bubble'
 
@@ -35,7 +37,9 @@ var hasOneField = {
 
 	defaultAlign: 'center',
 
-	configParts: [LabelChoice],
+	icon: 'arrows-merge',
+
+	configParts: [AlignChoice, LabelChoice, BubbleColorchoice],
 
 	element: React.createClass({
 
@@ -95,11 +99,12 @@ var hasOneField = {
 		},
 
 		getDisplayHTML: function (config, obj) {
-			var value = obj[config.column_id]
-			var token = value ? 
-				`<span class="has-many-bubble">${value[0][config.label]}</span>`
+			var array = obj[config.column_id]
+			var rObj = (array instanceof Array) ? array[0] : array;
+			var token = (rObj instanceof Object) ? 
+				`<span class="has-many-bubble">${rObj[config.label]}</span>`
 				: '';
-			return `<span class = "table-cell-inner">${token}</span>`;
+			return `<span class = "table-cell-inner" style = {{textAlign: config.textAlign}}>${token}</span>`;
 		},
 
 		render: function () {
@@ -113,7 +118,7 @@ var hasOneField = {
 			var cellStyle = {
 				lineHeight: this.props.rowHeight + 'px',
 				background: this.props.selected ? 'white' : null,
-				
+				textAlign: config.textAlign
 			}
 			var editorIconStyle 
 			if (showDetail) {
@@ -131,7 +136,6 @@ var hasOneField = {
 
 			return <span
 				className = {"table-cell " + (this.state.selected ? " table-cell-selected" : "")}
-				onDrop = {this.handleDrop}
 				style={style} >
 				<span 
 					className = "table-cell-inner"

@@ -3,6 +3,7 @@ import ReactDOM from "react-dom"
 import $ from "jquery"
 
 import _ from 'underscore'
+import util from '../../../../util/util'
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 var RHS_PADDING = 100
@@ -79,8 +80,8 @@ var ScrollBar = React.createClass ({
 			style = {style}
 
 			onScroll = {this.handleScroll}
-			onMouseDown = {this.props._handleClick}
-			onDoubleClick = {this.props._handleEdit}
+			onMouseDown = {util.clickTrap}
+			onDoubleClick = {util.clickTrap}
 			ref = "overlay">
 				<div className = "scroll-bar-inner"
 					style = {innerStyle}

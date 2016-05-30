@@ -63,7 +63,7 @@ var ColumnMenu = React.createClass({
 
 	handleEdit: function () {
 		if (this.refs.list.revertChanges) this.refs.list.revertChanges();
-		this.refs.list._blurSiblings();
+		this.refs.list.blurSiblings();
 		this.setState({editing: true, dirty: false, configPart: null});
 	},
 
@@ -83,7 +83,8 @@ var ColumnMenu = React.createClass({
 	// UTILITY ================================================================
 
 	blurChildren: function () {
-		if (this.refs.list) this.refs.list.blurChildren()
+		console.log('blur children')
+		if (this.refs.list) this.refs.list.blurSiblings()
 	},
 
 	markDirty: function (isDirty) {
@@ -206,9 +207,10 @@ var ColumnMenu = React.createClass({
 						{...transitionProps}>
 						{
 							this.state.open ? 
-							<div className = "dropdown-menu" style = {{minWidth: '500px'}}>
-								<div className="menu-item menu-sub-item menu-divider" >
-									{firstSection.label}
+							<div className = "dropdown-menu" style = {{minWidth: '550px'}}>
+								<div className="menu-item menu-sub-item menu-divider" onClick = {_this.blurChildren}>
+									<span style = {{flexGrow: 0}}>{firstSection.label}</span>
+									<span className = "menu-section-rule"/>
 								</div>
 								<ColumnList 
 									{...this.props} ref = "list" 

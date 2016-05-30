@@ -1,10 +1,33 @@
 @import "../../global.less";
 
+
+.notifier-icon, .notifier-icon-invert {
+  display: block;
+  position: absolute;
+  right: 10px;
+  bottom: 5px;
+  width: 20px;
+  height: 20px;
+  padding: 5px;
+  border-radius: 50px;
+  z-index: 1000;
+  color: @purple4;
+  &:hover {
+    color: @newgreen1 !important;
+  }
+  cursor: pointer;
+}
+
+.notifier-icon-invert {
+  
+}
+
+
 ul.notifier {
   margin: 0;
   padding: 2px;
   position: absolute;
-  left: 0;
+  width: 300px;
   right: 0;
   bottom: 50px;
   z-index: 11;
@@ -16,8 +39,10 @@ ul.notifier {
     margin-bottom: 2px;
     background: @headerMenuBgColor;
     box-shadow: 0 0 0 2px white;
+    transition: all cubic-bezier(.16,.85,.5,1) 250ms;
     
-    display: block;
+    display: flex;
+    flex-direction: row;
 
     &.error, &.prohibited {
       color: @red-bright;
@@ -41,7 +66,7 @@ ul.notifier {
       margin: 0;
     }
 
-    & > p {
+    & p {
       font-size: 12px;
       padding: 5px;
       margin: 0;

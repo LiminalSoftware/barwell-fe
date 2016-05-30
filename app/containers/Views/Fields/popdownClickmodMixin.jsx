@@ -1,4 +1,5 @@
 import React from "react"
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import util from '../../../util/util';
 import PopDownMenu from '../../../components/PopDownMenu'
 
@@ -22,11 +23,16 @@ var popdownClickmodMixin = {
 	    	{
 	    		this.getContent ? <span className="popdown-label">{this.getContent()}</span> : null
 	    	}
+	    	<ReactCSSTransitionGroup
+				transitionEnterTimeout={500}
+				transitionLeaveTimeout={300} 
+				transitionName="fade-in">
 	        {
 	          this.state.open ? <PopDownMenu>
 	          {this.renderMenu()}
 	        </PopDownMenu> : null
 	        }
+	        </ReactCSSTransitionGroup>
 	        {
 	          this.state.context ? 
 	            <span className = {"pop-down-overlay "}>

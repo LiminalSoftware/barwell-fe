@@ -14,6 +14,9 @@ var NotificationStore = storeFactory({
 	pivot: function(payload) {
 		switch(payload.actionType) {
 			case 'NOTIFY':
+				payload.status = 'active';
+				payload.timestamp = Date.now();
+				console.log(payload)
 	        	this.create(payload);
 	        	if (payload.notifyTime > 0) {
 	        		setTimeout(function() {
@@ -23,7 +26,13 @@ var NotificationStore = storeFactory({
 	        	this.emitChange();
 	        	break;
 			case 'CLEAR_NOTIFICATION':
-	        	this.destroy(payload);
+				var notification = this.get(payload.notification_key) || {};
+				if (notification.sticky) {
+					payload.status = 'history';
+	        		this.create(payload);
+				} else {
+					this.destroy(payload)
+				}
 	        	this.emitChange();
 	        	break;
 		}
