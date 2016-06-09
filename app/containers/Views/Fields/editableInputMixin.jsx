@@ -79,13 +79,6 @@ var editableInputMixin = {
 		this.setValue(event.target.value)
 	},
 
-	handleDetail: function (e) {
-		console.log('handleDetail')
-		this.setState({open: true})
-		event.preventDefault();
-		event.stopPropagation();
-	},
-
 	handleKeyPress: function (e) {
 		if (e.keyCode === constant.keycodes.ESC) this.cancelChanges()
 		if (e.keyCode === constant.keycodes.ENTER) {
@@ -100,7 +93,9 @@ var editableInputMixin = {
 		var value = obj[config.column_id];
 		var textConditional = (!config.textConditionAttr || obj['a' + config.textConditionAttr]);
 		var prettyValue = isNull ? '' : this.format ? this.format(value, config) : value;
-		var classes = 'table-cell-inner ' + (textConditional ? config.bold ? ' bolded ' : '' : '');
+		var classes = 'table-cell-inner ' + 
+			(textConditional ? (config.style === 'bold') ? ' bolded ' : '' : '') + 
+			(textConditional ? (config.style === 'italic') ? ' italics ' : '' : '');
 		var bg = this.getBgColor ? this.getBgColor(config, obj) : {};
 
 		return `<span class = "${classes}" style = "text-align: ${config.align}; background: ${bg.background || 'transparent'}; color: ${bg.color}">${prettyValue}</span>`;
@@ -120,7 +115,12 @@ var editableInputMixin = {
 		var detail = fieldType.detail;
 		var showDetail = this.state.open;
 		var textConditional = (!config.textConditionAttr || obj['a' + config.textConditionAttr]);
-		var boldClass = textConditional ? config.bold ? ' bolded ' : '' : '';
+		var styleClass = 'table-cell-inner ' + 
+			(textConditional ? (config.style === 'bold') ? ' bolded ' : '' : '') + 
+			(textConditional ? (config.style === 'italic') ? ' italics ' : '' : '') +
+			(this.props.selected ? 
+				(isNull ? "table-cell-selected-null" : "table-cell-selected") : 
+				(isNull ? "table-cell-null" : "") );
 		
 		if (showIcon) {
 			editorIconStyle = {
@@ -145,9 +145,7 @@ var editableInputMixin = {
 		
 		Object.assign(cellStyle, this.getBgColor(config, obj, false, this.props.selected));
 
-		return <span {...this.props} className = {"table-cell " + (this.props.selected ? 
-				(isNull ? "table-cell-selected-null" : "table-cell-selected") : 
-				(isNull ? "table-cell-null" : "") )}>
+		return <span {...this.props} className = {styleClass}>
 			{this.state.editing ?
 			<input
 				ref = "input"
@@ -159,9 +157,9 @@ var editableInputMixin = {
 				onBlur = {this.revert}
 				onChange = {this.handleChange} />
 			:
-			<span style = {cellStyle} className = {"table-cell-inner " +  boldClass +
-				((this.props.selected && !isNull) ? " table-cell-inner-selected" : "") +
-				(this.props.sorted ? "table-cell-inner-sorted" : "")
+			<span style = {cellStyle} className = {" table-cell-inner " +  styleClass +
+				((this.props.selected && !isNull) ? " table-cell-inner-selected " : "") +
+				(this.props.sorted ? " table-cell-inner-sorted " : "")
 				}>
 				{prettyValue}
 			</span>

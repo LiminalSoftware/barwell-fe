@@ -16,21 +16,6 @@ var RIGHT_FRINGE = '200px'
 
 var Cursors = React.createClass ({
 
-  // getInitialState: function () {
-  //   return {
-  //     selection: _.extend({
-  //       left: 0,
-  //       top: 0,
-  //       right: 0,
-  //       bottom: 0
-  //     }, viewconfig.selection),
-  //     pointer: _.extend({
-  //       left: 0,
-  //       top: 0
-  //     }, viewconfig.pointer),
-  //   }
-  // },
-
   getPointerElement: function () {
     var view = this.props.view;
     var model = this.props.model;
@@ -52,6 +37,7 @@ var Cursors = React.createClass ({
       view: view,
 
       selected: true,
+      recordPatch: true,
 
       spaceTop: ptr.top - this.props.rowOffset,
       spaceBottom: this.props.visibleRows + this.props.rowOffset - ptr.top,
@@ -65,13 +51,7 @@ var Cursors = React.createClass ({
       column_id: col.column_id,
 
       _handleBlur: this.props._handleBlur,
-      // _handleDetail: this.props._handleDetail,
-      // _handleClick: this.props._handleClick,
-      // _handleClick: (e => e.stopPropagation()),
-      // _handleEdit: this.props._handleEdit,
-      // _handleWheel: this.props._handleWheel,
-      // _handlePaste: this.props._handlePaste,
-
+      
       className: 'table-cell',
       ref: 'pointerCell',
       sorted: false,
@@ -110,6 +90,8 @@ var Cursors = React.createClass ({
 
     var detailColumn = view.data.visibleCols[ptr.left]
     var detailObject = store.getObject(ptr.top)
+
+    var singleton = sel.top === sel.bottom && sel.left === sel.right;
 
     var pointerFudge = this.props.expanded ? {
       left: -30,
@@ -204,10 +186,10 @@ var Cursors = React.createClass ({
           <Overlay
             {...this.props}
             numHiddenCols = {this.props.columnOffset}
-            className = "selection-outer"
+            className = {"selection-outer" + (singleton ? '-singleton' : '')}
             ref = "selectionOuter"
             position = {sel}
-            fudge = {{left: -3.75, top: -2.75, height: 7.5, width: 6.5}}>
+            fudge = {{left: -3.75, top: -2.75, height: 7.5, width: 6.75}}>
           </Overlay>
           
           {
@@ -223,15 +205,15 @@ var Cursors = React.createClass ({
               top: sel.top,
               bottom: sel.bottom
             }}
-            fudge = {{left: -3, width: 10 }} />
+            fudge = {{left: -4, width: 10 }} />
           : null}
 
           <Overlay
             columns = {view.data.visibleCols}
-              numHiddenCols = {this.props.columnOffset}
+            numHiddenCols = {this.props.columnOffset}
             rowOffset = {this.props.rowOffset}
             className = {" copyarea running marching-ants " + (focused ? " focused" : "")}
-            ref="copyarea"
+            ref = "copyarea"
             {...this.props}
             position = {cpy}
             fudge = {{left: -1.25, top: 0, height: 1, width: 1.25}}/>

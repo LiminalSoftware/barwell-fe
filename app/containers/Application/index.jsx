@@ -78,10 +78,10 @@ var Application = React.createClass({
 			})
 		}).catch(function (error) {
 			modelActionCreators.createNotification({
-				copy: 'Error loading workspace details: ' + JSON.stringify(error), 
-				type: 'error',
+				copy: 'We are having trouble reaching the server.  We will retry in a moment.', 
+				type: 'error-item',
 				icon: ' icon-warning ',
-				notification_key: 'error'
+				notification_key: 'workspaceLoad',
 			});
 		});
 	}

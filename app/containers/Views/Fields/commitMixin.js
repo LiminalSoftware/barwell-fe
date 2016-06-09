@@ -7,7 +7,7 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 
 var commitMixin = {
 
-	commitValue: function (value) {
+	commitValue: function (value, extras) {
 		var config = this.props.config;
 		var column_id = config.column_id;
 		var model = this.props.model;
@@ -20,7 +20,8 @@ var commitMixin = {
 		patch[column_id] = value
 
 		if (this.props.isNull) modelActionCreators.insertRecord(model, _.extend(patch, selector, 0))
-		else if (selector) modelActionCreators.patchRecords(model, patch, selector)
+		else if (this.props.recordPatch) modelActionCreators.multiPatchRecords(model, _.extend(patch, selector), extras)
+		else if (selector) modelActionCreators.patchRecords(model, patch, selector, extras)
 		
 		if (this.revert) this.revert();
 	},

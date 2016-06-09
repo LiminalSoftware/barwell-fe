@@ -19,17 +19,17 @@ var createTabularStore = function (view) {
     var label = 'm' + view.model_id
     var upperLabel = label.toUpperCase ()
 
-    var _records = []
-    var _recordCount = null
-    var _startIndex = 0
-    var _iterator = 0
-    var _sortKey = []
-    var stickyRecs = []
+    var _records = [];
+    var _recordCount = null;
+    var _startIndex = 0;
+    var _iterator = 0;
+    var _sortKey = [];
+    var stickyRecs = [];
 
     var TabularStore = assign({}, EventEmitter.prototype, {
 
         getClientId: function () {
-          return 'c' + (_iterator++)
+          return 'c' + (_iterator++);
         },
 
         emitChange: function () {
@@ -89,50 +89,72 @@ var createTabularStore = function (view) {
         },
 
         dispatchToken: dispatcher.register(function (payload) {
-            var type = payload.actionType
+            var type = payload.actionType;
+            var model_id = payload.model_id;
 
-            if (type === upperLabel + '_CREATE') {
-                var object = payload.record
+            // console.log('=========')
+            // console.log(payload)
+            // console.log('=========')
+
+            if (type === 'RECORD_INSERT' && payload.model.model_id === model.model_id) {
+                var object = payload.object
                 var index 
-                if (payload.index) {
-                  index = payload.index
 
+                console.log(object)
+
+                if ('index' in payload) {
+                  index = payload.index
                 } else {
                   index = this.search(object)
                 }
                 _records =
                   _records.slice(0, index)
-                  .concat(payload.record)
+                  .concat(payload.object)
                   .concat(_records.slice(index))
                 _recordCount++
                 TabularStore.emitChange()
             }
 
-            if (type === upperLabel + '_DESTROY') {
+            if (type === 'RECORD_DESTROY' && payload.model.model_id === model.model_id) {
                 var selector = payload.selector
-                _recordCount--
+                _recordCount--;
                 _records = _.reject(_records, _.matcher(selector) )
                 TabularStore.emitChange()
             }
 
-            if (type === (upperLabel + '_UPDATE') || type === (upperLabel + '_RECEIVEUPDATE')) {
+            if ((type === 'RECORD_UPDATE' || type === 'RECORD_RECEIVE') && payload.model.model_id === model.model_id) {
               var _this = this
-              var update = payload.update
+              var update = payload.object
               var selector = payload.selector
-              var patch = {
-                  _dirty: (type === (upperLabel + '_UPDATE'))
-              }
-              if (type === (upperLabel + '_RECEIVEUPDATE')) patch._server = update
+              var isDirty = true;
 
-              var updater = function (rec) {
-                  return 
-              }
-              var matcher =  _.matcher(selector)
+
+              var matcher =  _.matcher(payload.selector);
               _records.forEach(function(rec, idx) {
-                if (matcher(rec)) _records[idx] = _.extend(_.clone(rec), update, patch)
+                var clientPrecedent = (update._requestOrder > rec._requestOrder);
+
+                if (matcher(rec) && (update.action_id > rec.action_id || !rec.action_id))
+                    _records[idx] = _.extend(_.clone(rec), update, {_dirty: isDirty, _requestOrder: payload.requestOrder}, isDirty ? null : {_server: update})
               })
               TabularStore.emitChange()
             }
+
+            if ((type === 'RECORD_MULTIUPDATE' || type === 'RECORD_MULTIRECIEVE') && payload.model.model_id === model.model_id) {
+              var dict = _.indexBy(payload.patches, model._pk);
+              var cdict = _.indexBy(payload.patches, 'cid');
+              var isDirty = !payload.isClean;
+              _records.forEach(function (rec, idx) {
+                if (rec[model._pk] && (rec[model._pk] in dict)) {
+                  _records[idx] = _.extend(_.clone(rec), dict[rec[model._pk]], {_dirty: isDirty});
+                } else if (rec.cid && rec.cid in cdict) {
+                  _records[idx] = _.extend(_.clone(rec), cdict[rec.cid], {_dirty: isDirty});
+                }
+              });
+              TabularStore.emitChange();
+            }
+
+
+
 
             if (type === (upperLabel + '_REVERT')) {
               var _this = this

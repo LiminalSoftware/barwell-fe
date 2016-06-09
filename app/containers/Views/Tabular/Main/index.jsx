@@ -3,6 +3,7 @@ import ReactDOM from "react-dom"
 import { RouteHandler } from "react-router"
 import cursorStyles from "./styles/cursors.less"
 
+import csv from 'csv'
 import _ from 'underscore'
 import $ from 'jquery'
 
@@ -60,7 +61,6 @@ var TabularPane = React.createClass ({
 			detailOpen: false,
 			detailWidth: 300,
 			contextPosition: {left: 0, top: 0},
-			ViewConfigStore: 0,
 			hiddenColWidth: 0,
 
 			rowOffset: viewconfig.rowOffset || 0,
@@ -80,6 +80,7 @@ var TabularPane = React.createClass ({
 		copyPasteDummy.addEventListener('paste', this.pasteSelection);
 		FocusStore.addChangeListener(this._onChange);
 		ViewStore.addChangeListener(this._onChange);
+		ViewConfigStore.addChangeListener(this._onChange);
 		this.store = createTabularStore(this.props.view);
 		this.store.addChangeListener(this._onChange);
 
@@ -92,6 +93,7 @@ var TabularPane = React.createClass ({
 		document.body.removeEventListener('keydown', this.onKey);
 		FocusStore.removeChangeListener(this._onChange);
 		ViewStore.removeChangeListener(this._onChange);
+		ViewConfigStore.removeChangeListener(this._onChange);
 		copyPasteDummy.removeEventListener('paste', this.pasteSelection);
 		removeEventListener('resize', this._debounceCalibrateHeight);
 		if (this._timer) cancelFrame(this._timer)
@@ -105,7 +107,6 @@ var TabularPane = React.createClass ({
 		copyPasteDummy.addEventListener('paste', this.pasteSelection)
 		addEventListener('resize', this._debounceCalibrateHeight)
 		copyPasteDummy.focus();
-
 		this.calibrateHeight();
 		// this.scrollTo(viewconfig.rowOffset || 0);
 	},
@@ -161,11 +162,7 @@ var TabularPane = React.createClass ({
 	},
 
 	selectRow: function () {
-		var numCols = this.getNumberCols()
-		var sel = this.state.selection
-		sel.left = 0;
-		sel.right = numCols;
-		this.setState({selection: sel})
+		
 	},
 
 	getRCCoords: function (e) {
@@ -177,11 +174,13 @@ var TabularPane = React.createClass ({
 		var numFixed = view.data.fixedCols.length
 		var offset = $(lhs).offset()
 		var y = e.pageY - offset.top
-		var x = e.pageX - offset.left - geo.labelWidth
-		var xx = x
+		var x = e.pageX - offset.left
+		var xx = x - geo.labelWidth
 		var r = Math.floor((y) / geo.rowHeight, 1)
 		var c = 0
 
+		if (x < geo.labelWidth) return {top: r, left: -1}
+		
 		visibleCols.some(function (col, idx) {
 			if (idx < numFixed || idx - numFixed >= scrolledCols) xx -= col.width
 			if (xx > 0) c++
@@ -199,11 +198,15 @@ var TabularPane = React.createClass ({
 		var pos = this.state.pointer
 		var field = this.refs.cursors.refs.pointerCell
 		if (!field.handleEdit) return
+
+		modelActionCreators.clearNotification({
+			notification_key: 'copySuccess'
+		});
 		
 		this.setState({
 			editing: true,
-			copyarea: null
 		})
+		this.clearCopy();
 		field.handleEdit(e);
 	},
 
@@ -212,6 +215,7 @@ var TabularPane = React.createClass ({
 		var obj = {cid: cid};
 		this.blurPointer();
 		modelActionCreators.insertRecord(this.props.model, obj, this.store.getRecordCount())
+		this.clearCopy();
 		this.setState({copyarea: null});
 	},
 
@@ -231,26 +235,7 @@ var TabularPane = React.createClass ({
 	},
 
 	clearSelection: function () {
-		var model = this.props.model
-		var view = this.props.view
-		var sel = this.state.selection
-
-		for (var r = sel.top; r <= sel.bottom; r++) {
-			var obj = this.store.getObject(r)
-			var selector = {[model._pk]: obj[model._pk]}
-			var patch = {}
-
-			for (var c = sel.left; c <= sel.right; c++) {
-				var column = view.data.visibleCols[c]
-				var type = fieldTypes[column.type]
-				if (!type.uneditable) {
-					var validator = type.element.validator || _.identity
-					var value = validator(null)
-					patch[column.column_id] = value
-				}
-			}
-			if (_.keys(patch).length > 0) modelActionCreators.patchRecords(model, patch, selector)
-		}
+		this.putSelection([[null]], 'selection clear');
 	},
 
 	deleteRecords: function () {
@@ -262,8 +247,7 @@ var TabularPane = React.createClass ({
 		var numRows = this.getNumberRows()
 		var numRowsDeleted = (sel.bottom - sel.top + 1)
 		
-
-		this.blurPointer()
+		this.blurPointer();
 
 		for (var row = sel.top; row <= sel.bottom; row++) {
 			var obj = this.getValueAt(row)
@@ -274,70 +258,96 @@ var TabularPane = React.createClass ({
 		}
 		selectors.forEach(function (selector) {
 			modelActionCreators.deleteRecord(model, selector)
-		})
+		});
 
-		ptr.top = ptr.bottom = Math.min(ptr.top, numRows - numRowsDeleted)
-		sel.bottom = sel.top = Math.min(sel.top, numRows - numRowsDeleted)
-		this.setState({copyarea: null, selection: sel, pointer: ptr})
-		
+		ptr.top = ptr.bottom = Math.min(ptr.top, numRows - numRowsDeleted);
+		sel.bottom = sel.top = Math.min(sel.top, numRows - numRowsDeleted);
+		this.setState({copyarea: null, selection: sel, pointer: ptr});
 	},
 
 	copySelection: function (format) {
-		var text = this.getSelection('text');
-		var json = this.getSelection('json');
-
-		copyTextToClipboard(text);
-		this.setState({
-			copyarea: this.state.selection,
-			copydata: json
+		var _this = this;
+		var data = this.getSelectionData();
+		csv.stringify(data, {delimiter: '\t'}, function (err, text) {
+			copyTextToClipboard(text);
+			_this.setState({
+				copytext: text,
+				copyarea: _this.state.selection,
+				copydata: data
+			});
+			modelActionCreators.createNotification({
+	        	copy: 'Selection copied to clipboard', 
+	        	type: 'info',
+	        	icon: ' icon-clipboard-text ',
+				notification_key: 'copySuccess',
+	        })
 		});
-		modelActionCreators.createNotification({
-        	copy: 'Selection copied to clipboard', 
-        	type: 'info',
-        	icon: ' icon-clipboard-text ',
-			notification_key: 'copySuccess',
-			notifyTime: 3000
-        })
+	},
+
+	clearCopy: function () {
+		this.setState({
+			copytext: null,
+			copyarea: null,
+			copydata: null
+		});
+		modelActionCreators.clearNotification({
+			notification_key: 'copySuccess'
+        });
 	},
 
 	copySelectionAsJSON: function (format) {
-		var json = this.getSelection('JSON');
+		var json = this.getSelectionObjects(true);
+		var data = this.getSelectionObjects(false);
 
-		copyTextToClipboard(json);
+		copyTextToClipboard(JSON.stringify(json));
+
 		this.setState({
 			copyarea: this.state.selection,
-			copydata: json
+			copydata: data
 		});
 	},
 
-	getSelection: function (format) {
+	getSelectionObjects: function (usePrettyNames) {
 		var sel = this.state.selection;
-		var json = new Array(sel.bottom - sel.top + 1);
-		var text = '';
+		var json = [];
 		var view = this.props.view;
-		
 
 		for (var r = sel.top; r <= sel.bottom; r++) {
-			var data = {};
 			var obj = this.store.getObject(r);
-			json[r] = {}
-
+			var jsonRow = {};
 			for (var c = sel.left; c <= sel.right; c++) {
 				var column = view.data.visibleCols[c]
 				var type = fieldTypes[column.type]
-				var value = obj[column.column_id]
+				var value = (type.stringify ? type.stringify : _.identity)(obj[column.column_id])
 
-				if (format === 'JSON') 
-					json[r][column.column_id] = obj[column.column_id];
-				else if (format === 'prettyJSON') 
-					json[r][column.name] = obj[column.column_id];
-				else if (format === 'text') 
-					text += (value === null ? "" : type.stringify ? type.stringify(value) : value) + (c == sel.right ? "" : "\t");
+				if (usePrettyNames)
+					jsonRow[column.name] = value;
+				else
+					jsonRow[column.column_id] = value;
 			}
-			if (format === 'text') text += (r == sel.bottom ? "" : "\n");
+			json.push(jsonRow);
 		}
-		if (format === 'text') return text;
-		if (format === 'prettyJSON' || format === 'prettyJSON') return json;
+		return json;
+	},
+
+	getSelectionData: function () {
+		var sel = this.state.selection;
+		var data = []
+		var view = this.props.view;
+
+		for (var r = sel.top; r <= sel.bottom; r++) {
+			var obj = this.store.getObject(r);
+			var dataRow = [];
+			for (var c = sel.left; c <= sel.right; c++) {
+				var column = view.data.visibleCols[c]
+				var type = fieldTypes[column.type]
+				var value = (type.stringify ? type.stringify : _.identity)(obj[column.column_id])
+
+				dataRow.push(value)
+			}
+			data.push(dataRow);
+		}
+		return data;
 	},
 
 	getRangeStyle: function (pos, fudge, showHiddenHack) {
@@ -357,7 +367,7 @@ var TabularPane = React.createClass ({
 	      if (idx >= numFixed && idx < numFixed + columnOffset) return
 	      if (idx < pos.left)
 	        left += col.width
-	      else if (idx <= (pos.right || pos.left) )
+	      else if (idx <= (pos.right || pos.left))
 	        width += col.width
 	    })
 
@@ -372,36 +382,50 @@ var TabularPane = React.createClass ({
 	  	return style
 	},
 
-	putSelection: function (data) {
-		
-	},
-
-	pasteSelection: function (e) {
-		var text = e.clipboardData.getData('text')
+	putSelection: function (data, method) {
 		var model = this.props.model
-		var view = this.props.view
-
-		var rows = text.split('\n')
-		var data = rows.map(r => r.split('\t'))
-		var sel = this.state.selection
+		var sel = this.state.selection;
+		var patches = [];
+		var view = this.props.view;
 
 		for (var r = sel.top; r <= sel.bottom; r++) {
 			var cbr = (r - sel.top) % data.length
+			var row = data[cbr]
 			var obj = this.store.getObject(r)
-			var selector = {[model._pk]: obj[model._pk]}
-			var patch = {}
+			var patch = {[model._pk]: obj[model._pk]}
 
 			for (var c = sel.left; c <= sel.right; c++) {
 				var cbc = (c - sel.left) % data[cbr].length
 				var column = view.data.visibleCols[c]
 				var type = fieldTypes[column.type]
-				var validator = type.element.validator || _.identity
-				var value = validator(data[cbr][cbc])
+				var validator = type.element.prototype.validator || _.identity
+				var value = validator(data[cbr][cbc]);
 				if (!type.uneditable) {
 					patch[column.column_id] = value
 				}
 			}
-			if (_.keys(patch).length > 0) modelActionCreators.patchRecords(model, patch, selector)
+			patches.push(patch)
+		}
+		modelActionCreators.multiPatchRecords(model, patches, {method: method})
+	},
+
+	pasteSelection: function (e) {
+		var _this = this;
+		var text = e.clipboardData.getData('text') || "";
+		var isJsonValid = (text === this.state.copytext);
+		var data
+		if (isJsonValid) {
+			this.putSelection(this.state.copydata, 'copy/paste')
+		} else {
+			csv.parse(text, {delimiter: '\t'}, function (err, output) {
+				if (err) modelActionCreators.createNotification({
+		        	copy: 'Error parsing clipboard contents', 
+		        	type: 'error-item',
+		        	icon: ' icon-warning ',
+					notification_key: 'paste',
+					notifyTime: 3000
+		        }); else _this.putSelection (output, 'copy/paste')
+			});
 		}
 	},
 
@@ -438,13 +462,17 @@ var TabularPane = React.createClass ({
 	},
 
 	updateSelect: function (pos, shift) {
-		var sel = this.state.selection
-		var ptr = this.state.pointer
-		var view = this.props.view
-		var numCols = this.getNumberCols()
-		var numRows = this.getNumberRows()
+		var model = this.props.model;
+		var sel = this.state.selection;
+		var ptr = this.state.pointer;
+		var view = this.props.view;
+		var numCols = this.getNumberCols();
+		var numRows = this.getNumberRows();
 
-		if (shift) {
+		if (pos.left < 0) {
+			let pk = this.getValueAt(pos.top)[model._pk];
+			modelActionCreators.selectRecord(view, pk);
+		} else if (shift) {
 			// this.scrollTo(pos)
 			sel = {
 				left: Math.max(Math.min(ptr.left, pos.left, numCols), 0),
@@ -483,12 +511,14 @@ var TabularPane = React.createClass ({
 	},
 
 	setHorizontalScrollOffset: function (hOffset) {
+		var _this = this;
 		var view = this.props.view;
 		var columns = view.data.columnList;
 		var floatCols = view.data.floatCols;
 		var hiddenColWidth = 0;
 		var columnOffset = 0;
 		var rhsHorizontalOffsetter = this.refs.tableWrapper.refs.rhsHorizontalOffsetter;
+		var pointer = this.refs.cursors.refs.pointer
 
 		floatCols.some(function (col) {
 			if (hOffset > col.width + hiddenColWidth) {
@@ -504,9 +534,17 @@ var TabularPane = React.createClass ({
 			hiddenColWidth: hiddenColWidth
 		});
 		
-		if (hiddenColWidth !== this.state.hiddenColWidth) 
+		
+		if (hiddenColWidth !== this.state.hiddenColWidth) {
+			if (this.pointerTimer) clearTimeout(this.pointerTimer)
+			ReactDOM.findDOMNode(pointer).classList.add('pointer-transitioned');
 			ReactDOM.findDOMNode(rhsHorizontalOffsetter).style.marginLeft = 
 				(-1 * hiddenColWidth - 1) + 'px';
+			this.pointerTimer = setTimeout(function () {
+				ReactDOM.findDOMNode(pointer).classList.remove('pointer-transitioned');
+				_this.pointerTimer = null;
+			}, 100);
+		}
 	},
 
 	setVerticalScrollOffset: function (vOffset) {
@@ -567,6 +605,7 @@ var TabularPane = React.createClass ({
 		var focused = (FocusStore.getFocus() == 'view')
 		var totalWidth = this.getTotalWidth()
 		var geo = view.data.geometry
+		var viewconfig = ViewConfigStore.get(view.view_id);
 
 		var childProps = {
 			_handleBlur: this.handleBlur,
@@ -604,6 +643,7 @@ var TabularPane = React.createClass ({
 
 			model: model,
 			view: view,
+			viewconfig: viewconfig,
 			pointer: this.state.pointer,
 			selection: this.state.selection,
 			copyarea: this.state.copyarea,

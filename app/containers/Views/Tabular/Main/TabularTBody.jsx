@@ -147,17 +147,22 @@ var TabularTBody = React.createClass ({
 
 	prepareRow: function (obj, index) {
 		var view = this.props.view
+		var viewconfig = this.props.viewconfig || {}
+		var selectedRecords = viewconfig.selectedRecords || {}
 		var model = this.props.model
 		var pk = model._pk
 		var ptr = this.props.pointer
 		var rowKey = this.props.prefix + '-tr-' + (obj.cid || obj[pk])
 		var offset = this.state.start
 
+		// console.log(viewconfig)
+
 		return <TabularTR
 			view = {this.props.view}
 			model = {this.props.model}
 			focused = {this.props.focused}
 			hasRowLabel = {this.props.hasRowLabel}
+			selected = {obj[pk] in selectedRecords}
 			columns = {this.props.columns}
 			obj = {obj}
 			row = {index + offset}

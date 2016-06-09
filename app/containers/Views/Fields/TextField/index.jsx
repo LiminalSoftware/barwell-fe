@@ -21,15 +21,24 @@ import ColorChoice from "../textFieldConfig/ColorChoice"
 import TextChoice from "../textFieldConfig/TextChoice"
 
 var textField = {
+	
 	configParts: [AlignChoice, ColorChoice, TextChoice],
+	
 	sortable: true,
+	
 	sortIcon: 'sort-alpha-',
+	
 	icon: 'text-align-justify',
+	
 	canBeLabel: true,
+	
 	defaultWidth: 150,
+	
 	element: React.createClass({
 		mixins: [editableInputMixin, bgColorMixin, commitMixin, selectableMixin, keyPressMixin],
     	validator: _.identity,
+
+
 
     	format: function (value, _config) {
 			if (value === undefined || value === null) return '';

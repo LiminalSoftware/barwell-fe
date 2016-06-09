@@ -18,6 +18,7 @@ var PrimaryKeyElement = React.createClass({
 
 	getDisplayHTML: function (config, obj, isNull) {
 		var value = obj[config.column_id];
+		if (!value) value = '...';
 		return `<span class = "pk-cell-inner table-cell-inner">${value}</span>`;
 	},
 	
@@ -27,9 +28,11 @@ var PrimaryKeyElement = React.createClass({
 		var cellStyle = {lineHeight: this.props.rowHeight + 'px', paddingLeft: '5px'}
 		var className = "pk-cell-inner table-cell-inner" + (this.props.selected ? " table-cell-inner-selected" : "")
 
+		if (!value) value = '...';
+
 		return <span {...this.props} className = "table-cell " >
 			<span className = {className} style = {cellStyle}>
-				{this.props.value}
+				{value}
 			</span>
 		</span>
 	}

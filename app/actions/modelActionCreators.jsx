@@ -2,10 +2,10 @@ import MetasheetDispatcher from "../dispatcher/MetasheetDispatcher"
 import webUtils from "../util/MetasheetWebAPI.jsx"
 import _ from 'underscore'
 import ModelStore from '../stores/ModelStore'
+import ViewConfigStore from '../stores/ViewConfigStore'
 import RelationStore from '../stores/RelationStore'
 import groomView from '../containers/Views/groomView'
-
-
+import util from '../util/util'
 var BASE_URL = 'https://api.metasheet.io'
 
 var _requestId = 0;
@@ -13,7 +13,6 @@ var _requestId = 0;
 var modelActions = {
 
 	createNotification: function (notification) {
-		console.log('createNotification')
 		notification.actionType = 'NOTIFY';
 		MetasheetDispatcher.dispatch(notification);
 	},
@@ -39,123 +38,98 @@ var modelActions = {
 		MetasheetDispatcher.dispatch(message);
 	},
 
-	insertRecord: function (model, obj, position) {
-		var model_id = model.model_id
-		var message = {}
-		var json = JSON.stringify(obj)
-		var url = BASE_URL + '/m' + model.model_id;
+	selectRecord: function (view, pk) {
+		var count
+		var model = ModelStore.get(view.model_id);
+		var viewconfig = ViewConfigStore.get(view.view_id) || {};
+		var selectedRecords = viewconfig.selectedRecords || {};
+		if (pk in selectedRecords) delete selectedRecords[pk];
+		else selectedRecords[pk] = pk;
+		count = _.keys(selectedRecords).length;
+		modelActions.create('viewconfig', false, {
+			view_id: view.view_id, 
+			selectedRecords: selectedRecords
+		});
+		modelActions.createNotification({
+			copy: count > 1 ? 
+				(count + ' ' + model.plural + ' records selected')
+				: ('One ' + model.model + ' record selected'), 
+        	type: 'info',
+        	icon: ' icon-list3 ',
+        	sticky: true,
+			notification_key: 'selectedRecords',
+		})
+	},
 
-		message.actionType = 'M' + model.model_id + '_CREATE'
+	unselectRecords: function (view, pk) {
+		modelActions.create('viewconfig', false, {
+			view_id: view.view_id, 
+			selectedRecords: {}
+		});
+	},
+
+	insertRecord: function (model, obj, position) {
+		var message = {};
+		var requestId = _requestId++;
+
+		message.actionType = 'RECORD_INSERT'
+		message.model = model
+		
+		
+		message.object = obj
 		message.index = position
-		message.record = obj
-		message.selector = {cid: obj.cid}
+
 		MetasheetDispatcher.dispatch(message)
 
-		return webUtils.ajax('POST', url, json, {"Prefer": 'return=representation'}).then(function (results) {
-			var updt_message = {};
-			updt_message.actionType = 'M' + model.model_id + '_RECEIVEUPDATE';
-			updt_message.update = results.data || {};
-			updt_message.selector = {cid: obj.cid};
-			MetasheetDispatcher.dispatch (updt_message);
-
-			modelActions.createNotification({
-	        	copy: 'New ' + model.model + ' created',
-	        	pluralCopy: '%num% new ' + model.plural + ' created',
-	        	type: 'new-item',
-	        	icon: 'icon-flare',
-	        	sticky: true,
-				notification_key: 'createNewRecord',
-				notifyTime: 2000
-	        });
-
-			return results.data
-		})
 	},
 
 	deleteRecord: function (model, selector) {
-		var model_id = model.model_id;
+		var requestId = _requestId++;
 		var message = {};
-		var url = BASE_URL + '/m' + model.model_id;
+		
 		if (!selector instanceof Object) throw new Error ('Delete without qualifier is not permitted')
-		else url += '?' + _.map(selector, function (value, key) {
-			return key + '=eq.' + value;
-		}).join('&');
 
-		message.actionType = 'M' + model.model_id + '_DESTROY';
-		message.selector = selector;
+		var message = {
+			actionType: 'RECORD_DESTROY',
+			model: model,
+			selector: selector
+		};
 		MetasheetDispatcher.dispatch(message);
+	},
 
-		webUtils.ajax('DELETE', url, null, {"Prefer": 'return=representation'}).then(function (results) {
+	multiPatchRecords: function (model, patches, extras) {
+		var requestId = _requestId++;
 
-			modelActions.createNotification({
-	        	copy:  model.plural + ' deleted',
-	        	type: 'info',
-	        	sticky: true,
-	        	icon: 'icon-trash3 ',
-				notification_key: 'deleteRecord',
-				notifyTime: 2000
-	        })
+		if (!(patches instanceof Array)) patches = [patches]
 
-		})
+		patches.forEach(p => p._requestId = requestId);
+
+		var message = _.extend(extras || {}, {
+			actionType: 'RECORD_MULTIUPDATE',
+			model: model,
+			patches: patches,
+			request_id: requestId
+		});
+		MetasheetDispatcher.dispatch(message);
 	},
 
 	patchRecords: function (model, patch, selector, extras) {
-		var model_id = model.model_id;
-		var message = {};
-		var rx = /^a\d+$/i;
+		var requestId = _requestId++;
+		var object = patch;
 
-		message.actionType = 'M' + model.model_id + '_UPDATE';
-		message.update = _.clone(patch);
-		message.selector = selector;
-		message = _.extend(message, extras);
-		MetasheetDispatcher.dispatch(message);
+		if (!(selector instanceof Object)) throw new Error ('Patch without qualifier is not permitted')
+		if (!(patch instanceof Object)) throw new Error('Patch should be a single naked object');
 
-		var url = BASE_URL + '/m' + model.model_id;
-		if (!selector instanceof Object) throw new Error ('Patch without qualifier is not permitted')
-		else url += '?' + _.map(selector, function (value, key) {
-			return key + '=eq.' + value;
-		}).join('&')
-		
-		patch = _.pick(patch, (v,k)=> rx.test(k))
+		object._requestId = requestId;
 
-		webUtils.ajax('PATCH', url, JSON.stringify(patch), {"Prefer": 'return=representation'}).then(function (results) {
-			var message = {}
-			message.actionType = 'M' + model.model_id + '_RECEIVEUPDATE'
-			message.update = results.data
-			message.selector = selector
-			message.model = model
-			MetasheetDispatcher.dispatch(message)
-
-			modelActions.createNotification({
-              	copy: '' + model.model + ' updated',
-				pluralCopy: '%num% ' + model.plural + ' updated',
-				type: 'new-item',
-				sticky: true,
-				icon: 'icon-keyboard-up',
-				notification_key: 'updateRecordModel' + model.model_id,
-				notifyTime: 2000
-            });
-
-			
-		}).catch(function (error) {
-
-			modelActionCreators.createNotification({
-              copy: 'This update violates an existing constraint: ', 
-              type: 'error',
-              icon: ' icon-warning ',
-              notification_key: 'updateRecordError',
-              notifyTime: 2000
-            });
-
-			MetasheetDispatcher.dispatch({
-				selector: selector,
-				actionType: 'M' + model.model_id + '_REVERT'
-			})
-
-			// if (error.code === "23505") {
-				
-			// }
+		var message = _.extend(extras || {}, {
+			actionType: 'BULK_UPDATE',
+			model: model,
+			update: object,
+			object: object,
+			selector: selector
 		});
+		MetasheetDispatcher.dispatch(message);
 	},
 
 	moveHasMany: function (relationId, thisObj, relObj) {
@@ -191,7 +165,8 @@ var modelActions = {
 		var extras = {
 			hasOneObject: hasOneObj,
 			hasOneKeyAttrs: hasOneKeyAttrs,
-			hasManyKeyAttrs: hasManyKeyAttrs
+			hasManyKeyAttrs: hasManyKeyAttrs,
+			method: ' dragging a related item'
 		}
 		modelActions.patchRecords(hasOneModel, patch, selector, extras)
 	},
@@ -295,7 +270,7 @@ var modelActions = {
 		var url = BASE_URL + '/v' + view_id
 		var sortSpec = view.data.rowSortSpec.concat(view.data.columnSortSpec);
 		var sort = 'order=' + sortSpec.map(function(s) {
-			var column = view.data.columns['a' + s.attribute_id]
+			var column = view.data.columns[s.attribute]
 			return 'a' + column.attribute_id + (column.descending ? '.desc' : '.asc')
 		}).join(',');
 		

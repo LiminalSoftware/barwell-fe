@@ -176,6 +176,10 @@ var ColorChoice = React.createClass({
 
   getIcon: function () {
     return " icon icon-paint-roller " + (this.state.active && !this.state.context ? " active " : "");
+  },
+
+  isActive: function () {
+    return this.state.colorAttr || this.state.custom;
   }
   
 })

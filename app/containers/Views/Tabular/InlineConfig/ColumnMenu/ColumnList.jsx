@@ -27,10 +27,11 @@ var ColumnList = React.createClass({
 
 	componentWillMount: function () {
 		this.calibrateHeight();
+		this.setState(this.getItemState(this.props));
 	},
 
 	componentDidMount: function() {
-		this.setState(this.getItemState());
+		// this.setState(this.getItemState());
 	},
 
 	componentWillReceiveProps: function (next) {
@@ -50,6 +51,10 @@ var ColumnList = React.createClass({
 			}
 		});
 		this.setState({items: items})
+	},
+
+	onMoveBefore: function () {
+		this.blurSiblings()
 	},
 
 	onResorted: function () {
@@ -86,7 +91,7 @@ var ColumnList = React.createClass({
 		
 		props.sections.forEach(function (section, idx) {
 			var cols = section.selector(view);
-			if (idx > 0) items.push(_.extend({isSection: true}, section))
+			if (idx > 0) items.push(_.extend({isSection: true, isEmpty: cols.length === 0}, section))
 			cols.forEach(function (col) {
 				var attribute = AttributeStore.get(col.attribute_id);
 				var relation = RelationStore.get(col.relation_id);
@@ -94,7 +99,7 @@ var ColumnList = React.createClass({
 				if (attribute && !attribute._destroy) 
 					// col.attribute_id = attribute.attribute_id;
 					items.push(col);
-				if (relation) 
+				if (relation)
 					// col.relation_id = relation.relation_id;
 					items.push(col);
 			});
@@ -149,27 +154,27 @@ var ColumnList = React.createClass({
 
 			if (item.isSection) section = item;
 			if (item.isSection) return <div 
-				className="menu-item menu-sub-item menu-divider" 
-				key = {'section-' + item.section}
-				ref = {'section' + item.section}
-				{...itemProps}>
-				<span style = {{flexGrow: 0}}>{item.label}</span>
-				<span className = "menu-section-rule"/>
+				className = "menu-item menu-item-stacked"
+					key = {'section-' + item.label}
+					ref = {'section' + item.label}> 
+				<div className="menu-sub-item menu-divider" 
+					{...itemProps}>
+					<span style = {{flexGrow: 0}}>{item.label}</span>
+					<span className = "menu-section-rule"/>
 				</div>
-			else if (item.isEmpty) return <div
-				className="menu-item menu-sub-item menu-divider empty-item"
-				key = {'section-' + item.section + '-empty'}
-				{...itemProps}>{item.emptyText}</div>
+				{item.isEmpty ? <div className = "menu-sub-item menu-empty-item">{item.emptyText}</div> : null}
+			</div>
 			else return <ColumnDetail
 				key = {item.column_id}
 				ref = {item.column_id}
+				minWidth = '500px'
 				config = {item}
 				open = {true}
 				spaceTop = {idx}
 				spaceBottom = {numTotalItems - idx}
 				viewConfigParts = {section ? section.configParts : null}
 				editing = {_this.props.editing}
-				view= {view}
+				view = {view}
 				_blurSiblings = {_this.blurSiblings}
 				{...itemProps}/>
 		});

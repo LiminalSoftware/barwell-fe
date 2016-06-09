@@ -8,13 +8,14 @@ import PopDownMenu from '../../../../../components/PopDownMenu'
 import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 
 import configCommitMixin from '../../../Fields/configCommitMixin'
+import popdownClickmodMixin from '../../../Fields/popdownClickmodMixin'
 import blurOnClickMixin from '../../../../../blurOnClickMixin'
 
 var AggregatePicker = React.createClass({
 
 	partName: 'AggregatePicker',
 
-	mixins: [blurOnClickMixin, configCommitMixin],
+	mixins: [blurOnClickMixin, configCommitMixin, popdownClickmodMixin],
 
 	getInitialState: function () {
 		return {
@@ -67,29 +68,26 @@ var AggregatePicker = React.createClass({
 		}
 	],
 
-	render: function() {
-		var _this = this
+	getIcon: function () {
+		return " icon icon-sigma";
+	},
+
+	renderMenu: function () {
+		var _this = this;
 		var config = this.props.config;
 		var selected = this.props.config.aggregator;
 
-		return <span className={"pop-down clickable icon icon-sigma"}
-        	onMouseDown = {this.handleOpen}>
-	        {
-	        this.state.open ?
-				<PopDownMenu {...this.props}>
-					<li className = "bottom-divider">Aggregator</li>
-					{
-					this.aggregates.map(function (agg) {
-						return <li className = {"selectable " + (agg.id === selected ? " menu-selected " : "")} key = {agg.id} 
-						onClick = {_this.handleChooseAggregate.bind(_this, agg.id)}>
-						{agg.label}
-						</li>
-					})
-					}
-				</PopDownMenu>
-				: null
+		return <div className = "popdown-section">
+		    <li className = "popdown-item bottom-divider title">Aggregator</li>
+			{
+			this.aggregates.map(function (agg) {
+				return <div className = {"popdown-item selectable " + (agg.id === selected ? " menu-selected " : "")} key = {agg.id} 
+				onClick = {_this.handleChooseAggregate.bind(_this, agg.id)}>
+				<span className = "icon icon-sigma"/>{agg.label}
+				</div>
+			})
 			}
-			</span>
+		 </div>
 	}
 });
 

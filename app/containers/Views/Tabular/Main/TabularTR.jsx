@@ -17,6 +17,7 @@ class TabularTR extends React.Component {
 	shouldComponentUpdate (newProps) {
 		var oldProps = this.props
 		var response =	oldProps.view !== newProps.view ||
+						oldProps.selected !== newProps.selected ||
 						oldProps.row !== newProps.row ||
 						newProps.obj !== oldProps.obj;
 		// if (oldProps.view !== newProps.view) console.log('oldProps.view !== newProps.view')
@@ -47,12 +48,14 @@ class TabularTR extends React.Component {
 			lineHeight: (geo.rowHeight) + 'px',
 			top: (geo.rowHeight * (row)) + 'px',
 		}
+
 		var left = _this.props.hasRowLabel ? geo.labelWidth : 0;
 
 		// selector[model._pk] = obj[model._pk]
 
+		var checkbox = this.props.selected ? `<span class="check purple icon icon-check"></span>` : '';
 		var html = _this.props.hasRowLabel ?
-				`<span class = "table-cell ${obj._dirty ? ' dirty-label ' : ''}" style = "left: ${geo.leftGutter}px; width: ${geo.labelWidth} px"></span>`
+				`<span class = "table-cell ${obj._dirty ? ' dirty-label ' : ''}" style = "left: ${geo.leftGutter}px; width: ${geo.labelWidth}px"><span class="table-cell-inner"><span class="label-grab-handle"></span><span style = "margin-left: 2px;" class = "checkbox-surround ">${checkbox}</span></span></span>`
 				: '';
 
 		html = html + _this.props.columns.map(function (col, j) {
@@ -65,7 +68,7 @@ class TabularTR extends React.Component {
 		}).join(' ');
 
 		return <div id = {rowKey} key = {rowKey} dangerouslySetInnerHTML = {{__html: html}}
-			className = {"table-row " +  (obj._dirty ? " dirty " : "") + (obj._error ? " row-error " : "")} style = {rowStyle}/>
+			className = {"table-row " + (this.props.selected ? " table-row-selected" : "")} style = {rowStyle}/>
 	}
 }
 

@@ -61,6 +61,7 @@ var ViewStore = storeFactory({
         var oldView = this.get(view.view_id) || {};
         if (!(view instanceof Object)) return;
         if (oldView._requestId > requestId && requestId) return;
+        view = groomView(view);
         view._requestId = requestId;
         view._dirty = false;
         this.create(view);
@@ -78,7 +79,7 @@ var ViewStore = storeFactory({
         var models = payload.model instanceof Array ? payload.model : [payload.model]
         var _this = this;
         models.forEach(function (model) {
-          if('views' in model) model.views.map(util.clean).map(_this.create)
+          if('views' in model) model.views.map(groomView).map(util.clean).map(_this.create)
         });
         this.emitChange()
         break;

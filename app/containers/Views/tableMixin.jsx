@@ -112,7 +112,8 @@ var TableMixin = {
 			return;
 		}
 		else if (e.keyCode == keycodes.ESC) {
-			this.setState({copyarea: null, expanded: false})
+			this.clearCopy()
+			// this.setState({copyarea: null, expanded: false})
 			return;
 		}
 		else if (e.keyCode == keycodes.C && ctrlKey) {
@@ -218,6 +219,7 @@ var TableMixin = {
 		if (FocusStore.getFocus(0) !== 'view')
 			modelActionCreators.setFocus('view')
 		this.updateSelect(this.getRCCoords(e), e.shiftKey)
+		
 		addEventListener('selectstart', util.returnFalse)
 		addEventListener('mousemove', this.onSelectMouseMove)
 		addEventListener('mouseup', this.onMouseUp)
@@ -294,7 +296,7 @@ var TableMixin = {
 			this.updateSelect(ptr, false)
 		}
 
-		// down ---------------------------
+		// Down ---------------------------
 		else if (direction === 'DOWN' && shift) {
 			if (sel.top < ptr.top) sel.top += 1
 			else if (sel.bottom < numRows) sel.bottom += 1
@@ -303,7 +305,7 @@ var TableMixin = {
 			if (ptr.top < numRows) ptr.top = (ptr.top + 1)
 			this.updateSelect(ptr, shift)
 		}
-		// up
+		// Up
 		else if (direction === 'UP' && shift) {
 			if (sel.bottom > ptr.top) sel.bottom -= 1
 			else if (sel.top > 0) sel.top -= 1
@@ -314,32 +316,6 @@ var TableMixin = {
 		}
 	},
 
-	// ========================================================================
-	// scrolling
-	// ========================================================================
-
-
-	// setCSSOffset: function (_vOffset, _hOffset) {
-	// 	var view = this.props.view;
-	// 	var geo = view.data.geometry;
-	// 	var hOffset = (_hOffset === undefined) ? this.state.hOffset : _hOffset;
-	// 	var vOffset = (_vOffset === undefined) ? this.state.vOffset : _vOffset;
-
-	// 	var lhsOffsetter = this.refs.tableWrapper.refs.lhsOffsetter;
-	// 	var rhsOffsetter = this.refs.tableWrapper.refs.rhsOffsetter;
-	// 	var underlay = this.refs.cursors.refs.underlayInner;
-	// 	var overlay = this.refs.cursors.refs.overlayInner;
-
-	// 	var translateCss = "translate3d("
-	// 		+ (-1 * hOffset) + "px,"
-	// 		+ (-1 * vOffset) + "px, 0)";
-
-	// 	ReactDOM.findDOMNode(lhsOffsetter).style.transform = translateCss;
-	// 	ReactDOM.findDOMNode(rhsOffsetter).style.transform = translateCss;
-	// 	ReactDOM.findDOMNode(underlay).style.transform = translateCss;
-	// 	ReactDOM.findDOMNode(overlay).style.transform = translateCss;
-	// },
-
 	componentWillMount: function () {
 		this._debounceCreateView = _.debounce(this.createView, 500);
 		this._debounceCreateViewconfig = _.debounce(this.createViewconfig, 500);
@@ -349,7 +325,7 @@ var TableMixin = {
 	createViewconfig: function (viewconfig) {
 		modelActionCreators.create('viewconfig', false, viewconfig);
 	},
-
+	
 	createView: function (view) {
 		modelActionCreators.createView(view, false, false, true)
 	},

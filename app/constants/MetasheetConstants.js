@@ -2,6 +2,29 @@
 
 module.exports = {
 
+  updateMethods: {
+    'P': {
+      label: 'copy/paste',
+      icon: 'icon-clipboard-check'
+    },
+    'M': {
+      label: 'mouse or menu selection',
+      icon: 'icon-mouse'
+    },
+    'K': {
+      label: 'keyboard',
+      icon: 'icon-keyboard'
+    },
+    'C': {
+      label: 'clear',
+      icon: 'icon-broom'
+    },
+    'I': {
+      label: 'insert',
+      icon: 'flare'
+    }
+  },
+
   colors: {
     GRAY_A: '#2a3034',
     GRAY_1: '#524A50',

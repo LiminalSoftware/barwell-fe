@@ -14,10 +14,11 @@ var popdownClickmodMixin = {
 
 	render: function () {
 	    var iconClass = this.getIcon();
+	    var isActive = this.isActive ? this.isActive() : false;
 	    if (!!this.props.menuInline) return <div className = "menu-sub-item-boxed"  onClick = {util.clickTrap}>
 	      {this.renderMenu()}
 	    </div>;
-	    else return <span className={"pop-down clickable "}
+	    else return <span className={"pop-down clickable " + (isActive ? ' popdown-active' : '')}
 	        onClick = {this.handleClick}>
 	    	<span className = {iconClass} style={{width: '30px', textAlign: 'center', marginRight: 0}}/>
 	    	{

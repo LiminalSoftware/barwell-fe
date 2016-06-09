@@ -317,7 +317,7 @@ var CubePane = React.createClass ({
 		if (lo < 0 || hi < 0) throw new Error('Miscalulated cell areas');
 
 		var sortSpec = header.slice(0, pos[(dimension === 'row' ? 'left' : 'top')] + header.length + 1).map(function(k) {
-			return {attribute_id: k};
+			return {attribute: 'a' + k};
 		});
 		while (lo > 0 && util.compare(
 			sortSpec,

@@ -26,24 +26,17 @@ var TextChoice = React.createClass({
     var config = this.props.config
     return {
       textConditionAttr: config.textConditionAttr,
-      bold: config.bold,
-      italic: config.italic,
-      underline: config.underline,
+      style: config.style,
       open: false
     }
   },
 
   choosetextConditionAttr: function (attributeId) {
-    this.commitChanges({textConditionAttr: attributeId, bold: false})
+    this.commitChanges({textConditionAttr: attributeId})
   },
 
-  chooseBoldStyle: function () {
-    this.commitChanges({bold: true})
-    this.setState({open: false})
-  },
-
-  chooseNoStyle: function () {
-    this.commitChanges({bold: false})
+  chooseStyle: function (style) {
+    this.commitChanges({style: style})
     this.setState({open: false})
   },
 
@@ -56,14 +49,20 @@ var TextChoice = React.createClass({
         Font Style
       </li>
 
-      <li className = {"popdown-item selectable " + (_this.state.bold ? 'menu-selected' : '')}
-      onClick = {_this.chooseBoldStyle}>
+      <li className = {"popdown-item selectable " + (_this.state.style === 'bold' ? 'menu-selected' : '')}
+      onClick = {_this.chooseStyle.bind(_this, 'bold')}>
         <span className = "icon icon-bold"/>
         Bold text
       </li>
 
-      <li className = {"popdown-item selectable" + (!_this.state.bold ? ' menu-selected' : '')}
-      onClick = {_this.chooseNoStyle.bind(_this, null)}>
+      <li className = {"popdown-item selectable " + (_this.state.style === 'italic' ? 'menu-selected' : '')}
+      onClick = {_this.chooseStyle.bind(_this, 'italic')}>
+        <span className = "icon icon-italic"/>
+        Italic text
+      </li>
+
+      <li className = {"popdown-item selectable " + (_this.state.style === 'none' ? ' menu-selected' : '')}
+      onClick = {_this.chooseStyle.bind(_this, 'none')}>
         <span className = "icon icon-text-format"/>
         No font style
       </li>
@@ -118,8 +117,12 @@ var TextChoice = React.createClass({
     ]
   },
 
+  isActive: function () {
+    return this.state.style !== 'none';
+  },
+
   getIcon: function () {
-    return " icon " + (this.state.bold ? " icon-bold " : " icon-text-format ");
+    return " icon " + (this.state.style === 'none' ? " icon-text-format " : ('icon-' + this.state.style))
   },
 
 })

@@ -32,14 +32,14 @@ var CheckboxElement = React.createClass({
 	// },
 
 	handleEdit: function () {
-		this.toggle();
+		this.toggle('keyboard');
 		this.props._handleBlur();
 	},
 
 	validator: function (input) {
-		if (input === 'TRUE' || input === 'true') return true
-		if (input === 'FALSE' || input === 'false') return false
-		return (!!input)
+		if (input === 'TRUE' || input === 'true' || input === true) return true
+		if (input === 'FALSE' || input === 'false' || input === false) return false
+		return false
 	},
 
 	parser: function (input) {
@@ -47,14 +47,14 @@ var CheckboxElement = React.createClass({
 	},
 
 	handleClick: function (e) {
-		this.toggle()
+		this.toggle('mouse click')
 		e.preventDefault()
 		e.stopPropagation()
 		e.nativeEvent.stopPropagation()
 	},
 
-	toggle: function () {
-		this.commitValue(!this.state.value)
+	toggle: function (method) {
+		this.commitValue(!this.state.value, {method: method})
 	},
 
 	getDisplayHTML: function (config, obj) {
@@ -63,7 +63,7 @@ var CheckboxElement = React.createClass({
 		// var bgcolor = this.getBgColor(config, obj);
 		var iconCheck = value ? 'icon-check' : '';
 		var checkbox = `<span class="check green icon ${iconCheck}"></span>`;
-		var bg = this.getBgColor ? this.getBgColor(config, obj) : {};
+		var bg = this.getBgColor ? this.getBgColor(config, obj, null, null) : {};
 		return `<span style = "text-align: center; background: ${bg.background}" class = "${classes}"><span class = "checkbox-surround ">${checkbox}</span></span>`;
 		// return '<span class="table-cell-inner"></span>'
 	},
@@ -82,7 +82,7 @@ var CheckboxElement = React.createClass({
 
 		cellStyle.lineHeight = this.props.rowHeight + 'px'
 		cellStyle.textAlign = 'center'
-		Object.assign(cellStyle, this.getBgColor(config, this.props.object));
+		Object.assign(cellStyle, this.getBgColor(config, this.props.object, null, this.props.selected));
 
 		return <span {...this.props} className = {"table-cell " + (this.props.selected ? 
 				(isNull ? "table-cell-selected-null" : "table-cell-selected") : 
@@ -112,7 +112,12 @@ var booleanField = {
 	expandable: false,
 	defaultAlign: 'center',
 	element: CheckboxElement,
-	uneditable: true
+	uneditable: false,
+
+	stringify: function (input) {
+		if (input === true) return 'true';
+		else return 'false';
+	}
 }
 
 export default booleanField

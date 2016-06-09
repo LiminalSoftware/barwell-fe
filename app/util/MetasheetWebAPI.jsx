@@ -54,35 +54,7 @@ var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
         })
       },
       error: function (xhr, error, status) {
-        if (error === 'timeout') {
-          if (retry++ >= MAX_RETRIES) {
-            console.log('timeout, trying again: ' + retry)
-            modelActionCreators.createNotification({
-              copy: 'Error communicating with the server.  There may be a problem with the connection.', 
-              type: 'error',
-              icon: ' icon-warning ',
-              notification_key: 'connectivity',
-              notifyTime: 0
-            });
-            return
-          }
-          
-          $.ajax(this);
-        } else {  
-          // console.log('error')
-          console.log(xhr);
-          console.log(status);
-          console.log(error)
-          modelActionCreators.createNotification({
-              copy: 'Looks like something went wrong: ' + xhr.statusText, 
-              type: 'error',
-              icon: ' icon-warning ',
-              notification_key: 'serverError',
-              notifyTime: 0
-            });
-          
-          reject(xhr.responseJSON)
-        }
+        reject(xhr.responseJSON)
       }
     };
     if (json) {

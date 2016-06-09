@@ -23,6 +23,8 @@ var hasManyField = {
 
 	defaultAlign: 'center',
 
+	icon: 'arrows-split',
+
 	configParts: [AlignChoice, LabelChoice, BubbleColorchoice],
 
 	configCleanser: function (config) {
@@ -83,18 +85,18 @@ var hasManyField = {
 			})
 		},
 
-		handleDrop: function (e) {
-			var model = this.props.model
-			var config = this.props.config
-			var relationId = config.relation_id
-			var thisObj = this.props.object
-			var relObj = JSON.parse(
-				e.dataTransfer.getData('application/json')
-			)
-			modelActionCreators.moveHasMany(relationId, thisObj, relObj)
-			e.dataTransfer.dropEffect = 'move'
-			this.setState({droppable: false})
-		},
+		// handleDrop: function (e) {
+		// 	var model = this.props.model
+		// 	var config = this.props.config
+		// 	var relationId = config.relation_id
+		// 	var thisObj = this.props.object
+		// 	var relObj = JSON.parse(
+		// 		e.dataTransfer.getData('application/json')
+		// 	)
+		// 	modelActionCreators.moveHasMany(relationId, thisObj, relObj)
+		// 	e.dataTransfer.dropEffect = 'move'
+		// 	this.setState({droppable: false})
+		// },
 
 		getDisplayHTML: function (config, obj) {
 			var value = obj[config.column_id]
@@ -135,14 +137,7 @@ var hasManyField = {
 				else editorIconStyle.right = 0
 			}
 
-		// console.log('showDetail: ' + showDetail)
-
 			return <span
-				onDragEnter = {this.handleDragEnter}
-				onDragLeave = {this.handleDragLeave}
-				onDragEnd = {this.handleDragEnd}
-				onDragOver = {this.preventDefault}
-				onDrop = {this.handleDrop}
 				className = {"table-cell " + (this.state.selected ? " table-cell-selected" : "")}
 				style={style} >
 				<span className = "table-cell-inner"

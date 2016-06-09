@@ -1,6 +1,6 @@
 @import "../../../../../global.less";
 
-.selection, .copyarea, .pointer, .selection-outer, .selection-border, .jagged-edge {
+.selection, .copyarea, .pointer, .selection-outer, .selection-outer-singleton, .selection-border, .jagged-edge {
 	.border-box;
 	position: absolute;
 	top: 0;
@@ -9,6 +9,10 @@
 	// pointer-events: none;
 	.noselect;
 	transform-style: preserve-3d;
+}
+.selection, .selection-outer, .selection-border, .selection-outer-singleton, .pointer-transitioned {
+	transition-property: left, top, height, width, bottom, right;
+	transition-duration: 75ms;
 }
 
 .selection-drag-box {
@@ -21,7 +25,8 @@
 	padding: 0;
 	
 	background: white;
-	z-index: 7;
+	z-index: 11;
+	transform: translateZ(11px);
 	pointer-events: auto;
 	cursor: crosshair !important;
 }
@@ -35,30 +40,34 @@
 }
 
 .jagged-edge {
-	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAGCAYAAAD+Bd/7AAAAOklEQVQIW2Nkn2rx/0fWcQYQYGRkZAQzkADj/////3NMs2TApQisAKQBlyKwkSBFIOOxWUfYBEJuAADs9CgHgHfuFwAAAABJRU5ErkJggg==) repeat-y;
-	z-index: 6;
-	transform: translateZ(6px);
+	// background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAGCAYAAAD+Bd/7AAAAOklEQVQIW2Nkn2rx/0fWcQYQYGRkZAQzkADj/////3NMs2TApQisAKQBlyKwkSBFIOOxWUfYBEJuAADs9CgHgHfuFwAAAABJRU5ErkJggg==) repeat-y;
+	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKCAYAAABmBXS+AAAASUlEQVQYV2P8////f45plgw/so4zwAAjIyMjnMPAwMAIUgQSQFaIoQikgJBCuLH4FKLYjUshVkXIbgS5jzSTCLqJoO8IKQC5DwAj6UYL7xqHNAAAAABJRU5ErkJggg==) 
+		repeat-y;
+	z-index: 10;
+	transform: translateZ(10px);
 }
 
 .copyarea {
-	z-index: 4;
-	transform: translateZ(4px);
+	z-index: 10;
+	transform: translateZ(10px);
 }
 
-.selection {
+.selection, .selection-singleton {
 	transform: translateZ(-2px);
 	z-index: 1;
 
 	border: 6px solid white;
-	background-color: @gray-trans;
+	
 	&.focused {
 		cursor: move !important;
 	}
-	// .transition(all cubic-bezier(.1,.85,.5,1) 100ms);
-	
 }
 
-.selection.singleton {
+.selection {
+	background-color: @gray-trans;
+}
+
+.selection-singleton {
 	background: transparent !important;
 }
 
@@ -68,20 +77,15 @@
 	pointer-events: auto;
 }
 
-.pointer--expanded {
-	border: 1px solid @newgreen1;
-	// .transition(all cubic-bezier(.1,.85,.5,1) 100ms);
-}
-
-.selection-outer {
+.selection-outer, .selection-outer-singleton {
 	border: 6px solid white;
 	transform: translateZ(2px);
 	z-index: 2;
-	// .transition(all cubic-bezier(.1,.85,.5,1) 100ms);
-	background-color: @gray-trans;
-	cursor: move !important;
-	
 }
+.selection-outer {
+	background: @gray-trans;
+}
+
 .selection-border {
 	// .transition(all cubic-bezier(.1,.85,.5,1) 100ms);
 	

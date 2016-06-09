@@ -37,34 +37,30 @@ var PopDownMenu = React.createClass({
 			marginLeft: '-1px',
 			marginRight: '0',
 			pointerEvents: 'auto',
-			// maxHeight: this.state.mounted ? ((40 * _.flatten(this.props.children).length) + 'px') : 0
+			display: 'block',
+			maxHeight: this.props.maxHeight
 		};
 		var shouldOpenUp = this.shouldOpenUp()
+		var direction = this.shouldOpenUp() ? "up" : "down";
+		var color = this.props.green ? "green" : "";
 
 		if (this.props.width) style.width = this.props.width + 'px';
 
-		return <ul 
+		return <div
+			{...this.props}
 			className = {
 				(shouldOpenUp ? " pop-up-menu " : " pop-down-menu") + 
+				(this.props.green ? " green " : "") +
 				(this.props.split ? " split-menu " : "")
 			}
 			style = {style}>
-			{
-			shouldOpenUp ? 
-			<span className = "pop-up-pointer-outer "/>
-          	:
-          	<span className = "pop-down-pointer-outer "/>
-          	}
-          	{
-			shouldOpenUp ? 
-			<span className = "pop-up-pointer-inner"/>
-          	:
-          	<span className = "pop-down-pointer-inner"/>
-          	}
+			
+			<span className = {"pop-" + direction + "-pointer-outer " + color}/>
+          	<span className = {"pop-" + direction + "-pointer-inner " }/>
           	
 			{this.props.children}
 				
-			</ul>
+			</div>
 	}
 
 })

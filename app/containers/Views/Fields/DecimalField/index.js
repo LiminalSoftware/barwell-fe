@@ -63,16 +63,16 @@ var decimalField = {
 
 		format: function (value, _config) {
 			// var config = this.props.config || {}
-			var config = _config || this.props.config || {}
+			var config = _config || this.props.config || {};
 			
-			var prettyVal = numeral(value).format(config.formatString)
-			return prettyVal
+			var prettyVal = numeral(value).format(config.formatString);
+			return prettyVal;
 		},
 
 		validator: function (input) {
 			// console.log('validator input: ' + input)
-			var config = this.props.config || {}
-			if (_.isNumber(input)) return input
+			// var config = this.props.config || {}
+			return numeral(input).value();
 		},
 
 		parser: function (input) {

@@ -140,8 +140,8 @@ var TabularBodyWrapper = React.createClass ({
 
 	shouldComponentUpdate: function (nextProps, nextState) {
 		var oldProps = this.props
-		return this.props.view !== nextProps.view ||
-			this.props.children !== nextProps.children
+		// console.log('!(oldProps.view === nextProps.view): ' + !(oldProps.view === nextProps.view))
+		return !(oldProps.view === nextProps.view)
 	},
 
 	render: function () {
@@ -261,7 +261,8 @@ var TabularBodyWrapper = React.createClass ({
 				<div className = "rhs-h-scroll wrapper force-layer"
 					ref = "rhsHorizontalOffsetter"
 					style = {{
-						marginLeft: (-1 * this.props.hiddenColWidth - 1) + 'px', 
+						marginLeft: (-1 * this.props.hiddenColWidth - 1) + 'px',
+						transition: 'margin-left 75ms'
 						// use marginLeft instead of translate here because translate will clobber the other offset
 					}}>
 

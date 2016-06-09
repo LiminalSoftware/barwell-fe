@@ -9,15 +9,18 @@ import tinycolor from "tinycolor2"
 
 var Bubble = React.createClass({
 
-	handleDragStart (event) {
-		var obj = this.props.obj
-		event.dataTransfer.effectAllowed = 'move'
-		event.dataTransfer.setData('application/json', JSON.stringify(obj))
-		event.stopPropagation()
+	handleDragStart (e) {
+		var obj = this.props.obj;
+		var model_id = this.props.model.model_id;
+		obj._model_id = this.props.model.model_id;
+		var json = JSON.stringify(obj);
+		e.dataTransfer.effectAllowed = 'move';
+		e.dataTransfer.setData('m' + obj._model_id, json);
+		// e.stopPropagation()
 	},
 
-	handleMousedown: function (event) {
-		event.stopPropagation()
+	handleMousedown: function (e) {
+		e.stopPropagation()
 	},
 
 	render: function () {
@@ -37,12 +40,11 @@ var Bubble = React.createClass({
 		return <span key={obj[model._pk]}
 			className="has-many-bubble"
 			style = {style}
-			onDrop = {this.handleDrop}
 			draggable = "true"
 			onDragStart = {this.handleDragStart}
-			onMouseDown = {this.handleMousedown}
-			>
+			onMouseDown = {this.handleMousedown}>
 			{label}
+			<span className = "icon icon-circle-cross"/>
 		</span>
 	}
 

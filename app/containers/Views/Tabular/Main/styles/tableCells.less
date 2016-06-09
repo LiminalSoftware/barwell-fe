@@ -10,6 +10,10 @@
 	overflow: hidden;
 }
 
+.table-row-selected {
+	background: @gray-trans;
+}
+
 .table-cell-null {
    	background:url(
 	data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAALElEQVQIW2NkwAJmzpz5nxFdHCSYnp7OiCIBEwQphksgC8Il0AXBEtgEQRIAV8cW0fNIKO0AAAAASUVORK5CYII=
@@ -47,8 +51,21 @@
 .table-cell-selected {
 }
 
-.dirty-label {
-	.newgreen-stripe;
+// .dirty-label {
+// 	.newgreen-stripe;
+// }
+
+.label-grab-handle {
+	 background:url(
+	data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAGElEQVQIW2Nc4Lj/f8J+R0YGKIAziBcAAAF5BAVLxr7tAAAAAElFTkSuQmCC
+    ) repeat;
+
+	.draggable;
+	position: absolute;
+	left: 1px;
+	width: 8px;
+	top: 1px;
+	bottom: 1px;
 }
 
 .row-error {
@@ -69,6 +86,9 @@
 	padding-right: 7px;
 	&.bolded {
 		font-family: @headerFont;
+	}
+	&.italics {
+		font-style: italic;
 	}
 }
 
@@ -168,6 +188,10 @@
 .sort-th-label-blurred, .type-th-label-blurred {
 	color: @gray2 !important;
 	font-size: 16px;
+}
+.type-icon {
+	// color: @purple4 !important;
+	font-size: 18px;
 }
 
 

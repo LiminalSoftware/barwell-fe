@@ -106,7 +106,7 @@ var ColumnDetailMixin = {
 					transitionName="slide-in"
 					className={"menu-item" +
 						(this.singleton ? " singleton " : " menu-item-stacked ")}
-					style = {{minWidth: this.minWidth}}
+					style = {{minWidth: this.minWidth, display: 'block'}}
 					component = "div">
 
 				<div className = "menu-sub-item">
@@ -126,7 +126,7 @@ var ColumnDetailMixin = {
 						value={this.state.name}
 						onBlur = {this.handleBlurName}
 						onChange = {this.handleNameChange}/>
-					: <span><span className = {"icon icon-" + fieldType.icon}/>{config.name}</span>
+					: <span><span className = {"type-icon icon icon-" + fieldType.icon}/>{config.name}</span>
 					}
 				</span>
 				

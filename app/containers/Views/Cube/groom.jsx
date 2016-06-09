@@ -31,10 +31,10 @@ var groomView = function (view) {
 	// view.aggregator = view.aggregator ? view.aggregator.toLowerCase() : null;
 
 	data.rowSortSpec = view.row_aggregates.map(function (d) {
-        return {'attribute_id': d, 'descending': columns['a' + d].descending}
+        return {'attribute': 'a' + d, 'descending': columns['a' + d].descending}
     });
     data.columnSortSpec = view.column_aggregates.map(function (d) {
-        return {'attribute_id': d, 'descending': columns['a' + d].descending}
+        return {'attribute': 'a' + d, 'descending': columns['a' + d].descending}
     });
 	if(!(data.geometry instanceof Object)) data.geometry = {}
 	data.geometry = _.extend({

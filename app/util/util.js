@@ -1,6 +1,12 @@
 var _ = require('underscore')
 var tinycolor = require("tinycolor2")
 
+var wait = module.exports.wait = function (duration) {
+  return new Promise (function (resolve, reject) {
+    window.setTimeout(resolve, duration);
+  })
+}
+
 // fix javascript modulo bug
 Number.prototype.mod = function(n) {
     return ((this%n)+n)%n;
@@ -41,7 +47,7 @@ module.exports.subtractOffset = function (a, b) {
 
 var compare = module.exports.compare = function (sortSpec, a, b) {
     for (var i = 0; i < sortSpec.length; i++) {
-        var key = 'a' + sortSpec[i].attribute_id;
+        var key = sortSpec[i].attribute;
         var inversion = sortSpec[i].descending ? 1 : -1;
 
         if ((a[key] === null || a[key] === undefined) && 
@@ -68,8 +74,10 @@ var merge = module.exports.merge = function (sortSpec, reducer, a, b) {
         result.push(a[i++]);
       else if (compare(sortSpec, a[i], b[j]) > 0)
         result.push(b[j++]);
-      else
+      else if (reducer)
         result.push(reducer(a[i++], b[j++]));
+      else
+        result.push(a[i++], b[j++])
     }
 
     while (i < a.length)  
@@ -93,7 +101,7 @@ module.exports.sum = function (arr, prop) {
 
 module.exports.sequence = function (start, stop, howMany) {
   var a = []
-  for (var i = start; i < stop; i += ((stop - start)/(howMany + 0.0000000000001))) {
+  for (var i = start; i < stop; i += ((stop - start)/(howMany) + 0.000000000001)) {
       a.push(i);
   }
   return a;
