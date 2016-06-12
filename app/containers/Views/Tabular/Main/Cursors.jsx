@@ -67,11 +67,14 @@ var Cursors = React.createClass ({
 
 	render: function () {
     var view = this.props.view
+    var viewconfig = this.props.viewconfig || {};
     var model = this.props.model
     var store = this.props.store
     var rowCount = store.getRecordCount()
     var geo = view.data.geometry
     var focused = this.props.focused
+    
+    var rowsSelected = Object.keys(store.getSelection()).length > 0;
 
     var rowOffset = this.props.rowOffset
     var colOffset = this.props.hiddenColWidth
@@ -144,7 +147,6 @@ var Cursors = React.createClass ({
                 position = {{left: 0, right: view.data.visibleCols.length + view.data.fixedCols.length, 
                   top: rowCount, bottom: rowCount}}
                 fudge = {{left: -1, width: 1}}
-                numHiddenCols = {this.props.columnOffset}
                 className = {"add-new-row add-new-row--" + (focused ? "focused " : "blurred ")}>
               <div className = "table-cell-inner" style={{cursor: 'pointer', lineHeight: (geo.rowHeight + 'px')}} 
                 onClick = {this.props._addRecord}>
@@ -156,7 +158,6 @@ var Cursors = React.createClass ({
           
           <Overlay
             {...this.props}
-            numHiddenCols = {this.props.columnOffset}
             className = {"pointer " + (focused ? " focused" : " ") + 
               (focused ? " " : " gray-out ") +
               (this.props.expanded ? " pointer--expanded " : "")}
@@ -173,24 +174,26 @@ var Cursors = React.createClass ({
             </ReactCSSTransitionGroup>
           </Overlay>
 
+          {rowsSelected ? null :
           <Overlay
             {...this.props}
-            numHiddenCols = {this.props.columnOffset}
             className = {"selection-border selection-border--" + (focused ? "focused" : "blurred")}
             ref = "selectionBorder"
             position = {sel}
             fudge = {{left: -2.25, top: -0.25, height: 2.5, width: 3.5}}>
             <div className = {"selection-drag-box selection-drag-box--" + (focused ? "focused" : "blurred")} />
           </Overlay>
+          }
 
+          {rowsSelected ? null :
           <Overlay
             {...this.props}
-            numHiddenCols = {this.props.columnOffset}
             className = {"selection-outer" + (singleton ? '-singleton' : '')}
             ref = "selectionOuter"
             position = {sel}
             fudge = {{left: -3.75, top: -2.75, height: 7.5, width: 6.75}}>
           </Overlay>
+          }
           
           {
           showJaggedEdge ? 

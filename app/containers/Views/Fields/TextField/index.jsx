@@ -21,7 +21,7 @@ import ColorChoice from "../textFieldConfig/ColorChoice"
 import TextChoice from "../textFieldConfig/TextChoice"
 
 var textField = {
-	
+		
 	configParts: [AlignChoice, ColorChoice, TextChoice],
 	
 	sortable: true,
@@ -46,9 +46,12 @@ var textField = {
 		},
 
 		parser: function (input) {
-			input = String(input);
-			input = input.replace(/[\r\n]/g, '');
-			return input;
+			if (input === null || input === undefined) return '';
+			else return String(input);
+		},
+
+		validator: function (input) {
+			return String(input || '')
 		}
 	})
 }

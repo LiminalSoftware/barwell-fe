@@ -62,7 +62,7 @@ var Notifier = React.createClass({
 		var _this = this;
 		var notifications = NotificationStore.query({}); 
 		var transactions = TransactionStore.query(this.state.mouseOver ? null : {status: 'active'});
-
+		transactions = transactions.slice(this.state.mouseOver ? -1 : -8, 1)
 		var events = util.merge({attribute: 'timestamp', descending: true}, null, notifications, transactions)
 
 		return <div style = {{cursorEvents: 'none'}} >
@@ -71,7 +71,7 @@ var Notifier = React.createClass({
 			onMouseOut = {this.handleMouseOut} />
 		<ReactCSSTransitionGroup
 			transitionEnterTimeout = {500} transitionLeaveTimeout = {300}
-			component="ul" className="notifier" transitionName="slide-in">
+			component="ul" className="notifier" transitionName="fade-in">
 			{
 			events.map(function (note, idx) {
 				return <li className={note.type}
@@ -89,7 +89,7 @@ var Notifier = React.createClass({
 							note.errorMessage ? <p style = {{fontStyle: 'italic'}}>{note.errorMessage}</p>
 							: note.type === 'pending-item' ? <p style = {{fontStyle: 'italic'}}>Saving...</p>
 							: <p></p>
-							}
+							}	
 					</span>
 					{note.action_id ? <a style = {{flex: 1, flexGrow: 1, cursor: 'pointer'}} onClick = {util.clickTrap}>
 						<p><span className = 'icon icon-undo'/> Undo</p>

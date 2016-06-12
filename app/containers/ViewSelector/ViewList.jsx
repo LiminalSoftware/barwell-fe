@@ -55,14 +55,6 @@ var ViewList = React.createClass({
 			if (element) element.saveChanges();
 			ordering[item.view_id] = ord + 1;
 		});
-
-		// modelActionCreators.createNotification({
-		// 	copy: 'Views updated',
-		// 	type: 'info',
-		// 	icon: ' icon-check ',
-		// 	notification_key: 'viewsSaved',
-		// 	notificationTime: 2000
-		// });
 		
 		modelActionCreators.create('modelconfig', false, {
 			model_id: model.model_id,

@@ -8,7 +8,18 @@ var ViewConfigStore = storeFactory({
   identifier: 'view_id',
   dispatcher: dispatcher,
   pivot: function(payload) {
+    var config
     switch (payload.actionType) {
+      case 'CONFIG_SELECTRECORD':
+      case 'CONFIG_UPDATEPOINTER':
+      case 'CONFIG_SCROLL':
+        config = this.get(payload.viewconfig.view_id) || {};
+    }
+    switch (payload.actionType) {
+
+      case 'RECORD_MULTIUPDATE':
+      case 'RECORD_MULTIDELETE':
+        break;
 
       case 'VIEWCONFIG_CREATE':
         var config = this.get(payload.viewconfig.view_id) || {};

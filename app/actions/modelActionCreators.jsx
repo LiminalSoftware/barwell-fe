@@ -38,49 +38,36 @@ var modelActions = {
 		MetasheetDispatcher.dispatch(message);
 	},
 
-	selectRecord: function (view, pk) {
-		var count
-		var model = ModelStore.get(view.model_id);
-		var viewconfig = ViewConfigStore.get(view.view_id) || {};
-		var selectedRecords = viewconfig.selectedRecords || {};
-		if (pk in selectedRecords) delete selectedRecords[pk];
-		else selectedRecords[pk] = pk;
-		count = _.keys(selectedRecords).length;
-		modelActions.create('viewconfig', false, {
-			view_id: view.view_id, 
-			selectedRecords: selectedRecords
-		});
-		modelActions.createNotification({
-			copy: count > 1 ? 
-				(count + ' ' + model.plural + ' records selected')
-				: ('One ' + model.model + ' record selected'), 
-        	type: 'info',
-        	icon: ' icon-list3 ',
-        	sticky: true,
-			notification_key: 'selectedRecords',
-		})
+	selectRecord: function (view, id) {
+		console.log('a')
+		var message = {
+			model_id: view.model_id,
+			actionType: 'RECORD_TOGGLESELECT',
+			id: id
+		}
+		MetasheetDispatcher.dispatch(message);
 	},
 
-	unselectRecords: function (view, pk) {
-		modelActions.create('viewconfig', false, {
-			view_id: view.view_id, 
-			selectedRecords: {}
-		});
+	unselectRecords: function (view) {
+		var message = {
+			model_id: view.model_id,
+			actionType: 'UNSELECT'
+		}
+		MetasheetDispatcher.dispatch(message);
 	},
+
 
 	insertRecord: function (model, obj, position) {
 		var message = {};
 		var requestId = _requestId++;
 
 		message.actionType = 'RECORD_INSERT'
-		message.model = model
-		
-		
+		message.model_id = model.model_id
+		message.model = model;
 		message.object = obj
 		message.index = position
-
+		message.requestId = requestId
 		MetasheetDispatcher.dispatch(message)
-
 	},
 
 	deleteRecord: function (model, selector) {
@@ -97,6 +84,26 @@ var modelActions = {
 		MetasheetDispatcher.dispatch(message);
 	},
 
+	deleteMultiRecords: function (model, patches, extras) {
+		var requestId = _requestId++;
+
+		patches.forEach(k=> k.action = 'D')
+
+		modelActions.clearNotification({
+			notification_key: 'selectedRecords'
+		});
+
+		var message = _.extend(extras || {}, {
+			actionType: 'RECORD_MULTIDELETE',
+			model: model,
+			model_id: model.model_id,
+			patches: patches,
+			request_id: requestId
+		});
+		MetasheetDispatcher.dispatch(message);
+
+	},
+
 	multiPatchRecords: function (model, patches, extras) {
 		var requestId = _requestId++;
 
@@ -107,6 +114,7 @@ var modelActions = {
 		var message = _.extend(extras || {}, {
 			actionType: 'RECORD_MULTIUPDATE',
 			model: model,
+			model_id: model.model_id,
 			patches: patches,
 			request_id: requestId
 		});
@@ -193,11 +201,11 @@ var modelActions = {
 			message.endIndex = parseInt(rangeParts[1])
 			message.recordCount = parseInt(rangeParts[2])
 
-			message.actionType = ('M' + model_id + '_RECEIVE')
-			message['m' + model_id] = results.data
+			message.actionType = ('RECORD_RECIEVEFETCH')
+			message.model_id = model_id
+			message.records = results.data
 
 			MetasheetDispatcher.dispatch(message)
-
 			return message;
 		});
 	},

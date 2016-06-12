@@ -12,6 +12,15 @@ import makeColorPickerRows from '../ColorField/makeColorPickerRows'
 
 import util from '../../../../util/util';
 
+var palette = [
+  'rgb(77,179,113)',
+  'rgb(179,77,77)',
+  'rgb(240,233,117)', 
+  'rgb(186,224,133)', 
+  'rgb(230,122,25)',
+  'rgb(256,187,201)'
+];
+
 var ColorChoice = React.createClass({
 
   partName: 'ColorChoice',
@@ -25,7 +34,8 @@ var ColorChoice = React.createClass({
       colorAttr: this.props.config.colorAttr || null,
       colorConditionAttr: this.props.config.colorConditionAttr || null,
       color: this.props.config.color,
-      custom: !!this.props.config.color,
+      palette: !!this.props.config.color,
+      custom: this.props.config.customColor,
       adjustColor: !(this.props.config.adjustColor === false),
       open: false
     }

@@ -90,7 +90,7 @@ var TabularTBody = React.createClass ({
 		var skip = (lag >= FAST_THRESHOLD || !this.state.scrolling) ? 
 			(lag >= FASTER_THRESHOLD ? FASTER_SKIP : FAST_SKIP) : SLOW_SKIP
 		var startTarget = adjTarget
-		var endTarget = Math.min(adjTarget + VISIBLE_ROWS, fetchEnd)
+		var endTarget = adjTarget + VISIBLE_ROWS
 		
 		// advance or retreat the begining of the range as appropriate
 
@@ -146,23 +146,22 @@ var TabularTBody = React.createClass ({
 	// RENDER ================================================================
 
 	prepareRow: function (obj, index) {
-		var view = this.props.view
-		var viewconfig = this.props.viewconfig || {}
-		var selectedRecords = viewconfig.selectedRecords || {}
-		var model = this.props.model
-		var pk = model._pk
-		var ptr = this.props.pointer
-		var rowKey = this.props.prefix + '-tr-' + (obj.cid || obj[pk])
-		var offset = this.state.start
-
-		// console.log(viewconfig)
+		var view = this.props.view;
+		var viewconfig = this.props.viewconfig || {};
+		var model = this.props.model;
+		var pk = model._pk;
+		var ptr = this.props.pointer;
+		var rowKey = this.props.prefix + '-tr-' + (obj.cid || obj[pk]);
+		var offset = this.state.start;
+		var selectedRecords = this.props.store.getSelection();
+		
 
 		return <TabularTR
 			view = {this.props.view}
 			model = {this.props.model}
 			focused = {this.props.focused}
 			hasRowLabel = {this.props.hasRowLabel}
-			selected = {obj[pk] in selectedRecords}
+			selected = {(obj.cid || obj[pk]) in selectedRecords}
 			columns = {this.props.columns}
 			obj = {obj}
 			row = {index + offset}
@@ -179,16 +178,17 @@ var TabularTBody = React.createClass ({
 		var offset = Math.floor(this.state.offset/PAGE_SIZE) * PAGE_SIZE
 		var length = Math.floor(this.state.length/PAGE_SIZE) * PAGE_SIZE
 		var rows = this.props.store ? this.props.store.getObjects(
-			this.state.start, this.state.end
+			this.state.start, 
+			Math.min(this.state.end, this.props.fetchEnd)
 			// this.state.offset, this.state.offset + VISIBLE_ROWS
 		) : []
 		var rowCount = this.props.store ? this.props.store.getRecordCount() : 0
 		var geo = view.data.geometry
 		var floatOffset = this.props.floatOffset		
 		var style = this.props.style
-		style.transform = "translate3d(0, " + (-1 * this.state.rowOffset * geo.rowHeight ) + "px, 0)"
+		
 
-		// if (this.props.prefix === 'rhs') console.log('render tbody, target: ' + this.state.target + ', start: ' + this.state.start + ', end: ' + this.state.end)
+		style.transform = "translate3d(0, " + (-1 * this.state.rowOffset * geo.rowHeight ) + "px, 0)"
 
 		return <div
 			className = {"tabular-body-" + this.props.prefix + " tabular-body force-layer " + (this.props.focused ? ' focused ' : ' gray-out ')}

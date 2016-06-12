@@ -10,7 +10,7 @@ var ViewItemSingleton =  React.createClass({
 	handleClick: function (e) {
 		var model = this.props.model;
 		var view = this.props.view;
-		this.props._blurMenu();
+		if (this.props._blurMenu) this.props._blurMenu();
 		modelActionCreators.create('modelconfig', false, {
 			model_id: model.model_id,
 			selected_view_id: view.view_id

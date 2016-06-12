@@ -35,9 +35,9 @@ import constant from "../../../../constants/MetasheetConstants"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-var THROTTLE_DELAY = 14
-var MIN_CYCLE = 10
-var CYCLE = 25
+var THROTTLE_DELAY = 14;
+var MIN_CYCLE = 10;
+var CYCLE = 25;
 
 var getFrame = function (f, cycle) {
 	if (window.requestAnimationFrame) return window.requestAnimationFrame(f)
@@ -162,7 +162,13 @@ var TabularPane = React.createClass ({
 	},
 
 	selectRow: function () {
-		
+		var model = this.props.model
+		var view = this.props.view
+		var sel = this.state.selection;
+		for (let i = sel.top; i <= sel.bottom; i++) {
+			var rec = this.getValueAt(i)
+			modelActionCreators.selectRecord(view, rec.cid || rec[model._pk]);
+		}
 	},
 
 	getRCCoords: function (e) {
@@ -235,33 +241,26 @@ var TabularPane = React.createClass ({
 	},
 
 	clearSelection: function () {
-		this.putSelection([[null]], 'selection clear');
+		this.putSelection([[null]], 'clearing selection');
 	},
 
 	deleteRecords: function () {
+		var ptr = this.state.pointer
+		var sel = this.state.selection
 		var model = this.props.model
-		var sel = _.clone(this.state.selection)
-		var ptr = _.clone(this.state.pointer)
-		var pk = model._pk
-		var selectors = []
-		var numRows = this.getNumberRows()
-		var numRowsDeleted = (sel.bottom - sel.top + 1)
-		
+		var records = this.store.getSelectedRecords();
+		var numRows = this.getNumberRows();
 		this.blurPointer();
 
-		for (var row = sel.top; row <= sel.bottom; row++) {
-			var obj = this.getValueAt(row)
-			var selector = {}
-			if (!(pk in obj)) return // what about cid?
-			else selector[pk] = obj[pk]
-			selectors.push(selector)
+		if (records.length === 0) {
+			this.selectRow()
+			records = this.store.getSelectedRecords();
 		}
-		selectors.forEach(function (selector) {
-			modelActionCreators.deleteRecord(model, selector)
-		});
 
-		ptr.top = ptr.bottom = Math.min(ptr.top, numRows - numRowsDeleted);
-		sel.bottom = sel.top = Math.min(sel.top, numRows - numRowsDeleted);
+		modelActionCreators.deleteMultiRecords(model, records);
+
+		ptr.top = ptr.bottom = Math.min(ptr.top, numRows - records.length);
+		sel.bottom = sel.top = Math.min(sel.top, numRows - records.length);
 		this.setState({copyarea: null, selection: sel, pointer: ptr});
 	},
 
@@ -311,6 +310,30 @@ var TabularPane = React.createClass ({
 		var sel = this.state.selection;
 		var json = [];
 		var view = this.props.view;
+
+		var model = this.props.model
+		var view = this.props.view
+		var viewconfig = ViewConfigStore.get(view.view_id);
+		var sel = _.clone(this.state.selection)
+		var ptr = _.clone(this.state.pointer)
+		var pk = model._pk
+		var selectors = []
+		var numRows = this.getNumberRows()
+		var numRowsDeleted 
+		var records
+
+		var records = this.getSelectionObjects()
+		
+		if (viewconfig.selectedRecords)
+			records = Object.keys(viewconfig.selectedRecords)
+				.map(function(k){return {[model._pk]: k};});
+		
+		else
+			records = Array(sel.bottom - sel.top)
+				.map((e, i) => this.getValueAt(i))
+				.map(function(r){return {[model._pk]: r[model._pk]};});
+
+
 
 		for (var r = sel.top; r <= sel.bottom; r++) {
 			var obj = this.store.getObject(r);
@@ -446,9 +469,7 @@ var TabularPane = React.createClass ({
 			pointer: pos,
 			expanded: false,
 			contextOpen: false
-		})
-		
-		// this.scrollTo(pos)
+		});
 		
 		// focus the paste area just in case
 		document.getElementById("copy-paste-dummy").focus();
@@ -469,10 +490,7 @@ var TabularPane = React.createClass ({
 		var numCols = this.getNumberCols();
 		var numRows = this.getNumberRows();
 
-		if (pos.left < 0) {
-			let pk = this.getValueAt(pos.top)[model._pk];
-			modelActionCreators.selectRecord(view, pk);
-		} else if (shift) {
+		if (shift) {
 			// this.scrollTo(pos)
 			sel = {
 				left: Math.max(Math.min(ptr.left, pos.left, numCols), 0),
@@ -495,6 +513,28 @@ var TabularPane = React.createClass ({
 			selection: sel,
 			contextOpen: false
 		})
+	},
+
+	handleClick: function (e) {
+		var lhs = ReactDOM.findDOMNode(this.refs.tableWrapper.refs.lhs)
+		var view = this.props.view
+		var geo = view.data.geometry
+		var offset = $(lhs).offset()
+		var y = e.pageY - offset.top
+		var x = e.pageX - offset.left
+		var target = e.target
+		var id = target.id
+		var rx = (/lhs-tr-(c?\d+)-rowcheck/).exec(id);
+		
+		if (rx) modelActionCreators.selectRecord(view, rx[1]);
+		if (x < geo.labelWidth) {
+			e.preventDefault()
+			return;
+		}
+
+		modelActionCreators.unselectRecords(view);
+
+		this.onMouseDown(e);
 	},
 	
 
@@ -522,8 +562,8 @@ var TabularPane = React.createClass ({
 
 		floatCols.some(function (col) {
 			if (hOffset > col.width + hiddenColWidth) {
-				hiddenColWidth += col.width
-				columnOffset ++
+				hiddenColWidth += col.width;
+				columnOffset ++;
 			}
 			// break when we exceed hOffset
 			return (col.width + hiddenColWidth > hOffset)
@@ -559,7 +599,7 @@ var TabularPane = React.createClass ({
 		});
 		
 		if (!this._timer) this._timer = getFrame(this.refreshTable, CYCLE);
-		// this._debounceCreateViewconfig({view_id: view.view_id, rowOffset: rowOffset});
+		this._debounceCreateViewconfig({view_id: view.view_id, rowOffset: rowOffset});
 	},
 
 	updateVerticalOffset: function () {
@@ -609,7 +649,7 @@ var TabularPane = React.createClass ({
 
 		var childProps = {
 			_handleBlur: this.handleBlur,
-			_handleClick: this.onMouseDown,
+			_handleClick: this.handleClick,
 			_handlePaste: this.pasteSelection,
 			_copySelection: this.copySelection,
 			_copySelectionAsJSON: this.copySelectionAsJSON,

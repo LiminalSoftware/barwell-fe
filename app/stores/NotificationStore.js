@@ -16,7 +16,6 @@ var NotificationStore = storeFactory({
 			case 'NOTIFY':
 				payload.status = 'active';
 				payload.timestamp = Date.now();
-				console.log(payload)
 	        	this.create(payload);
 	        	if (payload.notifyTime > 0) {
 	        		setTimeout(function() {

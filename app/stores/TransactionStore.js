@@ -22,6 +22,7 @@ var TransactionStore = storeFactory({
 		var verb = '';
 		var _this = this;
 		var url;
+		
 
 		// console.log(payload)
 
@@ -29,11 +30,19 @@ var TransactionStore = storeFactory({
 		// 	payload.actionType = 'RECORD_MULTIUPDATE';
 		// 	payload.patches = [_.extend(payload.object, payload.selector)];	
 		// }
-		
-		// prepare the item
 		switch(payload.actionType) {
 			case 'BULK_UPDATE':
-				url = BASE_URL + '/m' + payload.model.model_id + '?' + _.map(payload.selector, function (value, key) {
+			case 'RECORD_INSERT':
+			case 'RECORD_MULTIDELETE':
+			case 'RECORD_UPDATE':
+			case 'RECORD_MULTIUPDATE':
+				url = BASE_URL + '/m' + payload.model.model_id;
+			break;
+		}
+		
+		switch(payload.actionType) {
+			case 'BULK_UPDATE':
+				url += '?' + _.map(payload.selector, function (value, key) {
 					return key + '=eq.' + value;
 				}).join('&');
 				verb = 'PATCH';
@@ -42,21 +51,27 @@ var TransactionStore = storeFactory({
 				payload.json = JSON.stringify(util.stripInternalVars(payload.patch));
 				break;
 			case 'RECORD_INSERT':
-				url = BASE_URL + '/m' + payload.model.model_id
 				verb = 'POST';
 				payload.copy = 'New ' + payload.model.model + ' inserted';
 				payload.json = JSON.stringify(payload.object);
 				payload.icon = 'icon-flare';
 				break;
+			case 'RECORD_MULTIDELETE':
+				verb = 'POST';
+				payload.copy = payload.patches.length > 1 ? 
+					(payload.patches.length + ' ' + payload.model.plural + ' deleted')
+					: (payload.model.model + ' deleted');
+				payload.icon = 'icon-trash2';
+				payload.json = JSON.stringify(payload.patches.map(util.stripInternalVars));
+				break;
 			case 'RECORD_UPDATE':
 				payload.actionType = 'RECORD_MULTIUPDATE';
 				payload.patches = [payload.object];	
 			case 'RECORD_MULTIUPDATE':
-				url = BASE_URL + '/m' + payload.model.model_id
 				verb = 'POST';
 				payload.copy = (payload.patches.length > 1 ? (payload.patches.length + ' ' + payload.model.plural) : payload.model.model) + ' updated'
 					+ (payload.method ? (' by ' + payload.method) : '');
-				payload.icon = (payload.method === 'copy/paste') ? 'icon-clipboard-check' : (payload.method === 'selection clear' ? 'icon-broom' : 'icon-keyboard');
+				payload.icon = (payload.method === 'copy/paste') ? 'icon-clipboard-check' : (payload.method === 'clearing selection' ? 'icon-broom' : 'icon-keyboard');
 				payload.json = JSON.stringify(payload.patches.map(util.stripInternalVars));
 				break;
 			// case 'RECORD_CREATE':
@@ -68,6 +83,7 @@ var TransactionStore = storeFactory({
 			case 'RECORD_UPDATE':
 			case 'RECORD_INSERT':
 			case 'RECORD_MULTIUPDATE':
+			case 'RECORD_MULTIDELETE':
 			case 'RECORD_CREATE':
 				var json = payload.json;
 
@@ -87,14 +103,14 @@ var TransactionStore = storeFactory({
 
 	        		if (payload.actionType === 'RECORD_MULTIUPDATE') {
 	        			payload.actionType = 'RECORD_MULTIRECIEVE';
-	        			payload.action_id = (results.data[0] || {}).action_id;
+	        			payload.action_id = (results.data instanceof Array ? results.data[0] : results.data).action_id;
 	        			payload.patches = results.data;
 	        		} else if (payload.actionType === 'RECORD_INSERT') {
 	        			payload.actionType = 'RECORD_MULTIRECIEVE';
 	        			payload.action_id = results.data.action_id;
 	        			payload.patches = [results.data];
-	        		} else {
-	        			
+	        		} else if (payload.actionType === 'RECORD_MULTIDELETE') {
+	        			payload.actionType = 'RECORD_MULTIDELETECONFIRM';
 	        		}
 
 					_this.create(payload);

@@ -55,7 +55,7 @@ class TabularTR extends React.Component {
 
 		var checkbox = this.props.selected ? `<span class="check purple icon icon-check"></span>` : '';
 		var html = _this.props.hasRowLabel ?
-				`<span class = "table-cell ${obj._dirty ? ' dirty-label ' : ''}" style = "left: ${geo.leftGutter}px; width: ${geo.labelWidth}px"><span class="table-cell-inner"><span class="label-grab-handle"></span><span style = "margin-left: 2px;" class = "checkbox-surround ">${checkbox}</span></span></span>`
+				`<span class = "table-cell ${obj._dirty ? ' dirty-label ' : ''}" style = "left: ${geo.leftGutter}px; width: ${geo.labelWidth}px"><span class="table-cell-inner"><span class="label-grab-handle"></span><span style = "margin-left: 2px;" class = "checkbox-surround " id = "${rowKey}-rowcheck">${checkbox}</span></span></span>`
 				: '';
 
 		html = html + _this.props.columns.map(function (col, j) {
