@@ -9,9 +9,9 @@ import modelActionCreators from '../actions/modelActionCreators'
 import webUtils from "../util/MetasheetWebAPI"
 import util from "../util/util"
 
-var BASE_URL = 'https://api.metasheet.io'
+var BASE_URL = 'http://api.metasheet.io'
 
-var _requestOrder = 0;
+var _actionCid = 0;
 var _pendingKeys = {};
 
 var TransactionStore = storeFactory({
@@ -30,6 +30,8 @@ var TransactionStore = storeFactory({
 		// 	payload.actionType = 'RECORD_MULTIUPDATE';
 		// 	payload.patches = [_.extend(payload.object, payload.selector)];	
 		// }
+
+		// set the url for the ajax call
 		switch(payload.actionType) {
 			case 'BULK_UPDATE':
 			case 'RECORD_INSERT':
@@ -39,7 +41,8 @@ var TransactionStore = storeFactory({
 				url = BASE_URL + '/m' + payload.model.model_id;
 			break;
 		}
-		
+
+		// set additional attributes of the message
 		switch(payload.actionType) {
 			case 'BULK_UPDATE':
 				url += '?' + _.map(payload.selector, function (value, key) {
@@ -86,15 +89,15 @@ var TransactionStore = storeFactory({
 			case 'RECORD_MULTIDELETE':
 			case 'RECORD_CREATE':
 				var json = payload.json;
-
+				payload.actionCid = 'c' + (_actionCid++)
 				payload.type = 'pending-item'
 				payload.status = 'active'
-	        	this.create(payload);
-	        	this.emitChange();
+	        	
+	        	_this.create(payload);
+	        	_this.emitChange();
 
 	        	// persist the change and then reflect the returned object locally
 	        	webUtils.ajax(verb, url, json).then(function (results) {
-	        		console.log(results)
 	        		var cleanObject
 	        		payload.type = 'new-item'
 	        		payload.status = 'active'
@@ -116,36 +119,25 @@ var TransactionStore = storeFactory({
 					_this.create(payload);
 					_this.emitChange();
 					MetasheetDispatcher.dispatch(payload);
-
-				// wait 3 seconds (notificaiton is visible udring this time)
-				}).then(function () {
-					var duration = 3000;
-					return new Promise (function (resolve, reject) {
-				    	window.setTimeout(resolve, duration);
-				  	})
-
-				// age the notificaiton out of the active list
-				}).then(function () {
-					payload.status = 'old'
-					_this.create(payload);
-					_this.emitChange();
-
-				// deal with any errors
 				}).catch(function (error) {
 					console.log(error)
-					if (error.type === 'timeout') {
-						payload.status = 'timeout'
-						payload.errorMessage = "We're having trouble reaching the server"
-						payload.icon = 'icon-wifi-alert-low2'
-						payload.type = 'warning-item'
-					} else {
-						payload.status = 'error'
-						payload.icon = 'icon-warning'
-						payload.type = 'error-item'
-						payload.errorMessage = 'The update could not be completed on the server as requested: ' + error.message
-					}
+					if (!(error instanceof Object)) error = {}
+
+					payload.type = 'error-item'
+					payload.statusMessage = 'Could not be completed: ' + error.message; 
+					payload.actionType = 'REVERT_ACTION'
+					
 					_this.create(payload);
-					_this.emitChange()
+					_this.emitChange();
+					MetasheetDispatcher.dispatch(payload);
+				}).then(function () {
+					// wait 3 seconds (notificaiton is visible udring this time)
+					var duration = 3000;
+					return util.wait(duration).then(function () {
+						payload.status = 'old'
+						_this.create(payload);
+						_this.emitChange();
+					})
 				})
 	        	break;
 		}

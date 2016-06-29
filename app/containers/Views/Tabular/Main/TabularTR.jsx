@@ -34,7 +34,6 @@ class TabularTR extends React.Component {
 	}
 
 	render () {
-		// console.log('render TR')
 		var _this = this
 		var model = this.props.model
 		var view = this.props.view
@@ -42,7 +41,6 @@ class TabularTR extends React.Component {
 		var row = this.props.row
 		var obj = this.props.obj
 		var geo = view.data.geometry
-		// var selector = {}
 		var rowStyle = {
 			height: (geo.rowHeight) + 'px',
 			lineHeight: (geo.rowHeight) + 'px',
@@ -58,17 +56,23 @@ class TabularTR extends React.Component {
 				`<span class = "table-cell ${obj._dirty ? ' dirty-label ' : ''}" style = "left: ${geo.leftGutter}px; width: ${geo.labelWidth}px"><span class="table-cell-inner"><span class="label-grab-handle"></span><span style = "margin-left: 2px;" class = "checkbox-surround " id = "${rowKey}-rowcheck">${checkbox}</span></span></span>`
 				: '';
 
+		
+
 		html = html + _this.props.columns.map(function (col, j) {
 			var element = (fieldTypes[col.type]).element;
 			var cellKey = rowKey + '-' + col.column_id;
 			var innerHtml = element.prototype.getDisplayHTML(col, obj);
-			var cellHtml = `<span class = "table-cell" style = "left: ${left}px; width: ${col.width}px;">${innerHtml}</span>`
+			var cellHtml = `<span class = "table-cell ${('_error' in obj && col.column_id in obj._error) ? ' table-cell-error' : ' '}" style = "left: ${left}px; width: ${col.width}px;">${innerHtml}</span>`
 			left += col.width
 			return cellHtml
 		}).join(' ');
-
+		
 		return <div id = {rowKey} key = {rowKey} dangerouslySetInnerHTML = {{__html: html}}
-			className = {"table-row " + (this.props.selected ? " table-row-selected" : "")} style = {rowStyle}/>
+			className = {"table-row " 
+				+ (obj._outoforder ? " table-row-outoforder " : "")
+				+ (this.props.selected ? " table-row-selected " : "")} 
+
+			style = {rowStyle}/>
 	}
 }
 

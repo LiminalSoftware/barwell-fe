@@ -116,7 +116,7 @@ var TabularBodyWrapper = React.createClass ({
 			modelActionCreators.createNotification({
 				copy: 'Loading view data',
 				type: 'loading',
-				icon: ' icon-sync spin ',
+				icon: ' icon-loading spin ',
 				notification_key: 'loadingRecords',
 				notificationTime: 0
 			});

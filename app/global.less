@@ -23,10 +23,13 @@
 
 @menuItemBorderRadius: 2px;
 @headerBorderWidth: 1px;
-@headerMenuBgColor: #fafafa;
+// @headerMenuBgColor: #fafafa;
+@headerMenuBgColor: #F1EEEC;
 @headerMenuBgHilite: lighten(@headerMenuBgColor, 0.7%);
 @headerMenuBorderColor: #A8B0BF;
-@headerFontColor: @gray1;
+// @headerMenuBorderColor: rgba(255,255,255,0.7);
+// @headerFontColor: rgba(255,255,255,0.7);
+@headerFontColor: #777;
 @headerFontSize: 16px;
 @headerOuterHilite: @newgreen1;
 
@@ -49,5 +52,5 @@
 }
 
 .gray-out {
-  -webkit-filter: saturate(0.1) contrast(0.5) brightness(1.4);
+  -webkit-filter: saturate(0.1) contrast(0.5) brightness(1.4) sepia(20%);
 }

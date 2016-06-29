@@ -41,7 +41,6 @@ var PrimaryKeyElement = React.createClass({
 var PrimaryKeyField = {
 	defaultWidth: 50,
 	defaultAlign: 'center',
-	sortable: true,
 	icon: 'key-hole',
 	sortable: true,
 	sortIcon: 'sort-numeric-',

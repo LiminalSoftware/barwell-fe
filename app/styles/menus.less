@@ -1,13 +1,25 @@
 @import "../global.less";
 
+.drag-grid {
+	float: left;
+	width: 12px;
+	max-width: 12px;
+	height: 100%;
+	margin: 5px 10px;
+	background:url(
+		data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAHElEQVQIW2NkQAOMIH55efn/zs5OMBtMIAMMAQCsfgQF6d4DGgAAAABJRU5ErkJggg==
+    ) repeat;
+}
+
 .pop-down {
 	position: relative;
+	flex: 1;
 	float: left;
 	line-height: 30px;
 	padding: 0 5px;
 	margin: 0;
 	width: auto;
-	min-width: 30px;
+	min-width: 10px;
 	text-align: center;
 
 	margin-right: 5px;
@@ -338,7 +350,8 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	z-index: 300;
 	border-radius: 3px;
 	border: 1px solid @headerMenuBorderColor;
-	background: @headerMenuBgColor;
+	// background: @headerMenuBgColor;
+	background: lighten(@headerMenuBgColor, 10%);
 	color: @headerFontColor;
 
 	box-shadow: 0 0 0 2px white;
@@ -405,6 +418,12 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	color: @gray3;
 }
 
+.new-menu-sub-item {
+	background:url(
+		data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAHUlEQVQIW2NkQAOMID77VIv/P7NPgNlgAhlgCAAAqjoEBUEfBWAAAAAASUVORK5CYII=
+    ) repeat;
+}
+
 .menu-sub-item {
 	display: relative;
 	height: 30px;
@@ -468,7 +487,9 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 
 .menu-divider {
 	// border-top: 1px solid @headerBorderColor !important;
-	font-family: @headerFont;
+	font-family: @bodyFont;
+	text-transform: uppercase;
+	font-size: 12px;
 }
 
 .menu-sub-item-boxed {

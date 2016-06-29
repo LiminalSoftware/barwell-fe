@@ -24,6 +24,12 @@ var NotificationStore = storeFactory({
 	        	}
 	        	this.emitChange();
 	        	break;
+	        case 'UPDATE_NOTIFICATION':
+				var notification = this.get(payload.notification_key) || {};
+				_.extend(notification, payload);
+	        	this.create(notification);
+	        	this.emitChange();
+	        	break;
 			case 'CLEAR_NOTIFICATION':
 				var notification = this.get(payload.notification_key) || {};
 				if (notification.sticky) {

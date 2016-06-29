@@ -53,7 +53,7 @@ var ViewItemMovable = React.createClass({
 		this.setState({editing: true})
 		util.clickTrap(e)
 	},
-
+	
 	handleClickDelete: function (e) {
 		var view = this.props.view;
 		this.setState({
@@ -81,8 +81,7 @@ var ViewItemMovable = React.createClass({
 
 		if (view)
 			return <div className = "menu-item menu-sub-item menu-clickable "  style = {{minWidth: "300px"}}>
-				<span className = {"draggable gray icon icon-menu " + 
-					(this.state.editTransition ? "" : "")} ref = "grabber"/>
+				<span ref = "grabber" className="draggable drag-grid"/>
 				<span className = {"icon " + viewTypes[view.type].icon}></span>
 				<span className = {"double ellipsis " + (this.state.deleting ? " strike-through" : "")}>
 					{this.state.editing  && !this.state.deleting ?

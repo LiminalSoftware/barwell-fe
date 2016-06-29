@@ -38,6 +38,7 @@ ul.notifier {
     width: 280px;
     
     background: @headerMenuBgColor;
+    border-radius: 3px;
     box-shadow: 0 0 0 2px white;
     transition: all cubic-bezier(.16,.85,.5,1) 250ms;
     
@@ -76,6 +77,8 @@ ul.notifier {
     }
 
     & p {
+      display: flex;
+      overflow: hidden;
       font-size: 12px;
       padding: 2px;
       margin: 0;

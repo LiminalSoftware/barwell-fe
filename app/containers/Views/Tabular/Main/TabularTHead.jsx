@@ -40,7 +40,8 @@ var TabularTHead = React.createClass ({
 			{this.props.hasRowLabel ?
 			<span style = {{left: 0, width: geo.labelWidth + 'px', top: 0, bottom: 0}}
 				className = "table-header-cell" >
-				<span className = "header-cell-inner" style = {{background: 'white'}}>
+				<span className = "header-cell-inner table-cell-inner" style = {{background: 'white'}}>
+				<span style = {{marginLeft: "2px"}} className = "checkbox-surround "></span>
 				</span>
 			</span>
 			: null }

@@ -99,6 +99,9 @@ var ColumnDetailMixin = {
 	    var config = this.props.config;
 		var fieldType = fieldTypes[config.type] || {};
 		var editing = this.props.editing
+		var isNew = (/ac\d+/).test(config.column_id)
+
+		// console.log(config.column_id)
 
 	    return	<ReactCSSTransitionGroup
 					transitionEnterTimeout={500}
@@ -109,13 +112,12 @@ var ColumnDetailMixin = {
 					style = {{minWidth: this.minWidth, display: 'block'}}
 					component = "div">
 
-				<div className = "menu-sub-item">
+				<div className = {"menu-sub-item " + (isNew ? " new-menu-sub-item" : "")}>
 
 		      	<span className = "ellipsis">
 					{
 					this.props.open ? 
-					<span ref = "grabber"
-					      className="draggable icon grayed icon-menu"/>
+					<span ref = "grabber" className="draggable drag-grid"/>
 					: null
 					}
 
@@ -132,7 +134,7 @@ var ColumnDetailMixin = {
 				
 				{editing ? 
 					<span>
-						<TypePicker {...this.props} 
+						<TypePicker {...this.props}
 							ref = "typePicker"
 							_blurSiblings = {_this.props._blurSiblings}
 							_handleConfigClick = {_this.handleConfigClick.bind(_this, TypePicker)}
@@ -140,7 +142,7 @@ var ColumnDetailMixin = {
 							type = {this.state.type}/>
 					</span>
 					:
-					<span>
+					<span style = {{display: 'flex'}}>
 					{
 						(fieldType.configParts || []) /* config parts associated with the field type*/
 							.concat(this.props.viewConfigParts || []) /* config parts passed down from the view*/

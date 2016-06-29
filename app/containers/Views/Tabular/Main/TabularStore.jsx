@@ -17,16 +17,20 @@ var createTabularStore = function (view) {
   var model = ModelStore.get (view.model_id)
   var relations = RelationStore.query({model_id: view.model_id})
   var label = 'm' + view.model_id
-  var upperLabel = label.toUpperCase ()
+  var upperLabel = label.toUpperCase ();
 
   var _records = [];
   var _recordsById = {};
   var _selection = {};
+  var _outOfOrderOmissions = {}; // by omitted record id
+  var _outOfOrderInsertions = {}; // by successor record id
+  var _pendingDelete = {};
+  var _pendingNew = {};
 
   var _recordCount = null;
   var _startIndex = 0;
   var _iterator = 0;
-  var _sortKey = [];
+  var _sortSpec = [];
   var stickyRecs = [];
 
   var TabularStore = assign({}, EventEmitter.prototype, {
@@ -57,7 +61,15 @@ var createTabularStore = function (view) {
     },
 
     getSelectedRecords: function () {
-      return _records.filter(r => r.cid in _selection || r[model._pk] in _selection)
+      return _records.filter(r => 
+        (r.cid in _selection || r[model._pk] in _selection)
+        && !(r.cid in _pendingDelete)
+        && !(r[model._pk] in _pendingDelete)
+      )
+    },
+
+    getOutOfOrderRecords: function () {
+      return _outOfOrderOmissions;
     },
 
     getObject: function (at) {
@@ -79,16 +91,6 @@ var createTabularStore = function (view) {
       dispatcher.unregister(this.dispatchToken);
     },
 
-    compare: function (a, b) {
-      for (var i = 0; i < _sortKey.length; i++) {
-        var key = _sortKey[i].attribute_id
-        var inversion = _sortKey[i].descending ? 1 : -1
-        if (a[key] < b[key]) return (1 * inversion)
-        if (a[key] > b[key]) return (-1 * inversion)
-      }
-      return 0;
-    },
-
     indexOf: function(array, obj, iteratee, context) {
       var low = 0;
       var high = _records.length;
@@ -99,12 +101,31 @@ var createTabularStore = function (view) {
       return low;
     },
 
+    isInRange: function (rec) {
+      var gtLowerBound = util.compare(_sortSpec, rec, _records[0])
+      var ltUpperBound = util.compare(_sortSpec, rec, _records[_records.length])
+
+      return gtLowerBound >= 0 && ltUpperBound <= 0
+    },
+
     dispatchToken: dispatcher.register(function (payload) {
       var type = payload.actionType;
 
       if (payload.model_id !== model.model_id) return;
 
-      switch(type) {
+      switch (type) {
+
+        case 'VIEW_CREATE':
+          var view = payload.view
+          _sortSpec = view.data.sorting
+          this.emitChange()
+          break;
+
+        case 'VIEW_RECEIVE':
+          var view = payload.view
+          this.emitChange()
+          break;
+
         case 'RECORD_TOGGLESELECT':
           var id = payload.id;
           // TODO check if this object is even in the list?
@@ -112,23 +133,46 @@ var createTabularStore = function (view) {
           if (id in _selection) delete _selection[id];
           else _selection[id] = object;
           break;
+
         case 'UNSELECT':
           _selection = {}
           break;
 
         case 'RECORD_INSERT':
           var object = payload.object || {}
-          var index = ('index' in payload) ? payload.index : this.search(object)
+          var index = payload.index
+          var successor = _records[index]
+
+          object._outoforder = true
+
           _records = _records.slice(0, index)
             .concat(payload.object)
             .concat(_records.slice(index));
-          _recordCount++
+          _recordCount++;
+          break;
+
+        case 'RECORD_REORDER':
+          var index = payload.index
+          var objects = payload.objects || [];
+          var dict = _.indexBy(objects, model._pk);
+          _records = _records.filter(function (rec, idx) {
+            if (rec[model._pk] in dict && idx < index) index--;
+            return !(rec[model._pk] in dict)
+          })
+          objects.map(rec => rec._outoforder = true);
+          _records = _records.slice(0, index)
+            .concat(objects)
+            .concat(_records.slice(index));
           break;
 
         case 'RECORD_BATCHDELETE':
           var selector = payload.selector
           // _recordCount -= something TODO
-          _records = _.reject(_records, _.matcher(selector) )
+          _records =_records.map(function (rec) {
+            if (selector(rec)) rec._destroy = true;
+            return rec;
+          });
+          // _records = _.reject(_records, _.matcher(selector) )
           break;
 
         case 'RECORD_UPDATE':
@@ -161,10 +205,39 @@ var createTabularStore = function (view) {
           })
           break;
 
+        case 'REVERT_ACTION':
+          var actionCid = payload.actionCid
+          var errorCells
+          _records = _records.map(function (rec) {
+            var affected
+            if (rec._pendingActions) {
+              rec._pendingActions = rec._pendingActions.filter(function (action) {
+                if (action._actionCid === actionCid) {
+                  affected = action
+                  return false;
+                }
+                else return true
+              });
+              return _.extend.apply(undefined, [{}, rec, rec._server, affected ? {_error: affected} : {}].concat(rec._pendingActions));
+            }
+            else return rec;
+          })
+          setTimeout(function () {
+            _records = _records.map(function (rec) {
+              if (rec._error) {
+                var newrec = _.clone(rec)
+                delete newrec._error
+                return newrec
+              }
+              return rec
+            });
+            TabularStore.emitChange();
+          }, 0);
+        break;
+
         case 'RECORD_MULTIUPDATE':
         case 'RECORD_MULTIRECIEVE':
         case 'RECORD_MULTIDELETE':
-          console.log('multi stuff')
           var newRecords = []
           var dict = _.indexBy(payload.patches, model._pk);
           var cdict = _.indexBy(payload.patches, 'cid');
@@ -172,20 +245,37 @@ var createTabularStore = function (view) {
 
           _records.forEach(function (rec, idx) {
             var newrec
-            if (rec[model._pk] && (rec[model._pk] in dict))
-              newrec = _.extend(_.clone(rec), dict[rec[model._pk]], {_dirty: isDirty});
+            var patch
+            var pendingActions = rec._pendingActions || []
+
+            // first test to see if the record is impacted by the change
+            if (rec[model._pk] && (rec[model._pk] in dict)) patch = dict[rec[model._pk]]
+            else if (rec.cid && rec.cid in cdict) patch = cdict[rec.cid]
+            else return newRecords.push(rec);
+
+            // if this is a client-side action append the action to the list of pending actions
+            if (isDirty) pendingActions.push(_.extend({}, patch, {_actionCid: payload.actionCid}));
+            // otherwise if it is a server-side action, take it out of the queue 
+            else pendingActions.filter(a => a._actionCid !== payload.actionCid);
             
-            else if (rec.cid && rec.cid in cdict)
-              newrec = _.extend(_.clone(rec), cdict[rec.cid], {_dirty: isDirty});
-            else newrec = rec;
+            newrec = _.extend (
+              {},
+              rec,
+              patch,
+              {_dirty: isDirty},
+              (!isDirty ? {_server: _.clone(util.stripInternalVars(rec))} : {}),
+              {_pendingActions: pendingActions}
+            );
             
             // if the action includes a deletion flag don't include it in the new record list
             if (newrec.action !== 'D') newRecords.push(newrec);
-            else {
-              delete _selection[newrec.cid];
-              delete _selection[newrec[model._pk]];
+            else if (newrec.action === 'D' && isDirty) {
+              // _pendingDelete[newrec[model._pk]] = newrec;
               _recordCount--;
+            } else if (newrec.action === 'D' && !isDirty) {
+              delete _pendingDelete[newrec[model._pk]]
             }
+
           });
           _records = newRecords;
           break;

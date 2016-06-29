@@ -42,48 +42,16 @@ var Application = React.createClass({
 		</div>;
 	},
 
-	// _onChange: function () {
-	// 	this.forceUpdate()
-	// },
-
 	componentDidMount: function () {
-	// 	ModelStore.addChangeListener(this._onChange)
-		
 		this.fetchModels(this.props.params.workspaceId);
 	},
 
-	// componentWillUnmount: function () {
-	// 	ModelStore.removeChangeListener(this._onChange)
-	// },
-
-	// componentWillReceiveProps: function (newProps) {
-	// 	if (newProps.params.workspaceId != this.props.params.workspaceId) this.fetchModels(newProps.params.workspaceId)
-	// },
-
-	fetchModels: function (workspaceId) {
+	fetchModels: function (workspaceId, retry) {
 		var _this = this
-
-		modelActionCreators.createNotification({
-			copy: 'Fetching workspace details', 
-			type: 'loading',
-			icon: ' icon-sync spin ',
-			notification_key: 'workspaceLoad',
-			notificationTime: 0
-		});
+		
 		modelActionCreators.fetchModels(workspaceId).then(function() {
 			_this.setState({loading: false})
-		}).then(function () {
-			modelActionCreators.clearNotification({
-				notification_key: 'workspaceLoad'
-			})
-		}).catch(function (error) {
-			modelActionCreators.createNotification({
-				copy: 'We are having trouble reaching the server.  We will retry in a moment.', 
-				type: 'error-item',
-				icon: ' icon-warning ',
-				notification_key: 'workspaceLoad',
-			});
-		});
+		})
 	}
 
 })

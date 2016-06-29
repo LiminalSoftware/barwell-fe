@@ -14,6 +14,10 @@ var commitMixin = {
 		var selector = this.props.selector;
 		var patch = {};
 
+		extras = extras || {};
+
+		extras._previous = {[column_id]: this.props.value};
+
 		if (this.parser) value = this.parser(value)
 		value = this.validator(value)
 		this.setState({value: value})

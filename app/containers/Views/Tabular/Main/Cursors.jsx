@@ -114,7 +114,8 @@ var Cursors = React.createClass ({
     if (HAS_3D) style.transform = 'translateY(' + (marginTop + 2) + 'px)'
     else style.marginTop = marginTop + 2 + 'px'
 
-    return <div className = "wrapper cursor-wrapper" style = {{
+    return <div className = {"wrapper cursor-wrapper " + (focused ? ' ' : ' cursor-wrapper--blurred')} 
+      style = {{
         left: 0,
         top: '1px',
         bottom: 0,

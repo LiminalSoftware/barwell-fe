@@ -2,6 +2,7 @@ import modelActionCreators from '../actions/modelActionCreators';
 import MetasheetDispatcher from "../dispatcher/MetasheetDispatcher"
 import $ from "jquery";
 import _ from 'underscore'
+import util from './util'
 
 var Promise = require('es6-promise').Promise;
 
@@ -11,6 +12,7 @@ $.ajaxSetup({
 
 var MAX_RETRIES = 2
 var INITIAL_WAIT = 100
+var BASE_URL = 'http://api.metasheet.io'
 
 var stripInternalVars = module.exports.stripInternalVars = function (obj) {
   var newObj = {}
@@ -20,21 +22,17 @@ var stripInternalVars = module.exports.stripInternalVars = function (obj) {
   return newObj;
 }
 
-var wait = module.exports.wait = function () {
-  return new Promise (function (resolve, reject) {
-    window.setTimeout(resolve, 0);
-  })
-}
 
 
 var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
   console.log(method + '->' + url);
   console.log(JSON.parse(json));
-
   
-
-  retry = retry || 1;
-  return new Promise(function (resolve, reject) {
+  if (!(retry instanceof Object)) retry = {}
+  if (!(retry.period > 0)) retry.period = 50
+  
+  return util.wait(Math.random() * 3000).then(function () {
+    return new Promise(function (resolve, reject) {
     var params = {
       type: method,
       url: url,
@@ -44,9 +42,6 @@ var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
         })
       },
       success: function (data, status, xhr) {
-        modelActionCreators.clearNotification({
-            notification_key: 'connectivity'
-        });
         resolve({
           data: data,
           status: status,
@@ -54,7 +49,28 @@ var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
         })
       },
       error: function (xhr, error, status) {
-        reject(xhr.responseJSON)
+        console.log('===========')
+        console.log(xhr)
+        console.log(error)
+        console.log(status)
+        console.log('===========')
+        if (error && error.statusText === 'error') {
+          if ('notification_key' in retry)
+            modelActionCreators.updateNotification({
+              notification_key: retry.notification_key, 
+              statusMessage: 'Couldn\'t reach server, trying again in a bit'});
+          retry.period = retry.period * 2;
+          retry.tries = (retry.tries || 1) + 1
+          setTimeout(ajax.bind(null, method, url, json, retry, headers), retry.period)
+        }
+        else {
+          if ('notification_key' in retry)
+            modelActionCreators.updateNotification({
+                notification_key: retry.notification_key, 
+                status: 'error',
+                statusMessage: ('Error: ' + status)});
+          reject(xhr.responseJSON);
+        }
       }
     };
     if (json) {
@@ -62,6 +78,7 @@ var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
       params.contentType = 'application/json'
     }
     $.ajax(params)
+  })
   })
 }
 
@@ -76,7 +93,7 @@ var issueReceipt = function (subject, obj, requestId) {
 var persist = module.exports.persist = function (subject, action, data, requestId) {
   action = action.toUpperCase()
   var identifier = (subject + '_id')
-  var url = 'https://api.metasheet.io/' + subject;
+  var url = BASE_URL + '/' + subject;
   var json = (action === 'CREATE') ? JSON.stringify(stripInternalVars(data)) : null;
   var method;
 

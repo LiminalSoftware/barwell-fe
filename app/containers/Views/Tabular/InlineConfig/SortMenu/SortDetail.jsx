@@ -44,9 +44,7 @@ var SortDetail = React.createClass({
 		var fieldType = fieldTypes[attr.type];
 
 	    return <div className="menu-item tight menu-sub-item">
-			{this.props.editing ? <span
-				ref = "grabber"
-				className="draggable half-column-config tight icon grayed icon-menu"/> : null }
+			{this.props.editing ? <span ref = "grabber" className="draggable drag-grid"/> : null }
       		<span className = "ellipsis">{attr.attribute}</span>
 
 			<span onClick={this.switch}

@@ -6,7 +6,7 @@ import ViewConfigStore from '../stores/ViewConfigStore'
 import RelationStore from '../stores/RelationStore'
 import groomView from '../containers/Views/groomView'
 import util from '../util/util'
-var BASE_URL = 'https://api.metasheet.io'
+var BASE_URL = 'http://api.metasheet.io'
 
 var _requestId = 0;
 
@@ -19,6 +19,11 @@ var modelActions = {
 
 	clearNotification: function (notification) {
 		notification.actionType = 'CLEAR_NOTIFICATION'
+		MetasheetDispatcher.dispatch(notification);
+	},
+
+	updateNotification: function (notification) {
+		notification.actionType = 'UPDATE_NOTIFICATION'
 		MetasheetDispatcher.dispatch(notification);
 	},
 
@@ -39,7 +44,6 @@ var modelActions = {
 	},
 
 	selectRecord: function (view, id) {
-		console.log('a')
 		var message = {
 			model_id: view.model_id,
 			actionType: 'RECORD_TOGGLESELECT',
@@ -85,8 +89,6 @@ var modelActions = {
 	},
 
 	deleteMultiRecords: function (model, patches, extras) {
-		var requestId = _requestId++;
-
 		patches.forEach(k=> k.action = 'D')
 
 		modelActions.clearNotification({
@@ -97,38 +99,29 @@ var modelActions = {
 			actionType: 'RECORD_MULTIDELETE',
 			model: model,
 			model_id: model.model_id,
-			patches: patches,
-			request_id: requestId
+			patches: patches
 		});
 		MetasheetDispatcher.dispatch(message);
 
 	},
 
 	multiPatchRecords: function (model, patches, extras) {
-		var requestId = _requestId++;
-
 		if (!(patches instanceof Array)) patches = [patches]
-
-		patches.forEach(p => p._requestId = requestId);
 
 		var message = _.extend(extras || {}, {
 			actionType: 'RECORD_MULTIUPDATE',
 			model: model,
 			model_id: model.model_id,
-			patches: patches,
-			request_id: requestId
+			patches: patches
 		});
 		MetasheetDispatcher.dispatch(message);
 	},
 
 	patchRecords: function (model, patch, selector, extras) {
-		var requestId = _requestId++;
 		var object = patch;
 
 		if (!(selector instanceof Object)) throw new Error ('Patch without qualifier is not permitted')
 		if (!(patch instanceof Object)) throw new Error('Patch should be a single naked object');
-
-		object._requestId = requestId;
 
 		var message = _.extend(extras || {}, {
 			actionType: 'BULK_UPDATE',
@@ -182,7 +175,7 @@ var modelActions = {
 	fetchRecords: function (view, offset, limit, sortSpec) {
 		var view_id = view.view_id
 		var model_id = view.model_id
-		var url = 'https://api.metasheet.io/v' + view_id;
+		var url = BASE_URL + '/v' + view_id;
 		if (sortSpec) {
 			url = url + '?order=' + _.map(sortSpec, function (comp) {
 				return 'a' + comp.attribute_id + '.' + (comp.descending ? 'desc' : 'asc')
@@ -238,7 +231,7 @@ var modelActions = {
 	fetchLevels: function (view, dimension, offset, limit) {
 		var view_id = view.view_id
 		var model_id = view.model_id
-		var url = 'https://api.metasheet.io/v' + view_id + '_' + dimension + 's';
+		var url = BASE_URL + '/v' + view_id + '_' + dimension + 's';
 		var aggregates = view[dimension + '_aggregates']
 
 		if (aggregates.length === 0) return
@@ -400,14 +393,37 @@ var modelActions = {
 
 	// models
 	fetchModels: function (workspace_id) {
-		var url = 'https://api.metasheet.io/model?workspace_id=eq.' + workspace_id;
-		return webUtils.ajax('GET', url, null, {"Prefer": 'return=representation'}).then(function (result) {
-			// models.data.map(function (model) {				
-				return MetasheetDispatcher.dispatch({
-					actionType: 'MODEL_RECEIVE',
-					model: result.data
-				})
-			// })
+		var url = BASE_URL + '/model?workspace_id=eq.' + workspace_id;
+		var retrySettings = {
+			period: 50,
+			strategy: 'double',
+			notification_key: 'workspaceLoad'
+		}
+
+		modelActions.createNotification({
+			copy: 'Fetching workspace details', 
+			type: 'loading',
+			icon: ' icon-loading spin ',
+			notification_key: 'workspaceLoad',
+			notificationTime: 0
+		});
+
+		return webUtils.ajax('GET', url, null, retrySettings, {"Prefer": 'return=representation'}).then(function (result) {
+			return MetasheetDispatcher.dispatch({
+				actionType: 'MODEL_RECEIVE',
+				model: result.data
+			})
+		}).then(function () {
+			modelActions.clearNotification({
+				notification_key: 'workspaceLoad'
+			})
+		}).catch(function (error) {
+			modelActions.createNotification({
+				copy: 'A critical error has occured on the server.  Unfortunately this is not recoverable.', 
+				type: 'error-item',
+				icon: ' icon-warning ',
+				notification_key: 'workspaceLoad',
+			});
 		});
 	},
 

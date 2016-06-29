@@ -2,12 +2,14 @@
 @import "./iconVendor.css";
 
 .icon {
+	font-size: 20px;
+	width: 20px;
 	.noselect;
 	margin-right: 8px;
 	vertical-align: text-bottom;
 	
 	&.grayed {
-		color: @gray3;
+		// color: @gray3;
 	}
 
 	&.green {
@@ -21,6 +23,12 @@
 	&.red {
 		color: @red-bright;
 	}
+}
+
+.icon--large {
+	font-size: 30px !important;
+	width: 30px;
+	vertical-align: text-middle;
 }
 
 .icon--small {

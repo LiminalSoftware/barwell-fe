@@ -78,8 +78,10 @@ var ColumnList = React.createClass({
 				item = section.enterTransform(item);
 				if (commit) view.data.columns[item.column_id] = item;
 			}
+			return item;
 		});
 		if (commit) modelActionCreators.createView(view, true, true);
+		else this.setState({items: items})
 	},
 
 	getItemState: function (_props) {

@@ -29,11 +29,10 @@ import TableMixin from '../../TableMixin'
 import ContextMenu from './ContextMenu'
 import ScrollBar from "./ScrollBar"
 import Cursors from "./Cursors"
-
 import constant from "../../../../constants/MetasheetConstants"
 
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import PureRenderMixin from 'react-addons-pure-render-mixin'
 
 var THROTTLE_DELAY = 14;
 var MIN_CYCLE = 10;
@@ -244,9 +243,13 @@ var TabularPane = React.createClass ({
 		this.putSelection([[null]], 'clearing selection');
 	},
 
+	getSelectedRecords: function () {
+		return this.store.getSelectedRecords();
+	},
+
 	deleteRecords: function () {
-		var ptr = this.state.pointer
-		var sel = this.state.selection
+		var ptr = _.clone(this.state.pointer)
+		var sel = _.clone(this.state.selection)
 		var model = this.props.model
 		var records = this.store.getSelectedRecords();
 		var numRows = this.getNumberRows();
@@ -259,8 +262,8 @@ var TabularPane = React.createClass ({
 
 		modelActionCreators.deleteMultiRecords(model, records);
 
-		ptr.top = ptr.bottom = Math.min(ptr.top, numRows - records.length);
-		sel.bottom = sel.top = Math.min(sel.top, numRows - records.length);
+		ptr.top = ptr.bottom = Math.min(ptr.top, numRows - records.length - 1);
+		sel.bottom = sel.top = Math.min(sel.top, numRows - records.length );
 		this.setState({copyarea: null, selection: sel, pointer: ptr});
 	},
 

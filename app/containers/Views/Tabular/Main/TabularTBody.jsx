@@ -154,7 +154,6 @@ var TabularTBody = React.createClass ({
 		var rowKey = this.props.prefix + '-tr-' + (obj.cid || obj[pk]);
 		var offset = this.state.start;
 		var selectedRecords = this.props.store.getSelection();
-		
 
 		return <TabularTR
 			view = {this.props.view}

@@ -180,7 +180,7 @@ var SearchDropdown = React.createClass({
 			{
 				this.state.searching ? 
 				<div className = "popdown-item" key="loader-li">
-					<span className = " icon icon-sync spin" />
+					<span className = " icon icon-loading spin" />
 					Searching...
 				</div>
 				:

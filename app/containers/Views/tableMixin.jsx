@@ -238,14 +238,21 @@ var TableMixin = {
 
 
 	move: function (direction, shift) {
+		var view = this.props.view;
 		var sel = _.clone(this.state.selection);
 		var ptr = _.clone(this.state.pointer);
 		var numCols = this.getNumberCols();
 		var numRows = this.getNumberRows();
-		var singleCell = (sel.left === sel.right && sel.top === sel.bottom)
+		var singleCell = (sel.left === sel.right && sel.top === sel.bottom);
+		// var selectedRows = this.getSelectedRecords();
 		var outline = singleCell ? {left: 0, right: numCols, top: 0, bottom: numRows} : sel ;
+		
 
 		// Tab ----------------------
+		// if (direction === 'TAB' && selectedRows) {
+		// 	var lilMod = numCols;
+		// 	var bigMod = selectedRows.length;
+		// } else 
 		if (direction === 'TAB') {
 			var lilMod = (outline.right - outline.left + 1)
 			var bigMod = lilMod * (outline.bottom - outline.top + 1)
@@ -285,6 +292,7 @@ var TableMixin = {
 		} else if (direction === 'RIGHT') {
 			if (ptr.left < numCols) ptr.left = (ptr.left + 1)
 			this.updateSelect(ptr, shift)
+			modelActionCreators.unselectRecords(view);
 		}
 		// Left --------------------------
 		else if (direction === 'LEFT' && shift) {
@@ -294,6 +302,7 @@ var TableMixin = {
 		} else if (direction === 'LEFT') {
 			if (ptr.left > 0) ptr.left -= 1
 			this.updateSelect(ptr, false)
+			modelActionCreators.unselectRecords(view);
 		}
 
 		// Down ---------------------------
@@ -304,6 +313,7 @@ var TableMixin = {
 		} else if (direction === 'DOWN') {
 			if (ptr.top < numRows) ptr.top = (ptr.top + 1)
 			this.updateSelect(ptr, shift)
+			modelActionCreators.unselectRecords(view);
 		}
 		// Up
 		else if (direction === 'UP' && shift) {
@@ -313,6 +323,7 @@ var TableMixin = {
 		} else if (direction === 'UP') {
 			if (ptr.top > 0) ptr.top -= 1
 			this.updateSelect(ptr, false)
+			modelActionCreators.unselectRecords(view);
 		}
 	},
 

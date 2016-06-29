@@ -8,6 +8,8 @@ import TransactionStore from "../../stores/TransactionStore"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import util from '../../util/util'
 
+import Note from './Note'
+
 var HIDE_TIMER = 250;
 
 var Notifier = React.createClass({
@@ -62,10 +64,11 @@ var Notifier = React.createClass({
 		var _this = this;
 		var notifications = NotificationStore.query({}); 
 		var transactions = TransactionStore.query(this.state.mouseOver ? null : {status: 'active'});
-		transactions = transactions.slice(this.state.mouseOver ? -1 : -8, 1)
+		transactions = transactions.slice(transactions.length - (this.state.mouseOver ? 7 : 1))
 		var events = util.merge({attribute: 'timestamp', descending: true}, null, notifications, transactions)
 
 		return <div style = {{cursorEvents: 'none'}} >
+		<span className = "	 icon icon-wifi"/>
 		<span className = {(this.state.mouseOver ? "notifier-icon-active" : "notifier-icon") + " icon icon-book2"} style = {{cursorEvents: 'auto'}} 
 			onMouseOver = {this.handleMouseOver}
 			onMouseOut = {this.handleMouseOut} />
@@ -74,34 +77,18 @@ var Notifier = React.createClass({
 			component="ul" className="notifier" transitionName="fade-in">
 			{
 			events.map(function (note, idx) {
-				return <li className={note.type}
-					key={note.cid || note.notification_key || note.transaction_id}
-					style={{zIndex: note.notificationId, cursorEvents: 'auto', top: (-70 * (idx + 1)) + 'px'}}
-					onMouseOver = {_this.handleMouseOver}
-					onMouseOut = {_this.handleMouseOut}>
-					<span style = {{lineHeight: '30px', padding: '0 10px'}}>
-						<span className={'icon ' + note.icon}/>
-					</span>
-					<span style = {{flexGrow: 2, textAlign: 'left'}}>
-						<p>{note.copy}</p>
-						{note.action_id ? 
-							<p style = {{fontStyle: 'italic'}}>{moment(note.timestamp).fromNow()}</p> : 
-							note.errorMessage ? <p style = {{fontStyle: 'italic'}}>{note.errorMessage}</p>
-							: note.type === 'pending-item' ? <p style = {{fontStyle: 'italic'}}>Saving...</p>
-							: <p></p>
-							}	
-					</span>
-					{note.action_id ? <a style = {{flex: 1, flexGrow: 1, cursor: 'pointer'}} onClick = {util.clickTrap}>
-						<p><span className = 'icon icon-undo'/> Undo</p>
-					</a> : <span style = {{flex: 1, flexGrow: 1}}/> }
-				</li>
+				return <Note 
+					_handleMouseOver = {_this.handleMouseOver} 
+					key = {note.actionCid || note.notification_key} 
+					note = {note} 
+					index = {idx} />;
 			})
 			}
 			{
 			(events.length === 0 && this.state.mouseOver)  ? 
 				<li className="info"
 					key= "no-notifications"
-					style={{zIndex: 1, cursorEvents: 'auto'}}
+					style={{zIndex: 1, cursorEvents: 'auto', top: '-70px'}}
 					onMouseOver = {_this.handleMouseOver}
 					onMouseOut = {_this.handleMouseOut}>
 					<p><span className = "icon icon-notification"/> No notifications to show</p>

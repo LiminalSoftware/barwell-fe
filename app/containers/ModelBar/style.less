@@ -12,9 +12,9 @@ add-new-model {
 }
 
 ul.model-bar-list {
-
 	.flex-display;
 	.flex(1);
+	
 	list-style: none;
 	padding-bottom: 10px;
 	margin: 0;
@@ -37,7 +37,7 @@ ul.model-bar-list {
 		text-decoration: none;
 
 		font-size: 16px;
-		font-family: @bodyFont;
+		font-family: @headerFont;
 		text-align: center;
 
 		.ellipsis;
@@ -66,8 +66,7 @@ ul.model-bar-list {
 		z-index: 2;
 		a {
 			margin-top: -1px;
-			border-top: 1px solid white;
-			background: white;
+			border-top: 1px solid @headerMenuBgColor;
 		}
 		
 	}
@@ -95,9 +94,10 @@ ul.model-bar-list {
 	padding: 0;
 	overflow: visible;
 	// background: @topBgColor;
-	background:url(
-		data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVQIW2P8////f0YQYIACAD4dBAOyWWJYAAAAAElFTkSuQmCC
-    ) repeat;
+
+	// background:url(
+	// 	data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVQIW2P8////f0YQYIACAD4dBAOyWWJYAAAAAElFTkSuQmCC
+ //    ) repeat;
 }
 
 .model-bar-list {
@@ -117,5 +117,5 @@ ul.model-bar-list {
 	height: 8px;
 	border-top: 1px solid @headerMenuBorderColor;
 	border-bottom: 1px solid @headerMenuBorderColor;
-	background: white;
+	background: @headerMenuBgColor;
 }
