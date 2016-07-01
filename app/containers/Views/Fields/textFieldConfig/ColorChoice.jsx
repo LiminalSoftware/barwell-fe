@@ -189,7 +189,7 @@ var ColorChoice = React.createClass({
   },
 
   isActive: function () {
-    return this.state.colorAttr || this.state.custom;
+    return this.state.colorAttr || this.state.color;
   }
   
 })

@@ -69,11 +69,13 @@ var dateField = {
 		format: function (value, _config) {
 			var config = _config || this.props.config || {}
 			var format = config.formatString || "DD MMMM YYYY";
-			var prettyDate = value ? moment(value).format(format) : ''
+			var dateObj = moment(value);
+			var prettyDate = dateObj.isValid() ? dateObj.format(format) : '';
 			return prettyDate
 		},
 
 		validator: function (input) {
+			console.log('date validator')
 			var config = this.props.config || {}
 			var format = config.formatString || "YYYY-MM-DD";
 			var date = moment(input, format)

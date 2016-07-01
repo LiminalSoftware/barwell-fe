@@ -12,6 +12,8 @@ import sortable from 'react-sortable-mixin';
 import ViewList from './ViewList'
 import ViewItemSingleton from './ViewItemSingleton';
 
+import ModelConfigStore from "../../stores/ModelConfigStore";
+
 import menuOverflowMixin from '../../menuOverflowMixin'
 
 import sortItems from './sortItems';
@@ -24,11 +26,13 @@ var ViewMenu = React.createClass({
 
 	componentWillMount: function () {
 		ViewStore.addChangeListener(this._onChange);
+		ModelConfigStore.addChangeListener(this._onChange);
 		this.calibrateHeight();
 	},
 
 	componentWillUnmount: function () {
 		ViewStore.removeChangeListener(this._onChange);
+		ModelConfigStore.removeChangeListener(this._onChange);
 	},
 
 	getInitialState: function () {
@@ -104,16 +108,6 @@ var ViewMenu = React.createClass({
 
 	// RENDER =================================================================
 
-	// <div key="fixed-list" className = "dropdown-list">
-	// 			{
-	// 				views.map((v, idx) =>
-	// 					<ViewItemSingleton 
-	// 						selected = {v.view_id === view.view_id}
-	// 						key = {'singleton-' + (v.cid || v.view_id)} 
-	// 						view = {v} model = {model}/>
-	// 				)
-	// 			}
-	// 			</div>
 
 
 	render: function () {
@@ -122,8 +116,9 @@ var ViewMenu = React.createClass({
 		var view = this.props.view || {};
 		var views = ViewStore.query({model_id: model.model_id});
 		var editing = this.state.editing;
+		var config = ModelConfigStore.get(model.model_id) || {};
 
-		views = sortItems(model, views);
+		views = sortItems(model, views, this.props.config);
 
 		return <div className = "dropdown-menu "
 					key = "list-wrapper"
@@ -133,10 +128,10 @@ var ViewMenu = React.createClass({
 				<ViewList ref = "viewList"
 					items = {views}
 					editing = {this.state.editing} 
+					config = {config}
 					{..._this.props}
 					key = "orderable-list"/>
 			}
-
 			
 
 			{

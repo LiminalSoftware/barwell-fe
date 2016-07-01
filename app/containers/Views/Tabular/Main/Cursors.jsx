@@ -30,7 +30,7 @@ var Cursors = React.createClass ({
     if (!obj) return ;
 
     selector[model._pk] = obj[model._pk];
-
+    
     if (element) return React.createElement(element, {
       config: col,
       model: model,
@@ -48,7 +48,7 @@ var Cursors = React.createClass ({
       rowHeight: geo.rowHeight,
 
       value: obj[col.column_id],
-      column_id: col.column_id,
+      column_id: ('a' + (col.attribute_id || col.cid)),
 
       _handleBlur: this.props._handleBlur,
       
@@ -96,6 +96,8 @@ var Cursors = React.createClass ({
 
     var singleton = sel.top === sel.bottom && sel.left === sel.right;
 
+    var hideCursor = (rowsSelected || rowCount === 0);
+
     var pointerFudge = this.props.expanded ? {
       left: -30,
       width: 60,
@@ -135,6 +137,7 @@ var Cursors = React.createClass ({
           left: geo.leftGutter + 'px',
           width: (fixedWidth + floatWidth + geo.labelWidth + RIGHT_FRINGE) + 'px',
           overflow: 'hidden',
+          transformStyle: 'preserve-3d',
           transform: 'translateZ(10px)',
           zIndex: 10
         }}>
@@ -157,6 +160,7 @@ var Cursors = React.createClass ({
           </Overlay>
 
           
+          {hideCursor ? null :
           <Overlay
             {...this.props}
             className = {"pointer " + (focused ? " focused" : " ") + 
@@ -174,8 +178,9 @@ var Cursors = React.createClass ({
             {this.props.context ? <ContextMenu key="context" {...this.props}/> : null}
             </ReactCSSTransitionGroup>
           </Overlay>
+          }
 
-          {rowsSelected ? null :
+          {hideCursor ? null :
           <Overlay
             {...this.props}
             className = {"selection-border selection-border--" + (focused ? "focused" : "blurred")}
@@ -186,7 +191,7 @@ var Cursors = React.createClass ({
           </Overlay>
           }
 
-          {rowsSelected ? null :
+          {hideCursor ? null :
           <Overlay
             {...this.props}
             className = {"selection-outer" + (singleton ? '-singleton' : '')}
@@ -197,7 +202,7 @@ var Cursors = React.createClass ({
           }
           
           {
-          showJaggedEdge ? 
+          !hideCursor && showJaggedEdge ? 
           <Overlay
             {...this.props}
             className = " jagged-edge "
@@ -209,7 +214,10 @@ var Cursors = React.createClass ({
               top: sel.top,
               bottom: sel.bottom
             }}
-            fudge = {{left: -4, width: 10 }} />
+            fudge = {{
+              left: (sel.left >= view.data.fixedCols.length) ? -6 : -4, 
+              width: 10 
+            }} />
           : null}
 
           <Overlay

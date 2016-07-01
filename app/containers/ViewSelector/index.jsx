@@ -4,8 +4,8 @@ import ViewStore from "../../stores/ViewStore"
 import styles from "./style.less"
 import viewTypes from "../Views/viewTypes"
 import { Link } from "react-router"
-// import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
+import ModelConfigStore from "../../stores/ModelConfigStore";
 
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import blurOnClickMixin from '../../blurOnClickMixin'
@@ -27,7 +27,7 @@ var ViewSelector = React.createClass({
 		if (!model) return null
 
 		return <div className = "header-section ">
-		<div className="header-label">Views</div>
+		<div className="header-label">Metaphors</div>
 		<div className="model-views-menu" onClick = {this.clickTrap}>
 			<ReactCSSTransitionGroup 
 				component = "div"
@@ -41,7 +41,7 @@ var ViewSelector = React.createClass({
 				
 				{
 					this.state.open ? 
-					<ViewMenu {...this.props} _blurMenu = {this.handleBlur} key = "menu" /> 
+					<ViewMenu {...this.props}  _blurMenu = {this.handleBlur} key = "menu" /> 
 					: 
 					<ViewItemSingleton {...this.props} suppressHilite = {true} key = "singleton" />
 				}

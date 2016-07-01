@@ -73,6 +73,8 @@ var TypePicker = React.createClass({
 		return  active.description;
 	},
 
+	width: '150px'
+
 	// render() inherited from popdownClickmodMixin
 
 });

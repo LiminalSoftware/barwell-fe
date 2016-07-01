@@ -68,15 +68,18 @@ var ColumnMenu = React.createClass({
 	},
 
 	handleCancelChanges: function () {
+		this.refs.list.blurSiblings();
 		this.commitChanges(false)
 	},
 
 	handleSaveChanges: function () {
+		this.refs.list.blurSiblings();
 		this.commitChanges(true);
 	},
 
 	handleAddColumn: function () {
 		this.setState({editing: true})
+		this.refs.list.blurSiblings();
 		this.refs.list.addItem()
 	},
 
@@ -130,7 +133,7 @@ var ColumnMenu = React.createClass({
 				this.props.confirmChanges && this.state.dirty ?
 				<div className="menu-item menu-config-row">
 					<div className = "menu-sub-item menu-clickable" onClick = {this.commitUpdates}>
-					<span className = "icon icon-check"/> Update cube
+					<span className = "icon icon-check"/> Update groupings
 					</div>
 				</div> : null
 			}

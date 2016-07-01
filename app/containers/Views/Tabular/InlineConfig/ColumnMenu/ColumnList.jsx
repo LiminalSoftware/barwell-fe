@@ -58,10 +58,10 @@ var ColumnList = React.createClass({
 	},
 
 	onResorted: function () {
+		this.commitViewUpdates(!this.props.confirmChanges);
 		if (this.props.confirmChanges) {
 			this.props._markDirty();
 		}
-		this.commitViewUpdates(!this.props.confirmChanges);
 	},
 
 	// UTILITY ================================================================
@@ -69,6 +69,7 @@ var ColumnList = React.createClass({
 	commitViewUpdates: function (commit) {
 		// applies the section transformers to each item in the section
 		// if @commit is true, then commits  changes to the view and persists
+		// commit = false
 		var view = this.props.view;
 		var section = this.props.sections[0];
 		var items = this.state.items.map(function (item, idx) {
@@ -76,7 +77,7 @@ var ColumnList = React.createClass({
 			else {
 				item.order = idx;
 				item = section.enterTransform(item);
-				if (commit) view.data.columns[item.column_id] = item;
+				if (commit) view.data.columns[item.cid || item.column_id] = item;
 			}
 			return item;
 		});
@@ -130,6 +131,7 @@ var ColumnList = React.createClass({
 			type: 'TEXT',
 			hidden: true
 		};
+		console.log(attr)
 		while (list.some(item => item.name === attr.attribute)) {
 			attr.attribute = 'New attribute ' + idx++;
 		}

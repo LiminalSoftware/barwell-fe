@@ -31,7 +31,7 @@ var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
   if (!(retry instanceof Object)) retry = {}
   if (!(retry.period > 0)) retry.period = 50
   
-  return util.wait(Math.random() * 3000).then(function () {
+  return util.wait(Math.random() * (method === 'POST' ? 15000 : 1000)).then(function () {
     return new Promise(function (resolve, reject) {
     var params = {
       type: method,

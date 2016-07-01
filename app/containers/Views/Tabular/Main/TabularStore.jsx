@@ -246,7 +246,7 @@ var createTabularStore = function (view) {
           _records.forEach(function (rec, idx) {
             var newrec
             var patch
-            var pendingActions = rec._pendingActions || []
+            var pendingActions = rec._pendingActions ? _.clone(rec._pendingActions) : []
 
             // first test to see if the record is impacted by the change
             if (rec[model._pk] && (rec[model._pk] in dict)) patch = dict[rec[model._pk]]
@@ -263,7 +263,7 @@ var createTabularStore = function (view) {
               rec,
               patch,
               {_dirty: isDirty},
-              (!isDirty ? {_server: _.clone(util.stripInternalVars(rec))} : {}),
+              (!isDirty ? {_server: util.stripInternalVars(rec)} : {}),
               {_pendingActions: pendingActions}
             );
             

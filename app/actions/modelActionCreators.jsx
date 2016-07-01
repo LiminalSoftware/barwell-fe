@@ -89,7 +89,10 @@ var modelActions = {
 	},
 
 	deleteMultiRecords: function (model, patches, extras) {
-		patches.forEach(k=> k.action = 'D')
+		patches = patches.map(function (rec) {
+			var _pk = model._pk
+			return {[_pk]: rec[_pk], action: 'D'}
+		});
 
 		modelActions.clearNotification({
 			notification_key: 'selectedRecords'
@@ -419,7 +422,7 @@ var modelActions = {
 			})
 		}).catch(function (error) {
 			modelActions.createNotification({
-				copy: 'A critical error has occured on the server.  Unfortunately this is not recoverable.', 
+				copy: 'A critical error has occured on the server.  Unfortunately this is not recoverable. Details: ' + JSON.stringify(error), 
 				type: 'error-item',
 				icon: ' icon-warning ',
 				notification_key: 'workspaceLoad',

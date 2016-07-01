@@ -9,6 +9,11 @@ import CubeInlineConfig from "./Cube/InlineConfig/index.jsx"
 import CubeMain from "./Cube/Main/index.jsx"
 import CubeGroomer from "./Cube/groom"
 
+import VennInlineConfig from "./Venn/InlineConfig/index.jsx"
+import VennMain from "./Venn/Main/index.jsx"
+import VennGroomer from "./Venn/groom"
+
+
 
 var viewTypes = {
 	Tabular: {
@@ -35,13 +40,22 @@ var viewTypes = {
 		mainElement: CalendarMain,
 		groomer: CalendarGroomer,
 		category: "Dates and Times",
-		description: "Lays out your data on a calendar."
+		description: "Shows events on a calendar."
 	},
 	Timeline : {
 		type: "Timeline",
 		icon: "icon-road",
 		category: "Dates and Times",
-		description: "Also called a Gannt chart.  Shows events and activities along a horizontal time axis."
+		description: "Shows events and activities along a horizontal time axis."
+	},
+	"Venn Diagram": {
+		type: "Venn Diagram",
+		mainElement: VennMain,
+		inlineConfigElement: VennInlineConfig,
+		groomer: VennGroomer,
+		icon: "icon-exclude",
+		category: "Diagrams",
+		description: "Shows set membership visually"
 	}
 }
 

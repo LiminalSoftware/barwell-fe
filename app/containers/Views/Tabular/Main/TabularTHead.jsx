@@ -33,6 +33,7 @@ var TabularTHead = React.createClass ({
 
 		return <div
 			className = {"tabular-view-header wrapper " 
+				+ (focused ? '' : " gray-out ")
 				+ this.props.side + '-header--' + (this.props.focused ? 'focused' : 'blurred') 
 				+ ' tabular-view-header--' + (this.props.focused ? 'focused' : 'blurred')}
 			style = {style}

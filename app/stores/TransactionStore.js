@@ -12,7 +12,6 @@ import util from "../util/util"
 var BASE_URL = 'http://api.metasheet.io'
 
 var _actionCid = 0;
-var _pendingKeys = {};
 
 var TransactionStore = storeFactory({
 	identifier: 'transaction_id',
@@ -22,14 +21,6 @@ var TransactionStore = storeFactory({
 		var verb = '';
 		var _this = this;
 		var url;
-		
-
-		// console.log(payload)
-
-		// if (payload.selector.keys.length === 1 && payload.selector.keys[0] === payload.model.model_id) {
-		// 	payload.actionType = 'RECORD_MULTIUPDATE';
-		// 	payload.patches = [_.extend(payload.object, payload.selector)];	
-		// }
 
 		// set the url for the ajax call
 		switch(payload.actionType) {
@@ -77,9 +68,9 @@ var TransactionStore = storeFactory({
 				payload.icon = (payload.method === 'copy/paste') ? 'icon-clipboard-check' : (payload.method === 'clearing selection' ? 'icon-broom' : 'icon-keyboard');
 				payload.json = JSON.stringify(payload.patches.map(util.stripInternalVars));
 				break;
-			// case 'RECORD_CREATE':
-			// 	break;
 		}
+
+
 
 		// process the action
 		switch(payload.actionType) {

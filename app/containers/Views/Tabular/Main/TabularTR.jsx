@@ -56,8 +56,6 @@ class TabularTR extends React.Component {
 				`<span class = "table-cell ${obj._dirty ? ' dirty-label ' : ''}" style = "left: ${geo.leftGutter}px; width: ${geo.labelWidth}px"><span class="table-cell-inner"><span class="label-grab-handle"></span><span style = "margin-left: 2px;" class = "checkbox-surround " id = "${rowKey}-rowcheck">${checkbox}</span></span></span>`
 				: '';
 
-		
-
 		html = html + _this.props.columns.map(function (col, j) {
 			var element = (fieldTypes[col.type]).element;
 			var cellKey = rowKey + '-' + col.column_id;
@@ -69,7 +67,7 @@ class TabularTR extends React.Component {
 		
 		return <div id = {rowKey} key = {rowKey} dangerouslySetInnerHTML = {{__html: html}}
 			className = {"table-row " 
-				+ (obj._outoforder ? " table-row-outoforder " : "")
+				+ (this.props.outoforder ? " table-row-outoforder " : "")
 				+ (this.props.selected ? " table-row-selected " : "")} 
 
 			style = {rowStyle}/>

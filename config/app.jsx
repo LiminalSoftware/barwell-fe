@@ -2,7 +2,7 @@ import async from "async";
 import React from "react";
 import ReactDOM from "react-dom";
 import Router from "react-router";
-var routes = require("../app/" + __resourceQuery.substr(1) + "Routes");
+var routes = require("../app/mainRoutes");
 
 
 ReactDOM.render(routes, document.getElementById("content"));

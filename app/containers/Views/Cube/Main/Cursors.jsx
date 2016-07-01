@@ -145,7 +145,8 @@ var Cursors = React.createClass ({
     //   marginTop: !HAS_3D ? (isColumnSelection ? 0 : (marginTop + 2)) : 0,
     // };
 
-    return <div className = "cursor-wrapper wrapper" style = {{
+    return <div className = {"cursor-wrapper wrapper " + (focused ? "" : " gray-out ")} 
+    style = {{
         left: '0',
         top: '0',
         bottom: 0,
@@ -182,7 +183,6 @@ var Cursors = React.createClass ({
           <Overlay
             {...this.props}
             className = {"pointer " + (focused ? " focused" : " ") + 
-              (focused ? " " : " gray-out ") +
               (this.props.expanded ? " pointer--expanded " : "")}
             ref = "pointer"
             fudge = {{width: -1, top: 1, height: -1}}

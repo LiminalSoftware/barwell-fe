@@ -24,11 +24,17 @@ var ViewList = React.createClass({
 	},
 
 	componentDidMount: function () {
-		this.setState({items: sortItems(this.props.model, this.props.items)});
+		var model = this.props.model;
+		var config = this.props.config;
+		this.setState({
+			items: sortItems(model, this.props.items, config.ordering),
+			defaultView: config.defaultView
+		});
 	},
 
 	componentWillReceiveProps: function (next) {
-		this.setState({items: sortItems(next.model, next.items)});
+		var config = next.config;
+		this.setState({items: sortItems(next.model, next.items, config.ordering)});
 	},
 
 	componentWillUnmount: function () {
@@ -38,11 +44,14 @@ var ViewList = React.createClass({
 	// HANDLERS ===============================================================
 
 	onResorted: function () {
-		// var model = this.props.model;
 		
 	},
 
 	// UTILITY ================================================================
+
+	selectDefault: function (viewId) {
+		this.setState({defaultView: viewId})
+	},
 
 	saveChanges: function () {
 		var _this = this;
@@ -58,7 +67,8 @@ var ViewList = React.createClass({
 		
 		modelActionCreators.create('modelconfig', false, {
 			model_id: model.model_id,
-			ordering: ordering
+			ordering: ordering,
+			defaultView: this.state.defaultView
 		});
 		this.setState({editing: false, adding: false});
 	},
@@ -79,6 +89,8 @@ var ViewList = React.createClass({
 		var name = 'New ' + type.type;
 		var iter = 1;
 		var view;
+
+		console.log(type)
 		
 		while (ViewStore.query({model_id: model.model_id, view: name}).length > 0)
 			name = 'New ' + type.type + ' ' + (iter++);
@@ -108,11 +120,12 @@ var ViewList = React.createClass({
 					view: v,
 					model: _this.props.model,
 					editing: _this.props.editing,
-					_blurMenu: _this.props._blurMenu
+					_blurMenu: _this.props._blurMenu,
+					_selectDefault: _this.selectDefault
 				};
 
 				return _this.props.editing ?
-					<ViewItemMovable {...itemProps} {..._this.movableProps}/>
+					<ViewItemMovable {...itemProps} isDefault = {_this.state.defaultView === v.view_id} {..._this.movableProps}/>
 					:
 					<ViewItemSingleton {...itemProps}/>;
 			})}

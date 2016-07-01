@@ -93,8 +93,9 @@ var ModelList = React.createClass ({
 						{..._this.movableProps} />;
 				})
 			}
-			<li className="clickable add-new-model"><a onClick = {this.handleAddModel}><span className = "icon icon-plus" style={{fontSize: '14px'}}/></a></li>
+			<li><a onClick = {this.handleAddModel}><span className = "icon icon-plus" style={{fontSize: '14px'}}/></a></li>
 			</ul>
+
 		</div>
 	}
 })

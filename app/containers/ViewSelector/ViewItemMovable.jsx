@@ -53,6 +53,11 @@ var ViewItemMovable = React.createClass({
 		this.setState({editing: true})
 		util.clickTrap(e)
 	},
+
+	handleClickStar: function (e) {
+		this.props._selectDefault(this.props.view.view_id)
+		util.clickTrap(e)
+	},
 	
 	handleClickDelete: function (e) {
 		var view = this.props.view;
@@ -91,6 +96,10 @@ var ViewItemMovable = React.createClass({
 							onChange = {this.handleNameChange}/>
 						: view.view}
 				</span>
+				{!this.state.deleting ?
+					<span className = {"icon icon-star " + (this.props.isDefault ? "green" : " grayed ")}
+						onClick = {this.handleClickStar}/>
+					: null}
 				{!this.state.deleting && !this.state.editing?
 					<span className = "icon icon-pencil "
 						onClick = {this.handleClickEdit}/> : 

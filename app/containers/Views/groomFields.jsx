@@ -16,20 +16,20 @@ var groomFields = function (view) {
 	var columns = {}
 
 	fields.forEach(function (field) {
+		var id = field.cid || field.attribute_id
    		var fieldType = fieldTypes[field.type] || {}
-		var col = oldColumns['a' + field.attribute_id]
+		var col = oldColumns['a' + id]
 		var existing = !!col
 		col = col || {}
-		col.column_id = 'a' + (field.attribute_id || field.cid);
-		col.attribute_id = field.attribute_id || field.cid;
+		col.column_id = 'a' + id;
+		col.attribute_id = id;
 		col.type = field.type
 		col.name = field.attribute
 		col.sorting = null
 		if ('configCleanser' in fieldType) col = fieldType.configCleanser(col)
 
 		if (!col.align) {
-    		if('defaultAlign' in fieldType) col.align = fieldType.defaultAlign
-			else col.align = 'left'
+    		col.align = fieldType.defaultAlign || 'left'
 		}
 		col.visible = existing ? (!!col.visible) : (!field.hidden);
 		col.fixed = existing ? (col.fixed && col.visible) : (!field.hidden && field.attribute_id === model.label_attribute_id);

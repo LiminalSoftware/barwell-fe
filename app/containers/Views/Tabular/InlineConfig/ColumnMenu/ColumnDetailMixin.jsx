@@ -108,18 +108,19 @@ var ColumnDetailMixin = {
 					transitionLeaveTimeout={300} 
 					transitionName="slide-in"
 					className={"menu-item" +
-						(this.singleton ? " singleton " : " menu-item-stacked ")}
-					style = {{minWidth: this.minWidth, display: 'block'}}
+						(this.singleton ? " singleton " : " menu-item-stacked column-menu-item-width")}
+					style = {{minWidth: this.props.minWidth, display: 'block'}}
 					component = "div">
 
 				<div className = {"menu-sub-item " + (isNew ? " new-menu-sub-item" : "")}>
+				{
+				this.props.open ? 
+				<span ref = "grabber" className="draggable drag-grid"/>
+				: null
+				}
 
-		      	<span className = "ellipsis">
-					{
-					this.props.open ? 
-					<span ref = "grabber" className="draggable drag-grid"/>
-					: null
-					}
+		      	<span className = {editing ? "" : "ellipsis"}>
+					
 
 					{
 					editing ?
@@ -128,11 +129,17 @@ var ColumnDetailMixin = {
 						value={this.state.name}
 						onBlur = {this.handleBlurName}
 						onChange = {this.handleNameChange}/>
-					: <span><span className = {"type-icon icon icon-" + fieldType.icon}/>{config.name}</span>
+					: <span className = {"type-icon icon icon-" + fieldType.icon}/>
+					}
+					{
+					editing ? 
+					null
+					:
+					<span>{config.name}</span>
 					}
 				</span>
 				
-				{editing ? 
+				{editing ?
 					<span>
 						<TypePicker {...this.props}
 							ref = "typePicker"
@@ -142,7 +149,7 @@ var ColumnDetailMixin = {
 							type = {this.state.type}/>
 					</span>
 					:
-					<span style = {{display: 'flex'}}>
+					<span>
 					{
 						(fieldType.configParts || []) /* config parts associated with the field type*/
 							.concat(this.props.viewConfigParts || []) /* config parts passed down from the view*/
@@ -164,13 +171,20 @@ var ColumnDetailMixin = {
 					</span>
 				}
 				{
-				editing ?       
-				<span  className = "pop-down clickable icon" onClick = {_this.handleConfigClick.bind(_this, AttributeConfig)}>
-					<span className = "icon icon-cog" style={{width: '30px', maxWidth: '30px', textAlign: 'center', marginRight: 0}}/>
-					{this.state.configPart === AttributeConfig ?
-						<span className = "pop-down-overlay"><span className = "icon icon-cog" style = {{margin: 0}}/></span> 
-						: null
-					}
+				editing ?
+				<span>
+					<span  className = "pop-down clickable" style = {{float: 'right', width: '30px', minWidth: '30px'}}
+					onClick = {_this.handleDelete.bind(_this, AttributeConfig)}>
+						<span className = "icon icon-cross-circle" style={{width: '30px', minWidth: '30px', textAlign: 'center', marginRight: 0}}/>
+					</span>   
+					<span  className = "pop-down clickable" style = {{float: 'right', width: '30px', minWidth: '30px'}}
+						onClick = {_this.handleConfigClick.bind(_this, AttributeConfig)}>
+						<span className = "icon icon-cog"  style = {{textAlign: 'center', marginRight: 0}}/>
+						{this.state.configPart === AttributeConfig ?
+							<span className = "pop-down-overlay"><span className = "icon icon-cog" style = {{margin: 0}}/></span> 
+							: null
+						}
+					</span>
 				</span>
 				: null
 				}

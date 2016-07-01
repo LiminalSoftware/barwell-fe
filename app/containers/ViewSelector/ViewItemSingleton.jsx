@@ -10,11 +10,14 @@ var ViewItemSingleton =  React.createClass({
 	handleClick: function (e) {
 		var model = this.props.model;
 		var view = this.props.view;
-		if (this.props._blurMenu) this.props._blurMenu();
 		modelActionCreators.create('modelconfig', false, {
 			model_id: model.model_id,
 			selected_view_id: view.view_id
 		});
+		if (this.props._blurMenu) {
+			console.log('blurrrr')
+			this.props._blurMenu();
+		}
 	},
 
 	// RENDER =================================================================
@@ -33,6 +36,11 @@ var ViewItemSingleton =  React.createClass({
 				<span className = "double ellipsis">
 					{view.view}
 				</span>
+				{
+				!this.props.suppressHilite && this.props.isDefault ?
+				<span className = {"icon icon-star " + (this.props.isDefault ? "green" : " grayed ")}/>
+				: null
+				}
 			</Link>
 		else return <div className = "singleton menu-item menu-sub-item no-left-padding">
 			<span className = "large icon icon-pencil-ruler"></span>

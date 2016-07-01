@@ -145,8 +145,7 @@ var TabularTBody = React.createClass ({
 
 	// RENDER ================================================================
 
-	prepareRow: function (obj, index) {
-		var view = this.props.view;
+	prepareRow: function (obj, index, ooo) {
 		var viewconfig = this.props.viewconfig || {};
 		var model = this.props.model;
 		var pk = model._pk;
@@ -167,10 +166,12 @@ var TabularTBody = React.createClass ({
 			rowKey = {rowKey}
 			ref = {rowKey}
 			key = {rowKey}
+			outoforder = {ooo}
 			isScrolling = {this.state.scrolling}/>;
 	},
 
 	render: function () {
+		var _this = this
 		var view = this.props.view
 		var model = this.props.model
 		var pk = model._pk
@@ -185,6 +186,7 @@ var TabularTBody = React.createClass ({
 		var geo = view.data.geometry
 		var floatOffset = this.props.floatOffset		
 		var style = this.props.style
+		var prevOutOfOrder = false
 		
 
 		style.transform = "translate3d(0, " + (-1 * this.state.rowOffset * geo.rowHeight ) + "px, 0)"
@@ -201,7 +203,12 @@ var TabularTBody = React.createClass ({
 			
 			ref = "tbody"
 			style = {this.props.style}>
-			{ rows.map(this.prepareRow) }
+			{ rows.map(function (row, idx) {
+				var ooo = prevOutOfOrder || row._outoforder;
+				prevOutOfOrder = row._outoforder;
+				return _this.prepareRow(row, idx, ooo);
+			}) 
+			}
 		</div>
 	}
 })
