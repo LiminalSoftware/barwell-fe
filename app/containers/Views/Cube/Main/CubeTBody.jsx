@@ -14,9 +14,11 @@ import AttributeStore from "../../../../stores/AttributeStore"
 
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 
+import chooseAggregateElement from './chooseAggregateElement'
+
 const VISIBLE_ROWS = 40
 const VISIBLE_COLUMNS = 20
-const DELIMITER = '#'; //constants.delimiter
+const DELIMITER = constants.delimiter
 
 var CubeTBody = React.createClass ({
 
@@ -57,9 +59,8 @@ var CubeTBody = React.createClass ({
 		var hOffset = this.props.horizontalOffset;
 		var rowLevels = store.getLevels('row', 0, 100) || [];
 		var colLevels = store.getLevels('column', 0, 100) || [];
-		var column = view.data.columns['a' + view.value];
 		var selector = {};
-		var element = (fieldTypes[column.type]).element;
+		
 		var cells = new Array(VISIBLE_ROWS * VISIBLE_COLUMNS);
 
 		for (var i = 0; i < Math.min(VISIBLE_ROWS, rowLevels.length); i++) {
@@ -68,18 +69,27 @@ var CubeTBody = React.createClass ({
 				.map(v => (v === null || v=== undefined) ? '%&NULL&%' : v).join(DELIMITER) + DELIMITER
 
 			for (var j = 0; j < Math.min(VISIBLE_COLUMNS, colLevels.length); j++) {
-				var obj = store.getValue(i,j);
-				var value = obj ? obj[column.column_id] : null;
+				Object.assign(selector, colLevels[j])
+				var agg = view.aggregate_values[0]
+				var valueKey = agg.aggregator + '_' + agg.value
+				var column = view.data.columns[agg.value];
+				var fieldConfig = chooseAggregateElement(column.type, agg.aggregator);
+				var element = (fieldTypes[fieldConfig.type]).element;
+
+				var obj = store.getValue(selector);
+				var value = obj ? obj[valueKey] : null;
+				
 				var style = {
 					width: geo.columnWidth + 'px',
 					height : geo.rowHeight + 'px',
 					left: (geo.columnWidth * j) + 'px',
-					top: (geo.rowHeight * i) + 'px'
+					top: (geo.rowHeight * i) + 'px',
+					borderBottom: '1px solid ' + constants.colors.GRAY_3,
+					borderLeft: '1px solid ' + constants.colors.GRAY_3
 				};
-				var cellKey = rowKey + _.values(colLevels[j])
+				var cellKey = rowKey + DELIMITER + _.values(colLevels[j])
 					.map(v => (v === null || v === undefined) ? '%&NULL&%' : v).join(DELIMITER);
-				Object.assign(selector, colLevels[j])
-				// console.log('value: ' + store.getValue(i,j))
+				
 				cells[i * VISIBLE_COLUMNS + j] = React.createElement(element, {
 					config: column,
 					model: model,
@@ -90,7 +100,6 @@ var CubeTBody = React.createClass ({
 					key: cellKey,
 					style: style,
 					isNull: !obj,
-					className: 'table-cell',
 					rowHeight: geo.rowHeight,
 				})
 			}

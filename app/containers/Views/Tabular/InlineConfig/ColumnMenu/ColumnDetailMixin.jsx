@@ -53,8 +53,9 @@ var ColumnDetailMixin = {
 
 	handleBlurName: function (e) {
 		var config = this.props.config
-		var attr  = AttributeStore.get(config.attribute_id);
-		attr.attribute = this.refs.attributeNameInput.value
+		var attr  = _.clone(AttributeStore.get(config.attribute_id));
+		attr.attribute = this.refs.attributeNameInput.value;
+		attr._dirty = true;
 		modelActionCreators.create('attribute', false, attr);
 	},
 
@@ -99,20 +100,17 @@ var ColumnDetailMixin = {
 	    var config = this.props.config;
 		var fieldType = fieldTypes[config.type] || {};
 		var editing = this.props.editing
-		var isNew = (/ac\d+/).test(config.column_id)
-
-		// console.log(config.column_id)
 
 	    return	<ReactCSSTransitionGroup
 					transitionEnterTimeout={500}
-					transitionLeaveTimeout={300} 
+					transitionLeaveTimeout={300}
 					transitionName="slide-in"
 					className={"menu-item" +
 						(this.singleton ? " singleton " : " menu-item-stacked column-menu-item-width")}
 					style = {{minWidth: this.props.minWidth, display: 'block'}}
 					component = "div">
 
-				<div className = {"menu-sub-item " + (isNew ? " new-menu-sub-item" : "")}>
+				<div className = {"menu-sub-item " + (this.props._isNew ? " new-menu-sub-item" : "")}>
 				{
 				this.props.open ? 
 				<span ref = "grabber" className="draggable drag-grid"/>
@@ -120,8 +118,6 @@ var ColumnDetailMixin = {
 				}
 
 		      	<span className = {editing ? "" : "ellipsis"}>
-					
-
 					{
 					editing ?
 					<input className = "menu-input text-input" 

@@ -2,12 +2,13 @@
 
 
 .menu-input {
+  float: left;
   position: relative;
   display: inline-block;
 	height: 26px;
   left: 0;
   right: 0;
-  padding: 2px;
+  padding: 2px 5px;
   margin: 0;
   min-width: 50px;
 
@@ -26,10 +27,11 @@
 
 }
 
-.menu-input.text-input {
+.text-input {
   background: white;
-  border: none;
-  // border-bottom: 1px solid @headerFontColor;
+  border: 1px solid @menuLightBorder;
+  border-radius: @menuItemBorderRadius;
+  outline: none;
 }
 
 .menu-input.selector {

@@ -1,6 +1,7 @@
 import React from "react"
 import $ from "jquery"
  
+import constants from '../../../../constants/MetasheetConstants'
 import _ from 'underscore'
 import fieldTypes from "../../fields"
 import modelActionCreators from "../../../../actions/modelActionCreators"
@@ -89,7 +90,9 @@ var CubeTHead = React.createClass ({
 							[dimension === 'row' ? 'height' : 'width']: length + 'px',
 							lineHeight: (length - 1) + 'px',
 							[dimension === 'row' ? 'left' : 'top']: offset + 'px',
-							[dimension === 'row' ? 'top' : 'left']: ((r - spans[c] + 1) * cellLength) + 'px'
+							[dimension === 'row' ? 'top' : 'left']: ((r - spans[c] + 1) * cellLength) + 'px',
+							borderBottom: '1px solid ' + constants.colors.GRAY_3,
+							borderLeft: '1px solid ' + constants.colors.GRAY_3
 						};
 						if (dimension === 'column' && c === groups.length - 1) thStyle.borderBottom = 'none';
 						offset += transverse

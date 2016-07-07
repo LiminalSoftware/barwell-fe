@@ -204,8 +204,10 @@ var TabularTBody = React.createClass ({
 			ref = "tbody"
 			style = {this.props.style}>
 			{ rows.map(function (row, idx) {
-				var ooo = prevOutOfOrder || row._outoforder;
-				prevOutOfOrder = row._outoforder;
+				var next = idx + 1 <rows.length  ? rows[idx + 1] : {}
+				var ooo = (next._outoforder && !row._outoforder) 
+				       || (!next._outoforder && row._outoforder)
+
 				return _this.prepareRow(row, idx, ooo);
 			}) 
 			}

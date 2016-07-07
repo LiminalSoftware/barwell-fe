@@ -10,7 +10,7 @@ import FocusStore from "../../../../stores/FocusStore"
 
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
-import createTabularStore from './TabularStore.jsx'
+import createTabularStore from '../TabularStore'
 import Overlay from './Overlay'
 import DetailBar from '../../../DetailBar'
 

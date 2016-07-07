@@ -10,6 +10,7 @@ import ContextMenu from './ContextMenu'
 
 import PopDownMenu from '../../../../components/PopDownMenu'
 import util from '../../../../util/util'
+import chooseAggregateElement from './chooseAggregateElement'
 
 const HAS_3D = util.has3d()
 const RIGHT_FRINGE = 200;
@@ -44,6 +45,7 @@ var Cursors = React.createClass ({
         }
       })
       isNull = false
+      element = col ? (fieldTypes[col.type]).element : isNull
     } else if (ptr.top < 0 && ptr.left >= 0) {
       var pointerKey = 'a' + columnHeaders[columnHeaders.length + ptr.top];
       var level = store.getLevel('column', ptr.left)
@@ -56,17 +58,27 @@ var Cursors = React.createClass ({
         }
       })
       isNull = false
+      element = col ? (fieldTypes[col.type]).element : null
     } else if (ptr.left >= 0 && ptr.top >= 0) {
       Object.assign(selector, store.getLevel('row', ptr.top));
       Object.assign(selector, store.getLevel('column', ptr.left));
 
-      obj = store.getValue(ptr.top, ptr.left);
-      col = view.data.columns['a' + view.value]
-      value = obj ? obj[col.column_id] : null;
+      var agg = view.aggregate_values[0]
+      var valueKey = agg.aggregator + '_' + agg.value
+      col = view.data.columns[agg.value];
+
+      var fieldConfig = chooseAggregateElement(col.type, agg.aggregator);
+      element = (fieldTypes[fieldConfig.type]).element;
+      obj = store.getValue(selector);
+      value = obj ? obj[valueKey] : null;
+      
       isNull = !obj
+
+    } else {
+      throw new Error('impossible pointer position')
     }
     
-    element = col ? (fieldTypes[col.type]).element : null
+    
 
     if (element) return React.createElement(element, {
       config: col,
@@ -74,6 +86,7 @@ var Cursors = React.createClass ({
       view: view,
 
       selected: true,
+      bordered: true,
 
       spaceTop: ptr.top - this.props.vOffset,
       spaceBottom: this.props.visibleRows + this.props.vOffset - ptr.top,

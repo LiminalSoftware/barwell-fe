@@ -5,7 +5,7 @@ import dispatcher from "../dispatcher/MetasheetDispatcher"
 import EventEmitter from 'events'
 import _ from 'underscore'
 import modelActionCreators from '../actions/modelActionCreators'
-
+import getGuid from './getGuid'
 
 var NotificationStore = storeFactory({
 	identifier: 'notification_key',

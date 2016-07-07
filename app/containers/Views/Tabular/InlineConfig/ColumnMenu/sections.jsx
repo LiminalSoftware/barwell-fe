@@ -5,7 +5,7 @@ var sections = [
 		section: "fixed",
 		label: "Fixed Attributes",
 		emptyText: "No fixed attributes...",
-		icon: "icon-pin-3",
+		icon: "icon-pushpin",
 		selector: function (view) {
 			return view.data.columnList.filter(c => c.visible && c.fixed).sort(util.orderSort)
 		},
@@ -19,7 +19,7 @@ var sections = [
 		section: "visible",
 		label: "Visible Attributes",
 		emptyText: "No visible attributes...",
-		icon: "icon-eye-3",
+		icon: "icon-eye",
 		selector: function (view) {
 			return view.data.columnList.filter(c => c.visible && !c.fixed).sort(util.orderSort)
 		},
@@ -33,7 +33,7 @@ var sections = [
 		section: "hidden",
 		label: "Hidden Attributes",
 		emptyText: "No hidden attributes...",
-		icon: "icon-eye-4",
+		icon: "icon-eye-crossed",
 		selector: function (view) {
 			return view.data.columnList.filter(c => !c.visible).sort(util.orderSort)
 		},

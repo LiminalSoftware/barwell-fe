@@ -8,7 +8,7 @@ var sections = [
 		section: 'rows',
 		label: "Row Groupings",
 		emptyText: "No row groups defined...",
-		icon: "icon-layer-3",
+		icon: "icon-menu",
 		configParts: [GroupSortPicker],
 		selector: function (view) {
 			return view.data.columnList.filter(c => c.groupByRow).sort(util.orderSort)
@@ -25,7 +25,7 @@ var sections = [
 		section: 'columns',
 		label: "Column Groupings",
 		emptyText: "No column groups defined...",
-		icon: "icon-layer-3",
+		icon: "icon-menu",
 		configParts: [GroupSortPicker],
 		selector: function (view) {
 			return view.data.columnList.filter(c => c.groupByColumn).sort(util.orderSort)
@@ -42,7 +42,7 @@ var sections = [
 		section: 'body',
 		label: "Table Body Attributes",
 		emptyText: "No table body attributes defined...",
-		icon: "icon-layer-3",
+		icon: "icon-border-all",
 		configParts: [AggregatePicker],
 		selector: function (view) {
 			return view.data.columnList.filter(c => c.inTableBody).sort(util.orderSort)
@@ -59,7 +59,7 @@ var sections = [
 		section: 'hidden',
 		label: "Hidden Attributes",
 		emptyText: "No hidden attributes...",
-		icon: "icon-eye-4",
+		icon: "icon-eye-crossed",
 		selector: function (view) {
 			return view.data.columnList.filter(c => !c.inTableBody && !c.groupByRow && !c.groupByColumn).sort(util.orderSort)
 		},

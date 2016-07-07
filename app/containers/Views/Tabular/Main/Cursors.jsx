@@ -29,7 +29,8 @@ var Cursors = React.createClass ({
     
     if (!obj) return ;
 
-    selector[model._pk] = obj[model._pk];
+    if (model._pk in obj) selector[model._pk] = obj[model._pk];
+    else selector.cid = obj.cid;
     
     if (element) return React.createElement(element, {
       config: col,

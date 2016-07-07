@@ -2,6 +2,7 @@ import storeFactory from 'flux-store-factory';
 import dispatcher from '../dispatcher/MetasheetDispatcher'
 import _ from 'underscore'
 import util from '../util/util'
+import getGuid from './getGuid'
 
 var createRecordStore = function (model) {
   var label = 'm' + model.model_id

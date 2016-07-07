@@ -36,10 +36,11 @@ var groomView = function (view) {
     data.columnSortSpec = view.column_aggregates.map(function (d) {
         return {'attribute': 'a' + d, 'descending': columns['a' + d].descending}
     });
+    
 	if(!(data.geometry instanceof Object)) data.geometry = {}
 	data.geometry = _.extend({
 		labelWidth: 30,
-		rowHeight: Math.min(Math.max(data.geometry.rowHeight || 25, 20), 80),
+		rowHeight: Math.min(Math.max(data.geometry.rowHeight || 30, 35), 80),
 		columnWidth: 100
 	}, {})
 

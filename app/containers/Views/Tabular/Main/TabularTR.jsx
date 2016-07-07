@@ -19,11 +19,8 @@ class TabularTR extends React.Component {
 		var response =	oldProps.view !== newProps.view ||
 						oldProps.selected !== newProps.selected ||
 						oldProps.row !== newProps.row ||
+						oldProps.outoforder !== newProps.outoforder ||
 						newProps.obj !== oldProps.obj;
-		// if (oldProps.view !== newProps.view) console.log('oldProps.view !== newProps.view')
-		// if (oldProps.row !== newProps.row) console.log('oldProps.row !== newProps.row')
-		// if (newProps.obj !== oldProps.obj) console.log('newProps.obj !== oldProps.obj')
-		// if (response) console.log('render TR: ' + this.props.rowKey)
 		return response
 	}
 

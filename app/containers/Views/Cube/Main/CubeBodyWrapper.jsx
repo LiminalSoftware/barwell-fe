@@ -10,7 +10,7 @@ import FocusStore from "../../../../stores/FocusStore"
 
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
-import createCubeStore from './CubeStore.jsx'
+import createCubeStore from '../CubeStore'
 import Overlay from '../../Tabular/Main/Overlay'
 import DetailBar from '../../../DetailBar'
 
@@ -242,14 +242,10 @@ var CubeBodyWrapper = React.createClass ({
 								
 								// marginLeft: HAS_3D ? 0 :(-1 * this.props.hOffset - 1) + 'px'
 							}}>
-						{
-						view.value ?
 						<CubeTBody
 							{...this.props}
 							verticalOffset = {0}
 							horizontalOffset = {0}/>
-						: null
-						}
 					</div>
 					</div>
 					

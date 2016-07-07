@@ -49,8 +49,7 @@ var ColumnMenu = React.createClass({
 		return {
 			open: false,
 			editing: false,
-			dirty: false,
-			newColumns: []
+			dirty: false
 		};
 	},
 
@@ -63,18 +62,18 @@ var ColumnMenu = React.createClass({
 
 	handleEdit: function () {
 		if (this.refs.list.revertChanges) this.refs.list.revertChanges();
-		this.refs.list.blurSiblings();
+		this.blurChildren()
 		this.setState({editing: true, dirty: false, configPart: null});
 	},
 
 	handleCancelChanges: function () {
-		this.refs.list.blurSiblings();
-		this.commitChanges(false)
+		this.blurChildren()
+		this.commitAttributeChanges(false)
 	},
 
 	handleSaveChanges: function () {
-		this.refs.list.blurSiblings();
-		this.commitChanges(true);
+		this.blurChildren()
+		this.commitAttributeChanges(true);
 	},
 
 	handleAddColumn: function () {
@@ -94,9 +93,9 @@ var ColumnMenu = React.createClass({
 		this.setState({dirty: (isDirty === false) ? false : true})
 	},
 
-	commitUpdates: function () {
+	commitViewUpdates: function () {
 		this.setState({dirty: false})
-		this.refs.list.commitViewUpdates();
+		this.refs.list.commitViewUpdates(true);
 	},
 
 	_setScrollOffset: function (offset) {
@@ -104,19 +103,19 @@ var ColumnMenu = React.createClass({
 		console.log('scroll: ' + offset)
 	},
 
-	commitChanges: function (save) {
+	commitAttributeChanges: function (save) {
 		var _this = this;
 		var model = this.props.model;
 		
 		return Promise.all(AttributeStore.query({model_id: model.model_id}).map(function (attr) {
-			if (!attr.attribute_id && !save) {
-				return modelActionCreators.destroy('attribute', false, attr);
+			if (attr.attribute_id && !save) {
+				return modelActionCreators.revert('attribute', attr);
 			} else if (!attr.attribute_id && save) {
 				return modelActionCreators.create('attribute', true, attr);
 			} else if (attr.attribute_id && attr._destroy && save) {
 				return modelActionCreators.destroy('attribute', true, attr);
 			} else if (attr.attribute_id && attr._destroy && !save) {
-				return modelActionCreators.restore('attribute', attr);
+				return modelActionCreators.revert('attribute', attr);
 			}
 		})).then(function () {
 			_this.setState({editing: false});
@@ -132,7 +131,7 @@ var ColumnMenu = React.createClass({
 			{
 				this.props.confirmChanges && this.state.dirty ?
 				<div className="menu-item menu-config-row">
-					<div className = "menu-sub-item menu-clickable" onClick = {this.commitUpdates}>
+					<div className = "menu-sub-item menu-clickable" onClick = {this.commitViewUpdates}>
 					<span className = "icon icon-check"/> Update groupings
 					</div>
 				</div> : null
@@ -191,6 +190,7 @@ var ColumnMenu = React.createClass({
 		
 		//set the first section separately so you can't drag on top of it
 		var firstSection = this.props.sections[0];
+		var firstSectionIsEmpty = firstSection.selector(view).length === 0;
 
 		var transitionProps = {
 			transitionName: "fade-in",
@@ -212,9 +212,11 @@ var ColumnMenu = React.createClass({
 							this.state.open ? 
 							<div className = "dropdown-menu" style = {{minWidth: '550px'}}>
 								<div className="menu-item menu-sub-item menu-divider" onClick = {_this.blurChildren}>
+									<span style = {{flexGrow: 0}} className = {"icon " + firstSection.icon}/>
 									<span style = {{flexGrow: 0}}>{firstSection.label}</span>
 									<span className = "menu-section-rule"/>
 								</div>
+								{firstSectionIsEmpty ? <div className = "menu-sub-item menu-empty-item">{firstSection.emptyText}</div> : null}
 								<ColumnList 
 									{...this.props} ref = "list" 
 									_markDirty = {this.markDirty}
@@ -227,7 +229,6 @@ var ColumnMenu = React.createClass({
 							<ColumnDetail
 								ref = 'columnDetail'
 								key = {currentCol.column_id}
-								
 								_blurChildren = {e => _this.refs.columnDetail.blurSubMenus()}
 								config = {currentCol} view = {view}/>
 							:

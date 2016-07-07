@@ -1,16 +1,29 @@
 import MetasheetDispatcher from "../dispatcher/MetasheetDispatcher"
 import webUtils from "../util/MetasheetWebAPI.jsx"
 import _ from 'underscore'
+
+import getGuid from '../stores/getGuid'
+
 import ModelStore from '../stores/ModelStore'
 import ViewConfigStore from '../stores/ViewConfigStore'
 import RelationStore from '../stores/RelationStore'
+import TransactionStore from '../stores/TransactionStore'
+import transactionObserver from './transactionObserver'
+
+
+
 import groomView from '../containers/Views/groomView'
 import util from '../util/util'
+
 var BASE_URL = 'http://api.metasheet.io'
 
-var _requestId = 0;
+var _actionCid = 0;
 
 var modelActions = {
+
+	// ========================================================================
+	// == NON-TRANSACTIONAL EVENTS
+	// ========================================================================
 
 	createNotification: function (notification) {
 		notification.actionType = 'NOTIFY';
@@ -32,7 +45,7 @@ var modelActions = {
 			actionType: 'SET_WORKSPACE',
 			workspaceId: workspaceId
 		}
-		// MetasheetDispatcher.dispatch(message);
+		MetasheetDispatcher.dispatch(message);
 	},
 
 	setFocus: function (focus) {
@@ -60,81 +73,96 @@ var modelActions = {
 		MetasheetDispatcher.dispatch(message);
 	},
 
+	// ========================================================================
+	// == TRANSACTIONAL EVENTS
+	// ========================================================================
 
 	insertRecord: function (model, obj, position) {
-		var message = {};
-		var requestId = _requestId++;
-
-		message.actionType = 'RECORD_INSERT'
-		message.model_id = model.model_id
-		message.model = model;
-		message.object = obj
-		message.index = position
-		message.requestId = requestId
+		var message = {
+			entity: 'record',
+			actionType: 'RECORD_INSERT',
+			model_id: model.model_id,
+			model: model,
+			data: obj instanceof Array ? obj : [obj],
+			index: position,
+			copy: 'New ' + model.model + ' inserted',
+			icon: 'icon-flare',
+			cid: 'c' + getGuid() // action cid
+		}
 		MetasheetDispatcher.dispatch(message)
 	},
 
-	deleteRecord: function (model, selector) {
-		var requestId = _requestId++;
-		var message = {};
-		
+	bulkDestroyRecords: function (model, selector) {
 		if (!selector instanceof Object) throw new Error ('Delete without qualifier is not permitted')
-
 		var message = {
-			actionType: 'RECORD_DESTROY',
+			entity: 'record',
+			actionType: 'RECORD_BULKDESTROY',
 			model: model,
-			selector: selector
+			model_id: model.model_id,
+			selector: selector,
+			cid: 'c' + getGuid() // action cid
 		};
 		MetasheetDispatcher.dispatch(message);
 	},
 
-	deleteMultiRecords: function (model, patches, extras) {
-		patches = patches.map(function (rec) {
-			var _pk = model._pk
-			return {[_pk]: rec[_pk], action: 'D'}
-		});
-
-		modelActions.clearNotification({
-			notification_key: 'selectedRecords'
-		});
-
-		var message = _.extend(extras || {}, {
-			actionType: 'RECORD_MULTIDELETE',
-			model: model,
-			model_id: model.model_id,
-			patches: patches
-		});
-		MetasheetDispatcher.dispatch(message);
-
-	},
-
-	multiPatchRecords: function (model, patches, extras) {
-		if (!(patches instanceof Array)) patches = [patches]
-
-		var message = _.extend(extras || {}, {
-			actionType: 'RECORD_MULTIUPDATE',
-			model: model,
-			model_id: model.model_id,
-			patches: patches
-		});
-		MetasheetDispatcher.dispatch(message);
-	},
-
-	patchRecords: function (model, patch, selector, extras) {
-		var object = patch;
+	bulkPatchRecords: function (model, obj, selector, extras) {
 
 		if (!(selector instanceof Object)) throw new Error ('Patch without qualifier is not permitted')
-		if (!(patch instanceof Object)) throw new Error('Patch should be a single naked object');
+		if (!(obj instanceof Object)) throw new Error('Patch should be a single naked object');
 
 		var message = _.extend(extras || {}, {
 			actionType: 'BULK_UPDATE',
 			model: model,
-			update: object,
-			object: object,
-			selector: selector
+			data: obj,
+			selector: selector,
+			cid: 'c' + getGuid() // action cid
 		});
 		MetasheetDispatcher.dispatch(message);
 	},
+
+	deleteMultiRecords: function (model, obj, extras) {
+		obj = obj.map(function (rec) {
+			var _pk = model._pk
+			return {[_pk]: rec[_pk], action: 'D'}
+		});
+		var message = _.extend(extras || {}, {
+			entity: 'record',
+			actionType: 'RECORD_MULTIDELETE',
+			model: model,
+			model_id: model.model_id,
+			data: obj instanceof Array ? obj : [obj],
+			cid: 'c' + getGuid(), // action cid
+			copy: obj.length > 1 ? 
+				(obj.length + ' ' + model.plural + ' deleted')
+				: (model.model + ' deleted'),
+			icon: 'icon-trash2'
+		});
+		MetasheetDispatcher.dispatch(message);
+	},
+
+	multiPatchRecords: function (model, obj, extras) {
+		if (!(obj instanceof Array)) obj = [obj]
+
+		var message = _.extend(extras || {}, {
+			entity: 'record',
+			actionType: 'RECORD_MULTIUPDATE',
+			model: model,
+			model_id: model.model_id,
+			data: obj instanceof Array ? obj : [obj],
+			cid: 'c' + getGuid(), // action cid
+			copy: (obj.length > 1 ? (obj.length + ' ' + model.plural) : model.model) + ' updated'
+					+ (extras.method ? (' by ' + extras.method) : ''),
+			icon: extras.method === 'copy/paste' ? 
+				'icon-clipboard-check' : 
+				extras.method === 'clearing selection' ? 
+				'icon-broom' :
+				'icon-keyboard'
+
+		});
+		MetasheetDispatcher.dispatch(message);
+	},
+
+	//---------------------
 
 	moveHasMany: function (relationId, thisObj, relObj) {
 		var relation = RelationStore.get(relationId)
@@ -250,21 +278,42 @@ var modelActions = {
 		}
 
 		return webUtils.ajax('GET', url, null, header).then(function (results) {
-			var message = {}
 			var range = results.xhr.getResponseHeader('Content-Range')
 			var rangeParts = range.split(/[-/]/)
-
-			message.startIndex = parseInt(rangeParts[0])
-			message.endIndex = parseInt(rangeParts[1])
-			message.numberLevels = parseInt(rangeParts[2])
-
-			message.dimension = dimension
-			message.aggregates = aggregates
-			message.levels = results.data
-			message.actionType = ('V' + view_id + '_RECEIVELEVELS').toUpperCase()
-
+			var message = {
+				startIndex: parseInt(rangeParts[0]),
+				endIndex: parseInt(rangeParts[1]),
+				numberLevels: parseInt(rangeParts[2]),
+				dimension: dimension,
+				aggregates: aggregates,
+				levels: results.data,
+				view_id: view.view_id,
+				actionType: 'CUBE_RECEIVELEVELS'
+			}
 			MetasheetDispatcher.dispatch(message)
 		})
+	},
+
+	fetchVennValues: function (view, store) {
+		var view_id = view.view_id
+		var url = BASE_URL + '/v' + view_id
+		var header = {
+			'Range-Unit': 'items',
+			'Range': '0-100'
+		}
+
+		return webUtils.ajax('GET', url, null, header).then(function (results) {
+			var range = results.xhr.getResponseHeader('Content-Range');
+			var rangeParts = range.split(/[-/]/);
+			var message = {
+				numberResults: parseInt(rangeParts[2]),
+				actionType: 'CUBE_RECEIVEVALUES',
+				values: results.data,
+				view_id: view.view_id
+			};
+			
+			MetasheetDispatcher.dispatch(message);
+		});
 	},
 
 	fetchCubeValues: function (view, store, vOffset, vLimit, hOffset, hLimit) {
@@ -308,12 +357,17 @@ var modelActions = {
 		}
 
 		return webUtils.ajax('GET', url, null, header).then(function (results) {
-			var message = {};
+				
+			// console.log(results.data)
 			var range = results.xhr.getResponseHeader('Content-Range');
 			var rangeParts = range.split(/[-/]/);
-			message.numberResults = parseInt(rangeParts[2]);
-			message.actionType = ('V' + view_id + '_RECEIVEVALUES').toUpperCase();
-			message.values = results.data;
+			var message = {
+				numberResults: parseInt(rangeParts[2]),
+				actionType: 'CUBE_RECEIVEVALUES',
+				values: results.data,
+				view_id: view.view_id
+			};
+			
 			MetasheetDispatcher.dispatch(message);
 		});
 	},
@@ -325,16 +379,23 @@ var modelActions = {
 
 	create: function (subject, persist, obj) {
 		var message = {};
-		var requestId = _requestId++;
 		obj._dirty = true;
 		obj._destroy = false;
 		message[subject] = obj;
 		message.actionType = subject.toUpperCase() + '_CREATE';
-		message.requestId = requestId;
+		message.actionCid = (_actionCid++);
 		MetasheetDispatcher.dispatch(message);
 
-		if (persist) return webUtils.persist(subject, 'CREATE', obj, requestId);
+		if (persist) return webUtils.persist(subject, 'CREATE', obj, message.actionCid);
 		else return Promise.resolve(obj);
+	},
+
+	revert: function (subject, obj) {
+		var message = {
+			actionType: subject.toUpperCase() + '_REVERT',
+			[subject]: obj
+		}
+		MetasheetDispatcher.dispatch(message);
 	},
 
 	undestroy: function (subject, obj) {

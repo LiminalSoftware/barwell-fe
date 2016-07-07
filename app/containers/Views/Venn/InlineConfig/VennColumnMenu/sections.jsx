@@ -17,10 +17,24 @@ var sections = [
 		}
 	},
 	{
+		section: 'weighting',
+		label: "Weighting",
+		emptyText: "No weight defined-record count will be used as weight.",
+		icon: "icon-scale2",
+		selector: function (view) {
+			return view.data.columnList.filter(c => c.weight && c.type === 'DECIMAL').sort(util.orderSort)
+		},
+		enterTransform: function (col) {
+			col.groupByCategory = true;
+			col.visible = true;
+			return col
+		}
+	},
+	{
 		section: 'hidden',
 		label: "Unused Attributes",
 		emptyText: "No hidden attributes...",
-		icon: "icon-eye-4",
+		icon: "icon-eye-crossed",
 		selector: function (view) {
 			return view.data.columnList.filter(c => !c.groupByCategory && c.type === 'BOOLEAN').sort(util.orderSort)
 		},

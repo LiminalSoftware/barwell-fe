@@ -3,6 +3,7 @@ import dispatcher from '../dispatcher/MetasheetDispatcher'
 import _ from 'underscore'
 import util from '../util/util'
 
+import getGuid from './getGuid'
 import ModelStore from './ModelStore'
 import AttributeStore from './AttributeStore'
 import KeyStore from './KeyStore'

@@ -1,11 +1,14 @@
 import storeFactory from 'flux-store-factory';
+
 import dispatcher from '../dispatcher/MetasheetDispatcher'
 import _ from 'underscore'
 import util from '../util/util'
+import getGuid from './getGuid'
 
 var ModelStore = storeFactory({
   identifier: 'model_id',
   dispatcher: dispatcher,
+  guidGenerator: getGuid,
   pivot: function (payload) {
     switch (payload.actionType) {
       case 'MODEL_CREATE':

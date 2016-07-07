@@ -1,13 +1,14 @@
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../dispatcher/MetasheetDispatcher'
 import _ from 'underscore'
-
+import getGuid from './getGuid'
 
 var _activeWorkspace = null;
 
 var WorkspaceStore = storeFactory({
   identifier: 'workspace_id',
   dispatcher: dispatcher,
+  guidGenerator: getGuid,
   pivot: function(payload) {
     switch (payload.actionType) {
       case 'WORKSPACE_CREATE':

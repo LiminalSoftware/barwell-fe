@@ -5,6 +5,7 @@ import _ from 'underscore'
 import groomView from '../containers/Views/groomView'
 import util from '../util/util'
 
+import getGuid from './getGuid'
 import ModelStore from './ModelStore'
 import AttributeStore from './AttributeStore'
 import RelationStore from './RelationStore'
@@ -14,6 +15,7 @@ import KeycompStore from './KeycompStore'
 var ViewStore = storeFactory({
   identifier: 'view_id',
   dispatcher: dispatcher,
+  guidGenerator: getGuid,
   pivot: function(payload) {
 
     switch (payload.actionType) {

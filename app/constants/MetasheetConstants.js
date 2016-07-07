@@ -186,7 +186,7 @@ module.exports = {
     'December'
   ],
 
-  delimiter: String.prototype.charCodeAt(31),
+  delimiter: '\u2661',
 
   aggregators: {
     'SUM': 'Sum',

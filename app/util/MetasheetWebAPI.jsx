@@ -31,7 +31,7 @@ var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
   if (!(retry instanceof Object)) retry = {}
   if (!(retry.period > 0)) retry.period = 50
   
-  return util.wait(Math.random() * (method === 'POST' ? 15000 : 1000)).then(function () {
+  return util.wait(Math.random() * (method === 'POST' ? 3000 : 1000) + (method === 'POST' ? 2000 : 0)).then(function () {
     return new Promise(function (resolve, reject) {
     var params = {
       type: method,
@@ -54,6 +54,7 @@ var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
         console.log(error)
         console.log(status)
         console.log('===========')
+
         if (error && error.statusText === 'error') {
           if ('notification_key' in retry)
             modelActionCreators.updateNotification({

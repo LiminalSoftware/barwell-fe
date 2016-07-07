@@ -20,7 +20,7 @@ import ViewConfigStore from "../../../../stores/ViewConfigStore"
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
 
-import createCubeStore from './CubeStore.jsx'
+import createCubeStore from '../CubeStore'
 import fieldTypes from "../../fields"
 import CubeBodyWrapper from "./CubeBodyWrapper"
 import Cursors from './Cursors'

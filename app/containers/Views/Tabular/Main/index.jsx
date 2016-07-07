@@ -21,7 +21,7 @@ import copyTextToClipboard from "../../../../util/copyTextToClipboard"
 import ViewConfigStore from "../../../../stores/ViewConfigStore"
 import storeFactory from 'flux-store-factory';
 import dispatcher from '../../../../dispatcher/MetasheetDispatcher'
-import createTabularStore from './TabularStore.jsx'
+import createTabularStore from '../TabularStore'
 
 import fieldTypes from "../../fields"
 import TabularBodyWrapper from "./TabularBodyWrapper"
@@ -134,7 +134,7 @@ var TabularPane = React.createClass ({
 		if (!focused) this.blurPointer()
 		this.setState({focused: focused})
 		this.forceUpdate()
-		this.refs.tableWrapper.forceUpdate()
+		if (this.refs.tableWrapper) this.refs.tableWrapper.forceUpdate()
 		this.refs.cursors.forceUpdate()
 	},
 

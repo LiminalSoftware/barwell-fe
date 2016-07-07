@@ -18,7 +18,8 @@ var groomView = function (view) {
 	data.columns = columns
 	data.columnList = columnList
 
-	view.row_aggregates = columnList.filter(c => c.groupByCategory && c.type === 'BOOLEAN')
+	view.row_aggregates = columnList.filter(c => c.groupByCategory && c.type === 'BOOLEAN').map(c => c.attribute_id)
+	view.aggregate_values = [{value: model._pk, aggregator: 'count'}]
 
 	return view;
 }

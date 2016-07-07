@@ -102,12 +102,10 @@ var ColumnList = React.createClass({
 				if (attribute && !attribute._destroy) 
 					// col.attribute_id = attribute.attribute_id;
 					items.push(col);
-				if (relation)
+				if (relation && !relation._destroy)
 					// col.relation_id = relation.relation_id;
 					items.push(col);
 			});
-			
-			// if (attrs.length === 0) items.push(_.extend({isEmpty: true}, section));
 		});
 
 		return {items: items};
@@ -129,15 +127,14 @@ var ColumnList = React.createClass({
 			attribute: 'New attribute',
 			model_id: model.model_id, 
 			type: 'TEXT',
-			hidden: true
+			hidden: true,
+			_isNew: true
 		};
-		console.log(attr)
-		while (list.some(item => item.name === attr.attribute)) {
+		// make the new attribute name unique
+		while (list.some(item => item.name === attr.attribute))
 			attr.attribute = 'New attribute ' + idx++;
-		}
-		// list.push(attr);
-		return modelActionCreators.create('attribute', false, attr).then(function (storeAttr) {
-		});
+		
+		return modelActionCreators.create('attribute', false, attr)
 	},
 
 	// RENDER ===================================================================
@@ -163,6 +160,7 @@ var ColumnList = React.createClass({
 					ref = {'section' + item.label}> 
 				<div className="menu-sub-item menu-divider" 
 					{...itemProps}>
+					<span className = {"icon " + item.icon} style = {{flexGrow: 0}}/>
 					<span style = {{flexGrow: 0}}>{item.label}</span>
 					<span className = "menu-section-rule"/>
 				</div>
