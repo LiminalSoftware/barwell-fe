@@ -37,7 +37,9 @@ var Note = React.createClass({
 			</span>
 			{
 			note.action_id ? 
-			<span className = "note-right-column" onClick = {util.clickTrap}>
+			<span 
+				className = {note.notification_key ? "note-short-right-column" : "note-right-column"}
+				onClick = {util.clickTrap}>
 				<span className = 'icon icon-undo'/> Undo
 			</span>
 			: 

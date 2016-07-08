@@ -11,28 +11,25 @@
 	outline: none;
 	opacity: 0;
 	border: 0;
+	pointer-events: none;
 }
 
 body {
-	background-color: white;
 	font-family: @bodyFont;
-	padding: 0;
-	margin: 0;
-	overflow: hidden;
 }
 
 h1, h2, h3, h4, h5 {
 	font-family: @headerFont;
 }
 
-
-
-
 .application {
 	.flex-display;
 	.flex-direction(column);
 	min-height: 100vh;
 	height: 100%;
+	background:url(
+		data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVQIW2P8////f0YQYIACAD4dBAOyWWJYAAAAAElFTkSuQmCC
+	) repeat;
 }
 
 .model-views {
@@ -88,7 +85,4 @@ h1, h2, h3, h4, h5 {
 	right: 0;
 	top: 0;
 	bottom: 0;
-
-	// transform-style: preserve-3d;
-	// transform: translateZ(0);
 }

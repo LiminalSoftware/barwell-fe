@@ -21,10 +21,11 @@ var makeCidPromise = function (cid) {
 
 // waits until the primary key (pk) is available, then populates the permanent key
 var makePkPromise = function (obj, pk) {
-	if (obj[pk]) return Promise.resolve()
+	if (obj[pk]) return Promise.resolve(obj)
 	else return makeCidPromise(obj.cid)
 		.then(function (value) {
 			obj[pk] = value
+			return obj;
 		})
 }
 
@@ -45,12 +46,12 @@ class TransactionObserver {
 
 	_onNewTransaction (action) {
 		var _this = this
-		var pk = (action.entity === 'RECORD' ? 
-				('m' + action.model.model_id) :
-				(action.entity + '_id'))
-		var url = BASE_URL
-		var verb
-		var json
+		var entityName = (action.entity === 'record' ? 
+			('m' + action.model.model_id) :
+			(action.entity))
+		var pk = (action.entity === 'record' ? 
+			(action.model._pk) :
+			(action.entity + '_id'))
 
 		if (action.isClean) {
 			if (action.data instanceof Array)
@@ -66,22 +67,33 @@ class TransactionObserver {
 		if (action.isTemporary) return;
 
 		Promise.resolve().then(function () {
-			switch (action.entity) {
-				case 'record':
-					url += '/m' + action.model.model_id
+			// first wait for any dependent queries to come back (assigning ids to cids and such)
+
+			switch(action.actionType) {
+				case 'RECORD_MULTIDELETE':
+				case 'RECORD_MULTIUPDATE':
+					return Promise.all(action.data.map(
+						rec => makePkPromise(rec, action.model._pk)
+						))
 					break;
 				default:
-					url += '/' + action.entity
+					return Promise.resolve(action.data)
 					break;
 			}
+
+		}).then(function (data) {
+			// do some pre-processing on the request and send it off
+			var url = BASE_URL + '/' + entityName
+			var verb
+			var json = JSON.stringify(util.stripInternalVars(data));
 
 			switch(action.actionType) {
 				case 'ATTRIBUTE_CREATE':
 				case 'MODEL_CREATE':
 				case 'KEY_CREATE':
 				case 'RELATION_CREATE':
-					if (pk in action.data) {
-						url += '?' + pk + '=eq.' + action.data[pk];
+					if (pk in data) {
+						url += '?' + pk + '=eq.' + data[pk];
 						verb = 'PATCH'
 					} else {
 						verb = 'POST'
@@ -95,22 +107,18 @@ class TransactionObserver {
 					verb = 'PATCH';
 					break;
 				case 'RECORD_INSERT':
-					verb = 'POST';
-					break;
 				case 'RECORD_MULTIDELETE':
 				case 'RECORD_MULTIUPDATE':
 					verb = 'POST';
-					return Promise.all(action.data.map(rec => makePkPromise(rec, action.model._pk)))
-					break;
-				default:
-					return action.data
 					break;
 			}
-		}).then(function (resolvedData) {
-			json = JSON.stringify(util.stripInternalVars(resolvedData));
 			return webUtils.ajax(verb, url, json)
 		}).then(function (results) {
+			// get the response back, process it a bit and then dispatch it locally
+			var resultantData = results.data instanceof Array ? results.data : [results.data]
+			var action_id = resultantData[0].action_id
 			var message = _.extend({}, action, {
+				action_id: action_id,
 				data: results.data,
 				type: 'new-item',
 				status: 'old',
@@ -124,7 +132,7 @@ class TransactionObserver {
 				case 'RECORD_MULTIUPDATE':
 				case 'RECORD_INSERT':
 					message.actionType = 'RECORD_MULTIUPDATE'
-					message.data = results.data instanceof Array ? results.data : [results.data]
+					message.data = resultantData
 					break;
 			}
 

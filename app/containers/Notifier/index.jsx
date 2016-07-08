@@ -93,14 +93,14 @@ var Notifier = React.createClass({
 			events.map(function (note, idx) {
 				return <Note 
 					_handleMouseOver = {_this.handleMouseOver} 
-					key = {note.actionCid || note.notification_key} 
+					key = {note.cid || note.notification_key} 
 					note = {note} 
 					index = {idx} />;
 			})
 			}
 			{
 			(events.length === 0 && this.state.mouseOver)  ? 
-				<div className="note-item">
+				<div className="note-item note-info" key = "no-notifications">
 					<span className = "note-left-column" style = {{lineHeight: '25px'}}>
 						<span className = "icon icon-notification"/>
 					</span>
@@ -112,7 +112,7 @@ var Notifier = React.createClass({
 			}
 			{
 			this.state.mouseOver ?
-			<div className = "note-item" onClick={this.handleTogglePreview}>
+			<div className = "note-item" onClick={this.handleTogglePreview} key = "preview-toggle">
 				<span className = "note-left-column" style = {{lineHeight: '25px'}}>
 				<input type="checkbox"
 					checked={this.state.showPreview}

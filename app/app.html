@@ -3,17 +3,6 @@
 <head>
 	<meta charset="utf-8">
 	<style>
-		body {
-			margin: 0;
-			padding: 0;
-		}
-		.application {
-			.flex-display;
-			.flex-direction(column);
-			min-height: 100vh;
-			margin: 0;
-			padding: 0;
-		}
 
 		.hero-header {
 			font-family: sans-serif !important;
@@ -24,20 +13,17 @@
 			font-size: 24px;
 			line-height: 100%;
 			color: #71646B; 
+			background-color: transparent;
+			text-align: center;
+			width: 100%;
 		}
 
 		.hero-banner {
-			background:url(
-				data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVQIW2P8////f0YQYIACAD4dBAOyWWJYAAAAAElFTkSuQmCC
-		    ) repeat;
-
+			
 			position: absolute;
 			left: 0; right: 0; top: 0; bottom: 0;
 			line-height: 100%;
-			text-align: center;
-		}
 
-		body {
 			background: rgba(255,247,224,1);
 			background: -moz-radial-gradient(center, ellipse cover, rgba(255,247,224,1) 0%, rgba(247,248,250,1) 74%, rgba(247,248,250,1) 100%);
 			background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, rgba(255,247,224,1)), color-stop(74%, rgba(247,248,250,1)), color-stop(100%, rgba(247,248,250,1)));
@@ -46,15 +32,24 @@
 			background: -ms-radial-gradient(center, ellipse cover, rgba(255,247,224,1) 0%, rgba(247,248,250,1) 74%, rgba(247,248,250,1) 100%);
 			background: radial-gradient(ellipse at center, rgba(255,247,224,1) 0%, rgba(247,248,250,1) 74%, rgba(247,248,250,1) 100%);
 			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fff7e0', endColorstr='#f7f8fa', GradientType=1 );
+
+		}
+
+		body {
+			padding: 0;
+			margin: 0;
+			overflow: hidden;
 		}
 	</style>
 	<link href="_assets/main.css" rel="stylesheet" title="allstyles">
 </head>
 <body>
 	
-	<div id = "content" className = "hero-banner">
-		<span className="three-quarters-loader"/>
-		<h1 className = "hero-header">Loading application...</h1>
+	<div id = "content" class = "hero-banner">
+		<h1 class = "hero-header">
+			<span class = "three-quarters-loader"></span>
+			Loading application...
+		</h1>
 	</div>
 
 	<script type="text/javascript" src="_assets/js/d3.js"></script>

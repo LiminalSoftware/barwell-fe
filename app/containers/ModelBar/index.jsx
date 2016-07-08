@@ -78,7 +78,7 @@ var ModelList = React.createClass ({
 
 	render: function () {
 		var _this = this
-		var models  = ModelStore.query(null, ['model'])
+		var models  = ModelStore.query(null, 'model')
 
 		return <div className="model-bar-container"> 
 			<span className="model-bar-top"/>
@@ -90,7 +90,7 @@ var ModelList = React.createClass ({
 						index = {idx}
 						key = {'model-link-' + modelId}
 						model = {model}
-						last = {models.length === idx - 1}
+						last = {models.length - 1 === idx}
 						active = {_this.props.curModelId === modelId}
 						{..._this.movableProps} />;
 				})
