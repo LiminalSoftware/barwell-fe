@@ -41,7 +41,7 @@ var PopDownMenu = React.createClass({
 			maxHeight: this.props.maxHeight
 		};
 		var shouldOpenUp = this.shouldOpenUp()
-		var direction = this.shouldOpenUp() ? "up" : "down";
+		var direction = this.props.direction || (this.shouldOpenUp() ? "up" : "down")
 		var color = this.props.green ? "green" : "";
 
 		if (this.props.width) style.width = this.props.width + 'px';

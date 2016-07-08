@@ -55,7 +55,6 @@ var ModelDefinition = React.createClass({
 		var model = this.props.model;
 
 		if(!model) return <div className = "model-panes">
-			<div className = "model-details"></div>
 		</div>
 		
 		else return	<div className = "model-panes"><div className = "model-details">

@@ -45,9 +45,9 @@ class TransactionObserver {
 
 	_onNewTransaction (action) {
 		var _this = this
-		var pk = action.entity === 'RECORD' ? 
-			('m' + action.model.model_id) :
-			(action.entity + '_id')
+		var pk = (action.entity === 'RECORD' ? 
+				('m' + action.model.model_id) :
+				(action.entity + '_id'))
 		var url = BASE_URL
 		var verb
 		var json
@@ -81,12 +81,13 @@ class TransactionObserver {
 				case 'KEY_CREATE':
 				case 'RELATION_CREATE':
 					if (pk in action.data) {
-						url += '?' + pk + '=eq.' + action.data[pk]
+						url += '?' + pk + '=eq.' + action.data[pk];
 						verb = 'PATCH'
 					} else {
 						verb = 'POST'
 					}
 					break;
+				case 'RECORD_BULKDELETE':
 				case 'RECORD_BULKUPDATE':
 					url += '?' + _.map(action.selector, function (value, key) {
 						return key + '=eq.' + value;
@@ -102,7 +103,7 @@ class TransactionObserver {
 					return Promise.all(action.data.map(rec => makePkPromise(rec, action.model._pk)))
 					break;
 				default:
-					return Promise.resolve(action.data)
+					return action.data
 					break;
 			}
 		}).then(function (resolvedData) {

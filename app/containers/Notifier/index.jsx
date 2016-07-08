@@ -7,6 +7,7 @@ import NotificationStore from "../../stores/NotificationStore"
 import TransactionStore from "../../stores/TransactionStore"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import util from '../../util/util'
+import PopDownMenu from '../../components/PopDownMenu'
 
 import Note from './Note'
 
@@ -14,13 +15,14 @@ var HIDE_TIMER = 250;
 
 var Notifier = React.createClass({
 
+	// LIFECYCLE ==============================================================
+	
 	getInitialState: function () {
 		return {
 			mouseOver: false,
+			showPreview: true
 		}
 	},
-
-	// LIFECYCLE ==============================================================
 
 	componentWillMount: function () {
 		NotificationStore.addChangeListener(this._onChange);
@@ -58,23 +60,35 @@ var Notifier = React.createClass({
 		this.setState({mouseOver: false});
 	},
 
+	handleTogglePreview: function () {
+		this.setState({showPreview: !this.state.showPreview})
+	},
+
 	// RENDER =================================================================
 
 	render: function() {
 		var _this = this;
-		var notifications = NotificationStore.query({}); 
+		var notifications = (this.state.mouseOver || this.state.showPreview) ? NotificationStore.query({}) : []; 
 		var transactions = TransactionStore.query(this.state.mouseOver ? null : {status: 'active'});
-		transactions = transactions.slice(transactions.length - (this.state.mouseOver ? 7 : 1))
+		transactions = transactions.slice(transactions.length - (this.state.mouseOver ? 7 : this.state.showPreview ? 1 : 0))
 		var events = util.merge({attribute: 'timestamp', descending: true}, null, notifications, transactions)
 
-		return <div style = {{cursorEvents: 'none'}} >
-		<span className = "	 icon icon-wifi"/>
-		<span className = {(this.state.mouseOver ? "notifier-icon-active" : "notifier-icon") + " icon icon-book2"} style = {{cursorEvents: 'auto'}} 
+		return <span className = "model-bar-extra--right height-transition" 
+			style = {{cursor: 'pointer'}}
 			onMouseOver = {this.handleMouseOver}
-			onMouseOut = {this.handleMouseOut} />
-		<ReactCSSTransitionGroup
-			transitionEnterTimeout = {500} transitionLeaveTimeout = {300}
-			component="ul" className="notifier" transitionName="fade-in">
+			onMouseOut = {this.handleMouseOut}>
+			<a onClick = {this.handleShowHistory} className = "icon icon-history2" />
+			{
+			events.length === 0 && !this.state.mouseOver ? null :
+			<div className = "pop-up-menu" 
+				style = {{
+					left: 'auto', 
+					right: 0,
+					cursor: 'pointer',
+					minWidth: '300px'
+				}}>
+				<span className = "pop-up-pointer-outer " style = {{left: 'auto',right: '20px'}}/>
+	          	<span className = "pop-up-pointer-inner " style = {{left: 'auto',right: '20px'}}/>
 			{
 			events.map(function (note, idx) {
 				return <Note 
@@ -86,15 +100,35 @@ var Notifier = React.createClass({
 			}
 			{
 			(events.length === 0 && this.state.mouseOver)  ? 
-				<li className="info"
-					key= "no-notifications"
-					style={{zIndex: 1, cursorEvents: 'auto', top: '-70px'}}
-					onMouseOver = {_this.handleMouseOver}
-					onMouseOut = {_this.handleMouseOut}>
-					<p><span className = "icon icon-notification"/> No notifications to show</p>
-				</li> : null
+				<div className="note-item">
+					<span className = "note-left-column" style = {{lineHeight: '25px'}}>
+						<span className = "icon icon-notification"/>
+					</span>
+					<span className = "note-middle-column" style = {{lineHeight: '25px'}}>
+						No notifications to show
+					</span>
+					<span className = "note-right-column"/>
+				</div> : null
 			}
-		</ReactCSSTransitionGroup></div>;
+			{
+			this.state.mouseOver ?
+			<div className = "note-item" onClick={this.handleTogglePreview}>
+				<span className = "note-left-column" style = {{lineHeight: '25px'}}>
+				<input type="checkbox"
+					checked={this.state.showPreview}
+					onChange={this.handleTogglePreview}/>
+				</span>
+				<span className = "note-middle-column" style = {{lineHeight: '25px'}}>
+					Show preview of latest item
+				</span>
+				<span className = "note-right-column"/>
+			</div>
+			:
+			null
+			}
+		</div>
+		}
+		</span>;
 	}
 })
 

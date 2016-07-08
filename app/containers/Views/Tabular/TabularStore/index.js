@@ -31,7 +31,7 @@ var createTabularStore = function (view) {
     getClientId: function () {
       return 'c' + (getGuid());
     },
-
+    
     emitChange: function () {
       this.emit('CHANGE_EVENT');
     },

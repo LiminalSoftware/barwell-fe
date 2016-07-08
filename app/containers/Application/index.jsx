@@ -5,6 +5,8 @@ import styles from "./style.less";
 import modelActionCreators from "../../actions/modelActionCreators"
 import util from '../../util/util'
 
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+
 import Notifier from '../Notifier'
 
 import ModelStore from "../../stores/ModelStore"
@@ -14,7 +16,7 @@ var Application = React.createClass({
 	getInitialState: function () {
 		return {
 			hiddenSidebar: false,
-			loading: false
+			loaded: false
 		}
 	},
 
@@ -26,20 +28,27 @@ var Application = React.createClass({
 			height: '1px', 
 			width: '1px'
 		}
-		return this.state.loading ? 
-		<div className = "application application--loading">
-			<div className = "loading-notice">
-				<span className="three-quarters-loader"></span>
-				Loading data...
-			</div>
-		</div> 
-		:
-		<div className="application " id="application">
+		return <ReactCSSTransitionGroup
+			transitionEnterTimeout={1000}
+			transitionLeaveTimeout={1000} 
+			transitionName="slide-in" 
+			className= "application" id = "application">
 			<textarea style = {dummyStyle} id = "copy-paste-dummy" value=""></textarea>
-			{this.props.children}
-			<Notifier {...this.props}/>
-			<ModelBar {...this.props} workspaceId = {this.props.params.workspaceId}/>
-		</div>;
+			{
+				this.state.loaded ?
+				this.props.children
+				: <div className = "hero-banner">
+					<span className="three-quarters-loader"/>
+					<h1 className = "hero-header">Loading workspace data...</h1>
+				</div>
+			}
+			{
+				this.state.loaded ?
+				<ModelBar {...this.props} workspaceId = {this.props.params.workspaceId}/>
+				: null
+			}
+			
+		</ReactCSSTransitionGroup>;
 	},
 
 	componentDidMount: function () {
@@ -50,7 +59,7 @@ var Application = React.createClass({
 		var _this = this
 		
 		modelActionCreators.fetchModels(workspaceId).then(function() {
-			_this.setState({loading: false})
+			_this.setState({loaded: true})
 		})
 	}
 

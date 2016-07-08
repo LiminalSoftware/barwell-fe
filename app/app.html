@@ -15,31 +15,48 @@
 			padding: 0;
 		}
 
-		.application--loading {
-			background: #CBC3B7;
+		.hero-header {
+			font-family: sans-serif !important;
+			margin-top: 50%;
+			line-height: 100%;
+			display: inline-block;
+			font-weight: 400;	
+			font-size: 24px;
+			line-height: 100%;
+			color: #71646B; 
 		}
 
-		.loading-notice {
-			font-family: sans-serif;
-			color: white;
-			font-size: 20px;
-			font-weight: 600;
-			text-align: center;
-			line-height: 200px;
+		.hero-banner {
+			background:url(
+				data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVQIW2P8////f0YQYIACAD4dBAOyWWJYAAAAAElFTkSuQmCC
+		    ) repeat;
+
 			position: absolute;
-			top: 0; left: 0; right: 0; bottom: 0;
+			left: 0; right: 0; top: 0; bottom: 0;
+			line-height: 100%;
+			text-align: center;
+		}
+
+		body {
+			background: rgba(255,247,224,1);
+			background: -moz-radial-gradient(center, ellipse cover, rgba(255,247,224,1) 0%, rgba(247,248,250,1) 74%, rgba(247,248,250,1) 100%);
+			background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, rgba(255,247,224,1)), color-stop(74%, rgba(247,248,250,1)), color-stop(100%, rgba(247,248,250,1)));
+			background: -webkit-radial-gradient(center, ellipse cover, rgba(255,247,224,1) 0%, rgba(247,248,250,1) 74%, rgba(247,248,250,1) 100%);
+			background: -o-radial-gradient(center, ellipse cover, rgba(255,247,224,1) 0%, rgba(247,248,250,1) 74%, rgba(247,248,250,1) 100%);
+			background: -ms-radial-gradient(center, ellipse cover, rgba(255,247,224,1) 0%, rgba(247,248,250,1) 74%, rgba(247,248,250,1) 100%);
+			background: radial-gradient(ellipse at center, rgba(255,247,224,1) 0%, rgba(247,248,250,1) 74%, rgba(247,248,250,1) 100%);
+			filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fff7e0', endColorstr='#f7f8fa', GradientType=1 );
 		}
 	</style>
 	<link href="_assets/main.css" rel="stylesheet" title="allstyles">
 </head>
 <body>
 	
-	<div id="content" className = "application application--loading">
-		<div className = "loading-notice">
-			Loading application...
-		</div>
-	</div> 
-	
+	<div id = "content" className = "hero-banner">
+		<span className="three-quarters-loader"/>
+		<h1 className = "hero-header">Loading application...</h1>
+	</div>
+
 	<script type="text/javascript" src="_assets/js/d3.js"></script>
 	<script type="text/javascript" src="SCRIPT_URL"></script>
 

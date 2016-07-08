@@ -5,7 +5,7 @@ import EventEmitter from 'events'
 
 var focusStore = module.exports = {focus: 'view-config'};
 
-var _focus = null;
+var _focus = 'LOADING';
 
 var FocusStore = assign({}, EventEmitter.prototype, {
 	addChangeListener: function(callback) {

@@ -15,30 +15,35 @@ var Note = React.createClass({
 	render: function() {
 		var note = this.props.note;
 		var idx = this.props.index
-		return <li className = {note.type}
+		return <div className = {'note-item note-' + note.type + " pop-down-item"}
 			key = {note.cid || note.notification_key || note.transaction_id}
 			style = {{zIndex: note.notificationId, cursorEvents: 'auto', top: (-70 * (idx + 1)) + 'px'}}>
-			<span style = {{lineHeight: '30px', padding: '0 10px'}}>
+			<span className = {note.notification_key ? "note-short-left-column" : "note-left-column"}>
 				<span className={'icon ' + note.icon}/>
 			</span>
-			<span style = {{flexGrow: 2, textAlign: 'left'}}>
+			<span className = "note-middle-column">
 				<p className = "">{note.copy}</p>
 				
+				{note.notification_key ? null :
 				<p className = "" style = {{fontStyle: 'italic'}}>
 					{
 					note.action_id ? 
 					moment(note.timestamp).fromNow()
 					: note.statusMessage ? note.statusMessage
-					: ''
+					: 'Syncing to server...'
 					}
 				</p>
+				}
 			</span>
-			{note.action_id ? <a style = {{flex: 1, flexGrow: 1, cursor: 'pointer'}} onClick = {util.clickTrap}>
-				<p><span className = 'icon icon-undo'/> Undo</p>
-			</a> 
-			: null
+			{
+			note.action_id ? 
+			<span className = "note-right-column" onClick = {util.clickTrap}>
+				<span className = 'icon icon-undo'/> Undo
+			</span>
+			: 
+			<span className = "note-right-column"/>
 			}
-		</li>
+		</div>
 	}
 })
 

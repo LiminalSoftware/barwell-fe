@@ -21,6 +21,7 @@ var processUpdates = function (_state, matcher, isDirty, actionCid) {
       // if it is a server-side update, see if it is really newer than ours
       if (patch.action_id > (server.action_id || 0)) server = _.clone(patch)
       // and take it out of the pending queue 
+      pendingActions.filter(a => util.cidNum(a._actionCid) > util.cidNum(actionCid));
     }
 
     // our record is the composite of the server record and all pending actions

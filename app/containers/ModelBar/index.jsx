@@ -78,23 +78,34 @@ var ModelList = React.createClass ({
 
 	render: function () {
 		var _this = this
+		var models  = ModelStore.query(null, ['model'])
 
 		return <div className="model-bar-container"> 
 			<span className="model-bar-top"/>
-			<ul className = "model-bar-list">
+			<div className = "model-bar-list">
 			{
-				ModelStore.query(null, ['model']).map(function (model, idx) {
+				models.map(function (model, idx) {
 					var modelId = "" + (model.model_id || model.cid);
 					return <ModelLink
 						index = {idx}
 						key = {'model-link-' + modelId}
 						model = {model}
+						last = {models.length === idx - 1}
 						active = {_this.props.curModelId === modelId}
 						{..._this.movableProps} />;
 				})
 			}
-			<li><a onClick = {this.handleAddModel}><span className = "icon icon-plus" style={{fontSize: '14px'}}/></a></li>
-			</ul>
+			{
+				models.length === 0 ?
+					<span className = "model-bar-extra--left"> No models available </span>
+					: null
+			}
+			<span className = "model-bar-extra--left"><a onClick = {this.handleAddModel}><span className = "icon icon-plus" /></a></span>
+			</div>
+
+			<div className = "model-bar-extras">
+				<Notifier/>
+			</div>
 
 		</div>
 	}
@@ -157,11 +168,14 @@ var ModelLink = React.createClass ({
 			(<input className="renamer header-renamer" ref="renamer" value={this.state.name} onChange={this.handleNameUpdate} onBlur={this.commitChanges}/>) :
 			(<span>{model.model}</span>) ;
 
-		return <li
-			className={(this.props.active ? "active " : "") + (this.props.editing ? " editmode" : "")}
+		return <span
+			className="model-bar-tab "
 			onClick = {util.clickTrap}>
 
 			<Link to = {`/workspace/${workspace_id}/model/${model_id}`}
+				className = {"model-bar-tab-link "
+					+ (this.props.active ? " model-bar-tab-link--active " : "")
+					+ (this.props.last ? " model-bar-tab-link--last " : "")}
 				onContextMenu = {this.handleContext}
 				onDoubleClick = {this.handleEdit}>
 				{modelDisplay}
@@ -170,6 +184,6 @@ var ModelLink = React.createClass ({
 				model = {this.props.model}
 				_rename = {this.handleEdit}
 				_delete = {this.doDelete}/> : null}
-		</li>
+		</span>
 	}
 })

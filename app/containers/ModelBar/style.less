@@ -11,66 +11,84 @@ add-new-model {
 	}
 }
 
-ul.model-bar-list {
+.model-bar-tab {
+	.flex-direction(row);
+	padding: 0;
+	position: relative;
+}
+
+
+
+
+
+.model-bar-tab-link, .model-bar-extra--left, .model-bar-extra--right {
+	position: relative;
+	margin: 0;
+	height: 45px;
+	line-height: 30px;
+	padding: 5px 10px;
+	
+	display: block;
+	text-decoration: none;
+
+	font-size: 16px;
+	font-family: @headerFont;
+	text-align: center;
+}
+
+.model-bar-extra--right {
+	float: right;
+}
+
+.model-bar-tab-link {
+	.ellipsis;
+
+	max-width: 150px;
+	min-width: 50px;
+
+	color: @headerFontColor;
+	background: @headerMenuBgColor;
+	border-bottom: 1px solid @headerMenuBorderColor;
+	border-left: 1px solid @headerMenuBorderColor;
+}
+
+.model-bar-tab-link--active {
+	z-index: 2;
+	margin-top: -1px;
+	border-top: 1px solid @headerMenuBgColor;
+	color: @newgreen1;
+}
+
+.model-bar-tab-link--first {
+	border-left: none !important;
+}
+
+.model-bar-tab-link--last {
+	border-right: 1px solid @headerMenuBorderColor;
+}
+
+.model-bar-list, .model-bar-extras {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	margin: 0;
+
 	.flex-display;
 	.flex(1);
 	
-	list-style: none;
-	padding-bottom: 10px;
 	margin: 0;
-	height: 50px;
+	height: 40px;
 	z-index: 100;
+}
 
-	& > li {
-		.flex-direction(row);
-		padding: 0;
-		position: relative;
-	}
+.model-bar-list {
+	padding-left: 15px;
+	left: 0;
+}
 
-	& > li > a {
-		margin: 0;
-		height: 45px;
-		line-height: 30px;
-		padding: 5px 10px;
-		
-		display: block;
-		text-decoration: none;
-
-		font-size: 16px;
-		font-family: @headerFont;
-		text-align: center;
-
-		.ellipsis;
-
-		max-width: 150px;
-		min-width: 50px;
-
-		color: @headerFontColor;
-		background: @headerMenuBgColor;
-		border-bottom: 1px solid @headerMenuBorderColor;
-		border-left: 1px solid @headerMenuBorderColor;
-
-		&:hover {
-			background: @headerMenuBgHilite;
-		}
-
-	}
-
-	& > li:first-child {
-		border-left: none;
-	}
-
-
-
-	& > li.active {
-		z-index: 2;
-		a {
-			margin-top: -1px;
-			border-top: 1px solid @headerMenuBgColor;
-		}
-		
-	}
-
+.model-bar-extras {
+	flex-direction: row-reverse;
+	width: 100px;
 }
 
 .renamer {
@@ -100,14 +118,6 @@ ul.model-bar-list {
  //    ) repeat;
 }
 
-.model-bar-list {
-	position: absolute;
-	top: 10px;
-	height: 40px;
-	left: 0;
-	right: 0;
-	padding-left: 5px;
-}
 
 .model-bar-top {
 	position: absolute;

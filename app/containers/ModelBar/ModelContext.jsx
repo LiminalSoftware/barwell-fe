@@ -37,15 +37,15 @@ var ModelContext = React.createClass ({
 		
 		var model = this.props.model
 
-		return <ul className = "pop-down-menu" 
+		return <ul className = "pop-up-menu" 
 		onClick = {util.clickTrap}
 		style = {{
 			position: 'absolute',
 			top: '100%',
 			left: 0
 		}}>	
-			<span className = "pop-down-pointer-outer"/>
-			<span className = "pop-down-pointer-inner"/>
+			<span className = "pop-up-pointer-outer"/>
+			<span className = "pop-up-pointer-inner"/>
 			<li onClick = {this.props._rename}>Rename model</li>
 			
 			{this.state.deleting ?
