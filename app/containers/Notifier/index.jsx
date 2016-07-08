@@ -11,7 +11,8 @@ import PopDownMenu from '../../components/PopDownMenu'
 
 import Note from './Note'
 
-var HIDE_TIMER = 250;
+var HIDE_TIMEOUT = 250;
+var PREVIEW_TIMEOUT = 4000;
 
 var Notifier = React.createClass({
 
@@ -30,12 +31,14 @@ var Notifier = React.createClass({
 	},
 
 	componentWillUnmount: function () {
+		clearTimeout(this._previewTimer)
+		clearTimeout(this._mouseOutTimer)
 		NotificationStore.removeChangeListener(this._onChange);
 		TransactionStore.removeChangeListener(this._onChange);
 	},
 
 	componentDidUpdate: function () {
-
+		this._previewTimer = setTimeout(this._onChange, PREVIEW_TIMEOUT)
 	},
 
 	_onChange: function () {
@@ -45,15 +48,15 @@ var Notifier = React.createClass({
 	// HANDLERS ================================================================
 
 	handleMouseOver: function () {
-		if (this._timer) {
-			window.clearTimeout(this._timer);
-			this._timer = null;
+		if (this._mouseOutTimer) {
+			window.clearTimeout(this._mouseOutTimer);
+			this._mouseOutTimer = null;
 		}
 		this.setState({mouseOver: true});
 	},
 
 	handleMouseOut: function () {
-		if(!this._timer) this._timer = window.setTimeout(this.handleHide, HIDE_TIMER)
+		if(!this._mouseOutTimer) this._mouseOutTimer = window.setTimeout(this.handleHide, HIDE_TIMEOUT)
 	},
 
 	handleHide: function () {
@@ -68,12 +71,17 @@ var Notifier = React.createClass({
 
 	render: function() {
 		var _this = this;
+		var cutoff = moment(Date.now()).subtract(3, 'seconds')
 		var notifications = (this.state.mouseOver || this.state.showPreview) ? NotificationStore.query({}) : []; 
-		var transactions = TransactionStore.query(this.state.mouseOver ? null : {status: 'active'});
-		transactions = transactions.slice(transactions.length - (this.state.mouseOver ? 7 : this.state.showPreview ? 1 : 0))
-		var events = util.merge({attribute: 'timestamp', descending: true}, null, notifications, transactions)
+		var transactions = TransactionStore.query({});
+		var events
 
-		return <span className = "model-bar-extra--right height-transition" 
+		if (this.state.mouseOver) transactions.slice(transactions.length - 10)
+		else transactions = transactions.filter(txn => moment(txn.timestamp).isAfter(cutoff))
+
+		events = util.merge({attribute: 'timestamp', descending: true}, null, notifications, transactions)
+
+		return <span className = "model-bar-extra--right height-transition"
 			style = {{cursor: 'pointer'}}
 			onMouseOver = {this.handleMouseOver}
 			onMouseOut = {this.handleMouseOut}>
