@@ -16,18 +16,18 @@ var RelationStore = storeFactory({
     switch (payload.actionType) {
       case 'RELATION_CREATE':
 
-        console.log('RELATION_CREATE payload.relation: '+ JSON.stringify(payload.relation, null, 2));
-        this.create(payload.relation);
+        console.log('RELATION_CREATE payload.data: '+ JSON.stringify(payload.data, null, 2));
+        this.create(payload.data);
         this.emitChange();
         break;
         
       case 'RELATION_DESTROY':
-        this.destroy(payload.relation);
+        this.destroy(payload.data);
         this.emitChange();
         break;
         
       case 'RELATION_RECEIVE':
-        var relation = payload.relation
+        var relation = payload.data
         relation._dirty = false
         this.create(relation)
         this.emitChange()
@@ -41,7 +41,7 @@ var RelationStore = storeFactory({
           KeycompStore.dispatchToken
         ]);
         var _this = this;
-        var models = payload.model instanceof Array ? payload.model : [payload.model];
+        var models = payload.data instanceof Array ? payload.data : [payload.data];
         models.forEach(function (model) {
           if (model.relations instanceof Array) model.relations.map(util.clean).map(_this.create);
         });

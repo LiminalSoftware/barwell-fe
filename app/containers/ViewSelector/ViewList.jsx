@@ -135,7 +135,7 @@ var ViewList = React.createClass({
 					(!view ? " menu-selected " : " ")}
 				 key="model-editor">
 				<span className = "icon icon-pencil-ruler"></span>
-				<span className = "double-column-config">Database Configuration</span>
+				<span className = "double-column-config">Designer</span>
 			</Link>
 
 			<Link to = {`/workspace/${model.workspace_id}/model/${model.model_id}/view/history`}
@@ -143,7 +143,7 @@ var ViewList = React.createClass({
 					(!view ? " menu-selected " : " ")}
 				 key="change-history">
 				<span className = "icon icon-library"></span>
-				<span className = "double-column-config">Change History</span>
+				<span className = "double-column-config">History</span>
 			</Link>
 		</div>
 	}

@@ -14,22 +14,20 @@ var AttributeStore = storeFactory({
     switch (payload.actionType) {
 
       case 'ATTRIBUTE_CREATE':
-        var attr = payload.attribute
-        var existing = this.get(attr.cid || attr.attribute_id)
-        attr = _.extend({}, existing, attr)
-        this.create(attr)
+        var attrs = payload.data instanceof Array ? payload.data : [payload.data];
+        attrs.map(payload.isClean ? util.clean : _.identity).forEach(this.create)
         this.emitChange()
         break;
 
       case 'ATTRIBUTE_REVERT':
-        var attr = payload.attribute
+        var attr = payload.data
         var existing = this.get(attr.attribute_id)
         if (existing) this.create(_.extend(attr, existing._server, {_dirty: false}))
         else this.destroy(attr.cid)
         break;
 
       case 'ATTRIBUTE_DESTROY':
-        this.destroy(payload.attribute)
+        this.destroy(payload.data)
         this.emitChange()
         break;
 
@@ -38,19 +36,21 @@ var AttributeStore = storeFactory({
         this.emitChange()
         break;
 
-      case 'ATTRIBUTE_RECEIVE':
-        var attribute = payload.attribute
-        if (!attribute) return;
-        this.create(util.clean(payload.attribute))
-        this.emitChange()
-        break;
+      // case 'ATTRIBUTE_RECEIVE':
+      //   var attribute = payload.data
+      //   if (!attribute) return;
+      //   this.create(util.clean(payload.data))
+      //   this.emitChange()
+      //   break;
 
-      case 'MODEL_RECEIVE':
+      case 'MODEL_CREATE':
         dispatcher.waitFor([ModelStore.dispatchToken]);
-        var models = payload.model; //instanceof Array ? payload.model : [payload.model]
+        var models = payload.data instanceof Array ? payload.data : [payload.data];
         var _this = this;
         models.forEach(function (model) {
-          model.attributes.map(util.clean).map(_this.create)
+          if (model.attributes) model.attributes
+            .map(payload.isClean ? util.clean : _.identity)
+            .map(_this.create)
         });
         this.emitChange();
         break;

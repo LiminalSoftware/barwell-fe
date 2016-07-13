@@ -15,12 +15,12 @@ var KeycompStore = storeFactory({
 
     switch (payload.actionType) {
       case 'KEYCOMP_CREATE':
-        this.create(payload.keycomp);
+        this.create(payload.data);
         this.emitChange();
         break;
 
       case 'KEYCOMP_DESTROY':
-        this.destroy(payload.keycomp);
+        this.destroy(payload.data);
         this.emitChange();
         break;
 
@@ -38,7 +38,7 @@ var KeycompStore = storeFactory({
         break;
         
       case 'KEYCOMP_RECEIVE':
-        var keycomp = payload.keycomp;
+        var keycomp = payload.data;
         if (!keycomp) return;
         keycomp._dirty = false;
         this.create(keycomp);
@@ -52,7 +52,7 @@ var KeycompStore = storeFactory({
           ModelStore.dispatchToken
         ]);
         var _this = this;
-        var models = payload.model instanceof Array ? payload.model : [payload.model];
+        var models = payload.data instanceof Array ? payload.data : [payload.data];
         models.forEach(function (model) {
           if(!('keys' in model)) return;
           model.keys.forEach(function (key) {

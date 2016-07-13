@@ -44,7 +44,7 @@ var ViewItemSingleton =  React.createClass({
 			</Link>
 		else return <div className = "singleton menu-item menu-sub-item no-left-padding">
 			<span className = "large icon icon-pencil-ruler"></span>
-			<span className = "double-column-config">Database Configuration</span>
+			<span className = "double-column-config">Designer</span>
 		</div>
 	}
 

@@ -68,7 +68,13 @@ module.exports = function(options) {
 	];
 	var plugins = [
 		new webpack.PrefetchPlugin("react"),
-		new webpack.PrefetchPlugin("react/lib/ReactComponentBrowserEnvironment")
+		new webpack.PrefetchPlugin("react/lib/ReactComponentBrowserEnvironment"),
+		new webpack.ProvidePlugin({
+		    $: "jquery",
+		    jQuery: "jquery",
+		    "window.jQuery": "jquery",
+		    "d3": "d3"
+		})
 	];
 	if(options.prerender) {
 		plugins.push(new StatsPlugin(path.join(__dirname, "build", "stats.prerender.json"), {

@@ -27,7 +27,7 @@ var CalcStore = storeFactory({
         break;
 
       case 'MODEL_RECEIVE':
-        var model = payload.model
+        var model = payload.data
         this.purge({model_id: model.model_id});
         (model.calcs || []).map(util.clean).map(this.create)
         this.emitChange()

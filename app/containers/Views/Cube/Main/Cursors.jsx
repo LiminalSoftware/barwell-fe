@@ -33,6 +33,8 @@ var Cursors = React.createClass ({
     var element;
     var selector = {};
     
+    if (view.column_aggregates.length + view.row_aggregates.length === 0) return null;
+
     if (ptr.left < 0 && ptr.top >= 0) {
       var pointerKey = 'a' + rowHeaders[rowHeaders.length + ptr.left]; // ptr.left is negative
       var level = store.getLevel('row', ptr.top)
@@ -148,16 +150,6 @@ var Cursors = React.createClass ({
       (rowCount * geo.rowHeight + this.props.columnHeaderHeight - marginTop) : 
       this.props.columnHeaderHeight
 
-    // var style = {
-    //   top: 0,
-    //   left:  0,
-    //   right: 0,
-    //   bottom: 0,
-    //   transformStyle: 'preserve-3d',
-    //   transform: 'translate3d(' + (isRowSelection ? 0 : (marginLeft) + 'px, ' + (isColumnSelection ? 0 : (marginTop)) + 'px, 0)',
-    //   marginTop: !HAS_3D ? (isColumnSelection ? 0 : (marginTop + 2)) : 0,
-    // };
-
     return <div className = {"cursor-wrapper wrapper " + (focused ? "" : " gray-out ")} 
     style = {{
         left: '0',
@@ -204,6 +196,7 @@ var Cursors = React.createClass ({
             onDoubleClick = {this.props._handleEdit}
             onContextMenu = {this.props._handleContextMenu}
             onWheel = {this.props._handleWheel}>
+
             {this.getPointerElement()}
             {this.props.context ? <ContextMenu {...this.props}/> : null}
           </Overlay>
@@ -214,7 +207,7 @@ var Cursors = React.createClass ({
             className = {"selection-border selection-border--" + (focused ? "focused" : "blurred")}
             ref = "selectionBorder"
             position = {sel}
-            fudge = {{left: -2.25, top: -0.25, height: 2.5, width: 3.5}}>
+            fudge = {{left: -2.25, top: -1.25, height: 3.5, width: 3.5}}>
             <div className = {"selection-drag-box selection-drag-box--" + (focused ? "focused" : "blurred")} />
           </Overlay>
 

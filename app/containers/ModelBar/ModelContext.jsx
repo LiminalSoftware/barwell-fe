@@ -23,8 +23,7 @@ var ModelContext = React.createClass ({
 			deleting: false
 		}
 	},
-
-
+	
 	handleClickDelete: function () {
 		this.setState({deleting: true})
 	},
@@ -41,24 +40,24 @@ var ModelContext = React.createClass ({
 		onClick = {util.clickTrap}
 		style = {{
 			position: 'absolute',
-			top: '100%',
+			bottom: '100%',
 			left: 0
 		}}>	
 			<span className = "pop-up-pointer-outer"/>
 			<span className = "pop-up-pointer-inner"/>
-			<li onClick = {this.props._rename}>Rename model</li>
+			<div div className = "selectable popdown-item" onClick = {this.props._rename}>Rename model</div>
 			
 			{this.state.deleting ?
-				<li>Delete this model?</li>
+				<div className = "selectable popdown-item">Delete this model?</div>
 				:
-				<li onClick = {this.handleClickDelete}>Delete model</li>
+				<div div className = "selectable popdown-item" onClick = {this.handleClickDelete}>Delete model</div>
 			}
 			{this.state.deleting ?
-				<li onClick={this.props._delete}>Delete</li>
+				<div div className = "selectable popdown-item" onClick={this.props._delete}>Delete</div>
 				: null
 			}
 			{this.state.deleting ?
-				<li onClick={this.handleCancelDelete}>cancel</li>
+				<div div className = "selectable popdown-item" onClick={this.handleCancelDelete}>cancel</div>
 				: null
 			}
 		</ul>

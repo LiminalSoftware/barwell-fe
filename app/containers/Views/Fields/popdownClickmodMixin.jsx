@@ -20,7 +20,7 @@ var popdownClickmodMixin = {
 	      {this.renderMenu()}
 	    </div>;
 	    else return <span className={"pop-down clickable " + (isActive ? ' popdown-active' : '')}
-	    	style={{minWidth: width, width: width}}
+	    	style={{minWidth: width, maxWidth: this.width || '40px'}}
 	        onClick = {this.handleClick}>
 	    	<span className = {iconClass} style={{textAlign: 'center', marginRight: 0}}/>
 	    	{

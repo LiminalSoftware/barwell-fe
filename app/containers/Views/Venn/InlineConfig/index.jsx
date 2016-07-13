@@ -12,7 +12,11 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import ViewSelector from '../../../ViewSelector'
 import ColumnMenu from '../../Tabular/InlineConfig/ColumnMenu'
 
+
+
 import sections from './VennColumnMenu/sections'
+
+const FETCH_DEBOUNCE = 1000
 
 var VennViewInlineConfig = React.createClass({
 

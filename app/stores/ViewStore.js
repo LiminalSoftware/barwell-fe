@@ -27,7 +27,7 @@ var ViewStore = storeFactory({
           ModelStore.dispatchToken
         ]);
         var _this = this;
-        var attribute = payload.attribute;
+        var attribute = payload.data;
         var views = this.query({model_id: attribute.model_id});
         views.map(function (view) {
           view = groomView(view)
@@ -36,41 +36,34 @@ var ViewStore = storeFactory({
         this.emitChange()
         break;
 
-      case 'VIEW_CREATE':
-        var requestId = payload.requestId;
-        var view = payload.view;
-        if (!payload.safe)
-          view = groomView(view)
-        view._requestId = payload.requestId;
-        this.create(view);
-        this.emitChange();
-        break;
-
-      case 'VIEW_DESTROY':
-        this.destroy(payload.view)
-        this.emitChange()
-        break;
-
-      case 'VIEW_RECEIVE':
+       case 'VIEW_CREATE':
         dispatcher.waitFor([
           AttributeStore.dispatchToken, 
           ModelStore.dispatchToken, 
           RelationStore.dispatchToken, 
           KeycompStore.dispatchToken
         ]);
-        var view = _.clone(payload.view)
-        var requestId = payload.requestId
-        var oldView = this.get(view.view_id) || {};
-        if (!(view instanceof Object)) return;
-        if (oldView._requestId > requestId && requestId) return;
-        view = groomView(view);
-        view._requestId = requestId;
-        view._dirty = false;
+        var view = payload.data
+        var oldView = this.get(view.view_id) || {}
+        var oldActionCid = oldView._actionCid || 'c0'
+        
+        if (util.cidNum(oldActionCid) > util.cidNum(payload.cid))
+          return;
+
+        if (!payload.safe)
+          view = groomView(view)
+
+        view._actionCid = payload.cid;
         this.create(view);
         this.emitChange();
         break;
 
-      case 'MODEL_RECEIVE':
+      case 'VIEW_DESTROY':
+        this.destroy(payload.data)
+        this.emitChange()
+        break;
+
+      case 'MODEL_CREATE':
         dispatcher.waitFor([
           AttributeStore.dispatchToken, 
           RelationStore.dispatchToken, 
@@ -78,10 +71,10 @@ var ViewStore = storeFactory({
           KeyStore.dispatchToken,
           KeycompStore.dispatchToken,
         ]);
-        var models = payload.model instanceof Array ? payload.model : [payload.model]
+        var models = payload.data instanceof Array ? payload.data : [payload.data]
         var _this = this;
         models.forEach(function (model) {
-          if('views' in model) model.views.map(groomView).map(util.clean).map(_this.create)
+          if(model.views instanceof Array) model.views.map(groomView).map(util.clean).map(_this.create)
         });
         this.emitChange()
         break;

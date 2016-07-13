@@ -13,8 +13,9 @@ var ViewConfigStore = storeFactory({
       case 'CONFIG_SELECTRECORD':
       case 'CONFIG_UPDATEPOINTER':
       case 'CONFIG_SCROLL':
-        config = this.get(payload.viewconfig.view_id) || {};
+        config = this.get(payload.data.view_id) || {};
     }
+
     switch (payload.actionType) {
 
       case 'RECORD_MULTIUPDATE':
@@ -22,8 +23,8 @@ var ViewConfigStore = storeFactory({
         break;
 
       case 'VIEWCONFIG_CREATE':
-        var config = this.get(payload.viewconfig.view_id) || {};
-        Object.assign(config, payload.viewconfig);
+        var config = this.get(payload.data.view_id) || {};
+        Object.assign(config, payload.data);
         this.create(config);
         this.emitChange();
         break;

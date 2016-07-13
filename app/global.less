@@ -19,19 +19,30 @@
 @headerOuterBorderColor: @green-trans;
 
 @headerBgColor: @gray4;
-@headerBgDark: lighten(@headerBgColor, 5%);
+
+
+
 
 @menuHiliteBorder: steelblue;
 @menuItemBorderRadius: 2px;
 @headerBorderWidth: 1px;
-// @headerMenuBgColor: #fafafa;
-@headerMenuBgColor: #F1EEEC;
-@headerMenuBgHilite: lighten(@headerMenuBgColor, 0.7%);
-@headerMenuBorderColor: #A8B0BF;
+@headerMenuBgColor: #746e7c;
+// @headerMenuBgColor: #F1EEEC;
+@headerBgLight3: rgba(247,248,250,1);
+@headerBgLight2: lighten(@headerMenuBgColor, 25%);
+@headerBgLight1: lighten(@headerMenuBgColor, 14%);
+@headerBgLight0: lighten(@headerMenuBgColor, 12%);
+@headerBgLight05: lighten(@headerMenuBgColor, 8%);
+@headerBgDark: lighten(@headerMenuBgColor, 5%);
+
+@headerMenuBgHilite: white;
+@headerLightBgColor: white;
+// @headerMenuBgHilite: lighten(@headerMenuBgColor, 0.7%);
+@headerMenuBorderColor: @headerBgLight1;
 @menuLightBorder: @gray4;
 // @headerMenuBorderColor: rgba(255,255,255,0.7);
 // @headerFontColor: rgba(255,255,255,0.7);
-@headerFontColor: #777;
+@headerFontColor: darken(@headerMenuBgColor, 25%);
 @headerFontSize: 16px;
 @headerOuterHilite: @newgreen1;
 
@@ -54,5 +65,5 @@
 }
 
 .gray-out {
-  -webkit-filter: saturate(0.1) contrast(0.5) brightness(1.32) sepia(10%);
+  -webkit-filter: saturate(0.1) contrast(0.5) brightness(1.30) sepia(10%);
 }

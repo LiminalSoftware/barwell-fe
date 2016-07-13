@@ -178,7 +178,7 @@ var TabularTBody = React.createClass ({
 		var offset = Math.floor(this.state.offset/PAGE_SIZE) * PAGE_SIZE
 		var length = Math.floor(this.state.length/PAGE_SIZE) * PAGE_SIZE
 		var rows = this.props.store ? this.props.store.getObjects(
-			this.state.start, 
+			this.state.start,
 			Math.min(this.state.end, this.props.fetchEnd)
 			// this.state.offset, this.state.offset + VISIBLE_ROWS
 		) : []

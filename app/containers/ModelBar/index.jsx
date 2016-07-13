@@ -14,7 +14,6 @@ import ViewStore from "../../stores/ViewStore"
 import MetasheetConst from '../../constants/MetasheetConstants'
 
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-
 import blurOnClickMixin from '../../blurOnClickMixin'
 
 import viewTypes from '../Views/viewTypes'
@@ -36,22 +35,26 @@ var ModelBar = React.createClass({
 		// modelActionCreators.fetchModels(this.props.workspaceId)
 	},
 
-	_onChange: function () {
-		this.forceUpdate()
-	},
-
 	getInitialState: function () {
 		return {
 			keyControl: false,
 			editing: false
 		}
 	},
+	
+	_onChange: function () {
+		this.forceUpdate()
+	},
+
+	focus: function () {
+		modelActionCreators.setFocus('view-config');
+	},
 
 	render: function () {
 		var _this = this;
 		var curModelId = this.props.params.modelId
 		var workspaceId = this.props.params.workspaceId
-		return <div className="model-bar">
+		return <div className="model-bar" onClick = {this.focus}>
 			<ModelList curModelId = {curModelId} workspaceId = {workspaceId}/>
 		</div>
 	}
@@ -62,17 +65,7 @@ export default ModelBar
 var ModelList = React.createClass ({
 
 	handleAddModel: function (e) {
-		var name = 'New model'
-		var workspaceId = this.props.workspaceId
-		var iter = 1
-		while (ModelStore.query({workspace_id: workspaceId, model: name}).length > 0) {
-			name = 'New model ' + (iter++)
-		}
-		modelActionCreators.create('model', true, {
-			model: name,
-			workspace_id: workspaceId,
-			plural: 'New models'
-		})
+		modelActionCreators.createNewModel(this.props.workspaceId)
 		e.preventDefault();
 	},
 
@@ -126,10 +119,15 @@ var ModelLink = React.createClass ({
 		this.forceUpdate()
 	},
 
+	focus: function () {
+		modelActionCreators.setFocus('view-config');
+	},
+
 	handleCommit: function () {
-		var model = this.props.model;
-		model.model = this.state.name
-		modelActionCreators.createModel(model)
+		modelActionCreators.updateModel({
+			model_id: this.props.model.model_id, 
+			model: this.state.name
+		})
 		this.revert()
 	},
 
@@ -153,7 +151,7 @@ var ModelLink = React.createClass ({
 		this.setState({name: name})
 	},
 
-	doDelete: function (e) {
+	handleDelete: function (e) {
 		modelActionCreators.destroy('model', true, this.props.model)
 	},
 
@@ -177,13 +175,14 @@ var ModelLink = React.createClass ({
 					+ (this.props.active ? " model-bar-tab-link--active " : "")
 					+ (this.props.last ? " model-bar-tab-link--last " : "")}
 				onContextMenu = {this.handleContext}
+				onClick = {this.focus}
 				onDoubleClick = {this.handleEdit}>
 				{modelDisplay}
 			</Link>
 			{this.state.context ? <ModelContext 
 				model = {this.props.model}
 				_rename = {this.handleEdit}
-				_delete = {this.doDelete}/> : null}
+				_delete = {this.handleDelete}/> : null}
 		</span>
 	}
 })

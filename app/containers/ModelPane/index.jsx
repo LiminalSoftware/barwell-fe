@@ -11,6 +11,8 @@ import groomView from '../../containers/Views/groomView'
 
 import ViewSelector from '../ViewSelector'
 
+import ChangeHistory from '../Views/ChangeHistory'
+
 import viewTypes from "../Views/viewTypes"
 import modelActionCreators from "../../actions/modelActionCreators"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
@@ -73,14 +75,17 @@ var ModelPane = React.createClass({
 		var view = view_id === 'config' ? null : ViewStore.get(view_id)
 		var viewconfig = {} // (view_id === 'config' ? null : ViewConfigStore.get(view_id)) || {}
 		var bodyContent
-		
+		var bodyElement
+		var configElement = <div className = "view-config">
+			<ViewSelector view = {view} model = {model}/>
+		</div>;
 		
 
 		if (view && view.model_id != model_id) view = null;
 		if (view) {
 			var type = viewTypes[view.type]
-			var bodyElement = type.mainElement
-			var configElement = type.inlineConfigElement
+			bodyElement = type.mainElement
+			configElement = type.inlineConfigElement
 
 			view = groomView(view)
 
@@ -97,12 +102,12 @@ var ModelPane = React.createClass({
 				viewconfig: viewconfig,
 				focusDepth: 0
 			})
-		}
-		else {
+		} else if (view_id === 'history') {
+			bodyContent = <ChangeHistory model = {model}/>
+		} else if (view_id === 'config'){
 			bodyContent = <ModelDefinition model={model}/>
-			configElement = <div className = "view-config">
-				<ViewSelector view = {view} model = {model}/>
-			</div>;
+		} else {
+			bodyContent = null
 		}
 
 		return <div className="model-views">

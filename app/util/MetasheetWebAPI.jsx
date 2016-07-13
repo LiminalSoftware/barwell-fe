@@ -31,7 +31,7 @@ var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
   if (!(retry instanceof Object)) retry = {}
   if (!(retry.period > 0)) retry.period = 50
   
-  return util.wait(Math.random() * (method === 'POST' ? 3000 : 1000) + (method === 'POST' ? 2000 : 0)).then(function () {
+  return util.wait(Math.random() * 0).then(function () {
     return new Promise(function (resolve, reject) {
     var params = {
       type: method,
@@ -80,44 +80,5 @@ var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
     }
     $.ajax(params)
   })
-  })
-}
-
-var issueReceipt = function (subject, obj, requestId) {
-  var message = {}
-  message.actionType = (subject.toUpperCase() + '_RECEIVE')
-  message.requestId = requestId
-  message[subject] = obj
-  MetasheetDispatcher.dispatch(message)
-}
-
-var persist = module.exports.persist = function (subject, action, data, requestId) {
-  action = action.toUpperCase()
-  var identifier = (subject + '_id')
-  var url = BASE_URL + '/' + subject;
-  var json = (action === 'CREATE') ? JSON.stringify(stripInternalVars(data)) : null;
-  var method;
-
-  if (action === 'CREATE' && _.isEqual(data._server, stripInternalVars(data)) ) {
-    console.log('object unchanged -- cancel persist')
-    return wait();
-  }
-
-  if (action == 'FETCH') method = 'GET';
-  else if (action == 'DESTROY') method = 'DELETE';
-  else if (action === 'CREATE' && data[identifier]) method = 'PATCH'
-  else if (action === 'CREATE') method = 'POST'
-  else return;
-
-  if (method === 'PATCH' || method === 'DELETE') url = url + '?' + identifier + '=eq.' + data[identifier];
-  
-  return ajax(method, url, json).then(function (results) {
-    // if (update === false || method=='DELETE') return;  // temporary hack until I refactor model push
-    (results.data instanceof Array ? results.data : [results.data]).forEach(function (obj) {
-      issueReceipt(subject, obj, requestId)
-    })
-    return results.data
-  }).catch(function (error) {
-    
   })
 }

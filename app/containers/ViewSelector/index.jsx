@@ -27,7 +27,7 @@ var ViewSelector = React.createClass({
 		if (!model) return null
 
 		return <div className = "header-section ">
-		<div className="header-label">Metaphors</div>
+		<div className="header-label">Metaphor</div>
 		<div className="model-views-menu" onClick = {this.clickTrap}>
 			<ReactCSSTransitionGroup 
 				component = "div"
@@ -47,7 +47,8 @@ var ViewSelector = React.createClass({
 				}
 			</ReactCSSTransitionGroup>
 			
-			<div className="dropdown icon icon--small icon-chevron-down"
+			<div className= {"dropdown" + (this.state.open ? "--open" : "")  + 
+				" icon icon--small icon-chevron-down"}
 				onClick = {this.handleOpen}></div>
 		</div>
 		</div>

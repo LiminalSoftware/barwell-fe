@@ -92,7 +92,7 @@ var CheckboxElement = React.createClass({
 				(this.props.sorted ? " table-cell-inner-sorted" : "")
 				}>
 				{!isNull ?
-				<span className = "checkbox-surround " onClick=  {this.handleClick}>
+				<span className = {"checkbox-surround" + (this.state.value ? "-checked" : "")} onClick=  {this.handleClick}>
 					<span className={"check green icon " + (this.state.value ? "icon-check" : "")} >
 					</span>
 				</span>

@@ -122,17 +122,14 @@ var ViewMenu = React.createClass({
 
 		return <div className = "dropdown-menu "
 					key = "list-wrapper"
-					style = {{minWidth: "400px", maxHeight: (this.state.windowHeight - 100) + 'px'}}>
-			{
-				
+					style = {{minWidth: "250px", maxHeight: (this.state.windowHeight - 100) + 'px'}}>
+			
 				<ViewList ref = "viewList"
 					items = {views}
 					editing = {this.state.editing} 
 					config = {config}
 					{..._this.props}
 					key = "orderable-list"/>
-			}
-			
 
 			{
 				this.state.editing && !this.state.adding ?
@@ -147,8 +144,9 @@ var ViewMenu = React.createClass({
 			{
 				this.state.adding ?
 				<div className = "menu-item menu-config-row" key = "add-row">
-					<div className="menu-sub-item padded">
-						Select type for new view:
+					<div className="menu-sub-item menu-divider">
+						<span className = "icon icon-plus"/>
+						Select new view type:
 					</div>
 				</div>
 				: null

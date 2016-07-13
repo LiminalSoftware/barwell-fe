@@ -445,7 +445,7 @@ var TabularPane = React.createClass ({
 		} else {
 			csv.parse(text, {delimiter: '\t'}, function (err, output) {
 				if (err) modelActionCreators.createNotification({
-		        	copy: 'Error parsing clipboard contents', 
+		        	narrative: 'Error parsing clipboard contents', 
 		        	type: 'error-item',
 		        	icon: ' icon-warning ',
 					notification_key: 'paste',

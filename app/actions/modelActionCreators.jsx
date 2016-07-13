@@ -11,11 +11,15 @@ import TransactionStore from '../stores/TransactionStore'
 import transactionObserver from './transactionObserver'
 
 
+import pluralize from 'pluralize'
 
 import groomView from '../containers/Views/groomView'
 import util from '../util/util'
 
 var BASE_URL = 'http://api.metasheet.io'
+const MAX_CUBE_LEVELS = 5000
+const WINDOW_ROWS = 50
+const WINDOW_COLS = 30
 
 var _actionCid = 0;
 
@@ -85,7 +89,7 @@ var modelActions = {
 			model: model,
 			data: obj instanceof Array ? obj : [obj],
 			index: position,
-			copy: 'New ' + model.model + ' inserted',
+			narrative: 'New ${model} inserted',
 			icon: 'icon-flare',
 			cid: 'c' + getGuid() // action cid
 		}
@@ -132,9 +136,9 @@ var modelActions = {
 			model_id: model.model_id,
 			data: obj instanceof Array ? obj : [obj],
 			cid: 'c' + getGuid(), // action cid
-			copy: obj.length > 1 ? 
-				(obj.length + ' ' + model.plural + ' deleted')
-				: (model.model + ' deleted'),
+			narrative: obj.length > 1 ? 
+				(obj.length + ' ${plural}' + ' deleted')
+				: ('${capsModel} deleted'),
 			icon: 'icon-trash2'
 		});
 		MetasheetDispatcher.dispatch(message);
@@ -150,7 +154,7 @@ var modelActions = {
 			model_id: model.model_id,
 			data: obj instanceof Array ? obj : [obj],
 			cid: 'c' + getGuid(), // action cid
-			copy: (obj.length > 1 ? (obj.length + ' ' + model.plural) : model.model) + ' updated'
+			narrative: (obj.length > 1 ? (obj.length + ' ${plural}') : '${capsModel}') + ' updated'
 					+ (extras.method ? (' by ' + extras.method) : ''),
 			icon: extras.method === 'copy/paste' ? 
 				'icon-clipboard-check' : 
@@ -201,6 +205,24 @@ var modelActions = {
 			method: ' dragging a related item'
 		}
 		modelActions.patchRecords(hasOneModel, patch, selector, extras)
+	},
+
+	fetchModelActions: function (model, offset, limit) {
+		offset = offset || 0
+		limit = limit || 50
+		var header = {
+			'Range-Unit': 'items',
+			'Range': (offset + '-' + (offset + limit))
+		}
+		var workspaceId = model.workspace_id
+		var url = BASE_URL + '/w' + workspaceId + '_action?order=action_id.desc';
+		return webUtils.ajax('GET', url, null, header).then(function (results) {
+			MetasheetDispatcher.dispatch({
+				actionType: 'ACTION_CREATE',
+				data: results.data,
+				isClean: true
+			})
+		})
 	},
 
 	fetchRecords: function (view, offset, limit, sortSpec) {
@@ -258,42 +280,6 @@ var modelActions = {
 		})
 	},
 
-
-	fetchLevels: function (view, dimension, offset, limit) {
-		var view_id = view.view_id
-		var model_id = view.model_id
-		var url = BASE_URL + '/v' + view_id + '_' + dimension + 's';
-		var aggregates = view[dimension + '_aggregates']
-
-		if (aggregates.length === 0) return
-
-		url += '?order=' + aggregates.map(function (grouping) {
-			var column = view.data.columns['a' + grouping]
-			return column.column_id + (column.descending ? '.desc' : '.asc')
-		}).join(',')
-
-		var header = {
-			'Range-Unit': 'items',
-			'Range': (offset + '-' + (offset + limit))
-		}
-
-		return webUtils.ajax('GET', url, null, header).then(function (results) {
-			var range = results.xhr.getResponseHeader('Content-Range')
-			var rangeParts = range.split(/[-/]/)
-			var message = {
-				startIndex: parseInt(rangeParts[0]),
-				endIndex: parseInt(rangeParts[1]),
-				numberLevels: parseInt(rangeParts[2]),
-				dimension: dimension,
-				aggregates: aggregates,
-				levels: results.data,
-				view_id: view.view_id,
-				actionType: 'CUBE_RECEIVELEVELS'
-			}
-			MetasheetDispatcher.dispatch(message)
-		})
-	},
-
 	fetchVennValues: function (view, store) {
 		var view_id = view.view_id
 		var url = BASE_URL + '/v' + view_id
@@ -316,13 +302,56 @@ var modelActions = {
 		});
 	},
 
-	fetchCubeValues: function (view, store, vOffset, vLimit, hOffset, hLimit) {
+	fetchCubeLevels: function (view, store, dimension) {
+		var view_id = view.view_id
+		var model_id = view.model_id
+		var url = BASE_URL + '/v' + view_id + '_' + dimension + 's';
+		var aggregates = view[dimension + '_aggregates'] || []
+		var header = {
+			'Range-Unit': 'items',
+			'Range': ('0' + '-' + MAX_CUBE_LEVELS)
+		}
+
+
+		if (aggregates.length === 0 || _.isEqual(aggregates,
+		 store.getRequestedDimensions(dimension) )) return;
+
+		url += '?order=' + aggregates.map(function (grouping) {
+			var column = view.data.columns['a' + grouping]
+			return column.column_id + (column.descending ? '.desc' : '.asc')
+		}).join(',')
+
+		
+		MetasheetDispatcher.dispatch({
+			actionType: 'CUBE_REQUESTLEVELS',
+			dimension: dimension,
+			aggregates: aggregates
+		})
+
+		return webUtils.ajax('GET', url, null, header).then(function (results) {
+			var range = results.xhr.getResponseHeader('Content-Range')
+			var rangeParts = range.split(/[-/]/)
+
+			MetasheetDispatcher.dispatch({
+				startIndex: parseInt(rangeParts[0]),
+				endIndex: parseInt(rangeParts[1]),
+				numberLevels: parseInt(rangeParts[2]),
+				dimension: dimension,
+				aggregates: aggregates,
+				levels: results.data,
+				view_id: view.view_id,
+				actionType: 'CUBE_RECEIVELEVELS'
+			})
+		})
+	},
+
+	fetchCubeValues: function (view, store, vOffset, hOffset) {
 		var offset = 0
 		var limit = 1000
 		var view_id = view.view_id
 		var url = BASE_URL + '/v' + view_id
-		var sortSpec = view.data.rowSortSpec.concat(view.data.columnSortSpec);
-		var sort = 'order=' + sortSpec.map(function(s) {
+		var sortSpec = (view.data.rowSortSpec || []).concat(view.data.columnSortSpec || []);
+		var sort = (sortSpec.length > 0 ? 'order=' : '') + sortSpec.map(function(s) {
 			var column = view.data.columns[s.attribute]
 			return 'a' + column.attribute_id + (column.descending ? '.desc' : '.asc')
 		}).join(',');
@@ -337,100 +366,78 @@ var modelActions = {
 				'a' + agg + '=' + (dir ? 'lte.' : 'gte.')  + val
 			);
 		}
+
+		['row', 'column'].map(function (dim) {
+			store.getStart(dim)
+		})
+		
 		
 		// the current filter only uses the highest-level aggregator
 		// going deeper would require "or" conditions in the request or multiple requests
 		if (view.row_aggregates.length) {
 			makeFilterStr(view.row_aggregates[0], 'row', vOffset, false)
-			makeFilterStr(view.row_aggregates[0], 'row', vOffset + vLimit, true)	
+			makeFilterStr(view.row_aggregates[0], 'row', vOffset + WINDOW_ROWS, true)	
 		}
 		if (view.column_aggregates.length) {
 			makeFilterStr(view.column_aggregates[0], 'column', hOffset, false)
-			makeFilterStr(view.column_aggregates[0], 'column', hOffset + hLimit, true)
+			makeFilterStr(view.column_aggregates[0], 'column', hOffset + WINDOW_COLS, true)
 		}
 		
 		url += '?' + filter.concat(sort || []).join('&')
 
 		var header = {
 			'Range-Unit': 'items',
-			'Range': ((hOffset + vOffset) + '-' + (hOffset + vOffset + hLimit, vLimit))
+			'Range': '0' + '-' + (WINDOW_ROWS * WINDOW_COLS)
 		}
 
 		return webUtils.ajax('GET', url, null, header).then(function (results) {
-				
-			// console.log(results.data)
-			var range = results.xhr.getResponseHeader('Content-Range');
-			var rangeParts = range.split(/[-/]/);
-			var message = {
+			var rangeParts = results.xhr.getResponseHeader('Content-Range').split(/[-/]/);
+			MetasheetDispatcher.dispatch({
 				numberResults: parseInt(rangeParts[2]),
 				actionType: 'CUBE_RECEIVEVALUES',
 				values: results.data,
 				view_id: view.view_id
-			};
-			
-			MetasheetDispatcher.dispatch(message);
+			});
 		});
 	},
 
-	fetch: function (subject, selector) {
-		var message = {};
-		message.selector = selector;
-	},
-
-	create: function (subject, persist, obj) {
-		var message = {};
+	create: function (subject, persist, obj, extras) {
+		var pk = subject + '_id'
 		obj._dirty = true;
 		obj._destroy = false;
-		message[subject] = obj;
-		message.actionType = subject.toUpperCase() + '_CREATE';
-		message.actionCid = (_actionCid++);
-		MetasheetDispatcher.dispatch(message);
 
-		if (persist) return webUtils.persist(subject, 'CREATE', obj, message.actionCid);
-		else return Promise.resolve(obj);
+		if (!obj[pk] && !obj.cid) obj.cid = 'c' + getGuid()
+		
+		MetasheetDispatcher.dispatch(Object.assign({
+			data: obj,
+			isTemporary: !persist,
+			entity: subject,
+			actionType: subject.toUpperCase() + '_CREATE',
+			cid: 'c' + getGuid(), // action cid
+		}, extras || {}));
 	},
 
 	revert: function (subject, obj) {
-		var message = {
+		MetasheetDispatcher.dispatch({
 			actionType: subject.toUpperCase() + '_REVERT',
-			[subject]: obj
-		}
-		MetasheetDispatcher.dispatch(message);
+			entity: subject,
+			data: obj
+		});
 	},
 
-	undestroy: function (subject, obj) {
-		var message = {};
-		obj._destroy = false;
-		message[subject] = obj;
-		message.actionType = subject.toUpperCase() + '_CREATE';
-		MetasheetDispatcher.dispatch(message);
-		return Promise.resolve(obj);
-	},
-
-	restore: function (subject, obj) {
-		var message = {};
-		obj = _.extend(obj, obj._server || {}, {_clean: true, _destroy: false});
-		message[subject] = obj;
-		message.actionType = subject.toUpperCase() + '_CREATE';
-		MetasheetDispatcher.dispatch(message);
-		return Promise.resolve(obj);
-	},
-
-	destroy: function (subject, persist, obj) {
-		var message = {};
-		message[subject] = obj;
-		if (!persist && ((subject+'_id') in obj)) {
-			// mark the object for destruction, but dont actually do it
-			message.actionType = subject.toUpperCase() + '_CREATE';
-			obj._destroy = true
-		} else {
-			message.actionType = subject.toUpperCase() + '_DESTROY';
-		}
-		MetasheetDispatcher.dispatch(message);
+	destroy: function (subject, persist, obj, extras) {
+		obj._dirty = true;
+		obj._destroy = true;
 		
-		if (persist) return webUtils.persist(subject, 'DESTROY', obj);
-		else return Promise.resolve(obj);
+		MetasheetDispatcher.dispatch(Object.assign({
+			data: obj,
+			isTemporary: !persist,
+			entity: subject,
+			actionType: subject.toUpperCase() + (persist ? '_DESTROY' : '_CREATE'),
+			cid: 'c' + getGuid(), // action cid
+		}, extras || {}));
 	},
+
 	// relations
 
 	createRelation: function (relation) {
@@ -465,7 +472,7 @@ var modelActions = {
 		}
 
 		modelActions.createNotification({
-			copy: 'Fetching workspace details', 
+			narrative: 'Fetching workspace details', 
 			type: 'loading',
 			icon: ' icon-loading spin ',
 			notification_key: 'workspaceLoad',
@@ -474,16 +481,18 @@ var modelActions = {
 
 		return webUtils.ajax('GET', url, null, retrySettings, {"Prefer": 'return=representation'}).then(function (result) {
 			return MetasheetDispatcher.dispatch({
-				actionType: 'MODEL_RECEIVE',
-				model: result.data
+				actionType: 'MODEL_CREATE',
+				isClean: true,
+				data: result.data
 			})
 		}).then(function () {
 			modelActions.clearNotification({
 				notification_key: 'workspaceLoad'
 			})
 		}).catch(function (error) {
+			console.log(error)
 			modelActions.createNotification({
-				copy: 'A critical error has occured on the server.  Unfortunately this is not recoverable. Details: ' + JSON.stringify(error), 
+				narrative: 'A critical error has occured on the server.  Unfortunately this is not recoverable. Details: ' + JSON.stringify(error), 
 				type: 'error-item',
 				icon: ' icon-warning ',
 				notification_key: 'workspaceLoad',
@@ -495,20 +504,30 @@ var modelActions = {
 		webUtils.persist('workspace', 'FETCH', null);
 	},
 
-	createModel: function(model) {
-		MetasheetDispatcher.dispatch({
-			actionType: 'MODEL_CREATE',
-			model: model
-		});
-		webUtils.persist('model', 'CREATE', _.pick(model, 'model_id', 'model', 'plural', 'workspace_id'));
+	createNewModel: function(workspaceId) {
+		var name = 'Thing'
+		var iter = 1
+		while (ModelStore.query({workspace_id: workspaceId, model: name}).length > 0) {
+			name = 'Thing ' + (iter++)
+		}
+		modelActions.create('model', true, {
+			model: name,
+			workspace_id: workspaceId,
+		})
+	},
+
+	updateModel: function (obj) {
+		var model = ModelStore.get(obj.model_id)
+		if (!model) throw new Error('Could not find model: ' + model_id);
+		model.model = obj.model
+		if (obj.plural) moodel.plural = obj.plural
+		else model.plural = pluralize.plural(obj.model)
+
+		modelActions.create('model', true, model)
 	},
 
 	dropModel: function (model) {
-		webUtils.persist('model', 'DESTROY', model);
-		MetasheetDispatcher.dispatch({
-			actionType: 'MODEL_DESTROY',
-			model: model
-		});
+		
 	},
 
 	// keys
@@ -521,13 +540,13 @@ var modelActions = {
 			actionType: 'KEY_CREATE',
 			key: key
 		});
-		webUtils.persist('key', 'CREATE', key);
+		// webUtils.persist('key', 'CREATE', key);
 	},
 
 	// views
 	createView: function(view, persist) {
 		view = _.clone(view)
-		modelActions.create('view', persist, groomView(view))
+		modelActions.create('view', persist, groomView(view), {hiddenTxn: true})
 	},
 
 	updatePointer: function(view, pointer) {
@@ -538,14 +557,10 @@ var modelActions = {
 	},
 
 	destroyView: function(view) {
-		if (!view) return;
-
 		MetasheetDispatcher.dispatch({
 			actionType: 'VIEW_DESTROY',
 			view: view
 		});
-
-		if (view.view_id) webUtils.persist('view', 'DESTROY', view);
 	},
 
 	// attributes

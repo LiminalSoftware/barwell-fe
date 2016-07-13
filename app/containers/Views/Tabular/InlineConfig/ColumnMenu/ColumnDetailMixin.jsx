@@ -169,11 +169,11 @@ var ColumnDetailMixin = {
 				{
 				editing ?
 				<span>
-					<span  className = "pop-down clickable" style = {{float: 'right', width: '30px', minWidth: '30px'}}
-					onClick = {_this.handleDelete.bind(_this, AttributeConfig)}>
-						<span className = "icon icon-cross-circle" style={{width: '30px', minWidth: '30px', textAlign: 'center', marginRight: 0}}/>
+					<span  className = "pop-down clickable" style = {{float: 'right', width: '15px', minWidth: '15px'}}
+					onClick = {_this.handleDelete}>
+						<span className = "icon icon-cross-circle" style={{width: '15px', minWidth: '15px', textAlign: 'center', marginRight: 0}}/>
 					</span>   
-					<span  className = "pop-down clickable" style = {{float: 'right', width: '30px', minWidth: '30px'}}
+					<span  className = "pop-down clickable" style = {{float: 'right', width: '15px', minWidth: '15'}}
 						onClick = {_this.handleConfigClick.bind(_this, AttributeConfig)}>
 						<span className = "icon icon-cog"  style = {{textAlign: 'center', marginRight: 0}}/>
 						{this.state.configPart === AttributeConfig ?

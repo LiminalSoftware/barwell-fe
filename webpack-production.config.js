@@ -4,7 +4,7 @@ module.exports = [
 		prerender: false,
 		minimize: true,
 		uglify: false,
-		// separateStylesheet: true,
+		separateStylesheet: true,
 		devtool: "source-map"
 	})
 ];

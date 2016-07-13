@@ -4,6 +4,7 @@ import ModelBar from "containers/ModelBar";
 import styles from "./style.less";
 import modelActionCreators from "../../actions/modelActionCreators"
 import util from '../../util/util'
+import contant from '../../constants/MetasheetConstants'
 
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
@@ -29,9 +30,7 @@ var Application = React.createClass({
 			width: '1px'
 		}
 		return <ReactCSSTransitionGroup
-			transitionEnterTimeout={1000}
-			transitionLeaveTimeout={1000} 
-			transitionName="slide-in" 
+			{...contant.transitions.slideIn}
 			className= "application" id = "application">
 			<textarea style = {dummyStyle} id = "copy-paste-dummy" value=""></textarea>
 			{

@@ -32,20 +32,24 @@ var createCubeStore = function (view, dimensions) {
 
     var _dimensions = {
         row: [],
-        column: [],
+        column: []
     };
+
+    var _requestedDimensions = {
+        row: [],
+        column: []
+    }
+
     var _sortSpec = {
         row: view.data.rowSortSpec,
         column: view.data.columnSortSpec
     };
+
     var _levels = {
         row: [],
         column: []
     };
-    var _count = {
-        row: null,
-        column: null
-    };
+
     var _startIndex = {
         row: null,
         column: null
@@ -54,11 +58,7 @@ var createCubeStore = function (view, dimensions) {
         row: null,
         column: null
     };
-    var _isCurrent = {
-        row: false,
-        column: false,
-        body: false
-    };
+    
     var _values = [];
 
 
@@ -82,16 +82,17 @@ var createCubeStore = function (view, dimensions) {
             this.removeListener('CHANGE_EVENT', callback);
         },
 
+
         getCount: function (dimension) {
-            return _count[dimension] || 0
+            return _levels[dimension].length
         },
 
-        getDimensions: function (dimension) {
-          return _dimensions[dimension]
+        getDimensions: function (dim) {
+          return _dimensions[dim]
         },
 
-        getAllDimensions: function () {
-
+        getRequestedDimensions: function (dim) {
+            return _requestedDimensions[dim]
         },
 
         getLevels: function (dimension, from, to) {
@@ -102,18 +103,11 @@ var createCubeStore = function (view, dimensions) {
             at = Math.min(at, _levels[dimension].length - 1)
             return _.clone(_levels[dimension][at])
         },
-
-        setStart: function (dimension, offset) {
-            _startIndex[dimension] = offset
-        },
-
+        
         getStart: function (dimension) {
             return _startIndex[dimension]
         },
 
-        isCurrent: function (dimension) {
-            return _isCurrent[dimension]
-        },
 
         getValue: function (selector) {
             var dimensions = _dimensions.row.concat(_dimensions.column).filter(_.identity);
@@ -122,16 +116,16 @@ var createCubeStore = function (view, dimensions) {
             return _values[key];
         },
 
+        getAllValues: function () {
+            return _.values(__values)
+        },
+
         unregister: function () {
           dispatcher.unregister(this.dispatchToken);
         },
 
         dispatchToken: dispatcher.register(function (payload) {
             var type = payload.actionType
-
-            if (type === 'VIEW_CREATE' && payload.view.view_id === view.view_id) {
-                ['row','column','body'].forEach(d => _isCurrent[d] = false);
-            }
 
             if (type === (modelUpperLabel + '_UPDATE') || type === (modelUpperLabel + '_RECEIVEUPDATE')) {
                 var dimensions = _dimensions.row.concat(_dimensions.column).filter(_.identity);
@@ -151,49 +145,20 @@ var createCubeStore = function (view, dimensions) {
                 var combinedLevels = [];
                 var unimpactedLevels = [];
 
-                // normalize the values array so that we can reduce similar entries
-                var values = normalize(_values, _levels, _sortSpec).map(function (rec, idx) {
-                    if (matcher(rec)) return _.extend(rec, update, dirty);
-                    else return rec;
-                });
-
-                // pull any impacted levels out of the main level array and apply the update
-                _levels[impactedDim].forEach(function (level) {
-                    if (matcher(level)) {
-                        level = _.extend(level, update);
-                        impactedLevels.push(level);
-                    } else unimpactedLevels.push(level);
-                });
-
-                // sort the impacted levels
-                impactedLevels.sort(util.compare.bind(_sortSpec[impactedDim]));
-
-                // merge the impacted levels back into the original levels array
-                _levels[impactedDim] = util.merge(_sortSpec[impactedDim], (a,b) => a, unimpactedLevels, impactedLevels);
-
-                _values = denormalize(values, _levels, _sortSpec);
-                
                 CubeStore.emitChange();
             }
 
-            if (type === modelUpperLabel + '_CREATE') {
-                var dimensions = _dimensions.row.concat(_dimensions.column).filter(_.identity);
-                var val = payload.record;
-                var index = payload.index;
-
-                CubeStore.emitChange();
+            if (type === 'CUBE_REQUESTLEVELS') {
+                var dimension  = payload.dimension
+                _requestedDimensions[dimension] = payload.aggregates
             }
 
             if (type === 'CUBE_RECEIVELEVELS' && payload.view_id === view.view_id) {
-                var _this = this;
                 var dimension  = payload.dimension;
                 var groups = _dimensions[dimension].map(g => 'a' + g);
                 
-                _dimensions[dimension] = payload.aggregates;
-                _levels[dimension] = payload.levels;
-                _count[dimension] = payload.numberLevels;
-                _isCurrent.body = false;
-                _isCurrent[dimension] = true;
+                _dimensions[dimension] = payload.aggregates
+                _levels[dimension] = payload.levels
 
                 CubeStore.emitChange();
             }
@@ -201,6 +166,7 @@ var createCubeStore = function (view, dimensions) {
             if (type === 'CUBE_REQUESTVALUES' && payload.view_id === view.view_id) {
                 _startIndex.row = payload.startIndex.row;
                 _startIndex.column = payload.startIndex.column;
+                _values = {}
             }
 
             if (type === 'CUBE_RECEIVEVALUES' && payload.view_id === view.view_id) {
@@ -212,7 +178,6 @@ var createCubeStore = function (view, dimensions) {
                     var key = formKey(v, dimensions); // _levels.map(l => v[l]).join(DELIMITER)
                     _values[key] = v;
                 })
-                _isCurrent.body = true;
                 
                 CubeStore.emitChange();
             }

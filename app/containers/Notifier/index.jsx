@@ -4,6 +4,7 @@ import moment from "moment";
 import styles from "./style.less";
 import modelActionCreators from "../../actions/modelActionCreators"
 import NotificationStore from "../../stores/NotificationStore"
+import ModelStore from '../../stores/ModelStore'
 import TransactionStore from "../../stores/TransactionStore"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import util from '../../util/util'
@@ -76,9 +77,10 @@ var Notifier = React.createClass({
 		var transactions = TransactionStore.query({});
 		var events
 
-		if (this.state.mouseOver) transactions.slice(transactions.length - 10)
+		if (this.state.mouseOver) transactions
 		else transactions = transactions.filter(txn => moment(txn.timestamp).isAfter(cutoff))
 
+		transactions = transactions.slice(transactions.length - (this.state.mouseOver ? 10 : 1))
 		events = util.merge({attribute: 'timestamp', descending: true}, null, notifications, transactions)
 
 		return <span className = "model-bar-extra--right height-transition"
@@ -102,6 +104,7 @@ var Notifier = React.createClass({
 				return <Note 
 					_handleMouseOver = {_this.handleMouseOver} 
 					key = {note.cid || note.notification_key} 
+					model = {ModelStore.get(note.model_id)}
 					note = {note} 
 					index = {idx} />;
 			})

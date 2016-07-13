@@ -53,7 +53,7 @@ var TabularBodyWrapper = React.createClass ({
 			frameNum: 0
 		}
 	},
-
+	
 	_onChange: function () {
 		// this.setState({contextOpen: false, detailOpen: false})
 		this.forceUpdate()
@@ -114,7 +114,7 @@ var TabularBodyWrapper = React.createClass ({
 			})
 
 			modelActionCreators.createNotification({
-				copy: 'Loading view data',
+				narrative: 'Loading view data',
 				type: 'loading',
 				icon: ' icon-loading spin ',
 				notification_key: 'loadingRecords',

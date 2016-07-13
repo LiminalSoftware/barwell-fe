@@ -35,7 +35,7 @@ add-new-model {
 	font-family: @headerFont;
 	text-align: center;
 
-	color: @gray2;
+	color: @headerBgLight2;
 	cursor: pointer;
 }
 
@@ -45,17 +45,19 @@ add-new-model {
 	max-width: 150px;
 	min-width: 50px;
 
+	
 	color: @headerFontColor;
-	background: @headerMenuBgColor;
-	border-bottom: 1px solid @headerMenuBorderColor;
-	border-left: 1px solid @headerMenuBorderColor;
+	background: @headerBgLight1;
+	border-right: 1px solid @headerBgLight1;
+	
 }
 
 .model-bar-tab-link--active {
 	z-index: 2;
 	margin-top: -1px;
-	border-top: 1px solid @headerMenuBgColor;
-	color: @newgreen1;
+	border-top: 1px solid @headerBgLight2;
+	background: @headerBgLight2 !important;
+	// color: @headerFontColor !important;
 }
 
 .model-bar-tab-link--first {
@@ -78,6 +80,7 @@ add-new-model {
 	margin: 0;
 	height: 40px;
 	z-index: 100;
+	background: @headerMenuBgColor;
 }
 
 .model-bar-list {
@@ -88,6 +91,7 @@ add-new-model {
 .model-bar-extras {
 	flex-direction: row-reverse;
 	width: 100px;
+	margin-right: 10px;
 }
 
 .renamer {
@@ -124,7 +128,7 @@ add-new-model {
 	left: 0;
 	right: 0;
 	height: 8px;
-	border-top: 1px solid @headerMenuBorderColor;
-	border-bottom: 1px solid @headerMenuBorderColor;
-	background: @headerMenuBgColor;
+	border-top: 1px solid @headerBgLight2;
+	border-bottom: 1px solid @headerBgLight2;
+	background: @headerBgLight2;
 }

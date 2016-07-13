@@ -12,7 +12,12 @@
 	pointer-events: none;
 }
 
-.checkbox-surround {
+.checkbox-surround, .checkbox-surround-checked {
+	border-radius: 3px;
+	background: white;
+	// border: 1px solid @gray3;
+	z-index: 4;
+	
 	position: relative;
 	display: inline-block;
 	max-height: 14px;
@@ -20,4 +25,22 @@
 	max-width: 14px;
 	min-width: 14px;
 	cursor: pointer;
+
+	&:hover {
+		background: @gray4;
+	}
 }
+
+
+// .checkbox-surround  {
+	
+
+// 	position: relative;
+// 	display: inline-block;
+// 	height: 14px;
+// 	width: 14px;
+	
+// 	cursor: pointer;
+// 	border-radius: 3px;
+// 	border: 1px solid @gray3;
+// }

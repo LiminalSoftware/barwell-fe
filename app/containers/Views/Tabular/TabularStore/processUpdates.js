@@ -29,7 +29,7 @@ var processUpdates = function (_state, matcher, isDirty, actionCid) {
       server,
       {
         _dirty: isDirty,
-        _outoforder: rec._outoforder, 
+        _outoforder: rec._outoforder,
         _server: util.stripInternalVars(server),
         _pendingActions: pendingActions
       }

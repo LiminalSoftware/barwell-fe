@@ -2,6 +2,14 @@
 
 module.exports = {
 
+  transitions: {
+    slideIn: {
+      transitionEnterTimeout: 1000,
+      transitionLeaveTimeout: 1000,
+      transitionName: "slide-in" 
+    }
+  },
+
   updateMethods: {
     'P': {
       label: 'copy/paste',

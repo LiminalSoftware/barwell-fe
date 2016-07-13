@@ -27,7 +27,7 @@ var CalcnodeStore = storeFactory({
         break;
 
       case 'MODEL_RECEIVE':
-        var model = payload.model
+        var model = payload.data
         
         (model.calcs || []).forEach(function (calc) {
           this.purge({calc_id: calc.calc_id});

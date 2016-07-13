@@ -14,18 +14,18 @@ var KeyStore = storeFactory({
   pivot: function(payload) {
     switch (payload.actionType) {
       case 'KEY_CREATE':
-        this.create(payload.key)
+        this.create(payload.data)
         this.emitChange()
         break
 
       case 'KEYCOMP_CREATE':
-        var keycomp = payload.keycomp
+        var keycomp = payload.datacomp
         var related_key = this.get(keycomp.key_id) || {}
         this.emitChange()
         break;
 
       case 'KEY_DESTROY':
-        this.destroy(payload.key)
+        this.destroy(payload.data)
         this.emitChange()
         break;
 
@@ -35,7 +35,7 @@ var KeyStore = storeFactory({
         break;
 
       case 'KEY_RECEIVE':
-        var key = payload.key
+        var key = payload.data
         if(!key) return;
         key._dirty = false
         key._named = true
@@ -43,16 +43,17 @@ var KeyStore = storeFactory({
         this.emitChange()
         break;
 
-      case 'MODEL_RECEIVE':
+      case 'MODEL_CREATE':
         dispatcher.waitFor([
           AttributeStore.dispatchToken, 
           ModelStore.dispatchToken
         ]);
         var _this = this;
-        var models = payload.model instanceof Array ? payload.model : [payload.model]
+        var models = payload.data instanceof Array ? payload.data : [payload.data]
         // this.purge();
         models.forEach(function (model) {
-          (model.keys || []).map(util.clean).map(_this.create)
+          if (model.keys instanceof Array)
+            model.keys.map(payload.isClean ? util.clean : _.identity).map(_this.create)
         });
         this.emitChange()
         break;

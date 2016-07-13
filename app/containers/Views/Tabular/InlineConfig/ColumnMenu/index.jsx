@@ -18,8 +18,6 @@ import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import blurOnClickMixin from '../../../../../blurOnClickMixin';
 
-import ScrollBar from '../../Main/ScrollBar'
-
 import sortable from 'react-sortable-mixin';
 
 
@@ -68,11 +66,13 @@ var ColumnMenu = React.createClass({
 
 	handleCancelChanges: function () {
 		this.blurChildren()
+		this.setState({editing: false})
 		this.commitAttributeChanges(false)
 	},
 
 	handleSaveChanges: function () {
 		this.blurChildren()
+		this.setState({open: false})
 		this.commitAttributeChanges(true);
 	},
 
@@ -107,19 +107,35 @@ var ColumnMenu = React.createClass({
 		var _this = this;
 		var model = this.props.model;
 		
-		return Promise.all(AttributeStore.query({model_id: model.model_id}).map(function (attr) {
+		return AttributeStore.query({model_id: model.model_id}).map(function (attr) {
 			if (attr.attribute_id && !save) {
 				return modelActionCreators.revert('attribute', attr);
-			} else if (!attr.attribute_id && save) {
-				return modelActionCreators.create('attribute', true, attr);
-			} else if (attr.attribute_id && attr._destroy && save) {
-				return modelActionCreators.destroy('attribute', true, attr);
-			} else if (attr.attribute_id && attr._destroy && !save) {
+			} 
+
+			else if (!attr.attribute_id && save) {
+				var copy = 'Attribute ' + attr.attribute + ' added to model ' + model.model;
+				return modelActionCreators.create('attribute', true, attr, {narrative: copy, icon: 'icon-pencil-ruler'});
+			} 
+
+			else if (attr.attribute_id && attr._dirty && !attr._destroy && save) {
+				var copy = 'Attribute "' + attr.attribute + '"'
+				if (attr._server.type !== attr.type) copy += ' type updated'
+				else if (attr._server.attribute !== attr.attribute) copy += ' renamed'
+				else copy += ' updated'
+
+				return modelActionCreators.create('attribute', true, attr, {narrative: copy, icon: 'icon-pencil-ruler'});
+			}
+
+			else if (attr.attribute_id && attr._destroy && save) {
+				var copy = 'Attribute "' + attr.attribute + '" removed from model "' + model.model + '"';
+				return modelActionCreators.destroy('attribute', true, attr, {narrative: copy, icon: 'icon-pencil-ruler'});
+			} 
+
+			else if (attr.attribute_id && attr._destroy && !save) {
 				return modelActionCreators.revert('attribute', attr);
 			}
-		})).then(function () {
-			_this.setState({editing: false});
 		})
+		_this.setState({editing: false});
 	},
 
 	
@@ -237,7 +253,10 @@ var ColumnMenu = React.createClass({
 							</div>
 						}
 					</ReactCSSTransitionGroup>
-				<div className="dropdown icon--small icon icon-chevron-down" onClick = {this.handleOpen}/>
+				<div className={"dropdown" + (this.state.open ? "--open " : " ") 
+					+ " icon--small icon icon-chevron-down"} 
+					onClick = {this.handleOpen}>
+				</div>
 			</div>
 		</div>
 	}

@@ -14,25 +14,25 @@ var ModelConfigStore = storeFactory({
         dispatcher.waitFor([
           ModelStore.dispatchToken
         ]);
-        this.create({model_id: payload.model.model_id});
+        this.create({model_id: payload.data.model_id});
         this.emitChange();
         break;
 
       case 'MODELCONFIG_CREATE':
-        var config = this.get(payload.modelconfig.model_id) || {};
-        Object.assign(config, payload.modelconfig);
+        var config = this.get(payload.data.model_id) || {};
+        Object.assign(config, payload.data);
         this.create(config);
         this.emitChange();
         break;
 
       case 'MODEL_DESTROY':
-        this.destroy(payload.model);
+        this.destroy(payload.data);
         this.emitChange();
         break;
 
       case 'MODEL_RECEIVE':
         var _this = this;
-        var models = payload.model;
+        var models = payload.data;
         models.forEach(function (model) {
           _this.create({model_id: model.model_id});
         });

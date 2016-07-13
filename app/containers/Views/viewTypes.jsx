@@ -2,6 +2,8 @@ import TabularInlineConfig from "./Tabular/InlineConfig/index.jsx"
 import TabularMain from "./Tabular/Main/index.jsx"
 import TabularGroomer from "./Tabular/groom"
 
+import HistoryMain from "./ChangeHistory/index.jsx"
+
 import CalendarMain from "./Calendar/Main/index.jsx"
 import CalendarGroomer from "./Calendar/groom.jsx"
 
@@ -16,6 +18,14 @@ import VennGroomer from "./Venn/groom"
 
 
 var viewTypes = {
+	// History: {
+	// 	type: "History",
+	// 	icon: "icon-history2",
+	// 	groomer: TabularGroomer,
+	// 	mainElement: HistoryMain,
+	// 	category: "Tables",
+	// 	description: ""
+	// },
 	Tabular: {
 		type: "Tabular",
 		icon: "icon-grid",

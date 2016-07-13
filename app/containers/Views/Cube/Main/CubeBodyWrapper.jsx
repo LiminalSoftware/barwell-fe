@@ -22,13 +22,13 @@ import util from '../../../../util/util'
 
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import cubeFetchMixin from './cubeFetchMixin'
 
 const FETCH_DEBOUNCE = 1000
 
 const MAX_LEVELS = 5000
 const WINDOW_ROWS = 50
 const WINDOW_COLS = 20
-
 const RHS_PADDING = 100
 const CYCLE = 60
 
@@ -44,6 +44,8 @@ var CubeBodyWrapper = React.createClass ({
 		var view = this.props.view
 		var geo = view.data.geometry
 		return {
+			requestedRowDimensions: null,
+			requestedColumnDimensions: null,
 			verticalOffset: 0,
 			horizontalOffset: 0
 		}
@@ -75,60 +77,24 @@ var CubeBodyWrapper = React.createClass ({
 	fetch: function () {
 		var _this = this
 		var view = this.props.view
+		var store = this.props.store
+		var hOffset = this.state.hOffset || 0
+		var vOffset = this.state.vOffset || 0
 
 		if (view._dirty) return;
 
 		return Promise.all([
-			this.fetchLevels('row'),
-			this.fetchLevels('column')
+			modelActionCreators.fetchCubeLevels(view, store, 'row'),
+			modelActionCreators.fetchCubeLevels(view, store, 'column'),
 		]).then(function () {
-			return _this.fetchBody()
-		});
-	},
-
-	fetchLevels: function (dimension) {
-		var store = this.props.store
-		var view = this.props.view
-		var _this = this
-		var aggregates = view[dimension + '_aggregates']
-
-		if (aggregates.length === 0 || _.isEqual(store.getDimensions(dimension), aggregates)){
-			return Promise.resolve()
-		}
-		this.setState({
-			[dimension + '_fetching']: true
-		})
-		
-		return modelActionCreators.fetchLevels(
-			view,
-			dimension,
-			0, MAX_LEVELS
-		).then(function () {
-			_this.setState({
-				[dimension + '_fetching']: false
-			})
+			return modelActionCreators.fetchCubeValues(
+				view, store, 
+				hOffset, WINDOW_ROWS, 
+				vOffset, WINDOW_COLS
+			)
 		})
 	},
-
-	fetchBody: function () {
-		var view = this.props.view
-		var geo = view.data.geometry
-		var store = this.props.store
-		var vOffset = this.state.verticalOffset
-		var hOffset = this.state.horizontalOffset
-		var filter = []
-		var rowAggregates = store.getDimensions('row')
-		var columnAggregates = store.getDimensions('row')
-
-		
-		if (!(rowAggregates.length + columnAggregates.length > 0)) return Promise.resolve();
-		if (store.isCurrent('body')) return Promise.resolve();
-		
-		return modelActionCreators.fetchCubeValues(view, store, hOffset, WINDOW_ROWS, vOffset, WINDOW_COLS).then(function () {
-			store.setStart('row', vOffset)
-			store.setStart('column', hOffset)
-		})
-	},
+	
 
 	render: function () {
 		var view = this.props.view

@@ -19,7 +19,12 @@ var groomView = function (view) {
 	data.columnList = columnList
 
 	view.row_aggregates = columnList.filter(c => c.groupByCategory && c.type === 'BOOLEAN').map(c => c.attribute_id)
+	view.column_aggregates = []
 	view.aggregate_values = [{value: model._pk, aggregator: 'count'}]
+
+	data.rowSortSpec = view.row_aggregates.map(function (d) {
+        return {'attribute': 'a' + d, 'descending': false}
+    });
 
 	return view;
 }
