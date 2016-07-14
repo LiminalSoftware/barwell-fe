@@ -80,12 +80,8 @@ var CubeBodyWrapper = React.createClass ({
 
 		return Promise.all([
 			modelActionCreators.fetchCubeLevels(view, store, 'row'),
-			modelActionCreators.fetchCubeLevels(view, store, 'column'),
-		]).then(function () {
-			return modelActionCreators.fetchCubeValues(
-				view, store, offset
-			)
-		})
+			modelActionCreators.fetchCubeLevels(view, store, 'column')
+		]).then(p => modelActionCreators.fetchCubeValues(view, store, offset))
 	},
 	
 
@@ -107,7 +103,7 @@ var CubeBodyWrapper = React.createClass ({
 			ref="tbodyWrapper"
 			style = {{
 				left: 0,
-				width: (this.props.adjustedWidth + 3) + 'px',
+				width: (this.props.adjustedWidth) + 'px',
 				transformStyle: 'preserve-3d'
 			}}>
 
@@ -119,7 +115,7 @@ var CubeBodyWrapper = React.createClass ({
 					overflow: 'hidden',
 					position: 'absolute'
 				}}>
-				<div className = "wrapper force-layer"
+				<div className = "wrapper force-layer cube-lhs-offsetter"
 					ref = "lhsOffsetter"
 					style = {{
 						top: 0,

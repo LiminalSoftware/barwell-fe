@@ -1,8 +1,11 @@
 import React from "react";
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { Link } from "react-router";
-import styles from "./style.less";
 import _ from 'underscore';
+import $ from 'jquery'
+
+import styles from "./style.less";
+
 import fieldTypes from "../../../fields";
 
 import ColumnList from "./ColumnList";
@@ -35,6 +38,7 @@ var ColumnMenu = React.createClass({
 	componentWillUnmount: function () {
 		AttributeStore.removeChangeListener(this._onChange);
 		// ViewConfigStore.removeChangeListener(this._onChange);
+		this.refs.popUp
 		this.handleCancelChanges()
 	},
 
@@ -47,6 +51,8 @@ var ColumnMenu = React.createClass({
 		return {
 			open: false,
 			editing: false,
+			context: false,
+			popUp: null,
 			dirty: false
 		};
 	},
@@ -82,10 +88,25 @@ var ColumnMenu = React.createClass({
 		this.refs.list.addItem()
 	},
 
+	showPopUp: function (part, configProps, e) {
+		var offset = $(e.target).closest('.pop-down').offset()
+		configProps.style = {
+			position: 'fixed',
+			left: offset.left + 'px',
+			top: offset.top + 'px',
+		}
+		configProps.open = true;
+		configProps.ref = 'popUp'
+		// var part = React.createElement(part, configProps);
+		this.setState({popUpPart: part, popUpConfig: configProps})
+		if (e) util.clickTrap(e)
+	},
+
 	// UTILITY ================================================================
 
 	blurChildren: function () {
-		console.log('blur children')
+		console.log('blurChildren')
+		this.setState({popUpPart: null})
 		if (this.refs.list) this.refs.list.blurSiblings()
 	},
 
@@ -219,6 +240,7 @@ var ColumnMenu = React.createClass({
     	return <div className = "double header-section" >
 			<div className="header-label">Attributes</div>
 				<div className = "model-views-menu">
+
 					<ReactCSSTransitionGroup 
 						component = "div"
 						onClick={this.clickTrap}
@@ -227,26 +249,36 @@ var ColumnMenu = React.createClass({
 						{
 							this.state.open ? 
 							<div className = "dropdown-menu" style = {{minWidth: '550px'}}>
-								<div className="menu-item menu-sub-item menu-divider" onClick = {_this.blurChildren}>
-									<span style = {{flexGrow: 0}} className = {"icon " + firstSection.icon}/>
-									<span style = {{flexGrow: 0}}>{firstSection.label}</span>
-									<span className = "menu-section-rule"/>
+								<div className="menu-sub-item menu-divider" onClick = {_this.blurChildren}>
+									<div className = "menu-divider-inner">
+										<span className = {"icon " + firstSection.icon} style = {{flexGrow: 0}}/>
+										<span style = {{flexGrow: 0}}>{firstSection.label}</span>
+									</div>
 								</div>
 								{firstSectionIsEmpty ? <div className = "menu-sub-item menu-empty-item">{firstSection.emptyText}</div> : null}
+								
 								<ColumnList 
 									{...this.props} ref = "list" 
+									_showPopUp = {this.showPopUp}
 									_markDirty = {this.markDirty}
+									_blurChildren = {_this.blurChildren}
 									editing = {this.state.editing}/>
+								
 								{this.renderButtonBar()}
 								
+								{this.state.popUpPart ?
+									React.createElement(this.state.popUpPart, this.state.popUpConfig)
+									: null }
 							</div>
+
 							:
 							currentCol ? 
 							<ColumnDetail
 								ref = 'columnDetail'
 								key = {currentCol.column_id}
-								_blurChildren = {e => _this.refs.columnDetail.blurSubMenus()}
+								_blurChildren = {_this.blurChildren}
 								config = {currentCol} view = {view}/>
+							
 							:
 							<div className="singleton menu-item menu-sub-item">
 								No selection...

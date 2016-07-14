@@ -111,11 +111,12 @@ var ColumnList = React.createClass({
 		return {items: items};
 	},
 
-	blurSiblings: function () {
+	blurSiblings: function (e) {
 		var _this = this;
 		this.state.items.forEach(function (item) {
 			if (item.column_id) _this.refs[item.column_id].blurSubMenus()
 		});
+		if (e) e.stopPropagation()
 	},
 
 	addItem: function () {
@@ -160,9 +161,10 @@ var ColumnList = React.createClass({
 					ref = {'section' + item.label}> 
 				<div className="menu-sub-item menu-divider" 
 					{...itemProps}>
-					<span className = {"icon " + item.icon} style = {{flexGrow: 0}}/>
-					<span style = {{flexGrow: 0}}>{item.label}</span>
-					<span className = "menu-section-rule"/>
+					<div className = "menu-divider-inner">
+						<span className = {"icon " + item.icon} style = {{flexGrow: 0}}/>
+						<span style = {{flexGrow: 0}}>{item.label}</span>
+					</div>
 				</div>
 				{item.isEmpty ? <div className = "menu-sub-item menu-empty-item">{item.emptyText}</div> : null}
 			</div>
@@ -178,6 +180,7 @@ var ColumnList = React.createClass({
 				editing = {_this.props.editing}
 				view = {view}
 				_blurSiblings = {_this.blurSiblings}
+				_showPopUp = {_this.props._showPopUp}
 				{...itemProps}/>
 		});
 
@@ -187,7 +190,7 @@ var ColumnList = React.createClass({
     			minWidth: '500px', 
     			maxHeight: (this.state.windowHeight - 250) + 'px',
     			overflowY: 'scroll'
-    		}} onClick = {this.blurSiblings}>
+    		}} onClick = {_this.props._blurChildren}>
 			{items}
 		</div>
 	}

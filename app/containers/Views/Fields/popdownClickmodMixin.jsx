@@ -6,21 +6,17 @@ import PopDownMenu from '../../../components/PopDownMenu'
 var popdownClickmodMixin = {
 	handleClick: function (e) {
 		if (this.props._blurSiblings) this.props._blurSiblings();
-		if (this.props._handleConfigClick) {
-			this.props._handleConfigClick(e);
-			this.setState({context: true})
-		} else this.handleOpen(e);
+		if (this.props._showPopUp) this.props._showPopUp(e);
+		else this.handleOpen(e);
 	},
 
 	render: function () {
 	    var iconClass = this.getIcon();
 	    var width = (this.width || '30px');
 	    var isActive = this.isActive ? this.isActive() : false;
-	    if (!!this.props.menuInline) return <div className = "menu-sub-item-boxed"  onClick = {util.clickTrap}>
-	      {this.renderMenu()}
-	    </div>;
-	    else return <span className={"pop-down clickable " + (isActive ? ' popdown-active' : '')}
-	    	style={{minWidth: width, maxWidth: this.width || '40px'}}
+
+	   return <span className={"pop-down clickable " + (isActive ? ' popdown-active' : '')}
+	    	style={this.props.style}
 	        onClick = {this.handleClick}>
 	    	<span className = {iconClass} style={{textAlign: 'center', marginRight: 0}}/>
 	    	{
@@ -28,22 +24,21 @@ var popdownClickmodMixin = {
 	    	}
 	    	<ReactCSSTransitionGroup
 				transitionEnterTimeout={500}
-				transitionLeaveTimeout={300} 
+				transitionLeaveTimeout={300}
 				transitionName="fade-in">
 	        {
-	          this.state.open ? <PopDownMenu>
-	          {this.renderMenu()}
-	        </PopDownMenu> : null
+	        	(this.state.open || this.props.open) ? <div className = "pop-down-menu" style = {{left: '-15px'}}>
+	        	<span className = "pop-down-overlay">
+	        		<span className = {iconClass} style={{textAlign: 'center', marginRight: 0}}/>
+	        		{
+			    		this.getContent ? <span className="popdown-label">{this.getContent()}</span> : null
+			    	}
+	        	</span>
+	        	{this.renderMenu()}
+	        	</div> : null
 	        }
 	        </ReactCSSTransitionGroup>
-	        {
-	          this.state.context ? 
-	            <span className = {"pop-down-overlay "}>
-	            <span className = {iconClass} style = {{margin: 0}}/>{
-	            	this.getContent ? <span className="popdown-label">{this.getContent()}</span> : null
-	            }</span>
-	            : null
-	        }
+	        
 	    </span>;
 	  }
 }

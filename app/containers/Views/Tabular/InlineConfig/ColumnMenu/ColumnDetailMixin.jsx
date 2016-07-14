@@ -93,6 +93,67 @@ var ColumnDetailMixin = {
 
 	// RENDER ===================================================================
 
+	getEditModeContent: function () {
+		return <div className="menu-item column-menu-item-width"
+				style = {{minWidth: this.props.minWidth, display: 'block'}}>
+			<span ref = "grabber" className="draggable drag-grid"/>
+			<input className = "menu-input text-input" 
+				ref = "attributeNameInput"
+				value={this.state.name}
+				onBlur = {this.handleBlurName}
+				onChange = {this.handleNameChange}/>
+			<span>
+				<TypePicker {...this.props}
+					ref = "typePicker"
+					_blurSiblings = {_this.props._blurSiblings}
+					_handleConfigClick = {_this.handleConfigClick.bind(_this, TypePicker)}
+					_chooseType = {_this.chooseType}
+					type = {this.state.type}/>
+			</span>
+			<span>
+				<span  className = "pop-down clickable "
+					onClick = {_this.handleDelete}>
+					<span className = "icon icon-cross-circle"/>
+				</span>   
+				<span  className = "pop-down clickable"
+					onClick = {_this.handleConfigClick.bind(_this, AttributeConfig)}>
+					<span className = "icon icon-cog"/>
+				</span>
+			</span>
+		</div>
+	},
+
+	getFormatModeContent: function () {
+		return <div className={"menu-item" + (this.singleton ? " singleton " : " column-menu-item-width")}
+				style = {{minWidth: this.props.minWidth, display: 'block'}}>
+			{
+			this.props.open ? <span ref = "grabber" className="draggable drag-grid"/> : null
+			}
+			<span>{config.name}</span>
+			<span>
+			{
+				(fieldType.configParts || []) /* config parts associated with the field type*/
+					.concat(this.props.viewConfigParts || []) /* config parts passed down from the view*/
+					.map(function (part, idx) {
+					var configProps = {
+						view: view,
+						model: model,
+						config: config
+					}
+					return React.createElement(part, _.extend({
+						_blurSiblings: _this.props._blurSiblings || _this.blurSubMenus,
+						key: part.prototype.partName,
+						ref: part.prototype.partName,
+						showPopUp: _this.props.showPopUp ? 
+							_this.props._showPopUp.bind(null, part, configProps)
+							: null
+					}, configProps));
+			})
+			}
+			</span>
+		</div>
+	},
+
 	render: function() {
 		var _this = this;
 	    var view = this.props.view;
@@ -101,14 +162,8 @@ var ColumnDetailMixin = {
 		var fieldType = fieldTypes[config.type] || {};
 		var editing = this.props.editing
 
-	    return	<ReactCSSTransitionGroup
-					transitionEnterTimeout={500}
-					transitionLeaveTimeout={300}
-					transitionName="slide-in"
-					className={"menu-item" +
-						(this.singleton ? " singleton " : " menu-item-stacked column-menu-item-width")}
-					style = {{minWidth: this.props.minWidth, display: 'block'}}
-					component = "div">
+	    return	<div className={"menu-item" + (this.singleton ? " singleton " : " column-menu-item-width")}
+					style = {{minWidth: this.props.minWidth, display: 'block'}}>
 
 				<div className = {"menu-sub-item " + (this.props._isNew ? " new-menu-sub-item" : "")}>
 				{
@@ -148,21 +203,26 @@ var ColumnDetailMixin = {
 					<span>
 					{
 						(fieldType.configParts || []) /* config parts associated with the field type*/
-							.concat(this.props.viewConfigParts || []) /* config parts passed down from the view*/
-							.map(function (part, idx) {
-							return React.createElement(part, {
-								_blurSiblings: _this.props._blurSiblings || _this.blurSubMenus,
-								key: part.prototype.partName,
-								ref: part.prototype.partName,
-								_handleConfigClick: _this.handleConfigClick ? 
-									_this.handleConfigClick.bind(_this, part)
-									: null,
+						.concat(this.props.viewConfigParts || []) /* config parts passed down from the view*/
+						.map(function (part, idx) {
+							var configProps = {
 								view: view,
 								model: model,
 								config: config,
-								classes: ""
-							});
-					})
+							}
+							var localProps = {
+								key: part.prototype.partName,
+								ref: part.prototype.partName,
+								_blurSiblings: _this.props._blurSiblings || _this.blurSubMenus,
+								_showPopUp: _this.props._showPopUp ? 
+									_this.props._showPopUp.bind(null, part, configProps)
+									: null
+							}
+							return React.createElement(part, _.extend(
+								localProps,
+								configProps
+							));
+						})
 					}
 					</span>
 				}
@@ -185,13 +245,7 @@ var ColumnDetailMixin = {
 				: null
 				}
 				</div>
-				{
-					this.state.configPart ? 
-					React.createElement(this.state.configPart, _.extend({menuInline: true, _chooseType: _this.chooseType}, _this.props, {type: _this.state.type}))
-					: 
-					null
-				}
-			</ReactCSSTransitionGroup>
+			</div>
 	}
 }
 

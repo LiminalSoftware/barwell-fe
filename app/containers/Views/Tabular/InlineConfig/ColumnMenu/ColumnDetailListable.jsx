@@ -28,7 +28,7 @@ var ColumnDetailListable = React.createClass({
 	minWidth: '500px',
 	
 	handleConfigClick: function (part, e) {
-		this.setState({configPart: part})
+		this.props._showPopUp(part)
 		util.clickTrap(e)
 	},
 

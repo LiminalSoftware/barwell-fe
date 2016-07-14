@@ -84,7 +84,7 @@ module.exports = {
       id: 'BOOLEAN',
       description: 'True/False',
       category: 'Basic',
-      icon: 'check-square'
+      icon: 'check'
     },
     
     'COLOR': {

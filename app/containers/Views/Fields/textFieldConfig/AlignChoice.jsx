@@ -11,7 +11,7 @@ import util from '../../../../util/util'
 var AlignChoice = React.createClass({
 
   partName: 'AlignChoice',
-
+  
   mixins: [blurOnClickMixin, popdownClickmodMixin, configCommitMixin],
 
   // LIFECYCLE ==============================================================
