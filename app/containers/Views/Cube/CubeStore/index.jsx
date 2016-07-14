@@ -50,11 +50,11 @@ var createCubeStore = function (view, dimensions) {
         column: []
     };
 
-    var _startIndex = {
+    var _offset = {
         row: null,
         column: null
     };
-    var _requestedStartIndex = {
+    var _requestedOffset = {
         row: null,
         column: null
     };
@@ -103,9 +103,13 @@ var createCubeStore = function (view, dimensions) {
             at = Math.min(at, _levels[dimension].length - 1)
             return _.clone(_levels[dimension][at])
         },
-        
+
         getStart: function (dimension) {
-            return _startIndex[dimension]
+            return _offset[dimension]
+        },
+
+        getRequestedStart: function (dimension) {
+            return _requestedOffset[dimension]
         },
 
 
@@ -164,15 +168,14 @@ var createCubeStore = function (view, dimensions) {
             }
 
             if (type === 'CUBE_REQUESTVALUES' && payload.view_id === view.view_id) {
-                _startIndex.row = payload.startIndex.row;
-                _startIndex.column = payload.startIndex.column;
-                _values = {}
+                _requestedOffset = payload.offset
             }
 
             if (type === 'CUBE_RECEIVEVALUES' && payload.view_id === view.view_id) {
                 var _this = this;
                 var dimensions = _dimensions.row.concat(_dimensions.column).filter(_.identity);
 
+                _offset = payload.offset
                 _values = {};
                 (payload.values || []).forEach(function (v) {
                     var key = formKey(v, dimensions); // _levels.map(l => v[l]).join(DELIMITER)

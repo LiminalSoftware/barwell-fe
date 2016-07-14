@@ -44,10 +44,7 @@ var CubeBodyWrapper = React.createClass ({
 		var view = this.props.view
 		var geo = view.data.geometry
 		return {
-			requestedRowDimensions: null,
-			requestedColumnDimensions: null,
-			verticalOffset: 0,
-			horizontalOffset: 0
+			offset: {row: 0, column: 0}
 		}
 	},
 
@@ -75,11 +72,9 @@ var CubeBodyWrapper = React.createClass ({
 	},
 
 	fetch: function () {
-		var _this = this
+		var offset = this.state.offset
 		var view = this.props.view
 		var store = this.props.store
-		var hOffset = this.state.hOffset || 0
-		var vOffset = this.state.vOffset || 0
 
 		if (view._dirty) return;
 
@@ -88,9 +83,7 @@ var CubeBodyWrapper = React.createClass ({
 			modelActionCreators.fetchCubeLevels(view, store, 'column'),
 		]).then(function () {
 			return modelActionCreators.fetchCubeValues(
-				view, store, 
-				hOffset, WINDOW_ROWS, 
-				vOffset, WINDOW_COLS
+				view, store, offset
 			)
 		})
 	},

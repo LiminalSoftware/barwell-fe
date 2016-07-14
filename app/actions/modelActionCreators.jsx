@@ -20,6 +20,7 @@ var BASE_URL = 'http://api.metasheet.io'
 const MAX_CUBE_LEVELS = 5000
 const WINDOW_ROWS = 50
 const WINDOW_COLS = 30
+const CUBE_OFFSET_TOLERANCE = 10
 
 var _actionCid = 0;
 
@@ -345,12 +346,14 @@ var modelActions = {
 		})
 	},
 
-	fetchCubeValues: function (view, store, vOffset, hOffset) {
-		var offset = 0
-		var limit = 1000
+	fetchCubeValues: function (view, store, offset) {
 		var view_id = view.view_id
 		var url = BASE_URL + '/v' + view_id
 		var sortSpec = (view.data.rowSortSpec || []).concat(view.data.columnSortSpec || []);
+		var shouldFetch = ['row', 'column'].some(function (dim) {
+			var reqStart = store.getRequestedStart(dim)
+			return (reqStart === null) || Math.abs(reqStart - offset[dim]) > CUBE_OFFSET_TOLERANCE
+		})
 		var sort = (sortSpec.length > 0 ? 'order=' : '') + sortSpec.map(function(s) {
 			var column = view.data.columns[s.attribute]
 			return 'a' + column.attribute_id + (column.descending ? '.desc' : '.asc')
@@ -358,7 +361,7 @@ var modelActions = {
 		
 		var filter = [];
 		var makeFilterStr = function (agg, dimension, pos, invert) {
-			var obj = store.getLevel(dimension, pos) || {}
+			var obj = store.getLevel(dimension, pos)
 			var val = obj['a' + agg]
 			var dir = (view.data.columns['a' + agg].descending)
 			if (invert) dir = !dir
@@ -367,20 +370,17 @@ var modelActions = {
 			);
 		}
 
-		['row', 'column'].map(function (dim) {
-			store.getStart(dim)
-		})
-		
+		if (!shouldFetch) return;
 		
 		// the current filter only uses the highest-level aggregator
 		// going deeper would require "or" conditions in the request or multiple requests
 		if (view.row_aggregates.length) {
-			makeFilterStr(view.row_aggregates[0], 'row', vOffset, false)
-			makeFilterStr(view.row_aggregates[0], 'row', vOffset + WINDOW_ROWS, true)	
+			makeFilterStr(view.row_aggregates[0], 'row', offset.row, false)
+			makeFilterStr(view.row_aggregates[0], 'row', offset.row + WINDOW_ROWS, true)	
 		}
 		if (view.column_aggregates.length) {
-			makeFilterStr(view.column_aggregates[0], 'column', hOffset, false)
-			makeFilterStr(view.column_aggregates[0], 'column', hOffset + WINDOW_COLS, true)
+			makeFilterStr(view.column_aggregates[0], 'column', offset.column, false)
+			makeFilterStr(view.column_aggregates[0], 'column', offset.column + WINDOW_COLS, true)
 		}
 		
 		url += '?' + filter.concat(sort || []).join('&')
@@ -390,11 +390,18 @@ var modelActions = {
 			'Range': '0' + '-' + (WINDOW_ROWS * WINDOW_COLS)
 		}
 
+		MetasheetDispatcher.dispatch({
+			actionType: 'CUBE_REQUESTVALUES',
+			offset: offset,
+			view_id: view.view_id
+		});
+
 		return webUtils.ajax('GET', url, null, header).then(function (results) {
 			var rangeParts = results.xhr.getResponseHeader('Content-Range').split(/[-/]/);
 			MetasheetDispatcher.dispatch({
 				numberResults: parseInt(rangeParts[2]),
 				actionType: 'CUBE_RECEIVEVALUES',
+				offset: offset,
 				values: results.data,
 				view_id: view.view_id
 			});
