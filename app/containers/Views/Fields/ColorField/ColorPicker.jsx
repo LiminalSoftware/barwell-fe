@@ -11,7 +11,7 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import CommitMixin from '../commitMixin'
 import ColorValidationMixin from './ColorValidationMixin'
 import MenuKeysMixin from '../MenuKeysMixin'
-import makeColorPickerRows from './makeColorPickerRows'
+import ColorPickerWidget from './ColorPickerWidget'
 
 var NUM_HUES = 10
 
@@ -47,7 +47,7 @@ var ColorPicker = React.createClass({
 		var current = obj[config.column_id]
 
 		return <PopDownMenu {...this.props} green = {true}>
-			{makeColorPickerRows(current, this.clickChoice)}
+			
 		</PopDownMenu>
 	}
 });

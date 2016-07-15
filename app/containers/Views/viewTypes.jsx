@@ -26,8 +26,8 @@ var viewTypes = {
 	// 	category: "Tables",
 	// 	description: ""
 	// },
-	Tabular: {
-		type: "Tabular",
+	Table: {
+		type: "Table",
 		icon: "icon-grid",
 		groomer: TabularGroomer,
 		mainElement: TabularMain,

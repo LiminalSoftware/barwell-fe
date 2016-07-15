@@ -25,6 +25,10 @@ var textField = {
 	configParts: [AlignChoice, ColorChoice, TextChoice],
 	
 	sortable: true,
+
+	category: 'General',
+
+	description: 'Text',
 	
 	sortIcon: 'sort-alpha-',
 	

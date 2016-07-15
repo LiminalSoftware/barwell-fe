@@ -12,12 +12,27 @@ import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import blurOnClickMixin from '../../../../../blurOnClickMixin';
+import configCommitMixin from '../../../Fields/configCommitMixin';
+import popdownClickmodMixin from '../../../Fields/popdownClickmodMixin';
 
 var AttributeConfig = React.createClass({
+
+	partName: 'AttributeConfig',
+  
+  	mixins: [blurOnClickMixin, popdownClickmodMixin, configCommitMixin],
+
+  	getInitialState: function () {
+  		return {}
+  	},
+
 	// RENDER ===================================================================
 
-	render: function() {
-		return <div className = "menu-sub-item-boxed"  onClick = {util.clickTrap}>
+	getIcon: function () {
+		return ' icon icon-cog'
+	},
+
+	renderMenu: function() {
+		return <div className = "popdown-section">
 			<div className = "popdown-section">
 		      <div className = "popdown-item bottom-divider title">Alter Attribute</div>
 		      <div className = "popdown-item"><span className = "icon icon-stamp"/>Default value: <input value = ""/></div>

@@ -39,6 +39,10 @@ var dateField = {
 
 	sortIcon: 'sort-time-',
 
+	category: 'Dates and Times',
+
+	description: 'Date',
+
 	icon: 'calendar-31',
 
 	stringify: function (value) {

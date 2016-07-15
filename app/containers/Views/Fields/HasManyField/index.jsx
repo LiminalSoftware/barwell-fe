@@ -25,6 +25,10 @@ var hasManyField = {
 
 	icon: 'arrows-split',
 
+	category: 'Relations',
+
+	description: 'Has-many',
+
 	configParts: [AlignChoice, LabelChoice, BubbleColorchoice],
 
 	configCleanser: function (config) {

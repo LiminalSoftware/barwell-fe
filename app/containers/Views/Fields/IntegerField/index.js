@@ -27,6 +27,10 @@ var integerField = {
 
 	icon: 'abacus small ',
 
+	category: 'General',
+
+	description: 'Integer',
+
 	defaultWidth: 80,
 
 	defaultAlign: 'right',

@@ -39,6 +39,10 @@ var hasOneField = {
 
 	icon: 'arrows-merge',
 
+	category: 'Relations',
+
+	description: 'Has one',
+
 	configParts: [AlignChoice, LabelChoice, BubbleColorchoice],
 
 	element: React.createClass({

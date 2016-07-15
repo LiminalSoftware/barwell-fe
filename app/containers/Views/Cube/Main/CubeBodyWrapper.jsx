@@ -193,9 +193,7 @@ var CubeBodyWrapper = React.createClass ({
 								top: 0,
 								width: (this.props.bodyWidth) + 'px',
 								bottom: 0,
-								marginTop: HAS_3D ? 0 : (this.props.vOffset + 2 + 'px'),
-								
-								// marginLeft: HAS_3D ? 0 :(-1 * this.props.hOffset - 1) + 'px'
+								marginTop: HAS_3D ? 0 : (this.props.vOffset + 2 + 'px')
 							}}>
 						<CubeTBody
 							{...this.props}

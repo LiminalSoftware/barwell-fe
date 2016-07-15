@@ -97,15 +97,14 @@ var ColumnMenu = React.createClass({
 		}
 		configProps.open = true;
 		configProps.ref = 'popUp'
-		// var part = React.createElement(part, configProps);
-		this.setState({popUpPart: part, popUpConfig: configProps})
+		
+		this.setState({popUpPart: part, popUpConfig: configProps, context: true})
 		if (e) util.clickTrap(e)
 	},
 
 	// UTILITY ================================================================
 
 	blurChildren: function () {
-		console.log('blurChildren')
 		this.setState({popUpPart: null})
 		if (this.refs.list) this.refs.list.blurSiblings()
 	},
@@ -241,16 +240,15 @@ var ColumnMenu = React.createClass({
 			<div className="header-label">Attributes</div>
 				<div className = "model-views-menu">
 
-					<ReactCSSTransitionGroup 
-						component = "div"
-						onClick={this.clickTrap}
-						className="model-views-menu-inner"
-						{...transitionProps}>
+					<div onClick={this.clickTrap}
+						className="model-views-menu-inner">
 						{
 							this.state.open ? 
 							<div className = "dropdown-menu" style = {{minWidth: '550px'}}>
-								<div className="menu-sub-item menu-divider" onClick = {_this.blurChildren}>
-									<div className = "menu-divider-inner">
+								<div className="menu-sub-item menu-divider" 
+									onClick = {_this.blurChildren} 
+									style = {{overflowY: 'scroll'}}>
+									<div className = "menu-divider-inner" >
 										<span className = {"icon " + firstSection.icon} style = {{flexGrow: 0}}/>
 										<span style = {{flexGrow: 0}}>{firstSection.label}</span>
 									</div>
@@ -264,11 +262,16 @@ var ColumnMenu = React.createClass({
 									_blurChildren = {_this.blurChildren}
 									editing = {this.state.editing}/>
 								
-								{this.renderButtonBar()}
 								
-								{this.state.popUpPart ?
-									React.createElement(this.state.popUpPart, this.state.popUpConfig)
-									: null }
+								<div className="menu-sub-item menu-divider" 
+									onClick = {_this.blurChildren} 
+									style = {{overflowY: 'scroll'}}>
+									<div className = "menu-divider-inner--green" >
+										<span className = "icon icon-plus"/>
+										<span>Add new attribute</span>
+									</div>
+								</div>
+								
 							</div>
 
 							:
@@ -276,6 +279,8 @@ var ColumnMenu = React.createClass({
 							<ColumnDetail
 								ref = 'columnDetail'
 								key = {currentCol.column_id}
+								minWidth = '100px'
+								_showPopUp = {_this.showPopUp}
 								_blurChildren = {_this.blurChildren}
 								config = {currentCol} view = {view}/>
 							
@@ -284,7 +289,10 @@ var ColumnMenu = React.createClass({
 								No selection...
 							</div>
 						}
-					</ReactCSSTransitionGroup>
+					{this.state.popUpPart && (this.state.open || this.state.context) ?
+						React.createElement(this.state.popUpPart, this.state.popUpConfig)
+						: null }
+					</div>
 				<div className={"dropdown" + (this.state.open ? "--open " : " ") 
 					+ " icon--small icon icon-chevron-down"} 
 					onClick = {this.handleOpen}>

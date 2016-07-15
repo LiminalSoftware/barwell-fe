@@ -19,7 +19,9 @@ var BlurOnClickMixin = {
     // this.clickTrap();
     
     if (this.props._blurSiblings) this.props._blurSiblings();
-    this.setState({open: true})
+    if (this.blurChildren) this.blurChildren();
+
+    this.setState({open: true, context: false})
     modelActionCreators.setFocus('view-config');
     this.clickTrap(e);
   },

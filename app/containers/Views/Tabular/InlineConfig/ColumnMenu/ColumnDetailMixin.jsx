@@ -93,9 +93,21 @@ var ColumnDetailMixin = {
 
 	// RENDER ===================================================================
 
-	getEditModeContent: function () {
-		return <div className="menu-item column-menu-item-width"
-				style = {{minWidth: this.props.minWidth, display: 'block'}}>
+	renderEditMode: function () {
+		var _this = this;
+	    var view = this.props.view;
+	    var model = this.props.model;
+	    var config = this.props.config;
+		var fieldType = fieldTypes[config.type] || {};
+		var configProps = {
+			view: view,
+			model: model,
+			config: config,
+			type: this.state.type,
+			_chooseType: this.chooseType
+		}
+
+		return  <div className = "menu-sub-item">
 			<span ref = "grabber" className="draggable drag-grid"/>
 			<input className = "menu-input text-input" 
 				ref = "attributeNameInput"
@@ -103,10 +115,11 @@ var ColumnDetailMixin = {
 				onBlur = {this.handleBlurName}
 				onChange = {this.handleNameChange}/>
 			<span>
-				<TypePicker {...this.props}
+				<TypePicker
 					ref = "typePicker"
+					config = {config}
 					_blurSiblings = {_this.props._blurSiblings}
-					_handleConfigClick = {_this.handleConfigClick.bind(_this, TypePicker)}
+					_showPopUp = {_this.props._showPopUp.bind(null, TypePicker, configProps)}
 					_chooseType = {_this.chooseType}
 					type = {this.state.type}/>
 			</span>
@@ -114,138 +127,82 @@ var ColumnDetailMixin = {
 				<span  className = "pop-down clickable "
 					onClick = {_this.handleDelete}>
 					<span className = "icon icon-cross-circle"/>
-				</span>   
-				<span  className = "pop-down clickable"
-					onClick = {_this.handleConfigClick.bind(_this, AttributeConfig)}>
-					<span className = "icon icon-cog"/>
 				</span>
+				
+				{
+					React.createElement(AttributeConfig, _.extend(
+						{
+							key: 'attributeConfig',
+							ref: 'attributeConfig',
+							_blurSiblings: _this.props._blurSiblings,
+							_showPopUp: _this.props._showPopUp.bind(null, AttributeConfig, configProps)
+						},
+						configProps
+					))
+				}
+				{
+					config._isNew ? 
+						<span className = "pop-down pop-down--greensolid">New</span>
+						: null
+				}
 			</span>
+			
 		</div>
 	},
 
-	getFormatModeContent: function () {
-		return <div className={"menu-item" + (this.singleton ? " singleton " : " column-menu-item-width")}
-				style = {{minWidth: this.props.minWidth, display: 'block'}}>
-			{
-			this.props.open ? <span ref = "grabber" className="draggable drag-grid"/> : null
+	renderFormatMode: function () {
+		var _this = this;
+	    var view = this.props.view;
+	    var model = this.props.model;
+	    var config = this.props.config;
+		var fieldType = fieldTypes[config.type] || {};
+		var configProps = {
+			view: view,
+			model: model,
+			config: config,
+		}
+
+		return <div className = "menu-sub-item">
+			{this.props.open ? 
+				<span ref = "grabber" className="draggable drag-grid"/> 
+				: null
 			}
-			<span>{config.name}</span>
-			<span>
+			<span className = "ellipsis">
+				{config.name}
+			</span>
+			<span className = "ellipsis">
 			{
 				(fieldType.configParts || []) /* config parts associated with the field type*/
-					.concat(this.props.viewConfigParts || []) /* config parts passed down from the view*/
-					.map(function (part, idx) {
-					var configProps = {
-						view: view,
-						model: model,
-						config: config
-					}
-					return React.createElement(part, _.extend({
-						_blurSiblings: _this.props._blurSiblings || _this.blurSubMenus,
+				.concat(this.props.viewConfigParts || []) /* config parts passed down from the view*/
+				.map(function (part, idx) {
+					
+					var localProps = {
 						key: part.prototype.partName,
 						ref: part.prototype.partName,
-						showPopUp: _this.props.showPopUp ? 
+						_blurSiblings: _this.props._blurSiblings || _this.blurSubMenus,
+						_showPopUp: _this.props._showPopUp ? 
 							_this.props._showPopUp.bind(null, part, configProps)
 							: null
-					}, configProps));
-			})
+					}
+					return React.createElement(part, _.extend(
+						localProps,
+						configProps
+					));
+				})
 			}
 			</span>
 		</div>
 	},
 
 	render: function() {
-		var _this = this;
-	    var view = this.props.view;
-	    var model = this.props.model;
-	    var config = this.props.config;
-		var fieldType = fieldTypes[config.type] || {};
-		var editing = this.props.editing
+	    return	<div className="menu-item column-menu-item-width"
+			style = {{minWidth: this.props.minWidth, display: 'block'}}>
 
-	    return	<div className={"menu-item" + (this.singleton ? " singleton " : " column-menu-item-width")}
-					style = {{minWidth: this.props.minWidth, display: 'block'}}>
-
-				<div className = {"menu-sub-item " + (this.props._isNew ? " new-menu-sub-item" : "")}>
-				{
-				this.props.open ? 
-				<span ref = "grabber" className="draggable drag-grid"/>
-				: null
-				}
-
-		      	<span className = {editing ? "" : "ellipsis"}>
-					{
-					editing ?
-					<input className = "menu-input text-input" 
-						ref = "attributeNameInput"
-						value={this.state.name}
-						onBlur = {this.handleBlurName}
-						onChange = {this.handleNameChange}/>
-					: <span className = {"type-icon icon icon-" + fieldType.icon}/>
-					}
-					{
-					editing ? 
-					null
-					:
-					<span>{config.name}</span>
-					}
-				</span>
-				
-				{editing ?
-					<span>
-						<TypePicker {...this.props}
-							ref = "typePicker"
-							_blurSiblings = {_this.props._blurSiblings}
-							_handleConfigClick = {_this.handleConfigClick.bind(_this, TypePicker)}
-							_chooseType = {_this.chooseType}
-							type = {this.state.type}/>
-					</span>
-					:
-					<span>
-					{
-						(fieldType.configParts || []) /* config parts associated with the field type*/
-						.concat(this.props.viewConfigParts || []) /* config parts passed down from the view*/
-						.map(function (part, idx) {
-							var configProps = {
-								view: view,
-								model: model,
-								config: config,
-							}
-							var localProps = {
-								key: part.prototype.partName,
-								ref: part.prototype.partName,
-								_blurSiblings: _this.props._blurSiblings || _this.blurSubMenus,
-								_showPopUp: _this.props._showPopUp ? 
-									_this.props._showPopUp.bind(null, part, configProps)
-									: null
-							}
-							return React.createElement(part, _.extend(
-								localProps,
-								configProps
-							));
-						})
-					}
-					</span>
-				}
-				{
-				editing ?
-				<span>
-					<span  className = "pop-down clickable" style = {{float: 'right', width: '15px', minWidth: '15px'}}
-					onClick = {_this.handleDelete}>
-						<span className = "icon icon-cross-circle" style={{width: '15px', minWidth: '15px', textAlign: 'center', marginRight: 0}}/>
-					</span>   
-					<span  className = "pop-down clickable" style = {{float: 'right', width: '15px', minWidth: '15'}}
-						onClick = {_this.handleConfigClick.bind(_this, AttributeConfig)}>
-						<span className = "icon icon-cog"  style = {{textAlign: 'center', marginRight: 0}}/>
-						{this.state.configPart === AttributeConfig ?
-							<span className = "pop-down-overlay"><span className = "icon icon-cog" style = {{margin: 0}}/></span> 
-							: null
-						}
-					</span>
-				</span>
-				: null
-				}
-				</div>
-			</div>
+			{this.props.editing ? 
+				this.renderEditMode() 
+				: this.renderFormatMode()
+			}
+		</div>
 	}
 }
 

@@ -19,8 +19,6 @@ var ColorElement = React.createClass({
 
 	handleEdit: _.noop,
 
-	defaultWidth: 80,
-
 	showPicker: function () {
 		this.setState({open: true})
 	},
@@ -86,7 +84,16 @@ var ColorElement = React.createClass({
 });
 
 var colorField = {
+	defaultWidth: 80,
+
+	sortable: false,
+
+	category: 'General',
+
+	description: 'Color',
+
 	icon: 'eye-dropper',
+
 	element: ColorElement	
 }
 

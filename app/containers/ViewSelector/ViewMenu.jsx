@@ -36,10 +36,7 @@ var ViewMenu = React.createClass({
 	},
 
 	getInitialState: function () {
-		return {
-			editing: false,
-			adding: false
-		}
+		return {editing: false}
 	},
 
 	// HANDLERS ===============================================================
@@ -53,68 +50,28 @@ var ViewMenu = React.createClass({
 		this.setState({adding: false});
 	},
 
-	handleAddNewChoices: function () {
-		this.setState({
-			adding: true, 
-			editing: true
-		});
-	},
-
-	handleEdit: function () {
-		this.setState({editing: true})
-	},
-
-	handleSave: function () {
-		this.refs.viewList.saveChanges();
-		this.setState({editing: false, adding: false})
-	},
-
-	handleCancelEdit: function () {
-		this.refs.viewList.cancelChanges();
-		this.setState({editing: false, adding: false});
+	toggleEdit: function () {
+		if (this.state.editing) this.save()
+		this.setState({editing: !this.state.editing})
 	},
 
 	// UTILITY ================================================================
 
-	getButtonBar: function () {
-		return <div className="menu-item menu-config-row" key="detail-menu-items">
-			{
-				this.state.editing ?
-				<div className = {"menu-sub-item padded menu-clickable " + (this.state.adding ? "border-bottom" : "")}
-					onClick = {this.handleSave}>
-					<span className = "icon icon-check"/> Save changes
-				</div>
-				:
-				<div className = "menu-sub-item padded menu-clickable"
-					onClick = {this.handleEdit}>
-					<span className = "icon icon-pencil"/> Edit views
-				</div>
-			}
-			{
-				this.state.editing ?
-				<div className = {"menu-sub-item padded menu-clickable " + (this.state.adding ? "border-bottom" : "")}
-					onClick = {this.handleCancelEdit}>
-					<span className = "icon icon-cross2"/>Cancel changes
-				</div>
-				:
-				<div className="menu-sub-item padded menu-clickable" 
-					onClick = {this.handleAddNewChoices}>
-					<span className = "icon icon-plus"/> Add view
-				</div>
-			}
-			
-		</div>
+	save: function () {
+		ViewStore.query({model_id: this.props.model.model_id}).map(function (view) {
+			if (view._destroy) modelActionCreators.destroy("view", true, view);
+			else if (view._dirty)modelActionCreators.create("view", true, view);
+		})
+		this.setState({editing: false})
 	},
 
 	// RENDER =================================================================
-
-
 
 	render: function () {
 		var _this = this;
 		var model = this.props.model;
 		var view = this.props.view || {};
-		var views = ViewStore.query({model_id: model.model_id});
+		var views = ViewStore.query({model_id: model.model_id}).filter(v => !v._destroy);
 		var editing = this.state.editing;
 		var config = ModelConfigStore.get(model.model_id) || {};
 
@@ -123,6 +80,16 @@ var ViewMenu = React.createClass({
 		return <div className = "dropdown-menu "
 					key = "list-wrapper"
 					style = {{minWidth: "250px", maxHeight: (this.state.windowHeight - 100) + 'px'}}>
+
+				<div className = "menu-item menu-sub-item menu-divider" key = "custom-views">
+					<div className="menu-divider-inner">
+						<span className = "icon icon-binoculars"/>
+						All Metaphors
+						<span className = {"icon icon-cog config-toggle" 
+							+ (this.state.editing ? '--toggled' : '')}
+							onClick = {this.toggleEdit}/>
+					</div>
+				</div>
 			
 				<ViewList ref = "viewList"
 					items = {views}
@@ -130,41 +97,7 @@ var ViewMenu = React.createClass({
 					config = {config}
 					{..._this.props}
 					key = "orderable-list"/>
-
-			{
-				this.state.editing && !this.state.adding ?
-				<div className = "menu-item menu-config-row" key = "config-row">
-					<div className="menu-sub-item padded menu-clickable" 
-						onClick = {this.handleAddNewChoices}>
-						<span className = "icon icon-plus"/> Add view
-					</div>
-				</div>
-				: null
-			}
-			{
-				this.state.adding ?
-				<div className = "menu-item menu-config-row" key = "add-row">
-					<div className="menu-sub-item menu-divider">
-						<span className = "icon icon-plus"/>
-						Select new view type:
-					</div>
-				</div>
-				: null
-			}
-			{
-				this.state.adding ? 
-				_.map(viewTypes, function (type, typeKey) {
-		        	return <div className = "menu-item menu-item menu-sub-item menu-clickable"
-		            	onClick = {_this.handleAddNewView.bind(_this, type)}
-		            	key = {typeKey}>
-		            	<span className = {"large icon view-icon " + type.icon}/>
-		            	{type.type}
-		            </div>
-		        })
-				:
-				null
-			}
-			{this.getButtonBar()}
+			
 		</div>
 	}
 })

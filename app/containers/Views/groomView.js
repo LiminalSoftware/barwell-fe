@@ -18,7 +18,7 @@ var enumerate = function (things, identifier) {
 }
 
 var groomView = function (view) {
-	if(!(view.type in viewTypes)) view.type = "Tabular"
+	if(!(view.type in viewTypes)) view.type = "Table"
 	view.data = view.data || {}
 	view.data.icon = viewTypes[view.type].icon
 	var groomer = viewTypes[view.type].groomer

@@ -34,6 +34,10 @@ var decimalField = {
 
 	icon: 'dial',
 
+	category: 'General',
+
+	description: 'Decimal field',
+
 	defaultAlign: 'right',
 
 	defaultWidth: 100,

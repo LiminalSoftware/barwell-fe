@@ -105,13 +105,25 @@ var CheckboxElement = React.createClass({
 
 var booleanField = {
 	defaultWidth: 50,
+
 	sortable: true,
+
 	sortIcon: 'sort-amount-',
+
+	category: 'General',
+
+	description: 'True / false',
+
 	icon: 'check-square',
+
 	configParts: [ColorChoice],
+
 	expandable: false,
+
 	defaultAlign: 'center',
+	
 	element: CheckboxElement,
+
 	uneditable: false,
 
 	stringify: function (input) {

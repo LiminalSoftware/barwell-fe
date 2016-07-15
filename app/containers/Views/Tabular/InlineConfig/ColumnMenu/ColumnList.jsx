@@ -187,9 +187,9 @@ var ColumnList = React.createClass({
     	return <div className = "dropdown-list" 
     		ref = "columnList"
     		style = {{
-    			minWidth: '500px', 
     			maxHeight: (this.state.windowHeight - 250) + 'px',
-    			overflowY: 'scroll'
+    			overflowY: 'scroll',
+    			overflowX: 'hidden'
     		}} onClick = {_this.props._blurChildren}>
 			{items}
 		</div>

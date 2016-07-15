@@ -8,6 +8,7 @@ import { Link } from "react-router";
 
 import ViewItemMovable from './ViewItemMovable';
 import ViewItemSingleton from './ViewItemSingleton';
+import NewViewAdder from './NewViewAdder'
 import sortItems from './sortItems';
 
 import modelActionCreators from "../../actions/modelActionCreators.jsx";
@@ -94,6 +95,7 @@ var ViewList = React.createClass({
 		
 		while (ViewStore.query({model_id: model.model_id, view: name}).length > 0)
 			name = 'New ' + type.type + ' ' + (iter++);
+
 		modelActionCreators.createView({
 			view: name,
 			model_id: model.model_id,
@@ -110,6 +112,7 @@ var ViewList = React.createClass({
 		var model = this.props.model;
 
 		return <div className = "dropdown-list">
+
 			{this.state.items.map(function(v, idx) {
 
 				var itemProps = {
@@ -119,9 +122,6 @@ var ViewList = React.createClass({
 					selected: (view.view_id === v.view_id),
 					view: v,
 					model: _this.props.model,
-					editing: _this.props.editing,
-					_blurMenu: _this.props._blurMenu,
-					_selectDefault: _this.selectDefault
 				};
 
 				return _this.props.editing ?
@@ -130,8 +130,9 @@ var ViewList = React.createClass({
 					<ViewItemSingleton {...itemProps}/>;
 			})}
 
+			
 			<Link to = {`/workspace/${model.workspace_id}/model/${model.model_id}/view/config`}
-				className = {"menu-item menu-sub-item menu-clickable" + 
+				className = {"menu-item menu-sub-item " + 
 					(!view ? " menu-selected " : " ")}
 				 key="model-editor">
 				<span className = "icon icon-pencil-ruler"></span>
@@ -139,12 +140,16 @@ var ViewList = React.createClass({
 			</Link>
 
 			<Link to = {`/workspace/${model.workspace_id}/model/${model.model_id}/view/history`}
-				className = {"menu-item menu-sub-item menu-clickable " + 
+				className = {"menu-item menu-sub-item  " + 
 					(!view ? " menu-selected " : " ")}
 				 key="change-history">
 				<span className = "icon icon-library"></span>
 				<span className = "double-column-config">History</span>
 			</Link>
+
+			<NewViewAdder/>
+
+			
 		</div>
 	}
 })
