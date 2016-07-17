@@ -134,6 +134,8 @@ var ColumnDetailMixin = {
 						{
 							key: 'attributeConfig',
 							ref: 'attributeConfig',
+							model: this.props.model,
+							config: config,
 							_blurSiblings: _this.props._blurSiblings,
 							_showPopUp: _this.props._showPopUp.bind(null, AttributeConfig, configProps)
 						},
@@ -168,7 +170,19 @@ var ColumnDetailMixin = {
 				: null
 			}
 			<span className = "ellipsis">
+				<TypePicker
+					ref = "typePicker"
+					config = {config}
+					_blurSiblings = {_this.props._blurSiblings}
+					_showPopUp = {_this.props._showPopUp.bind(null, TypePicker, configProps)}
+					_chooseType = {_this.chooseType}
+					type = {this.state.type}/>
+					
 				{config.name}
+				{
+					(model || {}).label_attribute_id === (config || {}).attribute_id ?
+						<span className = 'icon icon-tag' style = {{marginLeft: '8px'}}/> : null
+				}
 			</span>
 			<span className = "ellipsis">
 			{
@@ -191,6 +205,21 @@ var ColumnDetailMixin = {
 				})
 			}
 			</span>
+			{this.props.open ? 
+			<span style={{flexDirection: 'row-reverse', maxWidth: '35px', marginRight: '10px'}}>
+				{
+					React.createElement(AttributeConfig, _.extend(
+						{
+							key: 'attributeConfig',
+							ref: 'attributeConfig',
+							_blurSiblings: _this.props._blurSiblings,
+							_showPopUp: _this.props._showPopUp.bind(null, AttributeConfig, configProps)
+						},
+						configProps
+					))
+				}
+			</span>
+			: null}
 		</div>
 	},
 

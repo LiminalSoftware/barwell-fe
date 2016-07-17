@@ -154,7 +154,7 @@ var ColorChoice = React.createClass({
 
       <div key = "color-divider " 
         className = 'popdown-item title bottom-divider'>
-        Background Color
+        Configure Background Color:
       </div>
 
       {

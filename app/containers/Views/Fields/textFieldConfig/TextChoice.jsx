@@ -31,6 +31,14 @@ var TextChoice = React.createClass({
     }
   },
 
+  componentWillReceiveProps: function (nextProps) {
+    var config = nextProps.config
+    this.setState({
+      textConditionAttr: config.textConditionAttr,
+      style: config.style
+    })
+  },
+
   choosetextConditionAttr: function (attributeId) {
     this.commitChanges({textConditionAttr: attributeId})
   },

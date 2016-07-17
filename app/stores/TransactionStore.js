@@ -38,6 +38,7 @@ var TransactionStore = storeFactory({
 			case 'RECORD_MULTIUPDATE':
 			case 'RECORD_MULTIDELETE':
 			case 'RECORD_CREATE':
+				if (action.isClean && !action.action_id) return
 				if (!('type' in action)) action.type = 'pending-item'
 				if (!('status' in action)) action.status = 'active'
 	        	_this.create(action);

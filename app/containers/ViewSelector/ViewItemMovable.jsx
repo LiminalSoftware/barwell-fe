@@ -45,7 +45,7 @@ var ViewItemMovable = React.createClass({
 		var model = this.props.model
 
 		if (view)
-			return <div className = "menu-item menu-sub-item  "  style = {{minWidth: "250px"}}>
+			return <div className = "menu-item menu-sub-item  "  style = {{minWidth: "300px"}}>
 				<span ref = "grabber" className="draggable drag-grid"/>
 				<span className = {"icon " + viewTypes[view.type].icon}></span>
 				<span className = {"double ellipsis " + (this.state.deleting ? " strike-through" : "")}>

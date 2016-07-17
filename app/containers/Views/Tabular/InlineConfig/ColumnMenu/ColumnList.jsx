@@ -143,8 +143,6 @@ var ColumnList = React.createClass({
 	render: function() {
 		var _this = this;
 		var view = this.props.view;
-		var data = view.data;
-		var columns = view.data.columnList;
 		var section = this.props.sections[0];
 		var numTotalItems = this.state.items.length;
 
@@ -152,6 +150,8 @@ var ColumnList = React.createClass({
 			var itemProps = Object.assign({
 				item: item,
 				index: idx,
+				model: _this.props.model,
+				view: _this.props.view
 			}, _this.movableProps);
 
 			if (item.isSection) section = item;
@@ -178,7 +178,6 @@ var ColumnList = React.createClass({
 				spaceBottom = {numTotalItems - idx}
 				viewConfigParts = {section ? section.configParts : null}
 				editing = {_this.props.editing}
-				view = {view}
 				_blurSiblings = {_this.blurSiblings}
 				_showPopUp = {_this.props._showPopUp}
 				{...itemProps}/>
@@ -188,7 +187,7 @@ var ColumnList = React.createClass({
     		ref = "columnList"
     		style = {{
     			maxHeight: (this.state.windowHeight - 250) + 'px',
-    			overflowY: 'scroll',
+    			overflowY: 'auto',
     			overflowX: 'hidden'
     		}} onClick = {_this.props._blurChildren}>
 			{items}

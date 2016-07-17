@@ -46,7 +46,8 @@ var PrimaryKeyField = {
 	sortable: true,
 	sortIcon: 'sort-numeric-',
 	element: PrimaryKeyElement,
-	uneditable: true
+	uneditable: true,
+	unchangeable: true
 }
 
 export default PrimaryKeyField

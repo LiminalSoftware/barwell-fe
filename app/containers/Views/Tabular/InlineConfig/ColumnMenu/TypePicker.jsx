@@ -16,14 +16,18 @@ var TypePicker = React.createClass({
 
 	partName: 'TypePicker',
 
+	classes: 'popdown-borderless',
+
 	// LIFECYCLE ==============================================================
 
 	getInitialState: function () {
 		var config = this.props.config
+		var fieldType = fieldTypes[config.type] || {}
+
 		return {
 			open: false,
 			type: config.type,
-			category: 'Basic'
+			category: fieldType.category
 		}
 	},
 
@@ -46,15 +50,25 @@ var TypePicker = React.createClass({
 			.map(type => fieldTypes[type].category))
 			.filter(_.identity);
 
-		console.log(categories)
-
-		return <div className = "popdown-section">{categories.map(function (category) {
-			return <div className = {"popdown-item selectable " + 
-				(category === _this.state.category ? ' selected ' : '')}
+		return <div className = "popdown-section">
+		<div className="popdown-item bottom-divider title">
+			Choose Attribute Type:
+		</div>
+		<div className = "popdown-item menu-row bottom-divider"
+			style = {{paddingBottom: 0}}>
+		{categories.map(function (category) {
+			var isSelected = (category === _this.state.category)
+			return <span className = {"menu-choice selectable " + 
+				(isSelected ? ' selected ' : '')}
+				style = {{position: 'relative'}}
 				onMouseDown = {_this.handleChooseCategory.bind(_this, category)}>
+
+			{isSelected ? <span className = "pop-up-pointer-inner"/> : null}
+			{isSelected ? <span className = "pop-up-pointer-outer"/> : null}
 			{category}
-			</div>
+			</span>
 		})}</div>
+		</div>
 	},
 
 	renderFieldList: function () {
@@ -65,19 +79,23 @@ var TypePicker = React.createClass({
 
 		return <div className = "popdown-section">{
 			types.map(function (type) {
-			return <div className = {"popdown-item selectable " + 
+			return <span className = {"popdown-item " + 
 				(type === _this.state.type ? ' selected' : '')}
 				onClick = {_this.handleChooseType.bind(_this, type.id)}>
 
 				<span className = {"icon icon-" + type.icon}/>
 				{type.description}
-			</div>
+			</span>
 		})
 		}</div>
 	},
 
 	renderMenu: function () {
-		return [
+		var fieldType = fieldTypes[this.state.type] || {}
+		if (fieldType.unchangeable) return <div className = "popdown-section">
+			This attribute cannot be changed.
+		</div>
+		else return [
 			this.renderCategoriesList(), 
 			this.renderFieldList()
 		]
@@ -87,20 +105,19 @@ var TypePicker = React.createClass({
 	getIcon: function () {
 		var config = this.props.config
 		var fieldType = fieldTypes[this.state.type] || {}
-		var active = constants.colTypes[this.props.type]
 
-		return  " icon icon-" + active.icon;
+		return  " icon icon-" + fieldType.icon;
 	},
 
-	getContent: function () {
-		var config = this.props.config
-		var fieldType = fieldTypes[this.state.type] || {}
-		var active = constants.colTypes[this.props.type]
+	// getContent: function () {
+	// 	var config = this.props.config
+	// 	var fieldType = fieldTypes[this.state.type] || {}
+	// 	var active = constants.colTypes[this.props.type]
 
-		return  active.description;
-	},
+	// 	return  active.description;
+	// },
 
-	width: '150px'
+	menuWidth: '350px',
 
 	// render() inherited from popdownClickmodMixin
 

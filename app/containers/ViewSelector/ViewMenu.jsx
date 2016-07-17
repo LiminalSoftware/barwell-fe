@@ -79,14 +79,16 @@ var ViewMenu = React.createClass({
 
 		return <div className = "dropdown-menu "
 					key = "list-wrapper"
-					style = {{minWidth: "250px", maxHeight: (this.state.windowHeight - 100) + 'px'}}>
+					style = {{minWidth: "300px", maxHeight: (this.state.windowHeight - 100) + 'px'}}>
 
 				<div className = "menu-item menu-sub-item menu-divider" key = "custom-views">
 					<div className="menu-divider-inner">
 						<span className = "icon icon-binoculars"/>
 						All Metaphors
-						<span className = {"icon icon-cog config-toggle" 
-							+ (this.state.editing ? '--toggled' : '')}
+						
+					</div>
+					<div className = "menu-divider-inner" style = {{maxWidth: '24px'}}>
+						<span className = {"icon icon-cog"}
 							onClick = {this.toggleEdit}/>
 					</div>
 				</div>

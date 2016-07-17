@@ -14,8 +14,8 @@ module.exports = (
 	<Router history={hashHistory}>
 		<Route path="/">
 				<Route path="workspace/:workspaceId" component = {Application}>
-					<Route path="model/:modelId" component = {ModelPane}>
-						<Route path="view/:viewId" component = {ModelPane}></Route>
+					<Route path="model/:modelId" component = {Application}>
+						<Route path="view/:viewId" component = {Application}></Route>
 						<IndexRoute component = {ModelPane}></IndexRoute>
 					</Route>
 					<IndexRoute component = {ModelPane}></IndexRoute>

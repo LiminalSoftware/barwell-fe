@@ -28,7 +28,7 @@ var Note = React.createClass({
 				<span className={'icon ' + note.icon}/>
 			</span>
 			<span className = "note-middle-column">
-				<p className = "">[{note.action_id}] {narrative}</p>
+				<p className = "">[{note.action_id || note.cid}] {narrative}</p>
 				
 				{note.notification_key ? null :
 				<p className = "" style = {{fontStyle: 'italic'}}>

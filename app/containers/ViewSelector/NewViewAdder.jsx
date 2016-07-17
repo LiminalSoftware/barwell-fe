@@ -7,49 +7,56 @@ import { Link } from "react-router"
 
 import modelActionCreators from "../../actions/modelActionCreators.jsx"
 
-
-
+import blurOnClickMixin from '../../blurOnClickMixin';
 
 var NewViewAdder = React.createClass({
+
+	mixins: [blurOnClickMixin],
 
 	// LIFECYCLE ==============================================================
 
 	getInitialState: function () {
-		return {
-		}
+		return {open: false}
 	},
 
 	// HANDLERS ===============================================================
 
-	handleShowChoices: function () {
-		this.setState({editing: true})
+	handleClick: function (e) {
+		console.log('handleClick')
+		this.props._showPopUp(NewViewAdder, {}, e);
 	},
 
 	// UTILITY ================================================================
 	
 	// RENDER =================================================================
 
-
 	render: function () {
-		
-		return <div className = "menu-item menu-sub-item menu-divider" key = "add-row">
-			<div className="menu-divider-inner--green" onClick = {this.handleShowChoices}>
-				<span className = "icon icon-plus"/>
-				Add new metaphor
-			</div>
+		console.log('open: ' + this.props.open)
+		var style = this.props.style || {}
+		style.zIndex = '510'
+
+		return <div className="menu-divider-inner--green pop-stop" 
+			style={style}
+			onClick = {this.handleClick}>
+				<span style = {{display: 'block'}}>
+					<span className = "icon icon-plus"/>
+					Add new view
+				</span>
+			
 			{
-				this.state.editing ? 
-				_.map(viewTypes, function (type, typeKey) {
-		        	return <div className = "inner-inner-choice" key = {typeKey}>
-		            	<span className = {"large icon view-icon " + type.icon}/>
-		            	{type.type}
-		            </div>
-		        })
+				this.props.open ? 
+				<div className = "">
+					{_.map(viewTypes, function (type, typeKey) {
+			        	return <div className = "new-item-choice" key = {typeKey}>
+			            	<span className = {"large icon view-icon " + type.icon}/>
+			            	{type.type}
+			            </div>
+			        })}
+		        </div>
 				:
 				null
 			}
-		</div>
-			
+			</div>
 	}
 })
 

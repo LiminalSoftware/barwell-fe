@@ -17,7 +17,11 @@ import viewTypes from "../Views/viewTypes"
 import modelActionCreators from "../../actions/modelActionCreators"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
+import PureRenderMixin from 'react-addons-pure-render-mixin';
+
 var ModelPane = React.createClass({
+
+	mixins: [PureRenderMixin],
 
 	getInitialState: function () {
 		return {
@@ -65,7 +69,6 @@ var ModelPane = React.createClass({
 	},
 
 	render: function() {
-		// console.log('render ModelPane')
 		var _this = this
 		var workspace_id = this.props.params.workspaceId
 		var model_id = this.props.params.modelId
@@ -93,6 +96,8 @@ var ModelPane = React.createClass({
 				model: model,
 				view: view,
 				viewconfig: viewconfig,
+				_showPopUp: this.props._showPopUp,
+				_clearPopUp: this.props._clearPopUp,
 				key: "view-pane-" + (view.cid || view.view_id)
 			})
 
@@ -100,7 +105,8 @@ var ModelPane = React.createClass({
 				model: model,
 				view: view,
 				viewconfig: viewconfig,
-				focusDepth: 0
+				_showPopUp: this.props._showPopUp,
+				_clearPopUp: this.props._clearPopUp
 			})
 		} else if (view_id === 'history') {
 			bodyContent = <ChangeHistory model = {model}/>
@@ -111,7 +117,7 @@ var ModelPane = React.createClass({
 		}
 
 		return <div className="model-views">
-			<div className="view-bar" >
+			<div className="view-bar">
 				{configElement}
 			</div>
 			{bodyContent}
