@@ -66,6 +66,13 @@ var ColumnList = React.createClass({
 		}
 	},
 
+	componentWillUnmount: function () {
+		this.state.items.map(function (item) {
+			// var attr = AttributeStore.get(item.cid || item.attribute_id)
+			// if (item._dirty) modelActionCreators.create('attribute', true, item)
+		})
+	},
+
 	// UTILITY ================================================================
 
 	commitViewUpdates: function (commit) {
@@ -193,8 +200,6 @@ var ColumnList = React.createClass({
 				minWidth = '500px'
 				config = {item}
 				open = {true}
-				spaceTop = {idx}
-				spaceBottom = {numTotalItems - idx}
 				viewConfigParts = {section ? section.configParts : null}
 				editing = {_this.props.editing}
 				_blurSiblings = {_this.blurSiblings}

@@ -20,9 +20,9 @@ var BlurOnClickMixin = {
   },
 
   componentDidMount: function () {
-    if (this.state.open) {
-      this.addListeners()
-    }
+    // if (this.state.open) {
+    //   this.addListeners()
+    // }
   },
 
   componentWillUpdate: function (nextProps, nextState) {
@@ -38,33 +38,34 @@ var BlurOnClickMixin = {
   },
 
   componentWillUnmount: function () {
-    if (isOpen(this.state))
+    // if (isOpen(this.state))
       this.removeListeners()
   },
 
   // UTILITY ================================================================
 
   addListeners: function () {
-    // console.log('addListeners')
-    document.addEventListener('keyup', this.handleKeyPress)
-    document.addEventListener('click', this.handleOutsideClick)
+    console.log('addListeners')
+    addEventListener('keyup', this.handleKeyPress)
+    addEventListener('click', this.handleBlur)
   },
 
   removeListeners: function () {
-    // console.log('removeListeners')
-    document.removeEventListener('keyup', this.handleKeyPress)
-    document.removeEventListener('click ', this.handleOutsideClick)
+    console.log('removeListeners')
+    removeEventListener('keyup', this.handleKeyPress)
+    removeEventListener('click ', this.handleBlur)
   },
 
   // HANDLERS ================================================================
 
-  handleContext: function (e) {
-    this.setState({context: true})
-    modelActionCreators.setFocus('view-config')
-    e.preventDefault()
-  },
+  // handleContext: function (e) {
+  //   this.setState({context: true})
+  //   modelActionCreators.setFocus('view-config')
+  //   e.preventDefault()
+  // },
 
   handleBlur: function () {
+    console.log('handleBlur')
     if (this.props.isPopUp) 
       this.props._clearPopUp()
     else this.setState({
@@ -76,16 +77,12 @@ var BlurOnClickMixin = {
 
   handleOpen: function (e) {
     util.clickTrap(e)
-    if (this.props._blurSiblings) this.props._blurSiblings();
-    if (this.blurChildren) this.blurChildren();
+    // if (this.props._blurSiblings) this.props._blurSiblings();
+    // if (this.blurChildren) this.blurChildren();
 
-    this.setState({open: true, context: false})
+    this.setState({open: true})
 
     modelActionCreators.setFocus('view-config')
-  },
-
-  handleOutsideClick: function (e) {
-    this.handleBlur()
   },
 
   handleKeyPress: function (e) {

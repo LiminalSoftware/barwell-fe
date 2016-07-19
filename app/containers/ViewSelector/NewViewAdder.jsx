@@ -21,17 +21,17 @@ var NewViewAdder = React.createClass({
 
 	// HANDLERS ===============================================================
 
-	handleClick: function (e) {
-		console.log('handleClick')
-		this.props._showPopUp(NewViewAdder, {}, e);
-	},
+	// handleClick: function (e) {
+	// 	console.log('handleClick')
+	// 	this.props._showPopUp(NewViewAdder, {}, e);
+	// },
 
 	// UTILITY ================================================================
 	
 	// RENDER =================================================================
 
 	render: function () {
-		console.log('open: ' + this.props.open)
+
 		var style = this.props.style || {}
 		style.zIndex = '510'
 

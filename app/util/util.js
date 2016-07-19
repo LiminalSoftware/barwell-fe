@@ -12,7 +12,6 @@ Number.prototype.mod = function(n) {
     return ((this%n)+n)%n;
 };
 
-
 module.exports.cidNum = function (cid) {
   return parseInt(cid.substr(1))
 }
@@ -20,7 +19,6 @@ module.exports.cidNum = function (cid) {
 module.exports.lighten = function (color, lightness) {
   var hsl = (!!color) ? tinycolor(color).toHsl() : tinycolor("white")
   hsl.l = Math.max(hsl.l, lightness)
-  // hsl.s = Math.max(hsl.l, 0.8)
   return tinycolor(hsl).toRgbString()
 }
 
@@ -32,6 +30,21 @@ var stripInternalVars = module.exports.stripInternalVars = function (obj) {
   });
   return newObj;
 }
+
+var isDirty = module.exports.isDirty = function (obj) {
+  if (!obj._server) return true
+  return Object.keys.some(function (key) {
+    if (key.substr(0,1) === '_') return true
+    else return (obj[key] === obj._server[key])
+  })
+}
+
+module.exports.clean = function (obj) {
+  obj._dirty = false
+  obj._server = stripInternalVars(obj)
+  return obj
+}
+
 
 module.exports.addOffset = function (a, b) {
   return {
@@ -121,11 +134,7 @@ module.exports.sortByOrder = function (a, b) {
   return a.order - b.order
 }
 
-module.exports.clean = function (obj) {
-	obj._dirty = false
-	obj._server = stripInternalVars(obj)
-	return obj
-}
+
 
 module.exports.enumerate = function (list, comparator) {
   list.sort(comparator)

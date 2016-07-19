@@ -56,16 +56,14 @@ var CubeViewInlineConfig = React.createClass({
 
 	render: function () {
 		var childProps = {
-			view: this.props.view,
-			model: this.props.model,
-			viewconfig: this.props.viewconfig,
 			_blurSiblings: this.blurSiblings,
 			_getColumnAt: this.getColumnAt
 		};
 
     	return <div className = "view-config" onClick={this.focus}>
-			<ViewSelector {...childProps} ref = "viewSelector"/>
-			<ColumnMenu {...childProps} 
+			<ViewSelector {...this.props} {...childProps} 
+				ref = "viewSelector"/>
+			<ColumnMenu {...this.props} {...childProps}
 				confirmChanges = {true}
 				sections = {sections} 
 				ref = "columnMenu"/>

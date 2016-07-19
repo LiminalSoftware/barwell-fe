@@ -26,7 +26,7 @@ var makePkPromise = function (obj, pk) {
 // checks for keys of the form ac123 indicating a temporary column.  For each one, creates
 var makeAttrPromise = function (obj) {
 	return Promise.all(Object.keys(obj)
-		.filter(k => (/^ac\d+$/).test(k))
+		.filter(k => (/^[ar]c\d+$/).test(k))
 		.map(function (fullkey) {
 			var key = fullkey.substr(1)
 			return cidLookup.makeCidPromise(key).then(function (id) {
