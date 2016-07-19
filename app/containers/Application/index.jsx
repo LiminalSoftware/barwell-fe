@@ -47,7 +47,8 @@ var Application = React.createClass({
 		var style = Object.assign({}, props.style || {}, {
 			position: 'fixed',
 			left: offset.left + 'px',
-			top: offset.top + 'px'
+			top: offset.top + 'px',
+			zIndex: 110
 		})
 		if (!style.width) style.width = container.width() + 'px'
 		

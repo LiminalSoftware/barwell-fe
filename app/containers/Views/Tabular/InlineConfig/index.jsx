@@ -54,24 +54,16 @@ var TabularViewInlineConfig = React.createClass({
 	},
 
 	render: function() {
-		var _this = this
-		var view = this.props.view
-		var viewconfig = this.props.viewconfig
-		var model = this.props.model
-
 		var childProps = {
-			view: this.props.view,
-			viewconfig: this.props.viewconfig,
-			model: this.props.model,
 			_getColumnAt: this.getColumnAt,
 			_blurSiblings: this.blurSiblings,
 		}
 
     	return <div className = "view-config" onClick={this.focus}>
-			<ViewSelector {...childProps} ref="viewSelector"/>
-			<ColumnMenu {...childProps} ref="columnMenu" sections = {sections}/>
-			<SortMenu {...childProps} ref="sortMenu"/>
-			<FilterMenu {...childProps} ref="filterMenu"/>
+			<ViewSelector {...this.props} {...childProps} ref="viewSelector"/>
+			<ColumnMenu {...this.props} {...childProps} ref="columnMenu" sections = {sections}/>
+			<SortMenu {...this.props} {...childProps} ref="sortMenu"/>
+			<FilterMenu {...this.props} {...childProps} ref="filterMenu"/>
 		</div>
 	}
 });

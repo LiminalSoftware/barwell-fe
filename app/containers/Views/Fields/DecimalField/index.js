@@ -34,9 +34,9 @@ var decimalField = {
 
 	icon: 'dial',
 
-	category: 'General',
+	category: 'Numbers and Values',
 
-	description: 'Decimal field',
+	description: 'Decimal',
 
 	defaultAlign: 'right',
 

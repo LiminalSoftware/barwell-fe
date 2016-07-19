@@ -206,15 +206,14 @@ var ColorChoice = React.createClass({
         Custom color
       </div>
       
-      <div style={{maxHeight: customHeight, height: customHeight, overflowY: 'hidden', overflowX: 'hidden'}}>
+      
       {
         this.state.chooser === 'custom' ?
-        <ColorPickerWidget  color = {this.state.color} _chooseColor = {this.chooseFixedColor}/>
+        <ColorPickerWidget  color = {this.state.color} height = {customHeight} _chooseColor = {this.chooseFixedColor}/>
         : null
       }
-      </div>
-
-
+      
+      
       <div className = "popdown-item top-divider">
       Auto-lighten colors: <input type="checkbox"
         onChange = {_this.handleAdjustCheck}
@@ -231,7 +230,7 @@ var ColorChoice = React.createClass({
   },
 
   getIcon: function () {
-    return " icon icon-paint-roller " + (this.state.active && !this.state.context ? " active " : "");
+    return " icon icon-bucket " + (this.state.active && !this.state.context ? " active " : "");
   },
 
   isActive: function () {

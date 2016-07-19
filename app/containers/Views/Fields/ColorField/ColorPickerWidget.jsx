@@ -57,11 +57,12 @@ var ColorPickerWidget = React.createClass({
 		var hue = (this.state.h + e.deltaY/20).mod(360);
 		this.setState({h: hue})
 		this.debounceCommit()
+		util.clickTrap(e)
 	},
 
 
 	calcColorPick: function (e) {
-		var container = $(ReactDOM.findDOMNode(this))
+		var container = $(ReactDOM.findDOMNode(this.refs.shadePicker))
 		var offset = container.offset()
 		var lightness = 1 - util.limit(0, 1, (e.clientY - offset.top) / container.height() )
 		var saturation = util.limit(0, 1, (e.clientX - offset.left) / container.width() )
@@ -69,26 +70,70 @@ var ColorPickerWidget = React.createClass({
 		this.setState({l: lightness, s: saturation})
 	},
 
-	handleMouseDown: function (e) {
+	handleShadeClick: function (e) {
 		this.calcColorPick(e)
 		this.debounceCommit()
 	},
 
+	handleHueClick: function (e) {
+		var container = $(ReactDOM.findDOMNode(this.refs.huePicker))
+		var offset = container.offset()
+		var hue = util.limit(0, 1, (e.clientY - offset.top) / container.height()) * 360
+
+		this.setState({h: hue})
+	},
+
 	render: function() {
 		var hue = this.state.h
-
+		var height = this.props.height || '80px'
 		var saturationEndStop = tinycolor({h: hue, s: 0, l:100}).toRgbString()
 		var saturationStartStop = tinycolor({h: hue, s: 100, l:50}).toRgbString()
 		var gradientString = `linear-gradient(90deg, ${saturationEndStop} 0%, ${saturationStartStop} 100%)`
+		var rainbowFilter = `saturate(${makePercent(parseFloat(this.state.s)/100 - 1)}) brightness(${makePercent(parseFloat(this.state.l)/100 - 1)})`;
+		var colorString = tinycolor(this.state).toRgbString()
 
-		return <div className = "saturation-overlay" 
-			onWheel = {this.handleWheel}
-			onMouseDown = {this.handleMouseDown}
-			style = {{height: '100%', width: '100%', display: 'block', background: gradientString}}>
-			<div className = "lightness-overlay" style = {{height: '100%', width: '100%', display: 'block'}}>
-				<div className = "color-pointer" style = {{
-					left: makePercent(this.state.s), 
-					bottom: makePercent(this.state.l)}}/>
+		console.log(rainbowFilter)
+
+		return <div className = "poopdown-section" 
+			style = {{
+				position: 'relative',
+				maxHeight: height, 
+				height: height, 
+				overflowY: 'hidden', 
+				overflowX: 'hidden',
+				marginTop: '2px',
+				marginBottom: '2px'
+			}}>
+			<div style = {{
+				position: 'absolute',
+				left: 0,
+				width: '78px',
+				top: 0,
+				bottom: 0,
+				background: colorString
+			}}/>
+			<div className = "saturation-overlay"
+				ref = "shadePicker" 
+				onWheel = {this.handleWheel}
+				onMouseDown = {this.handleShadeClick}
+				style = {{height: '100%', left: '80px', right: '14px', display: 'block', background: gradientString, position: 'absolute'}}>
+				<div className = "lightness-overlay" style = {{height: '100%', width: '100%', display: 'block'}}>
+					<div className = "color-pointer" style = {{
+						left: makePercent(this.state.s), 
+						bottom: makePercent(this.state.l)}}/>
+				</div>
+			</div>
+			<div className = "rainbow" 
+			ref = "huePicker"
+			onClick = {this.handleHueClick}
+			style = {{
+				right: 0, 
+				width: '12px', 
+				top: 0, bottom: 0, 
+				position: 'absolute', 
+				WebkitFiter: rainbowFilter
+			}}>
+				<div className = "hue-pointer" style = {{top: makePercent(hue / 360)}}/>
 			</div>
 		</div>
 	}

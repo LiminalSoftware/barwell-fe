@@ -45,7 +45,9 @@ var ColumnList = React.createClass({
 		var itemsIndex = _.indexBy(items, 'column_id')
 
 		cols.forEach(function (col) {
-			if (!(col.column_id in itemsIndex)) {
+			if (col.column_id in itemsIndex) {
+				_.extend(itemsIndex[col.column_id], col)
+			} else {
 				col.hidden = true;
 				items.push(col);
 			}
@@ -69,7 +71,7 @@ var ColumnList = React.createClass({
 	commitViewUpdates: function (commit) {
 		// applies the section transformers to each item in the section
 		// if @commit is true, then commits  changes to the view and persists
-		// commit = false
+		
 		var view = this.props.view;
 		var section = this.props.sections[0];
 		var items = this.state.items.map(function (item, idx) {
@@ -93,7 +95,7 @@ var ColumnList = React.createClass({
 		var columns = view.data.columns;
 		
 		props.sections.forEach(function (section, idx) {
-			var cols = section.selector(view);
+			var cols = section.selector(view).sort(util.orderSort);
 			if (idx > 0) items.push(_.extend({isSection: true, isEmpty: cols.length === 0}, section))
 			cols.forEach(function (col) {
 				var attribute = AttributeStore.get(col.attribute_id);
@@ -116,26 +118,43 @@ var ColumnList = React.createClass({
 		this.state.items.forEach(function (item) {
 			if (item.column_id) _this.refs[item.column_id].blurSubMenus()
 		});
+		this.props._clearPopUp()
 		if (e) e.stopPropagation()
 	},
 
-	addItem: function () {
+	addAttribute: function () {
 		var _this = this;
 		var model = this.props.model;
 		var list = this.state.items;
 		var idx = 1;
 		var attr = {
-			attribute: 'New attribute',
+			attribute: 'Attribute',
 			model_id: model.model_id, 
 			type: 'TEXT',
-			hidden: true,
-			_isNew: true
+			_dirty: true
 		};
 		// make the new attribute name unique
 		while (list.some(item => item.name === attr.attribute))
-			attr.attribute = 'New attribute ' + idx++;
+			attr.attribute = 'Attribute ' + idx++;
 		
 		return modelActionCreators.create('attribute', false, attr)
+	},
+
+	addRelation: function () {
+		var _this = this;
+		var model = this.props.model;
+		var list = this.state.items;
+		var idx = 1;
+		var rel = {
+			relation: 'Relation',
+			model_id: model.model_id, 
+			_dirty: true
+		};
+		// make the new attribute name unique
+		while (list.some(item => item.name === rel.relation))
+			rel.relation = 'Relation ' + idx++;
+		
+		return modelActionCreators.create('relation', false, rel)
 	},
 
 	// RENDER ===================================================================
@@ -191,6 +210,18 @@ var ColumnList = React.createClass({
     			overflowX: 'hidden'
     		}} onClick = {_this.props._blurChildren}>
 			{items}
+			<div className="menu-sub-item menu-divider" >
+
+				<div className = "menu-divider-inner--green" onClick = {this.addAttribute} >
+					<span className = "icon icon-plus"/>
+					<span>Add new attribute</span>
+				</div>
+			
+				<div className = "menu-divider-inner--green" onClick = {this.addRelation} >
+					<span className = "icon icon-plus"/>
+					<span>Add new relation</span>
+				</div>
+			</div>
 		</div>
 	}
 });

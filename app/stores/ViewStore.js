@@ -22,13 +22,16 @@ var ViewStore = storeFactory({
 
       case 'ATTRIBUTE_CREATE':
       case 'ATTRIBUTE_DESTROY':
+      case 'RELATION_CREATE':
+      case 'RELATION_DESTROY':
         dispatcher.waitFor([
+          RelationStore.dispatchToken,
           AttributeStore.dispatchToken, 
           ModelStore.dispatchToken
         ]);
         var _this = this;
-        var attribute = payload.data;
-        var views = this.query({model_id: attribute.model_id});
+        var entity = payload.data;
+        var views = this.query({model_id: entity.model_id});
         views.map(function (view) {
           view = groomView(view)
           _this.create(view)
@@ -36,7 +39,9 @@ var ViewStore = storeFactory({
         this.emitChange()
         break;
 
-       case 'VIEW_CREATE':
+
+
+      case 'VIEW_CREATE':
         dispatcher.waitFor([
           AttributeStore.dispatchToken, 
           ModelStore.dispatchToken, 

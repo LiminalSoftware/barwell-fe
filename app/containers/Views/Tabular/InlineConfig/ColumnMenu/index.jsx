@@ -37,8 +37,6 @@ var ColumnMenu = React.createClass({
 
 	componentWillUnmount: function () {
 		AttributeStore.removeChangeListener(this._onChange);
-		// ViewConfigStore.removeChangeListener(this._onChange);
-		this.refs.popUp
 		this.handleCancelChanges()
 	},
 
@@ -52,7 +50,6 @@ var ColumnMenu = React.createClass({
 			open: false,
 			editing: false,
 			context: false,
-			popUp: null,
 			dirty: false
 		};
 	},
@@ -65,21 +62,14 @@ var ColumnMenu = React.createClass({
 	// HANDLERS ===============================================================
 
 	handleEdit: function () {
-		if (this.refs.list.revertChanges) this.refs.list.revertChanges();
+		if (this.refs.list.revertChanges) 
+			this.refs.list.revertChanges();
 		this.blurChildren()
 		this.setState({editing: true, dirty: false, configPart: null});
 	},
 
-	handleCancelChanges: function () {
-		this.blurChildren()
-		this.setState({editing: false})
-		this.commitAttributeChanges(false)
-	},
+	handleCancelChanges : function () {
 
-	handleSaveChanges: function () {
-		this.blurChildren()
-		this.setState({open: false})
-		this.commitAttributeChanges(true);
 	},
 
 	handleAddColumn: function () {
@@ -88,25 +78,11 @@ var ColumnMenu = React.createClass({
 		this.refs.list.addItem()
 	},
 
-	showPopUp: function (part, configProps, e) {
-		var offset = $(e.target).closest('.pop-down').offset()
-		configProps.style = {
-			position: 'fixed',
-			left: offset.left + 'px',
-			top: offset.top + 'px',
-		}
-		configProps.open = true;
-		configProps.ref = 'popUp'
-		
-		this.setState({popUpPart: part, popUpConfig: configProps, context: true})
-		if (e) util.clickTrap(e)
-	},
-
 	// UTILITY ================================================================
 
 	blurChildren: function () {
-		this.setState({popUpPart: null})
 		if (this.refs.list) this.refs.list.blurSiblings()
+		this.props._clearPopUp()
 	},
 
 	markDirty: function (isDirty) {
@@ -161,60 +137,6 @@ var ColumnMenu = React.createClass({
 	
 	// RENDER ===================================================================
 
-	renderButtonBar: function () {
-		var editing = this.state.editing;
-		return <div key = "buttons">
-			{
-				this.props.confirmChanges && this.state.dirty ?
-				<div className="menu-item menu-config-row">
-					<div className = "menu-sub-item menu-clickable" onClick = {this.commitViewUpdates}>
-					<span className = "icon icon-check"/> Update groupings
-					</div>
-				</div> : null
-			}
-			{
-				editing ?
-				<div className="menu-item menu-config-row"
-					onClick = {this.handleAddColumn}>
-					<div className = "menu-sub-item  menu-clickable">
-					<span className = "icon icon-plus"/> Add column
-					</div>
-				</div> : null
-			}
-			<div className="menu-item menu-config-row" key="detail-menu-items">
-			{
-				this.state.editing ?
-				<div className = "menu-sub-item  menu-clickable"
-					onClick = {this.handleSaveChanges}>
-					<span className = "icon icon-check"/>
-					Save changes
-				</div>
-				:
-				<div className = "menu-sub-item  menu-clickable"
-					onClick = {this.handleEdit}>
-					<span className = "icon icon-pencil"/> 
-					Edit columns
-				</div>
-			}
-			{
-				this.state.editing ?
-				<div className = "menu-sub-item menu-clickable"
-					onClick = {this.handleCancelChanges}>
-					<span className = "icon icon-cross2"/>
-					Cancel changes
-				</div>
-				:
-				<div className = "menu-sub-item menu-clickable"
-					onClick = {this.handleAddColumn}>
-					<span className = "icon icon-plus"/>
-					Add column
-				</div>
-			}
-			</div>
-
-		</div>
-	},
-
 	render: function() {
 		var _this = this;
 		var view = this.props.view;
@@ -238,16 +160,14 @@ var ColumnMenu = React.createClass({
 
     	return <div className = "double header-section" >
 			<div className="header-label">Attributes</div>
-				<div className = "model-views-menu">
+				<div className = "model-views-menu" onClick = {util.clickTrap}>
 
-					<div onClick={this.clickTrap}
-						className="model-views-menu-inner">
+					<div 
+						className="model-views-menu-inner" onClick = {_this.blurChildren}>
 						{
 							this.state.open ? 
 							<div className = "dropdown-menu" style = {{minWidth: '550px'}}>
-								<div className="menu-sub-item menu-divider" 
-									onClick = {_this.blurChildren} 
-									style = {{overflowY: 'scroll'}}>
+								<div className="menu-sub-item menu-divider" >
 									<div className = "menu-divider-inner" >
 										<span className = {"icon " + firstSection.icon} style = {{flexGrow: 0}}/>
 										<span style = {{flexGrow: 0}}>{firstSection.label}</span>
@@ -257,30 +177,22 @@ var ColumnMenu = React.createClass({
 								
 								<ColumnList 
 									{...this.props} ref = "list" 
-									_showPopUp = {this.showPopUp}
 									_markDirty = {this.markDirty}
 									_blurChildren = {_this.blurChildren}
 									editing = {this.state.editing}/>
 								
 								
-								<div className="menu-sub-item menu-divider" 
-									onClick = {_this.blurChildren} 
-									style = {{overflowY: 'scroll'}}>
-									<div className = "menu-divider-inner--green" >
-										<span className = "icon icon-plus"/>
-										<span>Add new attribute</span>
-									</div>
-								</div>
+								
 								
 							</div>
 
 							:
 							currentCol ? 
 							<ColumnDetail
+								{...this.props}
 								ref = 'columnDetail'
 								key = {currentCol.column_id}
 								minWidth = '100px'
-								_showPopUp = {_this.showPopUp}
 								_blurChildren = {_this.blurChildren}
 								config = {currentCol} view = {view}/>
 							
@@ -289,9 +201,7 @@ var ColumnMenu = React.createClass({
 								No selection...
 							</div>
 						}
-					{this.state.popUpPart && (this.state.open || this.state.context) ?
-						React.createElement(this.state.popUpPart, this.state.popUpConfig)
-						: null }
+					
 					</div>
 				<div className={"dropdown" + (this.state.open ? "--open " : " ") 
 					+ " icon--small icon icon-chevron-down"} 

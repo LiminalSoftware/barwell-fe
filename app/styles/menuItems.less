@@ -2,13 +2,16 @@
 
 
 .menu-input {
-  float: left;
+  
   position: relative;
   display: inline-block;
-	height: 26px;
+
+	height: 20px;
+  line-height: 20px;
+
   left: 0;
   right: 0;
-  padding: 2px 5px;
+  padding: 2px;
   margin: 0;
   min-width: 50px;
 
@@ -22,8 +25,9 @@
   transition: background ease-in 100ms;
   &:focus, &:hover {
     // border: 1px solid  @newgreen1;
-    background: @headerBgLight3;
+    // background: @headerBgLight3;
   }
+
 
 }
 
@@ -32,6 +36,9 @@
   border: 1px solid @menuLightBorder;
   // border-radius: @menuItemBorderRadius;
   outline: none;
+  &::selection {
+    background: @green-light !important;
+  }
 }
 
 .menu-input.selector {

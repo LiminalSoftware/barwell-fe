@@ -7,7 +7,7 @@ var sections = [
 		emptyText: "No fixed attributes...",
 		icon: "icon-pushpin",
 		selector: function (view) {
-			return view.data.columnList.filter(c => c.visible && c.fixed).sort(util.orderSort)
+			return view.data.columnList.filter(c => c.visible && c.fixed)
 		},
 		enterTransform: function (col) {
 			col.visible = true
@@ -21,7 +21,7 @@ var sections = [
 		emptyText: "No visible attributes...",
 		icon: "icon-eye",
 		selector: function (view) {
-			return view.data.columnList.filter(c => c.visible && !c.fixed).sort(util.orderSort)
+			return view.data.columnList.filter(c => c.visible && !c.fixed)
 		},
 		enterTransform: function (col) {
 			col.visible = true
@@ -35,7 +35,7 @@ var sections = [
 		emptyText: "No hidden attributes...",
 		icon: "icon-eye-crossed",
 		selector: function (view) {
-			return view.data.columnList.filter(c => !c.visible).sort(util.orderSort)
+			return view.data.columnList.filter(c => !c.visible)
 		},
 		enterTransform: function (col) {
 			col.visible = false

@@ -27,7 +27,7 @@ var integerField = {
 
 	icon: 'abacus small ',
 
-	category: 'General',
+	category: 'Numbers and Values',
 
 	description: 'Integer',
 

@@ -33,6 +33,10 @@ var ColorPicker = React.createClass({
 		this.commitValue(color);
 	},
 
+	chooseColor: function () {
+
+	},
+
 	render: function() {
 		var _this = this
     	var model = this.props.model
@@ -47,7 +51,10 @@ var ColorPicker = React.createClass({
 		var current = obj[config.column_id]
 
 		return <PopDownMenu {...this.props} green = {true}>
-			
+			<div className = 'popdown-item title bottom-divider'>
+				Choose color:
+			</div>
+			<ColorPickerWidget _chooseColor = {this.commitValue}/>
 		</PopDownMenu>
 	}
 });

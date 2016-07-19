@@ -44,14 +44,20 @@ var AttributeConfig = React.createClass({
 
 	renderMenu: function() {
 		return <div className = "popdown-section">
-			<div className = "popdown-section">
-		      <div className = "popdown-item bottom-divider title">Alter Attribute</div>
-		      <div className = "popdown-item"><span className = "icon icon-stamp"/>Default value: <input value = ""/>
-
-		      </div>
-		      <div className = "popdown-item selectable"><span className = "icon icon-label"/>Use this attribute as label</div>
-		      <div className = "popdown-item selectable"><span className = "icon icon-cross-circle"/>Delete this attribute</div>
+			
+		    <div className = "popdown-item bottom-divider title">Alter Attribute</div>
+		    <div className = "popdown-item">
+		    	<span className = "icon icon-stamp"/>
+		    	Default value: <input value = ""/>
 		    </div>
+		    <div className = "popdown-item selectable" onClick = {this.props._rename}>
+		      	<span className = "icon icon-pencil"/>Rename attribute
+		    </div>
+		    <div className = "popdown-item selectable"><span className = "icon icon-tag"/>Use this attribute as label</div>
+		    <div className = "popdown-item selectable" onClick = {this.props._handleDelete}>
+		      	<span className = "icon icon-cross-circle"/>Delete this attribute
+		    </div>
+		    
 	    </div>;
 	}
 });

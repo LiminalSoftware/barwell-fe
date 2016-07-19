@@ -10,6 +10,7 @@ var popdownClickmodMixin = {
 		if (this.props._blurSiblings) this.props._blurSiblings();
 		if (this.props._showPopUp) this.props._showPopUp(e);
 		else this.handleOpen(e);
+		util.clickTrap(e)
 	},
 
 	render: function () {
@@ -23,7 +24,7 @@ var popdownClickmodMixin = {
 	   		className={"pop-down pop-stop clickable " + (this.classes || '') + (isActive ? ' popdown-active' : '')}
 	    	style={style} onClick={this.handleClick}>
 
-	    	<span className={iconClass} 
+	    	<span className={iconClass}
 	    		style={{textAlign: 'center', marginRight: 0}}/>
 
 	    	{this.getContent ? <span className="popdown-label">
@@ -33,8 +34,8 @@ var popdownClickmodMixin = {
 
 	    	
 	        {
-	        	(this.state.open) ? <div className = "pop-down-menu split-menu" 
-	        	style = {{left: '-15px', width: menuWidth}}>
+	        	(this.state.open) ? <div className = "pop-down-menu" 
+	        	style = {{left: '-15px', width: menuWidth}} onClick = {util.clickTrap}>
 	        	<span className = "pop-down-overlay" style = {{minWidth: width, width: width}}>
 	        		<span className = {iconClass} style={{textAlign: 'center', marginRight: 0}}/>
 	        		{
