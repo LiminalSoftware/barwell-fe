@@ -38,34 +38,25 @@ var BlurOnClickMixin = {
   },
 
   componentWillUnmount: function () {
-    // if (isOpen(this.state))
-      this.removeListeners()
+    var wasOpen = isOpen(this.state)
+    if (wasOpen) this.removeListeners()
   },
 
   // UTILITY ================================================================
 
   addListeners: function () {
-    console.log('addListeners')
-    addEventListener('keyup', this.handleKeyPress)
-    addEventListener('click', this.handleBlur)
+    document.addEventListener('keyup', this.handleKeyPress)
+    document.addEventListener('mousedown', this.handleOutsideClick)
   },
 
   removeListeners: function () {
-    console.log('removeListeners')
-    removeEventListener('keyup', this.handleKeyPress)
-    removeEventListener('click ', this.handleBlur)
+    document.removeEventListener('keyup', this.handleKeyPress)
+    document.removeEventListener('mousedown', this.handleOutsideClick)
   },
 
   // HANDLERS ================================================================
 
-  // handleContext: function (e) {
-  //   this.setState({context: true})
-  //   modelActionCreators.setFocus('view-config')
-  //   e.preventDefault()
-  // },
-
   handleBlur: function () {
-    console.log('handleBlur')
     if (this.props.isPopUp) 
       this.props._clearPopUp()
     else this.setState({
@@ -75,13 +66,16 @@ var BlurOnClickMixin = {
       });
   },
 
+  handleOutsideClick: function () {
+    this.handleBlur()
+  },
+
   handleOpen: function (e) {
-    util.clickTrap(e)
-    // if (this.props._blurSiblings) this.props._blurSiblings();
-    // if (this.blurChildren) this.blurChildren();
+    if (this.props._blurSiblings) this.props._blurSiblings();
+    if (this.blurChildren) this.blurChildren();
 
     this.setState({open: true})
-
+    util.clickTrap(e)
     modelActionCreators.setFocus('view-config')
   },
 

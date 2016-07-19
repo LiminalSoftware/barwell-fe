@@ -45,6 +45,10 @@ var ColumnDetailMixin = {
 		})
 	},
 
+	componentWillUnmount: function () {
+		if (this.props._clearPopUp) this.props._clearPopUp()
+	},
+
 	// HANDLERS ===============================================================
 
 	chooseType: function (type) {
@@ -241,8 +245,7 @@ var ColumnDetailMixin = {
 	},
 
 	render: function() {
-	    return	<div className="menu-item column-menu-item-width"
-			style = {{minWidth: this.props.minWidth, display: 'block'}}>
+	    return	<div className={"menu-item " + (this.singleton ? "menu-item-singleton" : "")}>
 
 			{this.props.editing ? 
 				this.renderEditMode() 

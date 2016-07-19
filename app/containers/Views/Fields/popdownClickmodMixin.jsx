@@ -35,7 +35,7 @@ var popdownClickmodMixin = {
 	    	
 	        {
 	        	(this.state.open) ? <div className = "pop-down-menu" 
-	        	style = {{left: '-15px', width: menuWidth}} onClick = {util.clickTrap}>
+	        	style = {{left: '-15px', width: menuWidth}} onMouseDown = {util.clickTrap}>
 	        	<span className = "pop-down-overlay" style = {{minWidth: width, width: width}}>
 	        		<span className = {iconClass} style={{textAlign: 'center', marginRight: 0}}/>
 	        		{

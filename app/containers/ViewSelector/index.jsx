@@ -13,6 +13,8 @@ import blurOnClickMixin from '../../blurOnClickMixin'
 import ViewItemSingleton from './ViewItemSingleton'
 import ViewMenu from './ViewMenu'
 
+import util from '../../util/util'
+
 var ViewSelector = React.createClass({
 
 	mixins: [PureRenderMixin, blurOnClickMixin],
@@ -28,7 +30,7 @@ var ViewSelector = React.createClass({
 
 		return <div className = "header-section ">
 		<div className="header-label">Metaphor</div>
-		<div className="model-views-menu" onClick = {this.clickTrap}>
+		<div className="model-views-menu" onMouseDown = {util.clickTrap}>
 			<ReactCSSTransitionGroup 
 				component = "div"
 				onClick={this.handleOpen}

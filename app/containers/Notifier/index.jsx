@@ -83,8 +83,20 @@ var Notifier = React.createClass({
 		transactions = transactions.slice(transactions.length - (this.state.mouseOver ? 10 : 1))
 		events = util.merge({attribute: 'timestamp', descending: true}, null, notifications, transactions)
 
-		return <span className = "model-bar-extra--right height-transition"
+
+		var transitionProps = {
+			transitionName: "fade-in",
+			transitionAppear: true,
+			transitionEnterTimeout: 500,
+			transitionLeaveTimeout: 500,
+			transitionAppearTimeout: 500
+		};
+
+		return <ReactCSSTransitionGroup 
+			className = "model-bar-extra--right height-transition"
 			style = {{cursor: 'pointer'}}
+			{...transitionProps}
+			component = "span"
 			onMouseOver = {this.handleMouseOver}
 			onMouseOut = {this.handleMouseOut}>
 			<a onClick = {this.handleShowHistory} className = "icon icon-history2" />
@@ -139,7 +151,7 @@ var Notifier = React.createClass({
 			}
 		</div>
 		}
-		</span>;
+		</ReactCSSTransitionGroup>;
 	}
 })
 
