@@ -19,6 +19,8 @@ import blurOnClickMixin from '../../../../../blurOnClickMixin';
 import sortable from 'react-sortable-mixin';
 import menuOverflowMixin from '../../../../../menuOverflowMixin'
 
+
+
 var ColumnList = React.createClass({
 
 	mixins: [sortable.ListMixin, menuOverflowMixin],
@@ -215,18 +217,6 @@ var ColumnList = React.createClass({
     			overflowX: 'hidden'
     		}} onClick = {_this.props._blurChildren}>
 			{items}
-			<div className="menu-sub-item menu-divider" >
-
-				<div className = "menu-divider-inner--green" onClick = {this.addAttribute} >
-					<span className = "icon icon-plus"/>
-					<span>Add new attribute</span>
-				</div>
-			
-				<div className = "menu-divider-inner--green" onClick = {this.addRelation} >
-					<span className = "icon icon-plus"/>
-					<span>Add new relation</span>
-				</div>
-			</div>
 		</div>
 	}
 });

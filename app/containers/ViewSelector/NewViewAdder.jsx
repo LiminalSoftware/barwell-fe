@@ -11,7 +11,7 @@ import blurOnClickMixin from '../../blurOnClickMixin';
 
 var NewViewAdder = React.createClass({
 
-	mixins: [blurOnClickMixin],
+	mixins: [blurOnClickMixin, popdownClickmodMixin],
 
 	// LIFECYCLE ==============================================================
 
@@ -21,10 +21,9 @@ var NewViewAdder = React.createClass({
 
 	// HANDLERS ===============================================================
 
-	// handleClick: function (e) {
-	// 	console.log('handleClick')
-	// 	this.props._showPopUp(NewViewAdder, {}, e);
-	// },
+	handleClick: function (e) {
+		this.props._showPopUp(NewViewAdder, {}, e);
+	},
 
 	// UTILITY ================================================================
 	

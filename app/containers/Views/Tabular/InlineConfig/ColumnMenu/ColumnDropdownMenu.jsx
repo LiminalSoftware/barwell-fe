@@ -1,20 +1,24 @@
+// LIBRARIES
 import React from "react";
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { Link } from "react-router";
 import _ from 'underscore';
 
-import ColumnList from "./ColumnList";
-
+// STORES
 import AttributeStore from "../../../../../stores/AttributeStore";
 import ViewConfigStore from "../../../../../stores/ViewConfigStore";
+
+// UTILITES
 import constant from '../../../../../constants/MetasheetConstants';
 import util from "../../../../../util/util";
-
 import modelActionCreators from "../../../../../actions/modelActionCreators.jsx";
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import blurOnClickMixin from '../../../../../blurOnClickMixin';
-
 import sortable from 'react-sortable-mixin';
+
+// COMPONENTS
+import ColumnAdder from './ColumnAdder'
+import ColumnList from "./ColumnList";
 
 
 var ColumnDropdownMenu = React.createClass({
@@ -121,7 +125,18 @@ var ColumnDropdownMenu = React.createClass({
 			<ColumnList 
 				{...this.props} ref = "list" 
 				_markDirty = {this.markDirty}
-				_blurChildren = {this.blurChildren}/>								
+				_blurChildren = {this.blurChildren}/>
+
+			<div className="menu-sub-item menu-divider" >
+
+				<ColumnAdder {...this.props} />
+			
+				<div className = "menu-divider-inner--green" onClick = {this.addRelation} >
+					<span className = "icon icon-plus"/>
+					<span>Add new relation</span>
+				</div>
+
+			</div>						
 		</div>
 	}
 });

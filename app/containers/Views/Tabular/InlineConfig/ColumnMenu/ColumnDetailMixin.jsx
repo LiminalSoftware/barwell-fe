@@ -176,7 +176,7 @@ var ColumnDetailMixin = {
 					ref = "typePicker"
 					{...configProps}
 					_blurSiblings = {_this.props._blurSiblings}
-					_showPopUp = {_this.props._showPopUp.bind(null, TypePicker, configProps)}/>
+					_showPopUp = {_this.props._showPopUp}/>
 			</span>
 			
 			<span style = {{maxWidth: '150px', minWidth: '150px', position: 'relative'}}>
@@ -215,9 +215,7 @@ var ColumnDetailMixin = {
 					var localProps = {
 						key: part.prototype.partName,
 						ref: part.prototype.partName,
-						_showPopUp: _this.props._showPopUp ? 
-							_this.props._showPopUp.bind(null, part, configProps)
-							: null
+						_showPopUp: _this.props._showPopUp
 					}
 					return React.createElement(part, _.extend(
 						localProps,
@@ -230,14 +228,7 @@ var ColumnDetailMixin = {
 			<span style={{flexDirection: 'row-reverse', maxWidth: '35px', marginRight: '10px'}}>
 				{
 					fieldType.unchangeable ? null :
-					React.createElement(AttributeConfig, _.extend(
-						{
-							key: 'attributeConfig',
-							ref: 'attributeConfig',
-							_showPopUp: _this.props._showPopUp.bind(null, AttributeConfig, configProps)
-						},
-						configProps
-					))
+					<AttributeConfig {...this.props} {...configProps} open = {false} key = "attributeConfig"/>
 				}
 			</span>
 			: null}

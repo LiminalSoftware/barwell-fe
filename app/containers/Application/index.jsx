@@ -51,17 +51,19 @@ var Application = React.createClass({
 			zIndex: 110
 		})
 		if (!style.width) style.width = container.width() + 'px'
-		
-		props.style = style
-		props.open = true;
-		props._clearPopUp = this.clearPopUp
-		props.isPopUp = true
-		props.ref = 'popUp'
+		var extendedProps = Object.assign({}, props, {
+			style: style,
+			open: true,
+			_clearPopUp: this.clearPopUp,
+			isPopUp: true,
+			ref: 'popUp'
+		})
 		
 		this.setState({
 			popUpPart: part,
-			popUpConfig: props
+			popUpConfig: extendedProps
 		})
+		modelActionCreators.setFocus('view-config')
 		if (e) util.clickTrap(e)
 	},
 

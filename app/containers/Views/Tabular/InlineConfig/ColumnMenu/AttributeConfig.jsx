@@ -21,10 +21,10 @@ var AttributeConfig = React.createClass({
 
 	classes: 'popdown-borderless',
   
-  	mixins: [blurOnClickMixin, popdownClickmodMixin, configCommitMixin],
+  	mixins: [blurOnClickMixin, popdownClickmodMixin],
 
   	getInitialState: function () {
-  		return {}
+  		return {open: false}
   	},
 
   	// HANDLERS =================================================================

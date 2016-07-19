@@ -6,12 +6,7 @@ import PopDownMenu from '../../../components/PopDownMenu'
 
 var popdownClickmodMixin = {
 
-	handleClick: function (e) {
-		if (this.props._blurSiblings) this.props._blurSiblings();
-		if (this.props._showPopUp) this.props._showPopUp(e);
-		else this.handleOpen(e);
-		util.clickTrap(e)
-	},
+	popsUp: true,
 
 	render: function () {
 	    var iconClass = this.getIcon();
@@ -19,10 +14,11 @@ var popdownClickmodMixin = {
 	    var isActive = this.isActive ? this.isActive() : false;
 	    var style = _.extend({}, this.props.style, {width: width, minWidth: width})
 	    var menuWidth = this.menuWidth || '250px';
+	    var content = 
 
 	   return <span 
 	   		className={"pop-down pop-stop clickable " + (this.classes || '') + (isActive ? ' popdown-active' : '')}
-	    	style={style} onClick={this.handleClick}>
+	    	style={style} onMouseDown={this.handleOpen}>
 
 	    	<span className={iconClass}
 	    		style={{textAlign: 'center', marginRight: 0}}/>
