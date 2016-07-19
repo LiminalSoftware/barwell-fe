@@ -14,7 +14,6 @@ var popdownClickmodMixin = {
 	    var isActive = this.isActive ? this.isActive() : false;
 	    var style = _.extend({}, this.props.style, {width: width, minWidth: width})
 	    var menuWidth = this.menuWidth || '250px';
-	    var content = 
 
 	   return <span 
 	   		className={"pop-down pop-stop clickable " + (this.classes || '') + (isActive ? ' popdown-active' : '')}

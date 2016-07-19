@@ -7,6 +7,8 @@ import { Link } from "react-router"
 
 import modelActionCreators from "../../actions/modelActionCreators.jsx"
 
+
+import popdownClickmodMixin from '../Views/Fields/popdownClickmodMixin'
 import blurOnClickMixin from '../../blurOnClickMixin';
 
 var NewViewAdder = React.createClass({
@@ -29,34 +31,34 @@ var NewViewAdder = React.createClass({
 	
 	// RENDER =================================================================
 
-	render: function () {
+	// render: function () {
 
-		var style = this.props.style || {}
-		style.zIndex = '510'
+	// 	var style = this.props.style || {}
+	// 	style.zIndex = '510'
 
-		return <div className="menu-divider-inner--green pop-stop" 
-			style={style}
-			onClick = {this.handleClick}>
-				<span style = {{display: 'block'}}>
-					<span className = "icon icon-plus"/>
-					Add new view
-				</span>
+	// 	return <div className="menu-divider-inner--green pop-stop" 
+	// 		style={style}
+	// 		onClick = {this.handleClick}>
+	// 			<span style = {{display: 'block'}}>
+	// 				<span className = "icon icon-plus"/>
+	// 				Add new view
+	// 			</span>
 			
-			{
-				this.props.open ? 
-				<div className = "">
-					{_.map(viewTypes, function (type, typeKey) {
-			        	return <div className = "new-item-choice" key = {typeKey}>
-			            	<span className = {"large icon view-icon " + type.icon}/>
-			            	{type.type}
-			            </div>
-			        })}
-		        </div>
-				:
-				null
-			}
-			</div>
-	}
+	// 		{
+	// 			this.props.open ? 
+	// 			<div className = "">
+	// 				{_.map(viewTypes, function (type, typeKey) {
+	// 		        	return <div className = "new-item-choice" key = {typeKey}>
+	// 		            	<span className = {"large icon view-icon " + type.icon}/>
+	// 		            	{type.type}
+	// 		            </div>
+	// 		        })}
+	// 	        </div>
+	// 			:
+	// 			null
+	// 		}
+	// 		</div>
+	// }
 })
 
 export default NewViewAdder
