@@ -22,10 +22,10 @@ const DELIMITER = constants.delimiter
 
 var CubeTBody = React.createClass ({
 
-	shouldComponentUpdate: function (newProps) {
-		return newProps.view !== this.props.view;
-		// return false;
-	},
+	// shouldComponentUpdate: function (newProps) {
+	// 	return newProps.view !== this.props.view;
+	// 	// return false;
+	// },
 
 	getInitialState: function () {
 		var view = this.props.view

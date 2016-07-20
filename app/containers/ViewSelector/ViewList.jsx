@@ -8,7 +8,6 @@ import { Link } from "react-router";
 
 import ViewItemMovable from './ViewItemMovable';
 import ViewItemSingleton from './ViewItemSingleton';
-import NewViewAdder from './NewViewAdder'
 import sortItems from './sortItems';
 
 import modelActionCreators from "../../actions/modelActionCreators.jsx";
@@ -147,9 +146,7 @@ var ViewList = React.createClass({
 				<span className = "double-column-config">History</span>
 			</Link>
 
-			<div className = "menu-item menu-sub-item menu-divider" key = "add-row">
-				<NewViewAdder {...this.props}/>
-			</div>
+			
 
 			
 		</div>

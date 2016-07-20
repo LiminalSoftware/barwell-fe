@@ -88,6 +88,7 @@ var ColumnMenu = React.createClass({
 					currentCol ? 
 					<ColumnDetail
 						{...this.props}
+						singleton = {true}
 						ref = 'columnDetail'
 						key = {currentCol.column_id}
 						minWidth = "100px"

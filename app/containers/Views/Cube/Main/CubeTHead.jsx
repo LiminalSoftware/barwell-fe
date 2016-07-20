@@ -31,12 +31,12 @@ var CubeTHead = React.createClass ({
 
 	componentWillMount: function () {
 		var store = this.props.store;
-		if (store) store.addChangeListener(this._onChange);
+		store.addChangeListener(this._onChange);
 	},
 
 	componentWillUnmount: function () {
 		var store = this.props.store;
-		if (store) store.removeChangeListener(this._onChange);
+		store.removeChangeListener(this._onChange);
 	},
 
 	// shouldComponentUpdate: function (newProps, newState) {

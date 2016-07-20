@@ -57,14 +57,14 @@ var BlurOnClickMixin = {
   // HANDLERS ================================================================
 
   handleBlur: function () {
-    console.log('handleBlur')
-    if (this.props.isPopUp)
+    if (this.popsUp)
       this.props._clearPopUp()
-    else this.setState({
-        open: false,
-        editing: false,
-        context: false
-      });
+    
+    this.setState({
+      open: false,
+      editing: false,
+      context: false
+    });
   },
 
   handleOutsideClick: function () {
@@ -77,9 +77,9 @@ var BlurOnClickMixin = {
 
     if (this.popsUp && this.props._showPopUp) {
       this.props._showPopUp(this.__proto__.constructor, this.props, e);
-    } else {
-      this.setState({open: true})
     }
+      
+    this.setState({open: true})
 
     util.clickTrap(e)
     modelActionCreators.setFocus('view-config')

@@ -11,12 +11,14 @@ import sortable from 'react-sortable-mixin';
 
 import ViewList from './ViewList'
 import ViewItemSingleton from './ViewItemSingleton';
+import NewViewAdder from './NewViewAdder'
 
 import ModelConfigStore from "../../stores/ModelConfigStore";
-
 import menuOverflowMixin from '../../menuOverflowMixin'
 
 import sortItems from './sortItems';
+
+import util from '../../util/util'
 
 var ViewMenu = React.createClass({
 
@@ -79,6 +81,7 @@ var ViewMenu = React.createClass({
 
 		return <div className = "dropdown-menu "
 					key = "list-wrapper"
+					onMouseDown = {util.clickTrap}
 					style = {{minWidth: "300px", maxHeight: (this.state.windowHeight - 100) + 'px'}}>
 
 				<div className = "menu-item menu-sub-item menu-divider" key = "custom-views">
@@ -99,6 +102,10 @@ var ViewMenu = React.createClass({
 					config = {config}
 					{..._this.props}
 					key = "orderable-list"/>
+
+
+				<NewViewAdder {...this.props}/>
+				
 			
 		</div>
 	}

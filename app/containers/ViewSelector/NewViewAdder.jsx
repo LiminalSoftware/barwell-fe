@@ -7,13 +7,13 @@ import { Link } from "react-router"
 
 import modelActionCreators from "../../actions/modelActionCreators.jsx"
 
-
+import util from '../../util/util'
 import popdownClickmodMixin from '../Views/Fields/popdownClickmodMixin'
 import blurOnClickMixin from '../../blurOnClickMixin';
 
 var NewViewAdder = React.createClass({
 
-	mixins: [blurOnClickMixin, popdownClickmodMixin],
+	mixins: [],
 
 	// LIFECYCLE ==============================================================
 
@@ -23,42 +23,51 @@ var NewViewAdder = React.createClass({
 
 	// HANDLERS ===============================================================
 
-	handleClick: function (e) {
-		this.props._showPopUp(NewViewAdder, {}, e);
+	handleOpen: function (e) {
+		this.setState({open: true})
+		util.clickTrap(e)
 	},
 
 	// UTILITY ================================================================
 	
 	// RENDER =================================================================
 
-	// render: function () {
+	getIcon: function () {
+		return 'icon icon-plus'
+	},
 
-	// 	var style = this.props.style || {}
-	// 	style.zIndex = '510'
+	getContent: function () {
+		return 'Add new view'
+	},
 
-	// 	return <div className="menu-divider-inner--green pop-stop" 
-	// 		style={style}
-	// 		onClick = {this.handleClick}>
-	// 			<span style = {{display: 'block'}}>
-	// 				<span className = "icon icon-plus"/>
-	// 				Add new view
-	// 			</span>
+	renderChoices: function () {
+		return <div className = "popdown-section">
+		{_.map(viewTypes, function (type, typeKey) {
+        	return <div className = "menu-item menu-sub-item" key = {typeKey}>
+            	<span className = {"icon " + type.icon}/>
+            	{type.type}
+            </div>
+        })}
+        </div>
+	},
+
+	render: function () {
+		var style = {
+			maxHeight: this.state.open ? '300px' : '40px'
+		}
+
+		return <div className="menu-section" style = {style}>
+			<div className="menu-item menu-config-row menu-sub-item" 
+				onMouseDown = {this.handleOpen}>
+				<div className = "menu-divider-inner">
+					<span className = "icon icon-plus"/>
+					Add new view
+				</div>
+			</div>
+			{this.state.open ? this.renderChoices() : null}
 			
-	// 		{
-	// 			this.props.open ? 
-	// 			<div className = "">
-	// 				{_.map(viewTypes, function (type, typeKey) {
-	// 		        	return <div className = "new-item-choice" key = {typeKey}>
-	// 		            	<span className = {"large icon view-icon " + type.icon}/>
-	// 		            	{type.type}
-	// 		            </div>
-	// 		        })}
-	// 	        </div>
-	// 			:
-	// 			null
-	// 		}
-	// 		</div>
-	// }
+		</div>
+	}
 })
 
 export default NewViewAdder

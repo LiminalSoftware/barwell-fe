@@ -54,6 +54,7 @@ var createCubeStore = function (view, dimensions) {
         row: null,
         column: null
     };
+
     var _requestedOffset = {
         row: null,
         column: null
@@ -158,6 +159,7 @@ var createCubeStore = function (view, dimensions) {
             }
 
             if (type === 'CUBE_RECEIVELEVELS' && payload.view_id === view.view_id) {
+                console.log('receive levels: ' + payload.dimension)
                 var dimension  = payload.dimension;
                 var groups = _dimensions[dimension].map(g => 'a' + g);
                 
@@ -168,10 +170,12 @@ var createCubeStore = function (view, dimensions) {
             }
 
             if (type === 'CUBE_REQUESTVALUES' && payload.view_id === view.view_id) {
+                console.log('request values')
                 _requestedOffset = payload.offset
             }
 
             if (type === 'CUBE_RECEIVEVALUES' && payload.view_id === view.view_id) {
+                console.log('receive values')
                 var _this = this;
                 var dimensions = _dimensions.row.concat(_dimensions.column).filter(_.identity);
 

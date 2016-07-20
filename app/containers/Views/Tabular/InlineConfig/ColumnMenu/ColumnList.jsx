@@ -175,11 +175,13 @@ var ColumnList = React.createClass({
 		var numTotalItems = this.state.items.length;
 
 		var items = this.state.items.map(function (item, idx) {
-			var itemProps = Object.assign({
+			var itemProps = Object.assign({}, _this.props, {
 				item: item,
 				index: idx,
-				model: _this.props.model,
-				view: _this.props.view
+				minWidth: '500px',
+				config: item,
+				viewConfigParts: section ? section.configParts : null,
+				_blurSiblings: _this.blurSiblings,
 			}, _this.movableProps);
 
 			if (item.isSection) section = item;
@@ -199,13 +201,6 @@ var ColumnList = React.createClass({
 			else return <ColumnDetail
 				key = {item.column_id}
 				ref = {item.column_id}
-				minWidth = '500px'
-				config = {item}
-				open = {true}
-				viewConfigParts = {section ? section.configParts : null}
-				editing = {_this.props.editing}
-				_blurSiblings = {_this.blurSiblings}
-				_showPopUp = {_this.props._showPopUp}
 				{...itemProps}/>
 		});
 

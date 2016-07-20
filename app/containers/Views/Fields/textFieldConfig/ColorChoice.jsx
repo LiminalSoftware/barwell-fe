@@ -10,6 +10,8 @@ import blurOnClickMixin from '../../../../blurOnClickMixin'
 import popdownClickmodMixin from '../popdownClickmodMixin';
 import ColorPickerWidget from '../ColorField/ColorPickerWidget'
 
+import Dropdown from '../../../Dropdown/Dropdown'
+
 import util from '../../../../util/util';
 
 var palette = [
@@ -61,16 +63,19 @@ var ColorChoice = React.createClass({
 
   chooseColor: function (attributeId) {
     this.commitChanges({colorAttr: attributeId, color: null, adjustColor: this.state.adjustColor})
+    this.blurChildren(e)
     // this.setState({open: false})
   },
 
-  chooseCondition: function (attributeId) {
-    this.commitChanges({colorConditionAttr: attributeId, adjustColor: this.state.adjustColor})
+  chooseCondition: function (attributeId, e) {
+    this.commitChanges({colorConditionAttr: attributeId})
+    this.blurChildren(e)
     // this.setState({open: false})
   },
 
-  toggleConditional: function () {
+  toggleConditional: function (e) {
     this.setState({conditional: !this.state.conditional})
+    this.blurChildren(e)
   },
 
   chooseFixedColor: function (color) {
@@ -95,17 +100,40 @@ var ColorChoice = React.createClass({
     this.commitChanges({adjustColor: !this.state.adjustColor})
   },
 
+  blurChildren: function () {
+    const condionDropdown = this.refs.condionDropdown;
+    if (condionDropdown) condionDropdown.handleBlur()
+  },
+
   // RENDER ===================================================================
 
+  renderConditionDropdown: function () {
+    const view = this.props.view
+    const boolAttrs = AttributeStore
+      .query({type: 'BOOLEAN', model_id: view.model_id})
+      .map(function(a){
+        return {
+          "key": a.attribute_id, 
+          "label": a.attribute, 
+          "icon": 'icon-check-square'
+        }})
+    
+    return <Dropdown choices = {boolAttrs} 
+      _choose = {this.chooseCondition}
+      ref = "conditionDropdown"
+      selection = {this.state.colorConditionAttr}/>
+  },
+
   renderConditionSection: function () {
-    var _this = this
-    var view = this.props.view
-    var boolAttrs = AttributeStore.query({type: 'BOOLEAN', model_id: view.model_id})
+    const _this = this
+    const view = this.props.view
+    const boolAttrs = AttributeStore
+      .query({type: 'BOOLEAN', model_id: view.model_id})
 
     return <div className="popdown-section" key="condition">
       {
         boolAttrs.length > 0 ?
-        <div className="popdown-item bottom-divider title">
+        <div className="popdown-item title top-divider">
           <input type="checkbox"
             onChange = {_this.toggleConditional}
             checked = {_this.state.conditional} />
@@ -116,28 +144,8 @@ var ColorChoice = React.createClass({
       }
 
       {
-      _this.state.conditional ? 
-      boolAttrs.map(function (attr) {
-        return <div key = {attr.attribute_id} className = {"popdown-item selectable " + 
-          (_this.state.colorConditionAttr === attr.attribute_id ? ' menu-selected' : '')}
-            onClick = {_this.chooseCondition.bind(_this, attr.attribute_id)}>
-            <span className = "icon icon-check-square  ">
-            </span>
-            {attr.attribute}
-          </div>
-        })
-        :
-        null
-      }
-
-      {
-        _this.state.conditional > 0 ?
-        <div key = "no-condition" className = {"popdown-item selectable" + 
-          (_this.state.colorConditionAttr === null  ? ' menu-selected' : '')}
-          onClick = {_this.chooseCondition.bind(_this, null)}>
-          <span className = "icon icon-square"/>
-          No condition
-        </div>
+      this.state.conditional ? 
+        this.renderConditionDropdown()
         :
         null
       }
@@ -208,17 +216,25 @@ var ColorChoice = React.createClass({
       
       
       {
-        this.state.chooser === 'custom' ?
-        <ColorPickerWidget  color = {this.state.color} height = {customHeight} _chooseColor = {this.chooseFixedColor}/>
-        : null
+      this.state.chooser === 'custom' ?
+      <ColorPickerWidget  color = {this.state.color} height = {customHeight} 
+        _chooseColor = {this.chooseFixedColor}/>
+      : null
       }
-      
-      
+
+
+
+      {
+      this.state.colorConditionAttr ?
       <div className = "popdown-item top-divider">
       Auto-lighten colors: <input type="checkbox"
         onChange = {_this.handleAdjustCheck}
         checked = {_this.state.adjustColor} />
       </div>
+      : null
+      }
+      
+
     </div>
   },
 

@@ -78,7 +78,7 @@ var ColumnDetailMixin = {
 
 		// if the menu is open, defer all changes until the menu is closed
 		// otherwise, commit them right away
-		modelActionCreators.create('attribute', !this.props.open, attr);
+		modelActionCreators.create('attribute', this.props.singleton, attr);
 	},
 
 	handleDelete: function (e) {
@@ -145,6 +145,8 @@ var ColumnDetailMixin = {
 			_rename: _this.handleRename,
 			_handleDelete: _this.handleDelete,
 			_blurSiblings: _this.props._blurSiblings,
+			_showPopUp: _this.props._showPopUp,
+			_clearPopUp: _this.props._clearPopUp,
 			type: config.type
 		}
 		var keycomps = KeycompStore.query({attribute_id: config.attribute_id})
@@ -166,7 +168,7 @@ var ColumnDetailMixin = {
 		
 
 		return <div className = "menu-sub-item">
-			{this.props.open ? 
+			{!this.props.singleton ? 
 				<span ref = "grabber" className="draggable drag-grid"/> 
 				: null
 			}
@@ -174,9 +176,8 @@ var ColumnDetailMixin = {
 			<span className = "ellipsis" style = {{maxWidth: '34px'}}>
 				<TypePicker
 					ref = "typePicker"
-					{...configProps}
-					_blurSiblings = {_this.props._blurSiblings}
-					_showPopUp = {_this.props._showPopUp}/>
+					{...this.props}
+					{...configProps}/>
 			</span>
 			
 			<span style = {{maxWidth: '150px', minWidth: '150px', position: 'relative'}}>
@@ -215,7 +216,6 @@ var ColumnDetailMixin = {
 					var localProps = {
 						key: part.prototype.partName,
 						ref: part.prototype.partName,
-						_showPopUp: _this.props._showPopUp
 					}
 					return React.createElement(part, _.extend(
 						localProps,
@@ -224,11 +224,11 @@ var ColumnDetailMixin = {
 				})
 			}
 			</span>
-			{(this.props.open && !config._dirty) ? 
+			{!this.props.singleton ? 
 			<span style={{flexDirection: 'row-reverse', maxWidth: '35px', marginRight: '10px'}}>
 				{
 					fieldType.unchangeable ? null :
-					<AttributeConfig {...this.props} {...configProps} open = {false} key = "attributeConfig"/>
+					<AttributeConfig {...this.props} {...configProps} key = "attributeConfig"/>
 				}
 			</span>
 			: null}

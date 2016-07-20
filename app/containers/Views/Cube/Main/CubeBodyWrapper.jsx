@@ -48,14 +48,14 @@ var CubeBodyWrapper = React.createClass ({
 		}
 	},
 
-	shouldComponentUpdate: function (newProps) {
-		return newProps.view !== this.props.view;
-		// return false;
-	},
+	// shouldComponentUpdate: function (newProps) {
+	// 	return newProps.view !== this.props.view;
+	// 	// return false;
+	// },
 
 	_onChange: function () {
 		// this.setState({contextOpen: false, detailOpen: false})
-		// this.forceUpdate()
+		this.forceUpdate()
 		// this.refs.lhs.forceUpdate()
 		// this.refs.rhs.forceUpdate()
 		// this.refs.lhsHead.forceUpdate()
@@ -78,10 +78,29 @@ var CubeBodyWrapper = React.createClass ({
 
 		if (view._dirty) return;
 
+		modelActionCreators.createNotification({
+			narrative: 'Loading dimension data',
+			type: 'loading',
+			icon: ' icon-loading spin ',
+			notification_key: 'loadingRecords',
+			notificationTime: 0
+		});
+
 		return Promise.all([
 			modelActionCreators.fetchCubeLevels(view, store, 'row'),
 			modelActionCreators.fetchCubeLevels(view, store, 'column')
-		]).then(p => modelActionCreators.fetchCubeValues(view, store, offset))
+		]).then(function () {
+			modelActionCreators.createNotification({
+				narrative: 'Loading view data',
+				type: 'loading',
+				icon: ' icon-loading spin ',
+				notification_key: 'loadingRecords',
+				notificationTime: 0
+			});
+		}).then(p => modelActionCreators.fetchCubeValues(view, store, offset))
+		.then(function () {
+			modelActionCreators.clearNotification({notification_key: 'loadingRecords'})
+		})
 	},
 	
 
@@ -99,7 +118,7 @@ var CubeBodyWrapper = React.createClass ({
 		var colOffset = this.props.hiddenColWidth
 		
 		return <div
-			className = {"wrapper force-layer " + (focused ? "focused" : "blurred")}
+			className = {"wrapper force-layer " + (focused ? "focused" : "gray-out")}
 			ref="tbodyWrapper"
 			style = {{
 				left: 0,
@@ -121,7 +140,8 @@ var CubeBodyWrapper = React.createClass ({
 						top: 0,
 						height: (numRows * geo.rowHeight) + 'px',
 						marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
-						transform: 'translateZ(0) translateY(' + marginTop + 'px)'
+						transform: 'translateZ(0) translateY(' + marginTop + 'px)',
+						right: '1px'
 					}}>
 					<CubeTHead {...this.props}
 						dimension = {'row'}
@@ -169,7 +189,7 @@ var CubeBodyWrapper = React.createClass ({
 						style = {{
 							top: 0,
 							height: this.props.columnHeaderHeight + 'px',
-							left: 0,
+							left: '-1px',
 							right: 0,
 							transform: 'translateZ(2px)'
 						}}
@@ -189,7 +209,7 @@ var CubeBodyWrapper = React.createClass ({
 						<div className = "wrapper body-offsetter"
 							ref = "rhsOffsetter"
 							style = {{
-								left: 0,
+								left: '-1px',
 								top: 0,
 								width: (this.props.bodyWidth) + 'px',
 								bottom: 0,
