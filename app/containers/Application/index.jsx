@@ -40,36 +40,7 @@ var Application = React.createClass({
 
 	// UTILITY ================================================================
 
-	showPopUp: function (part, props, e) {
-		
-		var container = $(e.target).closest('.pop-stop')
-		var offset = container.offset()
-		var style = Object.assign({}, props.style || {}, {
-			position: 'fixed',
-			left: offset.left + 'px',
-			top: offset.top + 'px',
-			zIndex: 110
-		})
-		if (!style.width) style.width = container.width() + 'px'
-		var extendedProps = Object.assign({}, props, {
-			style: style,
-			open: true,
-			_clearPopUp: this.clearPopUp,
-			isPopUp: true,
-			ref: 'popUp'
-		})
-		
-		this.setState({
-			popUpPart: part,
-			popUpConfig: extendedProps
-		})
-		modelActionCreators.setFocus('view-config')
-		if (e) util.clickTrap(e)
-	},
-
-	clearPopUp: function () {
-		this.setState({popUpPart: null, popUpConfig: null})
-	},
+	
 
 	// RENDER ===================================================================
 
@@ -82,38 +53,37 @@ var Application = React.createClass({
 			height: '1px', 
 			width: '1px'
 		}
-		return <div
-			className= "application" id = "application">
-			
-			
+		return <div style = {{overflow: "hidden"}}>
 			<ReactCSSTransitionGroup className = "application"
-				{...contant.transitions.slideIn}>
-			{
+			{...contant.transitions.slideIn}>
+				{
+				this.state.loaded ?
+				<ModelBar 
+					{...this.props} 
+					_clearPopUp={this.clearPopUp}
+					_showPopUp={this.showPopUp}
+					workspaceId = {this.props.params.workspaceId}/>
+				: null
+				}
+				{
 				this.state.loaded ?
 				<ModelPane {...this.props} 
 					_clearPopUp={this.clearPopUp}
 					_showPopUp={this.showPopUp}/>
-				: <div className = "hero-banner">
+				: 
+				<div className = "hero-banner">
 					<span className="three-quarters-loader"/>
 					<h1 className = "hero-header">Loading workspace data...</h1>
 				</div>
-			}
-			{
-				this.state.loaded ?
-				<ModelBar {...this.props} workspaceId = {this.props.params.workspaceId}/>
-				: null
-			}
-			</ReactCSSTransitionGroup>
-
-
-				{this.state.popUpPart ?
-					React.createElement(this.state.popUpPart, this.state.popUpConfig)
-					: null 
 				}
+			</ReactCSSTransitionGroup>
+			{this.state.popUpPart ?
+				React.createElement(this.state.popUpPart, this.state.popUpConfig)
+				: null 
+			}
 
 			<textarea style = {dummyStyle} id = "copy-paste-dummy" value=""></textarea>
-
-		</div>;
+		</div>
 	}
 
 })

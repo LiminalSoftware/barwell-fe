@@ -14,6 +14,8 @@ import util from '../../../../util/util'
 var HAS_3D = util.has3d()
 var RIGHT_FRINGE = '200px'
 
+const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789"
+
 var Cursors = React.createClass ({
 
   getPointerElement: function () {
@@ -69,6 +71,8 @@ var Cursors = React.createClass ({
 	render: function () {
     var view = this.props.view
     var viewconfig = this.props.viewconfig || {};
+    var shadeOffset = viewconfig.hoverAttributeIndex
+    const shadeItem = view.data.visibleCols[shadeOffset] || {}
     var model = this.props.model
     var store = this.props.store
     var rowCount = store.getRecordCount()
@@ -98,6 +102,8 @@ var Cursors = React.createClass ({
     var singleton = sel.top === sel.bottom && sel.left === sel.right;
 
     var hideCursor = (rowsSelected || rowCount === 0);
+
+
 
     var pointerFudge = this.props.expanded ? {
       left: -30,
@@ -146,6 +152,23 @@ var Cursors = React.createClass ({
           ref = "overlayInner"
           style = {style}>
 
+          {
+          !focused && shadeOffset >= 0 ? 
+          <Overlay
+            {...this.props}
+            key = "referenceShade"
+            ref = "reference"
+            position = {_.extend({left: shadeOffset, right: shadeOffset, top: 0, bottom: 1000})}
+            fudge = {{left: -2, width: -2}}
+            className = "view-reference-box">
+            <div className = "ref-dot" style = {{left: '50%', top: "50%"}}>
+              
+            </div>
+          </Overlay>
+          : 
+          null
+          }
+
           <Overlay
                 {...this.props}
                 ref = "addNew"
@@ -165,7 +188,7 @@ var Cursors = React.createClass ({
           <Overlay
             {...this.props}
             className = {"pointer " + (focused ? " focused" : " ") + 
-              (focused ? " " : " gray-out ") +
+              (focused ? " " : "  ") +
               (this.props.expanded ? " pointer--expanded " : "")}
             ref = "pointer"
             fudge = {pointerFudge}

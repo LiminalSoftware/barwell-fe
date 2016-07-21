@@ -7,6 +7,11 @@ module.exports = {
       transitionEnterTimeout: 1000,
       transitionLeaveTimeout: 1000,
       transitionName: "slide-in" 
+    },
+    inandout: {
+      transitionEnterTimeout: 1000,
+      transitionLeaveTimeout: 1000,
+      transitionName: "inandout" 
     }
   },
 

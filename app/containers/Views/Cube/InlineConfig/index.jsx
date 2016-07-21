@@ -13,7 +13,6 @@ import modelActionCreators from "../../../../actions/modelActionCreators"
 import groomView from '../../groomView'
 
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import ViewSelector from '../../../ViewSelector'
 import ColumnMenu from '../../Tabular/InlineConfig/ColumnMenu'
 
 import sections from './CubeColumnMenu/sections'
@@ -37,7 +36,6 @@ var CubeViewInlineConfig = React.createClass({
 	},
 
 	blurSiblings: function () {
-		this.refs.viewSelector.handleBlur();
 		this.refs.columnMenu.handleBlur();
 	},
 
@@ -61,8 +59,7 @@ var CubeViewInlineConfig = React.createClass({
 		};
 
     	return <div className = "view-config" onClick={this.focus}>
-			<ViewSelector {...this.props} {...childProps} 
-				ref = "viewSelector"/>
+
 			<ColumnMenu {...this.props} {...childProps}
 				confirmChanges = {true}
 				sections = {sections} 

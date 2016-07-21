@@ -16,8 +16,8 @@ import groomView from '../../groomView'
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 
-import ViewSelector from '../../../ViewSelector'
-import ColumnMenu from './ColumnMenu/index'
+
+import ColumnDropdownMenu from './ColumnMenu'
 import SortMenu from './SortMenu/index'
 import FilterMenu from './FilterMenu'
 import sections from './ColumnMenu/sections'
@@ -40,7 +40,6 @@ var TabularViewInlineConfig = React.createClass({
 	},
 
 	blurSiblings: function () {
-		this.refs.viewSelector.handleBlur()
 		this.refs.columnMenu.handleBlur()
 		this.refs.sortMenu.handleBlur()
 	},
@@ -60,10 +59,9 @@ var TabularViewInlineConfig = React.createClass({
 		}
 
     	return <div className = "view-config" onClick={this.focus}>
-			<ViewSelector {...this.props} {...childProps} ref="viewSelector"/>
-			<ColumnMenu {...this.props} {...childProps} ref="columnMenu" sections = {sections}/>
-			<SortMenu {...this.props} {...childProps} ref="sortMenu"/>
+    		<SortMenu {...this.props} {...childProps} ref="sortMenu"/>
 			<FilterMenu {...this.props} {...childProps} ref="filterMenu"/>
+			<ColumnDropdownMenu {...this.props} {...childProps} ref="columnMenu" sections = {sections}/>
 		</div>
 	}
 });

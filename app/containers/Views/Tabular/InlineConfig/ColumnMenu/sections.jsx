@@ -5,7 +5,7 @@ var sections = [
 		section: "fixed",
 		label: "Fixed Attributes",
 		emptyText: "No fixed attributes...",
-		icon: "icon-pushpin",
+		icon: "icon-pushpin2",
 		selector: function (view) {
 			return view.data.columnList.filter(c => c.visible && c.fixed)
 		},

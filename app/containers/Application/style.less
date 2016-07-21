@@ -23,8 +23,9 @@ h1, h2, h3, h4, h5 {
 }
 
 .application {
-	.flex-display;
-	.flex-direction(column);
+	overflow: hidden;
+	display: flex;
+	flex-direction: row;
 	min-height: 100vh;
 	height: 100%;
 	background:url(
@@ -33,48 +34,39 @@ h1, h2, h3, h4, h5 {
 }
 
 .model-views {
-	.flex-display;
-	.flex-direction(column);
-	.flex(1);
-	.flex-grow(1);
 	.noselect;
-	order: 1;
+	display: flex;
+	flex: 3 3;
 	padding: 0;
+	margin: 0;
 	overflow: hidden;
-	position: absolute;
-	bottom: 50px;
-	top: 0;
-	left: 0;
-	right: 0;
 }
 
 .model-panes {
+	flex: 3 3;
+	display: flex;
 	position: relative;
-	.flex-display;
-	.flex-direction(column);
-	.flex(1);
-	.flex-grow(1);
-
 	margin: 0;
-	// margin-top: -1px;
-	// overflow: hidden;
 	.noselect;
 }
 
 .view-bar {
+	flex: 1 1 30%;
+	min-width: 400px;
+	max-width: 700px;
 	display: block;
 	padding: 0;
-	background: @headerMenuBgColor;
+	background: @headerBgLight2;
 	.noselect;
+
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 .view-config {
-	.flex-display;
-	.flex-direction(row);
-	padding: 6px;
-	min-height: 40px;
-	border-top: 1px solid @headerMenuBorderColor;
-	border-bottom: 1px solid @headerMenuBorderColor;
+	padding : 15px;
+	overflow: visilbe;
+	color: @lightFontColor;
 }
 
 .view-body-wrapper {
@@ -85,4 +77,8 @@ h1, h2, h3, h4, h5 {
 	right: 0;
 	top: 0;
 	bottom: 0;
+}
+
+#content {
+	overflow: hidden;
 }

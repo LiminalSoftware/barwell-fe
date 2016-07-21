@@ -16,6 +16,13 @@ module.exports.cidNum = function (cid) {
   return parseInt(cid.substr(1))
 }
 
+module.exports.makePercent = function (num) {
+  return _.isNumber(num) ? 
+    Math.round(num * 1000) / 10 + '%'
+    : num
+}
+
+
 module.exports.lighten = function (color, lightness) {
   var hsl = (!!color) ? tinycolor(color).toHsl() : tinycolor("white")
   hsl.l = Math.max(hsl.l, lightness)

@@ -9,8 +9,6 @@ import ViewConfigStore from "../../stores/ViewConfigStore"
 import ModelConfigStore from '../../stores/ModelConfigStore'
 import groomView from '../../containers/Views/groomView'
 
-import ViewSelector from '../ViewSelector'
-
 import ChangeHistory from '../Views/ChangeHistory'
 
 import viewTypes from "../Views/viewTypes"
@@ -80,7 +78,7 @@ var ModelPane = React.createClass({
 		var bodyContent
 		var bodyElement
 		var configElement = <div className = "view-config">
-			<ViewSelector view = {view} model = {model}/>
+
 		</div>;
 		
 
@@ -110,7 +108,7 @@ var ModelPane = React.createClass({
 			})
 		} else if (view_id === 'history') {
 			bodyContent = <ChangeHistory model = {model}/>
-		} else if (view_id === 'config'){
+		} else if (view_id === 'config') {
 			bodyContent = <ModelDefinition model={model}/>
 		} else {
 			bodyContent = null

@@ -17,6 +17,8 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import blurOnClickMixin from '../../../../../blurOnClickMixin';
 import sortable from 'react-sortable-mixin';
 
+import Dropdown from '../../../../Dropdown'
+
 
 
 var SortMenu = React.createClass({
@@ -76,60 +78,26 @@ var SortMenu = React.createClass({
 			var type = fieldTypes[attr.type]
 			if (_.contains(sortAttrs, attr.attribute_id)) return;
 			if (!type || !type.sortable) return
-			var attribute_id = (attr.attribute_id || attr.cid)
-			attrSelections.push(
-				<option value = {attribute_id} key = {attribute_id}>
-						{attr.attribute}
-				</option>
-			);
+			var attribute_id = (attr.cid || attr.attribute_id)
+			attrSelections.push({label: attr.attribute, key: attribute_id});
 		})
 
     	return <div className = "header-section">
-			<div className="header-label">Ordering</div>
-			<div className="model-views-menu" onClick = {util.clickTrap}>
-			<ReactCSSTransitionGroup 
-				component = "div"
-				className="model-views-menu-inner"
-				transitionName="fade-in" 
-				transitionAppear={true}
-				transitionEnterTimeout={500}
-				transitionLeaveTimeout={500}
-				transitionAppearTimeout={500}>
-				{
-				this.state.open ?
+			<div className="header-label">
+				Ordering
+				<div className="dropdown icon--small icon icon-chevron-down" onClick = {this.handleOpen}></div>
+			</div>
+			<div className="header-config-section">
 				<div key = "menu" className="dropdown-menu" style = {{minWidth: "300px"}}>
 					<SortList {...this.props} ref = "list"/>
 					<div className = "menu-item menu-sub-item">
 						<span>
-							<select className = "menu-input selector" 
-								style = {{width: "100%"}}
-								onChange = {this.chooseItem}
-								value = {0}>
-								{attrSelections}
-							</select>
+							<Dropdown _choose = {this.chooseItem}
+								choices = {attrSelections}/>
 						</span>
 					</div>
-
-					<div className = "menu-item menu-config-row">
-						<div className = "menu-sub-item  menu-clickable"
-							onClick = {this.handleSave}>
-							<span className = "icon icon-check"/>
-							Sort
-						</div>
-						<div className = "menu-sub-item  menu-clickable"
-							onClick = {this.handleCancel}>
-							<span className = "icon icon-cross2"/>
-							Cancel
-						</div>
-					</div>
 				</div>
-				:
-				<div key = "preview" className="model-views-menu-inner">
-					{sortPreview}
-				</div>
-				}
-				</ReactCSSTransitionGroup>
-				<div className="dropdown icon--small icon icon-chevron-down" onClick = {this.handleOpen}></div>
+				
 			</div>
 
 		</div>

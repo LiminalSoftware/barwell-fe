@@ -6,7 +6,8 @@ import AttributeStore from "../../../../stores/AttributeStore"
 
 import configCommitMixin from '../configCommitMixin'
 import blurOnClickMixin from '../../../../blurOnClickMixin'
-import popdownClickmodMixin from '../popdownClickmodMixin';
+import popdownClickmodMixin from '../popdownClickmodMixin'
+import conditionalMixin from './conditionalMixin'
 
 import PopDownMenu from '../../../../components/PopDownMenu';
 
@@ -16,10 +17,13 @@ var TextChoice = React.createClass({
 
   partName: 'TextChoice',
 
+  conditionProperty: 'textConditionAttr',
+
   mixins: [
     blurOnClickMixin, 
     configCommitMixin,
-    popdownClickmodMixin
+    popdownClickmodMixin,
+    conditionalMixin
   ],
 
   getInitialState: function () {
@@ -27,9 +31,12 @@ var TextChoice = React.createClass({
     return {
       textConditionAttr: config.textConditionAttr,
       style: config.style,
-      open: false
+      open: false,
+      conditional: false
     }
   },
+
+  // LIFECYCLE ==============================================================
 
   componentWillReceiveProps: function (nextProps) {
     var config = nextProps.config
@@ -40,13 +47,22 @@ var TextChoice = React.createClass({
   },
 
   choosetextConditionAttr: function (attributeId) {
-    this.commitChanges({textConditionAttr: attributeId})
+    this.commitChanges({
+      textConditionAttr: attributeId
+    })
   },
 
   chooseStyle: function (style) {
     this.commitChanges({style: style})
     this.setState({open: false})
   },
+
+  blurChildren: function () {
+    const conditionDropdown = this.refs.conditionDropdown;
+    if (conditionDropdown) conditionDropdown.handleBlur()
+  },
+
+  // RENDER ==============================================================
 
   renderFontStyleMenu: function () {
     var _this = this
@@ -77,51 +93,13 @@ var TextChoice = React.createClass({
     </div>
   },
 
-  renderConditionMenu: function () {
-    var _this = this
-    var view = this.props.view
-    var boolAttrs = AttributeStore.query({type: 'BOOLEAN', model_id: view.model_id})
 
-    return <div className = "popdown-section" key="condition">
-      {
-        boolAttrs.length > 0 ?
-          <li className = "popdown-item bottom-divider title " >
-            Conditional
-          </li>
-          :
-          null
-        }
 
-        {
-        boolAttrs.map(function (attr) {
-          return <li key = {attr.attribute_id} className = {"popdown-item  selectable "
-            + (_this.state.textConditionAttr === attr.attribute_id ? ' menu-selected' : '')}
-            onClick = {_this.choosetextConditionAttr.bind(_this, attr.attribute_id)}>
-            <span className = "icon icon-check-square"/>
-            {attr.attribute}
-          </li>
-        })
-        }
-
-        {
-        boolAttrs.length > 0 ?
-          <li className = {"popdown-item  selectable " + 
-            (!_this.state.textConditionAttr ? ' menu-selected' : '')}
-            onClick = {_this.choosetextConditionAttr.bind(_this, null)}>
-            
-            <span className = "icon icon-square"/>
-            No Condition
-          </li>
-          :
-          null
-        }
-    </div>
-  },
 
   renderMenu: function () {
     return [
       this.renderFontStyleMenu(),
-      this.renderConditionMenu()
+      this.renderConditionSection()
     ]
   },
 

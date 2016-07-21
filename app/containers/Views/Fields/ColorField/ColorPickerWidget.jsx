@@ -20,13 +20,6 @@ import MenuKeysMixin from '../MenuKeysMixin'
 const COMMIT_DEBOUNCE = 1000
 
 
-var makePercent = function (num) {
-	return _.isNumber(num) ? 
-		Math.round(num * 1000) / 10 + '%'
-		: num
-}
-
-
 var ColorPickerWidget = React.createClass({
 
 	getInitialState: function () {
@@ -89,7 +82,8 @@ var ColorPickerWidget = React.createClass({
 		var saturationEndStop = tinycolor({h: hue, s: 0, l:100}).toRgbString()
 		var saturationStartStop = tinycolor({h: hue, s: 100, l:50}).toRgbString()
 		var gradientString = `linear-gradient(90deg, ${saturationEndStop} 0%, ${saturationStartStop} 100%)`
-		var rainbowFilter = `saturate(${makePercent(parseFloat(this.state.s)/100 - 1)}) brightness(${makePercent(parseFloat(this.state.l)/100 - 1)})`;
+		var rainbowFilter = `saturate(${util.makePercent(parseFloat(this.state.s)/100 - 1)}) ` +
+			`brightness(${util.makePercent(parseFloat(this.state.l)/100 - 1)})`;
 		var colorString = tinycolor(this.state).toRgbString()
 
 		console.log(rainbowFilter)
@@ -119,8 +113,8 @@ var ColorPickerWidget = React.createClass({
 				style = {{height: '100%', left: '80px', right: '14px', display: 'block', background: gradientString, position: 'absolute'}}>
 				<div className = "lightness-overlay" style = {{height: '100%', width: '100%', display: 'block'}}>
 					<div className = "color-pointer" style = {{
-						left: makePercent(this.state.s), 
-						bottom: makePercent(this.state.l)}}/>
+						left: util.makePercent(this.state.s), 
+						bottom: util.makePercent(this.state.l)}}/>
 				</div>
 			</div>
 			<div className = "rainbow" 
@@ -133,7 +127,7 @@ var ColorPickerWidget = React.createClass({
 				position: 'absolute', 
 				WebkitFiter: rainbowFilter
 			}}>
-				<div className = "hue-pointer" style = {{top: makePercent(hue / 360)}}/>
+				<div className = "hue-pointer" style = {{top: util.makePercent(hue / 360)}}/>
 			</div>
 		</div>
 	}

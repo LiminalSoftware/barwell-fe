@@ -13,18 +13,6 @@ var BlurOnClickMixin = {
 
   // LIFECYCLE ==============================================================
 
-  componentWillMount: function () {
-    if (this.props.open) {
-      this.setState({open: true})
-    }
-  },
-
-  componentDidMount: function () {
-    // if (this.state.open) {
-    //   this.addListeners()
-    // }
-  },
-
   componentWillUpdate: function (nextProps, nextState) {
     var willBeOpen = isOpen(nextState)
     var wasOpen = isOpen(this.state)
@@ -34,7 +22,6 @@ var BlurOnClickMixin = {
       
     else if (wasOpen && !willBeOpen)
       this.removeListeners()
-    
   },
 
   componentWillUnmount: function () {
@@ -43,7 +30,7 @@ var BlurOnClickMixin = {
   },
 
   // UTILITY ================================================================
-
+  
   addListeners: function () {
     document.addEventListener('keyup', this.handleKeyPress)
     document.addEventListener('mousedown', this.handleOutsideClick)
@@ -57,9 +44,7 @@ var BlurOnClickMixin = {
   // HANDLERS ================================================================
 
   handleBlur: function () {
-    if (this.popsUp)
-      this.props._clearPopUp()
-    
+    console.log('blur')
     this.setState({
       open: false,
       editing: false,
@@ -72,16 +57,7 @@ var BlurOnClickMixin = {
   },
 
   handleOpen: function (e) {
-    if (this.props._blurSiblings) this.props._blurSiblings();
-    if (this.blurChildren) this.blurChildren();
-
-    if (this.popsUp && this.props._showPopUp) {
-      this.props._showPopUp(this.__proto__.constructor, this.props, e);
-    }
-      
     this.setState({open: true})
-
-    util.clickTrap(e)
     modelActionCreators.setFocus('view-config')
   },
 

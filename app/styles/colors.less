@@ -1,4 +1,5 @@
 
+//====================================================
 @grayA: #2a3034;
 @gray1: #524A50;
 @gray2: #71646B;
@@ -37,11 +38,71 @@
 
 .newgreen-stripe {
 	background:url(
-	data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAALElEQVQIW2NkwALYp1r8Z0QXBwn+zD7BiCIBEwQphksgC8Il0AXBEtgEQRIAyLsV2q2phJ4AAAAASUVORK5CYII=
+	data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVQYV2NkIAKwT7X4z0hIHUjRz+wTjHgVwhSBDMOpEFkRToXoirAqxKYIQyEuRSgK8SmCKySkCKyQGEUghQCcJiXerlSgIwAAAABJRU5ErkJggg==
     ) repeat;
+    
 }
 
 
 .sunburst-light {
 background: rgba(247,248,250,1);
+}
+
+//===========================================
+@headerBorderColor: transparent;
+@headerBorderHilite: @purple4;
+@menuBorderColor: transparent;
+@headerBorderRadius: 3px;
+@headerOuterBorderWidth: 5px;
+@headerOuterBorderColor: @green-trans;
+
+@headerBgColor: @gray4;
+
+@lightFontColor: fadeout(white, 30%);
+
+@menuItemBorderRadius: 2px;
+@headerBorderWidth: 1px;
+// @headerMenuBgColor: #746e7c;
+@headerBgLight1: desaturate(darken(steelblue, 8%), 30%);
+@headerMenuBgColor: darken(@headerBgLight1, 10%);
+@headerBgLight2: desaturate(lighten(@headerMenuBgColor, 10%), 5%);
+
+@headerBgLight3: rgba(247,248,250,1);
+
+
+@headerBgLight0: lighten(@headerMenuBgColor, 17%);
+@headerBgLight05: lighten(@headerMenuBgColor, 8%);
+@headerBgDark: lighten(@headerMenuBgColor, 5%);
+
+@headerMenuBgHilite: white;
+@headerLightBgColor: white;
+// @headerMenuBgHilite: lighten(@headerMenuBgColor, 0.7%);
+@headerMenuBorderColor: @headerBgLight1;
+@menuLightBorder: @gray4;
+// @headerMenuBorderColor: rgba(255,255,255,0.7);
+// @headerFontColor: rgba(255,255,255,0.7);
+@headerFontColor: darken(@headerMenuBgColor, 25%);
+@headerFontSize: 16px;
+@headerOuterHilite: @newgreen1;
+
+@pointerSize: 16px;
+
+.msInput {
+  display: inline-block;
+  padding: 0px;
+  border: none;
+  outline: none;
+  background: none;
+  border-bottom: 1px solid @headerBorderColor;
+  color: @headerFontColor;
+  font-family: @bodyFont;
+  min-width: 50px;
+  width: 100px;
+  margin: 0;
+  margin-bottom: -1px;
+  border-radius: 0;
+}
+
+.gray-out {
+  -webkit-filter: saturate(0.1) contrast(0.5) brightness(1.30) sepia(10%);
 }

@@ -22,7 +22,10 @@ var Dropdown = React.createClass({
 	// HANDLERS ===============================================================
 
 	handleClick: function (e) {
-		this.setState({open: true})
+		if (!this.state.open) {
+			this.setState({open: true})
+			util.clickTrap(e)	
+		}
 	},
 
 	handleBlur: function () {
@@ -35,43 +38,62 @@ var Dropdown = React.createClass({
 
 	render: function () {
 		const _this = this
-		const style = {position: 'relative'}
-		const selected = this.props.choices
-			.filter(c => c.key === this.props.selection)[0] 
+		const outerStyle = {position: 'relative'}
+		const choices = this.props.choices
+		const selection = this.props.selection
+		const selected = choices.filter(c => c.key === selection)[0] 
 			|| this.props.choices[0]
+		const selectedIndex = this.props.choices.indexOf(selected)
+		const style = {
+			position: 'absolute',
+			top: util.makePercent(-1 * selectedIndex),
+			left: 0,
+			right: 0,
+			zIndex: 0,
+			marginTop: selectedIndex * 2 + 'px'
+		}
 		
-
 		return <div className="pop-down-section"
-			style={style} onMouseDown = {this.handleClick}>
+			style={outerStyle} onMouseDown = {this.handleClick}>
+
+			<div className = "pop-down-menu-bordered">
+				<DropdownItem choice = {selected} placeholder = {true} />
+			</div>
 			
 			{
-				this.state.open ? 
-				<div className = "pop-down-menu-bordered" 
-				style = {{position: 'absolute', top: 0, left: 0, right: 0}}>{
-					this.props.choices
-					.map(c => <DropdownItem onMouseDown = {_this.props._choose.bind(_this, c.key)} 
-						key = {c.key} choice = {c}/>)
-				}</div>
-				:
-				null
+			this.state.open ? 
+			<div className = "pop-down-menu-bordered" style = {style}>{
+				this.props.choices
+				.map(c => <DropdownItem {...this.props}
+					key = {c.key} choice = {c}/>)
+			}</div>
+			:
+			null
 			}
 			
-			<div className = "pop-down-menu-bordered">
-			<DropdownItem choice = {selected} showpointer = {true} />
-			</div>
+			
 		</div>
 	}
 })
 
 var DropdownItem = React.createClass({
+
+	handleChoice: function () {	
+		this.props._choose(this.props.choice.key)
+	},
+
 	render: function () {
 		const choice = this.props.choice
-		return <div className = {"popdown-item selectable " + (this.props.classes || '')}>
+		const classes = "popdown-item selectable " + (this.props.classes || "")
+			+ (choice.key === this.props.selection ? " selected " : "" )
+		return <div 
+			onMouseDown = {this.props.placeholder ? null : this.handleChoice}
+			className = {classes}>
 			{choice.icon ?
 				<span className = {"icon view-icon " + choice.icon}/>
 				: null}
 			{choice.label}
-			{this.props.showpointer ?
+			{this.props.placeholder ?
 				<span className = "icon icon-chevron-down icon--small" 
 				style = {{float: 'right', lineHeight: '30px', marginRight: 0}}/>
 				: null

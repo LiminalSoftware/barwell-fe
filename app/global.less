@@ -6,64 +6,8 @@
 @import "./styles/colors.less";
 @import "./styles/mixins.less";
 @import "./styles/menus.less";
+@import "./styles/references.less";
 @import "./styles/menuItems.less";
 @import "./styles/menuTransition.less";
 @import "./styles/buttons.less";
 @import "./styles/context.less";
-
-@headerBorderColor: transparent;
-@headerBorderHilite: @purple4;
-@menuBorderColor: transparent;
-@headerBorderRadius: 3px;
-@headerOuterBorderWidth: 5px;
-@headerOuterBorderColor: @green-trans;
-
-@headerBgColor: @gray4;
-
-
-
-
-
-@menuItemBorderRadius: 2px;
-@headerBorderWidth: 1px;
-// @headerMenuBgColor: #746e7c;
-@headerMenuBgColor: desaturate(lighten(steelblue, 10%), 20%);
-@headerBgLight3: rgba(247,248,250,1);
-@headerBgLight2: lighten(@headerMenuBgColor, 25%);
-@headerBgLight1: lighten(@headerMenuBgColor, 14%);
-@headerBgLight0: lighten(@headerMenuBgColor, 12%);
-@headerBgLight05: lighten(@headerMenuBgColor, 8%);
-@headerBgDark: lighten(@headerMenuBgColor, 5%);
-
-@headerMenuBgHilite: white;
-@headerLightBgColor: white;
-// @headerMenuBgHilite: lighten(@headerMenuBgColor, 0.7%);
-@headerMenuBorderColor: @headerBgLight1;
-@menuLightBorder: @gray4;
-// @headerMenuBorderColor: rgba(255,255,255,0.7);
-// @headerFontColor: rgba(255,255,255,0.7);
-@headerFontColor: darken(@headerMenuBgColor, 25%);
-@headerFontSize: 16px;
-@headerOuterHilite: @newgreen1;
-
-@pointerSize: 16px;
-
-.msInput {
-  display: inline-block;
-  padding: 0px;
-  border: none;
-  outline: none;
-  background: none;
-  border-bottom: 1px solid @headerBorderColor;
-  color: @headerFontColor;
-  font-family: @bodyFont;
-  min-width: 50px;
-  width: 100px;
-  margin: 0;
-  margin-bottom: -1px;
-  border-radius: 0;
-}
-
-.gray-out {
-  -webkit-filter: saturate(0.1) contrast(0.5) brightness(1.30) sepia(10%);
-}

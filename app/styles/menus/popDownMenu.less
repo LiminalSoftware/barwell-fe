@@ -88,7 +88,7 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 }
 
 .pop-down-menu, .pop-up-menu {
-	left: 0;
+
 	padding:  0;
 	margin: 0;
 
@@ -98,12 +98,9 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	position: absolute;
 	display: block;
 	
-	
-	border-radius: 3px;
 	list-style: none;
-	border: 1px solid @headerMenuBgColor;
 	background: white;
-	box-shadow: 0 0 0 1px white;
+	box-shadow: 0 0 0 4px rgba(255,255,255,0.3);
 
 	&.green {
 		border: 1px solid @newgreen1;
@@ -127,7 +124,6 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	display: block;
 	position: relative;
 	pointer-events: auto;
-	background: white;
 	flex: 1 1;
 
 	padding: 3px 6px;
@@ -165,6 +161,7 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	&.hilite, &.selectable:hover {
 		background: @gray4;
 		// .sunburst;
+		border-radius: 3px;
 	}
 }
 

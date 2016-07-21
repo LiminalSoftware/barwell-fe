@@ -9,7 +9,6 @@ import modelActionCreators from "../../../../actions/modelActionCreators"
 import groomView from '../../groomView'
 
 import PureRenderMixin from 'react-addons-pure-render-mixin';
-import ViewSelector from '../../../ViewSelector'
 import ColumnMenu from '../../Tabular/InlineConfig/ColumnMenu'
 
 
@@ -31,7 +30,6 @@ var VennViewInlineConfig = React.createClass({
 	},
 
 	blurSiblings: function () {
-		this.refs.viewSelector.handleBlur();
 		this.refs.columnMenu.handleBlur();
 	},
 
@@ -51,7 +49,6 @@ var VennViewInlineConfig = React.createClass({
 		};
 
     	return <div className = "view-config" onClick={this.focus}>
-			<ViewSelector {...childProps} ref = "viewSelector"/>
 			<ColumnMenu {...childProps} 
 				confirmChanges = {true}
 				sections = {sections}

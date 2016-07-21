@@ -1,4 +1,4 @@
-@import "../global.less";
+@import "./colors.less";
 @import "./menus/popDown.less";
 @import "./menus/popDownMenu.less";
 
@@ -20,34 +20,24 @@
 }
 
 .header-section {
-	flex-direction: column;
-	display: flex;
-	flex: 1;
-	flex-grow: 1;
-	max-width: 300px;
-	min-width: 150px;
-	padding: 0 10px;
-	// border-right: 1px solid @headerBgLight05;
-	&:last-child {
-		border-right: none;
-	}
+	margin-top: 20px;
+	background: @headerMenuBgColor;
+	border-radius: 3px;
 }
 
-.double.header-section {
-	flex: 2;
-	flex-grow: 2;
-	max-width: 600px;
-	min-width: 300px;
+.header-config-section {
+	border-radius: 3px;
 }
 
 .header-label {
-	text-transform: uppercase;
-	color: @headerBgLight2;
-	font-size: 12px;
-	flex-direction: column;
-	padding: 0;
+	font-family: @headerFont;
 	text-align: left;
+	padding: 20px 10px;
+	border-bottom: 1px solid @headerBgLight2;
+
 }
+
+
 
 .model-views-menu {
 	margin-top: 4px;
@@ -58,89 +48,14 @@
 	cursor: pointer;
 }
 
-.menu-item {
-	color: @headerFontColor;
-}
 
-.model-views-menu-inner {
-	.border-box;
-	margin: 0;
-	display: block;
-	position: absolute;
-	right: 28px;
-	left: 0;
-	top: 0;
-	bottom: 0;
-	background: @headerBgLight1;
-	border-radius: 3px 0 0 3px;
-}
-
-.dropdown, .dropdown--open {
-	.border-box;
-	margin: 0;
-
-	border-radius: 0 3px 3px 0;
-
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	right: 0;
-	padding: 0 7px;
-	width: 28px;
-	line-height: 40px;
-
-	display: flex;
-	text-align: center;
-
-	margin: 0 !important;
-	text-align: center;
-	vertical-align: middle;
-
-	background: @headerBgLight1;
-}
-
-.dropdown {
-	
-}
-
-.dropdown--open {
-	
-}
-
-.dropdown-menu {
-	list-style: none;
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	min-height: 100;
-	z-index: 100;
-	margin: -1px !important;
-	border: 1px solid @headerMenuBgColor;
-
-	border-radius: 3px;
-
-	
-	// background: lighten(@headerBgLight3, 1%);
-	background: white;
-	color: @headerFontColor;
-
-	// border-radius: 1px;
-	// box-shadow: 0 0 0 1px @headerBgLight2;
-}
-
-.dropdown-menu-light {
-	background: white;
-	color: black;
-	border: 1px solid @newgreen1;
-}
 
 
 .menu-item {
 	display: block;
 	text-decoration: none;
-	
 	min-height: 40px;
+	color: @lightFontColor;
 }
 
 .menu-item-singleton {
@@ -188,8 +103,19 @@
 	color: @gray3;
 }
 
+.menu-sub-item--hilite {
+	border-left: 5px solid @newgreen1 !important;
+}
+
+.menu-divider {
+	text-align: center !important;
+	border-bottom: 1px dotted @headerBgLight2;
+}
+
 
 .menu-sub-item {
+	border-left: 5px solid transparent;
+
 	height: 30px;
 	min-height: 32px;
 	line-height: 32px;
@@ -205,6 +131,8 @@
 	display: flex;
 	flex: 1 1;
 	cursor: pointer;
+
+	transition: background ease-in 100ms;
 
 	& > span {
 		flex: 1 1;
@@ -245,95 +173,4 @@
 
 .menu-sub-item.warning-item {
 	color: @red-bright;
-}
-
-
-.menu-divider {
-	display: flex;
-	font-family: @bodyFont;
-	text-transform: uppercase;
-	font-size: 12px;
-}
-
-.config-toggle, .config-toggle--toggled {
-	display: block;
-	position: absolute;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	width: 28px;
-	line-height: 30px;
-	text-align: center;
-	border-radius: 0 3px 3px 0;
-	margin: 0;
-}
-
-
-
-.config-toggle {
-	
-}
-
-.config-toggle--toggled  {
-	background: @purple4;
-	color: white;
-}
-
-.menu-divider-inner, .menu-divider-inner--green {
-	flex-grow: 1;
-	margin-right: 3px;
-	padding: 5px 10px;
-	border-radius: 3px;
-	display: block;
-	line-height: 14px;
-}
-.menu-divider-inner {
-	background: @headerBgLight2;
-}
-
-.menu-divider-inner--green {
-	
-	background: transparent;
-	border: 1px solid @headerBgLight2;
-	&:hover {
-		color: @newgreen1;
-		background: white;
-		border: 1px solid @newgreen1;
-	}
-}
-
-.new-item-choice {
-	padding: 10px 0;
-}
-
-.menu-divider-inner--greenselect {
-	background: @newgreen1 !important;
-	color: white;
-}
-
-.menu-sub-item-boxed {
-	display: flex;
-	flex-direction: row;
-	border-top: 1px solid @headerOuterHilite;
-	border-bottom: 1px solid @headerOuterHilite;
-	margin: 0;
-	
-	background: white;
-}
-
-.menu-config-row {
-  	border-top: 1px solid @headerMenuBorderColor;
-  	.menu-sub-item {
-		// text-align: center;
-		border-left: 1px solid @headerMenuBorderColor;
-		&:hover {
-			@headerBgLight3;
-		}
-		&.border-bottom {
-			border-bottom: 1px solid @headerMenuBorderColor;
-		}
-  	}
-	.menu-sub-item:first-child {
-		border-left: none;
-	}
 }

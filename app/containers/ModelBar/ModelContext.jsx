@@ -1,22 +1,13 @@
 import React from "react"
-import { Link } from "react-router"
-import styles from "./style.less"
-import subHeader from "./subHeader.less"
-
-import _ from "underscore"
-
-import modelActionCreators from '../../actions/modelActionCreators'
-import MetasheetDispatcher from '../../dispatcher/MetasheetDispatcher'
-
-import ModelStore from "../../stores/ModelStore"
-import ViewStore from "../../stores/ViewStore"
-import MetasheetConst from '../../constants/MetasheetConstants'
-
-import viewTypes from '../Views/viewTypes'
-import Notifier from '../Notifier'
 import util from '../../util/util'
 
+// MIXINS
+import blurOnClickMixin from "../../blurOnClickMixin"
+import popdownClickmodMixin from '../Views/Fields/popdownClickmodMixin'
+
 var ModelContext = React.createClass ({
+
+	mixins: [blurOnClickMixin, popdownClickmodMixin],
 
 	getInitialState: function () {
 		return {
@@ -32,25 +23,36 @@ var ModelContext = React.createClass ({
 		this.setState({deleting: false})
 	},
 
-	render: function() {
-		
-		var model = this.props.model
+	handleRename: function () {
+		this.props._parent.handleRename()
+	},
 
-		return <ul className = "pop-up-menu" 
-		onClick = {util.clickTrap}
-		style = {{
-			position: 'absolute',
-			bottom: '100%',
-			left: 0
-		}}>	
-			<span className = "pop-up-pointer-outer"/>
-			<span className = "pop-up-pointer-inner"/>
-			<div div className = "selectable popdown-item" onClick = {this.props._rename}>Rename model</div>
+	getIcon: function () {
+		return "icon icon-ellipsis"
+	},
+
+	renderMenu: function() {
+		const model = this.props.model
+
+		return <div className = "pop-down-section">
+			<div className="popdown-item header bottom-divider title">
+				Model actions:
+			</div>
+
+			<div div className = "selectable popdown-item" onClick = {this.handleRename}>
+				<span className="icon icon-pencil"/>
+				Rename model
+			</div>
 			
 			{this.state.deleting ?
-				<div className = "selectable popdown-item">Delete this model?</div>
-				:
-				<div div className = "selectable popdown-item" onClick = {this.handleClickDelete}>Delete model</div>
+			<div className = "selectable popdown-item">
+				Delete this model?
+			</div>
+			:
+			<div div className = "selectable popdown-item" onClick = {this.handleClickDelete}>
+				<span className="icon icon-trash2"/>	
+				Delete model
+			</div>
 			}
 			{this.state.deleting ?
 				<div div className = "selectable popdown-item" onClick={this.props._delete}>Delete</div>
@@ -60,7 +62,7 @@ var ModelContext = React.createClass ({
 				<div div className = "selectable popdown-item" onClick={this.handleCancelDelete}>cancel</div>
 				: null
 			}
-		</ul>
+		</div>
 	}
 })
 

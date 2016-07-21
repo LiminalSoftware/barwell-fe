@@ -7,10 +7,11 @@ import PopDownMenu from '../../../../components/PopDownMenu'
 
 import configCommitMixin from '../configCommitMixin'
 import blurOnClickMixin from '../../../../blurOnClickMixin'
-import popdownClickmodMixin from '../popdownClickmodMixin';
-import ColorPickerWidget from '../ColorField/ColorPickerWidget'
+import popdownClickmodMixin from '../popdownClickmodMixin'
+import conditionalMixin from './conditionalMixin'
 
-import Dropdown from '../../../Dropdown/Dropdown'
+
+import ColorPickerWidget from '../ColorField/ColorPickerWidget'
 
 import util from '../../../../util/util';
 
@@ -31,7 +32,14 @@ var ColorChoice = React.createClass({
 
   partName: 'ColorChoice',
 
-  mixins: [blurOnClickMixin, popdownClickmodMixin, configCommitMixin],
+  conditionProperty: 'colorConditionAttr',
+
+  mixins: [
+    blurOnClickMixin, 
+    popdownClickmodMixin, 
+    configCommitMixin, 
+    conditionalMixin
+  ],
 
   // LIFECYCLE ==============================================================
 
@@ -40,7 +48,7 @@ var ColorChoice = React.createClass({
     return {
       colorAttr: config.colorAttr,
       colorConditionAttr: config.colorConditionAttr,
-      conditional: !!config.colorConditionAttr,
+      colorConditional: !!config.colorConditionAttr,
       chooser: !!config.colorAttr ? 'colorAttr' : !!config.color ? 
           (_.contains(palette, config.color) ? 'palette' : 'custom') 
           : 'nocolor',
@@ -62,20 +70,13 @@ var ColorChoice = React.createClass({
   // HANDLERS ================================================================
 
   chooseColor: function (attributeId) {
-    this.commitChanges({colorAttr: attributeId, color: null, adjustColor: this.state.adjustColor})
+    this.commitChanges({
+      colorAttr: attributeId,
+      color: null,
+      adjustColor: this.state.adjustColor
+    })
     this.blurChildren(e)
     // this.setState({open: false})
-  },
-
-  chooseCondition: function (attributeId, e) {
-    this.commitChanges({colorConditionAttr: attributeId})
-    this.blurChildren(e)
-    // this.setState({open: false})
-  },
-
-  toggleConditional: function (e) {
-    this.setState({conditional: !this.state.conditional})
-    this.blurChildren(e)
   },
 
   chooseFixedColor: function (color) {
@@ -101,56 +102,13 @@ var ColorChoice = React.createClass({
   },
 
   blurChildren: function () {
-    const condionDropdown = this.refs.condionDropdown;
-    if (condionDropdown) condionDropdown.handleBlur()
+    const conditionDropdown = this.refs.conditionDropdown;
+    if (conditionDropdown) conditionDropdown.handleBlur()
   },
 
   // RENDER ===================================================================
 
-  renderConditionDropdown: function () {
-    const view = this.props.view
-    const boolAttrs = AttributeStore
-      .query({type: 'BOOLEAN', model_id: view.model_id})
-      .map(function(a){
-        return {
-          "key": a.attribute_id, 
-          "label": a.attribute, 
-          "icon": 'icon-check-square'
-        }})
-    
-    return <Dropdown choices = {boolAttrs} 
-      _choose = {this.chooseCondition}
-      ref = "conditionDropdown"
-      selection = {this.state.colorConditionAttr}/>
-  },
-
-  renderConditionSection: function () {
-    const _this = this
-    const view = this.props.view
-    const boolAttrs = AttributeStore
-      .query({type: 'BOOLEAN', model_id: view.model_id})
-
-    return <div className="popdown-section" key="condition">
-      {
-        boolAttrs.length > 0 ?
-        <div className="popdown-item title top-divider">
-          <input type="checkbox"
-            onChange = {_this.toggleConditional}
-            checked = {_this.state.conditional} />
-          Conditional
-        </div>
-        :
-        null
-      }
-
-      {
-      this.state.conditional ? 
-        this.renderConditionDropdown()
-        :
-        null
-      }
-    </div>
-  },
+  
 
   renderColorSection: function () {
     var _this = this
