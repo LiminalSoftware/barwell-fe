@@ -1,28 +1,24 @@
 @import "../../global.less";
 
-add-new-model {
-	width: 25px;
-	min-width: 25px;
-	a {
-		min-width: 25px;
-		font-weight: 800;
-		text-align: center;
-		border: none !important;
-	}
+.branding {
+	font-size: 18px;
+	padding: 5px 10px;
+	color: @lightFontColor;
+	font-weight: 400;
+	flex: 1 1;
+	overflow: hidden;
 }
 
-.model-bar-tab {
-	.flex-direction(row);
+
+.mdlbar-tab {
+	.flex-direction(column);
 	padding: 0;
 	margin-right: 2px;
 	position: relative;
 }
 
-
-
-
-
-.model-bar-tab-link, .model-bar-extra--left, .model-bar-extra--right {
+.mdlbar-link {
+	overflow: visible !important;
 	position: relative;
 	margin: 0;
 	height: 28px;
@@ -34,65 +30,38 @@ add-new-model {
 
 	font-size: 16px;
 	font-family: @headerFont;
-	text-align: center;
-
-	color: @headerBgLight2;
 	cursor: pointer;
+
+	border-left: 4px solid transparent;
+
+	transition: background cubic-bezier(.16,.85,.5,1) 400ms;
+	transition: border cubic-bezier(.16,.85,.5,1) 400ms;
 }
 
-.model-bar-tab-link {
-	.ellipsis;
-
-	max-width: 150px;
-	min-width: 50px;
-
-	
-	color: @headerFontColor;
-	background: @headerBgLight1;
-	border-right: 1px solid @headerBgLight1;
-	
+.mdlbar-link {
+	display: block;
+	color: @lightFontColor;
 }
 
-.model-bar-tab-link--active {
-	z-index: 2;
-	margin-top: -1px;
-	border-top: 1px solid @headerBgLight2;
-	background: @headerBgLight2 !important;
-	// color: @headerFontColor !important;
+.mdlbar-link--active {
+	background: @headerBgLight2;
+	color: @lightFontColor;
+	border-left: 4px solid @newgreen1;
 }
 
-.model-bar-tab-link--first {
-	border-left: none !important;
-}
-
-.model-bar-tab-link--last {
-	border-right: 1px solid @headerMenuBorderColor;
-}
-
-.model-bar-list, .model-bar-extras {
+.mdlbar-list {
+	display: flex;
 	position: absolute;
-	bottom: 0;
-	right: 0;
-	margin: 0;
 
-	.flex-display;
-	.flex(1);
-	
-	margin: 0;
-	height: 40px;
-	z-index: 100;
-	background: @headerMenuBgColor;
-}
-
-.model-bar-list {
-	padding-left: 15px;
 	left: 0;
-}
+	right: 0;
+	top: 50px;
+	bottom: 0;
 
-.model-bar-extras {
-	flex-direction: row-reverse;
-	width: 100px;
-	margin-right: 10px;
+	flex-direction: column;
+	padding: 0;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 .renamer {
@@ -101,35 +70,48 @@ add-new-model {
 	.msInput;
 	-webkit-user-drag: none;
 	background: white;
-	// border-bottom: 1px solid @gray3;
+
+	border-radius: 1px;
+	padding: 2px;
+	padding-left: 5px;
+	margin: -2px;
+
+	width: 150px;
 }
 .header-renamer {
 	font-size: @headerFontSize !important;
 }
 
-.model-bar {
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	height: 50px;
-	padding: 0;
-	overflow: visible;
-	// background: @topBgColor;
-
-	// background:url(
-	// 	data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVQIW2P8////f0YQYIACAD4dBAOyWWJYAAAAAElFTkSuQmCC
- //    ) repeat;
+.mdlbar {
+	position: relative;
+	overflow: hidden;
+	min-width: 150px;
+	max-width: 300px;
+	min-height: 100vh;
+	height: 100%;
+	flex: 1 1 ;
+	display: flex;
+	flex-direction: column;
+	background: @headerMenuBgColor;
 }
 
+.mdlbar-section {
+	margin-bottom: 20px;
+}
 
-.model-bar-top {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	height: 8px;
-	border-top: 1px solid @headerBgLight2;
-	border-bottom: 1px solid @headerBgLight2;
-	background: @headerBgLight2;
+.mdlbar-adder {
+	.mdlbar-tab;
+	border: 1px solid @lightFontColor;
+	border-radius: 3px;
+	padding: 10px;
+	margin: 10px;
+	margin-right: 15px;
+	color: @lightFontColor;
+	cursor: pointer;
+
+	transition: background ease-in 100ms;
+	&:hover {
+		background: @headerBgLight1;
+	}
+
 }

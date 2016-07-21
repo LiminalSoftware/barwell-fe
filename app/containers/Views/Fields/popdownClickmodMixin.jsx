@@ -3,17 +3,33 @@ import _ from 'underscore'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import util from '../../../util/util';
 import PopDownMenu from '../../../components/PopDownMenu'
+import constant from "../../../contant/MetasheetConstants"
 
 var popdownClickmodMixin = {
 
-	popsUp: true,
+	handleInnerMouseDown: function (e) {
+		if (this.blurChildren) this.blurChildren()
+		util.clickTrap(e)
+	},
 
 	render: function () {
-	    var iconClass = this.getIcon();
-	    var width = '28px';
-	    var isActive = this.isActive ? this.isActive() : false;
-	    var style = _.extend({}, this.props.style, {width: width, minWidth: width})
-	    var menuWidth = this.menuWidth || '250px';
+	    const iconClass = this.getIcon();
+	    const isActive = this.isActive ? this.isActive() : false;
+	    
+	    const menuWidth = this.menuWidth || '250px';
+	    const headWidth = '28px';
+
+	    const popstyle = this.props.direction === 'left' ? 
+	    	{right: '-15px', width: menuWidth} : 
+	    	{left: '-15px', marginLeft: '0', width: menuWidth}
+
+	    const overlayStyle  = this.props.direction === 'left' ?
+	    	{right: '15px', width: headWidth} : 
+	    	{left: '15px', width: headWidth}
+
+	    
+	    const style = _.extend({}, this.props.style, {width: headWidth, minWidth: headWidth})
+	    
 
 	   return <span 
 	   		className={"pop-down pop-stop clickable " + (this.classes || '') + (isActive ? ' popdown-active' : '')}
@@ -22,28 +38,31 @@ var popdownClickmodMixin = {
 	    	<span className={iconClass}
 	    		style={{textAlign: 'center', marginRight: 0}}/>
 
-	    	{this.getContent ? <span className="popdown-label">
-	    			{this.getContent()}
-	    		</span> : null
+	    	{this.getContent ? 
+	    	<span className="popdown-label">
+    			{this.getContent()}
+    		</span> : null
 	    	}
-
-	    	
+	    	<ReactCSSTransitionGroup {...constant.slidein}>
 	        {
-	        	(this.props.open) ? <div className = "pop-down-menu" 
-	        	style = {{left: '-15px', width: menuWidth}} onMouseDown = {util.clickTrap}>
-	        	<span className = "pop-down-overlay" style = {{minWidth: width, width: width}}>
-	        		<span className = {iconClass} style={{textAlign: 'center', marginRight: 0}}/>
-	        		{
+	        	this.state.open ? 
+	        	<div className = "pop-down-menu"  style = {popstyle} 
+	        		onMouseDown = {this.handleInnerMouseDown}>
+
+	        		<span className = "pop-down-overlay" style = {overlayStyle}>
+	        			<span className = {iconClass} style={{textAlign: 'center', marginRight: 0}}/>
+        				{
 			    		this.getContent ? 
-			    		<span className="popdown-label">{this.getContent()}</span> 
+			    		<span className="popdown-label">
+			    			{this.getContent()}
+			    		</span> 
 			    		: null
-			    	}
-	        	</span>
-	        	{this.renderMenu()}
+		    			}
+        			</span>
+	        		{this.renderMenu()}
 	        	</div> : null
 	        }
-	        
-	        
+	        </ReactCSSTransitionGroup>
 	    </span>;
 	  }
 }

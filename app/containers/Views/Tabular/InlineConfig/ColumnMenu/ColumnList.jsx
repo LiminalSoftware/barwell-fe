@@ -1,34 +1,41 @@
-import React from "react";
+// LIBS AND SUCH
+import React from "react"
 import ReactDOM from "react-dom"
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import { Link } from "react-router";
-import styles from "./style.less";
-import _ from 'underscore';
-import fieldTypes from "../../../fields"
+import _ from 'underscore'
 
+// STYLES
+import styles from "./style.less";
+
+// STORES
 import AttributeStore from "../../../../../stores/AttributeStore";
 import RelationStore from "../../../../../stores/RelationStore";
+import ViewConfigStore from "../../../../../stores/ViewConfigStore";
+
+// CONSTANTS
+import fieldTypes from "../../../fields"
+
+// COMPONENTS
 import ColumnDetail from "./ColumnDetailListable"
 import constant from '../../../../../constants/MetasheetConstants'
-import util from "../../../../../util/util"
 
+// UTIL
+import util from "../../../../../util/util"
 import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 
+// MIXINS
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import blurOnClickMixin from '../../../../../blurOnClickMixin';
 import sortable from 'react-sortable-mixin';
-import menuOverflowMixin from '../../../../../menuOverflowMixin'
 
 
 
 var ColumnList = React.createClass({
 
-	mixins: [sortable.ListMixin, menuOverflowMixin],
+	mixins: [sortable.ListMixin],
 
 	// LIFECYCLE ==============================================================
 
 	componentWillMount: function () {
-		this.calibrateHeight();
 		this.setState(this.getItemState(this.props));
 	},
 
@@ -127,7 +134,6 @@ var ColumnList = React.createClass({
 		this.state.items.forEach(function (item) {
 			if (item.column_id) _this.refs[item.column_id].blurSubMenus()
 		});
-		this.props._clearPopUp()
 		if (e) e.stopPropagation()
 	},
 
@@ -173,16 +179,22 @@ var ColumnList = React.createClass({
 		var view = this.props.view;
 		var section = this.props.sections[0];
 		var numTotalItems = this.state.items.length;
+		var viewconfig = ViewConfigStore.get(view.cid || view.view_id)
+		var currentCol = this.props._getColumnAt(viewconfig) || {}
+		var trueIndex = 0
 
 		var items = this.state.items.map(function (item, idx) {
 			var itemProps = Object.assign({}, _this.props, {
 				item: item,
 				index: idx,
+				trueIndex: trueIndex,
 				minWidth: '500px',
 				config: item,
 				viewConfigParts: section ? section.configParts : null,
 				_blurSiblings: _this.blurSiblings,
 			}, _this.movableProps);
+			
+			trueIndex += (item.isSection ? 0 : 1)
 
 			if (item.isSection) section = item;
 			if (item.isSection) return <div 
@@ -191,26 +203,22 @@ var ColumnList = React.createClass({
 					ref = {'section' + item.label}> 
 				<div className="menu-sub-item menu-divider" 
 					{...itemProps}>
-					<div className = "menu-divider-inner">
-						<span className = {"icon " + item.icon} style = {{flexGrow: 0}}/>
-						<span style = {{flexGrow: 0}}>{item.label}</span>
-					</div>
+
+					<span className = {"icon " + item.icon} style = {{flexGrow: 0}}/>
+					<span style = {{flexGrow: 0}}>{item.label}</span>
+					
 				</div>
 				{item.isEmpty ? <div className = "menu-sub-item menu-empty-item">{item.emptyText}</div> : null}
 			</div>
 			else return <ColumnDetail
+				selected = {item.column_id === currentCol.column_id}
 				key = {item.column_id}
 				ref = {item.column_id}
 				{...itemProps}/>
 		});
 
     	return <div className = "dropdown-list" 
-    		ref = "columnList"
-    		style = {{
-    			maxHeight: (this.state.windowHeight - 250) + 'px',
-    			overflowY: 'auto',
-    			overflowX: 'hidden'
-    		}} onClick = {_this.props._blurChildren}>
+    		ref = "columnList">
 			{items}
 		</div>
 	}
