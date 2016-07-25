@@ -43,6 +43,7 @@ var PrimaryKeyField = {
 	defaultWidth: 80,
 	defaultAlign: 'center',
 	icon: 'key-hole',
+	description: 'Unique identifier',
 	sortable: true,
 	sortIcon: 'sort-numeric-',
 	element: PrimaryKeyElement,

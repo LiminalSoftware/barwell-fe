@@ -19,14 +19,22 @@ import blurOnClickMixin from "../../blurOnClickMixin"
 // UTILS
 import util from "../../util/util"
 
+// ACTIONS
+import modelActionCreators from "../../actions/modelActionCreators"
+
 var ModelSection = React.createClass ({
 
 	mixins: [blurOnClickMixin],
 
+	componentWillReceiveProps: function (nextProps) {
+		if (!this.renaming) this.setState({name: nextProps.model.model})
+	},
+
 	getInitialState: function () {
 		return {
-			renaming: false,
-			context: false
+			editing: false,
+			open: false,
+			name: this.props.model.model
 		}
 	},
 
@@ -46,12 +54,12 @@ var ModelSection = React.createClass ({
 		})
 	},
 
-	handleCommit: function () {
+	handleCommit: function (e) {
 		modelActionCreators.updateModel({
 			model_id: this.props.model.model_id, 
 			model: this.state.name
 		})
-		this.revert()
+		this.setState({editing: false})
 	},
 
 	handleShowContext: function () {
@@ -79,13 +87,14 @@ var ModelSection = React.createClass ({
 		const modelDisplay = this.state.editing ?
 			<input 
 				className="renamer header-renamer" 
+				autoFocus
 				ref="renamer" 
 				value={this.state.name} 
 				onChange={this.handleNameUpdate}
 				onMouseDown = {util.clickTrap}
 				onBlur={this.commitChanges} /> 
 			:
-			<span onDoubleClick = {this.handleRename}>{model.model}</span>
+			<span onDoubleClick = {this.handleRename} className="ellipsis">{this.state.name}</span>
 
 		return <div className="mdlbar-section ">
 

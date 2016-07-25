@@ -111,6 +111,12 @@ var TypePicker = React.createClass({
 			</div>]
 	},
 
+	getContent: function () {
+		var config = this.props.config
+		var fieldType = fieldTypes[config.type] || {}
+
+		return fieldType.description
+	},
 
 	getIcon: function () {
 		var config = this.props.config

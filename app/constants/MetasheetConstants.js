@@ -4,14 +4,24 @@ module.exports = {
 
   transitions: {
     slideIn: {
-      transitionEnterTimeout: 1000,
-      transitionLeaveTimeout: 1000,
+      transitionEnterTimeout: 300,
+      transitionLeaveTimeout: 300,
       transitionName: "slide-in" 
     },
     inandout: {
       transitionEnterTimeout: 1000,
       transitionLeaveTimeout: 1000,
       transitionName: "inandout" 
+    },
+    slideleft: {
+      transitionEnterTimeout: 300,
+      transitionLeaveTimeout: 300,
+      transitionName: "slideleft" 
+    },
+    fadeinout: {
+      transitionEnterTimeout: 300,
+      transitionLeaveTimeout: 300,
+      transitionName: "fadeinout" 
     }
   },
 

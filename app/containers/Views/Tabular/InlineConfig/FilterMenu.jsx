@@ -43,7 +43,6 @@ var FilterMenu = React.createClass({
 				<div className="model-views-menu-inner">
 					<div className = "menu-item menu-sub-item"><span className = "ellipsis">Not yet implemented...</span></div>
 				</div>
-				<div className="dropdown small grayed icon icon-chevron-down" onClick = {this.handleOpen}></div>
 			</div>
 
 		</div>

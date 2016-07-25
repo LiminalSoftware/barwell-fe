@@ -703,36 +703,34 @@ var TabularPane = React.createClass ({
 		// Curors is an overlay containing the selection, the highlighted cell and a few other items
 		// Scrollbars are... scrollbars
 
-		return <div className = "model-panes">
-			<div ref="wrapper"
-				className = "wrapper"				
-				beforePaste = {this.beforePaste}>
+		return <div ref="wrapper"
+			className = "wrapper"				
+			beforePaste = {this.beforePaste}>
 
-				<TabularBodyWrapper {...childProps}
-					ref = "tableWrapper"/>
-				
-				<Cursors {...childProps}
-					ref = "cursors"/>
+			<TabularBodyWrapper {...childProps}
+				ref = "tableWrapper"/>
+			
+			<Cursors {...childProps}
+				ref = "cursors"/>
 
-				<ScrollBar {...childProps}
-					innerDimension = {(rowCount + 4) * geo.rowHeight + geo.headerHeight}	
-					rowCount = {rowCount}
-					offset = {geo.headerHeight}
-					ref = "verticalScrollBar"
-					axis = "vertical"
-					_setScrollOffset = {this.setVerticalScrollOffset}
-					view = {view}/>
-				
-				<ScrollBar {...childProps}
-					innerDimension = {view.data.floatWidth + view.data.fixedWidth + geo.labelWidth + 200}
-					rowCount = {rowCount}
-					offset = {0}
-					ref = "horizontalScrollBar"
-					axis = "horizontal"
-					_setScrollOffset = {this.setHorizontalScrollOffset}
-					view = {view}/>
+			<ScrollBar {...childProps}
+				innerDimension = {(rowCount + 4) * geo.rowHeight + geo.headerHeight}	
+				rowCount = {rowCount}
+				offset = {geo.headerHeight}
+				ref = "verticalScrollBar"
+				axis = "vertical"
+				_setScrollOffset = {this.setVerticalScrollOffset}
+				view = {view}/>
+			
+			<ScrollBar {...childProps}
+				innerDimension = {view.data.floatWidth + view.data.fixedWidth + geo.labelWidth + 200}
+				rowCount = {rowCount}
+				offset = {0}
+				ref = "horizontalScrollBar"
+				axis = "horizontal"
+				_setScrollOffset = {this.setHorizontalScrollOffset}
+				view = {view}/>
 
-			</div>
 		</div>;
 			
 	}

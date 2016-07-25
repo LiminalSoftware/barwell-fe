@@ -62,11 +62,11 @@ var SortList = React.createClass({
 		var view = this.props.view
 		var items = this.state.items
 
-    	return <div>
+    	return <span>
 			{
 			this.state.items.map(function (item, order) {
 				return <SortDetail 
-					key = {item.attribute_id}
+					key = {item.cid || item.attribute_id}
 					item = {item}
 					index = {order}
 					sortSpec = {item}
@@ -77,7 +77,7 @@ var SortList = React.createClass({
 					{..._this.movableProps} />
 			})
 			}
-			</div>;
+		</span>;
 	}
 });
 

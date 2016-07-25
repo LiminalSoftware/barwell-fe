@@ -43,16 +43,16 @@ var SortDetail = React.createClass({
 		var attr = AttributeStore.get(spec.attribute_id)
 		var fieldType = fieldTypes[attr.type];
 
-	    return <div className="menu-item tight menu-sub-item">
+	    return <span className="sort-item">
 			{this.props.editing ? <span ref = "grabber" className="draggable drag-grid"/> : null }
-      		<span className = "ellipsis">{attr.attribute}</span>
+      		<span className = "ellipsis" style={{marginRight: '10px'}}>{attr.attribute}</span>
 
 			<span onClick={this.switch}
-				className={"half-column-config tight icon icon-" + fieldType.sortIcon + (spec.descending ? 'desc' : 'asc')}>
+				className={"half-column-config struct-style tight icon icon-" + fieldType.sortIcon + (spec.descending ? 'desc' : 'asc')}>
 			</span>
 			<span onClick={this.remove} 
-				className="half-column-config tight icon icon-cross-circle"></span>
-		</div>
+				className="half-column-config tight icon icon-cross-circle struct-style"></span>
+		</span>
 	}
 });
 

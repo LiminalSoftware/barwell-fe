@@ -43,13 +43,15 @@ var ViewAddContext = React.createClass ({
 			type: type,
 			model_id: model.model_id
 		}, true)
+
+		this.handleBlur()
 	},
 
 	renderMenu: function () {
 		const model = this.props.model
 		const _this = this
 
-		return <div className = "pop-down-section">
+		return <div className = "popdown-section">
 			<div className="popdown-item header bottom-divider title">
 				Choose type for new view:
 			</div>

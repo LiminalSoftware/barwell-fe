@@ -568,34 +568,7 @@ var modelActions = {
 			actionType: 'VIEW_DESTROY',
 			view: view
 		});
-	},
-
-	// attributes
-	createAttribute: function(attribute) {
-		if (!attribute) return;
-
-		attribute.attribute = attribute.attribute || 'New attribute'
-		attribute.type = attribute.type || 'TEXT'
-
-		MetasheetDispatcher.dispatch({
-			actionType: 'ATTRIBUTE_CREATE',
-			attribute: attribute
-		});
-
-		if (attribute._persist === true) webUtils.persist('attribute', 'CREATE',
-			_.pick(attribute, 'cid', 'attribute_id', 'attribute', 'type', 'model_id'));
-	},
-
-	destroyAttribute: function(attribute) {
-		if (!attribute) return;
-
-		MetasheetDispatcher.dispatch({
-			actionType: 'ATTRIBUTE_DESTROY',
-			attribute: attribute
-		});
-
-		if (attribute.attribute_id) webUtils.persist('attribute', 'DESTROY', attribute);
-	},
+	}
 }
 
 export default modelActions

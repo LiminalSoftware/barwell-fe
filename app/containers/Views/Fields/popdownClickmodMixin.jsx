@@ -3,7 +3,7 @@ import _ from 'underscore'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import util from '../../../util/util';
 import PopDownMenu from '../../../components/PopDownMenu'
-import constant from "../../../contant/MetasheetConstants"
+import constant from "../../../constants/MetasheetConstants"
 
 var popdownClickmodMixin = {
 
@@ -24,15 +24,15 @@ var popdownClickmodMixin = {
 	    	{left: '-15px', marginLeft: '0', width: menuWidth}
 
 	    const overlayStyle  = this.props.direction === 'left' ?
-	    	{right: '15px', width: headWidth} : 
-	    	{left: '15px', width: headWidth}
+	    	{right: '15px', minWidth: headWidth} : 
+	    	{left: '15px', minWidth: headWidth}
 
 	    
-	    const style = _.extend({}, this.props.style, {width: headWidth, minWidth: headWidth})
+	    const style = _.extend({}, this.props.style, {minWidth: headWidth})
 	    
 
 	   return <span 
-	   		className={"pop-down pop-stop clickable " + (this.classes || '') + (isActive ? ' popdown-active' : '')}
+	   		className={"pop-down pop-stop clickable " + (this.props.classes || '') + (isActive ? ' popdown-active' : '')}
 	    	style={style} onMouseDown={this.handleOpen}>
 
 	    	<span className={iconClass}
@@ -43,10 +43,11 @@ var popdownClickmodMixin = {
     			{this.getContent()}
     		</span> : null
 	    	}
-	    	<ReactCSSTransitionGroup {...constant.slidein}>
+	    	
 	        {
+	        // <ReactCSSTransitionGroup {...constant.transitions.slideIn}>
 	        	this.state.open ? 
-	        	<div className = "pop-down-menu"  style = {popstyle} 
+	        	<div key="popdown" className = "pop-down-menu"  style = {popstyle} 
 	        		onMouseDown = {this.handleInnerMouseDown}>
 
 	        		<span className = "pop-down-overlay" style = {overlayStyle}>
@@ -61,8 +62,9 @@ var popdownClickmodMixin = {
         			</span>
 	        		{this.renderMenu()}
 	        	</div> : null
+	        // </ReactCSSTransitionGroup>
 	        }
-	        </ReactCSSTransitionGroup>
+	        
 	    </span>;
 	  }
 }

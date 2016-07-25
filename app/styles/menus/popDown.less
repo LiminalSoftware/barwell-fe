@@ -14,7 +14,6 @@
 
 	margin-right: 5px;
 	
-	border-radius: @menuItemBorderRadius;
 	overflow: visible;
 
 }
@@ -25,8 +24,34 @@
 }
 
 .popdown-borderless {
-	border-color: transparent !important;
+	// border-color: transparent !important;
 }
+
+.popdown-prez.popdown-active {
+	background: lightsalmon !important;
+	color: @headerBgLight2;
+}
+
+.popdown-prez {
+	color: lightsalmon;
+	&:hover {
+		background: @headerBgLight2;
+	}
+}
+
+.popdown-struct.popdown-active {
+	background: @limegreen !important;
+	color: @headerMenuBgColor;
+}
+
+
+.popdown-struct {
+	color: @limegreen;
+	&:hover {
+		background: @headerBgLight2;
+	}
+}
+
 
 .pop-down-w-label {
 	text-align: left;
@@ -40,18 +65,10 @@
 .popdown-label {
 	font-family: @bodyFont;
 	font-size: 15px;
-	min-width: 100px;
-	width: 100px;
 	display: inline-block;
 	line-height: 30px;
 	margin: 0;
 	margin-left: 5px;
-}
-
-.popdown-active {
-	// color: white !important;
-	background: @headerBgLight2 !important;
-	// border: 1px solid white !important;
 }
 
 .pop-down-overlay {
@@ -62,18 +79,19 @@
 	
 
 	background: white;
-	padding: 5px;
-	padding-top: 1px;
+	padding: 4px;
+	padding-top: 0;
 	
 
 	color: @headerFontColor;
 	
-	margin: -2px;
+	margin-bottom: -6px;
 	
 	// margin-bottom: -1px;
+	border-right: 1px solid white;
+	border-left: 1px solid white;
 	
-	border: 1px solid white;
-	// border-bottom: 2px solid white;
+	border-bottom: 2px solid white;
 	
 	
 }

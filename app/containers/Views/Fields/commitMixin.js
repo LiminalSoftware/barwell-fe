@@ -22,8 +22,11 @@ var commitMixin = {
 		value = this.validator(value)
 		this.setState({value: value})
 		patch[column_id] = value
-
-		if (this.props.isNull) modelActionCreators.insertRecord(model, _.extend(patch, selector, 0))
+		
+		// I don't think we want this behavior yet...
+		// if (this.props.isNull) modelActionCreators.insertRecord(model, _.extend(patch, selector, 0))
+		// else 
+		if (this.props._recordCommit) _recordCommit(patch)
 		else if (this.props.recordPatch) modelActionCreators.multiPatchRecords(model, _.extend(patch, selector), extras)
 		else if (selector) modelActionCreators.patchRecords(model, patch, selector, extras)
 		

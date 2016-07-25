@@ -146,13 +146,13 @@ var editableInputMixin = {
 		Object.assign(cellStyle, this.getBgColor(config, obj, false, this.props.selected));
 
 		return <span {...this.props} className = {styleClass}>
-			{this.state.editing ?
+			{this.props.alwaysEdit || this.state.editing ?
 			<input
 				ref = "input"
 				className = "input-editor"
 				value = {this.state.value}
 				style = {{textAlign: config.align}}
-				autoFocus
+				autoFocus = {!this.props.noAutoFocus}
 				onClick = {e => e.stopPropagation() && e.nativeEvent.stopPropagation()}
 				onBlur = {this.revert}
 				onChange = {this.handleChange} />

@@ -14,6 +14,8 @@ var GroupSortPicker = React.createClass({
 
 	partName: 'GroupSortPicker',
 
+	structural: true,
+
 	mixins: [blurOnClickMixin, configCommitMixin],
 
 	getInitialState: function () {

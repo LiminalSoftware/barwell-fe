@@ -76,7 +76,7 @@ var ModelBar = React.createClass({
 				)}
 				<div className="mdlbar-adder">
 					<span  className="icon icon-plus"/>
-					Add new dataset
+					<span className="ellipsis">Add new dataset</span>
 				</div>
 			</div>
 		</div>

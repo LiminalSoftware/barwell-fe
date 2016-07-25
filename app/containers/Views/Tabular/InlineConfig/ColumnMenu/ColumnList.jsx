@@ -217,8 +217,7 @@ var ColumnList = React.createClass({
 				{...itemProps}/>
 		});
 
-    	return <div className = "dropdown-list" 
-    		ref = "columnList">
+    	return <div className = "dropdown-list" ref = "columnList">
 			{items}
 		</div>
 	}

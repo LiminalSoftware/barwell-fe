@@ -14,6 +14,7 @@ import ChangeHistory from '../Views/ChangeHistory'
 import viewTypes from "../Views/viewTypes"
 import modelActionCreators from "../../actions/modelActionCreators"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import constants from "../../constants/MetasheetConstants"
 
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
@@ -100,6 +101,7 @@ var ModelPane = React.createClass({
 			})
 
 			configElement = React.createElement(configElement, {
+				key: 'config-' + (view.cid || view.view_id),
 				model: model,
 				view: view,
 				viewconfig: viewconfig,
@@ -115,10 +117,18 @@ var ModelPane = React.createClass({
 		}
 
 		return <div className="model-views">
-			<div className="view-bar">
+			<ReactCSSTransitionGroup 
+				{...constants.transitions.fadeinout}
+				className="view-bar">
+
 				{configElement}
-			</div>
-			{bodyContent}
+			</ReactCSSTransitionGroup>
+			<ReactCSSTransitionGroup 
+				className = "model-panes"
+				key  = {"view-main-" + (view ? (view.cid || view.view_id) : 'default')}
+				{...constants.transitions.fadeinout}>
+				{bodyContent}
+			</ReactCSSTransitionGroup>
 		</div>
 	}
 });

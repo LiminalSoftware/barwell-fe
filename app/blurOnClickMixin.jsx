@@ -43,9 +43,9 @@ var BlurOnClickMixin = {
 
   // HANDLERS ================================================================
 
-  handleBlur: function () {
-    console.log('blur')
-    this.setState({
+  handleBlur: function (e) {
+    if (this.handleCommit) this.handleCommit()
+    else this.setState({
       open: false,
       editing: false,
       context: false

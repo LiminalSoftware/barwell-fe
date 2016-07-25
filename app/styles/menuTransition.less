@@ -1,8 +1,8 @@
 @import "../global.less";
 
 .fade-in-appear, .fade-in-enter {
-  
   opacity: 0.01;
+  transform: translate3D(0,0,0);
 }
 
 .fade-in-appear-active, .fade-in-enter-active {
@@ -23,6 +23,74 @@
 }
 
 
+// ============================================================================
+
+.fadeinout-appear, .fadeinout-enter {
+  opacity: 0.01;
+  transform: translate3D(0,0,0);
+  transition: all cubic-bezier(.16,.85,.5,1) 200ms;
+}
+
+.fadeinout-appear-active, .fadeinout-enter-active {
+  opacity: 1;
+  transform: translate3D(0,0,0);
+  transition: all  cubic-bezier(.16,.85,.5,1) 200ms;
+}
+
+.fadeinout-leave {
+  transform: translate3D(0,0,0);
+  opacity: 1;
+  transition: all cubic-bezier(.16,.85,.5,1) 200ms;
+}
+
+.fadeinout-leave-active {
+  opacity: 0.01;
+  transform: translate3D(0,0,0);
+  transition: all cubic-bezier(.16,.85,.5,1) 200ms;
+}
+
+
+// ============================================================================
+
+// .slideleft-appear {
+//   background: red !important;
+//   opacity: 0.01;
+//   transform: translate3D(80px,0,0);
+//   transition: all cubic-bezier(.16,.85,.5,1) 1000ms;
+// }
+
+// .slideleft-appear.slideleft-appear-active {
+//   opacity: 1;
+//   transform: translate3D(0,0,0);
+// }
+
+.slideleft-enter {
+  opacity: 0.01;
+  transform: translate3D(80px,0,0);
+}
+
+.slideleft-enter-active {
+  opacity: 1;
+  transform: translate3D(0,0,0);
+  transition: all cubic-bezier(.16,.85,.5,1) 200ms;
+}
+
+.slideleft-leave {
+  transform: translate3D(0,0,0);
+  opacity: 1;
+  
+}
+
+.slideleft-leave-active {
+  opacity: 0.01;
+  transform: translate3D(-80px,0,0);
+  transition: all cubic-bezier(.16,.85,.5,1) 200ms;
+}
+
+
+
+
+
 
 
 
@@ -30,13 +98,13 @@
 .inandout-appear, .inandout-enter {
   opacity: 0.01;
   transform: translate3D(50px,0,0);
-  transition: all 300ms cubic-bezier(.16,.85,.5,1) 400ms;
+  transition: all 300ms cubic-bezier(.16,.85,.5,1) 300ms;
 }
 
 .inandout-appear-active, .inandout-enter-active {
   opacity: 1;
   transform: translate3D(0,0,0);
-  transition: all 300ms cubic-bezier(.16,.85,.5,1) 400ms;
+  transition: all 300ms cubic-bezier(.16,.85,.5,1) 300ms;
 }
 
 .inandout-leave {

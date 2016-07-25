@@ -39,7 +39,7 @@ var AttributeConfig = React.createClass({
 	// RENDER ===================================================================
 
 	getIcon: function () {
-		return ' icon icon-cog'
+		return ' icon icon-ellipsis'
 	},
 
 	renderMenu: function() {

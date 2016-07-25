@@ -23,7 +23,9 @@ import Dropdown from '../../../../Dropdown'
 
 var SortMenu = React.createClass({
 
-	mixins: [blurOnClickMixin],
+	componentWillMount: function () {
+		this._debounceSave = _.debounce(this.handleSave, 2500)
+	},
 
 	getInitialState: function () {
 		var view = this.props.view
@@ -38,8 +40,8 @@ var SortMenu = React.createClass({
 		var list = this.refs.list
 		var item = {attribute_id: choice, descending: true};
 		if (choice == 0) return;
-		console.log('bbbbb');
 		list.addItem(item);
+		this._debounceSave()
 	},
 
 	handleSave: function () {
@@ -74,30 +76,23 @@ var SortMenu = React.createClass({
 		else if (sortList.length === 0) sortPreview = <div className="menu-item closed menu-sub-item empty-item">
 			<span className="ellipsis">Default sort order</span></div>
 
-		AttributeStore.query({model_id: view.model_id}).forEach(function (attr) {
-			var type = fieldTypes[attr.type]
-			if (_.contains(sortAttrs, attr.attribute_id)) return;
-			if (!type || !type.sortable) return
-			var attribute_id = (attr.cid || attr.attribute_id)
-			attrSelections.push({label: attr.attribute, key: attribute_id});
-		})
-
     	return <div className = "header-section">
 			<div className="header-label">
-				Ordering
-				<div className="dropdown icon--small icon icon-chevron-down" onClick = {this.handleOpen}></div>
-			</div>
-			<div className="header-config-section">
-				<div key = "menu" className="dropdown-menu" style = {{minWidth: "300px"}}>
-					<SortList {...this.props} ref = "list"/>
-					<div className = "menu-item menu-sub-item">
-						<span>
-							<Dropdown _choose = {this.chooseItem}
-								choices = {attrSelections}/>
-						</span>
-					</div>
-				</div>
-				
+				<span>Ordering:</span>
+				<SortList {...this.props} ref = "list"/>
+				<span style={{marginLeft: '10px'}}>
+					<select style = {{width: "150px", height: "40px"}} className="renamer" onChange = {this.chooseItem}>
+					<option>-- Choose -- </option>
+					{AttributeStore.query({model_id: view.model_id})
+					.filter(attr => fieldTypes[attr.type].sortable && 
+						sortAttrs.indexOf(attr.attribute_id))
+					.map(attr=>
+						<option value={attr.cid || attr.attribute_id}>
+							{attr.attribute}
+						</option>
+					)}
+					</select>
+				</span>
 			</div>
 
 		</div>
@@ -105,3 +100,4 @@ var SortMenu = React.createClass({
 });
 
 export default SortMenu;
+ 

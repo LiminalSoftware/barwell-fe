@@ -9,11 +9,14 @@ import constants from '../../../../../constants/MetasheetConstants'
 
 import TypePicker from './TypePicker'
 
+import AttributeStore from "../../../../../stores/AttributeStore"
+
 import modelActionCreators from "../../../../../actions/modelActionCreators.jsx"
 import util from '../../../../../util/util'
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import sortable from 'react-sortable-mixin';
+import blurOnClickMixin from '../../../../../blurOnClickMixin'
 import Dropdown from '../../../../Dropdown'
 
 import AttributeConfig from './AttributeConfig';
@@ -42,7 +45,7 @@ var ColumnDetailListable = React.createClass({
 		var config = this.props.config || {}
 		var isNew = /^c\d+$/.test(config.attribute_id)
 		return {
-			renaming: isNew,
+			editing: false,
 			name: config.name,
 			type: config.type,
 			isNew: isNew,
@@ -51,10 +54,11 @@ var ColumnDetailListable = React.createClass({
 	},
 
 	componentWillReceiveProps: function (next) {
-		if (!this.state.renaming) this.setState({
-			name: next.config.name,
-			type: next.config.type
-		})
+		var nextState = {}
+		if (!this.state.editing) nextState.name = next.name
+		nextState.type = next.type
+
+		this.setState(nextState)
 	},
 
 	componentWillMount: function () {
@@ -77,7 +81,7 @@ var ColumnDetailListable = React.createClass({
 	},
 
 	handleRename: function () {
-		this.setState({renaming: true})
+		this.setState({editing: true})
 	},
 
 	handleNameChange: function (e) {
@@ -87,14 +91,11 @@ var ColumnDetailListable = React.createClass({
 
 	handleBlurName: function (e) {
 		var config = this.props.config
-		var attr  = _.clone(AttributeStore.get(config.attribute_id));
-		attr.attribute = this.state.name;
-		attr._dirty = true;
-		this.setState({renaming: false})
+		var attr  = AttributeStore.get(config.attribute_id);
+		attr.attribute = this.state.name
 
-		// if the menu is open, defer all changes until the menu is closed
-		// otherwise, commit them right away
-		modelActionCreators.create('attribute', this.props.singleton, attr);
+		modelActionCreators.create('attribute', true, attr);
+		this.setState({editing: false})
 	},
 
 	handleDelete: function (e) {
@@ -190,17 +191,6 @@ var ColumnDetailListable = React.createClass({
 		var keyIds = _.indexBy(keycomps, 'key_id')
 		var keys = KeyStore.query({}).filter(k => k.key_id in keyIds)
 
-		var relatedModelChoices
-
-		if (isRelation) {
-			relatedModelChoices = ModelStore.query({}).map(function (model) {
-				return {
-					key: model.model_id,
-					choice: model.model
-				}
-			})
-		}
-
 		return <div className = {"menu-sub-item " + 
 			(this.state.showReference || selected ? "menu-sub-item--hilite":"")}
 			style = {{position: 'relative'}}
@@ -208,30 +198,14 @@ var ColumnDetailListable = React.createClass({
 			// onMouseOut = {this.handleMouseOut}
 			>
 
-			{
-			// this.state.showReference ? 
-			// <div className="ref-dot" style = {{left: '-8px', top: '-12px'}}>
-			// 	{alpha[this.props.index]}
-			// </div>
-			// : null
-			}
-
-			{!this.props.singleton ? 
-				<span ref = "grabber" className="draggable drag-grid"/> 
-				: null
-			}
 			
-			<span style = {{maxWidth: '34px'}}>
-				<TypePicker
-					ref = "typePicker"
-					{...this.props}
-					{...configProps}/>
-			</span>
+			<span ref = "grabber" className="draggable drag-grid"/>	
+			
 			
 			<span style = {{maxWidth: '150px', minWidth: '150px', position: 'relative'}}>
 				{
-					this.state.renaming ?
-					<input className = "menu-input text-input"
+					this.state.editing ?
+					<input className = "renamer"
 						autoFocus
 						onBlur = {_this.handleBlurName} 
 						onChange = {_this.handleNameChange} 
@@ -246,6 +220,12 @@ var ColumnDetailListable = React.createClass({
 				
 			</span>
 
+			<span style = {{color: "khaki"}}>
+				<span className = {"icon icon-" + fieldType.icon}/>
+				<span>{fieldType.description}</span>
+			</span>
+			
+
 			{config.relation_id ?
 			<span>
 				<span style = {{width: '30px', textAlign: 'center', position: 'relative', padding: 0, display: 'flex', flexDirection: 'column', margin: 0}}>
@@ -255,7 +235,7 @@ var ColumnDetailListable = React.createClass({
 			</span> : null}
 
 			
-			<span >
+			<span>
 			{
 				(fieldType.configParts || []) /* config parts associated with the field type*/
 				.concat(this.props.viewConfigParts || []) /* config parts passed down from the view*/
@@ -264,6 +244,9 @@ var ColumnDetailListable = React.createClass({
 					var localProps = {
 						key: part.prototype.partName,
 						ref: part.prototype.partName,
+						direction: "left",
+						classes: part.prototype.structural ? 
+							"popdown-struct" : "popdown-prez"
 					}
 					return React.createElement(part, _.extend(
 						localProps,
@@ -272,14 +255,15 @@ var ColumnDetailListable = React.createClass({
 				})
 			}
 			</span>
-			{!this.props.singleton ? 
+			
 			<span style={{flexDirection: 'row-reverse', maxWidth: '35px', marginRight: '10px'}}>
 				{
 					fieldType.unchangeable ? null :
-					<AttributeConfig {...this.props} {...configProps} key = "attributeConfig"/>
+					<AttributeConfig {...this.props} 
+					{...configProps} direction = "left" key = "attributeConfig"/>
 				}
 			</span>
-			: null}
+			
 		</div>
 	},
 

@@ -5,7 +5,7 @@ import util from '../../util/util'
 import blurOnClickMixin from "../../blurOnClickMixin"
 import popdownClickmodMixin from '../Views/Fields/popdownClickmodMixin'
 
-var ModelContext = React.createClass ({
+var ViewContext = React.createClass ({
 
 	mixins: [blurOnClickMixin, popdownClickmodMixin],
 
@@ -16,11 +16,8 @@ var ModelContext = React.createClass ({
 	},
 	
 	handleClickDelete: function () {
-		this.setState({deleting: true})
-	},
-
-	handleCancelDelete: function () {
-		this.setState({deleting: false})
+		this.props._parent.handleDelete()
+		this.handleBlur()
 	},
 
 	handleRename: function () {
@@ -42,29 +39,17 @@ var ModelContext = React.createClass ({
 
 			<div div className = "selectable popdown-item" onClick = {this.handleRename}>
 				<span className="icon icon-pencil"/>
-				Rename model
+				Rename view
 			</div>
 			
-			{this.state.deleting ?
-			<div className = "selectable popdown-item">
-				Delete this model?
-			</div>
-			:
+			
 			<div div className = "selectable popdown-item" onClick = {this.handleClickDelete}>
 				<span className="icon icon-trash2"/>	
-				Delete model
+				Delete view
 			</div>
-			}
-			{this.state.deleting ?
-				<div div className = "selectable popdown-item" onClick={this.props._delete}>Delete</div>
-				: null
-			}
-			{this.state.deleting ?
-				<div div className = "selectable popdown-item" onClick={this.handleCancelDelete}>cancel</div>
-				: null
-			}
+			
 		</div>
 	}
 })
 
-export default ModelContext
+export default ViewContext

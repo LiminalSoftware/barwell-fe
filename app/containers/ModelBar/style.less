@@ -39,6 +39,7 @@
 }
 
 .mdlbar-link {
+	direction: ltr !important;
 	display: block;
 	color: @lightFontColor;
 }
@@ -46,7 +47,7 @@
 .mdlbar-link--active {
 	background: @headerBgLight2;
 	color: @lightFontColor;
-	border-left: 4px solid @newgreen1;
+	border-left: 4px solid steelblue;
 }
 
 .mdlbar-list {
@@ -60,8 +61,20 @@
 
 	flex-direction: column;
 	padding: 0;
+	padding-left: 10px;
 	overflow-y: auto;
 	overflow-x: hidden;
+	direction: rtl;
+}
+
+.flush {
+	position: absolute !important;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	top: 0;
+	min-width: 100%;
+	width: auto;
 }
 
 .renamer {
@@ -73,10 +86,6 @@
 
 	border-radius: 1px;
 	padding: 2px;
-	padding-left: 5px;
-	margin: -2px;
-
-	width: 150px;
 }
 .header-renamer {
 	font-size: @headerFontSize !important;
@@ -100,6 +109,7 @@
 }
 
 .mdlbar-adder {
+	direction: ltr !important;
 	.mdlbar-tab;
 	border: 1px solid @lightFontColor;
 	border-radius: 3px;

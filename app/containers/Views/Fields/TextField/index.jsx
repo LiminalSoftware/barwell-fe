@@ -28,6 +28,8 @@ var textField = {
 
 	category: 'General',
 
+	defaultDefault: '',
+
 	description: 'Text',
 	
 	sortIcon: 'sort-alpha-',

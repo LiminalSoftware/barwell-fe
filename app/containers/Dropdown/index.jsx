@@ -1,13 +1,24 @@
+// LIBS
 import _ from "underscore"
 import React from "react"
 
+// STORES
 import ViewStore from "../../stores/ViewStore"
+
+// CONTANTS
 import viewTypes from "../Views/viewTypes"
 
+// ACTIONS AND UTILS
 import modelActionCreators from "../../actions/modelActionCreators.jsx"
 import util from '../../util/util'
 
+// MIXINS
+import blurOnClickMixin from "../../blurOnClickMixin"
+
+
 var Dropdown = React.createClass({
+
+	mixins: [blurOnClickMixin],
 
 	// LIFECYCLE ==============================================================
 
@@ -28,10 +39,6 @@ var Dropdown = React.createClass({
 		}
 	},
 
-	handleBlur: function () {
-		this.setState({open: false})
-	},
-
 	// UTILITY ================================================================
 	
 	// RENDER =================================================================
@@ -50,16 +57,13 @@ var Dropdown = React.createClass({
 			left: 0,
 			right: 0,
 			zIndex: 0,
+			margin: '-1px',
 			marginTop: selectedIndex * 2 + 'px'
 		}
 		
-		return <div className="pop-down-section"
-			style={outerStyle} onMouseDown = {this.handleClick}>
-
-			<div className = "pop-down-menu-bordered">
-				<DropdownItem choice = {selected} placeholder = {true} />
-			</div>
-			
+		return <div className = "pop-down-menu-bordered" 
+			style={outerStyle}
+			onMouseDown = {this.handleClick}>
 			{
 			this.state.open ? 
 			<div className = "pop-down-menu-bordered" style = {style}>{
@@ -68,10 +72,8 @@ var Dropdown = React.createClass({
 					key = {c.key} choice = {c}/>)
 			}</div>
 			:
-			null
+			<DropdownItem choice = {selected} placeholder = {true} />
 			}
-			
-			
 		</div>
 	}
 })

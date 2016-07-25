@@ -1,4 +1,6 @@
 
+@_purpletint: #D5C3DB;
+@limegreen: lighten(desaturate(lime, 40%), 30%);
 //====================================================
 @grayA: #2a3034;
 @gray1: #524A50;
@@ -9,8 +11,8 @@
 @purple1: #54365E;
 @purple2: #7F5E8A;
 @purple3: #AF86BD;
-// @purple4: #A041BF;
-@purple4: steelblue;
+@purple4: #A041BF;
+// @purple4: steelblue;
 @purple5: lighten(#A041BF, 20%);
 
 @orange3: #FF5845;
@@ -40,7 +42,6 @@
 	background:url(
 	data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVQYV2NkIAKwT7X4z0hIHUjRz+wTjHgVwhSBDMOpEFkRToXoirAqxKYIQyEuRSgK8SmCKySkCKyQGEUghQCcJiXerlSgIwAAAABJRU5ErkJggg==
     ) repeat;
-    
 }
 
 
@@ -64,10 +65,10 @@ background: rgba(247,248,250,1);
 @headerBorderWidth: 1px;
 // @headerMenuBgColor: #746e7c;
 @headerBgLight1: desaturate(darken(steelblue, 8%), 30%);
-@headerMenuBgColor: darken(@headerBgLight1, 10%);
-@headerBgLight2: desaturate(lighten(@headerMenuBgColor, 10%), 5%);
+@headerMenuBgColor: darken(@headerBgLight1, 20%);
+@headerBgLight2: desaturate(lighten(@headerMenuBgColor, 8%), 5%);
 
-@headerBgLight3: rgba(247,248,250,1);
+@headerBgLight3: lighten(@headerBgLight2, 50%);
 
 
 @headerBgLight0: lighten(@headerMenuBgColor, 17%);
@@ -96,8 +97,6 @@ background: rgba(247,248,250,1);
   border-bottom: 1px solid @headerBorderColor;
   color: @headerFontColor;
   font-family: @bodyFont;
-  min-width: 50px;
-  width: 100px;
   margin: 0;
   margin-bottom: -1px;
   border-radius: 0;

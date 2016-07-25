@@ -12,7 +12,7 @@ import PopDownMenu from '../../../../components/PopDownMenu'
 import util from '../../../../util/util'
 
 var HAS_3D = util.has3d()
-var RIGHT_FRINGE = '200px'
+var RIGHT_FRINGE = 200
 
 const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789"
 

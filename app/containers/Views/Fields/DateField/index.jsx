@@ -33,6 +33,8 @@ var dateField = {
 
 	sortable: true,
 
+	defaultDefault: null,
+
 	defaultWidth: 100,
 
 	defaultAlign: 'center',

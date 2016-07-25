@@ -15,11 +15,14 @@ var AggregatePicker = React.createClass({
 
 	partName: 'AggregatePicker',
 
+	structural: true,
+
 	mixins: [blurOnClickMixin, configCommitMixin, popdownClickmodMixin],
 
 	getInitialState: function () {
+		var config = this.props.config || {}
 		return {
-			choice: 'values',
+			choice: config.aggregator || 'list',
 			open: false
 		}
 	},
@@ -68,8 +71,17 @@ var AggregatePicker = React.createClass({
 		}
 	],
 
+	isActive: function () {
+		return true;
+	},
+
 	getIcon: function () {
+		if (this.state.choice === "list") return " icon icon-list"
 		return " icon icon-sigma";
+	},
+
+	getContent: function () {
+		return this.aggregates.filter(a => a.id === this.state.choice)[0].label
 	},
 
 	renderMenu: function () {

@@ -25,6 +25,12 @@ var ColumnDropdownMenu = React.createClass({
 
 	// LIFECYCLE ==============================================================
 
+	getInitialState: function () {
+		return {
+			addingAttribute: false,
+		}
+	},
+
 	componentWillMount: function () {
 		AttributeStore.addChangeListener(this._onChange);
 	},
@@ -39,10 +45,9 @@ var ColumnDropdownMenu = React.createClass({
 
 	// HANDLERS ===============================================================
 
-	handleAddColumn: function () {
-		this.setState({editing: true})
+	handleAddAttribute: function () {
+		this.setState({addingAttribute: true})
 		this.refs.list.blurSiblings();
-		this.refs.list.addItem()
 	},
 
 	// UTILITY ================================================================
@@ -121,23 +126,18 @@ var ColumnDropdownMenu = React.createClass({
 					{firstSection.emptyText}
 				</div> 
 				: null}
-							
+
 				<ColumnList 
-					{...this.props} ref = "list" 
+					{...this.props} ref = "list"
 					_markDirty = {this.markDirty}
 					_blurChildren = {this.blurChildren}/>
 
-				<div className="menu-sub-item menu-divider" >
-
-					<ColumnAdder {...this.props} />
+				<ColumnAdder {...this.props} config = {{}}/>
 				
-					<div className = "menu-divider-inner--green" onClick = {this.addRelation} >
-						<span className = "icon icon-plus"/>
-						<span>Add new relation</span>
-					</div>
-
-				</div>	
 			</div>					
+
+			
+			
 		</div>
 	}
 });
