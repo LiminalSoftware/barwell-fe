@@ -74,7 +74,7 @@ var ModelBar = React.createClass({
 					model = {mdl}
 					modelPath = {`/workspace/${workspaceId}/model/${mdl.model_id}`}/>
 				)}
-				<div className="mdlbar-adder">
+				<div className="mdlbar-adder" onClick = {this.handleAddModel}>
 					<span  className="icon icon-plus"/>
 					<span className="ellipsis">Add new dataset</span>
 				</div>

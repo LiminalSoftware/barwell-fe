@@ -113,31 +113,18 @@ var Cursors = React.createClass ({
     } : {width: -1, top: 1, height: -1};
 
     var style = {
-      top: 0,
+      top: "1px",
       left: 0,
       right: 0,
       height: ((rowCount + 1) * geo.rowHeight) + 'px',
-      transformStyle: 'preserve-3d'
+      transformStyle: 'preserve-3d',
+      zIndex: 10
     }
 
-    if (HAS_3D) style.transform = 'translateY(' + (marginTop + 2) + 'px)'
+    if (HAS_3D) style.transform = 'translate3d(0, ' + (marginTop + 2) + 'px, 20px)'
     else style.marginTop = marginTop + 2 + 'px'
 
-    return <div className = {"wrapper cursor-wrapper " + (focused ? ' ' : ' cursor-wrapper--blurred')} 
-      style = {{
-        left: 0,
-        top: '1px',
-        bottom: 0,
-        width: (adjustedWidth + RIGHT_FRINGE) + 'px',
-        transformStyle: 'preserve-3d',
-        pointerEvents: 'none'
-      }}
-      // onMouseDown = {this.props._handleClick}
-      onDoubleClick = {this.props._handleEdit}
-      onContextMenu = {this.props._handleContextMenu}
-      onWheel = {this.props._handleWheel}
-      >
-      <div className = "wrapper overlay "
+    return <div className = "wrapper overlay "
         style = {{
           top: geo.headerHeight - 1 - 2 + 'px',
           bottom: 0,
@@ -145,9 +132,13 @@ var Cursors = React.createClass ({
           width: (fixedWidth + floatWidth + geo.labelWidth + RIGHT_FRINGE) + 'px',
           overflow: 'hidden',
           transformStyle: 'preserve-3d',
-          transform: 'translateZ(10px)',
-          zIndex: 10
-        }}>
+          transform: 'translateZ(0)',
+          zIndex: 10,
+          pointerEvents: 'none',
+        }} 
+        onDoubleClick = {this.props._handleEdit}
+        onContextMenu = {this.props._handleContextMenu}
+        onWheel = {this.props._handleWheel}>
         <div className = "wrapper force-layer"
           ref = "overlayInner"
           style = {style}>
@@ -255,10 +246,6 @@ var Cursors = React.createClass ({
             fudge = {{left: -1.25, top: 0, height: 1, width: 1.25}}/>
         </div>
       </div>
-
-      
-
-    </div>
   }
 });
 

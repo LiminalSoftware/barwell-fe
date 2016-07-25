@@ -17,7 +17,7 @@ import sortable from 'react-sortable-mixin';
 var SortDetail = React.createClass({
 
 	mixins: [sortable.ItemMixin],
-
+	
 	dragRef: "grabber",
 
 	getInitialState: function () {
