@@ -38,7 +38,7 @@
 .header-section {
 	display: block;
 	margin-top: 10px;
-	background: @headerMenuBgColor;
+	// background: @headerMenuBgColor;
 }
 
 .header-config-section {
@@ -53,10 +53,11 @@
 	text-align: left;
 	
 	border-bottom: 1px solid @headerBgLight2;
+	background: steelblue;
 	
-	height: 50px;
-	min-height: 50px;
-	line-height: 50px;
+	height: 20px;
+	min-height: 20px;
+	line-height: 20px;
 	padding: 6px 10px;
 	margin: 0;
 	
@@ -97,19 +98,21 @@
 
 
 .menu-divider {
+
 	text-align: center !important;
+	font-family: @headerFont;
 	border-bottom: 1px solid @limegreen !important;
+	background: fadeout(@limegreen, 90%);
 	.struct-style;
 	height: 32px;
 	line-height: 32px;
 }
 
 
-
 .menu-item {
 	display: flex;
 	text-decoration: none;
-	color: @lightFontColor;
+	color: @darkFontColor;
 }
 
 .menu-item-stacked {

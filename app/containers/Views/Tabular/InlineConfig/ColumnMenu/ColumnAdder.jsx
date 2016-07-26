@@ -22,39 +22,59 @@ import popdownClickmodMixin from '../../../Fields/popdownClickmodMixin'
 // UTIL
 import util from '../../../../../util/util'
 
+const cardinalityMap = {
+	'ONE_TO_ONE': ['HAS_ONE', 'HAS_ONE'],
+	'HAS_ONE': ['HAS_ONE', 'HAS_MANY'],
+	'HAS_MANY': ['HAS_MANY', 'HAS_ONE'],
+	'MANY_TO_MANY' : ['HAS_MANY', 'HAS_MANY']
+}
+
+const inverseCardinalityMap = _.invert(cardinalityMap)
+
+const defaultState = {
+	open: false, 
+	type: null,
+	name: "",
+	reverseName: "",
+	cardinality: [],
+	step: 0,
+	nameError: null,
+	hasBeenRenamed: false,
+	reverseHasBeenRenamed: false,
+	relatedModel: null,
+	defaultValue: null
+}
+
+const stepDescriptions = {
+	0: "",
+	1: "Attribute data type:",
+	2: "Additional details:",
+	3: "Relation details"
+}
+
 var ColumnAdder = React.createClass({
 
 	mixins: [blurOnClickMixin],
 
-	stepDescriptions: {
-		0: "",
-		1: "Attribute data type:",
-		2: "Additional details:"
-	},
-
 	// LIFECYCLE ==============================================================
 
 	getInitialState: function () {
-		return {
-			open: false, 
-			type: null,
-			name: "",
-			step: 0,
-			nameError: null
-		}
+		return defaultState
 	},
 
 	componentWillMount: function () {
-		this._debounceCheckName = _.debounce(this.checkName, 250)
+		this._debounceErrorCheck= _.debounce(this.errorCheck, 250)
 	},
 
 	componentDidUpdate: function () {
-		if (this.state.step === 0 && this.state.open) this.setState({step: 1})
+		if (this.state.step === 0 && this.state.open) this.setState({
+			step: 1
+		})
 	},
 
 	// UTILITIES ===============================================================
 
-	checkName: function () {
+	errorCheck: function () {
 		const errors = this.getNameErrors(this.state.name)
 		this.setState({nameError: errors})
 	},
@@ -75,7 +95,7 @@ var ColumnAdder = React.createClass({
 	handleChooseType: function (type, e) {
 		const fieldType = fieldTypes[type]
 		const nameRoot = "New " + fieldType.description
-		var name = nameRoot
+		var name = this.state.hasBeenRenamed ? this.state.name : nameRoot
 		var iterator = 1
 		var error = this.getNameErrors(name)
 
@@ -83,6 +103,7 @@ var ColumnAdder = React.createClass({
 			name = nameRoot + " " + iterator++
 			error = this.getNameErrors(name)
 		}
+
 		this.setState({
 			type: type, 
 			step: 2, 
@@ -92,28 +113,99 @@ var ColumnAdder = React.createClass({
 
 	handleNameChange: function (e) {
 		const name = e.target.value
-		this.setState({name: name})
-		this._debounceCheckName()
+		this.setState({name: name, hasBeenRenamed: true})
+		this._debounceErrorCheck()
+	},
+
+	handleReverseNameChange: function (e) {
+		const name = e.target.value
+		this.setState({reverseName: name, reverseHasBeenRenamed: true})
+		this._debounceErrorCheck()
+	},
+
+	handleChooseRelatedModel: function (e) {
+		const fieldType = fieldTypes[this.state.type]
+		const modelId = e.target.value
+		const thisModel = ModelStore.get(this.props.model.model_id)
+		const cardinality = cardinalityMap[this.state.type]
+		const relatedModel = ModelStore.get(modelId)
+
+		this.setState({
+			step: 3,
+			relatedModel: modelId,
+			cardinality: cardinality,
+			name: this.state.hasBeenRenamed ? 
+				this.state.name : 
+				cardinality[0] === 'HAS_MANY' ? 
+					relatedModel.plural :
+					relatedModel.model,
+			reverseName: this.state.reverseHasBeenRenamed ? 
+				this.state.reverseName : 
+				cardinality[1] === 'HAS_MANY' ?
+					thisModel.plural :
+					thisModel.model
+		})
+		
 	},
 
 	// really this should be called handle blur, but the mixin is written this way
 	handleCommit: function () {
-		this.setState({step: 0, type: null, name: null, open: false})
+		this.setState(defaultState)
 	},
 
 	handleConfirm: function () {
 		const model = this.props.model
-		modelActionCreators.create('attribute', true, {
-			attribute: this.state.name,
-			model_id: model.cid || model.model_id,
-			type: this.state.type
-		})
-		this.setState({step: 0, open: false})
+		const fieldType = fieldTypes[this.state.type]
+
+		if (fieldType.category === 'Relations') {
+			modelActionCreators.create('relation', true, {
+				model_id: model.model_id,
+				related_model_id: parseInt(this.state.relatedModel),
+				relation: this.state.name,
+				related_relation: this.state.reverseName,
+				type: this.state.type
+			})
+		} else {
+			modelActionCreators.create('attribute', true, {
+				attribute: this.state.name,
+				model_id: model.cid || model.model_id,
+				type: this.state.type,
+				default_value: this.state.defaultValue
+			})
+		}
+		
+		this.setState(defaultState)
 	},
 
 	handleSetDefault: function (value) {
-		if (value !== null) this.setState({default: value})
+		if (value !== null) this.setState({defaultValue: value})
 	},
+
+	handleSelectCardinality: function (dir, e) {
+		var value = e.target.value
+		var cardinality = this.state.cardinality
+		var thisModel = this.props.model
+		var relatedModel = ModelStore.get(this.state.relatedModel)
+
+		if (dir === 'fwd') cardinality[0] = value
+		else cardinality[1] = value
+		
+		this.setState({
+			cardinality: cardinality,
+			type: inverseCardinalityMap[cardinality],
+			name: this.state.hasBeenRenamed ? 
+				this.state.name : 
+				cardinality[0] === 'HAS_MANY' ? 
+					relatedModel.plural :
+					relatedModel.model,
+			reverseName: this.state.reverseHasBeenRenamed ? 
+				this.state.reverseName : 
+				cardinality[1] === 'HAS_MANY' ?
+					thisModel.plural :
+					thisModel.model
+		}, )
+	},
+
 
 	// RENDER ===================================================================
 
@@ -157,17 +249,17 @@ var ColumnAdder = React.createClass({
 	renderDefaultField: function () {
 		var fieldType = fieldTypes[this.state.type]
 
-		return <tr className="menu-item menu-sub-item">
-			<td className="attr-style ">
+		return <div className="menu-item menu-sub-item">
+			<span className="attr-style ">
 				Default value:
-			</td>
-			<td style = {{position: "relative"}}>
+			</span>
+			<span style = {{position: "relative"}}>
 				<span style = {{position: "absolute", background: "white", width: "100%", height: "100%"}}>
 				{React.createElement(fieldType.element, {
 					_recordCommit: this.handleSetDefault,
 					_handleBlur: this.handleSetDefault,
 					noAutoFocus: true,
-					value: this.state.default,
+					value: this.state.defaultValue,
 					alwaysEdit: true,
 					config: {type: this.state.type},
 					selected: true,
@@ -181,19 +273,19 @@ var ColumnAdder = React.createClass({
 				     }
 				})}
 				</span>
-			</td>
-		</tr>
+			</span>
+		</div>
 	},
 
 	renderRelatedModelPicker: function () {
 		const model = this.props.model
 
-		return <tr className="attr-style menu-item menu-sub-item">
-			<td className="attr-style ">
-				Related item
-			</td>
-			<td style={{position: "relative"}} className="attr-style">
-				<select className="renamer flush">
+		return <div className="attr-style menu-item menu-sub-item">
+			<span className="attr-style ">
+				Related item:
+			</span>
+			<span style={{position: "relative"}} className="attr-style">
+				<select className="renamer flush" onChange={this.handleChooseRelatedModel}>
 				<option>-- Pick one --</option>
 				{
 				ModelStore.query({workspace_id: model.workspace_id}).map(mdl =>
@@ -203,84 +295,155 @@ var ColumnAdder = React.createClass({
 				)
 				}
 				</select>
-			</td>
-		</tr>
+			</span>
+		</div>
+	},
+
+	renderCardinalityForm: function () {
+		var relatedModel = ModelStore.get(this.state.relatedModel)
+		var thisModel = this.props.model
+		var _this = this
+		var fieldType = fieldTypes[this.state.type]
+		var fwdCardinality = this.state.cardinality[0]
+		var bwdCardinality = this.state.cardinality[1]
+
+		return <div className="wizard-inner" key = "steup3">
+
+			<div className="attr-style menu-item menu-sub-item">
+				<span className="attr-style ">
+					Attribute type:
+				</span>
+				<span style={{}} className="attr-style selectable-attr-style"
+				onClick={e => _this.setState({step: 1})}>
+					<span className={"icon icon-" + fieldType.icon} style={{marginLeft: "5px"}}/>
+					<span>{fieldType.description}</span>
+				</span>
+			</div>
+
+			<div className="attr-style menu-item menu-sub-item">
+				<span className="attr-style ">
+					Related item
+				</span>
+				<span style={{position: "relative"}} 
+					onClick={e => _this.setState({step: 2})}
+					className="attr-style selectable-attr-style">
+					<span style={{marginLeft: "5px"}}>{relatedModel.model}</span>
+				</span>
+			</div>
+
+			<div className="attr-style menu-item menu-sub-item">
+				{this.renderCadinalityLeg(
+					thisModel, 
+					fwdCardinality, 
+					this.handleSelectCardinality.bind(this, 'fwd'),
+					this.state.name,
+					this.handleNameChange
+				)}
+			</div>
+
+			<div className="attr-style menu-item menu-sub-item">
+				{this.renderCadinalityLeg(
+					relatedModel, 
+					bwdCardinality, 
+					this.handleSelectCardinality.bind(this, 'bwd'),
+					this.state.reverseName,
+					this.handleReverseNameChange
+				)}
+			</div>
+
+			{this.renderConfirmButtons()}
+		</div>
+	},
+
+	renderCadinalityLeg: function (model, cardinality, selectCardinality, name, changeName) {
+
+		return <span className="attr-style" style = {{position: "relative"}}>
+			Each <span>{model.model}</span> can have
+
+			<select className="renamer" value = {cardinality}
+				onChange = {selectCardinality}
+				style={{marginRight: "5px", marginLeft: "5px", height: "32px"}}>
+				<option value="HAS_ONE"> at most one </option>
+				<option value="HAS_MANY"> many </option>
+			</select>
+
+			<span>
+				<input style={{height: "28px"}} 
+					autoFocus className = "renamer" value={name}
+					onChange = {changeName}/>
+			</span>
+		</span>
+	},
+
+
+	renderConfirmButtons: function () {
+		return <div className="menu-item menu-config-item" 
+		style={{position: "absolute", bottom: 0, left: 0, right: 0}}>
+			<span 
+				onClick = {this.handleCommit}
+				className="menu-sub-item  selectable-attr-style attr-border  attr-style">
+				<span className="icon icon-cross"/>
+				<span>Nevermind</span>
+			</span>
+			<span 
+				onClick = {this.handleConfirm}
+				className="menu-sub-item selectable-attr-style attr-border attr-style">
+				<span className="icon icon-check"/>
+				<span>Done</span>
+			</span>
+		</div>
 	},
 
 	renderDetailForm: function () {
 		var fieldType = fieldTypes[this.state.type]
 		var _this = this
+		var isRelation = (fieldType.category === 'Relations' )
 
-		return <div className="wizard-inner" key = "steup2">
-			<table key="step2" style={{width: "100%"}}><tbody>
-				<tr className="attr-style menu-item menu-sub-item">
-					<td className="attr-style ">
+
+		return <div className="wizard-inner" key = "step2">
+			
+				<div className="attr-style menu-item menu-sub-item">
+					<span className="attr-style ">
 						Attribute type:
-					</td>
-					<td style={{}} className="attr-style"
+					</span>
+					<span style={{}} className="attr-style selectable-attr-style"
 					onClick={e => _this.setState({step: 1})}>
-						<span className={"icon icon-" + fieldType.icon}/>
+						<span className={"icon icon-" + fieldType.icon} style={{marginLeft: "5px"}}/>
 						<span>{fieldType.description}</span>
-					</td>
-				</tr>
-				{fieldType.category === 'Relations' ?
-					this.renderRelatedModelPicker()
-					: null
-				}
+					</span>
+				</div>
 
-				<tr className="attr-style menu-item menu-sub-item">
-					<td className="attr-style ">
+				{isRelation ?
+				this.renderRelatedModelPicker()
+				: 
+				<div className="attr-style menu-item menu-sub-item">
+					<span className="attr-style ">
 						Attribute name:
-					</td>
-					<td style={{ position: "relative"}}>
+					</span>
+					<span style={{ position: "relative"}}>
 						<input style={{}} 
 						autoFocus
 						className = "flush renamer" value={this.state.name}
 						onChange = {this.handleNameChange}/>
-					</td>
-				</tr>
-				
-				{fieldType.category === 'Relations' ?
-					null
-					: this.renderDefaultField()
+					</span>
+				</div>
 				}
-
-				{
-				// <tr className="attr-style menu-item menu-sub-item">
-				// 	<td className="attr-style ">
-				// 		Description/notes:
-				// 	</td>
-				// </tr>
-				// <tr><td>
-				// 	<textarea className="renamer" style = {{width: "100%", height: "100px"}}/>
-				// </td></tr>
+				
+				{!isRelation?
+					this.renderDefaultField()
+					: null
 				}
 				
 				{
 					this.state.nameError  ? 
-					<tr className="menu-item menu-sub-item"><td style = {{color: "lightcoral"}}>
+					<div className="menu-item menu-sub-item"><span style = {{color: "lightcoral"}}>
 					<span className="icon icon-warning"/>
 					{this.state.nameError}
-					</td></tr>
+					</span></div>
 					: null
 				}
-			</tbody></table>
 
-			<div className="menu-item menu-config-item" style={{position: "absolute", bottom: 0, left: 0, right: 0}}>
-				<span 
-					onClick = {this.handleCommit}
-					className="menu-sub-item  selectable-attr-style attr-border  attr-style">
-					<span className="icon icon-cross"/>
-					<span>Nevermind</span>
-				</span>
-				<span 
-					onClick = {this.handleConfirm}
-					className="menu-sub-item selectable-attr-style attr-border attr-style">
-					<span className="icon icon-check"/>
-					<span>Done</span>
-				</span>
-				
-			</div>
+			{!isRelation? this.renderConfirmButtons() : null}
 		</div>
 	},
 
@@ -301,8 +464,8 @@ var ColumnAdder = React.createClass({
 			<div className="wizard-overlay">
 				
 				<div className="wizard-title" key="title">
-					<span>{this.stepDescriptions[this.state.step]}</span>
-					<span style = {{float: "right"}}>(Step {this.state.step}/2)</span>
+					<span>{stepDescriptions[this.state.step]}</span>
+					<span style = {{float: "right"}}>(Step {this.state.step})</span>
 				</div>
 				<ReactCSSTransitionGroup
 					className="wizard-inner"
@@ -313,6 +476,8 @@ var ColumnAdder = React.createClass({
 					this.renderCategoriesList()
 					: this.state.step === 2 ?
 					this.renderDetailForm()
+					: this.state.step === 3 ?
+					this.renderCardinalityForm()
 					: <span key="done">done!</span>			
 					}
 				</ReactCSSTransitionGroup>

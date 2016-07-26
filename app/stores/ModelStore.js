@@ -11,10 +11,6 @@ var ModelStore = storeFactory({
   guidGenerator: getGuid,
   pivot: function (payload) {
     switch (payload.actionType) {
-      // case 'MODEL_CREATE':
-      //   this.create(payload.data)
-      //   this.emitChange()
-      //   break;
 
       case 'MODEL_DESTROY':
         this.destroy(payload.data)
@@ -22,7 +18,6 @@ var ModelStore = storeFactory({
         break;
 
       case 'MODEL_CREATE':
-        console.log(payload)
         var _this = this;
         var models = payload.data instanceof Array ? payload.data : [payload.data];
         models.forEach(function (model) {

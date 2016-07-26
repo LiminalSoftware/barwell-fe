@@ -1,6 +1,6 @@
 
 @_purpletint: #D5C3DB;
-@limegreen: lighten(desaturate(lime, 40%), 30%);
+@limegreen: lighten(desaturate(lime, 40%), 15%);
 //====================================================
 @grayA: #2a3034;
 @gray1: #524A50;
@@ -59,14 +59,13 @@ background: rgba(247,248,250,1);
 
 @headerBgColor: @gray4;
 
-@lightFontColor: fadeout(white, 30%);
-
 @menuItemBorderRadius: 2px;
 @headerBorderWidth: 1px;
 // @headerMenuBgColor: #746e7c;
 @headerBgLight1: desaturate(darken(steelblue, 8%), 30%);
 @headerMenuBgColor: darken(@headerBgLight1, 20%);
-@headerBgLight2: desaturate(lighten(@headerMenuBgColor, 8%), 5%);
+// @headerBgLight2: desaturate(lighten(@headerMenuBgColor, 8%), 5%);
+@headerBgLight2: #f2f2f3;
 
 @headerBgLight3: lighten(@headerBgLight2, 50%);
 
@@ -87,6 +86,9 @@ background: rgba(247,248,250,1);
 @headerOuterHilite: @newgreen1;
 
 @pointerSize: 16px;
+
+@lightFontColor: fadeout(white, 30%);
+@darkFontColor: lighten(@headerMenuBgColor, 10%);
 
 .msInput {
   display: inline-block;

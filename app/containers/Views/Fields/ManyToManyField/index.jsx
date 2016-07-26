@@ -2,26 +2,35 @@ import React from "react"
 import _ from "underscore"
 import $ from "jquery"
 
-import styles from "./hasOneStyles.less"
-
 import AttributeStore from "../../../../stores/AttributeStore"
-import RelationStore from "../../../../stores/RelationStore"
 import ModelStore from "../../../../stores/ModelStore"
-
+import KeyStore from "../../../../stores/KeyStore"
+import KeycompStore from "../../../../stores/KeycompStore"
 import constant from "../../../../constants/MetasheetConstants"
 import modelActionCreators from "../../../../actions/modelActionCreators"
+
 import selectableMixin from '../selectableMixin'
-import blurOnClickMixin from '../../../../blurOnClickMixin'
-import keyPressMixin from '../keyPressMixin'
 
 import LabelChoice from '../HasSomeParts/LabelChoice'
-import AlignChoice from '../textFieldConfig/AlignChoice'
 import BubbleColorchoice from '../HasSomeParts/BubbleColorchoice'
 import SearchDropdown from '../HasSomeParts/SearchDropdown'
+import AlignChoice from '../textFieldConfig/AlignChoice'
 import Bubble from '../HasSomeParts/Bubble'
 
-var hasOneField = {
+var manyToManyField = {
 	
+	defaultWidth: 200,
+
+	defaultAlign: 'center',
+
+	icon: 'expand',
+
+	category: 'Relations',
+
+	description: 'Many-to-many',
+
+	configParts: [AlignChoice, LabelChoice, BubbleColorchoice],
+
 	configCleanser: function (config) {
 		var label = config.label
 		var model_id = config.related_model_id
@@ -33,29 +42,14 @@ var hasOneField = {
 		return config
 	},
 
-	defaultWidth: 150,
-
-	defaultAlign: 'center',
-
-	icon: 'arrows-merge',
-
-	isSingular: true,
-
-	category: 'Relations',
-
-	description: 'Has one',
-
-	configParts: [AlignChoice, LabelChoice, BubbleColorchoice],
-
 	element: React.createClass({
-
 		mixins: [selectableMixin],
 
-		shouldComponentUpdate: function (nextProps, nextState) {
-			return nextProps.value !== this.props.value ||
-				nextProps.config !== this.props.config ||
-				nextState.selected !== this.state.selected ||
-				nextState.editing !== this.state.editing
+		getInitialState: function () {
+			return {
+				droppable: false, 
+				editing: false
+			}
 		},
 
 		handleDragEnter: function (e) {
@@ -63,16 +57,20 @@ var hasOneField = {
 			this.setState({droppable: true})
 		},
 
+		preventDefault: function (e) {
+			e.preventDefault();
+		},
+
 		handleDragLeave: function () {
 			this.setState({droppable: false})
 		},
 
-		getInitialState: function () {
-			return {editing: false}
+		handleDragEnd: function () {
+			this.setState({droppable: false})
 		},
 
-		commitChanges: function (e) {
-			if (this.state.editing) this.refs.search.chooseSelection(e)
+		commitChanges: function () {
+			if (this.state.editing) this.refs.search.chooseSelection({})
 			this.revert()
 		},
 
@@ -91,42 +89,45 @@ var hasOneField = {
 			})
 		},
 
-		handleDrop: function (e) {
-			var model = this.props.model
-			var config = this.props.config
-			var relationId = config.relation_id
-			var thisObj = this.props.object
-			var relObj = JSON.parse(
-				e.dataTransfer.getData('application/json')
-			)
-			modelActionCreators.moveHasMany(relationId, thisObj, relObj)
-			e.dataTransfer.dropEffect = 'move'
-			this.setState({droppable: false})
-		},
+		// handleDrop: function (e) {
+		// 	var model = this.props.model
+		// 	var config = this.props.config
+		// 	var relationId = config.relation_id
+		// 	var thisObj = this.props.object
+		// 	var relObj = JSON.parse(
+		// 		e.dataTransfer.getData('application/json')
+		// 	)
+		// 	modelActionCreators.moveHasMany(relationId, thisObj, relObj)
+		// 	e.dataTransfer.dropEffect = 'move'
+		// 	this.setState({droppable: false})
+		// },
 
 		getDisplayHTML: function (config, obj) {
-			var array = obj[config.column_id]
-			var rObj = (array instanceof Array) ? array[0] : array;
-			var token = (rObj instanceof Object) ? 
-				`<span class="has-many-bubble">${rObj[config.label]}</span>`
-				: '';
-			return `<span class = "table-cell-inner" style = {{textAlign: config.textAlign}}>${token}</span>`;
+			var value = obj[config.column_id]
+			var classes = 'table-cell-inner '; //+ (textConditional ? config.bold ? ' bolded ' : '' : '');
+			// var bgcolor = this.getBgColor(config, obj);
+
+			var tokens = (value || []).slice(0,5).map(function(relObj, idx) {
+				var label = relObj[config.label];
+				return `<span class="has-many-bubble">${label}</span>`;
+			}).join(" ");
+			
+			return `<span class = "table-cell-inner">${tokens}</span>`;
 		},
 
 		render: function () {
-			var array = this.props.value
-			var obj = (array instanceof Array ? array[0] : null)
+			var model = this.props.model
+			var value = this.props.value
 			var config = this.props.config || {}
 			var relatedModel = ModelStore.get(config.related_model_id)
 			var style = this.props.style || {}
-			var showDetail = this.props.selected && !this.state.editing
-			var value = (array instanceof Array ? array[0][config.label] : '')
+			var showDetail =  this.props.selected && !this.state.editing
 			var cellStyle = {
 				lineHeight: this.props.rowHeight + 'px',
-				background: this.props.selected ? 'white' : null,
-				textAlign: config.textAlign
+				background: this.props.selected ? 'white' : null
 			}
-			var editorIconStyle 
+			var editorIconStyle
+
 			if (showDetail) {
 				editorIconStyle = {
 					position: 'absolute',
@@ -143,14 +144,17 @@ var hasOneField = {
 			return <span
 				className = {"table-cell " + (this.state.selected ? " table-cell-selected" : "")}
 				style={style} >
-				<span 
-					className = "table-cell-inner"
+				<span className = "table-cell-inner"
 					style = {cellStyle}>
-				{obj ? <Bubble
-						obj = {obj}
-						model = {relatedModel}
-						label = {config.label}/>
-					: null
+				{
+					(value || []).map(function(obj, idx) {
+						if(idx < 5) return <Bubble
+							key = {obj.cid || obj[relatedModel._pk]}
+							obj = {obj}
+							model = {relatedModel}
+							color = {config.bubbleColor}
+							label = {config.label}/>
+					})
 				}
 				{showDetail ? <span
 					className = "editor-icon icon icon-magnifier"
@@ -168,7 +172,5 @@ var hasOneField = {
 	})
 
 }
-
-
-
-export default hasOneField
+	
+export default manyToManyField

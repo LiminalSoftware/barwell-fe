@@ -12,12 +12,13 @@ import KeycompStore from './KeycompStore'
 var RelationStore = storeFactory({
   identifier: 'relation_id',
   dispatcher: dispatcher,
+  guidGenerator: getGuid,
   pivot: function(payload) {
     switch (payload.actionType) {
+      
       case 'RELATION_CREATE':
-
-        console.log('RELATION_CREATE payload.data: '+ JSON.stringify(payload.data, null, 2));
-        this.create(payload.data);
+        var rels = payload.data instanceof Array ? payload.data : [payload.data];
+        rels.map(payload.isClean ? util.clean : _.identity).forEach(this.create)
         this.emitChange();
         break;
         
@@ -25,15 +26,8 @@ var RelationStore = storeFactory({
         this.destroy(payload.data);
         this.emitChange();
         break;
-        
-      case 'RELATION_RECEIVE':
-        var relation = payload.data
-        relation._dirty = false
-        this.create(relation)
-        this.emitChange()
-        break;
 
-      case 'MODEL_RECEIVE':
+      case 'MODEL_CREATE':
         dispatcher.waitFor([
           AttributeStore.dispatchToken, 
           ModelStore.dispatchToken, 
@@ -43,7 +37,9 @@ var RelationStore = storeFactory({
         var _this = this;
         var models = payload.data instanceof Array ? payload.data : [payload.data];
         models.forEach(function (model) {
-          if (model.relations instanceof Array) model.relations.map(util.clean).map(_this.create);
+          if (model.relations instanceof Array) model.relations
+            .map(payload.isClean ? util.clean : _.identity)
+            .map(_this.create);
         });
         this.emitChange();
         break;

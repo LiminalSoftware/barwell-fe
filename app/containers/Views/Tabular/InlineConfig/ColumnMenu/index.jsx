@@ -64,42 +64,6 @@ var ColumnDropdownMenu = React.createClass({
 		this.setState({dirty: false})
 		this.refs.list.commitViewUpdates(true);
 	},
-
-	commitAttributeChanges: function (save) {
-		var _this = this;
-		var model = this.props.model;
-		
-		return AttributeStore.query({model_id: model.model_id}).map(function (attr) {
-			if (attr.attribute_id && !save) {
-				return modelActionCreators.revert('attribute', attr);
-			} 
-
-			else if (!attr.attribute_id && save) {
-				var copy = 'Attribute ' + attr.attribute + ' added to model ' + model.model;
-				return modelActionCreators.create('attribute', true, attr, {narrative: copy, icon: 'icon-pencil-ruler'});
-			} 
-
-			else if (attr.attribute_id && attr._dirty && !attr._destroy && save) {
-				var copy = 'Attribute "' + attr.attribute + '"'
-				if (attr._server.type !== attr.type) copy += ' type updated'
-				else if (attr._server.attribute !== attr.attribute) copy += ' renamed'
-				else copy += ' updated'
-
-				return modelActionCreators.create('attribute', true, attr, {narrative: copy, icon: 'icon-pencil-ruler'});
-			}
-
-			else if (attr.attribute_id && attr._destroy && save) {
-				var copy = 'Attribute "' + attr.attribute + '" removed from model "' + model.model + '"';
-				return modelActionCreators.destroy('attribute', true, attr, {narrative: copy, icon: 'icon-pencil-ruler'});
-			} 
-
-			else if (attr.attribute_id && attr._destroy && !save) {
-				return modelActionCreators.revert('attribute', attr);
-			}
-		})
-		_this.setState({editing: false});
-	},
-
 	
 	// RENDER ===================================================================
 

@@ -99,13 +99,16 @@ const ViewLink = React.createClass ({
 				onMouseDown = {util.clickTrap}
 				onBlur={this.commitChanges} /> 
 			:
-			<span onDoubleClick = {this.handleRename} className="ellipsis">{this.state.name}</span>
+			<span onDoubleClick = {this.handleRename} className="ellipsis view-link">
+				<span className = {`icon ${viewTypes[view.type].icon}`}/>
+				{this.state.name}
+			</span>
 
 		return <Link to = {`${modelPath}/view/${view.view_id}`}
 			onContextMenu = {this.handleShowContext}
 			className = {`mdlbar-link ${active ? 'mdlbar-link--active' : ''}`}>
 
-			<span className = {`icon ${viewTypes[view.type].icon}`}/>
+			
 			{viewDisplay}
 
 			

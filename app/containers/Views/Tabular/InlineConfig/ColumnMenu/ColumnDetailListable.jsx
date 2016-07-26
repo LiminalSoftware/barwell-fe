@@ -26,7 +26,7 @@ const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789"
 
 var ColumnDetailListable = React.createClass({
 
-	mixins: [sortable.ItemMixin],
+	mixins: [sortable.ItemMixin, blurOnClickMixin],
 
 	dragRef: "grabber",
 
@@ -44,6 +44,7 @@ var ColumnDetailListable = React.createClass({
 	getInitialState: function () {
 		var config = this.props.config || {}
 		var isNew = /^c\d+$/.test(config.attribute_id)
+
 		return {
 			editing: false,
 			name: config.name,
@@ -53,12 +54,13 @@ var ColumnDetailListable = React.createClass({
 		}
 	},
 
-	componentWillReceiveProps: function (next) {
-		var nextState = {}
-		if (!this.state.editing) nextState.name = next.name
-		nextState.type = next.type
-
-		this.setState(nextState)
+	componentWillReceiveProps: function (nextProps) {
+		this.setState({
+			name: this.state.editing ? 
+				this.state.name : 
+				nextProps.config.name,
+			type: nextProps.type
+		})
 	},
 
 	componentWillMount: function () {
@@ -74,10 +76,10 @@ var ColumnDetailListable = React.createClass({
 	chooseType: function (type) {
 		var config = this.props.config
 		var attr  = AttributeStore.get(config.attribute_id)
-
-		this.setState({type: type})
+		
 		attr.type = type;
 		modelActionCreators.create('attribute', false, attr);
+		this.setState({type: type})
 	},
 
 	handleRename: function () {
@@ -89,12 +91,21 @@ var ColumnDetailListable = React.createClass({
 		this.props._blurSiblings()
 	},
 
-	handleBlurName: function (e) {
+	handleCommit: function (e) {
 		var config = this.props.config
-		var attr  = AttributeStore.get(config.attribute_id);
-		attr.attribute = this.state.name
+		
+		
 
-		modelActionCreators.create('attribute', true, attr);
+		if (config.relation) {
+			var rel  = RelationStore.get(config.relation_id);
+			rel.relation = this.state.name
+			modelActionCreators.create('relation', true, attr);
+		} 
+		else {
+			var attr  = AttributeStore.get(config.attribute_id);
+			attr.attribute = this.state.name
+			modelActionCreators.create('attribute', true, attr);	
+		}
 		this.setState({editing: false})
 	},
 
@@ -201,38 +212,32 @@ var ColumnDetailListable = React.createClass({
 			
 			<span ref = "grabber" className="draggable drag-grid"/>	
 			
-			
 			<span style = {{maxWidth: '150px', minWidth: '150px', position: 'relative'}}>
 				{
 					this.state.editing ?
 					<input className = "renamer"
 						autoFocus
-						onBlur = {_this.handleBlurName} 
+						onBlur = {_this.handleCommit} 
 						onChange = {_this.handleNameChange} 
 						value = {this.state.name}/>
 					: [
 						<span onDoubleClick = {_this.handleRename}>
-							{config.name}
+							{this.state.name}
 						</span>,
 						this.renderDecorators()
 					]
 				}
-				
 			</span>
 
 			<span style = {{color: "khaki"}}>
 				<span className = {"icon icon-" + fieldType.icon}/>
-				<span>{fieldType.description}</span>
-			</span>
-			
-
-			{config.relation_id ?
-			<span>
-				<span style = {{width: '30px', textAlign: 'center', position: 'relative', padding: 0, display: 'flex', flexDirection: 'column', margin: 0}}>
-					<span style = {{textTransform: 'uppercase', fontSize: '10px', margin: '1px', lineHeight: '10px'}}>has one</span>
-					<span style = {{margin: '1px', padding: 0, textAlign: 'center'}} className = "icon rotate-90 icon-arrows-merge"/>
+				<span>
+					{fieldType.description}
+					{
+						// fieldType.category === 'Relations' ? <span> ({config.related_model_id})</span> : null
+					}
 				</span>
-			</span> : null}
+			</span>
 
 			
 			<span>

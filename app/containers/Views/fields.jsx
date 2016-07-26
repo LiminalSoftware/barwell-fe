@@ -12,6 +12,7 @@ import $ from "jquery"
 import modelActionCreators from "../../actions/modelActionCreators"
 
 import hasManyField from './Fields/HasManyField'
+import manyToManyField from './Fields/ManyToManyField'
 import hasOneField from './Fields/HasOneField'
 import colorField from './Fields/ColorField'
 import integerField from './Fields/IntegerField'
@@ -50,6 +51,7 @@ var fieldTypes = {
 	BOOLEAN: booleanField,
 	HAS_ONE: hasOneField,
 	HAS_MANY: hasManyField,
+	MANY_TO_MANY: manyToManyField,
 	COLOR: colorField,
 	INTEGER: integerField,
 	DECIMAL: decimalField,
