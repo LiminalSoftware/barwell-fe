@@ -1,9 +1,4 @@
 import React from "react"
-import fieldTypes from "../../fields"
-import _ from "underscore"
-import modelActionCreators from "../../../../actions/modelActionCreators"
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 var Overlay = React.createClass ({
   shouldComponentUpdate: function (nextProps, nextState) {

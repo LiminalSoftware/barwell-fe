@@ -107,15 +107,12 @@ var TabularTBody = React.createClass ({
 				end += util.magLimit(skip, endTarget - end);
 		}
 
-		// console.log('adjTarget: ' + adjTarget)
 		this.setState({
 			start: start,
 			target: adjTarget,
 			end: end
 		});
-
-		// return true if not yet completely painted, false if complete
-		// console.log(this.props.prefix + ' - ' + adjTarget + ', ' + start + ', ' + end)
+		
 		return (start !== startTarget || end !== endTarget) 
 	},
 

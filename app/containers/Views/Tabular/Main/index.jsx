@@ -375,7 +375,7 @@ var TabularPane = React.createClass ({
 		}
 		return data;
 	},
-
+	
 	getRangeStyle: function (pos, fudge, showHiddenHack) {
 		var view = this.props.view
 	    var columnOffset = this.state.columnOffset
