@@ -396,7 +396,7 @@ var TabularPane = React.createClass ({
 	      else if (idx <= (pos.right || pos.left))
 	        width += col.width
 	    })
-
+		
 	    style.top = (pos.top * geo.rowHeight + (fudge.top || 0)) + 'px'
 	    style.left = (left + (fudge.left || 0)) + 'px'
 	    style.height = (geo.rowHeight * ((pos.bottom || pos.top) - pos.top + 1) + (fudge.height || 0)) + 'px'

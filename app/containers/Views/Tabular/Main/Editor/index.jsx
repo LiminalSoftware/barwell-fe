@@ -5,7 +5,8 @@ export default class Editor extends Component {
 
 	static propTypes = {
 		model: PropTypes.object,
-		view: PropTypes.object
+		view: PropTypes.object,
+		_getRangeStyle: PropTypes.function
 	}
 
 	getInitialState () {
@@ -20,7 +21,9 @@ export default class Editor extends Component {
 
 	render () {
 		return <div className="wrapper-overlay flush">
-			{this.getColumns().map(col=> <Column column={col}/> )}
+			{this.getColumns().map(col=> 
+				<Column {...this.props} column={col}/>
+			)}
 		</div>
 	}
 }

@@ -67,8 +67,8 @@ var CubeBodyWrapper = React.createClass ({
 		this.fetch()
 	},
 
-	componentWillReceiveProps: function (nextProps) {
-		this.debounceFetch(false, nextProps);
+	componentWillUpdate: function () {
+		this.debounceFetch();
 	},
 
 	fetch: function () {
@@ -76,7 +76,12 @@ var CubeBodyWrapper = React.createClass ({
 		var view = this.props.view
 		var store = this.props.store
 
-		if (view._dirty) return;
+		if (view._dirty) {
+			console.log('waiting for clean view')
+			return;
+		} else {
+			console.log('fetching with clean view')
+		}
 
 		modelActionCreators.createNotification({
 			narrative: 'Loading dimension data',
