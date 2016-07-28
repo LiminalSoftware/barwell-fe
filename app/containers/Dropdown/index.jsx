@@ -6,7 +6,7 @@ import React from "react"
 import ViewStore from "../../stores/ViewStore"
 
 // CONTANTS
-import viewTypes from "../Views/viewTypes"
+
 
 // ACTIONS AND UTILS
 import modelActionCreators from "../../actions/modelActionCreators.jsx"

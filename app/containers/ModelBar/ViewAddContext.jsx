@@ -4,10 +4,10 @@ import _ from "underscore"
 
 // MIXINS
 import blurOnClickMixin from "../../blurOnClickMixin"
-import popdownClickmodMixin from '../Views/Fields/popdownClickmodMixin'
+import popdownClickmodMixin from '../../Views/Fields/popdownClickmodMixin'
 
 // CONSTANTS
-import viewTypes from "../Views/viewTypes"
+import viewTypes from "../../Views/viewTypes"
 
 // STORES
 import ViewStore from "../../stores/ViewStore"

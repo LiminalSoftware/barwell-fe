@@ -7,11 +7,11 @@ import ModelStore from "../../stores/ModelStore"
 import ViewStore from "../../stores/ViewStore"
 import ViewConfigStore from "../../stores/ViewConfigStore"
 import ModelConfigStore from '../../stores/ModelConfigStore'
-import groomView from '../../containers/Views/groomView'
+import groomView from '../../Views/groomView'
 
-import ChangeHistory from '../Views/ChangeHistory'
+import ChangeHistory from '../../Views/ChangeHistory'
 
-import viewTypes from "../Views/viewTypes"
+import viewTypes from "../../Views/viewTypes"
 import modelActionCreators from "../../actions/modelActionCreators"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import constants from "../../constants/MetasheetConstants"
@@ -117,12 +117,7 @@ var ModelPane = React.createClass({
 		}
 
 		return <div className="model-views">
-			<ReactCSSTransitionGroup 
-				{...constants.transitions.fadeinout}
-				className="view-bar">
-
-				{configElement}
-			</ReactCSSTransitionGroup>
+			
 			<ReactCSSTransitionGroup 
 				className = "model-panes"
 				key  = {"view-main-" + (view ? (view.cid || view.view_id) : 'default')}
@@ -134,3 +129,11 @@ var ModelPane = React.createClass({
 });
 
 export default ModelPane
+
+
+// <ReactCSSTransitionGroup 
+// 	{...constants.transitions.fadeinout}
+// 	className="view-bar">
+
+// 	{configElement}
+// </ReactCSSTransitionGroup>

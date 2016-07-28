@@ -12,8 +12,7 @@ import transactionObserver from './transactionObserver'
 
 
 import pluralize from 'pluralize'
-
-import groomView from '../containers/Views/groomView'
+import groomView from '../Views/groomView'
 import util from '../util/util'
 
 var BASE_URL = 'http://api.metasheet.io'

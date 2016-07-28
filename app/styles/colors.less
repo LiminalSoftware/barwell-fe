@@ -98,7 +98,6 @@ background: rgba(247,248,250,1);
   background: none;
   border-bottom: 1px solid @headerBorderColor;
   color: @headerFontColor;
-  font-family: @bodyFont;
   margin: 0;
   margin-bottom: -1px;
   border-radius: 0;
@@ -106,4 +105,76 @@ background: rgba(247,248,250,1);
 
 .gray-out {
   -webkit-filter: saturate(0.1) contrast(0.5) brightness(1.30) sepia(10%);
+}
+
+@bodyFont: "Helvetica Neue LT W04_45", "Helvetica", sans-serif;
+@subheaderFont: "Helvetica Neue LT W06_61366420";
+@headerFont: "Helvetica Neue LT W06_61366420";
+
+
+.force-layer {
+  // transition: opacity 0.1;
+  // -ms-transform: translate(0,0);
+    // -webkit-transform: translate(0,0); 
+    // transform: translate(0,0);
+    transform: translateZ(0px);
+}
+
+.border-box {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.box-shadow (@string) {
+  -webkit-box-shadow: @string;
+  -moz-box-shadow:    @string;
+  box-shadow:         @string;
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.transition (@transition) {
+  -webkit-transition: @transition;
+  -moz-transition:    @transition;
+  -ms-transition:     @transition;
+  -o-transition:      @transition;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.transform(@string){
+  -webkit-transform: @string;
+  -moz-transform:    @string;
+  -ms-transform:     @string;
+  -o-transform:      @string;
+}
+
+.rotate (@deg) {
+  -webkit-transform: rotate(@deg);
+  -moz-transform:    rotate(@deg);
+  -ms-transform:     rotate(@deg);
+  -o-transform:      rotate(@deg);
+}
+
+.draggable {
+  cursor: move;
+  cursor: grab;
+  cursor: -moz-grab;
+  cursor: -webkit-grab;
 }

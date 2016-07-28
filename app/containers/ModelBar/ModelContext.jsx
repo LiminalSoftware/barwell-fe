@@ -3,7 +3,7 @@ import util from '../../util/util'
 
 // MIXINS
 import blurOnClickMixin from "../../blurOnClickMixin"
-import popdownClickmodMixin from '../Views/Fields/popdownClickmodMixin'
+import popdownClickmodMixin from '../../Views/Fields/popdownClickmodMixin'
 
 var ModelContext = React.createClass ({
 

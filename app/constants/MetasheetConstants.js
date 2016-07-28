@@ -48,6 +48,11 @@ module.exports = {
     }
   },
 
+  fonts: {
+    bodyFont: '"Helvetica Neue LT W06_61366420", "Helvetica", sans-serif',
+    headerFont: '"Helvetica Neue LT W04_45", "Helvetica", sans-serif'
+  },
+
   colors: {
     GRAY_A: '#2a3034',
     GRAY_1: '#524A50',

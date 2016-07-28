@@ -6,7 +6,7 @@ import { Link } from "react-router"
 import ViewStore from "../../stores/ViewStore"
 
 // CONSTANTS
-import viewTypes from '../Views/viewTypes'
+import viewTypes from '../../Views/viewTypes'
 
 // COMPONENTS
 import ViewLink from "./ViewLink"

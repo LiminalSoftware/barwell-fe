@@ -13,7 +13,7 @@ import MetasheetConst from '../../constants/MetasheetConstants'
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import blurOnClickMixin from '../../blurOnClickMixin'
 
-import viewTypes from '../Views/viewTypes'
+import viewTypes from '../../Views/viewTypes'
 import Notifier from '../Notifier'
 import ModelContext from './ModelContext'
 import ModelSection from './ModelSection'

@@ -7,7 +7,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import ViewStore from "../../stores/ViewStore"
 
 // CONSTANTS
-import viewTypes from '../Views/viewTypes'
+import viewTypes from '../../Views/viewTypes'
 import constants from '../../constants/MetasheetConstants'
 
 // COMPONENTS

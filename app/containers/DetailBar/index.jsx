@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import styles from "./style.less";
 import _ from 'underscore';
-import fieldTypes from "../Views/fields"
+import fieldTypes from "../../Views/fields"
 
 import ViewStore from "../../stores/ViewStore"
 import ModelStore from "../../stores/ModelStore"
