@@ -27,7 +27,7 @@ import TextFieldConfig from "../textFieldConfig"
 var decimalField = {
 
 	sortable: true,
-
+	
 	sortIcon: 'sort-numeric-',
 
 	icon: 'dial',
@@ -54,7 +54,7 @@ var decimalField = {
 	configParts: [AlignChoice, ColorChoice, TextChoice, NumberFormatChoice],
 	
 	element: React.createClass({
-
+		
 		mixins: [
 			editableInputMixin, 
 			bgColorMixin, 

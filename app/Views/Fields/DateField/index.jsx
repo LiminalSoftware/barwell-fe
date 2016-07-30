@@ -24,7 +24,6 @@ import ColorChoice from "../textFieldConfig/ColorChoice"
 import TextChoice from "../textFieldConfig/TextChoice"
 import DateConfig from "./DateConfig"
 
-
 import TextFieldConfig from "../textFieldConfig"
 
 var dateField = {
@@ -36,7 +35,7 @@ var dateField = {
 	defaultDefault: null,
 
 	defaultWidth: 100,
-
+	
 	defaultAlign: 'center',
 
 	sortIcon: 'sort-time-',
@@ -58,19 +57,16 @@ var dateField = {
 		return config
 	},
 
-	configParts: [AlignChoice, ColorChoice, TextChoice, DateConfig],
+	configParts: [
+		AlignChoice, 
+		ColorChoice, 
+		TextChoice, 
+		DateConfig
+	],
 
 	element: React.createClass({
 
 		mixins: [editableInputMixin, bgColorMixin, commitMixin, selectableMixin, keyPressMixin],
-
-		// revert: function () {
-		// 	this.setState({
-		// 		editing: false,
-		// 		open: false
-		// 	})
-		// 	this.props._handleBlur()
-		// },
 
 		format: function (value, _config) {
 			var config = _config || this.props.config || {}

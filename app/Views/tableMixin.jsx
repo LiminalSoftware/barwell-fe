@@ -14,7 +14,7 @@ var TableMixin = {
 	// ========================================================================
 	// cell editing
 	// ========================================================================
-
+	
 	getInitialState: function () {
 		var view = this.props.view
 		var viewconfig = this.props.viewconfig;

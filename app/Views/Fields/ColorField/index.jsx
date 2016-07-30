@@ -9,13 +9,13 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 import CommitMixin from '../commitMixin'
 import editableInputMixin from '../editableInputMixin'
 import selectableMixin from '../selectableMixin'
-import ColorValidationMixin from './ColorValidationMixin'
+import colorValidations from './colorValidations'
 
 import ColorPicker from './ColorPicker'
 
 var ColorElement = React.createClass({
 
-	mixins: [CommitMixin, selectableMixin, ColorValidationMixin],
+	mixins: [CommitMixin],
 
 	handleEdit: _.noop,
 
@@ -30,6 +30,10 @@ var ColorElement = React.createClass({
 		})
 		this.props._handleBlur()
 	},
+
+	parser: colorValidations.parser,
+
+	validator: colorValidations.validator,
 
 	getDisplayHTML: function (config, obj) {
 		var value = obj[config.column_id]

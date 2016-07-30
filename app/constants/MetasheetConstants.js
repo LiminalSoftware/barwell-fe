@@ -65,7 +65,9 @@ module.exports = {
     PURPLE_3: '#AF86BD',
     PURPLE_4: '#A041BF',
 
-    GREEN_1: '#079538'
+    GREEN_1: '#079538',
+
+    RED_BRIGHT_TRANS: "rgba(204, 0, 48, 0.2)"
   },
 
   fieldTypes: {

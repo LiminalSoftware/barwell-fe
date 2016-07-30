@@ -36,13 +36,6 @@ var AttributeStore = storeFactory({
         this.emitChange()
         break;
 
-      // case 'ATTRIBUTE_RECEIVE':
-      //   var attribute = payload.data
-      //   if (!attribute) return;
-      //   this.create(util.clean(payload.data))
-      //   this.emitChange()
-      //   break;
-
       case 'MODEL_CREATE':
         dispatcher.waitFor([ModelStore.dispatchToken]);
         var models = payload.data instanceof Array ? payload.data : [payload.data];

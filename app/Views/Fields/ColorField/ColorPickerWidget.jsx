@@ -14,7 +14,6 @@ import PopDownMenu from "../../../components/PopDownMenu"
 
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import CommitMixin from '../commitMixin'
-import ColorValidationMixin from './ColorValidationMixin'
 import MenuKeysMixin from '../MenuKeysMixin'
 
 const COMMIT_DEBOUNCE = 1000

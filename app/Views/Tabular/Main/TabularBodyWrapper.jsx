@@ -5,6 +5,7 @@ import _ from "underscore"
 import styles from "./styles/wrappers.less"
 
 import modelActionCreators from "../../../actions/modelActionCreators"
+import constant from "../../../constants/MetasheetConstants"
 import ViewStore from "../../../stores/ViewStore"
 import FocusStore from "../../../stores/FocusStore"
 
@@ -196,6 +197,7 @@ var TabularBodyWrapper = React.createClass ({
 				ref = "lhsTableBody"
 				style = {{
 					top: geo.headerHeight + 'px',
+					borderRight: "2px solid " + constant.colors.RED_BRIGHT_TRANS,
 					// transform: 'translateZ(1px)',
 					overflow: 'hidden',
 				}}>

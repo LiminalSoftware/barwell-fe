@@ -54,9 +54,10 @@ class TabularTR extends React.Component {
 				: '';
 
 		html = html + _this.props.columns.map(function (col, j) {
-			var element = (fieldTypes[col.type]).element;
+			var type = fieldTypes[col.type]
+			var element = type.element;
 			var cellKey = rowKey + '-' + col.column_id;
-			var innerHtml = element.prototype.getDisplayHTML(col, obj);
+			var innerHtml = type.getDisplayHTML ? type.getDisplayHTML(col, obj) : element.prototype.getDisplayHTML(col, obj)
 			var cellHtml = `<span class = "table-cell ${('_error' in obj && col.column_id in obj._error) ? ' table-cell-error' : ' '}" style = "left: ${left}px; width: ${col.width}px;">${innerHtml}</span>`
 			left += col.width
 			return cellHtml

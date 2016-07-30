@@ -7,6 +7,9 @@ import modelActionCreators from "../../actions/modelActionCreators"
 
 var commitMixin = {
 
+	/*
+	 * takes parameter @value and commits it (appending @extras to the action)
+	 */
 	commitValue: function (value, extras) {
 		var config = this.props.config;
 		var column_id = config.column_id;
@@ -33,6 +36,10 @@ var commitMixin = {
 		if (this.revert) this.revert();
 	},
 
+
+	/*
+	 * takes the values from the input element and commits it
+	 */
 	commitChanges: function () {
 		var value = this.validator(this.parser(this.props.value))
 		this.setState({open: false});

@@ -1,9 +1,5 @@
 import React from "react"
 import _ from "underscore"
-import $ from "jquery"
-
-import AttributeStore from "../../stores/AttributeStore"
-import ModelStore from "../../stores/ModelStore"
 
 import constant from "../../constants/MetasheetConstants"
 import modelActionCreators from "../../actions/modelActionCreators"
@@ -11,21 +7,15 @@ import modelActionCreators from "../../actions/modelActionCreators"
 import util from "../../util/util"
 import tinycolor from "tinycolor2"
 
-import bgColorMixin from './bgColorMixin'
-
 import fieldTypes from '../fields'
+
+import fieldUtils from "./fieldUtils"
 
 
 var editableInputMixin = {
 
 	shouldComponentUpdate: function (nextProps, nextState) {
-		return nextProps.value !== this.props.value ||
-			nextState.value !== this.state.value ||
-			nextState.searchValue !== this.state.searchValue ||
-			nextProps.config !== this.props.config ||
-			nextState.selected !== this.state.selected ||
-			nextState.open !== this.state.open ||
-			nextState.editing !== this.state.editing;
+		return nextProps !== this.props || nextState !== this.state
 	},
 
 	setValue: function (value) {
@@ -35,10 +25,6 @@ var editableInputMixin = {
 
 	getInitialState: function () {
 		return {editing: false}
-	},
-
-	componentWillUnmount: function () {
-		$(document.body).off('keydown', this.onKey)
 	},
 
 	componentDidUpdate: function (prevProps, prevState) {
@@ -80,17 +66,17 @@ var editableInputMixin = {
 	},
 
 	handleKeyPress: function (e) {
-		if (e.keyCode === constant.keycodes.ESC) this.cancelChanges()
-		if (e.keyCode === constant.keycodes.ENTER) {
-			this.commitChanges();
+		if (e.keyCode === constant.keycodes.ESC) {
+			this.cancelChanges()
 		}
-		if (e.keyCode === constant.keycodes.TAB) {
+		else if (e.keyCode === constant.keycodes.ENTER || 
+			e.keyCode === constant.keycodes.TAB) {
 			this.commitChanges();
 		}
 	},
 
 	getDisplayHTML: function (config, obj, isNull) {
-		var value = obj[config.column_id];
+		var value = _.escape(obj[config.column_id]);
 		var textConditional = (!config.textConditionAttr || obj['a' + config.textConditionAttr]);
 		var prettyValue = isNull ? '' : this.format ? this.format(value, config) : value;
 		var classes = 'table-cell-inner ' + 

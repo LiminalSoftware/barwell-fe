@@ -36,6 +36,8 @@ import constant from "../../../constants/MetasheetConstants"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
 
+import ViewConfigBar from "../ViewConfigBar"
+
 const THROTTLE_DELAY = 14;
 const MIN_CYCLE = 10;
 const CYCLE = 25;
@@ -69,7 +71,9 @@ const TabularPane = React.createClass ({
 
 			expanded: false,
 			context: false,
-			renderSide: 'lhs'
+			renderSide: 'lhs',
+
+			designMode: false
 		}
 	},
 
@@ -654,6 +658,7 @@ const TabularPane = React.createClass ({
 	},
 
 	render: function () {
+		var _this = this
 		var model = this.props.model
 		var view = this.props.view
 		var rowCount = this.getNumberRows()
@@ -720,6 +725,7 @@ const TabularPane = React.createClass ({
 			beforePaste = {this.beforePaste}>
 
 			<TabularBodyWrapper {...childProps}
+				designMode = {true}
 				ref = "tableWrapper"/>
 			
 			<Cursors {...childProps}
@@ -742,6 +748,9 @@ const TabularPane = React.createClass ({
 				axis = "horizontal"
 				_setScrollOffset = {this.setHorizontalScrollOffset}
 				view = {view}/>
+
+			<ViewConfigBar {...childProps}/>
+
 		</div>
 	}
 })

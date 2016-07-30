@@ -1,26 +1,34 @@
-import React from "react"
+import React, { Component, PropTypes } from 'react';
 import _ from "underscore"
-import $ from "jquery"
-import moment from "moment"
 
-import AttributeStore from "../../../stores/AttributeStore"
-import ModelStore from "../../../stores/ModelStore"
-
-import constant from "../../../constants/MetasheetConstants"
-import modelActionCreators from "../../../actions/modelActionCreators"
-
-import commitMixin from '../commitMixin'
 import editableInputMixin from '../editableInputMixin'
-import selectableMixin from '../selectableMixin'
-import keyPressMixin from '../keyPressMixin'
-// import TextFieldConfig from "../textFieldConfig"
-import bgColorMixin from '../bgColorMixin';
 
 import AlignChoice from "../textFieldConfig/AlignChoice"
 import ColorChoice from "../textFieldConfig/ColorChoice"
 import TextChoice from "../textFieldConfig/TextChoice"
 
-var textField = {
+import fieldUtils from "../fieldUtils"
+
+import GenericTextField from "../GenericTextField"
+import getGenericTextHTML from "../GenericTextField/getGenericTextHTML"
+
+function format (value, _config) {
+	if (value === undefined || value === null) return '';
+	else return value
+}
+
+function parser (input) {
+	if (input === null || input === undefined) return '';
+	else return String(input);
+}
+
+function validator (input) {
+	return String(input || '')
+}
+
+const stylers = []
+
+const textField = {
 		
 	configParts: [AlignChoice, ColorChoice, TextChoice],
 	
@@ -39,24 +47,18 @@ var textField = {
 	canBeLabel: true,
 	
 	defaultWidth: 150,
-	
-	element: React.createClass({
-		mixins: [editableInputMixin, bgColorMixin, commitMixin, selectableMixin, keyPressMixin],
 
-    	format: function (value, _config) {
-			if (value === undefined || value === null) return '';
-			else return value
-		},
+	getDisplayHTML: getGenericTextHTML.bind(null, format, stylers),
 
-		parser: function (input) {
-			if (input === null || input === undefined) return '';
-			else return String(input);
-		},
-
-		validator: function (input) {
-			return String(input || '')
+	element: class TextField extends Component {
+		render () {
+			return <GenericTextField {...this.props}
+				format = {_.identity}
+				validator = {_.identity}
+				parser = {_.identity}
+				stylers = {[]}/>
 		}
-	})
+	}
 }
 
 export default textField

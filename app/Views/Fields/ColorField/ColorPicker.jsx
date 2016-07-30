@@ -9,7 +9,7 @@ import PopDownMenu from "../../../components/PopDownMenu"
 
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import CommitMixin from '../commitMixin'
-import ColorValidationMixin from './ColorValidationMixin'
+import colorValidations from "./colorValidations"
 import MenuKeysMixin from '../MenuKeysMixin'
 import ColorPickerWidget from './ColorPickerWidget'
 
@@ -17,7 +17,7 @@ var NUM_HUES = 10
 
 var ColorPicker = React.createClass({
 
-	mixins: [ColorValidationMixin, CommitMixin, MenuKeysMixin],
+	mixins: [CommitMixin, MenuKeysMixin],
 
 	getInitialState: function () {
 		return {selection: -1}
@@ -32,6 +32,10 @@ var ColorPicker = React.createClass({
 		this.setState({value: color, open: false});
 		this.commitValue(color);
 	},
+
+	parser: colorValidations.parser,
+
+	validator: colorValidations.validator,
 
 	chooseColor: function () {
 
