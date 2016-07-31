@@ -41,13 +41,11 @@ var ModelPane = React.createClass({
 	componentWillUnmount: function () {
 		ModelStore.removeChangeListener(this._onChange)
 		ViewStore.removeChangeListener(this._onChange)
-		ViewConfigStore.removeChangeListener(this._onChange)
 	},
 
 	componentWillMount: function () {
 		ModelStore.addChangeListener(this._onChange)
 		ViewStore.addChangeListener(this._onChange)
-		ViewConfigStore.addChangeListener(this._onChange)
 	},
 
 	_onChange: function () {

@@ -85,8 +85,8 @@ const TabularPane = React.createClass ({
 		copyPasteDummy.addEventListener('paste', this.pasteSelection);
 
 		FocusStore.addChangeListener(this._onChange);
-		ViewStore.addChangeListener(this._onChange);
-		ViewConfigStore.addChangeListener(this._onChange);
+		// ViewStore.addChangeListener(this._onChange);
+		// ViewConfigStore.addChangeListener(this._onChange);
 
 		this.store = createTabularStore(this.props.view);
 		this.store.addChangeListener(this._onChange);
@@ -100,8 +100,8 @@ const TabularPane = React.createClass ({
 
 		document.body.removeEventListener('keydown', this.onKey);
 		FocusStore.removeChangeListener(this._onChange);
-		ViewStore.removeChangeListener(this._onChange);
-		ViewConfigStore.removeChangeListener(this._onChange);
+		// ViewStore.removeChangeListener(this._onChange);
+		// ViewConfigStore.removeChangeListener(this._onChange);
 		copyPasteDummy.removeEventListener('paste', this.pasteSelection);
 		removeEventListener('resize', this._debounceCalibrateHeight);
 		
@@ -130,8 +130,8 @@ const TabularPane = React.createClass ({
 		var props = this.props
 		var state = this.state
 		return props.view !== nextProps.view ||
-			state.selection !== nextState.selection ||
-			state.pointer !== nextState.pointer ||
+			!_.isEqual(state.selection, nextState.selection) ||
+			!_.isEqual(state.pointer, nextState.pointer) ||
 			state.focused !== nextState.focused ||
 			state.copyarea !== nextState.copyarea ||
 			state.contextOpen !== nextState.contextOpen ||
@@ -210,20 +210,15 @@ const TabularPane = React.createClass ({
 		return {top: r, left: c}
 	},
 
-	editCell: function (e) {
+	editCell: function (clobber) {
 		var pos = this.state.pointer
 		var field = this.refs.cursors.refs.pointerCell
-		if (!field.handleEdit) return
 
-		modelActionCreators.clearNotification({
-			notification_key: 'copySuccess'
-		});
-		
-		this.setState({
-			editing: true,
-		})
-		this.clearCopy();
-		field.handleEdit(e);
+		if (field.handleEdit) {
+			this.clearCopy()
+			this.setState({editing: true})
+			field.handleEdit(clobber)
+		}
 	},
 
 	addRecord: function () {
@@ -509,7 +504,6 @@ const TabularPane = React.createClass ({
 		var numRows = this.getNumberRows();
 
 		if (shift) {
-			// this.scrollTo(pos)
 			sel = {
 				left: Math.max(Math.min(ptr.left, pos.left, numCols), 0),
 				right: Math.min(Math.max(ptr.left, pos.left, 0), numCols),
@@ -665,7 +659,6 @@ const TabularPane = React.createClass ({
 		var focused = (FocusStore.getFocus() == 'view')
 		var totalWidth = this.getTotalWidth()
 		var geo = view.data.geometry
-		var viewconfig = ViewConfigStore.get(view.view_id);
 
 		var childProps = {
 			_handleBlur: this.handleBlur,
@@ -703,7 +696,6 @@ const TabularPane = React.createClass ({
 
 			model: model,
 			view: view,
-			viewconfig: viewconfig,
 			pointer: this.state.pointer,
 			selection: this.state.selection,
 			copyarea: this.state.copyarea,
@@ -715,11 +707,13 @@ const TabularPane = React.createClass ({
 			contextPosition: this.state.contextPosition
 		}
 
-		// Scrolling and the render cycle are handled in this element by the update*Offset and refreshTable methods
-		// Fetching and rendering of the actual table is handled by the TabularBodyWrapper element
-		// Curors is an overlay containing the selection, the highlighted cell and a few other items
-		// Scrollbars are... scrollbars
-
+		/*
+		 * Scrolling and the render cycle are handled in this element by the update*Offset and refreshTable methods
+		 * Fetching and rendering of the actual table is handled by the TabularBodyWrapper element
+		 * Curors is an overlay containing the selection, the highlighted cell and a few other items
+		 * Scrollbars are... scrollbars
+		 */
+		
 		return <div ref="wrapper"
 			className = "wrapper"				
 			beforePaste = {this.beforePaste}>
@@ -737,8 +731,7 @@ const TabularPane = React.createClass ({
 				offset = {geo.headerHeight}
 				ref = "verticalScrollBar"
 				axis = "vertical"
-				_setScrollOffset = {this.setVerticalScrollOffset}
-				view = {view}/>
+				_setScrollOffset = {this.setVerticalScrollOffset}/>
 			
 			<ScrollBar {...childProps}
 				innerDimension = {view.data.floatWidth + view.data.fixedWidth + geo.labelWidth + 200}
@@ -746,8 +739,7 @@ const TabularPane = React.createClass ({
 				offset = {0}
 				ref = "horizontalScrollBar"
 				axis = "horizontal"
-				_setScrollOffset = {this.setHorizontalScrollOffset}
-				view = {view}/>
+				_setScrollOffset = {this.setHorizontalScrollOffset}/>
 
 			<ViewConfigBar {...childProps}/>
 

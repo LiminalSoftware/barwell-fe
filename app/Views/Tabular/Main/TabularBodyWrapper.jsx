@@ -207,7 +207,8 @@ var TabularBodyWrapper = React.createClass ({
 						top: '1px',
 						height: (rowCount * geo.rowHeight) + 'px',
 						marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
-						transform: 'translate3d(0, ' + marginTop + 'px, 1px)'
+						transform: 'translate3d(0, ' + marginTop + 'px, 1px)',
+						transition: 'transform 65ms linear'
 					}}>
 
 				<TabularTBody
@@ -284,6 +285,7 @@ var TabularBodyWrapper = React.createClass ({
 							right: 0,
 							marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
 							transform: 'translateY(' + marginTop + 'px)',
+							transition: 'transform 65ms linear',
 							height: (rowCount * geo.rowHeight) + 'px',
 							width: (fixedWidth + floatWidth) + 'px',
 						}}>

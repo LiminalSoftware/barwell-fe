@@ -11,14 +11,14 @@ import ContextMenu from './ContextMenu'
 import PopDownMenu from "../../../components/PopDownMenu"
 import util from "../../../util/util"
 
-var HAS_3D = util.has3d()
-var RIGHT_FRINGE = 200
+const HAS_3D = util.has3d()
+const RIGHT_FRINGE = 200
 
-const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789"
 
 var Cursors = React.createClass ({
 
   getPointerElement: function () {
+    // console.log('getPointerElement')
     var view = this.props.view;
     var model = this.props.model;
     var geo = view.data.geometry;
@@ -29,31 +29,35 @@ var Cursors = React.createClass ({
     var element = col ? (fieldTypes[col.type]).element : null;
     var selector = {};
     
-    if (!obj) return ;
+    if (!obj) return;
 
-    if (model._pk in obj) selector[model._pk] = obj[model._pk];
-    else selector.cid = obj.cid;
+    const commit = (value, extras) => {
+      let patch = {}
+      if (model._pk in obj) patch[model._pk] = obj[model._pk]
+      else patch.cid = obj.cid
+      patch[col.column_id] = value
+      modelActionCreators.multiPatchRecords(model, patch, {method: ' typing a new value'})
+    }
     
     if (element) return React.createElement(element, {
+      key: (obj.cid || obj[model._pk]) + '-' + col.columnId,
       config: col,
       model: model,
       view: view,
-
       selected: true,
-      recordPatch: true,
+      object: obj,
+      value: obj[col.column_id],
+
+      // can be eliminated?
+      // column_id: ('a' + (col.attribute_id || col.cid)),
 
       spaceTop: ptr.top - this.props.rowOffset,
       spaceBottom: this.props.visibleRows + this.props.rowOffset - ptr.top,
 
-      selector: selector,
-      object: obj,
-      pointer: ptr,
       rowHeight: geo.rowHeight,
 
-      value: obj[col.column_id],
-      column_id: ('a' + (col.attribute_id || col.cid)),
-
       _handleBlur: this.props._handleBlur,
+      commit: commit,
       
       className: 'table-cell',
       ref: 'pointerCell',
@@ -63,7 +67,8 @@ var Cursors = React.createClass ({
         bottom: '0px',
         top: '0px',
         right: '0px',
-        border: 'none'
+        border: 'none',
+        lineHeight: geo.rowHeight + 'px'
       }
     })
   },
@@ -118,6 +123,7 @@ var Cursors = React.createClass ({
       right: 0,
       height: ((rowCount + 1) * geo.rowHeight) + 'px',
       transformStyle: 'preserve-3d',
+      transition: 'transform 65ms linear',
       zIndex: 10
     }
 

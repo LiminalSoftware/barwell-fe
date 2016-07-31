@@ -1,8 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import util from "../../../util/util"
-import constant from "../../../constants/MetasheetConstants"
-import modelActionCreators from "../../../actions/modelActionCreators"
+import constants from "../../../constants/MetasheetConstants"
 import fieldUtils from "../fieldUtils"
+
+import autobind from 'autobind-decorator'
 
 export default class GenericTextField extends Component {
 
@@ -11,56 +12,63 @@ export default class GenericTextField extends Component {
 	 */
 
 	static propTypes = {
-		// informs the top level view element when the element exits edit mode
+		
+		/*
+		 * informs the top level view element when the element exits edit mode
+		 */
 		_handleBlur: PropTypes.func,
-		// a list of functions that return style objects
+
+		/*
+		 * registers the current field with the view
+		 */
+		registerCell: PropTypes.func,
+
+		/*
+		 * prepares the content for rendering
+		 */
+		format: PropTypes.func.isRequired,
+
+		/*
+		 * ensures that the content is valid before commit to the server 
+		 */
+		validator: PropTypes.func.isRequired,
+
+		/*
+		 * takes serialized input and converts to an internal representation 
+		 */
+		parser: PropTypes.func.isRequired,
+
+		/*
+		 * a list of functions that return style objects
+		 */
 		stylers: PropTypes.arrayOf(React.PropTypes.func)
+
 	}
 
 	constructor (props) {
 		super(props)
 		this.state = {
 			editing: false, 
-			value: this.format(props.value)
+			value: this.props.format(props.value)
 		}
 	}
 
 	/*
-	 * standard pure component
+	 * update internal value state with the new value unless we're editing.
+	 * on blur, the state change {editing: false} will still be dirty by
+	 * the time we get new props from the parent (in the case of a cursor move)
 	 */
 
-	shouldComponentUpdate (nextProps, nextState) {
-		return nextProps !== this.props || nextState !== this.state
-	}
-
-	/*
-	 * add/remove keyup listeners when entering/leaving edit mode
-	 */
-
-	copmonentWillUpdate (nextProps, nextState) {
-		
-		if (!this.state.editing && nextState.editing) {
-			addEventListener('keyup', this.handleSpecialKeyPress)
-		}
-		else if (this.state.editing && !nextState.editing) {
-			removeEventListener('keyup', this.handleSpecialKeyPress)
-		}
-	}
-
-	/*
-	 * update internal value state with the new value unless we're editing
-	 */
-
-	componentWillReceiveProps (props) {
-		if (!this.state.editing)
-			this.setState({value: this.format(props.value)})
+	componentWillReceiveProps = (props)  => {
+		// if (!this.state.editing)
+		this.setState({value: props.format(props.value)})
 	}
 
 	/*
 	 * a bit of a hack to move the cursor to the end of the input on focus
 	 */
 
-	componentDidUpdate (prevProps, prevState) {
+	componentDidUpdate = (prevProps, prevState)  => {
 		if (this.state.editing && !prevState.editing) {
 			var val = this.refs.input.value
 			this.refs.input.value = ''
@@ -72,62 +80,7 @@ export default class GenericTextField extends Component {
 	 * UTILITY ****************************************************************
 	 */
 
-	/*
-	 * escapes out of edit mode and reverts to the previous value
-	 */
-
-	cancelChanges () {
-		this.setState({value: this.props.value})
-		this.revert()
-	}
-
-	/*
-	 * escapes out of edit mode
-	 */
-
-	revert () {
-		this.setState({
-			editing: false,
-			open: false
-		})
-		this.props._handleBlur()
-	}
-
-	/*
-	 * takes serialized input and converts to an internal representation
-	 */
-
-	parser (value) {
-		return this.props.parser.apply(arguments)
-	}
-
-	/*
-	 * ensures that the content is valid before commit to the server
-	 */
-
-	validator () {
-		return this.props.validator.apply(arguments)
-	}
-
-	/*
-	 * prepares the content for rendering
-	 */
-
-	format () {
-		return this.props.format.apply(arguments)
-	}
-
-	/*
-	 * TEMPORARY *************************************************************
-	 */
-
-	commitValue (value, extras) {
-		return fieldUtils.commitValue.bind(this)(value, extras)
-	}
-
-	commitChanges () {
-		return fieldUtils.commitChanges.bind(this)()
-	}
+	
 
 	/*
 	 * HANDLERS ***************************************************************
@@ -137,46 +90,50 @@ export default class GenericTextField extends Component {
 	 * takes the cell into edit mode
 	 */
 
-	handleEdit (event) {
-		const prettyValue = this.format ? 
-			this.format(this.props.value) : 
-			this.props.value
-		const keyCode = event.keyCode
-		
-		// if the key typed is a number/letter etc. then clobber existing input
-		// this should probably be expanded to include other keys
-		if (keyCode >= 48 && keyCode <= 90)
-			this.setState({value: ''})
-		
-		else
-			this.setState({value: prettyValue})	
+	handleEdit = (clobber) => {
+		// if the key typed is a number/letter etc., clobber any existing input
+		if (clobber === true)
+			this.setState({value: '', editing: true})
 
-		this.setState({editing: true})
+		else this.setState({editing: true})
+	}
+
+	/*
+	 * escapes out of edit mode and either commits the state value or
+	 * reverts to the prop value
+	 */
+	
+	handleBlur = (revert) => {
+
+		const hasChanged = this.state.value !== this.props.value
+
+		if (revert !== true && this.state.editing && hasChanged)
+			this.props.commit(this.state.value)
+		
+		this.setState({
+			editing: false,
+			open: false,
+			value: revert !== true ? 
+				this.state.value : 
+				this.props.value
+		})
 	}
 
 	/*
 	 * updates internal value state in response to an input event
 	 */
 
-	handleChange (event) {
+	handleChange = (event) => {
 		this.setState({value: event.target.value})
 	}
 
 	/*
-	 * handles special keys used during input  
-	 * this handler is only enabled during editing
+	 * use the supplied commit method to persist to server (only if changed)
 	 */
 
-	handleSpecialKeyPress (e) {
-		if (e.keyCode === constant.keycodes.ESC) {
-			this.cancelChanges()
-		}
-		else if (e.keyCode === constant.keycodes.ENTER) {
-			this.commitChanges();
-		}
-		else if (e.keyCode === constant.keycodes.TAB) {
-			this.commitChanges();
-		}
+	commitChanges = () => {
+		if (this.state.editing && this.state.value !== this.props.value)
+			this.props.commit(this.state.value)
 	}
 
 	/*
@@ -187,7 +144,8 @@ export default class GenericTextField extends Component {
 	 * executes each styler passed in props and merges the resulting objects
 	 */
 
-	getStyles () {
+	
+	getStyles = () => {
 		return fieldUtils.getStyles(
 			this.props.stylers,
 			this.props.config, 
@@ -195,29 +153,28 @@ export default class GenericTextField extends Component {
 		)
 	}
 
-	render () {
+	render = () => {
 		var config = this.props.config
 		var isNull = this.props.isNull
-		var prettyValue = isNull ? '' : this.format ? this.format(this.props.value) : this.props.value
+		var prettyValue = this.props.format(this.state.value)
 		var showIcon = this.detailIcon && this.props.selected && !this.state.editing
 		var obj = this.props.object
 		
-		return <span {...this.props} className = "table-cell-inner">
+		return <span className= "table-cell table-cell-selected" style={this.props.style}>
 			{this.props.alwaysEdit || this.state.editing ?
 			<input
 				ref = "input"
 				className = "input-editor"
 				value = {this.state.value}
-				style = {{textAlign: config.align}}
+				style = {this.getStyles()}
 				autoFocus = {!this.props.noAutoFocus}
 				onClick = {util.clickTrap}
-				onBlur = {this.revert}
 				onChange = {this.handleChange} />
 			:
-			<span style={this.getStyles()} className="table-cell-inner">
+			<span style={this.getStyles()} className="table-cell-inner table-cell-inner-selected">
 				{prettyValue}
 			</span>
-		}
+			}
 		{showIcon ?
 			<span
 			style = {editorIconStyle}

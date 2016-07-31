@@ -12,19 +12,6 @@ import fieldUtils from "../fieldUtils"
 import GenericTextField from "../GenericTextField"
 import getGenericTextHTML from "../GenericTextField/getGenericTextHTML"
 
-function format (value, _config) {
-	if (value === undefined || value === null) return '';
-	else return value
-}
-
-function parser (input) {
-	if (input === null || input === undefined) return '';
-	else return String(input);
-}
-
-function validator (input) {
-	return String(input || '')
-}
 
 const stylers = []
 
@@ -48,12 +35,26 @@ const textField = {
 	
 	defaultWidth: 150,
 
-	getDisplayHTML: getGenericTextHTML.bind(null, format, stylers),
+	getDisplayHTML: getGenericTextHTML.bind(null, _.escape, stylers),
 
 	element: class TextField extends Component {
+
+		handleEdit (e) {
+			this.refs.genericField.handleEdit(e)
+		}
+
+		commitChanges (e) {
+			this.refs.genericField.commitChanges(e)
+		}
+
+		handleBlur (commit) {
+			this.refs.genericField.handleBlur(commit)
+		}
+
 		render () {
 			return <GenericTextField {...this.props}
-				format = {_.identity}
+				ref = "genericField"
+				format = {_.escape}
 				validator = {_.identity}
 				parser = {_.identity}
 				stylers = {[]}/>

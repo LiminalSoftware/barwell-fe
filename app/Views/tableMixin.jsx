@@ -38,14 +38,6 @@ var TableMixin = {
 		return (FocusStore.getFocus(0) === 'view')
 	},
 
-	isCopied: function () {
-		return !!(this.state.copyarea)
-	},
-
-	handleBlur: function () {
-		this.setState({editing: false})
-	},
-
 	handleContextBlur: function () {
 		this.setState({contextOpen: false})
 	},
@@ -77,11 +69,12 @@ var TableMixin = {
 		this.refs.horizontalScrollBar.handleMouseWheel(e)
 	},
 
-	blurPointer: function (e) {
+	blurPointer: function (revert) {
 		var current = this.refs.cursors.refs.pointerCell
 		if (current) {
-			if (current.commitChanges) current.commitChanges(e)
+			current.handleBlur(revert)
 		}
+		this.setState({editing: false})
 	},
 
 	onKey: function (e) {
@@ -100,7 +93,8 @@ var TableMixin = {
 		if (!this.isFocused() || (
 			this.state.editing &&
 			e.keyCode !== keycodes.ENTER &&
-			e.keyCode !== keycodes.TAB
+			e.keyCode !== keycodes.TAB &&
+			e.keyCode !== keycodes.ESC
 		)) return;
 
 		else if (e.keyCode == keycodes.DELETE) {
@@ -113,7 +107,7 @@ var TableMixin = {
 		// }
 		else if (e.keyCode == keycodes.ESC) {
 			this.clearCopy()
-			// this.setState({copyarea: null, expanded: false})
+			this.blurPointer(true)
 			return;
 		}
 		else if (e.keyCode == keycodes.C && ctrlKey) {
@@ -145,7 +139,7 @@ var TableMixin = {
 			e.preventDefault();
 			return;
 		}
-		else if (e.keyCode == keycodes.F2) return this.editCell(e);
+		else if (e.keyCode == keycodes.F2) return this.editCell(false);
 		else if (e.keyCode == keycodes.SPACE && e.shiftKey) {
 			this.selectRow()
 			e.preventDefault()
@@ -176,7 +170,7 @@ var TableMixin = {
 				(e.keyCode >= 96 && e.keyCode <= 111) ||
 				(e.keyCode >= 186 && e.keyCode <= 222)
 			) && !ctrlKey) {
-			return this.editCell(e);
+			return this.editCell(true);
 		}
 	},
 
@@ -225,7 +219,7 @@ var TableMixin = {
 		addEventListener('mouseup', this.onMouseUp)
 	},
 
-	onSelectMouseMove: function (e) {;
+	onSelectMouseMove: function (e) {
 		this.updateSelect(this.getRCCoords(e), true);
 	},
 
