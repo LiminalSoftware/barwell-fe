@@ -8,7 +8,7 @@ import modelActionCreators from "../../../../actions/modelActionCreators"
 import FocusStore from "../../../../stores/FocusStore"
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-import TabularTH from "./TabularTH"
+import HeaderCell from "./HeaderCell"
 
 
 
@@ -58,7 +58,7 @@ var TableHeader = React.createClass ({
 				var sortIndex = view.data.sortIndex || {};
 				var sorting = (col.attribute_id in sortIndex) ? sortIndex[col.attribute_id] : null;
 
-				var el = <TabularTH key={"th-" + col.column_id}
+				var el = <HeaderCell key={"th-" + col.column_id}
 					focused = {_this.props.focused}
 					scrollTop = {_this.props.scrollTop}
 					column = {col}
