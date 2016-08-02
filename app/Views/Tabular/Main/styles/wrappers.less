@@ -4,7 +4,9 @@
 	
 }
 
-.loader-overlay, .notification-overlay, .error-overlay {
+.loader-overlay, 
+.notification-overlay, 
+.error-overlay {
 	position: absolute;
 	bottom: 50px;
 	left: 50px;
@@ -130,7 +132,7 @@
 
 	.noselect;
 	.border-box;
-	.transition(position linear 100ms);
+	.transition(position linear 75ms);
 }
 
 //
@@ -154,14 +156,23 @@
 	position: absolute;
 	cursor: pointer;
 	text-align: center;
-	color: @gray3;
-	padding: 0;
+	color: @purple4;
+	padding-left: 4px;
 	margin: 0;
-
-	text-transform: uppercase;
 	z-index: 3;
 	background: white;
 	pointer-events: auto;
+	border-left: 1px solid @purple4;
+	border-right: 1px solid @purple4;
+	border-bottom: 1px solid @purple4;
+
+	.transition(all cubic-bezier(.16,.85,.5, 1) 75ms);
+
+	&:hover {
+		color: @newgreen1;
+		border-color: @newgreen1;
+		background: @gray4;
+	}
 }
 
 .add-new-row--blurred {

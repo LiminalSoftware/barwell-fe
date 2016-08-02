@@ -29,7 +29,6 @@ import TableMixin from '../../TableMixin'
 import ContextMenu from './ContextMenu'
 import ScrollBar from "./ScrollBar"
 import Cursors from "./Cursors"
-import Editor from "./Editor"
 
 import constant from "../../../constants/MetasheetConstants"
 
@@ -141,7 +140,7 @@ const TabularPane = React.createClass ({
 	},
 
 	_onChange: function () {
-		var focused = (FocusStore.getFocus(0) == 'view')
+		var focused = this.isFocused()
 		if (!focused) this.blurPointer()
 		this.setState({focused: focused})
 		this.forceUpdate()
@@ -589,11 +588,11 @@ const TabularPane = React.createClass ({
 		
 		if (hiddenColWidth !== this.state.hiddenColWidth) {
 			if (this.pointerTimer) clearTimeout(this.pointerTimer)
-			ReactDOM.findDOMNode(pointer).classList.add('pointer-transitioned');
+			// ReactDOM.findDOMNode(pointer).classList.add('pointer-transitioned');
 			ReactDOM.findDOMNode(rhsHorizontalOffsetter).style.marginLeft = 
 				(-1 * hiddenColWidth - 1) + 'px';
 			this.pointerTimer = setTimeout(function () {
-				ReactDOM.findDOMNode(pointer).classList.remove('pointer-transitioned');
+				// ReactDOM.findDOMNode(pointer).classList.remove('pointer-transitioned');
 				_this.pointerTimer = null;
 			}, 100);
 		}
@@ -656,7 +655,7 @@ const TabularPane = React.createClass ({
 		var model = this.props.model
 		var view = this.props.view
 		var rowCount = this.getNumberRows()
-		var focused = (FocusStore.getFocus() == 'view')
+		var focused = this.isFocused()
 		var totalWidth = this.getTotalWidth()
 		var geo = view.data.geometry
 

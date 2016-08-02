@@ -19,14 +19,21 @@ import util from "../../../util/util"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-var OFFSET_TOLERANCE = 100
-var WINDOW_ROWS = 50
-var FETCH_DEBOUNCE = 500
-var MAX_ROWS = 300
-var RHS_PADDING = 100
-var CYCLE = 60
+const nav = window.navigator
+const userAgent = nav.userAgent
+const IS_CHROME = userAgent.indexOf("Chrome") > -1
+const HAS_3D = util.has3d()
 
-var HAS_3D = util.has3d()
+const OFFSET_TOLERANCE = 100
+const WINDOW_ROWS = 50
+const FETCH_DEBOUNCE = 500
+const MAX_ROWS = 300
+const RHS_PADDING = 100
+const CYCLE = 60
+
+
+
+
 
 import TabularTBody from "./TabularTBody"
 import TableHeader from "./TableHeader"
@@ -197,7 +204,7 @@ var TabularBodyWrapper = React.createClass ({
 				ref = "lhsTableBody"
 				style = {{
 					top: geo.headerHeight + 'px',
-					borderRight: "2px solid " + constant.colors.RED_BRIGHT_TRANS,
+					borderRight: "1px solid " + constant.colors.RED_BRIGHT_TRANS,
 					// transform: 'translateZ(1px)',
 					overflow: 'hidden',
 				}}>
@@ -208,7 +215,7 @@ var TabularBodyWrapper = React.createClass ({
 						height: (rowCount * geo.rowHeight) + 'px',
 						marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
 						transform: 'translate3d(0, ' + marginTop + 'px, 1px)',
-						transition: 'transform 65ms linear'
+						transition: IS_CHROME ? 'transform 75ms linear' : null
 					}}>
 
 				<TabularTBody
@@ -285,7 +292,7 @@ var TabularBodyWrapper = React.createClass ({
 							right: 0,
 							marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
 							transform: 'translateY(' + marginTop + 'px)',
-							transition: 'transform 65ms linear',
+							transition: IS_CHROME ? 'transform 75ms linear' : null,
 							height: (rowCount * geo.rowHeight) + 'px',
 							width: (fixedWidth + floatWidth) + 'px',
 						}}>

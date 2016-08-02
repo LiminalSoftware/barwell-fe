@@ -39,14 +39,24 @@
 }
 
 .mdlbar-link {
+	position: relative;
 	direction: ltr !important;
 	display: block;
 	color: @lightFontColor;
+	min-height: 30px;
+	line-height: 30px;
 }
 
 .view-link {
-	max-width: 180px;
-	display: inline-block;
+	position: absolute;
+	right: 65px;
+	left: 8px;
+	top: 0;
+	bottom: 0;
+	line-height: 35px;
+
+
+	display: block;
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
 	border-bottom-color: transparent;
@@ -54,6 +64,14 @@
 		border-bottom-color: @lightFontColor;
 	}
 	transition: all 50ms ease-in 100ms;
+}
+
+.view-link-actions {
+	position: absolute;
+	right: 0;
+	width: 50px;
+	top: 0;
+	bottom: 0;
 }
 
 .mdlbar-link--active {
@@ -114,7 +132,6 @@
 	display: flex;
 	flex-direction: column;
 	background: @headerMenuBgColor;
-	border-right: 5px solid @headerBgLight2;
 }
 
 .mdlbar-section {

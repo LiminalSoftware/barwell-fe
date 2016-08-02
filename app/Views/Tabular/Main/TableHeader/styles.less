@@ -16,11 +16,13 @@
 }
 
 .tabular-view-header--focused {
+	border-top: 1px solid @purple4;
 	border-bottom: 1px solid @purple4;
 	border-right: 1px solid @purple4;
 }
 
 .tabular-view-header--blurred {
+	border-top: 1px solid @gray2;
 	border-bottom: 1px solid @gray2;
 	border-right: 1px solid @gray2;
 }
@@ -30,15 +32,28 @@
 }
 
 .action-cell-topright {
-	border-right: 1px solid @purple4;
-	border-left: 1px solid @purple4 !important;
-	border-bottom: 1px solid @purple4 !important;
+	border: 1px solid @purple4;
 	color: @purple4;
 	width: 35px;
+	// border-radius: 0 10px 10px 0;
+	background: white;
+
 	&:hover {
 		border-color: @newgreen1 !important;
 		color: @newgreen1;
+		background: @gray4;
 	}
+}
+
+.action-cell-inner {
+	margin: 0;
+	padding: 0;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	
+	text-align: center;
+	cursor: pointer;
+	// border-radius: 0 10px 10px 0;
 }
 
 .th-context {

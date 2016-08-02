@@ -3,6 +3,27 @@
 @import "./menus/popDownMenu.less";
 @import "./menus/wizard.less";
 
+.pill, .pill-selected {
+	border-radius: 2px;
+	padding: 0 5px;
+	margin-left: 0;
+	margin-right: 5px;
+}
+
+.pill {
+	border: 1px solid steelblue;
+	color: steelblue;
+
+	&:hover {
+		background: fadeout(steelblue, 90%);
+	}
+}
+
+.pill-selected {
+	background: steelblue;
+	color: white;
+}
+
 .sort-item {
 	position: relative;
 	display: inline-block;
@@ -46,21 +67,8 @@
 	// font-size: 14px;
 }
 
-.header-label {
-	display: block;
-	flex-direction: row;
+.menu-label {
 	font-family: @headerFont;
-	text-align: left;
-	
-	border-bottom: 1px solid @headerBgLight2;
-	background: steelblue;
-	
-	height: 20px;
-	min-height: 20px;
-	line-height: 20px;
-	padding: 6px 10px;
-	margin: 0;
-	
 }
 
 
@@ -101,15 +109,15 @@
 
 	text-align: center !important;
 	font-family: @headerFont;
-	border-bottom: 1px solid @limegreen !important;
-	background: fadeout(@limegreen, 90%);
-	.struct-style;
+	
 	height: 32px;
 	line-height: 32px;
 }
 
 
 .menu-item {
+	background: white;
+	z-index: 5;
 	display: flex;
 	text-decoration: none;
 	color: @darkFontColor;
@@ -126,6 +134,10 @@
 	flex-direction: row !important;
 }
 
+.menu-sub-item-draggable {
+	padding-left: 20px;
+}
+
 .menu-sub-item {
 	border: 1px solid transparent;
 	border-bottom: 1px dotted @headerBgLight2;
@@ -135,7 +147,6 @@
 	height: 32px;
 	line-height: 32px;
 	padding: 4px 6px;
-	padding-left: 20px;
 	margin: 0;
 	
 	text-decoration: none;

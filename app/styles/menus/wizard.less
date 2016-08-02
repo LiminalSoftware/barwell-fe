@@ -7,22 +7,20 @@
 	left: 0;
 	right: 0;
 	padding: 10px;
-	background: fadeout(khaki, 80%);
-	border-bottom: 1px solid khaki;
-	color: khaki;
+	border-bottom: 1px solid stellblue;
 	font-style: italic;
 	z-index: 2;
 }
 
 .wizard-overlay {
-	color: @headerFontColor;
+	color: steelblue;
 	position: absolute;
 	padding-top: 50px;
 	left: 0;
 	right: 0;
 	bottom: 0;
 	top: 0;
-	background: @headerMenuBgColor;
+	background: white;
 	
 	overflow: hidden;
 }
@@ -33,21 +31,21 @@
 	right: 0;
 	bottom: 0;
 	top: 20px;
+
 }
 
 .wizard-blocks {
 	flex: 1 1;
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	flex-wrap: wrap;
 	overflow: hidden;
-	padding: 10px;
+	max-height: 100%;
 }
 
 .block {
 	flex: 1 1;
-	padding: 0;
-	width: 30%;
+	padding: 10px;
 }
 
 .block-header {
@@ -57,11 +55,11 @@
 .block-body, .block-header {
 	display: block;
 	flex: 1 1;
-	padding: 10px;
+	padding: 5px 10px;
 }
 
 .attr-style {
-	color: khaki;
+	color: steelblue;
 }
 
 .struct-style {
@@ -69,10 +67,10 @@
 }
 
 .selectable-attr-style:hover {
-	background: fadeout(khaki, 80%);
+	background: fadeout(steelblue, 80%);
 	cursor: pointer;
 }
 
 .attr-border {
-	border: 1px solid khaki !important;
+	border: 1px solid steelblue !important;
 }

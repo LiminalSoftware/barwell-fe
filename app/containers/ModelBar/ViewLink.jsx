@@ -116,10 +116,9 @@ const ViewLink = React.createClass ({
 			
 			<ReactCSSTransitionGroup {...constants.transitions.inandout}
 				component = "div"
-				
+				className = "view-link-actions"
 				onMouseOver = {this.handleMouseOver}
-				onMouseOut = {this.handleMouseOut}
-				style = {{float: "right", position: "relative"}}>
+				onMouseOut = {this.handleMouseOut}>
 
 				{active ? 
 				<span className="icon icon-arrow-right" 
@@ -128,7 +127,7 @@ const ViewLink = React.createClass ({
 
 
 				<ViewContext {...this.props} ref="context"
-				style={{float: "right", marginRight: "35px"}}
+				style={{float: "right", marginRight: "30px"}}
 				_parent = {this} direction = "left" visible = {this.state.mouseover}/>
 			</ReactCSSTransitionGroup>
 

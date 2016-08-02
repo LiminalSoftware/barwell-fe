@@ -53,6 +53,7 @@ var modelActions = {
 	},
 
 	setFocus: function (focus) {
+		console.log('focus: ' + focus)
 		var message = {
 			actionType: 'SET_FOCUS',
 			focus: focus

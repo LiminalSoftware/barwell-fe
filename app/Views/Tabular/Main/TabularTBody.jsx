@@ -143,7 +143,6 @@ var TabularTBody = React.createClass ({
 	// RENDER ================================================================
 
 	prepareRow: function (obj, index, ooo) {
-		var viewconfig = this.props.viewconfig || {};
 		var model = this.props.model;
 		var pk = model._pk;
 		var ptr = this.props.pointer;
@@ -207,6 +206,19 @@ var TabularTBody = React.createClass ({
 
 				return _this.prepareRow(row, idx, ooo);
 			}) 
+			}
+			{
+			this.props.hasRowLabel ? 
+			<span className="add-new-row" 
+			onClick = {this.props._addRecord}
+			style={{
+				top: rowCount * geo.rowHeight + 'px', 
+				height: geo.rowHeight + 'px',
+				lineHeight: geo.rowHeight + 'px',
+				left: 0, width: geo.labelWidth + 1 + 'px'}}>
+			<span className="icon icon-plus"/>
+			</span>
+			: null
 			}
 		</div>
 	}

@@ -10,8 +10,6 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 import HeaderCell from "./HeaderCell"
 
-
-
 var TableHeader = React.createClass ({
 
 	shouldComponentUpdate: function (nextProps) {
@@ -22,6 +20,7 @@ var TableHeader = React.createClass ({
 	render: function () {
 		const _this = this
 		const view = this.props.view
+		const model = this.props.model
 		const geo = view.data.geometry
 		var focused = this.props.focused
 		var left = (this.props.hasRowLabel ? geo.labelWidth : 0) + this.props.leftOffset
@@ -35,7 +34,6 @@ var TableHeader = React.createClass ({
 		}
 
 		const classes = 'tabular-view-header wrapper '
-			+ (focused ? '' : " gray-out ")
 			+ this.props.side + '-header--' + (this.props.focused ? 'focused' : 'blurred') 
 			+ ' tabular-view-header--' + (this.props.focused ? 'focused' : 'blurred')
 
@@ -64,6 +62,7 @@ var TableHeader = React.createClass ({
 					column = {col}
 					sorting = {sorting}
 					view = {view}
+					model = {model}
 					idx = {idx}
 					left = {left}/>;
 				left += col.width
@@ -73,20 +72,10 @@ var TableHeader = React.createClass ({
 
 			{this.props.hasRowLabel ? null :
 			<span onContextMenu = {this.onContextMenu}
-				style = {{left: left + 10 + 'px'}}
+				style = {{left: left + 'px', top: "-1px", bottom: "-1px", width: "35px", padding: 0}}
 				className = 'table-header-cell action-cell-topright'>
-				<span className = "table-cell-inner header-cell-inner" style = {{textAlign: 'center'}}>
+				<span className = "table-cell-inner action-cell-inner" style = {{textAlign: 'center'}}>
 					<span className="icon icon-plus" style={{margin: 0}}/>
-				</span>
-			</span>
-			}
-
-			{this.props.hasRowLabel ? null :
-			<span onContextMenu = {this.onContextMenu}
-				style = {{left: left + 55 + 'px'}}
-				className = 'table-header-cell action-cell-topright'>
-				<span className = "table-cell-inner header-cell-inner" style = {{textAlign: 'center'}}>
-					<span className="icon icon-eye-crossed" style={{margin: 0}}/>
 				</span>
 			</span>
 			}

@@ -2,13 +2,13 @@ import React, { Component, PropTypes } from 'react';
 import ReactDOM from "react-dom"
 import $ from "jquery"
 
-
-import _ from 'underscore'
-
+import constant from "../../../../constants/MetasheetConstants"
 import fieldTypes from "../../../fields"
-import modelActionCreators from "../../../../actions/modelActionCreators"
 import FocusStore from "../../../../stores/FocusStore"
-import AttributeStore from "../../../../stores/AttributeStore"
+
+import modelActionCreators from "../../../../actions/modelActionCreators"
+
+import AttributeContext from "./AttributeContext"
 
 const COLUMN_MIN_WIDTH = 50
 
@@ -20,74 +20,102 @@ export default class HeaderCell extends Component {
 			dragging: false,
 			rel: null,
 			pos: 0,
-      		context: false,
       		open: false,
       		mouseover: false
 		}
 	}
+
+	_onChange = () => {this.forceUpdate()}
+
+	/*
+	 * 
+	 */
+
+	componentWillUpdate = (newProps, newState) => {
+
+		if (!this.state.open && newState.open) {
+			FocusStore.addChangeListener(this._onChange)
+		} else if (this.state.open && !newState.open) {
+			FocusStore.removeChangeListener(this._onChange)
+		}
+	}
+
+	/*
+	 * add global mousemove and mouseup listeners when the drag begins and 
+	 * clean them up when it ends
+	 */
+
+	componentDidUpdate = (newProps, newState) => {
+		const focus = FocusStore.getFocus()
+		const column = this.props.column
+
+		if (focus !== column.column_id && this.state.open) this.setState({open: false})
+
+		if (this.state.dragging && !newState.dragging) {
+			addEventListener('mousemove', this.onMouseMove)
+			addEventListener('mouseup', this.onMouseUp)
+		} else if (!this.state.dragging && newState.dragging) {
+		   removeEventListener('mousemove', this.onMouseMove)
+		   removeEventListener('mouseup', this.onMouseUp)
+		}
+	}
+
+	/*
+	 * 
+	 */
 
 	renderIcons = () => {
 		const type = fieldTypes[this.props.column.type];
 		const blurFocus = this.props.focused ? "focused" : "blurred"
 		const sortDir = this.props.sortDirection ? 'desc' : 'asc'
 
-		if (this.state.mouseover) 
-			return <span onClick = {e => this.setState({open: true})} 
+		if (this.state.mouseover && !this.state.open) 
+			return <span onClick = {this.handleContextMenu} 
 			className={`sort-th-label-${blurFocus} icon icon-cog`}/>
 
-		else if (this.props.sorting)
+		else if (this.props.sorting && !this.state.open)
 			return <span onClick={this.switch}
 			className={`sort-th-label-${blurFocus} ` + 
 			`icon icon-${type.sortIcon}${sortDir}`}/>
 	}
 
-	render = () => {
-		const _this = this
-		const geo = this.props.view.data.geometry
-		const col = this.props.column
-		const cellStyle = {
-			width: col.width + (this.state.open ? 1 : 0) + 'px',
-			left: this.props.left + 'px',
-			height: this.state.open ? '300px' : '100%',
-			maxHeight: this.state.open ? '300px' : (geo.headerHeight + 'px'),
-			transition: 'max-height cubic-bezier(.1,.85,.5,1) 100ms'
-		}
-		const type = fieldTypes[col.type];
-		const innerStyle = {paddingRight: this.props.sorting || this.state.mouseover ? '25px' : null}
-		const blurFocus = this.props.focused ? "focused" : "blurred"	
+	/*
+	 * 
+	 */
 
-		return <span style = {cellStyle}
-			onContextMenu = {this.onContextMenu}
-			onMouseOver = {e => this.setState({mouseover: true})}
-			onMouseLeave = {e => this.setState({mouseover: false})}
-			className = 'table-header-cell '>
-			<span className = "table-cell-inner header-cell-inner " 
-			style = {innerStyle}>
-				<span className = {`type-th-label-${blurFocus} icon icon-${type.icon}`}/>
-				{col.name}
-				{this.renderIcons()}
-			</span>
-			{
-			this.state.context ?
-			<TabularTHContext
-        		headerHeight = {geo.headerHeight}
-        		config = {col}
+	getCellStyle = () => {
+		return {
+			width: this.props.column.width + 'px',
+			left: this.props.left + 'px'
+		}
+	}
+
+	/*
+	 * 
+	 */
+
+	renderContextMenu = () => {
+		if (this.state.open) 
+			return <AttributeContext {...this.props}
         		handleBlur = {this.handleBlur}/>
-        	: null
-	        }
-	        {
-	        this.state.open ? null :
-			<span ref = "resizer"
-				className = {"table-resizer col-resizer " + (this.state.dragging ? "dragging" : "")}
-				onMouseDown = {this.onResizerMouseDown}
-				style = {{
-					right: (-1 * this.state.pos) + 'px',
-					top: "0",
-					height: this.state.dragging ? "1000px" : "100%",
-					width: this.state.dragging ? "2px" : "10px"
-				}}>
-			</span>
-			}
+	}
+
+	/*
+	 * 
+	 */
+
+	renderResizer = () => {
+		const style = {
+			right: (-1 * this.state.pos) + 'px',
+			top: "0",
+			height: this.state.dragging ? "1000px" : "100%",
+			width: this.state.dragging ? "2px" : "10px"
+		}
+
+		if (!this.state.open) return <span ref = "resizer"
+			className = {`table-resizer col-resizer ${this.state.dragging ? "dragging" : ""}`}
+			onMouseDown = {this.onResizerMouseDown}
+			style = {style}>
 		</span>
 	}
 
@@ -95,10 +123,49 @@ export default class HeaderCell extends Component {
 	 * 
 	 */
 
-	componentDidMount = () => {
-		var col = this.props.column
-		this.setState(col)
+	isFocused = () => {
+		const view = this.props.view
+		const column = this.props.column
+		const focus = FocusStore.getFocus()
+		return (focus === column.column_id || focus === 'v' + view.view_id)
 	}
+
+	/*
+	 * 
+	 */
+
+	render = () => {
+		const _this = this
+		const col = this.props.column
+		const type = fieldTypes[col.type];
+		const innerStyle = {
+			paddingRight: this.props.sorting || this.state.mouseover ? '25px' : null,
+			border: this.state.open ? "1px solid steelblue" : null,
+			borderBottom: this.state.open ? "1px solid white" : null,
+			margin: this.state.open ? "-1px" : null
+		}
+		const blurFocus = this.props.focused ? "focused" : "blurred"	
+
+		return <span style = {this.getCellStyle()}
+			onContextMenu = {this.handleContextMenu}
+			onMouseEnter = {e => this.setState({mouseover: true})}
+			onMouseLeave = {e => this.setState({mouseover: false})}
+			className = {`table-header-cell ${this.isFocused() ? '' : " gray-out "}`}>
+			<span className = "table-cell-inner header-cell-inner " 
+			style = {innerStyle}>
+				<span className = {`type-th-label-${blurFocus} icon icon-${type.icon}`}/>
+				{col.name}
+				{this.renderIcons()}
+			</span>
+			{this.renderContextMenu()}
+	        {this.renderResizer()}
+		</span>
+	}
+
+	/*
+	 * 
+	 */
+
 
 	/*
 	 * 
@@ -112,6 +179,17 @@ export default class HeaderCell extends Component {
 		})
 		e.stopPropagation()
 		e.preventDefault()
+	}
+
+	/*
+	 * set column width
+	 */
+
+	setColumnWidth = (width, commit) => {
+		const view = this.props.view
+		const col = this.props.column
+   		view.data.columns[col.column_id].width = width
+		modelActionCreators.createView(view, !!commit, false)
 	}
 
 	/*
@@ -150,32 +228,17 @@ export default class HeaderCell extends Component {
 	   e.preventDefault()
 	}
 
-	/*
-	 * add global mousemove and mouseup listeners when the drag begins and 
-	 * clean them up when it ends
-	 */
-
-	componentDidUpdate = (props, state) => {
-		if (this.state.dragging && !state.dragging) {
-			addEventListener('mousemove', this.onMouseMove)
-			addEventListener('mouseup', this.onMouseUp)
-		} else if (!this.state.dragging && state.dragging) {
-		   removeEventListener('mousemove', this.onMouseMove)
-		   removeEventListener('mouseup', this.onMouseUp)
-		}
-	}
+	
 
 	/*
 	 * 
 	 */
 
 
-	onContextMenu = (e) => {
-		// disable column context menus for now
-	  	// modelActionCreators.setFocus('view-config')
-	  	// this.setState({context: true})
-	  	e.stopPropagation()
-		e.preventDefault()
+	handleContextMenu = (e) => {
+	  	modelActionCreators.setFocus(this.props.column.column_id)
+	  	this.setState({open: true})
+	  	// e.preventDefault()
 	}
 
 	/*
@@ -184,8 +247,7 @@ export default class HeaderCell extends Component {
 
 
 	handleBlur = () => {
-  		modelActionCreators.setFocus('view')
-  		this.setState({context: false})
+  		this.setState({open: false})
 	}
 
 	/*

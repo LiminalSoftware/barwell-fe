@@ -35,7 +35,7 @@ const textField = {
 	
 	defaultWidth: 150,
 
-	getDisplayHTML: getGenericTextHTML.bind(null, _.escape, stylers),
+	getDisplayHTML: getGenericTextHTML.bind(null, _.identity, stylers),
 
 	element: class TextField extends Component {
 
@@ -54,7 +54,7 @@ const textField = {
 		render () {
 			return <GenericTextField {...this.props}
 				ref = "genericField"
-				format = {_.escape}
+				format = {_.identity}
 				validator = {_.identity}
 				parser = {_.identity}
 				stylers = {[]}/>

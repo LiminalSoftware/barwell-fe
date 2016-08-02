@@ -9,7 +9,11 @@
 	right: 1px;
 	overflow: hidden;
 	border-bottom: 1px solid @gray3;
-	.transition(all cubic-bezier(.16,.85,.5, 1) 150ms);
+	.transition(all cubic-bezier(.16,.85,.5, 1) 75ms);
+}
+
+.table-row-label {
+	border-left: 1px solid @purple4 !important;
 }
 
 .table-cell-error {
@@ -57,6 +61,7 @@
 	top: 0;
 	bottom: 0;
 	z-index: 2;
+
 }
 
 .table-cell--selected {
@@ -114,13 +119,6 @@
 	color: @purple4 !important;
 }
 
-.table-cell-inner-sorted {
-	border-left: 3px solid @green-trans;
-	border-right: 3px solid @green-trans;
-	&.table-header-cell-inner {
-		border-top: 3px solid @green-trans;
-	}
-}
 
 .table-cell-inner-selected {
 	background: white;

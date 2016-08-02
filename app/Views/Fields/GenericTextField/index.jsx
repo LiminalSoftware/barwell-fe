@@ -1,4 +1,4 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react'
 import util from "../../../util/util"
 import constants from "../../../constants/MetasheetConstants"
 import fieldUtils from "../fieldUtils"
@@ -60,7 +60,7 @@ export default class GenericTextField extends Component {
 	 */
 
 	componentWillReceiveProps = (props)  => {
-		// if (!this.state.editing)
+		if (!this.state.editing)
 		this.setState({value: props.format(props.value)})
 	}
 
