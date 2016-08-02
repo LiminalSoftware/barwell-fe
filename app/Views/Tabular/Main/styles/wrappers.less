@@ -132,13 +132,13 @@
 
 	.noselect;
 	.border-box;
-	.transition(position linear 75ms);
+	.transition(all linear 75ms);
 }
 
 //
 .rhs-h-scroll {
 	overflow: hidden;
-	// .transition(margin cubic-bezier(.16,.85,.5, 1) 100ms);
+	.transition(all linear 75ms);
 	.force-layer;
 }
 
@@ -166,7 +166,7 @@
 	border-right: 1px solid @purple4;
 	border-bottom: 1px solid @purple4;
 
-	.transition(all cubic-bezier(.16,.85,.5, 1) 75ms);
+	.transition(all linear 75ms);
 
 	&:hover {
 		color: @newgreen1;

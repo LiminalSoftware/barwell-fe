@@ -83,9 +83,8 @@ var ModelPane = React.createClass({
 
 		if (view && view.model_id != model_id) view = null;
 		if (view) {
-			var type = viewTypes[view.type]
+			const type = viewTypes[view.type]
 			bodyElement = type.mainElement
-			configElement = type.inlineConfigElement
 
 			view = groomView(view)
 
@@ -98,14 +97,6 @@ var ModelPane = React.createClass({
 				key: "view-pane-" + (view.cid || view.view_id)
 			})
 
-			configElement = React.createElement(configElement, {
-				key: 'config-' + (view.cid || view.view_id),
-				model: model,
-				view: view,
-				viewconfig: viewconfig,
-				_showPopUp: this.props._showPopUp,
-				_clearPopUp: this.props._clearPopUp
-			})
 		} else if (view_id === 'history') {
 			bodyContent = <ChangeHistory model = {model}/>
 		} else if (view_id === 'config') {
@@ -115,13 +106,15 @@ var ModelPane = React.createClass({
 		}
 
 		return <div className="model-views">
-			
+
 			<ReactCSSTransitionGroup 
 				className = "model-panes"
-				key  = {"view-main-" + (view ? (view.cid || view.view_id) : 'default')}
 				{...constants.transitions.fadeinout}>
+
 				{bodyContent}
+
 			</ReactCSSTransitionGroup>
+
 		</div>
 	}
 });

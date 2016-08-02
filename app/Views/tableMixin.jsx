@@ -35,7 +35,11 @@ var TableMixin = {
 	},
 	
 	isFocused: function () {
-		return (FocusStore.getFocus(0) === 'view')
+		return FocusStore.getFocus() === ('v' + this.props.view.view_id)
+	},
+
+	getFocus: function () {
+		modelActionCreators.setFocus('v' + this.props.view.view_id)
 	},
 
 	handleContextBlur: function () {
@@ -68,10 +72,10 @@ var TableMixin = {
 		this.refs.verticalScrollBar.handleMouseWheel(e)
 		this.refs.horizontalScrollBar.handleMouseWheel(e)
 	},
-
+	
 	blurPointer: function (revert) {
 		var current = this.refs.cursors.refs.pointerCell
-		if (current) {
+		if (current && 'handleBlur' in current) {
 			current.handleBlur(revert)
 		}
 		this.setState({editing: false})
@@ -210,8 +214,7 @@ var TableMixin = {
         	return;
         }
 
-		if (FocusStore.getFocus(0) !== 'view')
-			modelActionCreators.setFocus('view')
+		if (!this.isFocused()) this.getFocus()
 		this.updateSelect(this.getRCCoords(e), e.shiftKey)
 		
 		addEventListener('selectstart', util.returnFalse)
@@ -333,16 +336,6 @@ var TableMixin = {
 	
 	createView: function (view) {
 		modelActionCreators.createView(view, false, false, true)
-	},
-
-	calibrateHeight: function () {
-		var wrapper = ReactDOM.findDOMNode(this.refs.tableWrapper)
-		var view = this.props.view
-		var geo = view.data.geometry
-		this.setState({
-			visibleHeight: wrapper.offsetHeight,
-			visibleRows: Math.floor((wrapper.offsetHeight - geo.headerHeight) / geo.rowHeight)
-		})
 	}
 
 }

@@ -48,6 +48,7 @@ var TabularBodyWrapper = React.createClass ({
 		var view = this.props.view
 		var geo = view.data.geometry
 		return {
+			initialFetchComplete: false,
 			fetchOffset: 0,
 			requestedOffset: 0,
 			columnOffset: 0,
@@ -134,9 +135,11 @@ var TabularBodyWrapper = React.createClass ({
 				boundedTarget + MAX_ROWS,
 				view.data.sorting
 			).then(function () {
+				console.log('done with fetch')
 				_this.setState({
 					fetchOffset: boundedTarget,
-					fetching: false
+					fetching: false,
+					initialFetchComplete: true
 				});
 				modelActionCreators.clearNotification({
 					notification_key: 'loadingRecords'
@@ -147,8 +150,9 @@ var TabularBodyWrapper = React.createClass ({
 
 	shouldComponentUpdate: function (nextProps, nextState) {
 		var oldProps = this.props
-		// console.log('!(oldProps.view === nextProps.view): ' + !(oldProps.view === nextProps.view))
-		return !(oldProps.view === nextProps.view)
+		
+		return oldProps.view !== nextProps.view || 
+		(!this.state.initialFetchComplete && nextState.initialFetchComplete)
 	},
 
 	render: function () {
@@ -176,8 +180,9 @@ var TabularBodyWrapper = React.createClass ({
 		})
 
 
-		// console.log('render wrapper')
-		
+		if (!this.state.initialFetchComplete) 
+			return null
+
 		return <div
 			className = {"tabular-body-wrapper force-layer " + (focused ? "focused" : "blurred")}
 			ref="tbodyWrapper"

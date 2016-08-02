@@ -102,7 +102,6 @@ const TabularPane = React.createClass ({
 		// ViewStore.removeChangeListener(this._onChange);
 		// ViewConfigStore.removeChangeListener(this._onChange);
 		copyPasteDummy.removeEventListener('paste', this.pasteSelection);
-		removeEventListener('resize', this._debounceCalibrateHeight);
 		
 		if (this._timer) cancelFrame(this._timer)
 
@@ -114,15 +113,9 @@ const TabularPane = React.createClass ({
 		var viewconfig = this.props.viewconfig;
 		var copyPasteDummy = document.getElementById('copy-paste-dummy')
 		copyPasteDummy.addEventListener('paste', this.pasteSelection)
-		addEventListener('resize', this._debounceCalibrateHeight)
 		copyPasteDummy.focus();
-		this.calibrateHeight();
+		
 		// this.scrollTo(viewconfig.rowOffset || 0);
-	},
-
-	componentWillUpdate: function (nextProps) {
-		if (this.props.view.data.rowHeight !== nextProps.view.data.rowHeight)
-			this.calibrateHeight()
 	},
 
 	shouldComponentUpdate: function (nextProps, nextState) {

@@ -169,7 +169,7 @@ var Cursors = React.createClass ({
 		const model = this.props.model
 		const focused = true
 
-		const hideCursor = (rowsSelected || rowCount === 0);
+		
 		const ptr = this.props.pointer
 		const sel = this.props.selection
 		const cpy = this.props.copyarea
@@ -184,7 +184,8 @@ var Cursors = React.createClass ({
 		const store = this.props.store
 		const rowCount = store.getRecordCount()
 		const geo = view.data.geometry
-
+		
+		const hideCursor = (rowsSelected || rowCount === 0);
 		// <Overlay
 		// 	{...this.props}
 		// 	ref = "addNew"
