@@ -125,6 +125,7 @@ const TabularPane = React.createClass ({
 		return props.view !== nextProps.view ||
 			!_.isEqual(state.selection, nextState.selection) ||
 			!_.isEqual(state.pointer, nextState.pointer) ||
+			this.state.contextPos !== nextState.contextPos || 
 			state.copyarea !== nextState.copyarea ||
 			state.contextOpen !== nextState.contextOpen ||
 			state.hiddenColWidth !== nextState.hiddenColWidth;
@@ -693,9 +694,7 @@ const TabularPane = React.createClass ({
 			store: this.store,
 			sorting: view.data.sorting,
 			focused: this.props.focused,
-			expanded: this.state.expanded,
-			context: this.state.contextOpen,
-			contextPosition: this.state.contextPosition
+			expanded: this.state.expanded
 		}
 
 		/*
@@ -731,6 +730,11 @@ const TabularPane = React.createClass ({
 				ref = "horizontalScrollBar"
 				axis = "horizontal"
 				_setScrollOffset = {this.setHorizontalScrollOffset}/>
+
+			{this.state.contextPos ? 
+				<ContextMenu {...childProps} 
+					position={this.state.contextPos}/> 
+				: null}
 
 		</div>
 	}

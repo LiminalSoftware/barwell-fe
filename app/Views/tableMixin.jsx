@@ -51,21 +51,16 @@ var TableMixin = {
 	},
 
 	showContext: function (e) {
-		var pos = this.getRCCoords(e)
-		var sel = this.state.selection
-		if (pos.left >= sel.left && pos.left <= sel.right &&
-			pos.top >= sel.top && pos.top <= sel.bottom) this.updatePointer(pos)
-		else this.updateSelect(pos, false)
-		this.setState({
-			contextOpen: true
-		})
+		var offset = $(this.refs.wrapper).offset()
+		var y = e.pageY - offset.top
+		var x = e.pageX - offset.left
+
+		this.setState({contextPos: {x: x, y: y}})
 		e.preventDefault();
 	},
 
 	hideContext: function (e) {
-		this.setState({
-			contextOpen: false
-		})
+		this.setState({contextPos: null})
 	},
 
 	handleMouseWheel: function (e) {

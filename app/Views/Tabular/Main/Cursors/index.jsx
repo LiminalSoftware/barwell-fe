@@ -8,7 +8,6 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 import constants from "../../../../constants/MetasheetConstants"
 
 import Overlay from '../Overlay'
-import ContextMenu from '../ContextMenu'
 
 import PopDownMenu from "../../../../components/PopDownMenu"
 import util from "../../../../util/util"
@@ -21,6 +20,17 @@ const HAS_3D = util.has3d()
 const RIGHT_FRINGE = 200
 
 var Cursors = React.createClass ({
+
+	showContextMenu: function (e) {
+		var cursors = ReactDOM.findDOMNode(this.overlayInner)
+		var view = this.props.view
+		var geo = view.data.geometry
+		var offset = $(cursors).offset()
+		var y = e.pageY - offset.top
+		var x = e.pageX - offset.left
+
+		this.setState({contextPos: {x: x, y: y}})
+	},
 
 	getPointerElement: function () {
 		// console.log('getPointerElement')
@@ -186,19 +196,6 @@ var Cursors = React.createClass ({
 		const geo = view.data.geometry
 		
 		const hideCursor = (rowsSelected || rowCount === 0);
-		// <Overlay
-		// 	{...this.props}
-		// 	ref = "addNew"
-		// 	position = {{left: 0, right: view.data.visibleCols.length + view.data.fixedCols.length, 
-		// 		top: rowCount, bottom: rowCount}}
-		// 	fudge = {{left: -1, width: 1}}
-		// 	className = {"add-new-row add-new-row--" + (focused ? "focused " : "blurred ")}>
-		// 	<div className = "table-cell-inner" style={{cursor: 'pointer', lineHeight: (geo.rowHeight + 'px')}} 
-		// 		onClick = {this.props._addRecord}>
-		// 		<span className = "small icon icon-plus"></span>
-		// 		<span>Add new record</span>
-		// 	</div>
-		// </Overlay>,
 
 		if (hideCursor) return null
 		return [
@@ -213,7 +210,6 @@ var Cursors = React.createClass ({
 				fudge = {pointerFudge}
 				position = {ptr}>
 				{this.getPointerElement()}
-				{this.props.context ? <ContextMenu key="context" {...this.props}/> : null}
 			</Overlay>,
 
 			<Overlay
