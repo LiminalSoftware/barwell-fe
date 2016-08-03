@@ -38,8 +38,8 @@ var TableMixin = {
 		return FocusStore.getFocus() === ('v' + this.props.view.view_id)
 	},
 
-	getFocus: function () {
-		modelActionCreators.setFocus('v' + this.props.view.view_id)
+	getFocus: function (modifier) {
+		modelActionCreators.setFocus('v' + this.props.view.view_id + (modifier || ''))
 	},
 
 	handleContextBlur: function () {

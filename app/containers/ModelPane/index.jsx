@@ -1,10 +1,14 @@
 import React from "react"
 import { RouteHandler, Link } from "react-router"
+import ReactDOM from "react-dom"
+
 import styles from "./style.less"
 import detailStyles from "./detail.less"
 import ModelDefinition from "../ModelDefinition"
 import ModelStore from "../../stores/ModelStore"
 import ViewStore from "../../stores/ViewStore"
+import FocusStore from "../../stores/FocusStore"
+
 import ViewConfigStore from "../../stores/ViewConfigStore"
 import ModelConfigStore from '../../stores/ModelConfigStore'
 import groomView from '../../Views/groomView'
@@ -38,14 +42,16 @@ var ModelPane = React.createClass({
 		this.setState({selection: "view"})
 	},
 
-	componentWillUnmount: function () {
-		ModelStore.removeChangeListener(this._onChange)
-		ViewStore.removeChangeListener(this._onChange)
-	},
-
 	componentWillMount: function () {
 		ModelStore.addChangeListener(this._onChange)
 		ViewStore.addChangeListener(this._onChange)
+		FocusStore.addChangeListener(this._onChange);
+	},
+
+	componentWillUnmount: function () {
+		ModelStore.removeChangeListener(this._onChange)
+		ViewStore.removeChangeListener(this._onChange)
+		FocusStore.removeChangeListener(this._onChange);
 	},
 
 	_onChange: function () {
@@ -57,61 +63,49 @@ var ModelPane = React.createClass({
 	},
 
 	focus: function () {
-		modelActionCreators.setFocus('model-config')
-	},
-
-	toggleViewList: function () {
-		var toggle = !(this.state.viewListOpen)
-		this.setState({viewListOpen: toggle})
+		modelActionCreators.setFocus('model-' + this.props.model.model_id)
 	},
 
 	render: function() {
 		var _this = this
 		var workspace_id = this.props.params.workspaceId
-		var model_id = this.props.params.modelId
-		var model = ModelStore.get(model_id);
-		var modelConfig = ModelConfigStore.get(model_id) || {};
-		var view_id = this.props.params.viewId || modelConfig.selected_view_id;
-		var view = view_id === 'config' ? null : ViewStore.get(view_id)
-		var viewconfig = {} // (view_id === 'config' ? null : ViewConfigStore.get(view_id)) || {}
-		var bodyContent
-		var bodyElement
-		var configElement = <div className = "view-config">
+		
+		var model = ModelStore.get(this.props.params.modelId);
+		var view = ViewStore.get(this.props.params.viewId)
+		var viewconfig = {}
 
-		</div>;
 		
 
-		if (view && view.model_id != model_id) view = null;
-		if (view) {
-			const type = viewTypes[view.type]
-			bodyElement = type.mainElement
+		const content = 
+			(view && view.model_id === model.model_id) ? 
+			React.createElement(viewTypes[view.type].mainElement, {
+				model: model,
+				view: view,
+				focused: ('v' + view.view_id === FocusStore.getFocus()),
+				viewconfig: viewconfig,
+				key: "view-pane-" + (view.cid || view.view_id)
+			}) : null;
 
-			view = groomView(view)
-
-			bodyContent = React.createElement(bodyElement, {
+		const config = 
+			(view && view.model_id === model.model_id) ? 
+			React.createElement(viewTypes[view.type].configElement, {
 				model: model,
 				view: view,
 				viewconfig: viewconfig,
-				_showPopUp: this.props._showPopUp,
-				_clearPopUp: this.props._clearPopUp,
-				key: "view-pane-" + (view.cid || view.view_id)
-			})
-
-		} else if (view_id === 'history') {
-			bodyContent = <ChangeHistory model = {model}/>
-		} else if (view_id === 'config') {
-			bodyContent = <ModelDefinition model={model}/>
-		} else {
-			bodyContent = null
-		}
+				key: "view-config-" + (view.cid || view.view_id)
+			}) : null;
 
 		return <div className="model-views">
 
-			<ReactCSSTransitionGroup 
-				className = "model-panes"
+			<ReactCSSTransitionGroup
+				ref="pane"
+				key="model-panes"
+				className="model-panes"
 				{...constants.transitions.fadeinout}>
 
-				{bodyContent}
+				{content}
+
+				{config}
 
 			</ReactCSSTransitionGroup>
 
@@ -120,11 +114,3 @@ var ModelPane = React.createClass({
 });
 
 export default ModelPane
-
-
-// <ReactCSSTransitionGroup 
-// 	{...constants.transitions.fadeinout}
-// 	className="view-bar">
-
-// 	{configElement}
-// </ReactCSSTransitionGroup>

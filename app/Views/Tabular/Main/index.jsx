@@ -9,16 +9,9 @@ import $ from 'jquery'
 
 import modelActionCreators from "../../../actions/modelActionCreators.jsx"
 
-import ModelStore from "../../../stores/ModelStore"
-import KeyStore from "../../../stores/KeyStore"
-import ViewStore from "../../../stores/ViewStore"
-import KeycompStore from "../../../stores/KeycompStore"
-import AttributeStore from "../../../stores/AttributeStore"
-import FocusStore from "../../../stores/FocusStore"
 import util from "../../../util/util"
 import copyTextToClipboard from "../../../util/copyTextToClipboard"
 
-import ViewConfigStore from "../../../stores/ViewConfigStore"
 import storeFactory from 'flux-store-factory';
 import dispatcher from "../../../dispatcher/MetasheetDispatcher"
 import createTabularStore from '../TabularStore'
@@ -26,6 +19,7 @@ import createTabularStore from '../TabularStore'
 import fieldTypes from "../../fields"
 import TabularBodyWrapper from "./TabularBodyWrapper"
 import TableMixin from '../../TableMixin'
+
 import ContextMenu from './ContextMenu'
 import ScrollBar from "./ScrollBar"
 import Cursors from "./Cursors"
@@ -83,10 +77,6 @@ const TabularPane = React.createClass ({
 		document.body.addEventListener('keydown', this.onKey);
 		copyPasteDummy.addEventListener('paste', this.pasteSelection);
 
-		FocusStore.addChangeListener(this._onChange);
-		// ViewStore.addChangeListener(this._onChange);
-		// ViewConfigStore.addChangeListener(this._onChange);
-
 		this.store = createTabularStore(this.props.view);
 		this.store.addChangeListener(this._onChange);
 
@@ -98,9 +88,6 @@ const TabularPane = React.createClass ({
 		const copyPasteDummy = document.getElementById('copy-paste-dummy');
 
 		document.body.removeEventListener('keydown', this.onKey);
-		FocusStore.removeChangeListener(this._onChange);
-		// ViewStore.removeChangeListener(this._onChange);
-		// ViewConfigStore.removeChangeListener(this._onChange);
 		copyPasteDummy.removeEventListener('paste', this.pasteSelection);
 		
 		if (this._timer) cancelFrame(this._timer)
@@ -118,24 +105,34 @@ const TabularPane = React.createClass ({
 		// this.scrollTo(viewconfig.rowOffset || 0);
 	},
 
+	componentWillReceiveProps: function (nextProps) {
+		const cursors = ReactDOM.findDOMNode(this.refs.cursors)
+		const wrapper = ReactDOM.findDOMNode(this.refs.tableWrapper)
+
+		if (!nextProps.focused && this.props.focused) {
+			cursors.classList.add('gray-out')
+			wrapper.classList.add('gray-out')
+		} else if (nextProps.focused && !this.props.focused) {
+			cursors.classList.remove('gray-out')
+			wrapper.classList.remove('gray-out')
+		}
+	},
+
 	shouldComponentUpdate: function (nextProps, nextState) {
 		var props = this.props
 		var state = this.state
+
 		return props.view !== nextProps.view ||
 			!_.isEqual(state.selection, nextState.selection) ||
 			!_.isEqual(state.pointer, nextState.pointer) ||
-			state.focused !== nextState.focused ||
 			state.copyarea !== nextState.copyarea ||
 			state.contextOpen !== nextState.contextOpen ||
-			// state.rowOffset !== nextState.rowOffset ||
-			state.expanded !== nextState.expanded ||
 			state.hiddenColWidth !== nextState.hiddenColWidth;
 	},
 
 	_onChange: function () {
-		var focused = this.isFocused()
-		if (!focused) this.blurPointer()
-		this.setState({focused: focused})
+
+		if (!this.props.focused) this.blurPointer()
 		this.forceUpdate()
 		if (this.refs.tableWrapper) this.refs.tableWrapper.forceUpdate()
 		this.refs.cursors.forceUpdate()
@@ -581,12 +578,14 @@ const TabularPane = React.createClass ({
 		
 		if (hiddenColWidth !== this.state.hiddenColWidth) {
 			if (this.pointerTimer) clearTimeout(this.pointerTimer)
-			// ReactDOM.findDOMNode(pointer).classList.add('pointer-transitioned');
+			const pointer = ReactDOM.findDOMNode(pointer)
+			if (pointer) pointer.classList.add('pointer-transitioned')
 			ReactDOM.findDOMNode(rhsHorizontalOffsetter).style.marginLeft = 
 				(-1 * hiddenColWidth - 1) + 'px';
 			this.pointerTimer = setTimeout(function () {
-				// ReactDOM.findDOMNode(pointer).classList.remove('pointer-transitioned');
-				_this.pointerTimer = null;
+				const pointer = ReactDOM.findDOMNode(pointer)
+				if (pointer) pointer.classList.remove('pointer-transitioned')
+				_this.pointerTimer = null
 			}, 100);
 		}
 	},
@@ -648,7 +647,7 @@ const TabularPane = React.createClass ({
 		var model = this.props.model
 		var view = this.props.view
 		var rowCount = this.getNumberRows()
-		var focused = this.isFocused()
+		var focused = this.props.focused
 		var totalWidth = this.getTotalWidth()
 		var geo = view.data.geometry
 
@@ -693,7 +692,7 @@ const TabularPane = React.createClass ({
 			copyarea: this.state.copyarea,
 			store: this.store,
 			sorting: view.data.sorting,
-			focused: focused,
+			focused: this.props.focused,
 			expanded: this.state.expanded,
 			context: this.state.contextOpen,
 			contextPosition: this.state.contextPosition
@@ -707,7 +706,7 @@ const TabularPane = React.createClass ({
 		 */
 		
 		return <div ref="wrapper"
-			className = "wrapper"				
+			className = {`wrapper table-top-wrapper`}
 			beforePaste = {this.beforePaste}>
 
 			<TabularBodyWrapper {...childProps}
@@ -732,8 +731,6 @@ const TabularPane = React.createClass ({
 				ref = "horizontalScrollBar"
 				axis = "horizontal"
 				_setScrollOffset = {this.setHorizontalScrollOffset}/>
-
-			<ViewConfigBar {...childProps}/>
 
 		</div>
 	}

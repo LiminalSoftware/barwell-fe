@@ -57,7 +57,6 @@ var TabularTBody = React.createClass ({
 	},
 
 	componentWillMount: function () {
-		ViewStore.addChangeListener(this._onChange)
 		this.props.store.addChangeListener(this._onChange)
 	},
 
@@ -66,7 +65,6 @@ var TabularTBody = React.createClass ({
 	},
 
 	componentWillUnmount: function () {
-		ViewStore.removeChangeListener(this._onChange)
 		this.props.store.removeChangeListener(this._onChange)
 	},
 

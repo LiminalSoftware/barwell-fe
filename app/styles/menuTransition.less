@@ -9,7 +9,6 @@
   opacity: 1;
   transform: translate3D(0,0,0);
   transition: all ease-in 100ms;
-  // transition: opacity cubic-bezier(.16,.85,.5,1) 600ms;
 }
 
 .fade-in-leave {
@@ -28,25 +27,24 @@
 .fadeinout-appear, .fadeinout-enter {
   opacity: 0.01;
   transform: translate3D(0,0,0);
-  transition: all cubic-bezier(.16,.85,.5,1) 200ms;
 }
 
 .fadeinout-appear-active, .fadeinout-enter-active {
   opacity: 1;
   transform: translate3D(0,0,0);
-  transition: all cubic-bezier(.16,.85,.5,1) 200ms;
+  transition: opacity cubic-bezier(.16,.85,.5,1) 300ms;
 }
 
-.fadeinout-leave {
+.fadeinout-leave, .fadeout-leave {
   transform: translate3D(0,0,0);
   opacity: 1;
-  transition: all cubic-bezier(.16,.85,.5,1) 200ms;
+  
 }
 
-.fadeinout-leave-active {
+.fadeinout-leave-active, .fadeout-leave-active {
   opacity: 0.01;
   transform: translate3D(0,0,0);
-  transition: all cubic-bezier(.16,.85,.5,1) 200ms;
+  transition: opacity cubic-bezier(.16,.85,.5,1) 300ms;
 }
 
 
@@ -105,16 +103,34 @@
 }
 
 
+// ============================================================================
+
+.zoomin-enter {
+  opacity: 0.01;
+  transform: translate3D(0,0,-10em);
+}
+
+.zoomin-enter.zoomin-enter-active {
+  opacity: 1;
+  transform: translate3D(0,0,0);
+  transition: transform cubic-bezier(.15,.86,.88,1) 150ms,
+              opacity cubic-bezier(.15,.86,.88,1) 100ms;
+}
+
+.zoomin-leave {
+  opacity: 1;
+  transform: translate3D(0,0,0);
+}
+
+.zoomin-leave-active {
+  opacity: 0.01;
+  transform: translate3D(0,0,-10em);
+  transition: transform ease-in 150ms,
+              opacity ease-in 150ms;
+}
 
 
-
-
-
-
-
-
-
-
+// ============================================================================
 
 .slide-in-appear, .slide-in-enter {
   transform: translate3D(0,0,0);

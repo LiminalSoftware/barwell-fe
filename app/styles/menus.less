@@ -52,34 +52,6 @@
     ) repeat;
 }
 
-.attribute-name-label {
-	font-family: @headerFont;
-}
-
-.header-section {
-	display: block;
-	margin-top: 10px;
-	// background: @headerMenuBgColor;
-}
-
-.header-config-section {
-	position: relative;
-	// font-size: 14px;
-}
-
-.menu-label {
-	font-family: @headerFont;
-}
-
-
-.model-views-menu {
-	margin-top: 4px;
-	position: relative;
-	display: flex;
-	height: 40px;
-	// flex-direction: row;
-	cursor: pointer;
-}
 
 .menu-selected {
 	color: @newgreen1 !important;
@@ -116,7 +88,6 @@
 
 
 .menu-item {
-	background: white;
 	z-index: 5;
 	display: flex;
 	text-decoration: none;
@@ -135,7 +106,7 @@
 }
 
 .menu-sub-item-draggable {
-	padding-left: 20px;
+	padding-left: 20px !important;
 }
 
 .menu-sub-item {
@@ -167,7 +138,6 @@
 
 .menu-item.dragging {
 	z-index: 105;
-	background: @headerBgDark;
 }
 
 .menu-sub-item.warning-item {

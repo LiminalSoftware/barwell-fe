@@ -1,4 +1,4 @@
-import TabularInlineConfig from "./Tabular/InlineConfig/index.jsx"
+import TableConfig from "./Tabular/ViewConfigBar"
 import TabularMain from "./Tabular/Main/index.jsx"
 import TabularGroomer from "./Tabular/groom"
 
@@ -31,7 +31,7 @@ var viewTypes = {
 		icon: "icon-grid",
 		groomer: TabularGroomer,
 		mainElement: TabularMain,
-		inlineConfigElement: TabularInlineConfig,
+		configElement: TableConfig,
 		category: "Tables",
 		description: "Simple, tabular format. Each row represents a single record."
 	},

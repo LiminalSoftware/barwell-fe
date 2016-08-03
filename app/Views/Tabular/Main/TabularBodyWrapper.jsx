@@ -79,7 +79,7 @@ var TabularBodyWrapper = React.createClass ({
 		var _this = this;
 		// HACK.  delay the fetch until the current dispatch is complete
 		// (only relevant if the view is loaded directly from url)
-		setTimeout(() => _this.fetch(true), 5)
+		setTimeout(() => _this.fetch(true), 0)
 	},
 
 	componentWillUpdate: function (nextProps, nextState) {
@@ -184,7 +184,7 @@ var TabularBodyWrapper = React.createClass ({
 			return null
 
 		return <div
-			className = {"tabular-body-wrapper force-layer " + (focused ? "focused" : "blurred")}
+			className = {`tabular-body-wrapper force-layer ${this.props.focused?"":"gray-out"}`}
 			ref="tbodyWrapper"
 			style = {{
 				left: 0,

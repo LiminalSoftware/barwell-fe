@@ -7,25 +7,38 @@ module.exports = {
       transitionEnterTimeout: 300,
       transitionAppearTimeout: 300,
       transitionLeaveTimeout: 300,
+      transitionAppear: true,
       transitionName: "slide-in" 
+    },
+    zoomIn: {
+      transitionEnterTimeout: 150,
+      transitionLeaveTimeout: 150,
+      transitionName: "zoomin" 
     },
     inandout: {
       transitionEnterTimeout: 1000,
       transitionAppearTimeout: 1000,
       transitionLeaveTimeout: 1000,
+      transitionAppear: true,
       transitionName: "inandout" 
     },
     slideleft: {
       transitionEnterTimeout: 300,
       transitionAppearTimeout: 300,
       transitionLeaveTimeout: 300,
+      transitionAppear: true,
       transitionName: "slideleft" 
     },
     fadeinout: {
-      transitionEnterTimeout: 300,
-      transitionAppearTimeout: 300,
-      transitionLeaveTimeout: 300,
-      transitionName: "fadeinout" 
+      transitionEnterTimeout: 500,
+      transitionLeaveTimeout: 500,
+      transitionName: "fadeinout",
+      transitionAppear: true,
+      transitionAppearTimeout: 500,
+    },
+    fadeout: {
+      transitionLeaveTimeout: 500,
+      transitionName: "fadeout",
     }
   },
 

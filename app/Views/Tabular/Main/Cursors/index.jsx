@@ -264,7 +264,7 @@ var Cursors = React.createClass ({
 		
 		
 
-		return <div className = "wrapper overlay "
+		return <div className = {`wrapper overlay ${this.props.focused?"":"gray-out"}`}
 				style = {this.getOuterWrapperStyle()} 
 				onDoubleClick = {this.props._handleEdit}
 				onContextMenu = {this.props._handleContextMenu}
