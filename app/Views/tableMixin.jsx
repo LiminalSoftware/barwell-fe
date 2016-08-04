@@ -54,8 +54,17 @@ var TableMixin = {
 		var offset = $(this.refs.wrapper).offset()
 		var y = e.pageY - offset.top
 		var x = e.pageX - offset.left
+		var rc = this.getRCCoords(e)
 
-		this.setState({contextPos: {x: x, y: y}})
+		var sel = this.state.selection
+
+		if (rc.left < sel.left || 
+		rc.left > sel.right || 
+		rc.top < sel.top || 
+		rc.top > sel.bottom)
+			this.updateSelect(rc, false)
+
+		this.setState({contextPos: {x: x, y: y}, contextRc: rc})
 		e.preventDefault();
 	},
 

@@ -207,6 +207,7 @@ var Cursors = React.createClass ({
 					(focused ? " " : "  ") +
 					(this.props.expanded ? " pointer--expanded " : "")}
 				ref = "pointer"
+				key={`pointer-${ptr.left}-${ptr.top}`}
 				fudge = {pointerFudge}
 				position = {ptr}>
 				{this.getPointerElement()}

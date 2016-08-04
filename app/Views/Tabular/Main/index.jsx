@@ -386,11 +386,11 @@ const TabularPane = React.createClass ({
 	    fudge = fudge || {}
 
 		visibleCols.forEach(function (col, idx) {
-	      if (idx >= numFixed && idx < numFixed + columnOffset) return
-	      if (idx < pos.left)
-	        left += col.width
-	      else if (idx <= (pos.right || pos.left))
-	        width += col.width
+	    	if (idx >= numFixed && idx < numFixed + columnOffset) return
+	    	if (idx < pos.left)
+	        	left += col.width
+	    	else if (idx <= (pos.right || pos.left))
+	    		width += col.width
 	    })
 		
 	    style.top = (pos.top * geo.rowHeight + (fudge.top || 0)) + 'px'
@@ -398,8 +398,10 @@ const TabularPane = React.createClass ({
 	    style.height = (geo.rowHeight * ((pos.bottom || pos.top) - pos.top + 1) + (fudge.height || 0)) + 'px'
 	    style.width = (width + (fudge.width || 0)) + 'px'
 
-	    if (!showHiddenHack && pos.left >= numFixed && (pos.right || pos.left) < numFixed + columnOffset)
-	      style.display = 'none'
+	    if (!showHiddenHack && pos.left >= numFixed && (pos.right || pos.left) < numFixed + columnOffset) {
+	    	style.maxWidth = 0
+	    	style.display = 'none'
+	    }
 
 	  	return style
 	},
@@ -580,12 +582,12 @@ const TabularPane = React.createClass ({
 		if (hiddenColWidth !== this.state.hiddenColWidth) {
 			if (this.pointerTimer) clearTimeout(this.pointerTimer)
 			const pointer = ReactDOM.findDOMNode(pointer)
-			if (pointer) pointer.classList.add('pointer-transitioned')
+			// if (pointer) pointer.classList.add('pointer-transitioned')
 			ReactDOM.findDOMNode(rhsHorizontalOffsetter).style.marginLeft = 
 				(-1 * hiddenColWidth - 1) + 'px';
 			this.pointerTimer = setTimeout(function () {
 				const pointer = ReactDOM.findDOMNode(pointer)
-				if (pointer) pointer.classList.remove('pointer-transitioned')
+				// if (pointer) pointer.classList.remove('pointer-transitioned')
 				_this.pointerTimer = null
 			}, 100);
 		}
