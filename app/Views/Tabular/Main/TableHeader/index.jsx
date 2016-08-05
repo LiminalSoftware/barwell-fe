@@ -22,7 +22,6 @@ var TableHeader = React.createClass ({
 		const view = this.props.view
 		const model = this.props.model
 		const geo = view.data.geometry
-		var focused = this.props.focused
 		var left = (this.props.hasRowLabel ? geo.labelWidth : 0) + this.props.leftOffset
 		var sortAttrs = _.pluck(view.data.sorting, 'attribute_id').map(parseInt)
 
@@ -33,9 +32,9 @@ var TableHeader = React.createClass ({
 			transform: 'translateZ(1px)'
 		}
 
-		const classes = 'tabular-view-header wrapper '
-			+ this.props.side + '-header--' + (this.props.focused ? 'focused' : 'blurred') 
-			+ ' tabular-view-header--' + (this.props.focused ? 'focused' : 'blurred')
+		const classes = `tabular-view-header wrapper 
+			${this.props.side}-header--focused 
+			tabular-view-header--focused`
 
 		return <div
 			className={classes} style={style}
@@ -56,8 +55,8 @@ var TableHeader = React.createClass ({
 				var sortIndex = view.data.sortIndex || {};
 				var sorting = (col.attribute_id in sortIndex) ? sortIndex[col.attribute_id] : null;
 
-				var el = <HeaderCell key={"th-" + col.column_id}
-					focused = {_this.props.focused}
+				var el = <HeaderCell {..._this.props}
+					key={"th-" + col.column_id}
 					scrollTop = {_this.props.scrollTop}
 					column = {col}
 					sorting = {sorting}
@@ -71,7 +70,7 @@ var TableHeader = React.createClass ({
 			}
 
 			{this.props.hasRowLabel ? null :
-			<span onContextMenu = {this.onContextMenu}
+			<span 
 				style = {{left: left + 'px', top: "-1px", bottom: "-1px", width: "35px", padding: 0}}
 				className = 'table-header-cell action-cell-topright'>
 				<span className = "table-cell-inner action-cell-inner" style = {{textAlign: 'center'}}>

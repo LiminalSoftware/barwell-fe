@@ -7,7 +7,6 @@ import styles from "./styles/wrappers.less"
 import modelActionCreators from "../../../actions/modelActionCreators"
 import constant from "../../../constants/MetasheetConstants"
 import ViewStore from "../../../stores/ViewStore"
-import FocusStore from "../../../stores/FocusStore"
 
 import storeFactory from 'flux-store-factory';
 import dispatcher from "../../../dispatcher/MetasheetDispatcher"
@@ -21,9 +20,9 @@ import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 const nav = window.navigator
 const userAgent = nav.userAgent
+
 const IS_CHROME = userAgent.indexOf("Chrome") > -1
 const HAS_3D = util.has3d()
-
 const OFFSET_TOLERANCE = 100
 const WINDOW_ROWS = 50
 const FETCH_DEBOUNCE = 500
@@ -156,12 +155,12 @@ var TabularBodyWrapper = React.createClass ({
 	},
 
 	render: function () {
+		console.log('render tabular-body-wrapper')
 		var view = this.props.view
 		var model = this.props.model
 		var store = this.props.store
 		var rowCount = store.getRecordCount()
 		var geo = view.data.geometry
-		var focused = this.props.focused
 
 		var rowOffset = this.props.rowOffset
 		var colOffset = this.props.hiddenColWidth
@@ -184,7 +183,7 @@ var TabularBodyWrapper = React.createClass ({
 			return null
 
 		return <div
-			className = {`tabular-body-wrapper force-layer ${this.props.focused?"":"gray-out"}`}
+			className = {`tabular-body-wrapper force-layer`}
 			ref="tbodyWrapper"
 			style = {{
 				left: 0,
@@ -209,7 +208,7 @@ var TabularBodyWrapper = React.createClass ({
 				ref = "lhsTableBody"
 				style = {{
 					top: geo.headerHeight + 'px',
-					borderRight: "1px solid " + constant.colors.RED_BRIGHT_TRANS,
+					borderRight: "3px solid " + constant.colors.RED_BRIGHT_TRANS,
 					// transform: 'translateZ(1px)',
 					overflow: 'hidden',
 				}}>
@@ -246,15 +245,13 @@ var TabularBodyWrapper = React.createClass ({
 			{/*END LHS TABLE BODY*/}
 
 			{/*LHS HEADER*/}
-			<TableHeader
+			<TableHeader {...this.props}
 				ref = "lhsHead"
 				totalWidth = {fixedWidth +  geo.labelWidth + 1}
 				leftOffset = {0}
 				side = {'lhs'}
 				hasRowLabel = {true}
-				columns = {view.data.fixedCols}
-				focused = {focused}
-				view = {view} />
+				columns = {view.data.fixedCols} />
 			{/*END LHS HEADER*/}
 			</div>
 			{/*LHS OUTER*/}
@@ -262,7 +259,7 @@ var TabularBodyWrapper = React.createClass ({
 
 
 			{/*RHS OUTER*/}
-			<div className = {"wrapper " + " rhs-h-scroll-outer--" + (focused ? "focused" : "blurred")}
+			<div className = "wrapper rhs-h-scroll-outer--focused"
 				ref = "rhsTableBody"
 				style = {{
 					top: 0,
@@ -276,7 +273,7 @@ var TabularBodyWrapper = React.createClass ({
 					ref = "rhsHorizontalOffsetter"
 					style = {{
 						marginLeft: (-1 * this.props.hiddenColWidth - 1) + 'px',
-						transition: 'margin-left 75ms'
+						transition: 'margin-left 75ms linear'
 						// use marginLeft instead of translate here because translate will clobber the other offset
 					}}>
 
@@ -322,14 +319,12 @@ var TabularBodyWrapper = React.createClass ({
 					</div>
 
 					</div>
-					<TableHeader
+					<TableHeader {...this.props}
 						ref = "rhsHead"
 						totalWidth = {floatWidth + 2}
 						leftOffset = {0}
 						side = "rhs"
-						columns = {view.data.floatCols}
-						focused = {focused}
-						view = {view} />
+						columns = {view.data.floatCols} />
 				</div>
 
 			</div>

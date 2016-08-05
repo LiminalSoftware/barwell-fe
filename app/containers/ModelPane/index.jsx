@@ -45,13 +45,13 @@ var ModelPane = React.createClass({
 	componentWillMount: function () {
 		ModelStore.addChangeListener(this._onChange)
 		ViewStore.addChangeListener(this._onChange)
-		FocusStore.addChangeListener(this._onChange);
+		FocusStore.addChangeListener(this._onChange)
 	},
 
 	componentWillUnmount: function () {
 		ModelStore.removeChangeListener(this._onChange)
 		ViewStore.removeChangeListener(this._onChange)
-		FocusStore.removeChangeListener(this._onChange);
+		FocusStore.removeChangeListener(this._onChange)
 	},
 
 	_onChange: function () {
@@ -67,40 +67,32 @@ var ModelPane = React.createClass({
 	},
 
 	render: function() {
-		var _this = this
-		var workspace_id = this.props.params.workspaceId
-		
-		var model = ModelStore.get(this.props.params.modelId);
-		var view = ViewStore.get(this.props.params.viewId)
-		var viewconfig = {}
+		const _this = this
+		const view = this.props.view
+		const model = ModelStore.get(view.model_id);
+		const viewconfig = {}
 
-		
-
-		const content = 
-			(view && view.model_id === model.model_id) ? 
-			React.createElement(viewTypes[view.type].mainElement, {
+		const content = React.createElement(viewTypes[view.type].mainElement, {
 				model: model,
 				view: view,
 				focused: ('v' + view.view_id === FocusStore.getFocus()),
 				viewconfig: viewconfig,
 				key: "view-pane-" + (view.cid || view.view_id)
-			}) : null;
+			})
 
-		const config = 
-			(view && view.model_id === model.model_id) ? 
-			React.createElement(viewTypes[view.type].configElement, {
+		const config = React.createElement(viewTypes[view.type].configElement, {
 				model: model,
 				view: view,
 				viewconfig: viewconfig,
 				key: "view-config-" + (view.cid || view.view_id)
-			}) : null;
+			})
 
 		return <div className="model-views">
 
 			<ReactCSSTransitionGroup
 				ref="pane"
 				key="model-panes"
-				className="model-panes"
+				className="model-pane"
 				{...constants.transitions.fadeinout}>
 
 				{content}

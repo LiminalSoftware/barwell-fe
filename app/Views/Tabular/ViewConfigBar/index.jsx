@@ -3,6 +3,7 @@ import update from 'react/lib/update';
 import SortConfig from "./SortConfig"
 import FilterConfig from "./FilterConfig"
 import ColumnConfig from "./ColumnConfig"
+import History from "./History"
 import FocusStore from "../../../stores/FocusStore"
 
 const viewConfigBarStyle = {
@@ -34,6 +35,10 @@ export default class ViewConfigBar extends Component {
 		const focus = FocusStore.getFocus()
 		
 		return <div style={viewConfigBarStyle}>
+			<History {...this.props} 
+				focus={focus} 
+				key="history" />
+
 			<SortConfig {...this.props} 
 				focus={focus} 
 				key="sort" 

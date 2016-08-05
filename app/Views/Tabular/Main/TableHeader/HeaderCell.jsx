@@ -4,11 +4,8 @@ import $ from "jquery"
 
 import constant from "../../../../constants/MetasheetConstants"
 import fieldTypes from "../../../fields"
-import FocusStore from "../../../../stores/FocusStore"
 
 import modelActionCreators from "../../../../actions/modelActionCreators"
-
-import AttributeContext from "./AttributeContext"
 
 const COLUMN_MIN_WIDTH = 50
 
@@ -31,26 +28,12 @@ export default class HeaderCell extends Component {
 	 * 
 	 */
 
-	componentWillUpdate = (newProps, newState) => {
-
-		if (!this.state.open && newState.open) {
-			FocusStore.addChangeListener(this._onChange)
-		} else if (this.state.open && !newState.open) {
-			FocusStore.removeChangeListener(this._onChange)
-		}
-	}
-
 	/*
 	 * add global mousemove and mouseup listeners when the drag begins and 
 	 * clean them up when it ends
 	 */
 
 	componentDidUpdate = (newProps, newState) => {
-		const focus = FocusStore.getFocus()
-		const column = this.props.column
-
-		if (focus !== column.column_id && this.state.open) this.setState({open: false})
-
 		if (this.state.dragging && !newState.dragging) {
 			addEventListener('mousemove', this.onMouseMove)
 			addEventListener('mouseup', this.onMouseUp)
@@ -66,17 +49,16 @@ export default class HeaderCell extends Component {
 
 	renderIcons = () => {
 		const type = fieldTypes[this.props.column.type];
-		const blurFocus = this.props.focused ? "focused" : "blurred"
 		const sortDir = this.props.sortDirection ? 'desc' : 'asc'
 
 		if (this.state.mouseover && !this.state.open) 
-			return <span onClick = {this.handleContextMenu} 
-			className={`sort-th-label-${blurFocus} icon icon-cog`}/>
+			return <span onClick = {this.props._handleContextMenu} 
+			className={`sort-th-label-focused icon icon-cog`}/>
 
 		else if (this.props.sorting && !this.state.open)
 			return <span onClick={this.switch}
-			className={`sort-th-label-${blurFocus} ` + 
-			`icon icon-${type.sortIcon}${sortDir}`}/>
+			className={`sort-th-label-focused 
+			icon icon-${type.sortIcon}${sortDir}`}/>
 	}
 
 	/*
@@ -94,11 +76,6 @@ export default class HeaderCell extends Component {
 	 * 
 	 */
 
-	renderContextMenu = () => {
-		if (this.state.open) 
-			return <AttributeContext {...this.props}
-        		handleBlur = {this.handleBlur}/>
-	}
 
 	/*
 	 * 
@@ -123,12 +100,6 @@ export default class HeaderCell extends Component {
 	 * 
 	 */
 
-	isFocused = () => {
-		const view = this.props.view
-		const column = this.props.column
-		const focus = FocusStore.getFocus()
-		return (focus === column.column_id || focus === 'v' + view.view_id)
-	}
 
 	/*
 	 * 
@@ -144,20 +115,18 @@ export default class HeaderCell extends Component {
 			borderBottom: this.state.open ? "1px solid white" : null,
 			margin: this.state.open ? "-1px" : null
 		}
-		const blurFocus = this.props.focused ? "focused" : "blurred"	
 
 		return <span style = {this.getCellStyle()}
-			onContextMenu = {this.handleContextMenu}
+			onContextMenu = {this.props._handleContextMenu}
 			onMouseEnter = {e => this.setState({mouseover: true})}
 			onMouseLeave = {e => this.setState({mouseover: false})}
-			className = {`table-header-cell ${this.isFocused() ? '' : " gray-out "}`}>
+			className = "table-header-cell">
 			<span className = "table-cell-inner header-cell-inner " 
 			style = {innerStyle}>
-				<span className = {`type-th-label-${blurFocus} icon icon-${type.icon}`}/>
+				<span className = {`type-th-label-focused icon icon-${type.icon}`}/>
 				{col.name}
 				{this.renderIcons()}
 			</span>
-			{this.renderContextMenu()}
 	        {this.renderResizer()}
 		</span>
 	}
@@ -228,18 +197,7 @@ export default class HeaderCell extends Component {
 	   e.preventDefault()
 	}
 
-	
 
-	/*
-	 * 
-	 */
-
-
-	handleContextMenu = (e) => {
-	  	modelActionCreators.setFocus(this.props.column.column_id)
-	  	this.setState({open: true})
-	  	// e.preventDefault()
-	}
 
 	/*
 	 * 

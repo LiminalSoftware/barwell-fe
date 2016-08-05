@@ -32,6 +32,8 @@ var ColorChoice = React.createClass({
 
   partName: 'ColorChoice',
 
+  partLabel: 'Background color',
+
   conditionProperty: 'colorConditionAttr',
 
   mixins: [
@@ -203,8 +205,9 @@ var ColorChoice = React.createClass({
     ]
   },
 
-  getIcon: function () {
-    return " icon icon-bucket " + (this.state.active && !this.state.context ? " active " : "");
+  getIcon: function (config) {
+    const active = config.colorAttr || config.color
+    return `icon icon-bucket ${active?"active":""}`;
   },
 
   isActive: function () {

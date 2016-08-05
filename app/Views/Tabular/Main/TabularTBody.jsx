@@ -48,7 +48,6 @@ var TabularTBody = React.createClass ({
 
 	shouldComponentUpdate: function (nextProps, nextState) {
 		if (nextProps.view !== this.props.view) return true;
-		if (nextProps.focused !== this.props.focused) return true;
 		return this.isUnpainted(nextState)
 	},
 
@@ -151,7 +150,6 @@ var TabularTBody = React.createClass ({
 		return <TabularTR
 			view = {this.props.view}
 			model = {this.props.model}
-			focused = {this.props.focused}
 			hasRowLabel = {this.props.hasRowLabel}
 			selected = {(obj.cid || obj[pk]) in selectedRecords}
 			columns = {this.props.columns}
@@ -186,7 +184,7 @@ var TabularTBody = React.createClass ({
 		style.transform = "translate3d(0, " + (-1 * this.state.rowOffset * geo.rowHeight ) + "px, 0)"
 
 		return <div
-			className = {"tabular-body-" + this.props.prefix + " tabular-body force-layer " + (this.props.focused ? ' focused ' : ' gray-out ')}
+			className = {`tabular-body-${this.props.prefix} tabular-body force-layer`}
 			
 			onMouseDown = {this.props._handleClick}
 			onDoubleClick = {this.props._handleEdit}

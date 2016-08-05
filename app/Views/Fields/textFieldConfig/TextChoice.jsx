@@ -17,6 +17,8 @@ var TextChoice = React.createClass({
 
   partName: 'TextChoice',
 
+  partLabel: 'Font style',
+
   conditionProperty: 'textConditionAttr',
 
   mixins: [
@@ -107,8 +109,8 @@ var TextChoice = React.createClass({
     return this.state.style !== 'none';
   },
 
-  getIcon: function () {
-    return " icon " + (this.state.style === 'none' ? " icon-text-format " : ('icon-' + this.state.style))
+  getIcon: function (config) {
+    return " icon " + (config.style === 'none' ? " icon-text-format " : ('icon-' + config.style))
   },
 
 })

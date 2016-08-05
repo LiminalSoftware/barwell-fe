@@ -24,9 +24,9 @@ module.exports = {
     },
     slideleft: {
       transitionEnterTimeout: 300,
-      transitionAppearTimeout: 300,
+      // transitionAppearTimeout: 300,
       transitionLeaveTimeout: 300,
-      transitionAppear: true,
+      // transitionAppear: true,
       transitionName: "slideleft" 
     },
     fadeinout: {

@@ -51,20 +51,29 @@ var TableMixin = {
 	},
 
 	showContext: function (e) {
+		
 		var offset = $(this.refs.wrapper).offset()
 		var y = e.pageY - offset.top
 		var x = e.pageX - offset.left
 		var rc = this.getRCCoords(e)
-
 		var sel = this.state.selection
 
-		if (rc.left < sel.left || 
+		console.log('show context: ' + JSON.stringify(rc))
+
+		if (rc.top < 0 || rc.left < 0) {
+			console.log('show attributeContext')
+			this.setState({contextPos: {}, contextRc: rc})
+		} else if (rc.left < sel.left ||
 		rc.left > sel.right || 
 		rc.top < sel.top || 
-		rc.top > sel.bottom)
+		rc.top > sel.bottom) {
+			this.setState({contextPos: {x: x, y: y}, contextRc: rc})
 			this.updateSelect(rc, false)
+		} else {
+			this.setState({contextPos: {x: x, y: y}, contextRc: rc})
+		}
 
-		this.setState({contextPos: {x: x, y: y}, contextRc: rc})
+		
 		e.preventDefault();
 	},
 
@@ -219,7 +228,7 @@ var TableMixin = {
         }
 
 		if (!this.isFocused()) this.getFocus()
-		this.updateSelect(this.getRCCoords(e), e.shiftKey)
+		this.updateSelect(this.getBoundedRCCoords(e), e.shiftKey)
 		
 		addEventListener('selectstart', util.returnFalse)
 		addEventListener('mousemove', this.onSelectMouseMove)
@@ -227,7 +236,7 @@ var TableMixin = {
 	},
 
 	onSelectMouseMove: function (e) {
-		this.updateSelect(this.getRCCoords(e), true);
+		this.updateSelect(this.getBoundedRCCoords(e), true);
 	},
 
 	onMouseUp: function (e) {

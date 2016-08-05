@@ -1,0 +1,190 @@
+import React from "react"
+import update from 'react/lib/update'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+
+import constants from "../../../../constants/MetasheetConstants"
+import modelActionCreators from "../../../../actions/modelActionCreators"
+import constant from "../../../../constants/MetasheetConstants"
+import fieldTypes from "../../../fields"
+
+
+import util from "../../../../util/util"
+
+var ColumnConfigContext = React.createClass ({
+
+	getInitialState: function () {
+		return {
+			mode: null
+		}
+	},
+
+	sort: function (desc) {
+		
+		const spec = [{
+			attribute_id: this.props.config.attribute_id, 
+			descending: !!desc
+		}]
+		const view = this.props.view
+		const updated = update(view, {
+			data: {
+				sorting: {$set: spec}
+			}
+		})
+		modelActionCreators.create("view", true, updated)
+	},
+
+	hideColumn: function () {
+		const view = this.props.view
+		const updated = update(view, {
+			data : {
+				columns: {
+					[this.props.config.column_id]: {
+						$set: {
+							visible: false
+						}
+					}
+				}
+			}
+		})
+		modelActionCreators.create("view", true, updated)
+	},
+
+	showHidden: function (e) {
+		this.setState({mode: 'unhide'})
+	},
+
+	configFormat: function (part, e) {
+
+	},
+
+	handleCancelMode: function (e) {
+		this.setState({mode: null})
+	},
+
+	renderUnhideMenu: function () {
+		const _this = this
+		const view = this.props.view
+		return <div className="context-menu">
+			<div className="popdown-item title bottom-divider">
+				<span>Show hidden columns</span>
+			</div>
+
+			{view.data.columnList
+			.filter(col => !col.visible)
+			.map(column =>
+			<div className="popdown-item">
+				<input type="checkbox" checked = {false} />
+				{column.name}
+			</div>)}
+
+			<div className="popdown-item">
+				<span style={{float: "left"}}>
+					<span className="icon icon-check"/>Save
+				</span>
+				<span style={{float: "right"}} onClick={this.handleCancelMode}>
+					<span className="icon icon-arrow-left"/>Cancel
+				</span>
+			</div>
+		</div>
+	},
+
+	renderMainMenu: function () {
+		const view = this.props.view
+		const config = this.props.config
+		const type = fieldTypes[config.type]
+
+		const _this = this
+		const innerStyle = {
+			top: 0, left: 0,
+			width: "350px"
+		}
+
+		return <div className="context-menu slide-invert" style={innerStyle} key="main-menu">
+			<div className="popdown-item title">
+				Change view settings
+			</div>
+			<div onClick={this.hideColumn} className = "popdown-item selectable">
+				<span className="icon icon-eye-crossed"/>
+				Hide this column from view
+			</div>
+			<div onClick={this.showHidden} className = "popdown-item selectable bottom-divider">
+				<span className="icon icon-eye"/>
+				Show hidden columns
+			</div>
+
+			<div onClick={this.sort.bind(_this, false)} className = "popdown-item selectable">
+				<span className="icon icon-sort-amount-asc"/>
+				Sort in ascending order
+			</div>
+			<div onClick={this.sort.bind(_this, true)} className = "popdown-item selectable bottom-divider">
+				<span className="icon icon-sort-amount-desc"/>
+				Sort in descending order
+			</div>
+
+			{/*==============================================================*/}
+
+			{type.configParts.map((part, idx)=> 
+			<div className = {`popdown-item selectable 
+				${idx + 1 === type.configParts.length ? "bottom-divider" : ""}`}
+				key={part.prototype.partLabel}
+				onClick={this.configFormat.bind(_this, part)}>
+
+				<span className={part.prototype.getIcon(config)}/>
+				{part.prototype.partLabel}
+			</div>
+			)}
+
+			{/*==============================================================*/}
+
+			<div className="popdown-item title">
+				Change attribute details
+			</div>
+
+			<div onClick={this.rename} className = "popdown-item selectable">
+				<span className="icon icon-quote-open"/>
+				Rename
+			</div>
+
+			<div onClick={this.changeType} className = "popdown-item selectable">
+				<span className="icon icon-wrench"/>
+				Change attribute type
+			</div>
+			<div onClick={this.makeUniq} className = "popdown-item selectable">
+				<span className="icon icon-snow2"/>
+				Make this attribute unique
+			</div>
+			<div onClick={this.setDefault} className = "popdown-item selectable">
+				<span className="icon icon-stamp"/>
+				Set default value for this attribute
+			</div>
+		</div>
+	},
+
+	render: function () {
+		const view = this.props.view
+		const style = Object.assign({}, 
+			this.props._getRangeStyle(this.props.rc), {
+				height: "0",
+				marginLeft: "-1px",
+				top: view.data.geometry.headerHeight + 'px',
+				position: "fixed",
+				minWidth: "350px",
+				overflow: "visible",
+				zIndex: 12,
+				transform: "translateZ(12px)",
+				pointerEvents: "auto"
+		})
+
+		return <ReactCSSTransitionGroup
+			{...constants.transitions.slideleft} 
+			style={style} onClick={util.clickTrap}>
+			{this.state.mode === 'unhide' ? 
+				this.renderUnhideMenu() 
+				: this.renderMainMenu()
+			}
+		</ReactCSSTransitionGroup>
+	}
+
+})
+
+export default ColumnConfigContext

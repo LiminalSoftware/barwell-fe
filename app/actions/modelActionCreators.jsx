@@ -496,7 +496,6 @@ var modelActions = {
 				notification_key: 'workspaceLoad'
 			})
 		}).catch(function (error) {
-			console.log(error)
 			modelActions.createNotification({
 				narrative: 'A critical error has occured on the server.  Unfortunately this is not recoverable. Details: ' + JSON.stringify(error), 
 				type: 'error-item',

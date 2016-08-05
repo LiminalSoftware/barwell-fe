@@ -11,6 +11,8 @@ import util from "../../../util/util"
 var AlignChoice = React.createClass({
 
   partName: 'AlignChoice',
+
+  partLabel: 'Text alignment',
   
   mixins: [blurOnClickMixin, popdownClickmodMixin, configCommitMixin],
 
@@ -62,8 +64,8 @@ var AlignChoice = React.createClass({
       </div>
   },
 
-  getIcon: function () {
-    return " icon icon-text-align-" + this.props.config.align + " ";
+  getIcon: function (config) {
+    return `icon icon-text-align-${config.align}`;
   },
 
 })

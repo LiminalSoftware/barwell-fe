@@ -1,0 +1,70 @@
+@import "../../../../styles/colors.less";
+
+
+.height-transition {
+  .transition(all cubic-bezier(.1,.85,.5,1) 150ms);
+}
+
+.note-item {
+  display: flex;
+  font-size: 12px;
+  line-height: 12px;
+  border-bottom: 1px dotted @gray2;
+  &:last-child {
+  	border-bottom: none; 	
+  }
+  p {
+  	padding: 0;
+  	margin: 6px;
+  }
+}
+
+.note-error-item {
+  color: @red-bright;
+}
+
+.warning-item {
+  color: orange;
+}
+
+.note-success-item {
+  color: @newgreen1;
+}
+
+.note-pending-item {
+  color: @gray2;
+}
+
+.note-info, .note-loading {
+  color: @purple4;
+}
+
+.note-short-left-column {
+  padding: 0 10px;
+  text-align: center;
+  line-height: 25px;
+}
+
+.note-left-column {
+	padding: 0 10px;
+	text-align: center;
+	line-height: 50px;
+}
+
+.note-middle-column {
+	flex-grow: 2;
+	text-align: left;
+}
+
+.note-short-right-column {
+  flex: 1;
+  flex-grow: 0;
+  text-align: center;
+}
+
+.note-right-column {
+  padding-right: 5px;
+	flex: 1;
+	flex-grow: 0;
+	text-align: center;
+}

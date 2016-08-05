@@ -78,10 +78,7 @@ const TabularPane = React.createClass ({
 		copyPasteDummy.addEventListener('paste', this.pasteSelection);
 
 		this.store = createTabularStore(this.props.view);
-		this.store.addChangeListener(this._onChange);
-
-		this._throttleSetVerticalScrollOffset = _.throttle(this.setVerticalScrollOffset, 15);
-
+		// this.store.addChangeListener(this._onChange);
 	},
 
 	componentWillUnmount: function () {
@@ -92,7 +89,7 @@ const TabularPane = React.createClass ({
 		
 		if (this._timer) cancelFrame(this._timer)
 
-		this.store.removeChangeListener(this._onChange);
+		// this.store.removeChangeListener(this._onChange);
 		this.store.unregister();
 	},
 
@@ -132,7 +129,7 @@ const TabularPane = React.createClass ({
 	},
 
 	_onChange: function () {
-
+		console.log('main onChange')
 		if (!this.props.focused) this.blurPointer()
 		this.forceUpdate()
 		if (this.refs.tableWrapper) this.refs.tableWrapper.forceUpdate()
@@ -171,6 +168,16 @@ const TabularPane = React.createClass ({
 		}
 	},
 
+	getBoundedRCCoords: function (e) {
+		var visibleCols = this.props.view.data.visibleCols
+		var rc = this.getRCCoords(e)
+		rc.left = Math.min(visibleCols.length - 1, rc.left)
+		rc.left = Math.max(0, rc.left)
+		rc.top = Math.max(0, rc.top)
+		rc.top = Math.min(rc.top, this.store.getRecordCount() - 1)
+		return rc
+	},
+
 	getRCCoords: function (e) {
 		var lhs = ReactDOM.findDOMNode(this.refs.tableWrapper.refs.lhs)
 		var view = this.props.view
@@ -192,10 +199,6 @@ const TabularPane = React.createClass ({
 			if (xx > 0) c++
 			else return true
 		})
-		c = Math.min(visibleCols.length - 1, c)
-		c = Math.max(0, c)
-		r = Math.max(0, r)
-		r = Math.min(r, this.store.getRecordCount() - 1)
 
 		return {top: r, left: c}
 	},
@@ -306,33 +309,15 @@ const TabularPane = React.createClass ({
 	},
 
 	getSelectionObjects: function (usePrettyNames) {
-		var sel = this.state.selection;
+		
 		var json = [];
 		var view = this.props.view;
-
 		var model = this.props.model
-		var view = this.props.view
-		var viewconfig = ViewConfigStore.get(view.view_id);
-		var sel = _.clone(this.state.selection)
-		var ptr = _.clone(this.state.pointer)
+		
+		var sel = this.state.selection
 		var pk = model._pk
-		var selectors = []
-		var numRows = this.getNumberRows()
-		var numRowsDeleted 
-		var records
 
-		var records = this.getSelectionObjects()
-		
-		if (viewconfig.selectedRecords)
-			records = Object.keys(viewconfig.selectedRecords)
-				.map(function(k){return {[model._pk]: k};});
-		
-		else
-			records = Array(sel.bottom - sel.top)
-				.map((e, i) => this.getValueAt(i))
-				.map(function(r){return {[model._pk]: r[model._pk]};});
-
-
+		var records = this.store.getSelectionObjects()
 
 		for (var r = sel.top; r <= sel.bottom; r++) {
 			var obj = this.store.getObject(r);
@@ -672,10 +657,8 @@ const TabularPane = React.createClass ({
 			_getRangeStyle: this.getRangeStyle,
 			_handleDrop: this.handleDrop,
 			_handleDragOver: this.handleDragOver,
+			_selectRow: this.selectRow,
 			// _handleStartDrag: this.handleStartDrag,
-
-			_setVericalScrollOffset: this._throttleSetVerticalScrollOffset,
-			_setHorizontalScrollOffset: this._throttleSetHorizontalScrollOffset,
 
 			_setScrollOffset: this.setHorizontalScrollOffset,
 
@@ -734,9 +717,10 @@ const TabularPane = React.createClass ({
 				_setScrollOffset = {this.setHorizontalScrollOffset}/>
 
 			{this.state.contextPos ? 
-				<ContextMenu {...childProps} 
-					position={this.state.contextPos}/> 
-				: null}
+			<ContextMenu {...childProps}
+				rc={this.state.contextRc}
+				position={this.state.contextPos}/> 
+			: null}
 
 		</div>
 	}

@@ -14,10 +14,14 @@ module.exports = (
 	<Router history={hashHistory}>
 		<Route path="/">
 				<Route path="workspace/:workspaceId" component = {Application}>
+				
+					<Route path="view/:viewId" component = {Application}></Route>
+
 					<Route path="model/:modelId" component = {Application}>
 						<Route path="view/:viewId" component = {Application}></Route>
 						<IndexRoute component = {ModelPane}></IndexRoute>
 					</Route>
+					
 					<IndexRoute component = {ModelPane}></IndexRoute>
 				</Route>
 				<IndexRoute name="workspaceBrowser" component = {WorkspaceBrowser}></IndexRoute>

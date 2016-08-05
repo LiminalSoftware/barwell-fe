@@ -216,7 +216,8 @@ var Cursors = React.createClass ({
 			<Overlay
 				{...this.props}
 				className = {"selection-border selection-border--" + (focused ? "focused" : "blurred")}
-				ref = "selectionBorder"
+				key="selectionBorder"
+				ref="selectionBorder"
 				position = {sel}
 				fudge = {{left: -2.25, top: -0.25, height: 2.5, width: 3.5}}>
 				<div className = {"selection-drag-box selection-drag-box--" + (focused ? "focused" : "blurred")} />
@@ -225,7 +226,8 @@ var Cursors = React.createClass ({
 			<Overlay
 				{...this.props}
 				className = {"selection-outer" + (singleton ? '-singleton' : '')}
-				ref = "selectionOuter"
+				ref="selectionOuter"
+				key="selectionOuter"
 				position = {sel}
 				fudge = {{left: -3.75, top: -2.75, height: 7.5, width: 6.75}}>
 			</Overlay>,
@@ -235,6 +237,7 @@ var Cursors = React.createClass ({
 				columns = {view.data.visibleCols}
 				className = {" copyarea running marching-ants " + (focused ? " focused" : "")}
 				ref = "copyarea"
+				key="copyare"
 				position = {cpy}
 				fudge = {{left: -1.25, top: 0, height: 1, width: 1.25}}/>,
 
@@ -242,6 +245,7 @@ var Cursors = React.createClass ({
 				{...this.props}
 				className = " jagged-edge "
 				ref = "jaggedEdge"
+				key="jaggedEdge"
 				showHiddenHack = {true}
 				position = {{
 					left: view.data.fixedCols.length,
@@ -249,7 +253,7 @@ var Cursors = React.createClass ({
 					top: sel.top,
 					bottom: sel.bottom
 				}}
-				fudge = {{left: -6, width: 10 }} />
+				fudge = {{left: -6, width: 10, top: 1, height: -4}} />
 			: null
 		]
 	},

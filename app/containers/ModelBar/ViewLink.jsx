@@ -1,6 +1,7 @@
 // LIBS AND SUCH
 import React from "react"
-import { Link } from "react-router"
+import { Link, browserHistory } from "react-router"
+
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 // STORES
@@ -82,12 +83,31 @@ const ViewLink = React.createClass ({
 		this.setState({mouseover: false})
 	},
 
+	handleClick: function (e) {
+		e.preventDefault()
+		if (e.shiftKey && !this.isActive()) {
+			const newViewIds = this.props.params.viewId 
+				+ "," + this.props.view.view_id
+			this.props.history.push(`${this.getRootPath()}/view/${newViewIds}`)
+		} else {
+			this.props.history.push(`${this.getRootPath()}/view/${this.props.view.view_id}`)
+		}
+	},
+
+	getRootPath: function () {
+		return `/workspace/${this.props.params.workspaceId}`
+	},
+
+	isActive: function () {
+		const viewIds = this.props.params.viewId.split(',').map(id=>parseInt(id))
+		return viewIds.indexOf(this.props.view.view_id) >= 0
+	},
+
 	// RENDER =================================================================
 
 	render: function () {
-		const modelPath = this.props.modelPath
 		const view = this.props.view
-		const active = parseInt(this.props.params.viewId) === view.view_id
+		const active = this.isActive()
 
 		const viewDisplay = this.state.editing ?
 			<input 
@@ -104,15 +124,13 @@ const ViewLink = React.createClass ({
 				{this.state.name}
 			</span>
 
-		return <Link to = {`${modelPath}/view/${view.view_id}`}
+		return <Link to = {`${this.getRootPath()}/view/${view.view_id}`}
+			onClick={this.handleClick}
 			onContextMenu = {this.handleShowContext}
 			className = {`mdlbar-link ${active ? 'mdlbar-link--active' : ''}`}>
 
 			
 			{viewDisplay}
-
-			
-
 			
 			<ReactCSSTransitionGroup {...constants.transitions.inandout}
 				component = "div"
