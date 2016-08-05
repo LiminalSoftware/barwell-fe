@@ -690,15 +690,18 @@ const TabularPane = React.createClass ({
 		 */
 		
 		return <div ref="wrapper"
+			style={{overflow: "visible"}}
 			className = {`wrapper table-top-wrapper`}
 			beforePaste = {this.beforePaste}>
 
-			<TabularBodyWrapper {...childProps}
-				designMode = {true}
-				ref = "tableWrapper"/>
-			
-			<Cursors {...childProps}
-				ref = "cursors"/>
+			<div className="table-clip-wrapper wrapper">
+				<TabularBodyWrapper {...childProps}
+					designMode = {true}
+					ref = "tableWrapper"/>
+				
+				<Cursors {...childProps}
+					ref = "cursors"/>
+			</div>
 
 			<ScrollBar {...childProps}
 				innerDimension = {(rowCount + 4) * geo.rowHeight + geo.headerHeight}	

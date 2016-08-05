@@ -34,7 +34,7 @@ var TableBodyContext = React.createClass ({
 
 	render: function () {
 		const style = {
-			position: "fixed",
+			position: "absolute",
 			left: this.props.position.x,
 			top: this.props.position.y,
 		}

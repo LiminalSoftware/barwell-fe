@@ -123,7 +123,7 @@ var ColumnConfigContext = React.createClass ({
 
 			{/*==============================================================*/}
 
-			{type.configParts.map((part, idx)=> 
+			{(type.configParts || []).map((part, idx)=> 
 			<div className = {`popdown-item selectable 
 				${idx + 1 === type.configParts.length ? "bottom-divider" : ""}`}
 				key={part.prototype.partLabel}
@@ -167,7 +167,7 @@ var ColumnConfigContext = React.createClass ({
 				height: "0",
 				marginLeft: "-1px",
 				top: view.data.geometry.headerHeight + 'px',
-				position: "fixed",
+				position: "absolute",
 				minWidth: "350px",
 				overflow: "visible",
 				zIndex: 12,

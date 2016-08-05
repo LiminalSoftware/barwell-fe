@@ -58,10 +58,9 @@ var TableMixin = {
 		var rc = this.getRCCoords(e)
 		var sel = this.state.selection
 
-		console.log('show context: ' + JSON.stringify(rc))
+		// console.log('show context: ' + JSON.stringify(rc))
 
 		if (rc.top < 0 || rc.left < 0) {
-			console.log('show attributeContext')
 			this.setState({contextPos: {}, contextRc: rc})
 		} else if (rc.left < sel.left ||
 		rc.left > sel.right || 
