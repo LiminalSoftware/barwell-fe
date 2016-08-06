@@ -42,7 +42,6 @@ var Cursors = React.createClass ({
 		var col = view.data.visibleCols[ptr.left];
 		var obj = store.getObject(ptr.top);
 		var element = col ? (fieldTypes[col.type]).element : null;
-		var selector = {};
 		
 		if (!obj) return;
 
@@ -72,6 +71,9 @@ var Cursors = React.createClass ({
 			rowHeight: geo.rowHeight,
 
 			_handleBlur: this.props._handleBlur,
+			_handleClick: this.props._handleClick,
+			_handleWheel: this.props._handleWheel,
+
 			commit: commit,
 			
 			className: 'table-cell',

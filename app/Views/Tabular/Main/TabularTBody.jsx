@@ -46,43 +46,14 @@ var TabularTBody = React.createClass ({
 		}
 	},
 
-	shouldComponentUpdate: function (nextProps, nextState) {
-		if (nextProps.view !== this.props.view) return true;
-		return this.isUnpainted(nextState)
-	},
-
-	_onChange: function () {
-		this.forceUpdate()
-	},
-
-	componentWillMount: function () {
-		this.props.store.addChangeListener(this._onChange)
-	},
-
-	componentDidMount: function () {
-		this._lastUpdate = new Date().getTime()
-	},
-
-	componentWillUnmount: function () {
-		this.props.store.removeChangeListener(this._onChange)
-	},
-
-
 	// UTILITY ================================================================
 
-	updateOffset: function (target, scrollDirection) {
-		var store = this.props.store
+	getInterimTarget: function (target) {
 		var fetchStart = this.props.fetchStart
 		var fetchEnd = this.props.fetchEnd
-
-		var buffer = 0 - BACKWARD_BUFFER  + (BUFFER_SIZE * scrollDirection)
-		var adjTarget = util.limit(fetchStart, fetchEnd - 1, target + buffer)
-
-		// if (this.props.prefix === 'rhs' ) window.msAdjTarget = adjTarget
-
+		var adjTarget = util.limit(fetchStart, fetchEnd - 1, target - BUFFER_SIZE)
 		var start = this.state.start
 		var end = this.state.end
-		var visibleRows = (end - start)
 		var lag = Math.abs(target - start)
 		var skip = (lag >= FAST_THRESHOLD || !this.state.scrolling) ? 
 			(lag >= FASTER_THRESHOLD ? FASTER_SKIP : FAST_SKIP) : SLOW_SKIP
@@ -104,25 +75,30 @@ var TabularTBody = React.createClass ({
 				end += util.magLimit(skip, endTarget - end);
 		}
 
-		this.setState({
+		return {
 			start: start,
-			target: adjTarget,
+			target: target,
 			end: end
-		});
-		
-		return (start !== startTarget || end !== endTarget) 
+		}
+	},
+
+	updateOffset: function (target, scrollDirection) {
+		const tgt = this.getInterimTarget(target)
+
+		this.setState(tgt);
+		return (this.state.start !== tgt.start || this.state.end !== tgt.end)
+	},
+
+	isUnpainted: function () {
+		const tgt = this.getInterimTarget(this.state.target)
+
+		return (this.state.start !== tgt.start || this.state.end !== tgt.end)
 	},
 
 	formatRowKey: function (obj) {
 		var model = this.props.model;
 		var pk = model._pk;
 		return this.props.prefix + '-tr-' + (obj.cid || obj[pk]);
-	},
-
-	isUnpainted: function () {
-		var startTarget = Math.max(this.state.target, this.props.fetchStart)
-		var endTarget = Math.min(this.state.target + VISIBLE_ROWS, this.props.fetchEnd)
-		return Math.abs(this.state.start - startTarget) + Math.abs(this.state.end  - endTarget) > 0;
 	},
 
 	getNumberCols: function () {

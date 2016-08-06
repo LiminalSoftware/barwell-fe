@@ -102,18 +102,16 @@ const TabularPane = React.createClass ({
 		// this.scrollTo(viewconfig.rowOffset || 0);
 	},
 
-	componentWillReceiveProps: function (nextProps) {
-		const cursors = ReactDOM.findDOMNode(this.refs.cursors)
-		const wrapper = ReactDOM.findDOMNode(this.refs.tableWrapper)
+	// componentWillReceiveProps: function (nextProps) {
+	// 	const cursors = ReactDOM.findDOMNode(this.refs.cursors)
+	// 	const wrapper = ReactDOM.findDOMNode(this.refs.tableWrapper)
 
-		if (!nextProps.focused && this.props.focused) {
-			cursors.classList.add('gray-out')
-			wrapper.classList.add('gray-out')
-		} else if (nextProps.focused && !this.props.focused) {
-			cursors.classList.remove('gray-out')
-			wrapper.classList.remove('gray-out')
-		}
-	},
+	// 	if (!nextProps.focused && this.props.focused) {
+	// 		cursors.style.opacity = "0"
+	// 	} else if (nextProps.focused && !this.props.focused) {
+	// 		cursors.style.opacity = "1"
+	// 	}
+	// },
 
 	shouldComponentUpdate: function (nextProps, nextState) {
 		var props = this.props
@@ -122,6 +120,7 @@ const TabularPane = React.createClass ({
 		return props.view !== nextProps.view ||
 			!_.isEqual(state.selection, nextState.selection) ||
 			!_.isEqual(state.pointer, nextState.pointer) ||
+			this.props.focused !== nextProps.focused ||
 			this.state.contextPos !== nextState.contextPos || 
 			state.copyarea !== nextState.copyarea ||
 			state.contextOpen !== nextState.contextOpen ||
@@ -129,11 +128,11 @@ const TabularPane = React.createClass ({
 	},
 
 	_onChange: function () {
-		console.log('main onChange')
+		
 		if (!this.props.focused) this.blurPointer()
 		this.forceUpdate()
 		if (this.refs.tableWrapper) this.refs.tableWrapper.forceUpdate()
-		this.refs.cursors.forceUpdate()
+		if (this.refs.cursors) this.refs.cursors.forceUpdate()
 	},
 
 	getTotalWidth: function () {
@@ -547,7 +546,8 @@ const TabularPane = React.createClass ({
 		var hiddenColWidth = 0;
 		var columnOffset = 0;
 		var rhsHorizontalOffsetter = this.refs.tableWrapper.refs.rhsHorizontalOffsetter;
-		var pointer = this.refs.cursors.refs.pointer
+		// var pointer = this.refs.cursors ? this.refs.cursors.refs.pointer : null
+
 
 		floatCols.some(function (col) {
 			if (hOffset > col.width + hiddenColWidth) {
@@ -566,12 +566,12 @@ const TabularPane = React.createClass ({
 		
 		if (hiddenColWidth !== this.state.hiddenColWidth) {
 			if (this.pointerTimer) clearTimeout(this.pointerTimer)
-			const pointer = ReactDOM.findDOMNode(pointer)
+			// const pointer = ReactDOM.findDOMNode(pointer)
 			// if (pointer) pointer.classList.add('pointer-transitioned')
 			ReactDOM.findDOMNode(rhsHorizontalOffsetter).style.marginLeft = 
 				(-1 * hiddenColWidth - 1) + 'px';
 			this.pointerTimer = setTimeout(function () {
-				const pointer = ReactDOM.findDOMNode(pointer)
+				// const pointer = ReactDOM.findDOMNode(pointer)
 				// if (pointer) pointer.classList.remove('pointer-transitioned')
 				_this.pointerTimer = null
 			}, 100);
@@ -596,13 +596,18 @@ const TabularPane = React.createClass ({
 		var view = this.props.view;
 		var geo = view.data.geometry;
 		
-		var lhsOffsetter = this.refs.tableWrapper.refs.lhsOffsetter;
-		var rhsOffsetter = this.refs.tableWrapper.refs.rhsOffsetter;
-		var overlay = this.refs.cursors.refs.overlayInner;
+		var lhsOffsetter = ReactDOM.findDOMNode(this.refs.tableWrapper.refs.lhsOffsetter)
+		var rhsOffsetter = ReactDOM.findDOMNode(this.refs.tableWrapper.refs.rhsOffsetter)
+		var overlay = this.refs.cursors ? 
+			ReactDOM.findDOMNode(this.refs.cursors.refs.overlayInner)
+			: null
 
-		ReactDOM.findDOMNode(lhsOffsetter).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 1px)"
-		ReactDOM.findDOMNode(rhsOffsetter).style.transform = "translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 1px)"
-		ReactDOM.findDOMNode(overlay).style.transform = "translate3d(0, " + ( -1 * rowOffset * geo.rowHeight + 2 ) + "px, 20px)"
+		lhsOffsetter.style.transform = 
+			"translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 1px)"
+		rhsOffsetter.style.transform = 
+			"translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 1px)"
+		if (overlay) overlay.style.transform = 
+			"translate3d(0, " + ( -1 * rowOffset * geo.rowHeight + 2 ) + "px, 20px)"
 	},
 
 	refreshTable: function () {
@@ -615,9 +620,9 @@ const TabularPane = React.createClass ({
 		var isUnpainted = body.updateOffset(this.state.rowOffset, direction) || alt.isUnpainted()
 
 		this.updateVerticalOffset();
-		this._lastUpdate = now;
+		
 
-		if (isUnpainted || this.state.isUnpainted) 
+		if (isUnpainted)
 			this._timer = getFrame(this.refreshTable, CYCLE)
 		else 
 			this._timer = null
@@ -626,7 +631,6 @@ const TabularPane = React.createClass ({
 			previousOffset: this.state.rowOffset,
 			direction: direction,
 			renderSide: (side === 'lhs' ? 'rhs' : 'lhs'),
-			isUnpainted: isUnpainted
 		})
 	},
 
@@ -697,10 +701,14 @@ const TabularPane = React.createClass ({
 			<div className="table-clip-wrapper wrapper">
 				<TabularBodyWrapper {...childProps}
 					designMode = {true}
-					ref = "tableWrapper"/>
-				
+					ref="tableWrapper"/>
+				{
+				this.props.focused ?
 				<Cursors {...childProps}
-					ref = "cursors"/>
+					key="cursors"
+					ref="cursors"/>
+				: null
+				}
 			</div>
 
 			<ScrollBar {...childProps}

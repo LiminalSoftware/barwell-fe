@@ -10,6 +10,11 @@ var RHS_PADDING = 100
 
 var ScrollBar = React.createClass ({
 
+	// shouldComponentUpdate: function (nextProps, nextState) {
+	// 	return this.props.innerDimension !== nextProps.innerDimension ||
+	// 	this.props.offset !== nextProps.offset
+	// },
+
 	componentWillMount: function () {
 		this._debounceHandleScroll = _.throttle(this.handleScroll, 15, true);
 	},

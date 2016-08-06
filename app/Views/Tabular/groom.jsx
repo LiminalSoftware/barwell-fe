@@ -61,7 +61,7 @@ var groomView = function (view) {
 	data.geometry = data.geometry || {}
 	data.geometry = _.extend({
 		leftGutter: 0,
-		labelWidth: 30,
+		labelWidth: 34,
 		topGutter: 0,
 		headerHeight: 28.5,
 		rowHeight: Math.min(Math.max(data.geometry.rowHeight || 25, 20), 80),

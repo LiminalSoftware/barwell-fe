@@ -107,10 +107,23 @@ var ColumnConfigContext = React.createClass ({
 				<span className="icon icon-eye-crossed"/>
 				Hide this column from view
 			</div>
-			<div onClick={this.showHidden} className = "popdown-item selectable bottom-divider">
+			<div onClick={this.showHidden} className = "popdown-item selectable ">
 				<span className="icon icon-eye"/>
 				Show hidden columns
 			</div>
+
+			{
+			config.fixed ? 
+			<div onClick={this.unpin} className = "popdown-item selectable bottom-divider">
+				<span className="icon icon-fingers-scroll-horizontal"/>
+				Un-pin this column
+			</div>
+			:
+			<div onClick={this.pin} className = "popdown-item selectable bottom-divider">
+				<span className="icon icon-pushpin2"/>
+				Pin this column
+			</div>
+			}
 
 			<div onClick={this.sort.bind(_this, false)} className = "popdown-item selectable">
 				<span className="icon icon-sort-amount-asc"/>
@@ -120,6 +133,9 @@ var ColumnConfigContext = React.createClass ({
 				<span className="icon icon-sort-amount-desc"/>
 				Sort in descending order
 			</div>
+			{/*==============================================================*/}
+
+			
 
 			{/*==============================================================*/}
 

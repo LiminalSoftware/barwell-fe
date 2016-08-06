@@ -59,6 +59,7 @@ var TableMixin = {
 		var sel = this.state.selection
 
 		// console.log('show context: ' + JSON.stringify(rc))
+		this.getFocus()
 
 		if (rc.top < 0 || rc.left < 0) {
 			this.setState({contextPos: {}, contextRc: rc})
@@ -86,10 +87,10 @@ var TableMixin = {
 	},
 	
 	blurPointer: function (revert) {
-		var current = this.refs.cursors.refs.pointerCell
-		if (current && 'handleBlur' in current) {
-			current.handleBlur(revert)
-		}
+		// var current = this.refs.cursors.refs.pointerCell
+		// if (current && 'handleBlur' in current) {
+			// current.handleBlur(revert)
+		// }
 		this.setState({editing: false})
 	},
 
