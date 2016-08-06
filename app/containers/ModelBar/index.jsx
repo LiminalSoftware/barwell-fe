@@ -9,6 +9,8 @@ import MetasheetDispatcher from '../../dispatcher/MetasheetDispatcher'
 import ModelStore from "../../stores/ModelStore"
 import ModelConfigStore from "../../stores/ModelConfigStore";
 import ViewStore from "../../stores/ViewStore"
+import FocusStore from "../../stores/FocusStore"
+
 import MetasheetConst from '../../constants/MetasheetConstants'
 
 import PureRenderMixin from 'react-addons-pure-render-mixin';
@@ -24,11 +26,13 @@ import util from '../../util/util'
 var ModelBar = React.createClass({
 
 	componentWillMount: function () {
+		FocusStore.addChangeListener(this._onChange)
 		ModelStore.addChangeListener(this._onChange)
 		ViewStore.addChangeListener(this._onChange)
 	},
 
 	componentWillUnmount: function () {
+		FocusStore.removeChangeListener(this._onChange)
 		ModelStore.removeChangeListener(this._onChange)
 		ViewStore.removeChangeListener(this._onChange)
 	},
@@ -60,9 +64,11 @@ var ModelBar = React.createClass({
 	// RENDER =================================================================	
 
 	render: function () {
-		var curModelId = this.props.params.modelId
-		var workspaceId = this.props.params.workspaceId
-		var models  = ModelStore.query({workspace_id: workspaceId}, 'model');
+		const workspaceId = this.props.params.workspaceId
+		const models  = ModelStore.query({workspace_id: workspaceId}, 'model');
+		const activeViewIds = this.props.params.viewId.split(',').map(id=>parseInt(id))
+		const focus = FocusStore.getFocus()
+		const focusedViewId = (/v\d+/).test(focus) ? parseInt(focus.slice(1)) : null
 
 		return <div className="mdlbar" onClick = {this.focus}>
 			<h1 className="branding">metasheet.io</h1>
@@ -71,6 +77,8 @@ var ModelBar = React.createClass({
 				<ModelSection
 					{...this.props}
 					index = {idx}
+					activeViewIds = {activeViewIds}
+					focusedViewId = {focusedViewId}
 					key = {`model-link-${mdl.cid || mdl.model_id}`}
 					model = {mdl}
 					modelPath = {`/workspace/${workspaceId}/model/${mdl.model_id}`}/>

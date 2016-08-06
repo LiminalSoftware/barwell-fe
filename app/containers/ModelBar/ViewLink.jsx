@@ -27,6 +27,13 @@ const ViewLink = React.createClass ({
 
 	mixins: [blurOnClickMixin],
 
+	shouldComponentUpdate: function (nextProps, nextState) {
+		return nextState !== this.state || 
+			nextProps.activeViewIds !== this.props.activeViewIds ||
+			nextProps.focusedViewId === this.props.view.view_id ||
+			this.props.focusedViewId === this.props.view.view_id
+	},
+
 	getInitialState: function () {
 		var view = this.props.view
 		return {
@@ -107,8 +114,7 @@ const ViewLink = React.createClass ({
 	},
 
 	isActive: function () {
-		const viewIds = this.props.params.viewId.split(',').map(id=>parseInt(id))
-		return viewIds.indexOf(this.props.view.view_id) >= 0
+		return this.props.activeViewIds.indexOf(this.props.view.view_id) >= 0
 	},
 
 	// RENDER =================================================================
@@ -116,6 +122,7 @@ const ViewLink = React.createClass ({
 	render: function () {
 		const view = this.props.view
 		const active = this.isActive()
+		const isFocused = view.view_id === this.props.focusedViewId
 
 		const viewDisplay = this.state.editing ?
 			<input 
@@ -135,7 +142,8 @@ const ViewLink = React.createClass ({
 		return <Link to = {`${this.getRootPath()}/view/${view.view_id}`}
 			onClick={this.handleClick}
 			onContextMenu = {this.handleShowContext}
-			className = {`mdlbar-link ${active ? 'mdlbar-link--active' : ''}`}>
+			className = {`mdlbar-link ${isFocused ? 'mdlbar-link--focused' : 
+				active ? 'mdlbar-link--active' : ''}`}>
 
 			
 			{viewDisplay}
