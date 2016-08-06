@@ -41,7 +41,6 @@ const ViewLink = React.createClass ({
 	handleShowContext: function (e) {
 		if (e) e.preventDefault()
 		this.refs.context.setState({open: true})
-
 	},
 
 	handleRename: function () {
@@ -66,15 +65,6 @@ const ViewLink = React.createClass ({
 		}
 	},
 
-	handleClick: function (e) {
-		if (("which" in e && e.which === 3) || 
-  		("button" in e && e.button === 2)) {
-  			this.handleShowContext()
-  			e.preventDefault()
-			util.clickTrap(e)
-  		}
-	},
-
 	handleMouseOver: function () {
 		this.setState({mouseover: true})
 	},
@@ -84,14 +74,32 @@ const ViewLink = React.createClass ({
 	},
 
 	handleClick: function (e) {
+		const _this = this
+
 		e.preventDefault()
-		if (e.shiftKey && !this.isActive()) {
+
+
+		if (("which" in e && e.which === 3) || 
+  		("button" in e && e.button === 2)) {
+			// right click don't do anything!
+
+  		} else if (e.shiftKey && !this.isActive()) {
 			const newViewIds = this.props.params.viewId 
 				+ "," + this.props.view.view_id
+			this.props.history.push(`${this.getRootPath()}/view/${newViewIds}`)
+
+		} else if (e.shiftKey && this.isActive()) {
+			const newViewIds = this.props.params.viewId
+				.split(",")
+				.filter(id => id !== _this.props.view.view_id)
+				.map(id => '' + id)
+				.join(",")
+				
 			this.props.history.push(`${this.getRootPath()}/view/${newViewIds}`)
 		} else {
 			this.props.history.push(`${this.getRootPath()}/view/${this.props.view.view_id}`)
 		}
+
 	},
 
 	getRootPath: function () {

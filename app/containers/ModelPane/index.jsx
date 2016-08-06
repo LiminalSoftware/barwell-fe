@@ -12,6 +12,7 @@ import FocusStore from "../../stores/FocusStore"
 import ViewConfigStore from "../../stores/ViewConfigStore"
 import ModelConfigStore from '../../stores/ModelConfigStore'
 import groomView from '../../Views/groomView'
+import fieldTypes from "../../Views/fields"
 
 import ChangeHistory from '../../Views/ChangeHistory'
 
@@ -69,10 +70,11 @@ var ModelPane = React.createClass({
 	render: function() {
 		const _this = this
 		const view = this.props.view
+		const viewType = viewTypes[view.type]
 		const model = ModelStore.get(view.model_id);
 		const viewconfig = {}
 
-		const content = React.createElement(viewTypes[view.type].mainElement, {
+		const content = React.createElement(viewType.mainElement, {
 				model: model,
 				view: view,
 				focused: ('v' + view.view_id === FocusStore.getFocus()),
@@ -80,15 +82,25 @@ var ModelPane = React.createClass({
 				key: "view-pane-" + (view.cid || view.view_id)
 			})
 
-		const config = React.createElement(viewTypes[view.type].configElement, {
+		const config = React.createElement(viewType.configElement, {
 				model: model,
 				view: view,
 				viewconfig: viewconfig,
 				key: "view-config-" + (view.cid || view.view_id)
 			})
 
-		return <div className="model-views">
+		// const style = {
+		// 	marginTop: this.props.multiViews ? "40px" : null
+		// }
 
+		return <div className="model-views" >
+			{this.props.multiViews ? 
+			<h2 className="model-pane-label">
+				<span className={`icon ${viewType.icon}`}/>
+				{view.view}
+			</h2> 
+			: null
+			}
 			<ReactCSSTransitionGroup
 				ref="pane"
 				key="model-panes"

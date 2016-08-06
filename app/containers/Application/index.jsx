@@ -62,6 +62,7 @@ var Application = React.createClass({
 		const workspaceId = this.props.params.workspaceId
 		const viewIdString = this.props.params.viewId
 		const views = viewIdString.split(',').map(id=>ViewStore.get(id))
+		const multiViews = views.length > 1
 
 		return <div className = "application">
 			{
@@ -71,7 +72,11 @@ var Application = React.createClass({
 			: this.renderLoader()
 			}
 
-			{views.filter(_.identity).map(v=><ModelPane {...this.props} view={v} key={v.view_id}/>)}
+			{views.filter(_.identity).map(v=>
+			<ModelPane {...this.props} 
+				view={v}
+				multiViews={multiViews}
+				key={v.view_id}/>)}
 
 			<textarea style = {dummyStyle} id = "copy-paste-dummy" value=""></textarea>
 		</div>
