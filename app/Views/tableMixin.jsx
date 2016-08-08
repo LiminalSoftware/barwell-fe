@@ -87,10 +87,15 @@ var TableMixin = {
 	},
 	
 	blurPointer: function (revert) {
-		// var current = this.refs.cursors.refs.pointerCell
-		// if (current && 'handleBlur' in current) {
-			// current.handleBlur(revert)
-		// }
+		var cursors = this.refs.cursors
+		var current = this.refs.cursors ? 
+			this.refs.cursors.refs.pointerCell
+			: null
+
+		if (current && 'handleBlur' in current) {
+			console.log('lkjdf')
+			current.handleBlur(revert)
+		}
 		this.setState({editing: false})
 	},
 

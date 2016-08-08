@@ -125,16 +125,16 @@ var TabularBodyWrapper = React.createClass ({
 				type: 'loading',
 				icon: ' icon-loading spin ',
 				notification_key: 'loadingRecords',
-				notificationTime: 0
+				notificationTime: 0,
 			});
 			
 			modelActionCreators.fetchRecords(
 				view,
 				boundedTarget,
 				boundedTarget + MAX_ROWS,
-				view.data.sorting
+				view.data.sorting,
+				this.props.store.storeId
 			).then(function () {
-				console.log('done with fetch')
 				_this.setState({
 					fetchOffset: boundedTarget,
 					fetching: false,

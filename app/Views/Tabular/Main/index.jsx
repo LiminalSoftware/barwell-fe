@@ -78,7 +78,7 @@ const TabularPane = React.createClass ({
 		copyPasteDummy.addEventListener('paste', this.pasteSelection);
 
 		this.store = createTabularStore(this.props.view);
-		// this.store.addChangeListener(this._onChange);
+		this.store.addChangeListener(this._onChange);
 	},
 
 	componentWillUnmount: function () {
@@ -89,7 +89,7 @@ const TabularPane = React.createClass ({
 		
 		if (this._timer) cancelFrame(this._timer)
 
-		// this.store.removeChangeListener(this._onChange);
+		this.store.removeChangeListener(this._onChange);
 		this.store.unregister();
 	},
 
@@ -703,7 +703,7 @@ const TabularPane = React.createClass ({
 					designMode = {true}
 					ref="tableWrapper"/>
 				{
-				this.props.focused ?
+				this.props.focused && !this.state.contextPos ?
 				<Cursors {...childProps}
 					key="cursors"
 					ref="cursors"/>

@@ -3,6 +3,9 @@ import util from "../../../util/util"
 import constants from "../../../constants/MetasheetConstants"
 import fieldUtils from "../fieldUtils"
 
+import FocusStore from "../../../stores/FocusStore"
+import modelActionCreators from "../../../actions/modelActionCreators"
+
 import autobind from 'autobind-decorator'
 
 export default class GenericTextField extends Component {
@@ -104,7 +107,7 @@ export default class GenericTextField extends Component {
 	 */
 	
 	handleBlur = (revert) => {
-
+		
 		const hasChanged = this.state.value !== this.props.value
 
 		if (revert !== true && this.state.editing && hasChanged)

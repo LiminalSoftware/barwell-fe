@@ -225,7 +225,7 @@ var modelActions = {
 		})
 	},
 
-	fetchRecords: function (view, offset, limit, sortSpec) {
+	fetchRecords: function (view, offset, limit, sortSpec, storeId) {
 		var view_id = view.view_id
 		var model_id = view.model_id
 		var url = BASE_URL + '/v' + view_id;
@@ -243,16 +243,15 @@ var modelActions = {
 			var range = results.xhr.getResponseHeader('Content-Range')
 			var rangeParts = range.split(/[-/]/)
 
-			message.startIndex = parseInt(rangeParts[0])
-			message.endIndex = parseInt(rangeParts[1])
-			message.recordCount = parseInt(rangeParts[2])
-
-			message.actionType = ('RECORD_RECIEVEFETCH')
-			message.model_id = model_id
-			message.records = results.data
-
-			MetasheetDispatcher.dispatch(message)
-			return message;
+			MetasheetDispatcher.dispatch({
+				startIndex: parseInt(rangeParts[0]),
+				endIndex: parseInt(rangeParts[1]),
+				recordCount: parseInt(rangeParts[2]),
+				actionType: 'RECORD_RECIEVEFETCH',
+				model_id: model_id,
+				records: results.data,
+				storeId: storeId
+			})
 		});
 	},
 
