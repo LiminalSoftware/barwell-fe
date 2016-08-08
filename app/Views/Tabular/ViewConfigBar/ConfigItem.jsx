@@ -30,7 +30,7 @@ export default class ConfigItem extends Component {
 	// }
 
 	getFocusId = () => {
-		return 'view-' + this.props.view.view_id + '-' + this.props.hoverText
+		return 'v' + this.props.view.view_id + '-' + this.props.hoverText
 	}
 
 	isFocused = () => {
@@ -38,7 +38,13 @@ export default class ConfigItem extends Component {
 	}
 
 	handleOpen = (e) => {
-		modelActionCreators.setFocus(this.getFocusId())
+		const focus = FocusStore.getFocus()
+		const thisFocusId = this.getFocusId()
+		const view = this.props.view
+		
+		modelActionCreators.setFocus(
+			isFocused() ? ('v' + view.view_id) : this.getFocusId()
+		)
 	}
 
 	handleMouseDown = (e) => {

@@ -69,9 +69,9 @@ export default class SortMenu extends Component {
 
 	render () {
 
-		return <div className="view-config-menu">
-			<div className="menu-pointer-outer"/>
-			<div className="menu-pointer-inner"/>
+		return <div className="view-config-menu" style={{right: -45 * this.props.idx - 15 + 'px'}}>
+			<div className="menu-pointer-outer" style={{right: 45 * this.props.idx + 30 + 'px'}}/>
+			<div className="menu-pointer-inner" style={{right: 45 * this.props.idx + 31 + 'px'}}/>
 			<SortList {...this.props} ref = "list"/>
 			
 			<div className="menu-item menu-sub-item menu-sub-item-draggable"

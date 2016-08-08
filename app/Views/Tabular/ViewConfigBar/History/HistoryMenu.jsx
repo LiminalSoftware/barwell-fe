@@ -31,8 +31,8 @@ var HistoryMenu = React.createClass({
 	},
 
 	componentWillUnmount: function () {
-		clearTimeout(this._previewTimer)
-		clearTimeout(this._mouseOutTimer)
+		// clearTimeout(this._previewTimer)
+		// clearTimeout(this._mouseOutTimer)
 		NotificationStore.removeChangeListener(this._onChange);
 		TransactionStore.removeChangeListener(this._onChange);
 	},
@@ -91,13 +91,12 @@ var HistoryMenu = React.createClass({
 			transitionAppearTimeout: 500
 		};
 
-		return <div className="view-config-menu">
-			<div className="menu-pointer-outer"/>
-			<div className="menu-pointer-inner"/>
+		return <div className="view-config-menu" style={{right: -45 * this.props.idx - 15 + 'px'}}>
+			<div className="menu-pointer-outer" style={{right: 45 * this.props.idx + 30 + 'px'}}/>
+			<div className="menu-pointer-inner" style={{right: 45 * this.props.idx + 31 + 'px'}}/>
 			{
 			events.map((note, idx) => {
 				return <Note 
-					_handleMouseOver = {_this.handleMouseOver} 
 					key = {note.cid || note.notification_key} 
 					model = {ModelStore.get(note.model_id)}
 					note = {note} 

@@ -36,20 +36,24 @@ export default class ViewConfigBar extends Component {
 		
 		return <div style={viewConfigBarStyle}>
 			<History {...this.props} 
-				focus={focus} 
+				focus={focus}
+				idx={3}
 				key="history" />
 
 			<SortConfig {...this.props} 
 				focus={focus} 
 				key="sort" 
+				idx={2}
 				isActive={!!(view.data.sorting).length}/>
 
 			<FilterConfig {...this.props} 
 				focus={focus} 
+				idx={1}
 				key="filter"/>
 
 			<ColumnConfig {...this.props} 
-				focus={focus} 
+				focus={focus}
+				idx={0}
 				key="columns"/>
 		</div>
 	}
