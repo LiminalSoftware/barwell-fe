@@ -1,3 +1,6 @@
+.title {
+	font-family: @headerFont;
+}
 
 .pop-down-pointer-outer, .pop-down-pointer-inner, .pop-up-pointer-inner, .pop-up-pointer-outer {
 	position: absolute;
@@ -138,20 +141,17 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 	&.half-width-menu-item {
 		min-width: 90px;
 	}
-	&.title {
-		font-family: @headerFont;
-	}
 	&.gray {
 		background: @gray4;
 	}
 	&.bottom-divider {
 		min-width: 150px;
 		border-bottom: 1px solid @gray3;
-		padding-bottom: 2px;
+		
 	}
 	&.top-divider {
-		border-top: 1px solid @headerMenuBorderColor;
-		padding-top: 2px;
+		border-top: 1px solid @gray3;
+		
 	}
 	&.right-divider {
 		border-right: 1px solid @headerMenuBorderColor;
@@ -160,9 +160,8 @@ pop-down-pointer-inner, .pop-up-pointer-inner {
 		border-top: 1px solid @headerMenuBorderColor;
 	}
 	&.hilite, &.selectable:hover {
-		background: @gray4;
-		// .sunburst;
-		border-radius: 3px;
+		background: @purple4;
+		color: white;
 	}
 }
 

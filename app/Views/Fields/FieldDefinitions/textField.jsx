@@ -3,9 +3,9 @@ import _ from "underscore"
 
 import editableInputMixin from '../editableInputMixin'
 
-import AlignChoice from "../textFieldConfig/AlignChoice"
-import ColorChoice from "../textFieldConfig/ColorChoice"
-import TextChoice from "../textFieldConfig/TextChoice"
+import AlignChoice from "../ConfigParts/AlignChoice"
+import ColorChoice from "../ConfigParts/BackgroundChoice"
+import TextChoice from "../ConfigParts/TextChoice"
 
 import fieldUtils from "../fieldUtils"
 

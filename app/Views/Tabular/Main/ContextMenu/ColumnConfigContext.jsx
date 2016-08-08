@@ -5,8 +5,9 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import constants from "../../../../constants/MetasheetConstants"
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import constant from "../../../../constants/MetasheetConstants"
-import fieldTypes from "../../../fields"
 
+import fieldTypes from "../../../fields"
+import ColumnUnhider from "./ColumnUnhider"
 
 import util from "../../../../util/util"
 
@@ -14,7 +15,7 @@ var ColumnConfigContext = React.createClass ({
 
 	getInitialState: function () {
 		return {
-			mode: null
+			detailElement: null
 		}
 	},
 
@@ -49,43 +50,13 @@ var ColumnConfigContext = React.createClass ({
 		modelActionCreators.create("view", true, updated)
 	},
 
-	showHidden: function (e) {
-		this.setState({mode: 'unhide'})
-	},
+	showDetail: function (element, e) {
+		this.setState({detailElement: element})
+	},	
 
-	configFormat: function (part, e) {
-
-	},
-
-	handleCancelMode: function (e) {
-		this.setState({mode: null})
-	},
-
-	renderUnhideMenu: function () {
-		const _this = this
-		const view = this.props.view
-		return <div className="context-menu">
-			<div className="popdown-item title bottom-divider">
-				<span>Show hidden columns</span>
-			</div>
-
-			{view.data.columnList
-			.filter(col => !col.visible)
-			.map(column =>
-			<div className="popdown-item">
-				<input type="checkbox" checked = {false} />
-				{column.name}
-			</div>)}
-
-			<div className="popdown-item">
-				<span style={{float: "left"}}>
-					<span className="icon icon-check"/>Save
-				</span>
-				<span style={{float: "right"}} onClick={this.handleCancelMode}>
-					<span className="icon icon-arrow-left"/>Cancel
-				</span>
-			</div>
-		</div>
+	blurMode: function (e) {
+		console.log('blurMode')
+		this.setState({detailElement: null})
 	},
 
 	renderMainMenu: function () {
@@ -107,9 +78,11 @@ var ColumnConfigContext = React.createClass ({
 				<span className="icon icon-eye-crossed"/>
 				Hide this column from view
 			</div>
-			<div onClick={this.showHidden} className = "popdown-item selectable ">
+			<div onClick={this.showDetail.bind(_this, ColumnUnhider)} 
+				className = "popdown-item selectable ">
 				<span className="icon icon-eye"/>
 				Show hidden columns
+				<span className="icon icon-detail-right icon-arrow-right"/>
 			</div>
 
 			{
@@ -142,11 +115,12 @@ var ColumnConfigContext = React.createClass ({
 			{(type.configParts || []).map((part, idx)=> 
 			<div className = {`popdown-item selectable 
 				${idx + 1 === type.configParts.length ? "bottom-divider" : ""}`}
-				key={part.prototype.partLabel}
-				onClick={this.configFormat.bind(_this, part)}>
+				key={part.partLabel}
+				onClick={this.showDetail.bind(_this, part.element)}>
 
-				<span className={part.prototype.getIcon(config)}/>
-				{part.prototype.partLabel}
+				<span className={part.getIcon(config)}/>
+				{part.partLabel}
+				<span className="icon icon-detail-right icon-arrow-right"/>
 			</div>
 			)}
 
@@ -164,6 +138,7 @@ var ColumnConfigContext = React.createClass ({
 			<div onClick={this.changeType} className = "popdown-item selectable">
 				<span className="icon icon-wrench"/>
 				Change attribute type
+				<span className="icon icon-detail-right icon-arrow-right"/>
 			</div>
 			<div onClick={this.makeUniq} className = "popdown-item selectable">
 				<span className="icon icon-snow2"/>
@@ -172,6 +147,7 @@ var ColumnConfigContext = React.createClass ({
 			<div onClick={this.setDefault} className = "popdown-item selectable">
 				<span className="icon icon-stamp"/>
 				Set default value for this attribute
+				<span className="icon icon-detail-right icon-arrow-right"/>
 			</div>
 		</div>
 	},
@@ -192,10 +168,11 @@ var ColumnConfigContext = React.createClass ({
 		})
 
 		return <ReactCSSTransitionGroup
-			{...constants.transitions.slideleft} 
+			{...constants.transitions.slideleft}
 			style={style} onClick={util.clickTrap}>
-			{this.state.mode === 'unhide' ? 
-				this.renderUnhideMenu() 
+			{this.state.detailElement ? 
+				React.createElement(this.state.detailElement, 
+					update(this.props, {blurSelf: {$set: this.blurMode}}) )
 				: this.renderMainMenu()
 			}
 		</ReactCSSTransitionGroup>

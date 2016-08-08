@@ -1,71 +1,72 @@
-import React from "react";
+import React, { Component, PropTypes } from 'react'
+import update from 'react/lib/update'
+
 import _ from "underscore";
-import modelActionCreators from "../../../actions/modelActionCreators";
-import PopDownMenu from "../../../components/PopDownMenu";
-import configCommitMixin from '../configCommitMixin';
-import blurOnClickMixin from "../../../blurOnClickMixin";
-import popdownClickmodMixin from '../popdownClickmodMixin';
+import modelActionCreators from "../../../../actions/modelActionCreators";
+import util from "../../../../util/util"
 
-import util from "../../../util/util"
+export default {
+	
+	partName: 'AlignChoice',
 
-var AlignChoice = React.createClass({
+	partLabel: 'Text alignment',
 
-  partName: 'AlignChoice',
-  
-  mixins: [blurOnClickMixin, popdownClickmodMixin, configCommitMixin],
-
-  // LIFECYCLE ==============================================================
-
-  getInitialState: function () {
-    return {
-      align: this.props.config.align,
-      open: false
-    }
-  },
-
-  componentWillReceiveProps: function (nextProps) {
-    this.setState({align: this.props.config.align})
-  },
-
-  // HANDLERS ================================================================
-
-  toggleAlign: function (event) {
-		var align = this.props.config.align
-		if (align === 'left') align = 'center'
-		else if (align === 'center') align = 'right'
-		else align = 'left'
-		this.commitChanges({align: align})
+	getIcon: function (config) {
+		return `icon icon-text-align-${config.align}`;
 	},
 
-  align: function (align) {
-    this.commitChanges({align: align})
-    this.handleBlur()
-  },
+	element: class AlignConfig extends Component {
+		constructor (props) {
+			super(props)
+			this.state = {
+				align: props.config.align,
+			}
+		}
 
-  // RENDER ===================================================================
+		align = (align) => {
+			console.log('align: ' + align)
+			const view = this.props.view
+			const config = this.props.config
 
-  renderMenu: function () {
-    var _this = this;
-    var config = this.props.config;
-    var currentAlignment = config.align;
-    return <div className = "popdown-section">
-        <li className = "popdown-item bottom-divider title">Text Alignment</li>
-        {
-          ['left', 'center', 'right'].map(function (alignment) {
-            return <li key = {alignment} onClick = {_this.align.bind(_this, alignment)} 
-              className = {"popdown-item  selectable " + (alignment === currentAlignment ? ' menu-selected' : '')}>
-              <span className = {"icon icon-text-align-" + alignment}/>
-              Align {alignment}
-            </li>
-          })
-        }
-      </div>
-  },
+			const updated = update(view, {
+				data : {
+					columns: {
+						[config.column_id]: {
+							$set: {
+								align: align
+							}
+						}
+					}
+				}
+			})
+			modelActionCreators.create("view", true, updated)
+			this.props.blurSelf()
+		}
 
-  getIcon: function () {
-    return " icon icon-text-align-" + this.props.config.align + " ";
-  },
+		render () {
+			const _this = this
+			const config = this.props.config
 
-})
+			return <div className="context-menu">
+				<div className = "popdown-item bottom-divider title">Text Alignment</div>
+				{
+					['left', 'center', 'right'].map(align =>
+						<div key = {align}
+						onClick = {_this.align.bind(_this, align)}
+						className = {`popdown-item  selectable`}>
 
-export default AlignChoice
+							<span className = {`icon icon-text-align-${align} 
+								${align === config.align?'icon-hilite':'icon-selectable'}`}/>
+							Align {align}
+						</div>
+					)
+				}
+				<div className = "popdown-item selectable top-divider" onClick={this.props.blurSelf}>
+					<span className="icon icon-arrow-left icon-detail-left"/>
+					<span>Back</span>
+				</div>
+			</div>
+		}
+	}
+}
+

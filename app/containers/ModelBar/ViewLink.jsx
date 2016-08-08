@@ -96,8 +96,7 @@ const ViewLink = React.createClass ({
 			this.props.history.push(`${this.getRootPath()}/view/${newViewIds}`)
 
 		} else if (e.shiftKey && this.isActive()) {
-			const newViewIds = this.props.params.viewId
-				.split(",")
+			const newViewIds = this.props.activeViewIds
 				.filter(id => id !== _this.props.view.view_id)
 				.map(id => '' + id)
 				.join(",")

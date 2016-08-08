@@ -73,11 +73,13 @@ var ModelPane = React.createClass({
 		const viewType = viewTypes[view.type]
 		const model = ModelStore.get(view.model_id);
 		const viewconfig = {}
+		const viewStr = 'v' + view.view_id
+		const isFocused = viewStr === FocusStore.getFocus().slice(0, viewStr.length)
 
 		const content = React.createElement(viewType.mainElement, {
 				model: model,
 				view: view,
-				focused: ('v' + view.view_id === FocusStore.getFocus()),
+				focused: isFocused,
 				viewconfig: viewconfig,
 				key: "view-pane-" + (view.cid || view.view_id)
 			})
@@ -89,15 +91,13 @@ var ModelPane = React.createClass({
 				key: "view-config-" + (view.cid || view.view_id)
 			})
 
-		// const style = {
-		// 	marginTop: this.props.multiViews ? "40px" : null
-		// }
-
 		return <div className="model-views" >
 			{this.props.multiViews ? 
 			<h2 className="model-pane-label">
+				<span >
 				<span className={`icon ${viewType.icon}`}/>
 				{view.view}
+				</span>
 			</h2> 
 			: null
 			}
@@ -109,7 +109,7 @@ var ModelPane = React.createClass({
 
 				{content}
 
-				{config}
+				{isFocused ? config : null}
 
 			</ReactCSSTransitionGroup>
 
