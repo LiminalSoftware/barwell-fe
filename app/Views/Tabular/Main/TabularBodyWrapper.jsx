@@ -166,8 +166,8 @@ var TabularBodyWrapper = React.createClass ({
 		var colOffset = this.props.hiddenColWidth
 
 		var marginTop = (-1 * rowOffset * geo.rowHeight)
-		var fixedWidth = view.data.fixedWidth
-		var floatWidth = view.data.floatWidth
+		var fixedWidth = view.data._fixedWidth
+		var floatWidth = view.data._floatWidth
 		var adjustedWidth = fixedWidth + floatWidth + geo.labelWidth
 			- this.state.hiddenColWidth
 
@@ -236,10 +236,10 @@ var TabularBodyWrapper = React.createClass ({
 					style = {{
 						left: 0,
 						top: 0,
-						width:  (view.data.fixedWidth + geo.labelWidth) + 'px',
+						width:  (view.data._fixedWidth + geo.labelWidth) + 'px',
 						height: (rowCount * geo.rowHeight) + 'px'
 					}}
-					columns = {view.data.fixedCols}/>
+					columns = {view.data._fixedCols}/>
 				</div>
 			</div>
 			{/*END LHS TABLE BODY*/}
@@ -251,7 +251,7 @@ var TabularBodyWrapper = React.createClass ({
 				leftOffset = {0}
 				side = {'lhs'}
 				hasRowLabel = {true}
-				columns = {view.data.fixedCols} />
+				columns = {view.data._fixedCols} />
 			{/*END LHS HEADER*/}
 			</div>
 			{/*LHS OUTER*/}
@@ -264,8 +264,8 @@ var TabularBodyWrapper = React.createClass ({
 				style = {{
 					top: 0,
 					bottom: 0,
-					left: (view.data.fixedWidth + geo.labelWidth) + 'px',
-					width:  view.data.floatWidth + geo.colAddWidth + 'px',
+					left: (view.data._fixedWidth + geo.labelWidth) + 'px',
+					width:  view.data._floatWidth + geo.colAddWidth + 'px',
 					// transform: 'translateZ(1px)',
 					overflow: 'hidden'
 				}}>
@@ -304,8 +304,8 @@ var TabularBodyWrapper = React.createClass ({
 							rowOffset = {rowOffset}
 							ref = "rhs"
 							prefix = "rhs"
-							columns = {view.data.floatCols}
-							offsetCols = {view.data.fixedCols.length}
+							columns = {view.data._floatCols}
+							offsetCols = {view.data._fixedCols.length}
 							fetchStart = {fetchStart}
 							fetchEnd = {fetchEnd}
 							shouldPaint = {this.state.renderSide === 'rhs'}
@@ -313,7 +313,7 @@ var TabularBodyWrapper = React.createClass ({
 							style = {{
 								left: 0,
 								top: 0,
-								width:  view.data.floatWidth + 1  + 'px',
+								width:  view.data._floatWidth + 1  + 'px',
 								height: (rowCount * geo.rowHeight) + 'px',
 							}} />
 					</div>
@@ -324,7 +324,7 @@ var TabularBodyWrapper = React.createClass ({
 						totalWidth = {floatWidth + 2}
 						leftOffset = {0}
 						side = "rhs"
-						columns = {view.data.floatCols} />
+						columns = {view.data._floatCols} />
 				</div>
 
 			</div>

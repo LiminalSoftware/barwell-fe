@@ -38,7 +38,8 @@ var RowResizer = React.createClass ({
     var col = this.props.column
 
     view.data.geometry.rowHeight = (geo.rowHeight + this.state.pos)
-    modelActionCreators.createView(view, true, false)
+    
+    modelActionCreators.createView(updated, true, {safe: true})
 
     this.setState({
       dragging: false,

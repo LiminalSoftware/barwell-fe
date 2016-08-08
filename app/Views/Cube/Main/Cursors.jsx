@@ -221,7 +221,7 @@ var Cursors = React.createClass ({
           </Overlay>
           
           <Overlay
-            columns = {view.data.visibleCols}
+            columns = {view.data._visibleCols}
             numHiddenCols = {this.props.columnOffset}
             rowOffset = {this.props.vOffset}
             className = {" copyarea running marching-ants " + (focused ? " focused" : "")}

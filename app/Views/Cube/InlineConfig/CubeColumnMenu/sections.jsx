@@ -11,7 +11,7 @@ var sections = [
 		icon: "icon-menu",
 		configParts: [GroupSortPicker],
 		selector: function (view) {
-			return view.data.columnList.filter(c => c.groupByRow).sort(util.orderSort)
+			return view.data._columnList.filter(c => c.groupByRow).sort(util.orderSort)
 		},
 		enterTransform: function (col) {
 			col.groupByColumn = false;
@@ -28,7 +28,7 @@ var sections = [
 		icon: "icon-menu",
 		configParts: [GroupSortPicker],
 		selector: function (view) {
-			return view.data.columnList.filter(c => c.groupByColumn).sort(util.orderSort)
+			return view.data._columnList.filter(c => c.groupByColumn).sort(util.orderSort)
 		},
 		enterTransform: function (col) {
 			col.groupByColumn = true;
@@ -45,7 +45,7 @@ var sections = [
 		icon: "icon-border-all",
 		configParts: [AggregatePicker],
 		selector: function (view) {
-			return view.data.columnList.filter(c => c.inTableBody).sort(util.orderSort)
+			return view.data._columnList.filter(c => c.inTableBody).sort(util.orderSort)
 		},
 		enterTransform: function (col) {
 			col.groupByColumn = false;
@@ -61,7 +61,7 @@ var sections = [
 		emptyText: "No hidden attributes...",
 		icon: "icon-eye-crossed",
 		selector: function (view) {
-			return view.data.columnList.filter(c => !c.inTableBody && !c.groupByRow && !c.groupByColumn).sort(util.orderSort)
+			return view.data._columnList.filter(c => !c.inTableBody && !c.groupByRow && !c.groupByColumn).sort(util.orderSort)
 		},
 		enterTransform: function (col) {
 			col.groupByColumn = false;

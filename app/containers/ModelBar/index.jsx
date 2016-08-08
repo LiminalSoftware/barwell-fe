@@ -25,27 +25,12 @@ import util from '../../util/util'
 
 var ModelBar = React.createClass({
 
-	componentWillMount: function () {
-		FocusStore.addChangeListener(this._onChange)
-		ModelStore.addChangeListener(this._onChange)
-		ViewStore.addChangeListener(this._onChange)
-	},
-
-	componentWillUnmount: function () {
-		FocusStore.removeChangeListener(this._onChange)
-		ModelStore.removeChangeListener(this._onChange)
-		ViewStore.removeChangeListener(this._onChange)
-	},
 	
 	getInitialState: function () {
 		return {
 			keyControl: false,
 			editing: false
 		}
-	},
-
-	_onChange: function () {
-		this.forceUpdate()
 	},
 
 

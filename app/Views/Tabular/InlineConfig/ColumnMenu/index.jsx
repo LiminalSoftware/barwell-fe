@@ -69,8 +69,8 @@ var ColumnDropdownMenu = React.createClass({
 
 	render: function() {
 		var view = this.props.view;
-		var columns = view.data.columnList;
-		var numItems = view.data.columnList.length + this.props.sections.length
+		var columns = view.data._columnList;
+		var numItems = view.data._columnList.length + this.props.sections.length
 		
 		//set the first section separately so you can't drag on top of it
 		var firstSection = this.props.sections[0];

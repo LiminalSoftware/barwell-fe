@@ -31,7 +31,7 @@ var ColumnConfigContext = React.createClass ({
 				sorting: {$set: spec}
 			}
 		})
-		modelActionCreators.create("view", true, updated)
+		modelActionCreators.createView(updated, true)
 	},
 
 	hideColumn: function () {
@@ -40,14 +40,14 @@ var ColumnConfigContext = React.createClass ({
 			data : {
 				columns: {
 					[this.props.config.column_id]: {
-						$set: {
+						$merge: {
 							visible: false
 						}
 					}
 				}
 			}
 		})
-		modelActionCreators.create("view", true, updated)
+		modelActionCreators.createView(true, updated, {safe: true})
 	},
 
 	showDetail: function (element, e) {

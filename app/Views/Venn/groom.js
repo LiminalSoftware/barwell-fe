@@ -16,7 +16,7 @@ var groomView = function (view) {
 	var columnList = util.enumerate(_.values(columns), util.sortByOrder)
 
 	data.columns = columns
-	data.columnList = columnList
+	data._columnList = columnList
 
 	view.row_aggregates = columnList.filter(c => c.groupByCategory && c.type === 'BOOLEAN').map(c => c.attribute_id)
 	view.column_aggregates = []

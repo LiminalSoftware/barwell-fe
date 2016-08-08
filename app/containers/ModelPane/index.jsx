@@ -43,18 +43,6 @@ var ModelPane = React.createClass({
 		this.setState({selection: "view"})
 	},
 
-	componentWillMount: function () {
-		ModelStore.addChangeListener(this._onChange)
-		ViewStore.addChangeListener(this._onChange)
-		FocusStore.addChangeListener(this._onChange)
-	},
-
-	componentWillUnmount: function () {
-		ModelStore.removeChangeListener(this._onChange)
-		ViewStore.removeChangeListener(this._onChange)
-		FocusStore.removeChangeListener(this._onChange)
-	},
-
 	_onChange: function () {
 		this.forceUpdate()
 	},
@@ -74,7 +62,7 @@ var ModelPane = React.createClass({
 		const model = ModelStore.get(view.model_id);
 		const viewconfig = {}
 		const viewStr = 'v' + view.view_id
-		const isFocused = viewStr === FocusStore.getFocus().slice(0, viewStr.length)
+		const isFocused = viewStr === this.props.focus.slice(0, viewStr.length)
 
 		const content = React.createElement(viewType.mainElement, {
 				model: model,
@@ -87,6 +75,7 @@ var ModelPane = React.createClass({
 		const config = React.createElement(viewType.configElement, {
 				model: model,
 				view: view,
+				focus: this.props.focus,
 				viewconfig: viewconfig,
 				key: "view-config-" + (view.cid || view.view_id)
 			})

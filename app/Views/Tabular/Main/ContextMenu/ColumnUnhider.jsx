@@ -22,7 +22,7 @@ export default class ColumnUnhider extends Component {
 
 	toggle = (column) => {
 		const unidden = update(this.state.unhidden, {
-			[column.column_id]: {$set: true}
+			[column.column_id]: {$apply: (v=>!v)}
 		})
 	}
 
@@ -32,14 +32,14 @@ export default class ColumnUnhider extends Component {
 			data : {
 				columns: {
 					[column.column_id]: {
-						$set: {
+						$merge: {
 							visible: true
 						}
 					}
 				}
 			}
 		})
-		modelActionCreators.create("view", true, updated)
+		modelActionCreators.createView(updated, true, {safe: true})
 		this.props.blurSelf()
 	}
 
@@ -58,7 +58,7 @@ export default class ColumnUnhider extends Component {
 				<span> (shift to select multiple)</span>
 			</div>
 
-			{view.data.columnList
+			{view.data._columnList
 			.filter(col => !col.visible)
 			.map(column =>
 			<div className="popdown-item selectable" 

@@ -13,6 +13,7 @@ import contant from '../../constants/MetasheetConstants'
 
 import ViewStore from "../../stores/ViewStore"
 import ModelStore from "../../stores/ModelStore"
+import FocusStore from "../../stores/FocusStore"
 
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
@@ -32,6 +33,22 @@ var Application = React.createClass({
 
 	getInitialState: function () {
 		return {loaded: false}
+	},
+
+	componentWillMount: function () {
+		ModelStore.addChangeListener(this._onChange)
+		ViewStore.addChangeListener(this._onChange)
+		FocusStore.addChangeListener(this._onChange)
+	},
+
+	componentWillUnmount: function () {
+		ModelStore.removeChangeListener(this._onChange)
+		ViewStore.removeChangeListener(this._onChange)
+		FocusStore.removeChangeListener(this._onChange)
+	},
+
+	_onChange: function () {
+		this.forceUpdate()
 	},
 
 	componentDidMount: function () {
@@ -67,7 +84,9 @@ var Application = React.createClass({
 		return <div className = "application">
 			{
 			this.state.loaded ?
-			<ModelBar {...this.props}
+			<ModelBar 
+				{...this.props}
+				focus={FocusStore.getFocus()}
 				workspaceId = {workspaceId}/>
 			: this.renderLoader()
 			}
@@ -75,6 +94,8 @@ var Application = React.createClass({
 			{views.filter(_.identity).map(v=>
 			<ModelPane {...this.props} 
 				view={v}
+				focus={FocusStore.getFocus()}
+				model={ModelStore.get(v.model_id)}
 				multiViews={multiViews}
 				key={v.view_id}/>)}
 

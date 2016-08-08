@@ -12,7 +12,7 @@ var groomView = function (view) {
 	var model = ModelStore.get(view.model_id);
 	var data = view.data || {}
 	var columns = data.columns = groomFields(view)
-	var columnList = data.columnList = util.enumerate(_.values(columns), util.sortByOrder)
+	var columnList = data._columnList = util.enumerate(_.values(columns), util.sortByOrder)
 	var fields = AttributeStore.query({model_id: view.model_id});
 	var relations = RelationStore.query({model_id: view.model_id});
 	var ptr = data.pointer || {};

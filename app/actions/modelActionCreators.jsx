@@ -548,9 +548,11 @@ var modelActions = {
 	},
 
 	// views
-	createView: function(view, persist) {
-		view = _.clone(view)
-		modelActions.create('view', persist, groomView(view), {hiddenTxn: true})
+	createView: function(view, persist, extras) {
+		// view.data = util.stripInternalVars(view.data)
+		extras = (extras || {})
+		extras.hiddenTxn = true
+		modelActions.create('view', persist, view, extras)
 	},
 
 	updatePointer: function(view, pointer) {

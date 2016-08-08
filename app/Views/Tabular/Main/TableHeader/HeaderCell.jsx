@@ -1,5 +1,7 @@
 import React, { Component, PropTypes } from 'react';
+import update from 'react/lib/update'
 import ReactDOM from "react-dom"
+
 import $ from "jquery"
 
 import constant from "../../../../constants/MetasheetConstants"
@@ -154,12 +156,12 @@ export default class HeaderCell extends Component {
 	 * set column width
 	 */
 
-	setColumnWidth = (width, commit) => {
-		const view = this.props.view
-		const col = this.props.column
-   		view.data.columns[col.column_id].width = width
-		modelActionCreators.createView(view, !!commit, false)
-	}
+	// setColumnWidth = (width, commit) => {
+	// 	const view = this.props.view
+	// 	const col = this.props.column
+ //   		view.data.columns[col.column_id].width = width
+	// 	modelActionCreators.createView(view, !!commit, false)
+	// }
 
 	/*
 	 * if mouseup occurs during drag, cancel drag and commit view changes
@@ -168,9 +170,19 @@ export default class HeaderCell extends Component {
 	onMouseUp = (e) => {
    		const view = this.props.view
 		const col = this.props.column
-
-   		view.data.columns[col.column_id].width = (col.width + this.state.pos)
-		modelActionCreators.createView(view, true, false)
+		const updated = update(view, {
+			data : {
+				columns: {
+					[col.column_id]: {
+						$merge: {
+							width: (col.width + this.state.pos)
+						}
+					}
+				}
+			}
+		})
+		
+		modelActionCreators.createView(updated, true, {safe: true})
 		this.setState({
 			dragging: false,
 			pos: 0

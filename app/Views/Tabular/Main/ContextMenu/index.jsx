@@ -17,7 +17,7 @@ var TabularContextMenu = React.createClass ({
 	getConfig: function () {
 		const rc = this.props.rc
 		const view = this.props.view
-		return view.data.visibleCols[rc.left]
+		return view.data._visibleCols[rc.left]
 	},
 
 	componentDidMount: function () {

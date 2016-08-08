@@ -39,7 +39,7 @@ var Cursors = React.createClass ({
 		var geo = view.data.geometry;
 		var store = this.props.store;
 		var ptr = this.props.pointer;
-		var col = view.data.visibleCols[ptr.left];
+		var col = view.data._visibleCols[ptr.left];
 		var obj = store.getObject(ptr.top);
 		var element = col ? (fieldTypes[col.type]).element : null;
 		
@@ -93,8 +93,8 @@ var Cursors = React.createClass ({
 	getOuterWrapperStyle: function () {
 		const view = this.props.view
 		const geo = view.data.geometry
-		const fixedWidth = view.data.fixedWidth
-		const floatWidth = view.data.floatWidth
+		const fixedWidth = view.data._fixedWidth
+		const floatWidth = view.data._floatWidth
 		const adjustedWidth = fixedWidth + floatWidth + geo.labelWidth
 			- this.props.hiddenColWidth
 
@@ -148,8 +148,8 @@ var Cursors = React.createClass ({
 		}
 		return null;
 		
-		return view.data.fixedCols
-		.concat(view.data.floatCols)
+		return view.data._fixedCols
+		.concat(view.data._floatCols)
 		.map( (col, idx) => 
 			<Overlay {..._this.props} 
 			key = {col.column_id}
@@ -170,7 +170,7 @@ var Cursors = React.createClass ({
 		className = "view-reference-outline"
 		position = {{
 			left: 0, 
-			right: view.data.fixedCols.length - 1, 
+			right: view.data._fixedCols.length - 1, 
 			top: this.props.rowOffset,
 			bottom: height
 		}}>Fixed Columns</Overlay>])
@@ -185,8 +185,8 @@ var Cursors = React.createClass ({
 		const ptr = this.props.pointer
 		const sel = this.props.selection
 		const cpy = this.props.copyarea
-		const showJaggedEdge = ((sel.right >= view.data.fixedCols.length)
-			&& (sel.left < view.data.fixedCols.length + this.props.columnOffset) && (this.props.columnOffset > 0));
+		const showJaggedEdge = ((sel.right >= view.data._fixedCols.length)
+			&& (sel.left < view.data._fixedCols.length + this.props.columnOffset) && (this.props.columnOffset > 0));
 
 		const singleton = (sel.top === sel.bottom && sel.left === sel.right)
 		const pointerFudge = {width: -1, top: 1, height: -1};
@@ -236,7 +236,7 @@ var Cursors = React.createClass ({
 
 			<Overlay
 				{...this.props}
-				columns = {view.data.visibleCols}
+				columns = {view.data._visibleCols}
 				className = {" copyarea running marching-ants " + (focused ? " focused" : "")}
 				ref = "copyarea"
 				key="copyare"
@@ -250,7 +250,7 @@ var Cursors = React.createClass ({
 				key="jaggedEdge"
 				showHiddenHack = {true}
 				position = {{
-					left: view.data.fixedCols.length,
+					left: view.data._fixedCols.length,
 					width: '10px',
 					top: sel.top,
 					bottom: sel.bottom

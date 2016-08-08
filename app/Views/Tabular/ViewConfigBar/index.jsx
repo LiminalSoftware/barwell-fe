@@ -22,17 +22,10 @@ export default class ViewConfigBar extends Component {
 		view: PropTypes.object
 	}
 
-	componentWillMount = () => {
-		// FocusStore.addChangeListener(this.forceUpdate)
-	}
-
-	componentWillUnmount = () => {
-		// FocusStore.removeChangeListener(this.forceUpdate)
-	}
 
 	render () {
 		const view = this.props.view
-		const focus = FocusStore.getFocus()
+		const focus = this.props.focus
 		
 		return <div style={viewConfigBarStyle}>
 			<History {...this.props} 

@@ -11,7 +11,7 @@ import groomFields from '../groomFields'
 var BIG_NUM = 10000000;
 
 var limit = function (thing, view) {
-	var numCols = view.data.visibleCols.length
+	var numCols = view.data._visibleCols.length
 	thing.left = Math.min(thing.left, numCols - 1)
 	if (thing.right) thing.right = Math.min(thing.right, numCols)
 	return thing
@@ -30,15 +30,15 @@ var groomView = function (view) {
 	var columnList = util.enumerate(_.values(columns), util.sortByOrder)
 
 	data.columns = columns
-	data.columnList = columnList
+	data._columnList = columnList
 	
-	data.floatCols = columnList.filter(c => !c.fixed && c.visible)
-	data.fixedCols = columnList.filter(c => c.fixed && c.visible)
-	data.visibleCols = _.clone(data.fixedCols).concat(data.floatCols)
+	data._floatCols = columnList.filter(c => !c.fixed && c.visible)
+	data._fixedCols = columnList.filter(c => c.fixed && c.visible)
+	data._visibleCols = _.clone(data._fixedCols).concat(data._floatCols)
 
-	data.floatWidth = util.sum(data.floatCols, 'width')
-	data.fixedWidth = util.sum(data.fixedCols, 'width')
-	data.columns = _.indexBy(data.columnList, 'column_id');
+	data._floatWidth = util.sum(data._floatCols, 'width')
+	data._fixedWidth = util.sum(data._fixedCols, 'width')
+	data.columns = _.indexBy(data._columnList, 'column_id');
 
 	data.sorting = _.isArray(data.sorting) ? data.sorting : []
 	data.sorting = data.sorting.filter(function (sort) {
@@ -68,8 +68,6 @@ var groomView = function (view) {
 		rowPadding: 1,
 		colAddWidth: 100
 	}, {})
-
-	data.currentColumn = data.visibleCols[data.pointer.left];
 
 	view.data = data;
 	return view

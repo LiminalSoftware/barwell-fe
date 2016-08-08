@@ -118,6 +118,7 @@ const TabularPane = React.createClass ({
 		var state = this.state
 
 		return props.view !== nextProps.view ||
+			props.view._version > nextProps.view._version ||
 			!_.isEqual(state.selection, nextState.selection) ||
 			!_.isEqual(state.pointer, nextState.pointer) ||
 			this.props.focused !== nextProps.focused ||
@@ -137,11 +138,11 @@ const TabularPane = React.createClass ({
 
 	getTotalWidth: function () {
     	var view = this.props.view
-		return util.sum(view.data.visibleCols, 'width');
+		return util.sum(view.data._visibleCols, 'width');
 	},
 
 	getNumberCols: function () {
-		return this.props.view.data.visibleCols.length - 1;
+		return this.props.view.data._visibleCols.length - 1;
 	},
 
 	getNumberRows: function () {
@@ -154,7 +155,7 @@ const TabularPane = React.createClass ({
 
 	getColumnAt: function (pos) {
 		var left = pos.left || 0;
-		return this.props.view.data.visibleCols[left];
+		return this.props.view.data._visibleCols[left];
 	},
 
 	selectRow: function () {
@@ -168,7 +169,7 @@ const TabularPane = React.createClass ({
 	},
 
 	getBoundedRCCoords: function (e) {
-		var visibleCols = this.props.view.data.visibleCols
+		var visibleCols = this.props.view.data._visibleCols
 		var rc = this.getRCCoords(e)
 		rc.left = Math.min(visibleCols.length - 1, rc.left)
 		rc.left = Math.max(0, rc.left)
@@ -181,9 +182,9 @@ const TabularPane = React.createClass ({
 		var lhs = ReactDOM.findDOMNode(this.refs.tableWrapper.refs.lhs)
 		var view = this.props.view
 		var geo = view.data.geometry
-		var visibleCols = view.data.visibleCols
+		var visibleCols = view.data._visibleCols
 		var scrolledCols = this.state.columnOffset
-		var numFixed = view.data.fixedCols.length
+		var numFixed = view.data._fixedCols.length
 		var offset = $(lhs).offset()
 		var y = e.pageY - offset.top
 		var x = e.pageX - offset.left
@@ -322,7 +323,7 @@ const TabularPane = React.createClass ({
 			var obj = this.store.getObject(r);
 			var jsonRow = {};
 			for (var c = sel.left; c <= sel.right; c++) {
-				var column = view.data.visibleCols[c]
+				var column = view.data._visibleCols[c]
 				var type = fieldTypes[column.type]
 				var value = (type.stringify ? type.stringify : _.identity)(obj[column.column_id])
 
@@ -345,7 +346,7 @@ const TabularPane = React.createClass ({
 			var obj = this.store.getObject(r);
 			var dataRow = [];
 			for (var c = sel.left; c <= sel.right; c++) {
-				var column = view.data.visibleCols[c]
+				var column = view.data._visibleCols[c]
 				var type = fieldTypes[column.type]
 				var value = (type.stringify ? type.stringify : _.identity)(obj[column.column_id])
 
@@ -359,8 +360,8 @@ const TabularPane = React.createClass ({
 	getRangeStyle: function (pos, fudge, showHiddenHack) {
 		var view = this.props.view
 	    var columnOffset = this.state.columnOffset
-	    var visibleCols = view.data.visibleCols
-	    var fixedCols = view.data.fixedCols
+	    var visibleCols = view.data._visibleCols
+	    var fixedCols = view.data._fixedCols
 	    var numFixed = fixedCols.length
 	    var geo = view.data.geometry
 	    var width = 0
@@ -404,7 +405,7 @@ const TabularPane = React.createClass ({
 
 			for (var c = sel.left; c <= sel.right; c++) {
 				var cbc = (c - sel.left) % data[cbr].length
-				var column = view.data.visibleCols[c]
+				var column = view.data._visibleCols[c]
 				var type = fieldTypes[column.type]
 				var validator = type.element.prototype.validator || _.identity
 				var value = validator(data[cbr][cbc]);
@@ -541,8 +542,8 @@ const TabularPane = React.createClass ({
 	setHorizontalScrollOffset: function (hOffset) {
 		var _this = this;
 		var view = this.props.view;
-		var columns = view.data.columnList;
-		var floatCols = view.data.floatCols;
+		var columns = view.data._columnList;
+		var floatCols = view.data._floatCols;
 		var hiddenColWidth = 0;
 		var columnOffset = 0;
 		var rhsHorizontalOffsetter = this.refs.tableWrapper.refs.rhsHorizontalOffsetter;
@@ -720,7 +721,7 @@ const TabularPane = React.createClass ({
 				_setScrollOffset = {this.setVerticalScrollOffset}/>
 			
 			<ScrollBar {...childProps}
-				innerDimension = {view.data.floatWidth + view.data.fixedWidth + geo.labelWidth + 200}
+				innerDimension = {view.data._floatWidth + view.data._fixedWidth + geo.labelWidth + 200}
 				rowCount = {rowCount}
 				offset = {0}
 				ref = "horizontalScrollBar"

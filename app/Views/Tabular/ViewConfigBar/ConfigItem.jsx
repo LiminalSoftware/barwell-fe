@@ -43,7 +43,7 @@ export default class ConfigItem extends Component {
 		const view = this.props.view
 		
 		modelActionCreators.setFocus(
-			isFocused() ? ('v' + view.view_id) : this.getFocusId()
+			this.isFocused() ? ('v' + view.view_id) : this.getFocusId()
 		)
 	}
 

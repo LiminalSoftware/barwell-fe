@@ -49,7 +49,7 @@ var TabularViewInlineConfig = React.createClass({
 		var data = view.data;
 		var pos = (viewconifg instanceof Object) ? (viewconifg.pointer || {}) : {};
 		var left = pos.left || 0;
-		return data.visibleCols[left];
+		return data._visibleCols[left];
 	},
 
 	render: function() {
