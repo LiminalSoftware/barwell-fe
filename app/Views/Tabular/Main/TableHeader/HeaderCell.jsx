@@ -175,7 +175,7 @@ export default class HeaderCell extends Component {
 				columns: {
 					[col.column_id]: {
 						$merge: {
-							width: (col.width + this.state.pos)
+							width: col.width + this.state.pos
 						}
 					}
 				}

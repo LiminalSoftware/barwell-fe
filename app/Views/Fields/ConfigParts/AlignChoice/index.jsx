@@ -1,9 +1,6 @@
-import React, { Component, PropTypes } from 'react'
-import update from 'react/lib/update'
+import React, {Component, PropTypes } from 'react'
 
-import _ from "underscore";
-import modelActionCreators from "../../../../actions/modelActionCreators";
-import util from "../../../../util/util"
+import commitColumnConfig from "../commitColumnConfig"
 
 export default {
 	
@@ -23,23 +20,12 @@ export default {
 			}
 		}
 
-		align = (align) => {
-			console.log('align: ' + align)
-			const view = this.props.view
-			const config = this.props.config
-
-			const updated = update(view, {
-				data : {
-					columns: {
-						[config.column_id]: {
-							$set: {
-								align: align
-							}
-						}
-					}
-				}
-			})
-			modelActionCreators.create("view", true, updated)
+		handlePick = (align) => {
+			commitColumnConfig(
+				this.props.view, 
+				this.props.config.column_id, 
+				{align: align}, 
+				true)
 			this.props.blurSelf()
 		}
 
@@ -52,11 +38,11 @@ export default {
 				{
 					['left', 'center', 'right'].map(align =>
 						<div key = {align}
-						onClick = {_this.align.bind(_this, align)}
+						onClick = {_this.handlePick.bind(_this, align)}
 						className = {`popdown-item  selectable`}>
 
-							<span className = {`icon icon-text-align-${align} 
-								${align === config.align?'icon-hilite':'icon-selectable'}`}/>
+							<span className = {`icon icon-text-align-${align} ` + 
+							`${align === config.align?'icon-hilite':'icon-selectable'}`}/>
 							Align {align}
 						</div>
 					)

@@ -27,20 +27,22 @@ export default class ColumnUnhider extends Component {
 	}
 
 	unhide = (column) => {
+		const adjacentCol = this.props.column
 		const view = this.props.view
 		const updated = update(view, {
 			data : {
 				columns: {
 					[column.column_id]: {
 						$merge: {
-							visible: true
+							visible: true,
+							order: (adjacentCol.order + 0.1)
 						}
 					}
 				}
 			}
 		})
-		modelActionCreators.createView(updated, true, {safe: true})
-		this.props.blurSelf()
+		modelActionCreators.createView(updated, true)
+		this.props.blurContextMenu()
 	}
 
 	handleClick = (column, e) => {
@@ -62,6 +64,7 @@ export default class ColumnUnhider extends Component {
 			.filter(col => !col.visible)
 			.map(column =>
 			<div className="popdown-item selectable" 
+			key={column.column_id}
 			onClick={this.handleClick.bind(_this, column)}>
 				<span className="icon icon-eye"/>
 				{column.name}

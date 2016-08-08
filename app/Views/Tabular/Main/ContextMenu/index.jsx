@@ -31,11 +31,11 @@ var TabularContextMenu = React.createClass ({
 	},
 
 	handleKeyPress: function (e) {
-		if (e.keyCode === constant.keycodes.ESC) this.props._hideContextMenu()
+		if (e.keyCode === constant.keycodes.ESC) this.props.blurContextMenu()
 	},
 
 	handleClick: function (e) {
-		this.props._hideContextMenu(e)
+		this.props.blurContextMenu(e)
 	},
 
 	render: function () {

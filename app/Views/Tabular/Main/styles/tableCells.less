@@ -48,6 +48,7 @@
 }
 
 .table-cell {
+	cursor: default;
 	display: block;
 	position: absolute;
 	border-left: 1px solid @gray3;
@@ -101,10 +102,10 @@
 // ************************************************************************
 
 .table-cell-inner {
+	cursor: default;
 	.noselect;
 	.ellipsis;
 	-webkit-user-drag: none;
-	cursor: cell;
 	padding-left: 7px;
 	padding-right: 7px;
 	&.bolded {
@@ -230,7 +231,6 @@
 	bottom: 3px;
 	border: 1px solid white;
 	border-radius: 3px;
-	cursor: cell;
 }
 
 .has-many-bubble.placeholder {

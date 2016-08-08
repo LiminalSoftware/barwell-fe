@@ -41,7 +41,7 @@ var groomFields = function (view) {
 		col.visible = existing ? (!!col.visible) : (!fieldType.defaultHidden);
 		col.fixed = existing ? (col.fixed && col.visible) : (!fieldType.defaultHidden && field.attribute_id === model.label_attribute_id);
 		col.style = existing ? (col.style) : (field.attribute_id === model.label_attribute_id) ? ('bold') : 'none';
-		if (col.style !== 'bold' && col.style !== 'italic') col.style = 'none';
+		if (col.style !== 'bold' && col.style !== 'italic' && col.style !== 'none') col.style = 'none';
 		col.width = existing ? Math.max(_.isNumber(col.width) ? col.width : 0, 50) : (fieldType.defaultWidth || 100);
 		columns[col.column_id] = col;
 	})

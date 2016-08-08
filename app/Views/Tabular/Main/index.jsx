@@ -118,7 +118,7 @@ const TabularPane = React.createClass ({
 		var state = this.state
 
 		return props.view !== nextProps.view ||
-			props.view._version > nextProps.view._version ||
+			nextProps.view._version > (props.view._version || 0) ||
 			!_.isEqual(state.selection, nextState.selection) ||
 			!_.isEqual(state.pointer, nextState.pointer) ||
 			this.props.focused !== nextProps.focused ||
@@ -566,16 +566,17 @@ const TabularPane = React.createClass ({
 		
 		
 		if (hiddenColWidth !== this.state.hiddenColWidth) {
-			if (this.pointerTimer) clearTimeout(this.pointerTimer)
+			// if (this.pointerTimer) clearTimeout(this.pointerTimer)
 			// const pointer = ReactDOM.findDOMNode(pointer)
 			// if (pointer) pointer.classList.add('pointer-transitioned')
 			ReactDOM.findDOMNode(rhsHorizontalOffsetter).style.marginLeft = 
 				(-1 * hiddenColWidth - 1) + 'px';
-			this.pointerTimer = setTimeout(function () {
+			
+			// this.pointerTimer = setTimeout(function () {
 				// const pointer = ReactDOM.findDOMNode(pointer)
 				// if (pointer) pointer.classList.remove('pointer-transitioned')
-				_this.pointerTimer = null
-			}, 100);
+				// _this.pointerTimer = null
+			// }, 100);
 		}
 	},
 
@@ -654,7 +655,7 @@ const TabularPane = React.createClass ({
 			_deleteRecords: this.deleteRecords,
 			_insertRecord: this.insertRecord,
 			_handleContextMenu: this.showContext,
-			_hideContextMenu: this.hideContext,
+			blurContextMenu: this.hideContext,
 			_handleWheel: this.handleMouseWheel,
 			_handleEdit: this.editCell,
 			_updatePointer: this.updatePointer,

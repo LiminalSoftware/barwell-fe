@@ -1,4 +1,4 @@
-import constant from "../../../constants/MetasheetConstants"
+import constant from "../../../../constants/MetasheetConstants"
 
 export default function (config, object) {
 	const textConditional = (!config.textConditionAttr || obj['a' + config.textConditionAttr])

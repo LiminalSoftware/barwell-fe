@@ -3,21 +3,38 @@ import _ from "underscore"
 
 import editableInputMixin from '../editableInputMixin'
 
+/*
+ *	Align styler
+ */
 import AlignChoice from "../ConfigParts/AlignChoice"
-import ColorChoice from "../ConfigParts/BackgroundChoice"
+import getAlignStyles from "../ConfigParts/AlignChoice/getStyles"
+
+/*
+ *	Background color styler
+ */
+
+import BackgroundChoice from "../ConfigParts/BackgroundChoice"
+import getBackgroundStyles from "../ConfigParts/BackgroundChoice/getStyles"
+
+/*
+ *	Font style styler
+ */
+
 import TextChoice from "../ConfigParts/TextChoice"
+import getFontStyles from "../ConfigParts/TextChoice/getStyles"
+
 
 import fieldUtils from "../fieldUtils"
 
-import GenericTextField from "../GenericTextField"
-import getGenericTextHTML from "../GenericTextField/getGenericTextHTML"
+import GenericTextElement from "../GenericTextElement"
+import getHTML from "../GenericTextElement/getHTML"
 
 
-const stylers = []
+const stylers = [getAlignStyles, getBackgroundStyles, getFontStyles]
 
 const textField = {
-		
-	configParts: [AlignChoice, ColorChoice, TextChoice],
+	
+	configParts: [AlignChoice, BackgroundChoice, TextChoice],
 	
 	sortable: true,
 
@@ -35,7 +52,7 @@ const textField = {
 	
 	defaultWidth: 150,
 
-	getDisplayHTML: getGenericTextHTML.bind(null, _.identity, stylers),
+	getDisplayHTML: getHTML.bind(null, _.identity, stylers),
 
 	element: class TextField extends Component {
 
@@ -52,12 +69,12 @@ const textField = {
 		}
 
 		render () {
-			return <GenericTextField {...this.props}
+			return <GenericTextElement {...this.props}
 				ref = "genericField"
 				format = {_.identity}
 				validator = {_.identity}
 				parser = {_.identity}
-				stylers = {[]}/>
+				stylers = {stylers}/>
 		}
 	}
 }

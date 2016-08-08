@@ -1,5 +1,6 @@
 import React from "react"
 import ReactDOM from "react-dom"
+import update from 'react/lib/update'
 
 import modelActionCreators from "../../../actions/modelActionCreators"
 import fieldTypes from "../../fields"
@@ -18,10 +19,6 @@ var RowResizer = React.createClass ({
 		}
 	},
 
-	// shouldComponentUpdate: function (nextProps) {
-			// return this.props.view !== nextProps.view
-	// },
-
   onResizerMouseDown: function (e) {
     var pos = $(ReactDOM.findDOMNode(this)).offset()
     this.setState({
@@ -37,7 +34,17 @@ var RowResizer = React.createClass ({
     var geo = view.data.geometry
     var col = this.props.column
 
-    view.data.geometry.rowHeight = (geo.rowHeight + this.state.pos)
+    // view.data.geometry.rowHeight = (geo.rowHeight + this.state.pos)
+
+    const updated = update(view, {
+      data : {
+        geometry: {
+          $merge: {
+            rowHeight: geo.rowHeight + this.state.pos
+          }
+        }
+      }
+    })
     
     modelActionCreators.createView(updated, true, {safe: true})
 

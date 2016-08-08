@@ -47,7 +47,8 @@ var ColumnConfigContext = React.createClass ({
 				}
 			}
 		})
-		modelActionCreators.createView(true, updated, {safe: true})
+		modelActionCreators.createView(updated, true)
+		this.props.blurContextMenu()
 	},
 
 	showDetail: function (element, e) {
@@ -55,7 +56,6 @@ var ColumnConfigContext = React.createClass ({
 	},	
 
 	blurMode: function (e) {
-		console.log('blurMode')
 		this.setState({detailElement: null})
 	},
 
@@ -172,7 +172,7 @@ var ColumnConfigContext = React.createClass ({
 			style={style} onClick={util.clickTrap}>
 			{this.state.detailElement ? 
 				React.createElement(this.state.detailElement, 
-					update(this.props, {blurSelf: {$set: this.blurMode}}) )
+					update(this.props, {$merge: {blurSelf: this.blurMode, blurMenu: this.blurMenu}}) )
 				: this.renderMainMenu()
 			}
 		</ReactCSSTransitionGroup>

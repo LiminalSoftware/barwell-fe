@@ -6,6 +6,7 @@ import AttributeStore from "../../../../stores/AttributeStore"
 import util from "../../../../util/util"
 
 import ColorPickerWidget from '../../../../components/ColorPickerWidget'
+import commitColumnConfig from "../commitColumnConfig"
 
 var palette = [
 	'rgb(77,179,113)',
@@ -59,8 +60,9 @@ export default {
 		}
 
 		chooseFixedColor = (color) => {
-			this.setState({color: color})
-			this.commitChanges({color: color})
+			const patch = {color: color}
+			this.setState(patch)
+			commitColumnConfig(this.props.view, this.props.config.column_id, patch, true)
 		}
 
 		chooseCustom = () => {
@@ -92,6 +94,7 @@ export default {
 			var view = this.props.view
 			var colorAttrs = AttributeStore.query({type: 'COLOR', model_id: view.model_id})
 			var customHeight = (this.state.chooser === 'custom' ? '80px' : '0');
+			const chooser = this.state.chooser
 
 			return <div key="color">
 
@@ -105,28 +108,28 @@ export default {
 					return <div key = {attr.attribute_id} className = {"popdown-item selectable "
 						+ (_this.state.colorAttr === attr.attribute_id ? ' menu-selected' : '')}
 						onClick = {_this.chooseColor.bind(_this, attr.attribute_id)}>
-						<span className = "icon icon-eye-dropper  "/>
+						<span className = " icon icon-eye-dropper  "/>
 						{attr.attribute}
 					</div>
 				})
 				}
 				
-				<div className = {"popdown-item selectable " +
-					((_this.state.chooser === 'nocolor') ? ' menu-selected' : '')}
+				<div className = "popdown-item selectable"
 					onClick = {_this.chooseNone}>
-					<span className = "icon icon-square"/>
+					<span className = {"icon icon-square " + 
+					(chooser === 'nocolor'?"icon-hilite":"icon-selectable")}/>
 					No cell color
 				</div>
 
-				<div className = {"popdown-item selectable " + 
-					(this.state.chooser === 'palette' ? " menu-selected bottom-divider " : " ")}
+				<div className = "popdown-item selectable "
 					onClick = {_this.choosePalette}>
-					<span className = "icon icon-color-sampler"/>
+					<span className = {"icon icon-color-sampler " + 
+					(chooser === 'palette'?"icon-hilite":"icon-selectable")}/>
 					Quick colors
 				</div>
 
 				{
-					this.state.chooser === 'palette' ? 
+					chooser === 'palette' ? 
 					<div className = "popdown-item menu-row"> {
 						palette.map(function (color) {
 							return <span className = "menu-choice" key = {color} style = {{background: color}}
@@ -142,10 +145,10 @@ export default {
 					: null
 				}
 
-				<div className = {"popdown-item selectable " + 
-					(this.state.chooser === 'custom' ? " menu-selected bottom-divider " : " ")}
+				<div className = "popdown-item selectable "
 					onClick = {_this.chooseCustom}>
-					<span className = "icon icon-code"/>
+					<span className = {"icon icon-code " + 
+					(chooser === 'custom'?"icon-hilite":"icon-selectable")}/>
 					Custom color
 				</div>
 				

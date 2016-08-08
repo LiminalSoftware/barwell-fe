@@ -8,7 +8,7 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 
 import autobind from 'autobind-decorator'
 
-export default class GenericTextField extends Component {
+export default class GenericTextElement extends Component {
 
 	/*
 	 * LIFECYCLE **************************************************************
@@ -22,15 +22,10 @@ export default class GenericTextField extends Component {
 		_handleBlur: PropTypes.func,
 
 		/*
-		 * registers the current field with the view
-		 */
-		registerCell: PropTypes.func,
-
-		/*
 		 * prepares the content for rendering
 		 */
 		format: PropTypes.func.isRequired,
-
+		
 		/*
 		 * ensures that the content is valid before commit to the server 
 		 */
@@ -78,11 +73,6 @@ export default class GenericTextField extends Component {
 			this.refs.input.value = val
 		}
 	}
-
-	/*
-	 * UTILITY ****************************************************************
-	 */
-
 	
 
 	/*
