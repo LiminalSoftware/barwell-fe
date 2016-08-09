@@ -9,7 +9,14 @@ const MIN_LIGHTNESS = 0.85
  */
 
 export function getStyles (stylers, config, object) {
-	return Object.apply({}, stylers.map(s=>s(config, object)))
+	config = config || {}
+	object = object || {}
+
+	if (!(stylers instanceof Array) || stylers.length === 0) return {}
+	
+	const styles = Object.assign(...(stylers.map(s=>s(config, object))) )
+	
+	return styles
 }
 
 export  function getBgColor (config, object, isNull, isSelected) {

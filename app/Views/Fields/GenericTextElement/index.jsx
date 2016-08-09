@@ -6,8 +6,6 @@ import fieldUtils from "../fieldUtils"
 import FocusStore from "../../../stores/FocusStore"
 import modelActionCreators from "../../../actions/modelActionCreators"
 
-import autobind from 'autobind-decorator'
-
 export default class GenericTextElement extends Component {
 
 	/*

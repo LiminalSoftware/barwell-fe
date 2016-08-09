@@ -42,7 +42,8 @@ export default class BooleanElement extends Component {
 	}
 
 	toggle = (method) => {
-		this.commitValue(!this.state.value, {method: method})
+		this.props.commit(!this.state.value, {method: method})
+		this.setState({value: !this.state.value})
 	}
 
 	getStyles = () => {
@@ -56,11 +57,14 @@ export default class BooleanElement extends Component {
 	render () {
 		var config = this.props.config
 		var value = this.props.value
+		let styles = this.getStyles()
+		styles.textAlign = "center"
+		styles.background = "white"
 
-		return <span className= "table-cell table-cell-selected" style={this.props.style}>
-			<span style = {this.getStyles()} className = "table-cell-inner">
-				<span className = {"checkbox-surround" + (this.state.value ? "-checked" : "")} onClick=  {this.handleClick}>
-					<span className={"check green icon " + (this.state.value ? "icon-check" : "")} >
+		return <span className= "table-cell" style={this.props.style}>
+			<span style = {styles} className = "table-cell-inner">
+				<span className = {`checkbox-surround${value?"-checked":""}`} onClick=  {this.handleClick}>
+					<span className={"check green icon " + (value ? "icon-check" : "")} >
 					</span>
 				</span>
 			</span>

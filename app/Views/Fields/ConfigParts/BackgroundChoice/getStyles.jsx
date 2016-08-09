@@ -5,10 +5,12 @@ const MIN_LIGHTNESS = 0.85
 export default function (config, object) {
 	let style = {}
 	let bg = null
-	const conditional = (!config.colorConditionAttr || !!object['a' + config.colorConditionAttr])
+	const conditional = (!config.colorConditionAttr || 
+		!!object['a' + config.colorConditionAttr])
 
 	if (config.color && conditional) bg = config.color
 	else if (config.colorAttr && conditional) bg = object['a' + config.colorAttr]
+	else bg = 'white'
 
 	let c = tinycolor(bg)
 	let hsl = c.toHsl()
