@@ -11,6 +11,7 @@ import util from "../../../../util/util"
 
 import ColumnConfigContext from "./ColumnConfigContext"
 import TableBodyContext from "./TableBodyContext"
+import NewAttributeContext from "./NewAttributeContext"
 
 var TabularContextMenu = React.createClass ({
 
@@ -37,11 +38,18 @@ var TabularContextMenu = React.createClass ({
 	handleClick: function (e) {
 		this.props.blurContextMenu(e)
 	},
-
+	
 	render: function () {
-		const rc = this.props.rc
-		if (rc.top >= 0 && rc.left >= 0) return <TableBodyContext {...this.props}/>
-		else return <ColumnConfigContext {...this.props} config={this.getConfig()}/>
+		const subject = this.props.subject
+		if (subject === 'column') 
+			return <ColumnConfigContext 
+				{...this.props}
+				config={this.getConfig()}/>
+		else if (subject === 'body') 
+			return <TableBodyContext {...this.props}/>
+		else if (subject === 'newAttribute') 
+			return <NewAttributeContext {...this.props}/>
+			
 	}
 })
 

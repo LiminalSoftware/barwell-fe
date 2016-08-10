@@ -62,9 +62,6 @@ var Cursors = React.createClass ({
 			object: obj,
 			value: obj[col.column_id],
 
-			// can be eliminated?
-			// column_id: ('a' + (col.attribute_id || col.cid)),
-
 			spaceTop: ptr.top - this.props.rowOffset,
 			spaceBottom: this.props.visibleRows + this.props.rowOffset - ptr.top,
 
@@ -85,7 +82,8 @@ var Cursors = React.createClass ({
 				top: '0px',
 				right: '0px',
 				border: 'none',
-				lineHeight: geo.rowHeight + 'px'
+				lineHeight: geo.rowHeight + 'px',
+				background: 'white'
 			}
 		})
 	},
@@ -189,7 +187,7 @@ var Cursors = React.createClass ({
 			&& (sel.left < view.data._fixedCols.length + this.props.columnOffset) && (this.props.columnOffset > 0));
 
 		const singleton = (sel.top === sel.bottom && sel.left === sel.right)
-		const pointerFudge = {width: -1, top: 1, height: -1};
+		const pointerFudge = {width: -1, top: 2	, height: -1};
 		const rowsSelected = Object.keys(this.props.store.getSelection()).length > 0;
 		const rowOffset = this.props.rowOffset
 
@@ -215,15 +213,6 @@ var Cursors = React.createClass ({
 				{this.getPointerElement()}
 			</Overlay>,
 
-			<Overlay
-				{...this.props}
-				className = {"selection-border selection-border--" + (focused ? "focused" : "blurred")}
-				key="selectionBorder"
-				ref="selectionBorder"
-				position = {sel}
-				fudge = {{left: -2.25, top: -0.25, height: 2.5, width: 3.5}}>
-				<div className = {"selection-drag-box selection-drag-box--" + (focused ? "focused" : "blurred")} />
-			</Overlay>,
 
 			<Overlay
 				{...this.props}
@@ -231,7 +220,10 @@ var Cursors = React.createClass ({
 				ref="selectionOuter"
 				key="selectionOuter"
 				position = {sel}
-				fudge = {{left: -3.75, top: -2.75, height: 7.5, width: 6.75}}>
+				fudge = {{left: -4.75, top: -2.75, height: 9.5, width: 9.5}}>
+				<div className = "selection-border selection-border"
+					style={{left: "-3px", right: "-3px", top: "-3px", bottom: "-3px"}}/>
+				
 			</Overlay>,
 
 			<Overlay
@@ -265,26 +257,27 @@ var Cursors = React.createClass ({
 		const model = this.props.model
 		const focused = this.props.focused
 		
-		
+		// <ReactCSSTransitionGroup comonent="div"
+		// 			{...constants.transitions.fadeinout}
+		// 			className = "wrapper force-layer"
+		// 			ref = "overlayInner"
+		// 			style = {this.getInnerWrapperStyle()}>
+
 
 		return <div className = {`wrapper overlay ${this.props.focused?"":"gray-out"}`}
 				style = {this.getOuterWrapperStyle()} 
 				onDoubleClick = {this.props._handleEdit}
 				onContextMenu = {this.props._handleContextMenu}
 				onWheel = {this.props._handleWheel}>
-				<ReactCSSTransitionGroup comonent="div"
-					{...constants.transitions.fadeinout}
-					className = "wrapper force-layer"
-					ref = "overlayInner"
-					style = {this.getInnerWrapperStyle()}>
-
+				<div className="wrapper force-layer" 
+					ref="overlayInner"
+					style={this.getInnerWrapperStyle()}>
 					{
 					!focused ? 
 						this.showColumnOverlays() : 
 						this.renderCursor()
 					}
-
-				</ReactCSSTransitionGroup>
+				</div>
 			</div>
 	}
 });

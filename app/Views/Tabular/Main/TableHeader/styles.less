@@ -1,13 +1,8 @@
 @import "../../../../styles/colors.less";
-@import "../../../../styles/fonts.less";
 @import "../../../../styles/mixins.less";
 
-.rhs-header--focused {
-	// border-right: 1px solid @purple4;
-}
-
-.rhs-header--blurred {
-	// border-right: 1px solid @gray2;
+.rhs-header {
+	border-right: 1px solid @purple4;
 }
 
 .tabular-view-header {
@@ -15,17 +10,12 @@
 	background: white;
 }
 
-.tabular-view-header--focused {
+.tabular-view-header {
 	border-top: 1px solid @purple4;
 	border-bottom: 1px solid @purple4;
 	border-right: 1px solid @purple4;
 }
 
-.tabular-view-header--blurred {
-	border-top: 1px solid @gray2;
-	border-bottom: 1px solid @gray2;
-	border-right: 1px solid @gray2;
-}
 
 .cube-column-header {
 	border-bottom: 1px solid @purple4;
@@ -55,17 +45,6 @@
 	cursor: pointer;
 	// border-radius: 0 10px 10px 0;
 }
-
-.th-context {
-	font-style: @bodyFont !important;
-	font-size: 15px !important;
-	font-weight: 400 !important;
-	position: absolute;
-	left: 0;
-	top: 10px;
-	min-width: 250px;
-}
-
 
 .table-header-cell {
 	display: block;

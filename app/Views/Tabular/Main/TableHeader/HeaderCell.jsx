@@ -101,12 +101,7 @@ export default class HeaderCell extends Component {
 	/*
 	 * 
 	 */
-
-
-	/*
-	 * 
-	 */
-
+	 
 	render = () => {
 		const _this = this
 		const col = this.props.column
@@ -125,7 +120,7 @@ export default class HeaderCell extends Component {
 			className = "table-header-cell">
 			<span className = "table-cell-inner header-cell-inner " 
 			style = {innerStyle}>
-				<span className = {`type-th-label-focused icon icon-${type.icon}`}/>
+				{/*<span className = {`type-th-label-focused icon icon-${type.icon}`}/>*/}
 				{col.name}
 				{this.renderIcons()}
 			</span>
@@ -182,7 +177,7 @@ export default class HeaderCell extends Component {
 			}
 		})
 		
-		modelActionCreators.createView(updated, true, {safe: true})
+		modelActionCreators.createView(updated, true)
 		this.setState({
 			dragging: false,
 			pos: 0

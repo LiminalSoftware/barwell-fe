@@ -5,16 +5,23 @@ import util from "../util/util"
 import _ from 'underscore'
 import cidLookup from './cidLookup'
 
-var BASE_URL = 'http://api.metasheet.io'
+const BASE_URL = 'http://api.metasheet.io'
 
-// a lookup from cid to an array of promises that are waiting for that cid
-var _cidPromises = {}
+/*
+ * a lookup from cid to an array of promises that are waiting for that cid
+ */
 
-// a lookup from cid to the permanent id
-var _cidLookup = {}
+let _cidPromises = {}
 
-// waits until the primary key (pk) is available, then populates the permanent key
-var makePkPromise = function (obj, pk) {
+/*
+ * a lookup from cid to the permanent id
+ */
+let _cidLookup = {}
+
+/*
+ * waits until the primary key (pk) is available, then populates the permanent key
+ */
+const makePkPromise = function (obj, pk) {
 	if (obj[pk]) return Promise.resolve(obj)
 	else return cidLookup.makeCidPromise(obj.cid)
 		.then(function (id) {
@@ -22,9 +29,11 @@ var makePkPromise = function (obj, pk) {
 			return obj;
 		})
 }
+/*
+ * checks for keys of the form ac123 indicating a temporary column.  For each one, creates
+ */
 
-// checks for keys of the form ac123 indicating a temporary column.  For each one, creates
-var makeAttrPromise = function (obj) {
+const makeAttrPromise = function (obj) {
 	return Promise.all(Object.keys(obj)
 		.filter(k => (/^[ar]c\d+$/).test(k))
 		.map(function (fullkey) {
@@ -39,6 +48,8 @@ var makeAttrPromise = function (obj) {
 			return obj
 		})
 }
+
+
 
 class TransactionObserver {
 	constructor () {
@@ -172,5 +183,5 @@ class TransactionObserver {
 	}
 }
 
-let observer = new TransactionObserver()
-export default observer;
+const observer = new TransactionObserver()
+export default observer

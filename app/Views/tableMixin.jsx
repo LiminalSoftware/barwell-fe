@@ -46,39 +46,8 @@ var TableMixin = {
 		this.setState({contextOpen: false})
 	},
 
-	toggleExpand: function () {
-		// this.setState({expanded: !this.state.expanded})
-	},
-
-	showContext: function (e) {
-		
-		var offset = $(this.refs.wrapper).offset()
-		var y = e.pageY - offset.top
-		var x = e.pageX - offset.left
-		var rc = this.getRCCoords(e)
-		var sel = this.state.selection
-
-		// console.log('show context: ' + JSON.stringify(rc))
-		this.getFocus()
-
-		if (rc.top < 0 || rc.left < 0) {
-			this.setState({contextPos: {}, contextRc: rc})
-		} else if (rc.left < sel.left ||
-		rc.left > sel.right || 
-		rc.top < sel.top || 
-		rc.top > sel.bottom) {
-			this.setState({contextPos: {x: x, y: y}, contextRc: rc})
-			this.updateSelect(rc, false)
-		} else {
-			this.setState({contextPos: {x: x, y: y}, contextRc: rc})
-		}
-
-		
-		e.preventDefault();
-	},
-
 	hideContext: function (e) {
-		this.setState({contextPos: null})
+		this.setState({contextSubject: null})
 	},
 
 	handleMouseWheel: function (e) {
@@ -93,7 +62,6 @@ var TableMixin = {
 			: null
 
 		if (current && 'handleBlur' in current) {
-			console.log('lkjdf')
 			current.handleBlur(revert)
 		}
 		this.setState({editing: false})
@@ -137,11 +105,6 @@ var TableMixin = {
 			e.preventDefault()
 			return;
 		}
-		// if (e.keyCode == keycodes.V && e.ctrlKey) {
-		// 	this.pasteSelection(e)
-		// 	e.preventDefault()
-		// 	return;
-		// }
 		else if (e.keyCode == keycodes.PLUS && ctrlKey && e.shiftKey) {
 			this.insertRecord();
 			e.preventDefault();

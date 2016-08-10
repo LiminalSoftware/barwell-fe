@@ -1,5 +1,6 @@
 import MetasheetDispatcher from "../dispatcher/MetasheetDispatcher"
 import webUtils from "../util/MetasheetWebAPI.jsx"
+import update from 'react/lib/update'
 import _ from 'underscore'
 
 import getGuid from '../stores/getGuid'
@@ -125,10 +126,7 @@ var modelActions = {
 	},
 
 	deleteMultiRecords: function (model, obj, extras) {
-		obj = obj.map(function (rec) {
-			var _pk = model._pk
-			return {[_pk]: rec[_pk], action: 'D'}
-		});
+		obj = obj.map(rec => update(rec, {action: {$set: 'D'}}) );
 		var message = _.extend(extras || {}, {
 			entity: 'record',
 			actionType: 'RECORD_MULTIDELETE',

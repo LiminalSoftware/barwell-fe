@@ -1,13 +1,15 @@
 import React, { Component, PropTypes } from 'react'
 
-import BackgroundChoice from "../ConfigParts/BackgroundChoice"
 import fieldUtils from "../fieldUtils"
 import _ from "underscore"
+
+import BackgroundChoice from "../ConfigParts/BackgroundChoice"
+import getBackgroundStyles from "../ConfigParts/BackgroundChoice/getStyles"
 
 import BooleanElement from "../BooleanElement"
 import getHTML from "../BooleanElement/getHTML"
 
-const stylers = []
+const stylers = [getBackgroundStyles]
 
 var booleanField = {
 

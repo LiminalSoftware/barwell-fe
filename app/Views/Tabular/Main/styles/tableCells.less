@@ -9,8 +9,7 @@
 	right: 1px;
 	overflow: hidden;
 	border-bottom: 1px solid @gray3;
-	transition: position, width, height linear 75ms;
-
+	transition: all linear 75ms;
 }
 
 .table-row-label {
@@ -52,7 +51,7 @@
 	display: block;
 	position: absolute;
 	border-left: 1px solid @gray3;
-	border-bottom: 1px solid transparent;
+	// border-bottom: 1px solid transparent;
 
 	margin: 0;
 	padding: 0;
@@ -62,13 +61,11 @@
 	top: 0;
 	bottom: 0;
 	z-index: 2;
-
-	transition: position, width, height linear 75ms;
 }
 
 .table-cell--selected {
 	border-left: 1px solid transparent;
-	border-bottom: 1px solid transparent;
+	// border-bottom: 1px solid transparent;
 }
 
 .table-cell-selected {
@@ -80,8 +77,8 @@
 // }
 
 .label-grab-handle {
-	 background:url(
-	data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAGElEQVQIW2Nc4Lj/f8J+R0YGKIAziBcAAAF5BAVLxr7tAAAAAElFTkSuQmCC
+	background:url(
+		data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAGElEQVQIW2Nc4Lj/f8J+R0YGKIAziBcAAAF5BAVLxr7tAAAAAElFTkSuQmCC
     ) repeat;
 
 	.draggable;

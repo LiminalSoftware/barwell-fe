@@ -71,6 +71,7 @@ var TableHeader = React.createClass ({
 
 			{this.props.hasRowLabel ? null :
 			<span 
+				onClick = {this.props.showAttributeAdder}
 				style = {{left: left + 'px', top: "-1px", bottom: "-1px", width: "35px", padding: 0}}
 				className = 'table-header-cell action-cell-topright'>
 				<span className = "table-cell-inner action-cell-inner" style = {{textAlign: 'center'}}>

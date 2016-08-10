@@ -12,7 +12,8 @@ const viewConfigBarStyle = {
 	position: "absolute",
 	display: "flex",
 	flexDirection: "row",
-	zIndex: 100
+	zIndex: 100,
+	transform: "translate3d(0,0,0)"
 }
 
 export default class ViewConfigBar extends Component {

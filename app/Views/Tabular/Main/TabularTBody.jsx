@@ -46,6 +46,18 @@ var TabularTBody = React.createClass ({
 		}
 	},
 
+	// _onChange: function () {
+	// 	this.forceUpdate()
+	// },
+
+	// componentWillMount: function () {
+	// 	this.props.store.addChangeListener(this._onChange);
+	// },
+
+	// componentWillUnmount: function () {
+	// 	this.props.store.removeChangeListener(this._onChange);
+	// },
+
 	// UTILITY ================================================================
 
 	getInterimTarget: function (target) {
@@ -153,7 +165,12 @@ var TabularTBody = React.createClass ({
 		var rowCount = this.props.store ? this.props.store.getRecordCount() : 0
 		var geo = view.data.geometry
 		var floatOffset = this.props.floatOffset		
-		var style = this.props.style
+		var style = {
+			left: 0,
+			top: 0,
+			height: rowCount * geo.rowHeight + 'px',
+			width: this.props.width + 'px'
+		}
 		var prevOutOfOrder = false
 		
 

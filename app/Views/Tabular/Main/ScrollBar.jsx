@@ -49,7 +49,6 @@ var ScrollBar = React.createClass ({
 			top: 0,
 			left: 0,
 			position: 'absolute',
-			zIndex: 21,
 			display: 'block'
 		};
 

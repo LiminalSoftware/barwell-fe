@@ -28,7 +28,6 @@ const FocusStore = assign({}, EventEmitter.prototype, {
 		switch(payload.actionType) {
 			case 'SET_FOCUS':
 				if (_focus !== payload.focus) {
-					console.log('SET_FOCUS: ' + payload.focus)
 					if ("handleBlur" in (_focusElement || {})) _focusElement.handleBlur()
 					_focus = payload.focus
 					_focusElement = payload.element

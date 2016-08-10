@@ -120,13 +120,16 @@ const createTabularStore = function (view) {
 					var object = _state.records.filter(r => r.cid === id || r[model._pk] === id)[0]
 					if (id in _state.selection) delete _state.selection[id];
 					else _state.selection[id] = object;
+					TabularStore.emitChange()
 					break;
 
 				case 'UNSELECT':
 					_state.selection = {}
+					TabularStore.emitChange()
 					break;
 
 				case 'RECORD_INSERT':
+					console.log('record insert...')
 					var object = action.data || {}
 					var index = action.index
 					object._outoforder = true
@@ -134,6 +137,7 @@ const createTabularStore = function (view) {
 						.concat(action.data)
 						.concat(_state.records.slice(index));
 					_state.recordCount++;
+					TabularStore.emitChange()
 					break;
 
 				case 'RECORD_REORDER':
@@ -148,6 +152,7 @@ const createTabularStore = function (view) {
 					_state.records = _state.records.slice(0, index)
 						.concat(objects)
 						.concat(_state.records.slice(index));
+					TabularStore.emitChange()
 					break;
 
 				case 'RECORD_BATCHUPDATE':
@@ -176,6 +181,7 @@ const createTabularStore = function (view) {
 						rec._server = _.clone(rec)
 						return rec
 					})
+					TabularStore.emitChange()
 					break;
 
 				case 'REVERT_ACTION':

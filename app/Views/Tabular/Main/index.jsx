@@ -1,4 +1,5 @@
 import React from "react"
+import update from 'react/lib/update'
 import ReactDOM from "react-dom"
 import { RouteHandler } from "react-router"
 import cursorStyles from "./styles/cursors.less"
@@ -102,16 +103,12 @@ const TabularPane = React.createClass ({
 		// this.scrollTo(viewconfig.rowOffset || 0);
 	},
 
-	// componentWillReceiveProps: function (nextProps) {
-	// 	const cursors = ReactDOM.findDOMNode(this.refs.cursors)
-	// 	const wrapper = ReactDOM.findDOMNode(this.refs.tableWrapper)
-
-	// 	if (!nextProps.focused && this.props.focused) {
-	// 		cursors.style.opacity = "0"
-	// 	} else if (nextProps.focused && !this.props.focused) {
-	// 		cursors.style.opacity = "1"
-	// 	}
-	// },
+	componentWillReceiveProps: function (nextProps) {
+		if (!nextProps.focused && this.props.focused) {
+			this.hideContext()
+			this.blurPointer()
+		}
+	},
 
 	shouldComponentUpdate: function (nextProps, nextState) {
 		var props = this.props
@@ -122,18 +119,24 @@ const TabularPane = React.createClass ({
 			!_.isEqual(state.selection, nextState.selection) ||
 			!_.isEqual(state.pointer, nextState.pointer) ||
 			this.props.focused !== nextProps.focused ||
-			this.state.contextPos !== nextState.contextPos || 
+			this.state.contextRc !== nextState.contextRc || 
+			this.state.contextSubject !== nextState.contextSubject || 
 			state.copyarea !== nextState.copyarea ||
 			state.contextOpen !== nextState.contextOpen ||
 			state.hiddenColWidth !== nextState.hiddenColWidth;
 	},
 
 	_onChange: function () {
+		const tableWrapper = this.refs.tableWrapper
+		const cursors = this.refs.cursors
+		const lhs = tableWrapper ? tableWrapper.refs.lhs : null
+		const rhs = tableWrapper ? tableWrapper.refs.rhs : null
 		
-		if (!this.props.focused) this.blurPointer()
 		this.forceUpdate()
-		if (this.refs.tableWrapper) this.refs.tableWrapper.forceUpdate()
-		if (this.refs.cursors) this.refs.cursors.forceUpdate()
+		if (tableWrapper) tableWrapper.forceUpdate()
+		if (cursors) cursors.forceUpdate()
+		if (lhs) lhs.forceUpdate()
+		if (rhs) rhs.forceUpdate()
 	},
 
 	getTotalWidth: function () {
@@ -230,10 +233,10 @@ const TabularPane = React.createClass ({
 		var sel = this.state.selection;
 		var model = this.props.model;
 		this.blurPointer();
-		if (pos >= sel.top && pos <= sel.bottom) {
-			sel = _.clone(sel);
-			sel.bottom++;
-		}
+		
+		if (pos >= sel.top && pos <= sel.bottom)
+			sel = update(sel, {bottom: {$apply: (b=>b++)}})
+		
 		modelActionCreators.insertRecord(this.props.model, obj, pos)
 		this.setState({copyarea: null, selection: sel})
 	},
@@ -320,8 +323,8 @@ const TabularPane = React.createClass ({
 		var records = this.store.getSelectionObjects()
 
 		for (var r = sel.top; r <= sel.bottom; r++) {
-			var obj = this.store.getObject(r);
-			var jsonRow = {};
+			var obj = this.store.getObject(r)
+			var jsonRow = {}
 			for (var c = sel.left; c <= sel.right; c++) {
 				var column = view.data._visibleCols[c]
 				var type = fieldTypes[column.type]
@@ -355,6 +358,46 @@ const TabularPane = React.createClass ({
 			data.push(dataRow);
 		}
 		return data;
+	},
+
+	calculateRhsSpace: function () {
+		var el = ReactDOM.findDOMNode(this)
+		return $('#application').outerWidth() - 
+			$(el).offset().left - 
+			$(el).outerWidth()
+	},
+
+	showAttributeAdder: function () {
+		this.getFocus()
+		this.setState({
+			contextSubject: 'newAttribute', 
+			contextPos: {}, 
+			contextRc: {}}
+		)
+	},
+
+	showContext: function (e) {
+		var offset = $(this.refs.wrapper).offset()
+		var y = e.pageY - offset.top
+		var x = e.pageX - offset.left
+		var rc = this.getRCCoords(e)
+		var sel = this.state.selection
+
+		this.getFocus()
+
+		if (rc.top < 0 || rc.left < 0) {
+			this.setState({contextSubject: 'column', contextRc: rc})
+		} else {
+			this.setState({contextSubject: 'body', contextPos: {x: x, y: y}, contextRc: rc})
+			if (rc.left < sel.left ||
+			rc.left > sel.right || 
+			rc.top < sel.top || 
+			rc.top > sel.bottom) {
+				this.updateSelect(rc, false)
+			}
+		}
+
+		e.preventDefault();
 	},
 	
 	getRangeStyle: function (pos, fudge, showHiddenHack) {
@@ -419,6 +462,7 @@ const TabularPane = React.createClass ({
 	},
 
 	pasteSelection: function (e) {
+		if (!this.props.focused) return;
 		const _this = this;
 		const text = e.clipboardData.getData('text') || "";
 		const isJsonValid = (text === this.state.copytext);
@@ -656,6 +700,7 @@ const TabularPane = React.createClass ({
 			_insertRecord: this.insertRecord,
 			_handleContextMenu: this.showContext,
 			blurContextMenu: this.hideContext,
+			showAttributeAdder: this.showAttributeAdder,
 			_handleWheel: this.handleMouseWheel,
 			_handleEdit: this.editCell,
 			_updatePointer: this.updatePointer,
@@ -705,7 +750,7 @@ const TabularPane = React.createClass ({
 					designMode = {true}
 					ref="tableWrapper"/>
 				{
-				this.props.focused && !this.state.contextPos ?
+				this.props.focused && !this.state.contextSubject ?
 				<Cursors {...childProps}
 					key="cursors"
 					ref="cursors"/>
@@ -729,8 +774,9 @@ const TabularPane = React.createClass ({
 				axis = "horizontal"
 				_setScrollOffset = {this.setHorizontalScrollOffset}/>
 
-			{this.state.contextPos ? 
+			{this.state.contextSubject && this.props.focused ? 
 			<ContextMenu {...childProps}
+				subject={this.state.contextSubject}
 				rc={this.state.contextRc}
 				position={this.state.contextPos}/> 
 			: null}

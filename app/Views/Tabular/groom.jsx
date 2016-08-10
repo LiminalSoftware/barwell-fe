@@ -22,6 +22,7 @@ var groomView = function (view) {
 	
 	var data = view.data = view.data || {};
 	if (!model) return view;
+	console.log('grrom')
 	var fields = AttributeStore.query({model_id: view.model_id});
 	var relations = RelationStore.query({model_id: view.model_id})
 	var iter =  BIG_NUM;

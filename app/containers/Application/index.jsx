@@ -81,7 +81,7 @@ var Application = React.createClass({
 		const views = viewIdString.split(',').map(id=>ViewStore.get(id))
 		const multiViews = views.length > 1
 
-		return <div className = "application">
+		return <div className = "application" id="application">
 			{
 			this.state.loaded ?
 			<ModelBar 

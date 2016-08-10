@@ -27,7 +27,7 @@ export default class ColumnUnhider extends Component {
 	}
 
 	unhide = (column) => {
-		const adjacentCol = this.props.column
+		const adjacent = this.props.config
 		const view = this.props.view
 		const updated = update(view, {
 			data : {
@@ -35,7 +35,7 @@ export default class ColumnUnhider extends Component {
 					[column.column_id]: {
 						$merge: {
 							visible: true,
-							order: (adjacentCol.order + 0.1)
+							order: (adjacent.order + 0.1)
 						}
 					}
 				}

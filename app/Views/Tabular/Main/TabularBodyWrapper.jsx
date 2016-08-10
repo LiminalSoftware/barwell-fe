@@ -56,39 +56,25 @@ var TabularBodyWrapper = React.createClass ({
 			colOffset: 0,
 			detailOpen: false,
 			contextOpen: false,
-			renderSide: 'lhs',
-			frameNum: 0
 		}
 	},
 	
-	_onChange: function () {
-		// this.setState({contextOpen: false, detailOpen: false})
-		this.forceUpdate()
-		this.refs.lhs.forceUpdate()
-		this.refs.rhs.forceUpdate()
-		this.refs.lhsHead.forceUpdate()
-		this.refs.rhsHead.forceUpdate()
-	},
-
 	componentWillMount: function () {
 		this.debounceFetch = _.debounce(this.fetch, FETCH_DEBOUNCE)
 	},
 
 	componentDidMount: function () {
 		var _this = this;
-		// HACK.  delay the fetch until the current dispatch is complete
-		// (only relevant if the view is loaded directly from url)
+		/* 
+		 * Delay the fetch until the current dispatch is complete
+		 * (only relevant if the view is loaded directly from url)
+		 */
 		setTimeout(() => _this.fetch(true), 0)
 	},
 
 	componentWillUpdate: function (nextProps, nextState) {
-		var renderSide = this.state.renderSide === 'lhs' ? 'rhs' : 'lhs';
 		// if (this.__timer) clearTimeout(this.__timer);
 		this.debounceFetch(false, nextProps, nextState);
-		this.setState({
-			renderSide: renderSide,
-			frameNum: this.state.frameNum + 1
-		});
 	},
 
 	componentWillReceiveProps: function (nextProps) {
@@ -136,10 +122,12 @@ var TabularBodyWrapper = React.createClass ({
 				this.props.store.storeId
 			).then(function () {
 				_this.setState({
+					initialFetchComplete: true,
 					fetchOffset: boundedTarget,
-					fetching: false,
-					initialFetchComplete: true
+					fetching: false
 				});
+				_this.forceUpdate()
+				
 				modelActionCreators.clearNotification({
 					notification_key: 'loadingRecords'
 				})
@@ -147,15 +135,12 @@ var TabularBodyWrapper = React.createClass ({
 		}
 	},
 
-	shouldComponentUpdate: function (nextProps, nextState) {
+	shouldComponentUpdate: function (newProps, nextState) {
 		var oldProps = this.props
-		
-		return oldProps.view !== nextProps.view || 
-		(!this.state.initialFetchComplete && nextState.initialFetchComplete)
+		return oldProps.view !== newProps.view 
 	},
 
 	render: function () {
-		console.log('render tabular-body-wrapper')
 		var view = this.props.view
 		var model = this.props.model
 		var store = this.props.store
@@ -231,14 +216,7 @@ var TabularBodyWrapper = React.createClass ({
 					offsetCols = {0}
 					fetchStart = {fetchStart}
 					fetchEnd = {fetchEnd}
-					shouldPaint = {this.state.renderSide === 'lhs'}
-					frameNum = {this.state.frameNum}
-					style = {{
-						left: 0,
-						top: 0,
-						width:  (view.data._fixedWidth + geo.labelWidth) + 'px',
-						height: (rowCount * geo.rowHeight) + 'px'
-					}}
+					width = {view.data._fixedWidth + geo.labelWidth}
 					columns = {view.data._fixedCols}/>
 				</div>
 			</div>
@@ -259,12 +237,12 @@ var TabularBodyWrapper = React.createClass ({
 
 
 			{/*RHS OUTER*/}
-			<div className = "wrapper rhs-h-scroll-outer--focused"
+			<div className = "wrapper rhs-h-scroll-outer"
 				ref = "rhsTableBody"
 				style = {{
 					top: 0,
 					bottom: 0,
-					left: (view.data._fixedWidth + geo.labelWidth) + 'px',
+					left: (view.data._fixedWidth + geo.labelWidth + 1) + 'px',
 					width:  view.data._floatWidth + geo.colAddWidth + 'px',
 					// transform: 'translateZ(1px)',
 					overflow: 'hidden'
@@ -282,7 +260,7 @@ var TabularBodyWrapper = React.createClass ({
 						style = {{
 							left: 0,
 							top: geo.headerHeight + 'px',
-							width: (fixedWidth + floatWidth) + 'px',
+							width: (floatWidth + 1) + 'px',
 							bottom: 0,
 							overflow: 'hidden'
 						}}>
@@ -296,7 +274,7 @@ var TabularBodyWrapper = React.createClass ({
 							transform: 'translateY(' + marginTop + 'px)',
 							transition: IS_CHROME ? 'transform 75ms linear' : null,
 							height: (rowCount * geo.rowHeight) + 'px',
-							width: (fixedWidth + floatWidth) + 'px',
+							width: (floatWidth + 1) + 'px',
 						}}>
 						<TabularTBody
 							{...this.props}
@@ -308,14 +286,7 @@ var TabularBodyWrapper = React.createClass ({
 							offsetCols = {view.data._fixedCols.length}
 							fetchStart = {fetchStart}
 							fetchEnd = {fetchEnd}
-							shouldPaint = {this.state.renderSide === 'rhs'}
-							frameNum = {this.state.frameNum}
-							style = {{
-								left: 0,
-								top: 0,
-								width:  view.data._floatWidth + 1  + 'px',
-								height: (rowCount * geo.rowHeight) + 'px',
-							}} />
+							width={view.data._floatWidth + 1} />
 					</div>
 
 					</div>

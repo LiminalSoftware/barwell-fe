@@ -25,9 +25,12 @@ export default class ConfigItem extends Component {
 		}
 	}
 
-	// shouldComponentUpdate = (newProps, newState) => {
-	// 	return newProps.focus !== this.props.focus
-	// }
+	shouldComponentUpdate = (newProps, newState) => {
+		const focusId = this.getFocusId()
+		const wasFocused = this.props.focus === focusId
+		const willBeFocused = newProps.focus === focusId
+		return wasFocused !== willBeFocused
+	}
 
 	getFocusId = () => {
 		return 'v' + this.props.view.view_id + '-' + this.props.hoverText

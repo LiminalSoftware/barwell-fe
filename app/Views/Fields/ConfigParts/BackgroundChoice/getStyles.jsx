@@ -10,7 +10,7 @@ export default function (config, object) {
 
 	if (config.color && conditional) bg = config.color
 	else if (config.colorAttr && conditional) bg = object['a' + config.colorAttr]
-	else bg = 'white'
+	else bg = 'rgba(255,255,255,0)'
 
 	let c = tinycolor(bg)
 	let hsl = c.toHsl()

@@ -4,6 +4,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 import constants from "../../../../constants/MetasheetConstants"
 import modelActionCreators from "../../../../actions/modelActionCreators"
+import AttributeStore from "../../../../stores/AttributeStore"
 import constant from "../../../../constants/MetasheetConstants"
 
 import fieldTypes from "../../../fields"
@@ -17,6 +18,29 @@ var ColumnConfigContext = React.createClass ({
 		return {
 			detailElement: null
 		}
+	},
+
+	updateColumnConfig: function (patch) {
+		const view = this.props.view
+		const column = this.props.config
+		
+		modelActionCreators.createView(update(view, {
+			data: {
+				columns: {
+					[column.column_id]: {
+						$merge: patch
+					}
+				}
+			}
+		}), true)
+	},
+
+	showDetail: function (element, e) {
+		this.setState({detailElement: element})
+	},	
+
+	blurMode: function (e) {
+		this.setState({detailElement: null})
 	},
 
 	sort: function (desc) {
@@ -34,31 +58,27 @@ var ColumnConfigContext = React.createClass ({
 		modelActionCreators.createView(updated, true)
 	},
 
-	hideColumn: function () {
-		const view = this.props.view
-		const updated = update(view, {
-			data : {
-				columns: {
-					[this.props.config.column_id]: {
-						$merge: {
-							visible: false
-						}
-					}
-				}
-			}
-		})
-		modelActionCreators.createView(updated, true)
+	pin: function () {
+		this.updateColumnConfig({fixed: true, visible: true})
 		this.props.blurContextMenu()
 	},
 
-	showDetail: function (element, e) {
-		this.setState({detailElement: element})
-	},	
-
-	blurMode: function (e) {
-		this.setState({detailElement: null})
+	unpin: function () {
+		this.updateColumnConfig({fixed: false})
+		this.props.blurContextMenu()
 	},
 
+	hideColumn: function () {
+		this.updateColumnConfig({visible: false})
+		this.props.blurContextMenu()
+	},
+
+	deleteColumn: function () {
+		const config = this.props.config
+		const attribute = AttributeStore.get(config.attribute_id)
+		modelActionCreators.destroy('attribute', true, attribute)
+	},
+	
 	renderMainMenu: function () {
 		const view = this.props.view
 		const config = this.props.config
@@ -149,12 +169,16 @@ var ColumnConfigContext = React.createClass ({
 				Set default value for this attribute
 				<span className="icon icon-detail-right icon-arrow-right"/>
 			</div>
+			<div onClick={this.deleteColumn} className = "popdown-item selectable">
+				<span className="icon icon-trash2"/>
+				Delete this attribute
+			</div>
 		</div>
 	},
 
 	render: function () {
 		const view = this.props.view
-		const style = Object.assign({}, 
+		let style = Object.assign({}, 
 			this.props._getRangeStyle(this.props.rc), {
 				height: "0",
 				marginLeft: "-1px",
@@ -162,8 +186,6 @@ var ColumnConfigContext = React.createClass ({
 				position: "absolute",
 				minWidth: "350px",
 				overflow: "visible",
-				zIndex: 12,
-				transform: "translateZ(12px)",
 				pointerEvents: "auto"
 		})
 
