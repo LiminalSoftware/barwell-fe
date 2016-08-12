@@ -3,7 +3,7 @@ import _ from "underscore"
 
 export default function getGenericTextHTML (format, stylers, config, obj) {
 	var value = obj[config.column_id];
-	var prettyValue = _.escape(format(value))
+	var prettyValue = _.escape(format(value, config))
 	var styles = fieldUtils.getStyles(stylers, config, obj)
 	
 	return `<span class = "table-cell-inner" 

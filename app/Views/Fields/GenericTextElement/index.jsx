@@ -43,9 +43,10 @@ export default class GenericTextElement extends Component {
 
 	constructor (props) {
 		super(props)
+		const config = this.props.config
 		this.state = {
 			editing: false, 
-			value: this.props.format(props.value)
+			value: this.props.format(props.value, config)
 		}
 	}
 
@@ -56,8 +57,9 @@ export default class GenericTextElement extends Component {
 	 */
 
 	componentWillReceiveProps = (props)  => {
+		const config = this.props.config
 		if (!this.state.editing)
-		this.setState({value: props.format(props.value)})
+		this.setState({value: props.format(props.value, config)})
 	}
 
 	/*
@@ -95,18 +97,20 @@ export default class GenericTextElement extends Component {
 	 */
 	
 	handleBlur = (revert) => {
-		
+		const config = this.props.config
 		const hasChanged = this.state.value !== this.props.value
+		const parsedValue = this.props.parser(this.state.value, config)
 
 		if (revert !== true && this.state.editing && hasChanged)
-			this.props.commit(this.state.value)
+			this.props.commit(parsedValue)
 		
 		this.setState({
 			editing: false,
 			open: false,
-			value: revert !== true ? 
+			value: this.props.format(revert !== true ? 
 				this.state.value : 
 				this.props.value
+				, config)
 		})
 	}
 
@@ -122,10 +126,10 @@ export default class GenericTextElement extends Component {
 	 * use the supplied commit method to persist to server (only if changed)
 	 */
 
-	commitChanges = () => {
-		if (this.state.editing && this.state.value !== this.props.value)
-			this.props.commit(this.state.value)
-	}
+	// commitChanges = () => {
+	// 	if (this.state.editing && this.state.value !== this.props.value)
+	// 		this.props.commit(this.state.value)
+	// }
 
 	/*
 	 * RENDER *****************************************************************
@@ -147,7 +151,7 @@ export default class GenericTextElement extends Component {
 	render = () => {
 		var config = this.props.config
 		var isNull = this.props.isNull
-		var prettyValue = this.props.format(this.state.value)
+		var prettyValue = this.props.format(this.state.value, config)
 		var showIcon = this.detailIcon && this.props.selected && !this.state.editing
 		var obj = this.props.object
 		

@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import _ from "underscore"
 
+import numeral from "numeral"
+
 import editableInputMixin from '../editableInputMixin'
 
 /*
@@ -39,6 +41,11 @@ import displayStyles from "../ConfigParts/NumberFormatChoice/displayStyles"
 
 const stylers = [getAlignStyles, getBackgroundStyles, getFontStyles]
 
+const format = function (value, config) {
+	var prettyVal = numeral(value).format(config.formatString);
+	return prettyVal;
+}
+
 export default {
 
 	configParts: [AlignChoice, BackgroundChoice, TextChoice, NumberFormatChoice],
@@ -68,7 +75,7 @@ export default {
 		return config
 	},
 	
-	getDisplayHTML: getHTML.bind(null, _.identity, stylers),
+	getDisplayHTML: getHTML.bind(null, format, stylers),
 
 	element: class TextField extends Component {
 
@@ -87,7 +94,7 @@ export default {
 		render () {
 			return <GenericTextElement {...this.props}
 				ref = "genericField"
-				format = {_.identity}
+				format = {format}
 				validator = {_.identity}
 				parser = {_.identity}
 				stylers = {stylers}/>
