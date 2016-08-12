@@ -141,7 +141,7 @@ class TransactionObserver {
 			}
 
 			json = JSON.stringify(util.stripInternalVars(data));
-			return webUtils.ajax(verb, url, json);
+			return webUtils.ajax({method: verb, url: url, json: json});
 		}).then(function (results) {
 			// get the response back, process it a bit and then dispatch 
 			// the result locally

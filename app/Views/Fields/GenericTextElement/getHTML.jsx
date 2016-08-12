@@ -7,7 +7,9 @@ export default function getGenericTextHTML (format, stylers, config, obj) {
 	var styles = fieldUtils.getStyles(stylers, config, obj)
 	
 	return `<span class = "table-cell-inner" 
-	style = "text-align: ${styles.textAlign}; background: ${styles.background || 'transparent'}; color: ${styles.color}; font-family: ${styles.fontFamily || 'inherit'}">
+	style = "text-align: ${styles.textAlign}; font-style: ${styles.fontStyle || 'inherit'};
+	background: ${styles.background || 'transparent'}; color: black; 
+	font-family: ${styles.fontFamily || 'inherit'}">
 		${prettyValue}
 	</span>`
 }

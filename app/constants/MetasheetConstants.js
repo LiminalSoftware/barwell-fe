@@ -29,6 +29,13 @@ module.exports = {
       // transitionAppear: true,
       transitionName: "slideleft" 
     },
+    delayfade: {
+      transitionEnterTimeout: 500,
+      transitionLeaveTimeout: 500,
+      transitionName: "delayfade",
+      transitionAppear: true,
+      transitionAppearTimeout: 500,
+    },
     fadeinout: {
       transitionEnterTimeout: 500,
       transitionLeaveTimeout: 500,
@@ -66,8 +73,8 @@ module.exports = {
   },
 
   fonts: {
-    bodyFont: '"Helvetica Neue LT W06_61366420", "Helvetica", sans-serif',
-    headerFont: '"Helvetica Neue LT W04_45", "Helvetica", sans-serif'
+    headerFont: 'Helvetica Neue LT W06_61366420, Helvetica, sans-serif',
+    bodyFont: 'Helvetica Neue LT W04_45, Helvetica, sans-serif'
   },
 
   colors: {

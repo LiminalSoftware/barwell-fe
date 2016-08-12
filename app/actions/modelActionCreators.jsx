@@ -214,7 +214,16 @@ var modelActions = {
 		}
 		var workspaceId = model.workspace_id
 		var url = BASE_URL + '/w' + workspaceId + '_action?order=action_id.desc';
-		return webUtils.ajax('GET', url, null, header).then(function (results) {
+		
+		return webUtils.ajax({
+			method: 'GET', 
+			url: url, 
+			json: null,
+			header: {
+				'Range-Unit': 'items',
+				'Range': (offset + '-' + (offset + limit))
+			}
+		}).then(function (results) {
 			MetasheetDispatcher.dispatch({
 				actionType: 'ACTION_CREATE',
 				data: results.data,
@@ -224,19 +233,26 @@ var modelActions = {
 	},
 
 	fetchRecords: function (view, offset, limit, sortSpec, storeId) {
-		var view_id = view.view_id
-		var model_id = view.model_id
-		var url = BASE_URL + '/v' + view_id;
-		if (sortSpec) {
-			url = url + '?order=' + _.map(sortSpec, function (comp) {
-				return 'a' + comp.attribute_id + '.' + (comp.descending ? 'desc' : 'asc')
-			}).join(",")
-		}
-		var header = {
-			'Range-Unit': 'items',
-			'Range': (offset + '-' + (offset + limit))
-		}
-		return webUtils.ajax('GET', url, null, header).then(function (results) {
+		const view_id = view.view_id
+		const model = ModelStore.get(view.model_id)
+		let url = BASE_URL + '/v' + view_id;
+		
+		url += '?order=' + 
+			(sortSpec || [])
+			.concat({attribute_id: model._pk.slice(1), descending: false})
+			.map(comp =>
+			`a${comp.attribute_id}.${comp.descending?'desc':'asc'}`
+			).join(",")
+		
+		return webUtils.ajax({
+			method: 'GET', 
+			url: url, 
+			json: null,
+			header: {
+				'Range-Unit': 'items',
+				'Range': (offset + '-' + (offset + limit))
+			}
+		}).then(function (results) {
 			var message = {}
 			var range = results.xhr.getResponseHeader('Content-Range')
 			var rangeParts = range.split(/[-/]/)
@@ -246,7 +262,7 @@ var modelActions = {
 				endIndex: parseInt(rangeParts[1]),
 				recordCount: parseInt(rangeParts[2]),
 				actionType: 'RECORD_RECIEVEFETCH',
-				model_id: model_id,
+				model_id: model.model_id,
 				records: results.data,
 				storeId: storeId
 			})
@@ -260,32 +276,42 @@ var modelActions = {
 		offset = offset || 0
 		limit = limit || 20
 
-		var header = {
-			'Range-Unit': 'items',
-			'Range': (offset + '-' + (offset + limit))
-		}
+		
 
-		return webUtils.ajax('GET', url, null, header).then(function (results) {
+		return webUtils.ajax({
+			method: 'GET', 
+			url: url, 
+			json: null,
+			header: {
+				'Range-Unit': 'items',
+				'Range': (offset + '-' + (offset + limit))
+			}
+		}).then(function (results) {
 			var range = results.xhr.getResponseHeader('Content-Range')
 			var rangeParts = range.split(/[-/]/)
-			var res = {}
-			res.searchRecords = results.data
-			res.startIndex = parseInt(rangeParts[0])
-			res.endIndex = parseInt(rangeParts[1])
-			res.count = parseInt(rangeParts[2])
-			return res
+			return {
+				searchRecords: results.data,
+				startIndex: parseInt(rangeParts[0]),
+				endIndex: parseInt(rangeParts[1]),
+				count: parseInt(rangeParts[2])
+			}
 		})
 	},
 
 	fetchVennValues: function (view, store) {
 		var view_id = view.view_id
 		var url = BASE_URL + '/v' + view_id
-		var header = {
-			'Range-Unit': 'items',
-			'Range': '0-100'
-		}
+		
 
-		return webUtils.ajax('GET', url, null, header).then(function (results) {
+		return webUtils.ajax({
+			method: 'GET', 
+			url: url, 
+			json: null,
+			header: {
+				'Range-Unit': 'items',
+				'Range': '0-100'
+			}
+		}).then(function (results) {
 			var range = results.xhr.getResponseHeader('Content-Range');
 			var rangeParts = range.split(/[-/]/);
 			var message = {
@@ -304,10 +330,6 @@ var modelActions = {
 		var model_id = view.model_id
 		var url = BASE_URL + '/v' + view_id + '_' + dimension + 's';
 		var aggregates = view[dimension + '_aggregates'] || []
-		var header = {
-			'Range-Unit': 'items',
-			'Range': ('0' + '-' + MAX_CUBE_LEVELS)
-		}
 
 
 		if (aggregates.length === 0 || _.isEqual(aggregates,
@@ -325,7 +347,15 @@ var modelActions = {
 			aggregates: aggregates
 		})
 
-		return webUtils.ajax('GET', url, null, header).then(function (results) {
+		return webUtils.ajax({
+			method: 'GET', 
+			url: url, 
+			json: null,
+			header: {
+				'Range-Unit': 'items',
+				'Range': ('0' + '-' + MAX_CUBE_LEVELS)
+			}
+		}).then(function (results) {
 			var range = results.xhr.getResponseHeader('Content-Range')
 			var rangeParts = range.split(/[-/]/)
 
@@ -392,7 +422,12 @@ var modelActions = {
 			view_id: view.view_id
 		});
 
-		return webUtils.ajax('GET', url, null, header).then(function (results) {
+		return webUtils.ajax({
+			method: 'GET', 
+			url: url, 
+			json: null,
+			header: header
+		}).then(function (results) {
 			var rangeParts = results.xhr.getResponseHeader('Content-Range').split(/[-/]/);
 			MetasheetDispatcher.dispatch({
 				numberResults: parseInt(rangeParts[2]),
@@ -468,42 +503,30 @@ var modelActions = {
 	// models
 	fetchModels: function (workspace_id) {
 		var url = BASE_URL + '/model?workspace_id=eq.' + workspace_id;
-		var retrySettings = {
-			period: 50,
-			strategy: 'double',
-			notification_key: 'workspaceLoad'
-		}
 
-		modelActions.createNotification({
-			narrative: 'Fetching workspace details', 
-			type: 'loading',
-			icon: ' icon-loading spin ',
-			notification_key: 'workspaceLoad',
-			notificationTime: 0
-		});
-
-		return webUtils.ajax('GET', url, null, retrySettings, {"Prefer": 'return=representation'}).then(function (result) {
+		return webUtils.ajax({
+			method: 'GET', 
+			url: url, 
+			json: null
+		}).then(function (result) {
 			return MetasheetDispatcher.dispatch({
 				actionType: 'MODEL_CREATE',
 				isClean: true,
 				data: result.data
 			})
-		}).then(function () {
-			modelActions.clearNotification({
-				notification_key: 'workspaceLoad'
-			})
-		}).catch(function (error) {
-			modelActions.createNotification({
-				narrative: 'A critical error has occured on the server.  Unfortunately this is not recoverable. Details: ' + JSON.stringify(error), 
-				type: 'error-item',
-				icon: ' icon-warning ',
-				notification_key: 'workspaceLoad',
-			});
-		});
+		})
 	},
 
 	fetchWorkspaces: function () {
-		webUtils.persist('workspace', 'FETCH', null);
+		var url = BASE_URL + '/workspace';
+		
+		return webUtils.ajax({
+			method: 'GET', 
+			url: url, 
+			json: null
+		}).then(function (results) {
+
+		})
 	},
 
 	createNewModel: function(workspaceId) {

@@ -6,6 +6,8 @@ import util from './util'
 
 var Promise = require('es6-promise').Promise;
 
+let persistBacklog = []
+
 $.ajaxSetup({
     headers: {"Prefer": 'return=representation'}
 });
@@ -24,12 +26,9 @@ var stripInternalVars = module.exports.stripInternalVars = function (obj) {
 
 
 
-var ajax = module.exports.ajax = function (method, url, json, retry, headers) {
+var ajax = module.exports.ajax = function ({method, url, json, headers}) {
   console.log(method + '->' + url);
   console.log(JSON.parse(json));
-  
-  if (!(retry instanceof Object)) retry = {}
-  if (!(retry.period > 0)) retry.period = 50
   
   return util.wait(0).then(function () {
     return new Promise(function (resolve, reject) {

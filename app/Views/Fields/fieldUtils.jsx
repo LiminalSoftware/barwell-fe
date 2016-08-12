@@ -14,8 +14,8 @@ export function getStyles (stylers, config, object) {
 
 	if (!(stylers instanceof Array) || stylers.length === 0) return {}
 	
-	const styles = Object.assign(...(stylers.map(s=>s(config, object))) )
-	
+	let styles = Object.assign(...(stylers.map(s=>s(config, object))) )
+
 	return styles
 }
 

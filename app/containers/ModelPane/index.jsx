@@ -82,12 +82,14 @@ var ModelPane = React.createClass({
 
 		return <div className="model-views" >
 			{this.props.multiViews ? 
-			<h2 className="model-pane-label">
-				<span >
-				<span className={`icon ${viewType.icon}`}/>
-				{view.view}
+			<div className="model-pane-label" onClick={this.focus} style={{position: "relative"}}>
+				<span>
+					<span className={`icon ${viewType.icon}`}/>
+					{view.view}
 				</span>
-			</h2> 
+				<span style={{position: "absolute", right: "4px", top: "4px"}}
+					className="icon icon-cross"/>
+			</div> 
 			: null
 			}
 			<ReactCSSTransitionGroup

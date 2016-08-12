@@ -23,7 +23,7 @@
 .selection-outer-singleton, 
 .pointer,
 .view-reference-box {
-	transition-property: left, top, height, width, max-width, bottom, right;
+	transition-property: left, top, height, width, max-width, bottom, right, opacity;
 	transition-style: linear;
 	transition-duration: 75ms;
 }
@@ -77,12 +77,12 @@
 .selection-outer, .selection-outer-singleton {
 	border: 5px solid white;
 	background-color: @gray-trans;
-	transform: translateZ(2px);
+	// transform: translateZ(2px);
 	z-index: 2;
 }
 .selection-border {
 	// transform: translateZ(2px);
-	border: 2px solid @newgreen1;
+	border: 1px solid @newgreen1;
 	z-index: 4;
 }
 

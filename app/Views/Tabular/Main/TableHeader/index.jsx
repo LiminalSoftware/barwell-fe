@@ -1,6 +1,6 @@
 import React from "react"
 import $ from "jquery"
-import styles from "./styles.less"
+import styles from "../styles/headers.less"
 
 import _ from 'underscore'
 import fieldTypes from "../../../fields"
@@ -13,8 +13,9 @@ import HeaderCell from "./HeaderCell"
 var TableHeader = React.createClass ({
 
 	shouldComponentUpdate: function (nextProps) {
-		return (nextProps.leftOffset !== this.props.leftOffset ||
-			nextProps.view !== this.props.view || this.props.focused !== nextProps.focused)
+		return nextProps.leftOffset !== this.props.leftOffset ||
+				nextProps.view !== this.props.view || 
+				nextProps.focused !== this.props.focused
 	},
 
 	render: function () {
@@ -22,9 +23,9 @@ var TableHeader = React.createClass ({
 		const view = this.props.view
 		const model = this.props.model
 		const geo = view.data.geometry
-		var left = (this.props.hasRowLabel ? geo.labelWidth : 0) + this.props.leftOffset
+		var left = (this.props.hasRowLabel ? geo.labelWidth : -1) + this.props.leftOffset
 		var sortAttrs = _.pluck(view.data.sorting, 'attribute_id').map(parseInt)
-
+		
 		const style = {
 			marginLeft: this.props.leftOffset + 'px',
 			height: (this.props.height || (geo.headerHeight + 1)) + 'px',
@@ -56,8 +57,9 @@ var TableHeader = React.createClass ({
 				var sorting = (col.attribute_id in sortIndex) ? sortIndex[col.attribute_id] : null;
 
 				var el = <HeaderCell {..._this.props}
-					key={"th-" + col.column_id}
-					scrollTop = {_this.props.scrollTop}
+					key={col.column_id}
+					ref={"head-" + col.column_id}
+					scrollTop={_this.props.scrollTop}
 					column = {col}
 					sorting = {sorting}
 					view = {view}

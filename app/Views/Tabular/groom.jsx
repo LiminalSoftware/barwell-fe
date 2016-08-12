@@ -1,7 +1,10 @@
 import _ from "underscore"
+import update from 'react/lib/update'
+
 import AttributeStore from "../../stores/AttributeStore"
 import ModelStore from "../../stores/ModelStore"
 import RelationStore from "../../stores/RelationStore"
+
 import fieldTypes from '../fields'
 import viewTypes from '../viewTypes'
 import util from "../../util/util"
@@ -20,9 +23,11 @@ var limit = function (thing, view) {
 var groomView = function (view) {
 	var model = ModelStore.get(view.model_id);
 	
-	var data = view.data = view.data || {};
+	var data = view.data || {};
+
 	if (!model) return view;
-	console.log('grrom')
+
+	console.log('grr000000mmmmm')
 	var fields = AttributeStore.query({model_id: view.model_id});
 	var relations = RelationStore.query({model_id: view.model_id})
 	var iter =  BIG_NUM;
@@ -51,27 +56,19 @@ var groomView = function (view) {
 	})
 	data.sortIndex = _.indexBy(data.sorting, 'attribute_id')
 
-	data.selection = _.extend({'left': 0, 'top': 0, 'right': 0, 'bottom': 0}, (data.selection || {}) );
-	data.selection = limit(data.selection, view);
-	data.anchor = _.extend({"left": 0, "top": 0}, data.anchor || {});
-	data.anchor = limit(data.anchor, view);
-	data.pointer = _.extend({"left": 0, "top": 0}, data.pointer || {});
-	data.pointer = limit(data.pointer, view);
-	data.scrollTop = data.scrollTop || 0;
-
-	data.geometry = data.geometry || {}
-	data.geometry = _.extend({
+	let geo = data.geometry || {}
+	data.geometry =  {
 		leftGutter: 0,
 		labelWidth: 34,
 		topGutter: 0,
-		headerHeight: 28.5,
-		rowHeight: Math.min(Math.max(data.geometry.rowHeight || 25, 20), 80),
-		rowPadding: 1,
+		headerHeight: 32,
+		rowHeight: Math.floor(geo.rowHeight * 2)/2 || 24,
+		rowPadding: 2,
 		colAddWidth: 100
-	}, {})
+	}
 
-	view.data = data;
-	return view
+	
+	return update(view, {data: {$set: data}})
 }
 
 export default groomView;

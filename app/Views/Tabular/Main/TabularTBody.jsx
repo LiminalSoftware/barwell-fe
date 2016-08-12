@@ -174,9 +174,9 @@ var TabularTBody = React.createClass ({
 		var prevOutOfOrder = false
 		
 
-		style.transform = "translate3d(0, " + (-1 * this.state.rowOffset * geo.rowHeight ) + "px, 0)"
+		style.transform = "translate3d(0, " + (-1 * this.state.rowOffset * geo.rowHeight ) + "px, 5px)"
 
-		return <div
+		return <div style={{background: 'white'}}
 			className = {`tabular-body-${this.props.prefix} tabular-body force-layer`}
 			
 			onMouseDown = {this.props._handleClick}
@@ -204,7 +204,7 @@ var TabularTBody = React.createClass ({
 				top: rowCount * geo.rowHeight + 'px', 
 				height: geo.rowHeight + 'px',
 				lineHeight: geo.rowHeight + 'px',
-				left: 0, width: geo.labelWidth + 1 + 'px'}}>
+				left: 0, width: geo.labelWidth + 2 + 'px'}}>
 			<span className="icon icon-plus"/>
 			</span>
 			: null

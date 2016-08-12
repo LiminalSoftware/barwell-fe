@@ -19,16 +19,16 @@ export default class HeaderCell extends Component {
 			dragging: false,
 			rel: null,
 			pos: 0,
-      		open: false,
+      		editing: false,
       		mouseover: false
 		}
 	}
 
-	_onChange = () => {this.forceUpdate()}
-
 	/*
 	 * 
 	 */
+
+	_onChange = () => {this.forceUpdate()}
 
 	/*
 	 * add global mousemove and mouseup listeners when the drag begins and 
@@ -46,7 +46,7 @@ export default class HeaderCell extends Component {
 	}
 
 	/*
-	 * 
+	 * render sort and filter icons that appear at the right edge of the header
 	 */
 
 	renderIcons = () => {
@@ -121,16 +121,14 @@ export default class HeaderCell extends Component {
 			<span className = "table-cell-inner header-cell-inner " 
 			style = {innerStyle}>
 				{/*<span className = {`type-th-label-focused icon icon-${type.icon}`}/>*/}
-				{col.name}
+				{this.state.renaming ?
+					<input className="renamer" value={col.name}/>
+					: <span>{col.name}</span>}
 				{this.renderIcons()}
 			</span>
 	        {this.renderResizer()}
 		</span>
 	}
-
-	/*
-	 * 
-	 */
 
 
 	/*
@@ -204,24 +202,31 @@ export default class HeaderCell extends Component {
 	   e.preventDefault()
 	}
 
-
-
 	/*
 	 * 
 	 */
-
 
 	handleBlur = () => {
-  		this.setState({open: false})
+  		this.setState({renaming: false})
 	}
 
-	/*
-	 * 
-	 */
+	componentDidMount = () => {
+		document.addEventListener('keyup', this.handleKeyPress)
+		document.addEventListener('click', this.handleClick)
+	}
+
+	componentWillUnmount = () => {
+		document.removeEventListener('keyup', this.handleKeyPress)
+		document.removeEventListener('click', this.handleClick)
+	}
 
 	handleKeyPress = (e) => {
 		if (event.keyCode === constant.keycodes.ESC)
 			this.handleBlur()
+	}
+
+	handleClick = (e) => {
+		this.handleBlur()
 	}
 
 }

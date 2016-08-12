@@ -150,7 +150,9 @@ var TabularBodyWrapper = React.createClass ({
 		var rowOffset = this.props.rowOffset
 		var colOffset = this.props.hiddenColWidth
 
-		var marginTop = (-1 * rowOffset * geo.rowHeight)
+		const rowHeight = Math.floor(geo.rowHeight)
+
+		var marginTop = -1 * rowOffset * rowHeight
 		var fixedWidth = view.data._fixedWidth
 		var floatWidth = view.data._floatWidth
 		var adjustedWidth = fixedWidth + floatWidth + geo.labelWidth
@@ -165,46 +167,55 @@ var TabularBodyWrapper = React.createClass ({
 
 
 		if (!this.state.initialFetchComplete) 
-			return null
+			return <div><div className="loader"/></div>
 
 		return <div
-			className = {`tabular-body-wrapper force-layer`}
+			className = "wrapper overlay"
 			ref="tbodyWrapper"
 			style = {{
 				left: 0,
-				width: (adjustedWidth + 3) + 'px',
-				transformStyle: 'preserve-3d',
+				width: (adjustedWidth + 2) + 'px',
 				zIndex: 5,
-        		// transform: 'translateZ(5)'
+				background: 'white',
+				overflow: 'hidden',
+				transformStyle: "preserve-3d",
+        		// transform: 'translateZ(10px)'
 			}}>
 			
 			<RowResizer {...this.props} adjustedWidth = {adjustedWidth} />
 
-			<div className = "lhs-outer wrapper"
+			<div className = " wrapper force-layer"
 				style = {{
 					left: geo.leftGutter + 'px',
 					top: 0,
 					bottom: 0,
-					width: (fixedWidth + geo.labelWidth) + 'px',
-					transformStyle: 'preserve-3d'
+					width: (fixedWidth + geo.labelWidth + 1) + 'px',
+					background: 'white',
+					transform: 'translate3d(0, 0, 10px)',
+					zIndex: 5,
 				}}>
+
 			{/*LHS TABLE BODY*/}
 			<div className = "wrapper outer-table-wrapper "
 				ref = "lhsTableBody"
 				style = {{
 					top: geo.headerHeight + 'px',
-					borderRight: "3px solid " + constant.colors.RED_BRIGHT_TRANS,
+					borderRight: "2px solid " + constant.colors.RED_BRIGHT_TRANS,
 					// transform: 'translateZ(1px)',
+					transform: 'translateZ(10px)',
 					overflow: 'hidden',
+					background: 'white',
 				}}>
-				<div className = "wrapper force-layer"
+				<div className = "wrapper force-layer lhs-offset-wrapper"
 					ref = "lhsOffsetter"
 					style = {{
-						top: '1px',
-						height: (rowCount * geo.rowHeight) + 'px',
+						top: '0',
+						height: (rowCount * rowHeight) + 'px',
 						marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
-						transform: 'translate3d(0, ' + marginTop + 'px, 1px)',
-						transition: IS_CHROME ? 'transform 75ms linear' : null
+						transform: 'translate3d(0, ' + marginTop + 'px, 10px)',
+						// transformStyle: "flat",
+						// transition: IS_CHROME ? 'transform 75ms linear' : null,
+						background: 'white'
 					}}>
 
 				<TabularTBody
@@ -216,7 +227,7 @@ var TabularBodyWrapper = React.createClass ({
 					offsetCols = {0}
 					fetchStart = {fetchStart}
 					fetchEnd = {fetchEnd}
-					width = {view.data._fixedWidth + geo.labelWidth}
+					width = {view.data._fixedWidth + geo.labelWidth -1 }
 					columns = {view.data._fixedCols}/>
 				</div>
 			</div>
@@ -225,7 +236,7 @@ var TabularBodyWrapper = React.createClass ({
 			{/*LHS HEADER*/}
 			<TableHeader {...this.props}
 				ref = "lhsHead"
-				totalWidth = {fixedWidth +  geo.labelWidth + 1}
+				totalWidth = {fixedWidth +  geo.labelWidth}
 				leftOffset = {0}
 				side = {'lhs'}
 				hasRowLabel = {true}
@@ -244,7 +255,8 @@ var TabularBodyWrapper = React.createClass ({
 					bottom: 0,
 					left: (view.data._fixedWidth + geo.labelWidth + 1) + 'px',
 					width:  view.data._floatWidth + geo.colAddWidth + 'px',
-					// transform: 'translateZ(1px)',
+					transform: 'translateZ(10px)',
+					background: 'white',
 					overflow: 'hidden'
 				}}>
 				<div className = "rhs-h-scroll wrapper force-layer"
@@ -262,19 +274,23 @@ var TabularBodyWrapper = React.createClass ({
 							top: geo.headerHeight + 'px',
 							width: (floatWidth + 1) + 'px',
 							bottom: 0,
+							transform: 'translateZ(10px)',
+							background: 'white',
 							overflow: 'hidden'
 						}}>
 					<div className = "wrapper"
 						ref = "rhsOffsetter"
 						style = {{
-							top: '1px',
+							top: '0',
 							left: 0,
 							right: 0,
 							marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
-							transform: 'translateY(' + marginTop + 'px)',
-							transition: IS_CHROME ? 'transform 75ms linear' : null,
-							height: (rowCount * geo.rowHeight) + 'px',
+							transform: 'translate3d(0, ' + marginTop + 'px, 10px)',
+							// transformStyle: "preserve-3d",
+							// transition: IS_CHROME ? 'transform 75ms linear' : null,
+							height: (rowCount * rowHeight) + 'px',
 							width: (floatWidth + 1) + 'px',
+							background: 'white'
 						}}>
 						<TabularTBody
 							{...this.props}

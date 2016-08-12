@@ -50,19 +50,25 @@ export default {
 		}
 
 		chooseColor = (attributeId) => {
-			this.commitChanges({
+			const patch = {
 				colorAttr: attributeId,
 				color: null,
 				adjustColor: this.state.adjustColor
-			})
-			this.blurChildren(e)
-			// this.setState({open: false})
+			}
+			this.setState(patch)
+			commitColumnConfig(
+				this.props.view, 
+				this.props.config.column_id, 
+				patch)
 		}
 
 		chooseFixedColor = (color) => {
 			const patch = {color: color}
 			this.setState(patch)
-			commitColumnConfig(this.props.view, this.props.config.column_id, patch, true)
+			commitColumnConfig(
+				this.props.view, 
+				this.props.config.column_id, 
+				patch)
 		}
 
 		chooseCustom = () => {
@@ -74,8 +80,17 @@ export default {
 		}
 
 		chooseNone = () => {
-			this.setState({chooser: 'nocolor', color: null, conditional: false, colorAttr: null,})
-			this.commitChanges({colorAttr: null, color: null})
+			const patch = {
+				chooser: 'nocolor', 
+				color: null, 
+				conditional: false, 
+				colorAttr: null
+			}
+			this.setState(patch)
+			commitColumnConfig(
+				this.props.view, 
+				this.props.config.column_id,
+				patch)
 		}
 
 		handleAdjustCheck = () => {

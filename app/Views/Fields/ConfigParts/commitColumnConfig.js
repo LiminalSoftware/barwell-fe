@@ -11,5 +11,5 @@ export default function (view, columnId, patch, safe) {
 			}
 		}
 	})
-	modelActionCreators.createView(updated, true, safe ? {safe: true} : null)
+	modelActionCreators.createView(updated, true)
 }

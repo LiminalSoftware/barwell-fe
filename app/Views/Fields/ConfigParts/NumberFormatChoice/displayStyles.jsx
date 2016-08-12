@@ -1,4 +1,4 @@
-var displayStyles = {
+export default {
   'DECIMAL': {
     displayStyle: 'DECIMAL',
   	description: 'Decimal', 
@@ -18,4 +18,3 @@ var displayStyles = {
   	formatString: '$0,0.00'
   },
 }
-export default displayStyles

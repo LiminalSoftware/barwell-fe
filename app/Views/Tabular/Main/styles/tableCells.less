@@ -13,7 +13,7 @@
 }
 
 .table-row-label {
-	border-left: 1px solid @purple4 !important;
+	border-left: 1px solid transparent !important;
 }
 
 .table-cell-error {
@@ -100,6 +100,7 @@
 
 .table-cell-inner {
 	cursor: default;
+	-webkit-font-smoothing: subpixel-antialiased !important;
 	.noselect;
 	.ellipsis;
 	-webkit-user-drag: none;
@@ -118,12 +119,7 @@
 	color: @purple4 !important;
 }
 
-
-.table-cell-inner-selected {
-	background: white;
-}
-
-.table-cell-inner, .special-cell-inner, .input-editor {
+.table-cell-inner, .input-editor {
 	position: absolute !important;
 	display: block;
 	font-size: 16px;
@@ -177,7 +173,7 @@
 	border: 1px solid white;
 }
 
-.editor-icon, .sort-th-label-focused, .sort-th-label-blurred {
+.editor-icon, .sort-th-label-focused {
 	// font-size: 16px;
 	display: block;
 	position: absolute !important;
@@ -192,14 +188,11 @@
 .editor-icon {
 	color: @newgreen1 !important;
 }
-.sort-th-label-focused, .sort-th-label-blurred {
+.sort-th-label-focused {
 	right: 5px;
 	top: 5px;
 }
-.type-th-label-focused, .type-th-label-blurred {
-	left: 5px;
-	top: 5px;
-}
+
 
 .type-th-label-focused {
 	color: @purple4 !important;
@@ -209,10 +202,7 @@
 	color: steelblue !important;
 }
 
-.sort-th-label-blurred, .type-th-label-blurred {
-	color: @gray2 !important;
-	font-size: 16px;
-}
+
 .type-icon {
 	// color: @purple4 !important;
 	font-size: 18px;

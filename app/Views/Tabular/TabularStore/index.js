@@ -97,21 +97,18 @@ const createTabularStore = function (view) {
 		},
 
 		dispatchToken: dispatcher.register(function (action) {
-			var type = action.actionType;
 
 			if (action.model_id !== model.model_id) return;
 
-			switch (type) {
+			switch (action.actionType) {
 
 				case 'VIEW_CREATE':
 					if (action.view.view_id = view.view_id)
 					_state.sortSpec = action.view.data.sorting
-					TabularStore.emitChange()
 					break;
 
 				case 'VIEW_RECEIVE':
 					var view = action.view
-					TabularStore.emitChange()
 					break;
 
 				case 'RECORD_TOGGLESELECT':
@@ -124,8 +121,9 @@ const createTabularStore = function (view) {
 					break;
 
 				case 'UNSELECT':
+					const count = Object.keys(_state.selection).length
 					_state.selection = {}
-					TabularStore.emitChange()
+					if (count > 0) TabularStore.emitChange()
 					break;
 
 				case 'RECORD_INSERT':

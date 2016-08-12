@@ -79,7 +79,7 @@ const TabularPane = React.createClass ({
 		copyPasteDummy.addEventListener('paste', this.pasteSelection);
 
 		this.store = createTabularStore(this.props.view);
-		this.store.addChangeListener(this._onChange);
+		this.store.addChangeListener(this._onStoreChange);
 	},
 
 	componentWillUnmount: function () {
@@ -90,7 +90,7 @@ const TabularPane = React.createClass ({
 		
 		if (this._timer) cancelFrame(this._timer)
 
-		this.store.removeChangeListener(this._onChange);
+		this.store.removeChangeListener(this._onStoreChange);
 		this.store.unregister();
 	},
 
@@ -115,7 +115,6 @@ const TabularPane = React.createClass ({
 		var state = this.state
 
 		return props.view !== nextProps.view ||
-			nextProps.view._version > (props.view._version || 0) ||
 			!_.isEqual(state.selection, nextState.selection) ||
 			!_.isEqual(state.pointer, nextState.pointer) ||
 			this.props.focused !== nextProps.focused ||
@@ -126,7 +125,7 @@ const TabularPane = React.createClass ({
 			state.hiddenColWidth !== nextState.hiddenColWidth;
 	},
 
-	_onChange: function () {
+	_onStoreChange: function () {
 		const tableWrapper = this.refs.tableWrapper
 		const cursors = this.refs.cursors
 		const lhs = tableWrapper ? tableWrapper.refs.lhs : null
@@ -428,7 +427,10 @@ const TabularPane = React.createClass ({
 
 	    if (!showHiddenHack && pos.left >= numFixed && (pos.right || pos.left) < numFixed + columnOffset) {
 	    	style.maxWidth = 0
-	    	style.display = 'none'
+	    	style.opacity = 0
+	    } else {
+	    	style.maxWidth = (width + (fudge.width || 0)) + 'px'
+	    	style.opacity = 1
 	    }
 
 	  	return style
@@ -510,10 +512,10 @@ const TabularPane = React.createClass ({
 
 		// commit the pointer position to the view object, but debounce
 		// view.data.pointer = pos
-		this._debounceCreateViewconfig({
-			view_id: view.view_id,
-			pointer: pos
-		});
+		// this._debounceCreateViewconfig({
+		// 	view_id: view.view_id,
+		// 	pointer: pos
+		// });
 	},
 
 	updateSelect: function (pos, shift) {
@@ -664,10 +666,10 @@ const TabularPane = React.createClass ({
 		var delta = this.state.rowOffset - this.state.previousOffset
 		var direction = delta > 0 ? 1 : delta < 0 ? -1 : 0;
 		var isUnpainted = body.updateOffset(this.state.rowOffset, direction) || alt.isUnpainted()
-
+		
 		this.updateVerticalOffset();
 		
-
+		
 		if (isUnpainted)
 			this._timer = getFrame(this.refreshTable, CYCLE)
 		else 
@@ -738,19 +740,18 @@ const TabularPane = React.createClass ({
 		 * Fetching and rendering of the actual table is handled by the TabularBodyWrapper element
 		 * Curors is an overlay containing the selection, the highlighted cell and a few other items
 		 * Scrollbars are... scrollbars
+		 * table-clip-wrapper
 		 */
 		
 		return <div ref="wrapper"
-			style={{overflow: "visible"}}
-			className = {`wrapper table-top-wrapper`}
+			className = {`wrapper table-outermost-wrapper`}
 			beforePaste = {this.beforePaste}>
 
-			<div className="table-clip-wrapper wrapper">
+			<div className=" wrapper" style={{overflow: "hidden"}}>
 				<TabularBodyWrapper {...childProps}
-					designMode = {true}
 					ref="tableWrapper"/>
 				{
-				this.props.focused && !this.state.contextSubject ?
+				this.props.focused 	?
 				<Cursors {...childProps}
 					key="cursors"
 					ref="cursors"/>

@@ -22,12 +22,12 @@ var TabularContextMenu = React.createClass ({
 	},
 
 	componentDidMount: function () {
-		document.addEventListener('keyup', this.handleKeyPress)
+		document.addEventListener('keydown', this.handleKeyPress)
 		document.addEventListener('click', this.handleClick)
 	},
 
 	componentWillUnmount: function () {
-		document.removeEventListener('keyup', this.handleKeyPress)
+		document.removeEventListener('keydown', this.handleKeyPress)
 		document.removeEventListener('click', this.handleClick)
 	},
 

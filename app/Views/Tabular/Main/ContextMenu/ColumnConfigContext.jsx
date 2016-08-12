@@ -44,18 +44,17 @@ var ColumnConfigContext = React.createClass ({
 	},
 
 	sort: function (desc) {
-		
-		const spec = [{
-			attribute_id: this.props.config.attribute_id, 
-			descending: !!desc
-		}]
 		const view = this.props.view
 		const updated = update(view, {
 			data: {
-				sorting: {$set: spec}
+				sorting: {$set: [{
+					attribute_id: this.props.config.attribute_id, 
+					descending: !!desc
+				}]}
 			}
 		})
 		modelActionCreators.createView(updated, true)
+		this.props.blurContextMenu()
 	},
 
 	pin: function () {
@@ -77,6 +76,7 @@ var ColumnConfigContext = React.createClass ({
 		const config = this.props.config
 		const attribute = AttributeStore.get(config.attribute_id)
 		modelActionCreators.destroy('attribute', true, attribute)
+		this.props.blurContextMenu()
 	},
 	
 	renderMainMenu: function () {
@@ -98,12 +98,16 @@ var ColumnConfigContext = React.createClass ({
 				<span className="icon icon-eye-crossed"/>
 				Hide this column from view
 			</div>
+			
+			{view.data._columnList.filter(col => !col.visible).length > 0 ?
 			<div onClick={this.showDetail.bind(_this, ColumnUnhider)} 
 				className = "popdown-item selectable ">
 				<span className="icon icon-eye"/>
 				Show hidden columns
 				<span className="icon icon-detail-right icon-arrow-right"/>
 			</div>
+			: null
+			}
 
 			{
 			config.fixed ? 

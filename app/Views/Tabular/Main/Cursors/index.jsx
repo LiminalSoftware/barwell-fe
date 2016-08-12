@@ -88,91 +88,6 @@ var Cursors = React.createClass ({
 		})
 	},
 
-	getOuterWrapperStyle: function () {
-		const view = this.props.view
-		const geo = view.data.geometry
-		const fixedWidth = view.data._fixedWidth
-		const floatWidth = view.data._floatWidth
-		const adjustedWidth = fixedWidth + floatWidth + geo.labelWidth
-			- this.props.hiddenColWidth
-
-		return {
-			top: geo.headerHeight - 1 - 2 + 'px',
-			bottom: 0,
-			left: geo.leftGutter + 'px',
-			width: (fixedWidth + floatWidth + geo.labelWidth + RIGHT_FRINGE) + 'px',
-			overflow: 'hidden',
-			transformStyle: 'preserve-3d',
-			transform: 'translateZ(0)',
-			zIndex: 10,
-			pointerEvents: 'none',
-		}
-	},
-
-	getInnerWrapperStyle: function () {
-		const geo = this.props.view.data.geometry
-		const marginTop = (-1 * this.props.rowOffset * geo.rowHeight)
-		const store = this.props.store
-		const rowCount = store.getRecordCount()
-
-		return {
-			top: "1px",
-			left: 0,
-			right: 0,
-			height: ((rowCount + 1) * geo.rowHeight) + 'px',
-			transformStyle: 'preserve-3d',
-			transition: IS_CHROME ? 'transform 75ms linear' : null,
-			transform: HAS_3D ? `translate3d(0,${marginTop + 2}px, 20px)` : null,
-			marginTop: HAS_3D ? null : (marginTop + 2 + 'px'),
-			zIndex: 10
-		}
-	},
-
-	showColumnOverlays: function () {
-		const _this = this
-		const view = this.props.view
-		const store = this.props.store
-		const rowCount = store.getRecordCount()
-		const height = Math.min(this.props.rowOffset + 50, rowCount)
-
-		const labelStyle = {
-			transform: "rotate(-90deg)",
-			transformOrigin: "left top 0",
-		    display: "block",
-		    position: "absolute",
-		    top: "40%",
-		    left: "40%",
-		    width: "500px",
-		}
-		return null;
-		
-		return view.data._fixedCols
-		.concat(view.data._floatCols)
-		.map( (col, idx) => 
-			<Overlay {..._this.props} 
-			key = {col.column_id}
-			className = "view-reference-box"
-			position = {{
-				left: idx, 
-				right: idx, 
-				top: this.props.rowOffset, 
-				bottom: height
-			}}>
-				<span style={labelStyle}>
-				<span className={`icon icon-${fieldTypes[col.type].icon}` }
-					style={{fontSize: "20px", lineHeight: "24px"}}/>
-				{col.name}
-				</span>
-			</Overlay>
-		).concat([<Overlay {..._this.props}
-		className = "view-reference-outline"
-		position = {{
-			left: 0, 
-			right: view.data._fixedCols.length - 1, 
-			top: this.props.rowOffset,
-			bottom: height
-		}}>Fixed Columns</Overlay>])
-	},
 
 	renderCursor: function () {
 		const view = this.props.view
@@ -187,7 +102,7 @@ var Cursors = React.createClass ({
 			&& (sel.left < view.data._fixedCols.length + this.props.columnOffset) && (this.props.columnOffset > 0));
 
 		const singleton = (sel.top === sel.bottom && sel.left === sel.right)
-		const pointerFudge = {width: -1, top: 2	, height: -1};
+		
 		const rowsSelected = Object.keys(this.props.store.getSelection()).length > 0;
 		const rowOffset = this.props.rowOffset
 
@@ -199,7 +114,6 @@ var Cursors = React.createClass ({
 
 		if (hideCursor) return null
 		return [
-			
 
 			<Overlay
 				{...this.props}
@@ -208,7 +122,7 @@ var Cursors = React.createClass ({
 					(this.props.expanded ? " pointer--expanded " : "")}
 				ref = "pointer"
 				key={`pointer-${ptr.left}-${ptr.top}`}
-				fudge = {pointerFudge}
+				fudge = {{width: -2, left: 1, top: 1, height: -1}}
 				position = {ptr}>
 				{this.getPointerElement()}
 			</Overlay>,
@@ -220,7 +134,7 @@ var Cursors = React.createClass ({
 				ref="selectionOuter"
 				key="selectionOuter"
 				position = {sel}
-				fudge = {{left: -4.75, top: -2.75, height: 9.5, width: 9.5}}>
+				fudge = {{left: -3, top: -3.75, height: 7.75, width: 5.75}}>
 				<div className = "selection-border selection-border"
 					style={{left: "-3px", right: "-3px", top: "-3px", bottom: "-3px"}}/>
 				
@@ -252,26 +166,58 @@ var Cursors = React.createClass ({
 		]
 	},
 
+	getOuterWrapperStyle: function () {
+		const view = this.props.view
+		const geo = view.data.geometry
+		const fixedWidth = view.data._fixedWidth
+		const floatWidth = view.data._floatWidth
+		const adjustedWidth = fixedWidth + floatWidth + geo.labelWidth
+			- this.props.hiddenColWidth
+
+		return {
+			top: geo.headerHeight - 1 - 2 + 'px',
+			bottom: 0,
+			left: geo.leftGutter + 'px',
+			width: (fixedWidth + floatWidth + geo.labelWidth + RIGHT_FRINGE) + 'px',
+			overflow: 'hidden',
+			transform: 'translateZ(0)',
+			zIndex: 10,
+			pointerEvents: 'none',
+		}
+	},
+
+	getInnerWrapperStyle: function () {
+		const geo = this.props.view.data.geometry
+		const marginTop = (-1 * this.props.rowOffset * geo.rowHeight)
+		const store = this.props.store
+		const rowCount = store.getRecordCount()
+
+		return {
+			top: "1px",
+			left: 0,
+			right: 0,
+			height: ((rowCount + 1) * geo.rowHeight) + 'px',
+			// transition: IS_CHROME ? 'transform 75ms linear' : null,
+			transform: HAS_3D ? `translate3d(0,${marginTop + 2}px, 0)` : null,
+			marginTop: HAS_3D ? null : (marginTop + 2 + 'px'),
+			zIndex: 10
+		}
+	},
+
 	render: function () {
 		const view = this.props.view
 		const model = this.props.model
 		const focused = this.props.focused
-		
-		// <ReactCSSTransitionGroup comonent="div"
-		// 			{...constants.transitions.fadeinout}
-		// 			className = "wrapper force-layer"
-		// 			ref = "overlayInner"
-		// 			style = {this.getInnerWrapperStyle()}>
 
-
-		return <div className = {`wrapper overlay ${this.props.focused?"":"gray-out"}`}
+		return <div className = "wrapper overlay"
 				style = {this.getOuterWrapperStyle()} 
 				onDoubleClick = {this.props._handleEdit}
 				onContextMenu = {this.props._handleContextMenu}
 				onWheel = {this.props._handleWheel}>
-				<div className="wrapper force-layer" 
-					ref="overlayInner"
-					style={this.getInnerWrapperStyle()}>
+
+				<div className = "wrapper force-layer"
+					ref = "overlayInner"
+					style = {this.getInnerWrapperStyle()}>
 					{
 					!focused ? 
 						this.showColumnOverlays() : 

@@ -59,6 +59,7 @@ export default class NewAttributeContext extends Component {
 				model_id: view.model_id,
 				type: type
 			})
+			this.props.blurContextMenu()
 		}
 	}
 
@@ -96,12 +97,13 @@ export default class NewAttributeContext extends Component {
 				return type
 			})
 
-		return types.map(type =>
-			<span className="popdown-item selectable"
+		return types.map( (type, idx) =>
+			<span className={"popdown-item selectable " + (idx === 0 ? " top-divider" : "")}
 			key = {type.typeId}
 			onClick = {_this.chooseType.bind(_this, type.typeId)}>
 			<span className = {"icon icon-" + type.icon}/>
-			{type.description}
+			{type.description} attribute
+			<span className="key-shortcut">X</span>
 		</span>)
 		
 	}
