@@ -168,16 +168,18 @@ var TabularTBody = React.createClass ({
 		var style = {
 			left: 0,
 			top: 0,
-			height: rowCount * geo.rowHeight + 'px',
-			width: this.props.width + 'px'
+			height: rowCount * geo.rowHeight,
+			width: this.props.width,
+			transformStyle: "preserve-3d",
+			zIndex: 5
 		}
 		var prevOutOfOrder = false
 		
 
 		style.transform = "translate3d(0, " + (-1 * this.state.rowOffset * geo.rowHeight ) + "px, 5px)"
 
-		return <div style={{background: 'white'}}
-			className = {`tabular-body-${this.props.prefix} tabular-body force-layer`}
+		return <div
+			className = {`tabular-body-${this.props.prefix} tabular-body`}
 			
 			onMouseDown = {this.props._handleClick}
 			onDoubleClick = {this.props._handleEdit}

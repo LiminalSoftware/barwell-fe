@@ -46,6 +46,13 @@ const format = function (value, config) {
 	return prettyVal;
 }
 
+const parser = function (input, config) {
+	const format = config.formatString || ''
+	input = String(input).trim()
+	if (format.slice(-1) === '%' && input.slice(-1) !== '%') input = input + '%'; 
+	return numeral().unformat(input)
+}
+
 export default {
 
 	configParts: [AlignChoice, BackgroundChoice, TextChoice, NumberFormatChoice],
@@ -74,6 +81,10 @@ export default {
 			config.formatString = displayStyles[config.displayStyle].formatString
 		return config
 	},
+
+	parser: parser,
+
+	format: format,
 	
 	getDisplayHTML: getHTML.bind(null, format, stylers),
 
@@ -96,7 +107,7 @@ export default {
 				ref = "genericField"
 				format = {format}
 				validator = {_.identity}
-				parser = {_.identity}
+				parser = {parser}
 				stylers = {stylers}/>
 		}
 	}

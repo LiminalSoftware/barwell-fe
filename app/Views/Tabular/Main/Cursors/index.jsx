@@ -117,12 +117,10 @@ var Cursors = React.createClass ({
 
 			<Overlay
 				{...this.props}
-				className = {"pointer " + (focused ? " focused" : " ") + 
-					(focused ? " " : "  ") +
-					(this.props.expanded ? " pointer--expanded " : "")}
+				className = "pointer"
 				ref = "pointer"
 				key={`pointer-${ptr.left}-${ptr.top}`}
-				fudge = {{width: -2, left: 1, top: 1, height: -1}}
+				fudge = {{width: -1, left: 1, top: 1, height: -1}}
 				position = {ptr}>
 				{this.getPointerElement()}
 			</Overlay>,
@@ -175,13 +173,12 @@ var Cursors = React.createClass ({
 			- this.props.hiddenColWidth
 
 		return {
-			top: geo.headerHeight - 1 - 2 + 'px',
+			top: geo.headerHeight - 3,
 			bottom: 0,
-			left: geo.leftGutter + 'px',
+			left: 0,
 			width: (fixedWidth + floatWidth + geo.labelWidth + RIGHT_FRINGE) + 'px',
 			overflow: 'hidden',
-			transform: 'translateZ(0)',
-			zIndex: 10,
+			zIndex: 6,
 			pointerEvents: 'none',
 		}
 	},
@@ -193,14 +190,13 @@ var Cursors = React.createClass ({
 		const rowCount = store.getRecordCount()
 
 		return {
-			top: "1px",
+			top: 1,
 			left: 0,
 			right: 0,
-			height: ((rowCount + 1) * geo.rowHeight) + 'px',
-			// transition: IS_CHROME ? 'transform 75ms linear' : null,
+			height: rowCount  * geo.rowHeight + 3,
+			transition: IS_CHROME ? 'transform 75ms linear' : null,
 			transform: HAS_3D ? `translate3d(0,${marginTop + 2}px, 0)` : null,
 			marginTop: HAS_3D ? null : (marginTop + 2 + 'px'),
-			zIndex: 10
 		}
 	},
 
@@ -220,7 +216,7 @@ var Cursors = React.createClass ({
 					style = {this.getInnerWrapperStyle()}>
 					{
 					!focused ? 
-						this.showColumnOverlays() : 
+						null : 
 						this.renderCursor()
 					}
 				</div>

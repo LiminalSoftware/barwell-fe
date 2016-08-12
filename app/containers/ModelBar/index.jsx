@@ -51,9 +51,9 @@ var ModelBar = React.createClass({
 	render: function () {
 		const workspaceId = this.props.params.workspaceId
 		const models  = ModelStore.query({workspace_id: workspaceId}, 'model');
-		const activeViewIds = this.props.params.viewId.split(',').map(id=>parseInt(id))
+		const activeViews = this.props.activeViews
 		const focus = FocusStore.getFocus()
-		const focusedViewId = (/v\d+/).test(focus) ? parseInt(focus.slice(1)) : null
+		const focusedViewId = (/^v\d+/).test(focus) ? parseInt(focus.slice(1)) : null
 
 		return <div className="mdlbar" onClick = {this.focus}>
 			<h1 className="branding">metasheet.io</h1>
@@ -62,7 +62,7 @@ var ModelBar = React.createClass({
 				<ModelSection
 					{...this.props}
 					index = {idx}
-					activeViewIds = {activeViewIds}
+					activeViews = {this.props.activeViews}
 					focusedViewId = {focusedViewId}
 					key = {`model-link-${mdl.cid || mdl.model_id}`}
 					model = {mdl}

@@ -6,9 +6,13 @@ import _ from 'underscore'
 import fieldTypes from "../../../fields"
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import FocusStore from "../../../../stores/FocusStore"
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+
+import util from "../../../../util/util"
+import constants from "../../../../constants/MetasheetConstants"
 
 import HeaderCell from "./HeaderCell"
+
+const HAS_3D = util.has3d()
 
 var TableHeader = React.createClass ({
 
@@ -27,10 +31,11 @@ var TableHeader = React.createClass ({
 		var sortAttrs = _.pluck(view.data.sorting, 'attribute_id').map(parseInt)
 		
 		const style = {
+			borderRight: this.props.side==='lhs' ? ("2px solid " + constants.colors.RED_BRIGHT_TRANS) : null,
 			marginLeft: this.props.leftOffset + 'px',
 			height: (this.props.height || (geo.headerHeight + 1)) + 'px',
 			width: (this.props.totalWidth ) -1 + 'px',
-			transform: 'translateZ(1px)'
+			transform: HAS_3D ? 'translateZ(1px)' : ''
 		}
 
 		const classes = `tabular-view-header wrapper 
@@ -65,7 +70,8 @@ var TableHeader = React.createClass ({
 					view = {view}
 					model = {model}
 					idx = {idx}
-					left = {left}/>;
+					left = {left}
+					width = {col.width - 2}/>;
 				left += col.width
 				return el
 			})

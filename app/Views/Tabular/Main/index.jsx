@@ -750,13 +750,10 @@ const TabularPane = React.createClass ({
 			<div className=" wrapper" style={{overflow: "hidden"}}>
 				<TabularBodyWrapper {...childProps}
 					ref="tableWrapper"/>
-				{
-				this.props.focused 	?
+				
 				<Cursors {...childProps}
 					key="cursors"
 					ref="cursors"/>
-				: null
-				}
 			</div>
 
 			<ScrollBar {...childProps}

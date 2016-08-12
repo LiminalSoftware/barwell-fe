@@ -5,7 +5,7 @@ import _ from "underscore"
 import styles from "./styles/wrappers.less"
 
 import modelActionCreators from "../../../actions/modelActionCreators"
-import constant from "../../../constants/MetasheetConstants"
+import constants from "../../../constants/MetasheetConstants"
 import ViewStore from "../../../stores/ViewStore"
 
 import storeFactory from 'flux-store-factory';
@@ -29,9 +29,6 @@ const FETCH_DEBOUNCE = 500
 const MAX_ROWS = 300
 const RHS_PADDING = 100
 const CYCLE = 60
-
-
-
 
 
 import TabularTBody from "./TabularTBody"
@@ -140,6 +137,7 @@ var TabularBodyWrapper = React.createClass ({
 		return oldProps.view !== newProps.view 
 	},
 
+
 	render: function () {
 		var view = this.props.view
 		var model = this.props.model
@@ -175,46 +173,50 @@ var TabularBodyWrapper = React.createClass ({
 			style = {{
 				left: 0,
 				width: (adjustedWidth + 2) + 'px',
-				zIndex: 5,
-				background: 'white',
+				top: 0,
+				bottom: 0,
+				
 				overflow: 'hidden',
-				transformStyle: "preserve-3d",
-        		// transform: 'translateZ(10px)'
 			}}>
 			
-			<RowResizer {...this.props} adjustedWidth = {adjustedWidth} />
+			{/*<RowResizer {...this.props} adjustedWidth = {adjustedWidth} />*/}
 
-			<div className = " wrapper force-layer"
+			<div className = " wrapper"
 				style = {{
-					left: geo.leftGutter + 'px',
+					left: 0,
 					top: 0,
 					bottom: 0,
-					width: (fixedWidth + geo.labelWidth + 1) + 'px',
-					background: 'white',
-					transform: 'translate3d(0, 0, 10px)',
-					zIndex: 5,
+					height: (rowCount + 1)  * geo.rowHeight + geo.headerHeight,
+					width: (fixedWidth + geo.labelWidth + 1) + 'px'
 				}}>
 
+				{/*<div className="pointer" style={{left: 10, width: 200, maxWidth: 200, top: 50, height: 50, position: "absolute", opacity: 1}}>
+					<div className="table-cell table-cell-selected" style={{lineHeight: "30px", left: 0, right: 0, top: 0, bottom: 0, position: "absolute",  background: "white", border: "none"}}>
+						<div className="table-cell-inner" style={{textAlign: "left"}}>
+							Test cell sub-pixel antialis
+						</div>
+					</div>
+				</div>*/}
+
 			{/*LHS TABLE BODY*/}
-			<div className = "wrapper outer-table-wrapper "
+			<div className = "wrapper outer-table-wrapper lhs-pane"
 				ref = "lhsTableBody"
 				style = {{
 					top: geo.headerHeight + 'px',
-					borderRight: "2px solid " + constant.colors.RED_BRIGHT_TRANS,
-					// transform: 'translateZ(1px)',
-					transform: 'translateZ(10px)',
+					transform: 'translateZ(1px)',
 					overflow: 'hidden',
-					background: 'white',
+					background: '#F5F5F5',
 				}}>
-				<div className = "wrapper force-layer lhs-offset-wrapper"
+				<div className = "wrapper lhs-offset-wrapper"
 					ref = "lhsOffsetter"
 					style = {{
 						top: '0',
-						height: (rowCount * rowHeight) + 'px',
+						height: (rowCount * rowHeight + 1),
+						borderRight: "2px solid " + constants.colors.RED_BRIGHT_TRANS,
+						
 						marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
-						transform: 'translate3d(0, ' + marginTop + 'px, 10px)',
-						// transformStyle: "flat",
-						// transition: IS_CHROME ? 'transform 75ms linear' : null,
+						transform: HAS_3D ? `translate3d(0, ${marginTop}px, 10px)` : null,
+						transition: IS_CHROME && HAS_3D ? 'transform 75ms linear' : null,
 						background: 'white'
 					}}>
 
@@ -236,7 +238,7 @@ var TabularBodyWrapper = React.createClass ({
 			{/*LHS HEADER*/}
 			<TableHeader {...this.props}
 				ref = "lhsHead"
-				totalWidth = {fixedWidth +  geo.labelWidth}
+				totalWidth = {fixedWidth +  geo.labelWidth + 2}
 				leftOffset = {0}
 				side = {'lhs'}
 				hasRowLabel = {true}
@@ -252,45 +254,46 @@ var TabularBodyWrapper = React.createClass ({
 				ref = "rhsTableBody"
 				style = {{
 					top: 0,
-					bottom: 0,
 					left: (view.data._fixedWidth + geo.labelWidth + 1) + 'px',
+					height: (rowCount * rowHeight + geo.headerHeight + 1),
 					width:  view.data._floatWidth + geo.colAddWidth + 'px',
-					transform: 'translateZ(10px)',
+					transform: IS_CHROME && HAS_3D ? 'translateZ(10px)' : null,
 					background: 'white',
 					overflow: 'hidden'
 				}}>
-				<div className = "rhs-h-scroll wrapper force-layer"
+				<div className = "rhs-h-scroll wrapper"
 					ref = "rhsHorizontalOffsetter"
 					style = {{
-						marginLeft: (-1 * this.props.hiddenColWidth - 1) + 'px',
+						marginLeft: (-1 * this.props.hiddenColWidth ) + 'px',
 						transition: 'margin-left 75ms linear'
 						// use marginLeft instead of translate here because translate will clobber the other offset
 					}}>
 
 					{/*RHS TABLE BODY WRAPPER*/}
-					<div className = "wrapper"
+					{/*<div className = "wrapper"
 						style = {{
 							left: 0,
-							top: geo.headerHeight + 'px',
-							width: (floatWidth + 1) + 'px',
-							bottom: 0,
-							transform: 'translateZ(10px)',
+							top: geo.headerHeight,
+							width: (floatWidth + 1),
+							height: (rowCount * rowHeight - marginTop),
+							transform: HAS_3D ? 'translateZ(10px)' : null,
 							background: 'white',
 							overflow: 'hidden'
-						}}>
+						}}>*/}
 					<div className = "wrapper"
 						ref = "rhsOffsetter"
 						style = {{
-							top: '0',
+							top: geo.headerHeight,
 							left: 0,
 							right: 0,
 							marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
-							transform: 'translate3d(0, ' + marginTop + 'px, 10px)',
+							transform: HAS_3D ? `translate3d(0, ${marginTop}px, 10px)` : null,
 							// transformStyle: "preserve-3d",
-							// transition: IS_CHROME ? 'transform 75ms linear' : null,
-							height: (rowCount * rowHeight) + 'px',
-							width: (floatWidth + 1) + 'px',
-							background: 'white'
+							transition: IS_CHROME && HAS_3D ? 'transform 75ms linear' : null,
+							height: (rowCount * rowHeight),
+							width: (floatWidth + 1),
+							background: 'white',
+							borderRight: "1px solid steelblue"
 						}}>
 						<TabularTBody
 							{...this.props}
@@ -303,7 +306,7 @@ var TabularBodyWrapper = React.createClass ({
 							fetchStart = {fetchStart}
 							fetchEnd = {fetchEnd}
 							width={view.data._floatWidth + 1} />
-					</div>
+					
 
 					</div>
 					<TableHeader {...this.props}

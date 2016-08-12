@@ -19,13 +19,11 @@ class TabularTR extends React.Component {
 		return response
 	}
 
-	componentDidMount () {
-		var ptr = this.props.pointer || {}
-		if (this.props.row === ptr.top)
-			this.props._updatePointer(ptr)
+	componentWillReceiveProps = (newProps) => {
+
 	}
 
-	render () {
+	render = () => {
 		var _this = this
 		var model = this.props.model
 		var view = this.props.view
@@ -52,10 +50,10 @@ class TabularTR extends React.Component {
 			var type = fieldTypes[col.type]
 			var element = type.element;
 			var cellKey = rowKey + '-' + col.column_id;
-			var innerHtml = type.getDisplayHTML ? type.getDisplayHTML(col, obj) : element.prototype.getDisplayHTML(col, obj)
-			var cellHtml = `<span class = "table-cell ${('_error' in obj && col.column_id in obj._error) ? ' table-cell-error' : ' '}" style = "left: ${left}px; width: ${col.width}px;">${innerHtml}</span>`
+			var innerHtml = type.getDisplayHTML ? type.getDisplayHTML(col, obj, {left: left, width: col.width}) : element.prototype.getDisplayHTML(col, obj)
+			// var cellHtml = `<span class = "table-cell ${('_error' in obj && col.column_id in obj._error) ? ' table-cell-error' : ' '}" style = "left: ${left}px; width: ${col.width}px;">${innerHtml}</span>`
 			left += col.width
-			return cellHtml
+			return innerHtml
 		}).join(' ');
 		
 		return <div id = {rowKey} key = {rowKey} dangerouslySetInnerHTML = {{__html: html}}

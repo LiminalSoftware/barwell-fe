@@ -78,8 +78,8 @@ var Application = React.createClass({
 	render: function() {
 		const workspaceId = this.props.params.workspaceId
 		const viewIdString = this.props.params.viewId
-		const views = viewIdString.split(',').map(id=>ViewStore.get(id))
-		const multiViews = views.length > 1
+		const activeViews = viewIdString ? viewIdString.split(',').map(id=>ViewStore.get(id)) : []
+		const multiViews = activeViews.length > 1
 
 		return <div className = "application" id="application">
 			{
@@ -87,11 +87,12 @@ var Application = React.createClass({
 			<ModelBar 
 				{...this.props}
 				focus={FocusStore.getFocus()}
+				activeViews={activeViews}
 				workspaceId = {workspaceId}/>
 			: this.renderLoader()
 			}
 
-			{views.filter(_.identity).map(v=>
+			{activeViews.filter(_.identity).map(v=>
 			<ModelPane {...this.props} 
 				view={v}
 				focus={FocusStore.getFocus()}

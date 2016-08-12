@@ -69,8 +69,8 @@ export default class HeaderCell extends Component {
 
 	getCellStyle = () => {
 		return {
-			width: this.props.column.width + 'px',
-			left: this.props.left + 'px'
+			width: this.props.column.width - 2,
+			left: this.props.left
 		}
 	}
 
@@ -85,10 +85,10 @@ export default class HeaderCell extends Component {
 
 	renderResizer = () => {
 		const style = {
-			right: (-1 * this.state.pos) + 'px',
-			top: "0",
-			height: this.state.dragging ? "1000px" : "100%",
-			width: this.state.dragging ? "2px" : "10px"
+			right: (-1 * this.state.pos - 2),
+			top: 0,
+			height: this.state.dragging ? 1000 : "100%",
+			width: this.state.dragging ? 2 : 10
 		}
 
 		if (!this.state.open) return <span ref = "resizer"

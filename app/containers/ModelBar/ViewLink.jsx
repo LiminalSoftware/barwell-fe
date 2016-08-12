@@ -29,7 +29,7 @@ const ViewLink = React.createClass ({
 
 	shouldComponentUpdate: function (nextProps, nextState) {
 		return nextState !== this.state || 
-			nextProps.activeViewIds !== this.props.activeViewIds ||
+			nextProps.activeViews !== this.props.activeViews ||
 			nextProps.focusedViewId === this.props.view.view_id ||
 			this.props.focusedViewId === this.props.view.view_id
 	},
@@ -96,7 +96,8 @@ const ViewLink = React.createClass ({
 			this.props.history.push(`${this.getRootPath()}/view/${newViewIds}`)
 
 		} else if (e.shiftKey && this.isActive()) {
-			const newViewIds = this.props.activeViewIds
+			const newViewIds = this.props.activeViews
+				.map(v=>v.view_id)
 				.filter(id => id !== _this.props.view.view_id)
 				.map(id => '' + id)
 				.join(",")
@@ -113,7 +114,7 @@ const ViewLink = React.createClass ({
 	},
 
 	isActive: function () {
-		return this.props.activeViewIds.indexOf(this.props.view.view_id) >= 0
+		return this.props.activeViews.map(v=>v.view_id).indexOf(this.props.view.view_id) >= 0
 	},
 
 	// RENDER =================================================================

@@ -8,7 +8,7 @@
 	left: 0;
 	right: 1px;
 	overflow: hidden;
-	border-bottom: 1px solid @gray3;
+	border-bottom: 1px solid desaturate(lighten(steelblue, 40%), 5%);
 	transition: all linear 75ms;
 }
 
@@ -40,10 +40,6 @@
 	background:url(
 	data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAM0lEQVQIW12MQQ4AMAjC9LP+CT/LgsnMRo9tIEkyjO6O9CBZVX+4Uge7eOUGlxMAUJ/OAUx3Jb1pGHe6AAAAAElFTkSuQmCC
 	) repeat;
-}
-
-.table-cell-bordered {
-	border-bottom: 1px solid @gray3 !important;
 }
 
 .table-cell {
@@ -106,12 +102,6 @@
 	-webkit-user-drag: none;
 	padding-left: 7px;
 	padding-right: 7px;
-	&.bolded {
-		font-family: @headerFont;
-	}
-	&.italics {
-		font-style: italic;
-	}
 }
 
 .pk-cell-inner {
