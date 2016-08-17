@@ -42,7 +42,8 @@ var TableMixin = {
 		modelActionCreators.setFocus('v' + this.props.view.view_id + (modifier || ''))
 	},
 
-	handleContextBlur: function () {
+	handleContextBlur: function (newFocus) {
+		if (newFocus) modelActionCreators.setFocus(newFocus)
 		this.setState({contextOpen: false})
 	},
 

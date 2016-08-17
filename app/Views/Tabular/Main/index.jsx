@@ -160,6 +160,15 @@ const TabularPane = React.createClass ({
 		return this.props.view.data._visibleCols[left];
 	},
 
+	getColumnRefAt: function (pos) {
+		const data = this.props.view.data
+		const col = this.getColumnAt(pos)
+		const isPinned = (pos.left < data._visibleCols.length)
+		const header = this.refs.tableWrapper.refs[isPinned ? "lhsHead":"rhsHead"]
+		
+		return header.refs['head-' + col.column_id]	
+	},
+
 	selectRow: function () {
 		var model = this.props.model
 		var view = this.props.view
@@ -381,11 +390,18 @@ const TabularPane = React.createClass ({
 		var x = e.pageX - offset.left
 		var rc = this.getRCCoords(e)
 		var sel = this.state.selection
+		const geo = this.props.view.data.geometry
 
 		this.getFocus()
 
-		if (rc.top < 0 || rc.left < 0) {
-			this.setState({contextSubject: 'column', contextRc: rc})
+		if (y < geo.headerHeight) {
+			let column = this.getColumnRefAt(rc)
+			
+			this.setState({
+				contextSubject: 'column', 
+				contextRc: rc,
+				contextElement: column
+			})
 		} else {
 			this.setState({contextSubject: 'body', contextPos: {x: x, y: y}, contextRc: rc})
 			if (rc.left < sel.left ||
@@ -775,6 +791,7 @@ const TabularPane = React.createClass ({
 			{this.state.contextSubject && this.props.focused ? 
 			<ContextMenu {...childProps}
 				subject={this.state.contextSubject}
+				element={this.state.contextElement}
 				rc={this.state.contextRc}
 				position={this.state.contextPos}/> 
 			: null}

@@ -8,6 +8,7 @@ import constant from "../../../../constants/MetasheetConstants"
 import fieldTypes from "../../../fields"
 
 import modelActionCreators from "../../../../actions/modelActionCreators"
+import util from "../../../../util/util"
 
 const COLUMN_MIN_WIDTH = 50
 
@@ -19,7 +20,7 @@ export default class HeaderCell extends Component {
 			dragging: false,
 			rel: null,
 			pos: 0,
-      		editing: false,
+      		renaming: false,
       		mouseover: false
 		}
 	}
@@ -53,82 +54,15 @@ export default class HeaderCell extends Component {
 		const type = fieldTypes[this.props.column.type];
 		const sortDir = this.props.sortDirection ? 'desc' : 'asc'
 
-		if (this.state.mouseover && !this.state.open) 
+		if (this.state.mouseover && !this.state.open && !this.state.renaming) 
 			return <span onClick = {this.props._handleContextMenu} 
 			className={`sort-th-label-focused icon icon-cog`}/>
 
-		else if (this.props.sorting && !this.state.open)
+		else if (this.props.sorting && !this.state.open && !this.state.renaming)
 			return <span onClick={this.switch}
 			className={`sort-th-label-focused 
 			icon icon-${type.sortIcon}${sortDir}`}/>
 	}
-
-	/*
-	 * 
-	 */
-
-	getCellStyle = () => {
-		return {
-			width: this.props.column.width - 2,
-			left: this.props.left
-		}
-	}
-
-	/*
-	 * 
-	 */
-
-
-	/*
-	 * 
-	 */
-
-	renderResizer = () => {
-		const style = {
-			right: (-1 * this.state.pos - 2),
-			top: 0,
-			height: this.state.dragging ? 1000 : "100%",
-			width: this.state.dragging ? 2 : 10
-		}
-
-		if (!this.state.open) return <span ref = "resizer"
-			className = {`table-resizer col-resizer ${this.state.dragging ? "dragging" : ""}`}
-			onMouseDown = {this.onResizerMouseDown}
-			style = {style}>
-		</span>
-	}
-
-	/*
-	 * 
-	 */
-	 
-	render = () => {
-		const _this = this
-		const col = this.props.column
-		const type = fieldTypes[col.type]
-		const geo = this.props.view.data.geometry
-		const innerStyle = {
-			paddingRight: this.props.sorting || this.state.mouseover ? '25px' : null,
-			lineHeight: geo.headerHeight + 'px'
-		}
-
-		return <span style = {this.getCellStyle()}
-			onContextMenu = {this.props._handleContextMenu}
-			onMouseEnter = {e => this.setState({mouseover: true})}
-			onMouseLeave = {e => this.setState({mouseover: false})}
-			className = "table-header-cell">
-			<span className = "table-cell-inner header-cell-inner " 
-			style = {innerStyle}>
-				{/*<span className = {`type-th-label-focused icon icon-${type.icon}`}/>*/}
-				{this.state.renaming ?
-					<input className="renamer" value={col.name}/>
-					: <span>{col.name}</span>}
-				{this.renderIcons()}
-			</span>
-	        {this.renderResizer()}
-		</span>
-	}
-
 
 	/*
 	 * 
@@ -151,7 +85,7 @@ export default class HeaderCell extends Component {
 	// setColumnWidth = (width, commit) => {
 	// 	const view = this.props.view
 	// 	const col = this.props.column
- //   		view.data.columns[col.column_id].width = width
+ 	//  	view.data.columns[col.column_id].width = width
 	// 	modelActionCreators.createView(view, !!commit, false)
 	// }
 
@@ -160,14 +94,14 @@ export default class HeaderCell extends Component {
 	 */
 
 	onMouseUp = (e) => {
-   		const view = this.props.view
-		const col = this.props.column
+   		const {view, column} = this.props
+		
 		const updated = update(view, {
 			data : {
 				columns: {
-					[col.column_id]: {
+					[column.column_id]: {
 						$merge: {
-							width: col.width + this.state.pos
+							width: column.width + this.state.pos
 						}
 					}
 				}
@@ -227,5 +161,76 @@ export default class HeaderCell extends Component {
 	handleClick = (e) => {
 		this.handleBlur()
 	}
+
+	handleRename = (e) => {
+		this.setState({renaming: true})
+	}
+
+	/*
+	 * 
+	 */
+
+	getCellStyle = () => {
+		return {
+			width: this.props.column.width - 2,
+			left: this.props.left
+		}
+	}
+
+	/*
+	 * 
+	 */
+
+	renderResizer = () => {
+		const style = {
+			right: (-1 * this.state.pos - 2),
+			top: 0,
+			height: this.state.dragging ? 1000 : "100%",
+			width: this.state.dragging ? 2 : 10
+		}
+
+		if (!this.state.open) return <span ref = "resizer"
+			className = {`table-resizer col-resizer ${this.state.dragging ? "dragging" : ""}`}
+			onMouseDown = {this.onResizerMouseDown}
+			style = {style}>
+		</span>
+	}
+
+	/*
+	 * 
+	 */
+	 
+	render = () => {
+		const _this = this
+		const col = this.props.column
+		const type = fieldTypes[col.type]
+		const geo = this.props.view.data.geometry
+		const innerStyle = {
+			paddingRight: this.props.sorting || this.state.mouseover ? '25px' : null,
+			lineHeight: geo.headerHeight + 'px'
+		}
+
+		return <span style = {this.getCellStyle()}
+			onContextMenu = {this.props._handleContextMenu}
+			onDoubleClick = {this.handleRename}
+			onMouseEnter = {e => this.setState({mouseover: true})}
+			onMouseLeave = {e => this.setState({mouseover: false})}
+			className = "table-header-cell">
+			<span className = "table-cell-inner header-cell-inner " 
+			style = {innerStyle}>
+				{/*<span className = {`type-th-label-focused icon icon-${type.icon}`}/>*/}
+				{this.state.renaming ?
+					<input className="table-cell-renamer" 
+						autofocus
+						value={col.name} 
+						onBlur={this.handleRenameBlur}
+						onClick={util.clickTrap}/>
+					: <span>{col.name}</span>}
+				{this.renderIcons()}
+			</span>
+	        {this.renderResizer()}
+		</span>
+	}
+
 
 }

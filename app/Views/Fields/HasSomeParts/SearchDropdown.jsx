@@ -1,6 +1,8 @@
 import React from "react"
 import _ from "underscore"
 
+import styles from "./searchDropdown.less"
+
 import AttributeStore from "../../../stores/AttributeStore"
 import RelationStore from "../../../stores/RelationStore"
 import ModelStore from "../../../stores/ModelStore"
@@ -10,9 +12,20 @@ import constants from "../../../constants/MetasheetConstants"
 
 import modelActionCreators from "../../../actions/modelActionCreators"
 
-var SEARCH_DEBOUNCE = 200;
+var SEARCH_DEBOUNCE = 50;
 var SEARCH_RECORD_COUNT = 50;
 var SEARCH_RECORDS_VISIBLE = 10
+
+const magnifierStyle = {
+	position: "absolute", 
+	right: 0, 
+	width: '18px',
+	top: 0, 
+	bottom: 0, 
+	zIndex: 20, 
+	lineHeight: "30px",
+	color: constants.colors.GREEN_1
+}
 
 var SearchDropdown = React.createClass({
 
@@ -22,12 +35,16 @@ var SearchDropdown = React.createClass({
 	},
 
 	componentDidMount: function () {
-		this.setState({expanded: true})
+		const _this = this
+		setTimeout(() => _this.setState({expanded: true}), 0)
 	},
 
 	getNumberOptions: function () {
-		return Math.min(this.state.count, SEARCH_RECORDS_VISIBLE) + 
-			(this.state.count > SEARCH_RECORDS_VISIBLE ? 2 : 1) + (this.state.searching ? 1 : 0);
+		const {expanded, count, filteredRecords, searching, searchTerm} = this.state
+		if (!expanded) return 0
+		return Math.min(filteredRecords.length || 1, SEARCH_RECORDS_VISIBLE) + 
+			(count > SEARCH_RECORDS_VISIBLE ? 2 : 1) + 
+			(searchTerm.length > 0 ? 1 : 0)
 	},
 
 	getInitialState: function () {
@@ -87,8 +104,9 @@ var SearchDropdown = React.createClass({
 	filterResults: function (_searchRecords) {
 		var config = this.props.config;
 		var searchRecords = _searchRecords || this.state.searchRecords;
+		var term = this.state.searchTerm.toLowerCase()
 		var filteredRecords = searchRecords.filter(
-			rec => (rec[config.label] || '').toLowerCase().indexOf(this.state.searchTerm) >= 0
+			rec => (rec[config.label] || '').toLowerCase().indexOf(term) >= 0
 		).slice(this.state.page * SEARCH_RECORDS_VISIBLE, SEARCH_RECORDS_VISIBLE);
 		this.setState({filteredRecords: filteredRecords})
 	},
@@ -129,6 +147,10 @@ var SearchDropdown = React.createClass({
 			&& (this.props.spaceBottom > this.props.spaceTop)
 	},
 
+	handleContext: function (e) {
+		util.clickTrap(e)
+	},
+
 	render: function () {
 		var _this = this
 		var model = this.props.model;
@@ -137,27 +159,32 @@ var SearchDropdown = React.createClass({
 		var relation = RelationStore.get(config.relation_id);
 		var oppModel = ModelStore.get(relation.related_model_id);
 		var searchTerm = this.state.searchTerm.toLowerCase();
-		var filteredRecords = this.state.filteredRecords;
-		var showMoreIdx = this.getNumberOptions() - 2;
-		var addOneIdx = this.getNumberOptions() - 1;
+		var filteredRecords = this.state.filteredRecords
+		var showMoreIdx = this.getNumberOptions() - 2
+		var addOneIdx = this.getNumberOptions() - 1
+		var height = 35 * this.getNumberOptions()
 
-		return <div className="pop-down-menu" 
+		return <div className="pop-down-menu search-menu" 
+			onContextMenu = {this.handleContext}
 			style = {{
-				maxHeight: (40 * (this.getNumberOptions() + 2) + 'px'),
+				opacity: this.state.expanded ? 1 : 0.01,
+				maxHeight: height,
+				minHeight: height,
 				left: 1,
 				right: 1,
 				top: 1,
-				border: `1px solid ${constants.colors.GRAY_3}`,
-				boxShadow: "0 0 0 1px white",
-				borderRadius: "3px"
 			}}>
           	
 			<div key = "search-li" className = {"popdown-item " + (this.state.count > 0 ? "bottom-divider" : "")}
 				style = {{height: '30px', position: 'relative'}}>
-				<input className = "input-editor" autoFocus
-					onChange = {this.updateSearchValue}
-					value = {this.searchTerm}/>
-				<span className = "icon icon-magnifier" style = {{right: 0, width: '18px', top: 0, bottom: 0, zIndex: 20}}/>
+				<div style={{position: "absolute", left: 0, right: 20, top: 0, bottom: 0}}>
+					<input className = "input-editor" autoFocus
+						style={{borderRadius: "3px"}}
+						onChange = {this.updateSearchValue}
+						value = {this.searchTerm}/>
+				</div>
+				<span className = "icon icon-magnifier" style = {magnifierStyle}/>
+
 			</div>
 			{
 				filteredRecords.map(function (rec, idx) {
@@ -172,12 +199,6 @@ var SearchDropdown = React.createClass({
 			}	
 			
 			{
-				this.state.searching ? 
-				<div className = "popdown-item" key="loader-li">
-					<span className = " icon icon-loading spin" />
-					Searching...
-				</div>
-				:
 				(this.state.count > SEARCH_RECORDS_VISIBLE) ? 
 				<div
 				className={"popdown-item selectable top-divider" + (_this.state.selection === showMoreIdx ? ' hilite' : '')}
@@ -189,8 +210,7 @@ var SearchDropdown = React.createClass({
 				</div>
 				:
 				filteredRecords.length === 0 && searchTerm.length > 0 ? 
-				<div className = "popdown-item">
-					<span className = "icon icon-notification-circle"/>
+				<div className = "popdown-item popdown-item-grayed">
 					No records found...
 				</div>
 				: null

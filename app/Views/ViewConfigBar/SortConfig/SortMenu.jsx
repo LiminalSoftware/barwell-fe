@@ -81,7 +81,7 @@ export default class SortMenu extends Component {
 
 		return <select style = {selectorStyle}  ref="selector"
 			value = {0}
-			className="menu-input menu-input-selector" onChange = {this.chooseItem}>
+			className="menu-input menu-input-selector selector-style" onChange = {this.chooseItem}>
 
 			<option value="0">-- Choose --</option>
 			{choices}
@@ -133,7 +133,7 @@ export default class SortMenu extends Component {
 
 		return <div className="view-config-menu" 
 			style={{right: -45 * this.props.idx - 15 + 'px'}} 
-			onClick={util.clickTrap}>
+			onClick={util.clickTrap} onMouseDown={util.clickTrap}>
 			<div className="menu-pointer-outer" style={{right: 45 * this.props.idx + 30 + 'px'}}/>
 			<div className="menu-pointer-inner" style={{right: 45 * this.props.idx + 30 + 'px'}}/>
 			
@@ -154,8 +154,7 @@ export default class SortMenu extends Component {
 				)}
 			</FlipMove>
 			
-			<div className="menu-item menu-sub-item menu-sub-item-draggable"
-			style = {{position: "relative", borderBottom: `1px dotted ${constants.colors.GRAY_3}`}}>
+			<div className="menu-item menu-sub-item" style={{position: "relative", margin: "5px"}}>
 				{this.renderSelector()}
 			</div>
 

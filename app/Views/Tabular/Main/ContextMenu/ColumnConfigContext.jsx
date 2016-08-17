@@ -35,6 +35,11 @@ var ColumnConfigContext = React.createClass ({
 		}), true)
 	},
 
+	rename: function () {
+		const colHeader = this.props.element.handleRename()
+		this.props.blurContextMenu()
+	},
+
 	showDetail: function (element, e) {
 		this.setState({detailElement: element})
 	},	

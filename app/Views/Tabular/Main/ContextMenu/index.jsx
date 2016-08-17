@@ -21,9 +21,14 @@ var TabularContextMenu = React.createClass ({
 		return view.data._visibleCols[rc.left]
 	},
 
+	getFocusId: function () {
+		return 'v' + this.props.view.view_id + '-context'
+	},
+
 	componentDidMount: function () {
 		document.addEventListener('keydown', this.handleKeyPress)
 		document.addEventListener('click', this.handleClick)
+		modelActionCreators.setFocus(this.getFocusId())
 	},
 
 	componentWillUnmount: function () {
@@ -36,7 +41,7 @@ var TabularContextMenu = React.createClass ({
 	},
 
 	handleClick: function (e) {
-		this.props.blurContextMenu(e)
+		this.props.blurContextMenu(e, newFocus)
 	},
 	
 	render: function () {

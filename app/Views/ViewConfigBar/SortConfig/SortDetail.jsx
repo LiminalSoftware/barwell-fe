@@ -124,28 +124,15 @@ export default class SortDetail extends Component {
 		this.props._updateItem(spec)
 	}
 
-	renderItem = () => {
-		const {view, sortSpec} = this.props
-		const attr = AttributeStore.get(sortSpec.attribute_id)
-		const fieldType = fieldTypes[attr.type];
-
-		return <div>
-			<span ref = "grabber" className="draggable drag-grid"/>
-      		<span className = "ellipsis" style={{marginRight: '10px'}}>{attr.attribute}</span>
-
-			<span onClick={this.switch}
-				className={"half-column-config tight icon icon-" + fieldType.sortIcon + (sortSpec.descending ? 'desc' : 'asc')}/>
-			<span onClick={this.remove} 
-				className="half-column-config tight icon icon-cross-circle "/>
-		</div>
-	}
-
 	renderPlaceholder () {
 		return <span style={placeHolderStyle}/>
 	}
 
 	render () {
 		const {isDragging, index, connectDragSource, connectDropTarget} = this.props
+		const {view, sortSpec} = this.props
+		const attr = AttributeStore.get(sortSpec.attribute_id)
+		const fieldType = fieldTypes[attr.type]
     	const opacity = isDragging ? 0 : 1
     	const style = {position: "relative"}
     	const color = isDragging ? constants.colors.GRAY_3 : null
@@ -153,7 +140,13 @@ export default class SortDetail extends Component {
 	    return connectDragSource(connectDropTarget(
 	    <div className="menu-item menu-sub-item menu-sub-item-draggable"
 	    style={{opacity, color, ...style}}>
-    		{this.renderItem()}
+    		<span ref = "grabber" className="draggable drag-grid"/>
+      		<span className = "ellipsis" style={{marginRight: '10px'}}>{attr.attribute}</span>
+
+			<span onClick={this.switch}
+				className={"half-column-config tight icon icon-" + fieldType.sortIcon + (sortSpec.descending ? 'desc' : 'asc')}/>
+			<span onClick={this.remove} 
+				className="half-column-config tight icon icon-cross-circle "/>
 		</div>))
 	}
 }
