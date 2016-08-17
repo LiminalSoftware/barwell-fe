@@ -162,8 +162,7 @@ var TabularBodyWrapper = React.createClass ({
 		var tableProps = _.extend(_.clone(this.props), {
 
 		})
-
-
+		
 		if (!this.state.initialFetchComplete) 
 			return <div><div className="loader"/></div>
 
@@ -172,7 +171,7 @@ var TabularBodyWrapper = React.createClass ({
 			ref="tbodyWrapper"
 			style = {{
 				left: 0,
-				width: (adjustedWidth + 2) + 'px',
+				width: (adjustedWidth + geo.colAddWidth + 2) + 'px',
 				top: 0,
 				bottom: 0,
 				
@@ -186,26 +185,18 @@ var TabularBodyWrapper = React.createClass ({
 					left: 0,
 					top: 0,
 					bottom: 0,
-					height: (rowCount + 1)  * geo.rowHeight + geo.headerHeight,
+					height: (rowCount + 2)  * geo.rowHeight + geo.headerHeight,
 					width: (fixedWidth + geo.labelWidth + 1) + 'px'
 				}}>
 
-				{/*<div className="pointer" style={{left: 10, width: 200, maxWidth: 200, top: 50, height: 50, position: "absolute", opacity: 1}}>
-					<div className="table-cell table-cell-selected" style={{lineHeight: "30px", left: 0, right: 0, top: 0, bottom: 0, position: "absolute",  background: "white", border: "none"}}>
-						<div className="table-cell-inner" style={{textAlign: "left"}}>
-							Test cell sub-pixel antialis
-						</div>
-					</div>
-				</div>*/}
 
 			{/*LHS TABLE BODY*/}
 			<div className = "wrapper outer-table-wrapper lhs-pane"
 				ref = "lhsTableBody"
 				style = {{
 					top: geo.headerHeight + 'px',
-					transform: 'translateZ(1px)',
 					overflow: 'hidden',
-					background: '#F5F5F5',
+					background: constants.colors.GRAY_4
 				}}>
 				<div className = "wrapper lhs-offset-wrapper"
 					ref = "lhsOffsetter"
@@ -215,7 +206,7 @@ var TabularBodyWrapper = React.createClass ({
 						borderRight: "2px solid " + constants.colors.RED_BRIGHT_TRANS,
 						
 						marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
-						transform: HAS_3D ? `translate3d(0, ${marginTop}px, 10px)` : null,
+						transform: HAS_3D ? `translate(0, ${marginTop}px)` : null,
 						transition: IS_CHROME && HAS_3D ? 'transform 75ms linear' : null,
 						background: 'white'
 					}}>
@@ -257,8 +248,8 @@ var TabularBodyWrapper = React.createClass ({
 					left: (view.data._fixedWidth + geo.labelWidth + 1) + 'px',
 					height: (rowCount * rowHeight + geo.headerHeight + 1),
 					width:  view.data._floatWidth + geo.colAddWidth + 'px',
-					transform: IS_CHROME && HAS_3D ? 'translateZ(10px)' : null,
-					background: 'white',
+					// transform: IS_CHROME && HAS_3D ? 'translateZ(10px)' : null,
+					background: constants.colors.GRAY_4,
 					overflow: 'hidden'
 				}}>
 				<div className = "rhs-h-scroll wrapper"
@@ -287,7 +278,7 @@ var TabularBodyWrapper = React.createClass ({
 							left: 0,
 							right: 0,
 							marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
-							transform: HAS_3D ? `translate3d(0, ${marginTop}px, 10px)` : null,
+							transform: HAS_3D ? `translate(0, ${marginTop}px)` : null,
 							// transformStyle: "preserve-3d",
 							transition: IS_CHROME && HAS_3D ? 'transform 75ms linear' : null,
 							height: (rowCount * rowHeight),

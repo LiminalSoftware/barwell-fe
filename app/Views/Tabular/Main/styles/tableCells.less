@@ -85,10 +85,6 @@
 	bottom: 1px;
 }
 
-.row-error {
-	background: @red-bright-trans;
-}
-
 
 // ************************************************************************
 // TABLE_CELL_INNER
@@ -97,11 +93,35 @@
 .table-cell-inner {
 	cursor: default;
 	-webkit-font-smoothing: subpixel-antialiased !important;
+	
 	.noselect;
 	.ellipsis;
 	-webkit-user-drag: none;
 	padding-left: 7px;
 	padding-right: 7px;
+}
+
+// .cell-decorator {
+// 	position: absolute;
+// 	top: 0; 
+// 	bottom: 0;
+// 	line-height: 100%;
+// 	width: 24px;
+// 	text-align: center;
+	
+// }
+
+.color-sample {
+	position: absolute;
+	top: 50%;
+	margin-top: -11px;
+	right: 2px;
+	height: 20px;
+	width: 20px;
+	border-radius: 11px;
+	border: 1px solid white;
+	padding: 0;
+	cursor: pointer !important;
 }
 
 .pk-cell-inner {

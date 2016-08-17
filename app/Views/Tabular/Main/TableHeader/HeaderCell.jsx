@@ -105,12 +105,11 @@ export default class HeaderCell extends Component {
 	render = () => {
 		const _this = this
 		const col = this.props.column
-		const type = fieldTypes[col.type];
+		const type = fieldTypes[col.type]
+		const geo = this.props.view.data.geometry
 		const innerStyle = {
 			paddingRight: this.props.sorting || this.state.mouseover ? '25px' : null,
-			border: this.state.open ? "1px solid steelblue" : null,
-			borderBottom: this.state.open ? "1px solid white" : null,
-			margin: this.state.open ? "-1px" : null
+			lineHeight: geo.headerHeight + 'px'
 		}
 
 		return <span style = {this.getCellStyle()}

@@ -5,26 +5,20 @@ import AttributeStore from "../../../stores/AttributeStore"
 import RelationStore from "../../../stores/RelationStore"
 import ModelStore from "../../../stores/ModelStore"
 
-import PopDownMenu from "../../../components/PopDownMenu"
-
 import util from "../../../util/util"
-import constant from "../../../constants/MetasheetConstants"
+import constants from "../../../constants/MetasheetConstants"
 
-import MenuKeysMixin from '../MenuKeysMixin'
 import modelActionCreators from "../../../actions/modelActionCreators"
-
-
 
 var SEARCH_DEBOUNCE = 200;
 var SEARCH_RECORD_COUNT = 50;
 var SEARCH_RECORDS_VISIBLE = 10
 
 var SearchDropdown = React.createClass({
-	
-	mixins: [MenuKeysMixin],
 
 	componentWillMount: function () {
 		this._debounceSearch = _.debounce(this.search, SEARCH_DEBOUNCE)
+		this.search()
 	},
 
 	componentDidMount: function () {
@@ -106,8 +100,8 @@ var SearchDropdown = React.createClass({
 	chooseItem: function (num) {
 		var index = this.state.page * SEARCH_RECORDS_VISIBLE + num;
 		var obj = this.state.searchRecords[num];
-		this.commit(obj);
-		this.props._revert();
+		this.props.commit(obj);
+		this.props.blurSelf();
 	},
 
 	chooseSelection: function (e) {
@@ -118,26 +112,17 @@ var SearchDropdown = React.createClass({
 		// if (selection < 0 && e.ctrlKey) this.createNewItem(); 
 		if (selection < 0) return;
 		obj = this.state.searchRecords[index];
-		this.commit(obj);
+		this.props.commit(obj);
 	},
 
-	commit: function (hasManyObj) {
-		var model = this.props.model;
-		var config = this.props.config;
-		var hasOneObj = this.props.object;
-		var hasManyKeyId = config.related_key_id;
-		var hasOneKeyId = config.key_id;
-		modelActionCreators.moveHasMany(config.relation_id, hasOneObj, hasManyObj);
-	},
-
-	createNewItem: function () {
-		console.log("create new item")
-		var config = this.props.config
-		var model = ModelStore.get(config.related_model_id);
-		var label = config.label;
-		var obj = {[label]: this.state.searchTerm};
-		modelActionCreators.insertRecord(model, obj, 0).then(this.commit);
-	},
+	// createNewItem: function () {
+	// 	console.log("create new item")
+	// 	var config = this.props.config
+	// 	var model = ModelStore.get(config.related_model_id);
+	// 	var label = config.label;
+	// 	var obj = {[label]: this.state.searchTerm};
+	// 	modelActionCreators.insertRecord(model, obj, 0).then(this.commit);
+	// },
 
 	shouldOpenDown: function () {
 		return this.props.spaceBottom > 5 
@@ -156,7 +141,16 @@ var SearchDropdown = React.createClass({
 		var showMoreIdx = this.getNumberOptions() - 2;
 		var addOneIdx = this.getNumberOptions() - 1;
 
-		return <PopDownMenu {...this.props} green = {true} maxHeight = {(40 * (this.getNumberOptions() + 2) + 'px')}>
+		return <div className="pop-down-menu" 
+			style = {{
+				maxHeight: (40 * (this.getNumberOptions() + 2) + 'px'),
+				left: 1,
+				right: 1,
+				top: 1,
+				border: `1px solid ${constants.colors.GRAY_3}`,
+				boxShadow: "0 0 0 1px white",
+				borderRadius: "3px"
+			}}>
           	
 			<div key = "search-li" className = {"popdown-item " + (this.state.count > 0 ? "bottom-divider" : "")}
 				style = {{height: '30px', position: 'relative'}}>
@@ -213,7 +207,7 @@ var SearchDropdown = React.createClass({
 				: null
 			}
 				
-			</PopDownMenu>
+			</div>
 	}
 
 })

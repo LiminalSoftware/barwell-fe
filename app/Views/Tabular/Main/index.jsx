@@ -436,24 +436,24 @@ const TabularPane = React.createClass ({
 	  	return style
 	},
 
-	putSelection: function (data, method) {
-		var model = this.props.model
-		var sel = this.state.selection;
-		var patches = [];
-		var view = this.props.view;
+	putSelection: function (data, method, isValidated) {
+		const model = this.props.model
+		const sel = this.state.selection
+		const view = this.props.view
+		let patches = []
 
-		for (var r = sel.top; r <= sel.bottom; r++) {
-			var cbr = (r - sel.top) % data.length
-			var row = data[cbr]
-			var obj = this.store.getObject(r)
-			var patch = {[model._pk]: obj[model._pk]}
+		for (let r = sel.top; r <= sel.bottom; r++) {
+			const cbr = (r - sel.top) % data.length
+			const row = data[cbr]
+			const obj = this.store.getObject(r)
+			let patch = {[model._pk]: obj[model._pk]}
 
-			for (var c = sel.left; c <= sel.right; c++) {
-				var cbc = (c - sel.left) % data[cbr].length
-				var column = view.data._visibleCols[c]
-				var type = fieldTypes[column.type]
-				var validator = type.element.prototype.validator || _.identity
-				var value = validator(data[cbr][cbc]);
+			for (let c = sel.left; c <= sel.right; c++) {
+				const cbc = (c - sel.left) % data[cbr].length
+				const column = view.data._visibleCols[c]
+				const type = fieldTypes[column.type]
+				const parser = type.parser
+				const value = (isValidated || !parser) ? data[cbr][cbc] : parser(data[cbr][cbc])
 				if (!type.uneditable) {
 					patch[column.column_id] = value
 				}
@@ -616,7 +616,7 @@ const TabularPane = React.createClass ({
 			// const pointer = ReactDOM.findDOMNode(pointer)
 			// if (pointer) pointer.classList.add('pointer-transitioned')
 			ReactDOM.findDOMNode(rhsHorizontalOffsetter).style.marginLeft = 
-				(-1 * hiddenColWidth - 1) + 'px';
+				(-1 * hiddenColWidth) + 'px';
 			
 			// this.pointerTimer = setTimeout(function () {
 				// const pointer = ReactDOM.findDOMNode(pointer)
@@ -651,11 +651,11 @@ const TabularPane = React.createClass ({
 			: null
 
 		lhsOffsetter.style.transform = 
-			"translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 1px)"
+			"translate(0, " + Math.floor(-1 * rowOffset * geo.rowHeight ) + "px)"
 		rhsOffsetter.style.transform = 
-			"translate3d(0, " + (-1 * rowOffset * geo.rowHeight ) + "px, 1px)"
+			"translate(0, " + Math.floor(-1 * rowOffset * geo.rowHeight ) + "px)"
 		if (overlay) overlay.style.transform = 
-			"translate3d(0, " + ( -1 * rowOffset * geo.rowHeight + 2 ) + "px, 20px)"
+			"translate(0, " + Math.floor( -1 * rowOffset * geo.rowHeight + 2 ) + "px)"
 	},
 
 	refreshTable: function () {

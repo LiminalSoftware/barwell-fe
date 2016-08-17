@@ -12,7 +12,6 @@ import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
 
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import blurOnClickMixin from "../../../../blurOnClickMixin";
-import configCommitMixin from '../../../Fields/configCommitMixin';
 import popdownClickmodMixin from '../../../Fields/popdownClickmodMixin';
 
 var AttributeConfig = React.createClass({

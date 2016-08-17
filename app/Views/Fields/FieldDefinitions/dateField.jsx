@@ -1,8 +1,49 @@
+import React, { Component, PropTypes } from 'react';
+import _ from "underscore"
+import moment from "moment"
+
+/*
+ *	Align styler
+ */
+import AlignChoice from "../ConfigParts/AlignChoice"
+import getAlignStyles from "../ConfigParts/AlignChoice/getStyles"
+
+/*
+ *	Background color styler
+ */
+
+import BackgroundChoice from "../ConfigParts/BackgroundChoice"
+import getBackgroundStyles from "../ConfigParts/BackgroundChoice/getStyles"
+
+/*
+ *	Font style styler
+ */
+
+import TextChoice from "../ConfigParts/TextChoice"
+import getFontStyles from "../ConfigParts/TextChoice/getStyles"
+
+/*
+ *	Numeric formatter
+ */
+
+import DateFormatChoice from "../ConfigParts/DateFormatChoice"
+// import DatePicker from ""
+
+import detailStyle from "../ConfigParts/detailStyle"
+
+import fieldUtils from "../fieldUtils"
+
+import GenericTextElement from "../GenericTextElement"
+import getHTML from "../GenericTextElement/getHTML"
+
+import dateStyles from "../ConfigParts/DateFormatChoice/dateStyles"
+
+const stylers = [getAlignStyles, getBackgroundStyles, getFontStyles, detailStyle]
 
 const format = function (value, _config) {
 	var config = _config || this.props.config || {}
-	var format = config.formatString || "DD MMMM YYYY";
-	var dateObj = moment(value);
+	var format = config.formatString;
+	var dateObj = moment(value,'YYYY-MM-DD');
 	var prettyDate = dateObj.isValid() ? dateObj.format(format) : '';
 	return prettyDate
 }
@@ -15,13 +56,19 @@ const validator = function (input) {
 		return date.isValid() ? date : null
 }
 
-parser = function (input) {
-	return input
+const parser = function (input, config) {
+	var format = config.formatString
+	var date = moment(input, format)
+	return date.format('YYYY-MM-DD')
 }
 
-var dateField = {
+export default {
 
-	detail: DatePicker,
+	configParts: [AlignChoice, BackgroundChoice, TextChoice, DateFormatChoice],
+
+	// detail: DatePicker,
+
+	detailIcon: 'calendar-31',
 
 	sortable: true,
 
@@ -39,6 +86,12 @@ var dateField = {
 
 	icon: 'calendar-31',
 
+	parser: parser,
+
+	format: format,
+
+	validator: validator,
+
 	stringify: function (value) {
 		var val = moment(value)
 		if (val.isValid()) return val.toISOString()
@@ -50,42 +103,31 @@ var dateField = {
 		return config
 	},
 
-	configParts: [
-		AlignChoice, 
-		ColorChoice, 
-		TextChoice, 
-		DateConfig
-	],
+	getDisplayHTML: getHTML.bind(null, format, stylers),
 
-	element: React.createClass({
+	element: class DateField extends Component {
 
-		mixins: [editableInputMixin, bgColorMixin, commitMixin, selectableMixin, keyPressMixin],
+		handleEdit (e) {
+			this.refs.genericField.handleEdit(e)
+		}
 
-		format: function (value, _config) {
-			var config = _config || this.props.config || {}
-			var format = config.formatString || "DD MMMM YYYY";
-			var dateObj = moment(value);
-			var prettyDate = dateObj.isValid() ? dateObj.format(format) : '';
-			return prettyDate
-		},
+		commitChanges (e) {
+			this.refs.genericField.commitChanges(e)
+		}
 
-		validator: function (input) {
-			console.log('date validator')
-			var config = this.props.config || {}
-			var format = config.formatString || "YYYY-MM-DD";
-			var date = moment(input, format)
-			if (!date.isValid()) date = moment(input, "YYYY-MM-DD")
-				return date.isValid() ? date : null
-		},
+		handleBlur (commit) {
+			this.refs.genericField.handleBlur(commit)
+		}
 
-		parser: function (input) {
-			return input
-		},
+		render () {
+			return <GenericTextElement {...this.props}
+				ref = "genericField"
+				format = {format}
+				validator = {_.identity}
+				parser = {parser}
+				stylers = {stylers}/>
+		}
 
-		detailIcon: 'icon-calendar-31',
-
-	})
+	}
 
 }
-
-export default dateField;

@@ -24,7 +24,7 @@
 	font-family: @bodyFont;
 	color: white;
 	border-radius: 3px;
-	transform: translateZ(1px);
+	
 	z-index: 200;
 	line-height: 40px;
 	height: 40px;
@@ -60,8 +60,6 @@
 	-webkit-user-drag: none;
 
 
-	
-	// transform: translateZ(15px);
 	z-index: 15;
 	margin: 3px;
 	pointer-events: auto;
@@ -69,7 +67,6 @@
 }
 
 .scroll-bar-inner {
-	// transform: translateZ(20px);
 	pointer-events: auto;
 }
 
@@ -134,17 +131,8 @@
 
 	border: 1px solid @purple4;
 
-	// .transition(all linear 75ms);
+	transition: all linear 75ms;
 
-	&:hover {
-		color: @newgreen1;
-		border-color: @newgreen1;
-		background: @gray4;
-	}
-}
-
-.table-backing {
-	background: white;
-	transform: translateZ(-3px);
-	z-index: -3;
+	box-shadow: 2px 2px 0 0 lightgray;
+	border-radius: 2px;
 }

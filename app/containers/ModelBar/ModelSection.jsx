@@ -98,7 +98,7 @@ var ModelSection = React.createClass ({
 
 		return <div className="mdlbar-section ">
 
-			<div className="mdlbar-link">
+			<div className="model-link">
 				{modelDisplay}
 				<span style = {{float: 'right'}}>
 					

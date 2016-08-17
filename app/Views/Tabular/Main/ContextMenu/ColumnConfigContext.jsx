@@ -182,10 +182,11 @@ var ColumnConfigContext = React.createClass ({
 
 	render: function () {
 		const view = this.props.view
+		const config = this.props.config
 		let style = Object.assign({}, 
 			this.props._getRangeStyle(this.props.rc), {
 				height: "0",
-				marginLeft: "-1px",
+				marginLeft: "-0",
 				top: view.data.geometry.headerHeight + 'px',
 				position: "absolute",
 				minWidth: "350px",
@@ -201,6 +202,15 @@ var ColumnConfigContext = React.createClass ({
 					update(this.props, {$merge: {blurSelf: this.blurMode, blurMenu: this.blurMenu}}) )
 				: this.renderMainMenu()
 			}
+			<div style={{
+				position: "absolute", 
+				top: 0, left: 1, height: 0, 
+				marginTop: "-2px",
+				borderTop: "3px solid white",
+				zIndex: 51,
+				borderLeft: `1px solid constants.colors.GRAY_3`,
+				borderRight: `1px solid constants.colors.GRAY_3`,
+				width: config.width - 1}}/>
 		</ReactCSSTransitionGroup>
 	}
 

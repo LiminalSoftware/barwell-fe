@@ -203,9 +203,9 @@ var TabularTBody = React.createClass ({
 			<span className="add-new-row" 
 			onClick = {this.props._addRecord}
 			style={{
-				top: rowCount * geo.rowHeight + 'px', 
-				height: geo.rowHeight + 'px',
-				lineHeight: geo.rowHeight + 'px',
+				top: rowCount * geo.rowHeight + 10 + 'px', 
+				height: geo.headerHeight + 'px',
+				lineHeight: geo.headerHeight + 'px',
 				left: 0, width: geo.labelWidth + 2 + 'px'}}>
 			<span className="icon icon-plus"/>
 			</span>

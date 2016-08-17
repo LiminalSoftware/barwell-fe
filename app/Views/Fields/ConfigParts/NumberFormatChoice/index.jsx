@@ -158,7 +158,7 @@ export default {
 			var format = config.displayStyle
 			var formatAttr = parseFormatString(config.formatString)
 
-			return null;
+			
 			return <div className = "popdown-section" key="custom">
 				<li className="popdown-item title bottom-divider">
 					Customize

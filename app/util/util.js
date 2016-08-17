@@ -33,7 +33,7 @@ var stripInternalVars = module.exports.stripInternalVars = function (obj) {
   if (obj instanceof Array) return obj.map(stripInternalVars)
   var newObj = {}
   Object.keys(obj || {}).forEach(function (key) {
-    if (key.slice(0,1) !== '_') newObj[key] = obj[key];
+    if (key.slice(0,1) !== '_' && key.slice(0,1) !== 'r') newObj[key] = obj[key];
   });
   return newObj;
 }

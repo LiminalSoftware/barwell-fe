@@ -1,8 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import _ from "underscore"
 
-import editableInputMixin from '../editableInputMixin'
-
 /*
  *	Align styler
  */
@@ -30,6 +28,8 @@ import GenericTextElement from "../GenericTextElement"
 import getHTML from "../GenericTextElement/getHTML"
 
 
+const parser = input => ((input===null || input===undefined) ? '' : String(input))
+
 const stylers = [getAlignStyles, getBackgroundStyles, getFontStyles]
 
 const textField = {
@@ -52,16 +52,14 @@ const textField = {
 	
 	defaultWidth: 150,
 
+	parser: parser,
+
 	getDisplayHTML: getHTML.bind(null, _.identity, stylers),
 
 	element: class TextField extends Component {
 
 		handleEdit (e) {
 			this.refs.genericField.handleEdit(e)
-		}
-
-		commitChanges (e) {
-			this.refs.genericField.commitChanges(e)
 		}
 
 		handleBlur (commit) {
@@ -73,7 +71,7 @@ const textField = {
 				ref = "genericField"
 				format = {_.identity}
 				validator = {_.identity}
-				parser = {_.identity}
+				parser = {parser}
 				stylers = {stylers}/>
 		}
 	}

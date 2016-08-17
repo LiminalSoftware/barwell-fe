@@ -19,12 +19,16 @@
 	border-bottom: 1px solid @purple4;
 }
 
-.action-cell-topright {
-	border: 1px solid @purple4;
+.column-adder {
+	border: 1px solid @purple4 !important;
 	color: @purple4;
 	width: 35px;
-	// border-radius: 0 10px 10px 0;
+	border-radius: 2px;
+	padding: 5px !important;
 	background: white;
+
+	box-shadow: 2px 2px 0 0 lightgray;
+	cursor: pointer;
 
 	&:hover {
 		border-color: @newgreen1 !important;
@@ -64,8 +68,9 @@
 
 .header-cell-inner {
 	cursor: pointer;
-	padding: 5px;
-	
+	padding: 0 5px;
+	color: @purple4;
+	font-family: @headerFont;
 	background: white;
 }
 
@@ -76,7 +81,7 @@
 
 	&.row-resizer {
 		cursor: row-resize;
-		transform: translateZ(10px);
+		zIndex: 30;
 	}
 	&.col-resizer {
 		cursor: col-resize;

@@ -3,8 +3,6 @@ import _ from "underscore"
 
 import numeral from "numeral"
 
-import editableInputMixin from '../editableInputMixin'
-
 /*
  *	Align styler
  */
@@ -83,12 +81,12 @@ export default {
 	},
 
 	parser: parser,
-
+	
 	format: format,
 	
 	getDisplayHTML: getHTML.bind(null, format, stylers),
 
-	element: class TextField extends Component {
+	element: class DecimalField extends Component {
 
 		handleEdit (e) {
 			this.refs.genericField.handleEdit(e)

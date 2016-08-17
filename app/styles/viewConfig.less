@@ -11,40 +11,43 @@
 	border-bottom-right-radius: 0;
 	border-radius: 3px;
 	background: white;
-	box-shadow: 2px 2px 2px 0px lightgray;
+	
+	box-shadow: 2px 2px 0 0 lightgray;
 }
 
 .menu-pointer-outer {
 	position: absolute;
-	bottom: 0; right: 15px;
-	margin-bottom: -16px;
-	margin-right: -1px;
-	border-width: 8px;
+	bottom: 0; 
+
+	margin-bottom: -24px;
+	
+	border-width: 12px;
 	border-style: solid;
-	border-right-color: @gray3;
+	
+	border-color: transparent;
 	border-top-color: @gray3;
-	border-bottom-color: transparent;
-	border-left-color: transparent;
+	
+	
 }
 
 .menu-pointer-inner {
 	position: absolute;
-	bottom: 0; right: 16px;
-	margin-bottom: -11px;
-	margin-right: 0px;
-	border-width: 8px;
+	bottom: 0;
+
+	margin-bottom: -22px;
+	
+	border-width: 12px;
 	border-style: solid;
-	border-right-color: white;
+	
+	border-color: transparent;
 	border-top-color: white;
-	border-bottom-color: transparent;
-	border-left-color: transparent;
+	
 }
 
 .view-config-item,
 .view-config-item--pushed,
 .view-config-item--active
 {
-	
 	perspective: 1em;
 	position: relative;
 	border: 1px solid @purple4;
@@ -53,6 +56,8 @@
 	margin-right: 10px;
 	cursor: pointer;
 	transition: all 75ms linear;
+	
+	box-shadow: 2px 2px 0 0 lightgray;
 }
 .view-config-item {
 	background: white;
@@ -60,13 +65,15 @@
 	&:hover {background: @gray4;}
 }
 .view-config-item--pushed {
-	background: @purple4;
-	color: white;
+	color: @purple4;
+	background: @gray4;
+	transform: translate(2px, 2px);
+	box-shadow: 0 0 0 0 lightgray !important;
 }
 .view-config-item--active {
 	background: white;
-	color: @newgreen1;
-	border-color: @newgreen1;
+	color: @purple4;
+	
 }
 
 .label-text {

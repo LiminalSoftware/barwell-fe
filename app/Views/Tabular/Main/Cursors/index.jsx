@@ -132,7 +132,7 @@ var Cursors = React.createClass ({
 				ref="selectionOuter"
 				key="selectionOuter"
 				position = {sel}
-				fudge = {{left: -3, top: -3.75, height: 7.75, width: 5.75}}>
+				fudge = {{left: -3, top: -3.25, height: 7.5, width: 6.75}}>
 				<div className = "selection-border selection-border"
 					style={{left: "-3px", right: "-3px", top: "-3px", bottom: "-3px"}}/>
 				
@@ -145,7 +145,7 @@ var Cursors = React.createClass ({
 				ref = "copyarea"
 				key="copyare"
 				position = {cpy}
-				fudge = {{left: -1.25, top: 0, height: 1, width: 1.25}}/>,
+				fudge = {{left: 0.25, top: 0.25, height: 1, width: 1}}/>,
 
 			showJaggedEdge ? <Overlay
 				{...this.props}
@@ -195,7 +195,7 @@ var Cursors = React.createClass ({
 			right: 0,
 			height: rowCount  * geo.rowHeight + 3,
 			transition: IS_CHROME ? 'transform 75ms linear' : null,
-			transform: HAS_3D ? `translate3d(0,${marginTop + 2}px, 0)` : null,
+			transform: HAS_3D ? `translate(0,${marginTop + 2}px)` : null,
 			marginTop: HAS_3D ? null : (marginTop + 2 + 'px'),
 		}
 	},

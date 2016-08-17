@@ -45,7 +45,7 @@ var KeycompStore = storeFactory({
         this.emitChange();
         break;
 
-      case 'MODEL_RECEIVE':
+      case 'MODEL_CREATE':
         dispatcher.waitFor([
           KeyStore.dispatchToken, 
           AttributeStore.dispatchToken, 
@@ -54,9 +54,10 @@ var KeycompStore = storeFactory({
         var _this = this;
         var models = payload.data instanceof Array ? payload.data : [payload.data];
         models.forEach(function (model) {
-          if(!('keys' in model)) return;
-          model.keys.forEach(function (key) {
-            (key.keycomps || []).map(util.clean).map(_this.create)
+          (model.keys || []).forEach(function (key) {
+            (key.keycomps || [])
+              .map(payload.isClean ? util.clean : _.identity)
+              .map(_this.create)
           })
         });
         this.emitChange();

@@ -3,10 +3,26 @@
 .branding {
 	font-size: 18px;
 	padding: 5px 10px;
-	color: @lightFontColor;
+	// color: @lightFontColor;
+	color: @gray1;
 	font-weight: 400;
 	flex: 1 1;
 	overflow: hidden;
+}
+
+
+.mdlbar {
+	position: relative;
+	overflow: hidden;
+	min-width: 300px;
+	max-width: 300px;
+	min-height: 100vh;
+	height: 100%;
+	flex: 1 1 ;
+	display: flex;
+	flex-direction: column;
+	// background: @headerMenuBgColor;
+	background: @gray3;
 }
 
 
@@ -17,19 +33,21 @@
 	position: relative;
 }
 
-.mdlbar-link {
+.model-link, .view-link {
 	overflow: visible !important;
+	direction: ltr !important;
 	position: relative;
 	margin: 0;
 	height: 28px;
 	line-height: 30px;
 	padding: 5px 10px;
+
+	color: @gray1;
 	
 	display: block;
 	text-decoration: none;
 
 	font-size: 16px;
-	font-family: @headerFont;
 	cursor: pointer;
 
 	border-left: 4px solid transparent;
@@ -38,26 +56,25 @@
 	transition: border cubic-bezier(.16,.85,.5,1) 400ms;
 }
 
-.mdlbar-link {
-	position: relative;
-	direction: ltr !important;
-	display: block;
-	color: @lightFontColor;
-	min-height: 30px;
-	line-height: 30px;
+.model-link {
+	font-family: @headerFont;
 }
 
 .view-link {
-	position: absolute;
-	right: 65px;
-	left: 8px;
-	top: 0;
-	bottom: 0;
-	line-height: 35px;
-
-
-	display: block;
+	font-family: @bodyFont;
 }
+
+// .view-link {
+// 	position: absolute;
+// 	right: 65px;
+// 	left: 8px;
+// 	top: 0;
+// 	bottom: 0;
+// 	line-height: 35px;
+
+
+// 	display: block;
+// }
 
 .view-link-actions {
 	position: absolute;
@@ -67,16 +84,17 @@
 	bottom: 0;
 }
 
-.mdlbar-link--active {
+.view-link--active {
 	// background: @headerBgLight2;
 	// color: @lightFontColor;
 	border-left: 4px solid @gray2;
 }
 
-.mdlbar-link--focused {
+.view-link--focused {
 	// background: @headerBgLight2;
-	// color: @lightFontColor;
-	border-left: 4px solid @purple4;
+	color: @lightFontColor;
+	// border-left: 4px solid @purple4;
+	background: @purple4;
 }
 
 .mdlbar-list {
@@ -90,7 +108,7 @@
 
 	flex-direction: column;
 	padding: 0;
-	padding-left: 10px;
+	// padding-left: 10px;
 	overflow-y: auto;
 	overflow-x: hidden;
 	direction: rtl;
@@ -120,18 +138,6 @@
 	font-size: @headerFontSize !important;
 }
 
-.mdlbar {
-	position: relative;
-	overflow: hidden;
-	min-width: 300px;
-	max-width: 300px;
-	min-height: 100vh;
-	height: 100%;
-	flex: 1 1 ;
-	display: flex;
-	flex-direction: column;
-	background: @headerMenuBgColor;
-}
 
 .mdlbar-section {
 	margin-bottom: 20px;

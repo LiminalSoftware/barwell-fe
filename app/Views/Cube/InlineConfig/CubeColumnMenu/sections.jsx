@@ -1,6 +1,4 @@
 import fieldTypes from "../../../fields"
-import AggregatePicker from './AggregatePicker'
-import GroupSortPicker from './GroupSortPicker'
 import util from "../../../../util/util"
 
 var sections = [
@@ -9,7 +7,7 @@ var sections = [
 		label: "Row Groupings",
 		emptyText: "No row groups defined...",
 		icon: "icon-menu",
-		configParts: [GroupSortPicker],
+		configParts: [],
 		selector: function (view) {
 			return view.data._columnList.filter(c => c.groupByRow).sort(util.orderSort)
 		},
@@ -26,7 +24,7 @@ var sections = [
 		label: "Column Groupings",
 		emptyText: "No column groups defined...",
 		icon: "icon-menu",
-		configParts: [GroupSortPicker],
+		configParts: [],
 		selector: function (view) {
 			return view.data._columnList.filter(c => c.groupByColumn).sort(util.orderSort)
 		},
@@ -43,7 +41,7 @@ var sections = [
 		label: "Table Body Attributes",
 		emptyText: "No table body attributes defined...",
 		icon: "icon-border-all",
-		configParts: [AggregatePicker],
+		configParts: [],
 		selector: function (view) {
 			return view.data._columnList.filter(c => c.inTableBody).sort(util.orderSort)
 		},

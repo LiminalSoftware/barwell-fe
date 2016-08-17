@@ -6,8 +6,8 @@ import _ from "underscore"
 import BackgroundChoice from "../ConfigParts/BackgroundChoice"
 import getBackgroundStyles from "../ConfigParts/BackgroundChoice/getStyles"
 
-import BooleanElement from "../BooleanElement"
-import getHTML from "../BooleanElement/getHTML"
+import CheckboxElement from "../CheckboxElement"
+import getHTML from "../CheckboxElement/getHTML"
 
 const stylers = [getBackgroundStyles]
 
@@ -21,8 +21,8 @@ var booleanField = {
 
 	category: 'General',
 
-	description: 'True / false',
-
+	description: 'Check-box',
+	
 	icon: 'check-square',
 
 	configParts: [BackgroundChoice],
@@ -55,7 +55,7 @@ var booleanField = {
 		}
 
 		render () {
-			return <BooleanElement {...this.props}
+			return <CheckboxElement {...this.props}
 				ref = "field"
 				validator = {_.identity}
 				parser = {v=>!!v}

@@ -37,7 +37,12 @@ export default class GenericTextElement extends Component {
 		/*
 		 * a list of functions that return style objects
 		 */
-		stylers: PropTypes.arrayOf(React.PropTypes.func)
+		stylers: PropTypes.arrayOf(React.PropTypes.func),
+
+		/*
+		 * an optional element to be displayed within the cell
+		 */
+		decorator: PropTypes.element
 
 	}
 
@@ -94,6 +99,7 @@ export default class GenericTextElement extends Component {
 	/*
 	 * escapes out of edit mode and either commits the state value or
 	 * reverts to the prop value
+	 * uses the supplied commit method to persist to server (only if changed)
 	 */
 	
 	handleBlur = (revert) => {
@@ -101,17 +107,17 @@ export default class GenericTextElement extends Component {
 		const hasChanged = this.state.value !== this.props.value
 		const parsedValue = this.props.parser(this.state.value, config)
 
-		if (revert !== true && this.state.editing && hasChanged)
+		if (revert !== true && this.state.editing && hasChanged) {
 			this.props.commit(parsedValue)
-		
-		this.setState({
-			editing: false,
-			open: false,
-			value: this.props.format(revert !== true ? 
-				this.state.value : 
-				this.props.value
-				, config)
-		})
+			this.setState({editing: false, open: false})
+		}
+		else {
+			this.setState({
+				editing: false,
+				open: false,
+				value: this.props.format(this.props.value, config)
+			})
+		}
 	}
 
 	/*
@@ -121,15 +127,6 @@ export default class GenericTextElement extends Component {
 	handleChange = (event) => {
 		this.setState({value: event.target.value})
 	}
-
-	/*
-	 * use the supplied commit method to persist to server (only if changed)
-	 */
-
-	// commitChanges = () => {
-	// 	if (this.state.editing && this.state.value !== this.props.value)
-	// 		this.props.commit(this.state.value)
-	// }
 
 	/*
 	 * RENDER *****************************************************************
@@ -148,14 +145,20 @@ export default class GenericTextElement extends Component {
 		)
 	}
 
-	render = () => {
+	getDetailStyle = () => {
 		var config = this.props.config
-		var isNull = this.props.isNull
-		var prettyValue = this.props.format(this.state.value, config)
-		var showIcon = this.detailIcon && this.props.selected && !this.state.editing
-		var obj = this.props.object
+		if (config.align === 'right') return {left: 0, width: '24px'}
+		else return {right: 0, width: '24px'}
+	}
+
+	render = () => {
+		// const prettyValue = this.props.format(this.state.value, this.props.config)
+		// var showIcon = this.detailIcon && this.props.selected && !this.state.editing
 		
 		return <span className= "table-cell table-cell-selected" style={this.props.style}>
+			
+			{this.props.decorator}
+
 			{this.props.alwaysEdit || this.state.editing ?
 			<input
 				ref = "input"
@@ -167,16 +170,10 @@ export default class GenericTextElement extends Component {
 				onChange = {this.handleChange} />
 			:
 			<span style={this.getStyles()} className="table-cell-inner table-cell-inner-selected">
-				{prettyValue}
+				{this.state.value}
 			</span>
 			}
-		{showIcon ?
-			<span
-			style = {editorIconStyle}
-			className = {"editor-icon icon " + this.detailIcon}
-			onClick = {this.handleDetail}/>
-			: null
-		}
+		
 		{this.state.open ?
 			React.createElement(detail, Object.assign({value: this.state.value, _revert: this.revert}, this.props) )
 			: null

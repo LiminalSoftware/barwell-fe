@@ -1,4 +1,4 @@
-import TableConfig from "./Tabular/ViewConfigBar"
+import TableConfig from "./ViewConfigBar"
 import TabularMain from "./Tabular/Main/index.jsx"
 import TabularGroomer from "./Tabular/groom"
 
@@ -7,7 +7,7 @@ import HistoryMain from "./ChangeHistory/index.jsx"
 import CalendarMain from "./Calendar/Main/index.jsx"
 import CalendarGroomer from "./Calendar/groom.jsx"
 
-import CubeInlineConfig from "./Cube/InlineConfig/index.jsx"
+import CubeConfig from "./ViewConfigBar"
 import CubeMain from "./Cube/Main/index.jsx"
 import CubeGroomer from "./Cube/groom"
 
@@ -40,7 +40,7 @@ var viewTypes = {
 		icon: "icon-cube",
 		groomer: CubeGroomer,
 		mainElement: CubeMain,
-		inlineConfigElement: CubeInlineConfig,
+		configElement: CubeConfig,
 		category: "Tables",
 		description: "Dynamic table with configurable row and column grouping."
 	},
