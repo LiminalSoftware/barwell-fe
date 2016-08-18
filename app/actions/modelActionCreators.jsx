@@ -82,6 +82,18 @@ var modelActions = {
 	// == TRANSACTIONAL EVENTS
 	// ========================================================================
 
+	renameColumn: function (column_id, name) {
+		// if it is a regular attribute, just update it
+		if (column_id.slice(0,1) === 'a') {
+			const attribute = AttributeStore.get(column_id.slice(1))
+			modelActions.create('attribute', update(attribute, {
+				attribute: {$set: name}
+			}))
+		}
+		// if it is a relationship, update the relationship name
+		// TODO
+	},
+
 	insertRecord: function (model, obj, position) {
 		var message = {
 			entity: 'record',

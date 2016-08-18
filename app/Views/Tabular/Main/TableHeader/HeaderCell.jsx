@@ -4,6 +4,8 @@ import ReactDOM from "react-dom"
 
 import $ from "jquery"
 
+import FocusStore from "../../../../stores/FocusStore"
+
 import constant from "../../../../constants/MetasheetConstants"
 import fieldTypes from "../../../fields"
 
@@ -20,6 +22,8 @@ export default class HeaderCell extends Component {
 			dragging: false,
 			rel: null,
 			pos: 0,
+			name: this.props.column.name,
+			context: false,
       		renaming: false,
       		mouseover: false
 		}
@@ -37,12 +41,28 @@ export default class HeaderCell extends Component {
 	 */
 
 	componentDidUpdate = (newProps, newState) => {
+		/* global listener setup and cleanup for drag bar */
 		if (this.state.dragging && !newState.dragging) {
 			addEventListener('mousemove', this.onMouseMove)
 			addEventListener('mouseup', this.onMouseUp)
 		} else if (!this.state.dragging && newState.dragging) {
 		   removeEventListener('mousemove', this.onMouseMove)
 		   removeEventListener('mouseup', this.onMouseUp)
+		}
+
+		if (!newState.renaming && this.state.renaming ) {
+			addEventListener('keyup', this.handleKeyPress)
+			addEventListener('click', this.handleClick)
+		}
+
+		/* move cursor to the end of the input upon edit */
+		if (newState.renaming && !this.state.renaming) {
+			const val = this.refs.input.value
+			this.refs.input.value = ''
+			this.refs.input.value = val
+
+			removeEventListener('keyup', this.handleKeyPress)
+			removeEventListener('click', this.handleClick)
 		}
 	}
 
@@ -139,31 +159,52 @@ export default class HeaderCell extends Component {
 	 * 
 	 */
 
-	handleBlur = () => {
-  		this.setState({renaming: false})
+	handleBlurRenamer = (revert) => {
+		const {column} = this.props
+		if (!revert) {
+			modelActionCreators.renameColumn(column, this.state.name)
+		}
+  		this.setState(update(this.state, {
+  			renaming: {$set: false},
+  			name: {$set: (revert ? column.name : this.state.name)}
+  		}))
 	}
 
 	componentDidMount = () => {
-		document.addEventListener('keyup', this.handleKeyPress)
-		document.addEventListener('click', this.handleClick)
+		
 	}
 
 	componentWillUnmount = () => {
-		document.removeEventListener('keyup', this.handleKeyPress)
-		document.removeEventListener('click', this.handleClick)
+		removeEventListener('keyup', this.handleKeyPress)
+		removeEventListener('click', this.handleClick)
+		removeEventListener('mousemove', this.onMouseMove)
+		removeEventListener('mouseup', this.onMouseUp)
 	}
 
 	handleKeyPress = (e) => {
 		if (event.keyCode === constant.keycodes.ESC)
-			this.handleBlur()
+			this.handleBlur(true)
+		if (event.keyCode === constant.keycodes.ENTER)
+			this.handleBlur(false)
 	}
 
 	handleClick = (e) => {
 		this.handleBlur()
 	}
 
+	getFocus = () => {
+		modelActionCreators.setFocus('v' + this.props.view.view_id + '-header')
+	}
+
 	handleRename = (e) => {
+		this.getFocus()
 		this.setState({renaming: true})
+	}
+
+	handleNameInput = (e) => {
+		this.setState(update(this.state, {
+			name: {$set: e.target.value}
+		}))
 	}
 
 	/*
@@ -222,10 +263,12 @@ export default class HeaderCell extends Component {
 				{this.state.renaming ?
 					<input className="table-cell-renamer" 
 						autofocus
-						value={col.name} 
-						onBlur={this.handleRenameBlur}
+						ref="input"
+						value={this.state.name}
+						onChange={this.handleNameInput}
+						onBlur={this.handleBlur}
 						onClick={util.clickTrap}/>
-					: <span>{col.name}</span>}
+					: <span>{this.state.name}</span>}
 				{this.renderIcons()}
 			</span>
 	        {this.renderResizer()}

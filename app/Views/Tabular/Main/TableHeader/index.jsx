@@ -80,8 +80,8 @@ var TableHeader = React.createClass ({
 			{this.props.hasRowLabel ? null :
 			<span 
 				onClick = {this.props.showAttributeAdder}
-				style = {{left: left + 10 + 'px', top: "-1px", bottom: "-1px", width: "35px", padding: 0}}
-				className = 'table-header-cell column-adder'>
+				style = {{left: left + 10 + 'px', top: "-1px", bottom: "2px", width: "32px", padding: 0}}
+				className = 'table-header-cell new-adder'>
 					<span className="icon icon-plus" style={{margin: 0}}/>
 			</span>
 			}
