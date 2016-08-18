@@ -51,10 +51,6 @@ var ModelPane = React.createClass({
 		this.props.toggleSidebar();
 	},
 
-	focus: function () {
-		modelActionCreators.setFocus('model-' + this.props.model.model_id)
-	},
-
 	render: function() {
 		const _this = this
 		const view = this.props.view
@@ -81,17 +77,15 @@ var ModelPane = React.createClass({
 			})
 
 		return <div className="model-views" >
-			{this.props.multiViews ? 
-			<div className="model-pane-label" onClick={this.focus} style={{position: "relative"}}>
-				<span>
+			
+			<div className="model-pane-header" style={{position: "relative"}}>
+				<span className="view-label">
 					<span className={`icon ${viewType.icon}`}/>
 					{view.view}
 				</span>
-				<span style={{position: "absolute", right: "4px", top: "4px"}}
-					className="icon icon-cross"/>
+				{config}
+				<span className="icon icon-cross" style={{marginLeft: "auto"}}/>
 			</div> 
-			: null
-			}
 			<ReactCSSTransitionGroup
 				ref="pane"
 				key="model-panes"
@@ -99,8 +93,6 @@ var ModelPane = React.createClass({
 				{...constants.transitions.fadeinout}>
 
 				{content}
-
-				{isFocused ? config : null}
 
 			</ReactCSSTransitionGroup>
 

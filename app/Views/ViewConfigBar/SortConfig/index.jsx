@@ -8,6 +8,7 @@ export default class FilterConfig extends Component {
 			menu={SortMenu}
 			icon="icon-sort-alpha-asc"
 			hoverText="Sort records"
+			title="Ordering"
 			{...this.props}/>
 	}
 }

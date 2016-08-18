@@ -8,6 +8,7 @@ export default class History extends Component {
 			menu={HistoryMenu}
 			icon="icon-history2"
 			hoverText="Change history"
+			title="History"
 			{...this.props}/>
 	}
 }

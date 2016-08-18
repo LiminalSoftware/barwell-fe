@@ -7,6 +7,7 @@ export default class FilterConfig extends Component {
 		return <ConfigItem
 			menu={FilterMenu}
 			icon="icon-funnel"
+			title="Filter"
 			hoverText="Filter records"
 			{...this.props}/>
 	}

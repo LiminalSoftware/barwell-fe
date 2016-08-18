@@ -7,6 +7,7 @@ export default class ColumnConfig extends Component {
 		return <ConfigItem
 			menu={ColumnMenu}
 			icon="icon-wrench"
+			title="Config"
 			hoverText="Configure column format"
 			{...this.props}/>
 	}

@@ -14,27 +14,14 @@ import fieldTypes from "../../fields"
 import modelActionCreators from "../../../actions/modelActionCreators"
 import util from "../../../util/util"
 
-import SortDetail from "./SortDetail"
+// import ColumnDetail from "./ColumnDetail"
 
 const getItemState = (view) => {
 	return {items: view.data.sorting, oldItems: view.data.sorting};
 }
 
-const selectorStyle = {
-	left: 0, 
-	right: 0,
-	bottom: 0, 
-	top: 0, 
-	height: "auto", 
-	width: "100%",
-	position: "absolute",
-	cursor: "pointer",
-	textAlign: "center",
-	color: constants.colors.PURPLE_4
-}
-
 @DragDropContext(HTML5Backend)
-export default class SortMenu extends Component {
+export default class ColumnConfigSection extends Component {
 
 	constructor (props) {
 		super(props)
@@ -132,42 +119,11 @@ export default class SortMenu extends Component {
 		const items = this.state.items
 
 		return <div className="view-config-menu" 
-			
+			style={{right: -45 * this.props.idx - 15 + 'px'}} 
 			onClick={util.clickTrap} onMouseDown={util.clickTrap}>
-			<div className="menu-pointer-outer"/>
-			<div className="menu-pointer-inner"/>
+			<div className="menu-pointer-outer" style={{right: 45 * this.props.idx + 30 + 'px'}}/>
+			<div className="menu-pointer-inner" style={{right: 45 * this.props.idx + 30 + 'px'}}/>
 			
-			<FlipMove  duration={150} staggerDelayBy={50}
-			enterAnimation="fade" leaveAnimation="fade">
-				{items.map((item, order) => 
-				<SortDetail 
-					key = {item.cid || item.attribute_id}
-					id = {item.cid || item.attribute_id}
-					item = {item}
-					index = {order}
-					sortSpec = {item}
-					_remove = {_this.removeItem}
-					_moveItem = {_this.debounceMoveItem}
-					view = {view} 
-					editing = {true}
-					{..._this.movableProps} />
-				)}
-			</FlipMove>
-			
-			<div className="menu-item menu-sub-item" style={{position: "relative", margin: "5px"}}>
-				{this.renderSelector()}
-			</div>
-
-			<div  className="menu-item">
-				<span className="menu-sub-item" >
-					<span className="icon icon-check"/>
-					<span style={{borderRight: `1px dotted ${constants.colors.GRAY_3}`}} >Sort</span>
-				</span>
-				<span className="menu-sub-item">
-					<span className="icon icon-cross"/>
-					<span>Cancel</span>
-				</span>
-			</div>
 			
 		</div>
 	}

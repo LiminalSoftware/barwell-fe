@@ -79,8 +79,9 @@ export default class ConfigItem extends Component {
 		onMouseOut={this.handleClearMouseDown}
 		className={classes}
 		title={this.props.hoverText}>
-			<ReactCSSTransitionGroup {...constants.transitions.fadeinout}>
-				<span key="icon" className={`icon ${this.props.icon}`} style={{margin: 0}}/>
+			<span key="icon" className={`icon ${this.props.icon}`} />
+			{this.props.showTitle ? this.props.title : null}
+			<ReactCSSTransitionGroup {...constants.transitions.fadeinout}>	
 				{focused ? this.renderMenu() : null}
 			</ReactCSSTransitionGroup>
 		</div>
