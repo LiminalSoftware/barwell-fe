@@ -41,7 +41,7 @@ var TabularContextMenu = React.createClass ({
 	},
 
 	handleClick: function (e) {
-		this.props.blurContextMenu(e, newFocus)
+		this.props.blurContextMenu(e, 'v' + this.props.view.view_id)
 	},
 	
 	render: function () {

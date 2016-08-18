@@ -200,14 +200,17 @@ var TabularTBody = React.createClass ({
 			}
 			{
 			this.props.hasRowLabel ? 
-			<span className="add-new-row" 
+			<span className="new-adder" 
 			onClick = {this.props._addRecord}
+			onContextMenu = {util.clickTrap}
 			style={{
-				top: rowCount * geo.rowHeight + 10 + 'px', 
-				height: geo.headerHeight + 'px',
-				lineHeight: geo.headerHeight + 'px',
-				left: 0, width: geo.labelWidth + 2 + 'px'}}>
-			<span className="icon icon-plus"/>
+				position: "absolute",
+				top: rowCount * geo.rowHeight + 10 + 'px',
+				width: geo.labelWidth,
+				height: 28,
+				left: 0
+			}}>
+			<span className="icon icon-plus" style={{margin: 0}}/>
 			</span>
 			: null
 			}

@@ -175,7 +175,7 @@ var SearchDropdown = React.createClass({
 				top: 1,
 			}}>
           	
-			<div key = "search-li" className = {"popdown-item " + (this.state.count > 0 ? "bottom-divider" : "")}
+			<div key = "search-li" className = {"popdown-item "}
 				style = {{height: '30px', position: 'relative'}}>
 				<div style={{position: "absolute", left: 0, right: 20, top: 0, bottom: 0}}>
 					<input className = "input-editor" autoFocus
@@ -183,7 +183,11 @@ var SearchDropdown = React.createClass({
 						onChange = {this.updateSearchValue}
 						value = {this.searchTerm}/>
 				</div>
+				{
+				this.state.loading ? 
+				<span className = "icon icon-loading2 rotate" style = {magnifierStyle}/> :
 				<span className = "icon icon-magnifier" style = {magnifierStyle}/>
+				}
 
 			</div>
 			{
@@ -201,7 +205,7 @@ var SearchDropdown = React.createClass({
 			{
 				(this.state.count > SEARCH_RECORDS_VISIBLE) ? 
 				<div
-				className={"popdown-item selectable top-divider" + (_this.state.selection === showMoreIdx ? ' hilite' : '')}
+				className={"popdown-item selectable" + (_this.state.selection === showMoreIdx ? ' hilite' : '')}
 				key="show-more"
 				onMouseOver = {_this.selectItem.bind(_this, showMoreIdx)}>
 				

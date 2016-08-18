@@ -1,6 +1,6 @@
 
 @_purpletint: #D5C3DB;
-@limegreen: lighten(desaturate(lime, 40%), 15%);
+
 //====================================================
 @grayA: #2a3034;
 @gray1: #524A50;
@@ -11,8 +11,9 @@
 @purple1: #54365E;
 @purple2: #7F5E8A;
 @purple3: #AF86BD;
-// @purple4: #A041BF;
-@purple4: steelblue;
+@purple4: #A041BF;
+
+@blue1: steelblue;
 @purple5: lighten(#A041BF, 20%);
 
 @orange3: #FF5845;
@@ -22,9 +23,10 @@
 
 @gray-trans: rgba(102, 81, 81, 0.1);
 
-@newgreen1: #079538;
-@newgreen2: lighten(@newgreen1, 5%);
-@green-light: saturate(lighten(@newgreen1, 50%),-60%);
+@green1: #079538;
+
+@newgreen2: lighten(@green1, 5%);
+@green-light: saturate(lighten(@green1, 50%),-60%);
 @green5: #F2FDF5;
 
 @teal: #EFF6EA;
@@ -38,6 +40,21 @@
 @bluegray-1: #6D6773;
 @bluegray-2: #504854;
 
+.shadowed-menu {
+  border-top-width: 1px;
+  border-left-width: 1px;
+  border-bottom-width: 3px;
+  border-right-width: 3px;
+  border-style: solid;
+  
+  border-radius: 3px;
+  border-top-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+
+  box-shadow: 0 1px 0 2px white;
+}
+
+
 .newgreen-stripe {
 	background:url(
 	data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVQYV2NkIAKwT7X4z0hIHUjRz+wTjHgVwhSBDMOpEFkRToXoirAqxKYIQyEuRSgK8SmCKySkCKyQGEUghQCcJiXerlSgIwAAAABJRU5ErkJggg==
@@ -45,16 +62,12 @@
 }
 
 
-.sunburst-light {
-background: rgba(247,248,250,1);
-}
-
 
 @viewBgColor: @gray4;
 
 //===========================================
 @headerBorderColor: transparent;
-@headerBorderHilite: @purple4;
+@headerBorderHilite: @blue1;
 @menuBorderColor: transparent;
 @headerBorderRadius: 3px;
 @headerOuterBorderWidth: 5px;
@@ -86,7 +99,7 @@ background: rgba(247,248,250,1);
 // @headerFontColor: rgba(255,255,255,0.7);
 @headerFontColor: darken(@headerMenuBgColor, 25%);
 @headerFontSize: 16px;
-@headerOuterHilite: @newgreen1;
+@headerOuterHilite: @green1;
 
 @pointerSize: 16px;
 

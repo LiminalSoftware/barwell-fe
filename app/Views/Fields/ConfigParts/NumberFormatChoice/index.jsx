@@ -53,7 +53,7 @@ export default {
 	getIcon: function (config) {
 		var formatAttr = parseFormatString(config.formatString)
 		var displayObj = displayStyles[formatAttr.type]
-		return ` icon ${displayObj.icon}`;
+		return ` icon ${displayObj ? displayObj.icon : "icon-icons2"}`;
 	},
 
 	element: class NumberConfig extends Component {

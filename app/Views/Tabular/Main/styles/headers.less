@@ -2,7 +2,7 @@
 @import "../../../../styles/mixins.less";
 
 .rhs-header {
-	border-right: 1px solid @purple4;
+	border-right: 1px solid @blue1;
 }
 
 .tabular-view-header {
@@ -11,41 +11,36 @@
 }
 
 .tabular-view-header {
-	border: 1px solid @purple4;
+	border-top-right-radius: 3px;
+	border-top-left-radius: 3px;
+	border: 1px solid @blue1;
 }
 
 
 .cube-column-header {
-	border-bottom: 1px solid @purple4;
+	border-bottom: 1px solid @blue1;
 }
 
-.column-adder {
-	border: 1px solid @purple4 !important;
-	color: @purple4;
-	width: 35px;
-	border-radius: 2px;
-	padding: 5px !important;
-	background: white;
+.new-adder {
+	text-align: center;
+	line-height: 28px;
+	padding: 0;
+	border: 1px solid @gray3;
+	border-radius: 3px;
 
-	box-shadow: 2px 2px 0 0 lightgray;
+	background: white;
+	color: @gray3 !important;
+	
 	cursor: pointer;
 
+	transition: all linear 75ms;
+
 	&:hover {
-		border-color: @newgreen1 !important;
-		color: @newgreen1;
+		border-color: @green1 !important;
+		color: @green1 !important;
 	}
 }
 
-.action-cell-inner {
-	margin: 0;
-	padding: 0;
-	padding-top: 3px;
-	padding-bottom: 3px;
-	
-	text-align: center;
-	cursor: pointer;
-	// border-radius: 0 10px 10px 0;
-}
 
 .table-header-cell {
 	display: block;
@@ -69,9 +64,10 @@
 .header-cell-inner {
 	cursor: pointer;
 	padding: 0 5px;
-	color: @purple4;
+	color: @blue1;
 	font-family: @headerFont;
 	background: white;
+	
 }
 
 .table-cell-renamer {
@@ -81,7 +77,7 @@
 	bottom: 3px;
 	top: 3px;
 	width: auto;
-	color: @purple4;
+	color: @blue1;
 	font-family: @headerFont;
 	font-size: 16px;
 	background: white;
