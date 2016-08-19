@@ -206,7 +206,7 @@ var TabularTBody = React.createClass ({
 			style={{
 				position: "absolute",
 				top: rowCount * geo.rowHeight + 10 + 'px',
-				width: geo.labelWidth,
+				width: 28,
 				height: 28,
 				left: 0
 			}}>

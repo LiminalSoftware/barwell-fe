@@ -32,11 +32,12 @@ h1, h2, h3, h4, h5 {
 	// background:url(
 	// 	data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVQIW2P8////f0YQYIACAD4dBAOyWWJYAAAAAElFTkSuQmCC
 	// ) repeat;
-	// background: @gray4;
+	background: @gray4;
 }
 
 .model-views {
 	.noselect;
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	flex: 3 3;
@@ -47,43 +48,130 @@ h1, h2, h3, h4, h5 {
 }
 
 .model-pane-header {
+	position: relative;
+	display: flex;
 	line-height: 30px;
-	
-	
-	
-	
-	color: @purple4;
-	background: white;
+	color: @red-bright;
+	background: desaturate(lighten(@red-bright, 43%),10%);
 
 
-	margin: 5px;
-	border: 1px solid @purple4;
-	border-radius: 2px;
+	margin: 3px;
+	margin-bottom: 2px;
+	// border: 1px solid @red-bright;
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
 	
-	padding: 2px 5px;
-	
+	padding: 0;
+	height: 26px;
+	line-height: 24px;
 	
 	display: flex;
 	flex-direction: row;
 }
 
 .view-label {
-	font-size: 18px;
-	font-weight: 400;
-	font-family: @bodyFont;
-	// text-transform: uppercase;
+	display: flex;
+	flex: 2;
+	flex-grow: 3;
+	border-top-left-radius: 3px;
+	// border-bottom-left-radius: 3px;
 	.ellipsis;
-	width: 30%;
+	max-width: 300px;
+	min-width: 100px;
 }
 
+.view-config-item--focused {
+	flex: 2 2;
+	background: white;
+}
+
+
+.view-label,
+.view-pane-rhs-cap,
+.view-config-item,
+.view-config-item--pushed,
+.view-config-item--active,
+.view-config-item--focused
+{
+	padding: 0 8px;
+	display: flex;
+	
+	
+	text-align: center;
+
+	cursor: pointer;
+	transition: all 75ms linear;
+
+	color: @red-bright;
+	text-transform: uppercase;
+	font-size: 12px;
+
+	border: 1px solid @red-bright;
+	border-right: none;
+	
+
+	margin-right: 0;
+	height: 24px;
+	line-height: 24px;
+}
+
+.view-config-item,
+.view-config-item--pushed,
+.view-config-item--active {
+	flex: 1 1;
+}
+
+.view-pane-rhs-cap {
+	border-right: 1px solid @red-bright !important;
+	border-top-right-radius: 3px;
+	// border-bottom-right-radius: 3px;
+	flex: 1 0;
+}
+
+.header-item {
+	border-bottom: 1px dotted @red-bright;
+	margin-left: 3px;
+}
+
+
+
+
+
+.view-config-bar {
+	display: flex;
+	felx-direction: row;
+	flex-grow: 4;
+	margin: 0;
+	max-width: 800px;
+}
+
+.view-config-item {
+	// background: white;
+	// color: @blue1;
+	// &:hover {background: @gray4;}
+}
+.view-config-item--pushed {
+	// color: white;
+	background: @gray4;
+}
+.view-config-item--active {
+	
+	// color: @blue1;
+	
+}
+
+
+
+
 .model-pane {
+
 	flex: 1;
 	flex-grow: 1;
 	display: flex;
 	position: relative;
 	overflow: visible;
-	margin: 5px;
-	// margin-top: 5px;
+	margin: 3px;
+	margin-top: 0;
 	.noselect;
 }
 

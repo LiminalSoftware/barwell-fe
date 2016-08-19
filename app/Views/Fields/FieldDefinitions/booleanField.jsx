@@ -43,7 +43,8 @@ var booleanField = {
 	element: class BooleanField extends Component {
 
 		handleEdit (e) {
-			this.refs.genericField.handleEdit(e)
+			const field = this.refs.field
+			this.refs.field.setValue()
 		}
 
 		commitChanges (e) {

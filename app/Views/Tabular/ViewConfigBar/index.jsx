@@ -1,20 +1,11 @@
 import React, { Component, PropTypes } from 'react'
 import update from 'react/lib/update';
-import SortConfig from "./SortConfig"
-import FilterConfig from "./FilterConfig"
-import ColumnConfig from "./ColumnConfig"
-import History from "./History"
+import SortConfig from "../../ViewConfigBar/SortConfig"
+import FilterConfig from "../../ViewConfigBar/FilterConfig"
+import ColumnConfig from "../../ViewConfigBar/ColumnConfig"
 import FocusStore from "../../../stores/FocusStore"
 
-const viewConfigBarStyle = {
-	right: "10px",
-	bottom: "20px",
-	position: "absolute",
-	display: "flex",
-	flexDirection: "row",
-	zIndex: 100,
-	transform: "translate3d(0,0,0)"
-}
+import sections from "./sections"
 
 export default class ViewConfigBar extends Component {
 
@@ -23,32 +14,25 @@ export default class ViewConfigBar extends Component {
 		view: PropTypes.object
 	}
 
-
 	render () {
 		const view = this.props.view
-		const focus = this.props.focus
+		const showTitle = true
 		
-		return <div style={viewConfigBarStyle}>
-			<History {...this.props} 
-				focus={focus}
-				idx={3}
-				key="history" />
-
-			<SortConfig {...this.props} 
-				focus={focus} 
-				key="sort" 
-				idx={2}
-				isActive={!!(view.data.sorting).length}/>
-
-			<FilterConfig {...this.props} 
-				focus={focus} 
-				idx={1}
-				key="filter"/>
+		return <div className="view-config-bar">
 
 			<ColumnConfig {...this.props} 
-				focus={focus}
-				idx={0}
+				showTitle = {showTitle}
 				key="columns"/>
+
+			<FilterConfig {...this.props} 
+				showTitle = {showTitle}
+				key="filter"/>
+
+			<SortConfig {...this.props} 
+				showTitle = {showTitle}
+				key="sort"
+				isActive={!!(view.data.sorting).length}/>
+			
 		</div>
 	}
 }

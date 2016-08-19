@@ -1,11 +1,11 @@
 import React, { Component, PropTypes } from 'react'
 import update from 'react/lib/update';
-import SortConfig from "./SortConfig"
-import FilterConfig from "./FilterConfig"
-import ColumnConfig from "./ColumnConfig"
-import History from "./History"
-import FocusStore from "../../stores/FocusStore"
+import SortConfig from "../../ViewConfigBar/SortConfig"
+import FilterConfig from "../../ViewConfigBar/FilterConfig"
+import ColumnConfig from "../../ViewConfigBar/ColumnConfig"
+import FocusStore from "../../../stores/FocusStore"
 
+import sections from "./sections"
 
 export default class ViewConfigBar extends Component {
 
@@ -14,14 +14,14 @@ export default class ViewConfigBar extends Component {
 		view: PropTypes.object
 	}
 
-
 	render () {
 		const view = this.props.view
 		const focus = this.props.focus
 		
 		return <div className="view-config-bar">
-			
+
 			<ColumnConfig {...this.props} 
+				sections={sections}
 				focus={focus}
 				idx={0}
 				key="columns"/>
@@ -30,17 +30,7 @@ export default class ViewConfigBar extends Component {
 				focus={focus} 
 				idx={1}
 				key="filter"/>
-
-			<SortConfig {...this.props} 
-				focus={focus} 
-				key="sort" 
-				idx={2}
-				isActive={!!(view.data.sorting).length}/>
-
-			<History {...this.props} 
-				focus={focus}
-				idx={3}
-				key="history" />
+				
 		</div>
 	}
 }

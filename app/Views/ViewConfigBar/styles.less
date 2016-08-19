@@ -1,0 +1,84 @@
+@import "../../styles/colors.less";
+
+
+.view-config-menu-col {
+	
+	flex-grow: 1;
+	flex-direction: column;
+	display: flex;
+	padding: 15px;
+	color: @red-bright;
+	max-height: 250px;
+	min-height: 250px;
+}
+
+.menu-explainer {
+	max-width: 400px;
+	flex: 1 1;
+	text-align: left;
+	& > h3, & > p {
+		padding: 5px;
+		margin: 0;
+	}
+	background: @gray4;
+	padding: 5px;
+	margin: 5px;
+}
+
+.menu-action {
+	flex: 2 2;
+	max-width: 600px;
+}
+
+.menu-box {
+	display: flex;
+	flex: 1 1;
+	flex-direction: column;
+}
+
+.config-style {
+	text-transform: uppercase;
+	font-size: 12px;
+	padding: 2px 0;
+	margin-left: 4px;
+	flex: 1 1;
+}
+
+.menu-span {
+	flex: 1 1;
+}
+
+.view-config-menu {
+	display: flex;
+	flex-direction: row;
+
+	position: absolute;
+	top: 100%;
+	left: 0;
+	right: 0;
+	margin: 0;
+
+	z-index: 50;
+	transform: translateZ(50px);
+
+	color: @red-bright;
+	text-transform: none;
+	font-size: 16px;
+
+	background: white;
+
+	border: 1px solid @red-bright;
+	// border-radius: 3px;
+	box-shadow: 0 0 0 3px white;
+}
+
+
+.selector-style {
+	max-height: 28px;
+	border-radius: 3px;
+}
+
+
+.label-text {
+	display: block;
+}

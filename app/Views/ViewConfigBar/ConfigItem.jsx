@@ -4,7 +4,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import constants from "../../constants/MetasheetConstants"
 import FocusStore from "../../stores/FocusStore"
 import modelActionCreators from "../../actions/modelActionCreators"
-
+import styles from "./styles.less"
 
 
 export default class ConfigItem extends Component {
@@ -34,6 +34,27 @@ export default class ConfigItem extends Component {
 			this.state.pushed !== newState.pushed
 	}
 
+	componentWillUpdate = (newProps, newState) => {
+		const focusId = this.getFocusId()
+		const wasFocused = this.props.focus === focusId
+		const willBeFocused = newProps.focus === focusId
+
+		if (!wasFocused && willBeFocused) {
+			addEventListener('keydown', this.handleKeyPress)
+		} else if (wasFocused && !willBeFocused) {
+		   removeEventListener('keydown', this.handleKeyPress)
+		}
+	}
+
+	componentDidMount = () => {
+
+	}
+
+	handleKeyPress = (e) => {
+		if (event.keyCode === constants.keycodes.ESC)
+			modelActionCreators.setFocus('v' + this.props.view.view_id)
+	}
+
 	getFocusId = () => {
 		return 'v' + this.props.view.view_id + '-' + this.props.hoverText
 	}
@@ -46,7 +67,8 @@ export default class ConfigItem extends Component {
 		const focus = FocusStore.getFocus()
 		const thisFocusId = this.getFocusId()
 		const view = this.props.view
-		
+
+
 		modelActionCreators.setFocus(
 			this.isFocused() ? ('v' + view.view_id) : this.getFocusId()
 		)
@@ -61,16 +83,15 @@ export default class ConfigItem extends Component {
 	}
 
 	renderMenu = () => {
-		return  React.createElement(
-			this.props.menu, 
-			Object.assign({}, this.props, {key: "menu"})
-		)
+		return React.createElement(this.props.menu, this.props)
 	}
 
 	render = () => {
 		const focused = this.isFocused()
-		const classes = `view-config-item${(this.state.pushed) ? "--pushed" : 
-			this.props.isActive ? "--active" : ""}`
+		const classes = `view-config-item${
+			focused ? "--focused" :
+			this.state.pushed ? "--pushed" : 
+			this.props.isActive ? "--active" : ''}`
 
 		return <div 
 		onClick={this.handleOpen}
@@ -79,10 +100,10 @@ export default class ConfigItem extends Component {
 		onMouseOut={this.handleClearMouseDown}
 		className={classes}
 		title={this.props.hoverText}>
-			<span key="icon" className={`icon ${this.props.icon}`} />
-			{this.props.showTitle ? this.props.title : null}
-			<ReactCSSTransitionGroup {...constants.transitions.fadeinout}>	
-				{focused ? this.renderMenu() : null}
+			<span key="icon" className={`icon ${this.props.icon}`} style={{marginTop: "1px"}}/>
+			{this.props.preview ? this.props.preview : this.props.title}
+			<ReactCSSTransitionGroup {...constants.transitions.fadeinout}>
+			{focused? this.renderMenu() : null}
 			</ReactCSSTransitionGroup>
 		</div>
 	}

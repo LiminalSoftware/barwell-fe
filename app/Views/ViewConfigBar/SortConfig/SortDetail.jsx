@@ -17,71 +17,41 @@ import modelActionCreators from "../../../actions/modelActionCreators.jsx"
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import sortable from 'react-sortable-mixin'
 
-const placeHolderStyle = {
-	left: 5,
-	right: 5,
-	top: 5,
-	bottom: 5,
-	position: "absolute",
-	border: `1px dashed ${constants.colors.GRAY_3}`,
-	borderRadius: "3px"
-}
 
 const itemSource = {
-  beginDrag(props) {
-    return {
-      id: props.id,
-      index: props.index
-    };
-  }
+
+	beginDrag (props) {
+    	return {
+	    	id: props.id,
+	    	index: props.index,
+	    	originalIndex: props.index
+	    }
+	},
+
+	endDrag (props, monitor) {
+		const { id: droppedId, originalIndex } = monitor.getItem()
+		const didDrop = monitor.didDrop()
+
+		if (!didDrop) props.moveCard(droppedId, originalIndex)
+	}
+
 }
 
 const itemTarget = {
-  hover(props, monitor, component) {
-    const dragIndex = monitor.getItem().index;
-    const hoverIndex = props.index;
+	canDrop () {
+		return false
+	},
 
-    // Don't replace items with themselves
-    if (dragIndex === hoverIndex) {
-      return;
-    }
+	hover(props, monitor, component) {
+		const { id: draggedId } = monitor.getItem();
+		const { id: overId } = props;
 
-    // Determine rectangle on screen
-    const hoverBoundingRect = findDOMNode(component).getBoundingClientRect();
-
-    // Get vertical middle
-    const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-
-    // Determine mouse position
-    const clientOffset = monitor.getClientOffset();
-
-    // Get pixels to the top
-    const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-
-    // Only perform the move when the mouse has crossed half of the items height
-    // When dragging downwards, only move when the cursor is below 50%
-    // When dragging upwards, only move when the cursor is above 50%
-
-    // Dragging downwards
-    if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-      return;
-    }
-
-    // Dragging upwards
-    if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-      return;
-    }
-
-    // Time to actually perform the action
-    props._moveItem(dragIndex, hoverIndex);
-
-    // Note: we're mutating the monitor item here!
-    // Generally it's better to avoid mutations,
-    // but it's good here for the sake of performance
-    // to avoid expensive index searches.
-    monitor.getItem().index = hoverIndex;
-  }
-};
+		if (draggedId !== overId) {
+			const overIndex = props._itemIndex(overIndex);
+			props._moveItem(draggedId, overIndex);
+		}
+	}
+}
 
 @DropTarget("ATTRIBUTE", itemTarget, connect => ({
   connectDropTarget: connect.dropTarget()
@@ -91,8 +61,6 @@ const itemTarget = {
   connectDragSource: connect.dragSource(),
   isDragging: monitor.isDragging()
 }))
-
-
 
 export default class SortDetail extends Component {
 
@@ -134,19 +102,26 @@ export default class SortDetail extends Component {
 		const attr = AttributeStore.get(sortSpec.attribute_id)
 		const fieldType = fieldTypes[attr.type]
     	const opacity = isDragging ? 0 : 1
-    	const style = {position: "relative"}
-    	const color = isDragging ? constants.colors.GRAY_3 : null
+    	const style = {borderBottom: `1px solid ${constants.colors.RED_BRIGHT}`}
+    	// const color = isDragging ? constants.colors.GRAY_3 : null
 		
 	    return connectDragSource(connectDropTarget(
 	    <div className="menu-item menu-sub-item menu-sub-item-draggable"
-	    style={{opacity, color, ...style}}>
+	    style={{opacity, ...style}}>
     		<span ref = "grabber" className="draggable drag-grid"/>
-      		<span className = "ellipsis" style={{marginRight: '10px'}}>{attr.attribute}</span>
+    		<span className="config-style">
+    			{this.props.index===0 ? "Sorted by " : "... then by"}
+    		</span>
+      		<span className="menu-span" style={{flexGrow: 2}}>
+      			<span className="config-style header-item"> {attr.attribute} </span>
+      		</span>
+      		<span className="config-style"> from </span>
+      		<span className="config-style">A <span className="icon icon-arrow-right" style={{fontSize: 16}}/> Z</span>
+      		<span className="config-style">Z <span className="icon icon-arrow-right" style={{fontSize: 16}}/> A</span>
 
-			<span onClick={this.switch}
-				className={"half-column-config tight icon icon-" + fieldType.sortIcon + (sortSpec.descending ? 'desc' : 'asc')}/>
-			<span onClick={this.remove} 
-				className="half-column-config tight icon icon-cross-circle "/>
+      		<span style={{marginLeft: "auto"}}>
+				<span onClick={this.remove} className="icon icon-cross "/>
+			</span>
 		</div>))
 	}
 }

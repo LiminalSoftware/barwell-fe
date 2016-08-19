@@ -3,12 +3,16 @@ import ConfigItem from "../ConfigItem"
 import ColumnMenu from "./ColumnMenu"
 
 export default class ColumnConfig extends Component {
+	getPreview = () => {
+		const {view} = this.props
+		return <span>No hidden fields</span>
+	}
 	render () {
-		return <ConfigItem
+		return <ConfigItem {...this.props}
 			menu={ColumnMenu}
-			icon="icon-wrench"
+			icon="icon-cog"
 			title="Config"
-			hoverText="Configure column format"
-			{...this.props}/>
+			preview={this.getPreview()}
+			hoverText="Configure column format"/>
 	}
 }

@@ -3,39 +3,6 @@
 @import "./menus/popDownMenu.less";
 @import "./menus/wizard.less";
 
-.pill, .pill-selected {
-	border-radius: 2px;
-	padding: 0 5px;
-	margin-left: 0;
-	margin-right: 5px;
-}
-
-.pill {
-	border: 1px solid steelblue;
-	color: steelblue;
-
-	&:hover {
-		background: fadeout(steelblue, 90%);
-	}
-}
-
-.pill-selected {
-	background: steelblue;
-	color: white;
-}
-
-.sort-item {
-	position: relative;
-	display: inline-block;
-	border: 1px solid @headerBgLight2;
-	padding: 5px;
-	padding-left: 20px;
-	border-radius: 3px;
-	line-height: 32px;
-	margin-left: 10px;
-	font-family: @bodyFont;
-}
-
 .drag-grid {
 	position: absolute;
 	left: 3px;
@@ -44,23 +11,10 @@
 	float: left;
 	width: 12px;
 	max-width: 12px;
-	
-	
 	margin-left: 0px !important;
 	background:url(
 		data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAHElEQVQIW2NkQAOMIH55efn/zs5OMBtMIAMMAQCsfgQF6d4DGgAAAABJRU5ErkJggg==
     ) repeat;
-}
-
-
-.menu-selected {
-	color: @green1 !important;
-}
-
-.menu-box {
-	background: @headerBgDark;
-	padding: 6px;
-	border-radius: @headerBorderRadius;
 }
 
 .menu-empty-item {
@@ -68,37 +22,31 @@
 	font-style: italic;
 }
 
-.menu-sub-item--hilite {
-	border: 1px solid steelblue !important;
+.menu-title {
+	font-size: 12px;
+	height: 18px !important;
+	line-height: 18px !important;
+	padding: 0 8px;
+	text-transform: uppercase;
 }
-
-
-.menu-divider {
-
-	text-align: center !important;
-	font-family: @headerFont;
-	
-	height: 32px;
-	line-height: 32px;
-}
-
 
 .menu-item {
 	z-index: 5;
 	display: flex;
+
 	text-decoration: none;
-	color: @darkFontColor;
+	padding: 0;
 }
 
-.menu-item-stacked {
-	flex-direction: column !important;
-}
-
-
-.menu-config-item {
-	min-height: 45px;
-	border-top: 1px solid @headerBgLight2;
-	flex-direction: row !important;
+.menu-button {
+	background: @gray4;
+	border: 1px solid @red-bright;
+	// border-radius: 3px;
+	margin: 5px !important;
+	line-height: 28px;
+	min-height: 28px;
+	font-size: 12px;
+	text-transform: uppercase;
 }
 
 .menu-sub-item-draggable {
@@ -106,14 +54,12 @@
 }
 
 .menu-sub-item {
-	border: 1px solid transparent;
-	border-bottom: 1px dotted @headerBgLight2;
-
+	position: relative;
 	text-align: left;
 
-	height: 32px;
-	line-height: 32px;
-	padding: 4px 6px;
+	height: 30px;
+	line-height: 30px;
+	padding: 1px 6px;
 	margin: 0;
 	
 	text-decoration: none;
@@ -123,19 +69,5 @@
 
 	transition: background ease-in 100ms;
 
-	& > span, & > td {
-		flex: 1 1;
-		white-space: nowrap;
-		margin: 0 5px;
-		min-height: 30px;
-		line-height: 30px;
-	}
-}
-
-.menu-item.dragging {
-	z-index: 105;
-}
-
-.menu-sub-item.warning-item {
-	color: @red-bright;
+	
 }

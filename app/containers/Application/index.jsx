@@ -1,5 +1,4 @@
-import React from "react";
-import $ from 'jquery'
+import React, { Component, PropTypes } from 'react'
 import _ from "underscore"
 
 import { RouteHandler } from "react-router"
@@ -17,7 +16,8 @@ import FocusStore from "../../stores/FocusStore"
 
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
-import Notifier from '../Notifier'
+import { DragDropContext } from 'react-dnd'
+import HTML5Backend from 'react-dnd-html5-backend'
 
 const dummyStyle = {
 	position: 'absolute',
@@ -27,55 +27,57 @@ const dummyStyle = {
 	width: '1px'
 }
 
-var Application = React.createClass({
+@DragDropContext(HTML5Backend)
+export default class Application extends Component {
 
 	// LIFECYCLE ==============================================================
 
-	getInitialState: function () {
-		return {loaded: false}
-	},
+	constructor (props) {
+		super(props)
+		this.state = {loaded: false}
+	}
 
-	componentWillMount: function () {
+	componentWillMount () {
 		ModelStore.addChangeListener(this._onChange)
 		ViewStore.addChangeListener(this._onChange)
 		FocusStore.addChangeListener(this._onChange)
-	},
+	}
 
-	componentWillUnmount: function () {
+	componentWillUnmount () {
 		ModelStore.removeChangeListener(this._onChange)
 		ViewStore.removeChangeListener(this._onChange)
 		FocusStore.removeChangeListener(this._onChange)
-	},
+	}
 
-	_onChange: function () {
+	_onChange = () => {
 		this.forceUpdate()
-	},
+	}
 
-	componentDidMount: function () {
+	componentDidMount = () => {
 		this.fetchModels(this.props.params.workspaceId);
-	},
+	}
 
-	fetchModels: function (workspaceId, retry) {
+	fetchModels = (workspaceId, retry) => {
 		var _this = this
 		
 		modelActionCreators.fetchModels(workspaceId).then(function() {
 			_this.setState({loaded: true})
 		})
-	},
+	}
 
 	// UTILITY ================================================================
 
 	
 
 	// RENDER ===================================================================
-	renderLoader: function () {
+	renderLoader () {
 		return <div className = "hero-banner">
 			<span className="three-quarters-loader"/>
 			<h1 className = "hero-header">Loading workspace data...</h1>
 		</div>
-	},
+	}
 	
-	render: function() {
+	render () {
 		const workspaceId = this.props.params.workspaceId
 		const viewIdString = this.props.params.viewId
 		const activeViews = viewIdString ? viewIdString.split(',').map(id=>ViewStore.get(id)) : []
@@ -104,6 +106,4 @@ var Application = React.createClass({
 		</div>
 	}
 
-})
-
-export default Application
+}

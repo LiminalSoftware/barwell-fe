@@ -43,7 +43,7 @@ var TableBodyContext = React.createClass ({
 			<div onClick={this.clickSelectRecords} className = "popdown-item selectable bottom-divider">
 				<span className="icon icon-focus"/>
 				Select records
-				<span className="key-shortcut">Ctrl+Shift+C</span>
+				<span className="key-shortcut">Shift+Space</span>
 			</div>
 			<div onClick={this.clickCopySelection} className = "popdown-item selectable">
 				<span className="icon icon-clipboard-empty"/>

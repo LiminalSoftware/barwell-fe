@@ -51,7 +51,7 @@ export default class HeaderCell extends Component {
 		}
 
 		if (!newState.renaming && this.state.renaming ) {
-			addEventListener('keyup', this.handleKeyPress)
+			addEventListener('keydown', this.handleKeyPress)
 			addEventListener('click', this.handleClick)
 		}
 
@@ -61,7 +61,7 @@ export default class HeaderCell extends Component {
 			this.refs.input.value = ''
 			this.refs.input.value = val
 
-			removeEventListener('keyup', this.handleKeyPress)
+			removeEventListener('keydown', this.handleKeyPress)
 			removeEventListener('click', this.handleClick)
 		}
 	}
@@ -183,13 +183,13 @@ export default class HeaderCell extends Component {
 
 	handleKeyPress = (e) => {
 		if (event.keyCode === constant.keycodes.ESC)
-			this.handleBlur(true)
+			this.handleBlurRenamer(true)
 		if (event.keyCode === constant.keycodes.ENTER)
-			this.handleBlur(false)
+			this.handleBlurRenamer(false)
 	}
 
 	handleClick = (e) => {
-		this.handleBlur()
+		this.handleBlurRenamer()
 	}
 
 	getFocus = () => {

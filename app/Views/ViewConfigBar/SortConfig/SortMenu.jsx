@@ -3,8 +3,6 @@ import update from 'react/lib/update'
 import _ from "underscore"
 
 import FlipMove from 'react-flip-move'
-import { DragDropContext } from 'react-dnd'
-import HTML5Backend from 'react-dnd-html5-backend'
 
 import constants from "../../../constants/MetasheetConstants"
 
@@ -24,16 +22,17 @@ const selectorStyle = {
 	left: 0, 
 	right: 0,
 	bottom: 0, 
-	top: 0, 
+	top: 0,
+	maxHeight: 26,
+	padding: "0 8px",
 	height: "auto", 
 	width: "100%",
 	position: "absolute",
 	cursor: "pointer",
 	textAlign: "center",
-	color: constants.colors.PURPLE_4
 }
 
-@DragDropContext(HTML5Backend)
+
 export default class SortMenu extends Component {
 
 	constructor (props) {
@@ -88,15 +87,15 @@ export default class SortMenu extends Component {
 		</select>
 	}
 
-	moveItem = (dragIndex, hoverIndex) => {
+	moveItem = (fromIndex, toIndex) => {
 		const { items } = this.state;
     	const dragItem = items[dragIndex];
 
 		this.setState(update(this.state, {
 			items: {
 				$splice: [
-					[dragIndex, 1],
-					[hoverIndex, 0, dragItem]
+					[fromIndex, 1],
+					[toIndex, 0, dragItem]
 				]
 			}
 		}))
@@ -126,48 +125,60 @@ export default class SortMenu extends Component {
 		return this.state.items
 	}
 
+	itemIndex = (item) => {
+		return this.state.items.indexOf(item)
+	}
+
 	render () {
 		const _this = this
 		const view = this.props.view
 		const items = this.state.items
-
+		
 		return <div className="view-config-menu" 
-			
-			onClick={util.clickTrap} onMouseDown={util.clickTrap}>
-			<div className="menu-pointer-outer"/>
-			<div className="menu-pointer-inner"/>
-			
-			<FlipMove  duration={150} staggerDelayBy={50}
-			enterAnimation="fade" leaveAnimation="fade">
-				{items.map((item, order) => 
-				<SortDetail 
-					key = {item.cid || item.attribute_id}
-					id = {item.cid || item.attribute_id}
-					item = {item}
-					index = {order}
-					sortSpec = {item}
-					_remove = {_this.removeItem}
-					_moveItem = {_this.debounceMoveItem}
-					view = {view} 
-					editing = {true}
-					{..._this.movableProps} />
-				)}
-			</FlipMove>
-			
-			<div className="menu-item menu-sub-item" style={{position: "relative", margin: "5px"}}>
-				{this.renderSelector()}
-			</div>
+			onClick={util.clickTrap}
+			onMouseDown={util.clickTrap}>
 
-			<div  className="menu-item">
-				<span className="menu-sub-item" >
-					<span className="icon icon-check"/>
-					<span style={{borderRight: `1px dotted ${constants.colors.GRAY_3}`}} >Sort</span>
-				</span>
-				<span className="menu-sub-item">
-					<span className="icon icon-cross"/>
-					<span>Cancel</span>
-				</span>
-			</div>
+
+			<span className="view-config-menu-col menu-explainer">
+				<h3>Sort records</h3>
+				<p>You can choose how records in this table should be sorted by picking the attributes in the menu to the right.</p>
+				<p>Most attribute types are sortable, but some like has-many are not.</p>
+			</span>
+			<span className="view-config-menu-col menu-action">
+
+				<div className="menu-box">
+					<FlipMove  duration={150} staggerDelayBy={50}
+					enterAnimation="fade" leaveAnimation="fade">
+						{items.map((item, order) => 
+						<SortDetail 
+							key = {item.cid || item.attribute_id}
+							id = {item.cid || item.attribute_id}
+							item = {item}
+							index = {order}
+							sortSpec = {item}
+							_itemIndex = {_this.itemIndex}
+							_remove = {_this.removeItem}
+							_moveItem = {_this.debounceMoveItem}
+							view = {view}  />
+						)}
+					</FlipMove>
+					
+					<div className="menu-item menu-sub-item" style={{position: "relative", margin: "5px", height: 24}}>
+						{this.renderSelector()}
+					</div>
+				</div>
+
+				<div  className="menu-item">
+					<span className="menu-sub-item menu-button" >
+						<span className="icon icon-check"/>
+						<span>Sort</span>
+					</span>
+					<span className="menu-sub-item menu-button">
+						<span className="icon icon-cross"/>
+						<span>Cancel</span>
+					</span>
+				</div>
+			</span>
 			
 		</div>
 	}

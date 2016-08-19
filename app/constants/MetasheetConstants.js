@@ -87,11 +87,12 @@ module.exports = {
     PURPLE_1: '#54365E',
     PURPLE_2: '#7F5E8A',
     PURPLE_3: '#AF86BD',
-    // PURPLE_4: '#A041BF',
-    PURPLE_4: 'steelblue',
+    PURPLE_4: '#A041BF',
+    BLUE_1: 'steelblue',
 
     GREEN_1: '#079538',
 
+    RED_BRIGHT: "rgba(204, 0, 48, 0)",
     RED_BRIGHT_TRANS: "rgba(204, 0, 48, 0.2)"
   },
 

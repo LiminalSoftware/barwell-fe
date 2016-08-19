@@ -1,4 +1,4 @@
-import TableConfig from "./ViewConfigBar"
+import TableConfig from "./Tabular/ViewConfigBar"
 import TabularMain from "./Tabular/Main/index.jsx"
 import TabularGroomer from "./Tabular/groom"
 
@@ -7,7 +7,7 @@ import HistoryMain from "./ChangeHistory/index.jsx"
 import CalendarMain from "./Calendar/Main/index.jsx"
 import CalendarGroomer from "./Calendar/groom.jsx"
 
-import CubeConfig from "./ViewConfigBar"
+import CubeConfig from "./Cube/ViewConfigBar"
 import CubeMain from "./Cube/Main/index.jsx"
 import CubeGroomer from "./Cube/groom"
 

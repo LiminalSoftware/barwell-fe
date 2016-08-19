@@ -25,7 +25,7 @@ import ContextMenu from './ContextMenu'
 import ScrollBar from "./ScrollBar"
 import Cursors from "./Cursors"
 
-import constant from "../../../constants/MetasheetConstants"
+import constants from "../../../constants/MetasheetConstants"
 
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 import PureRenderMixin from 'react-addons-pure-render-mixin'
@@ -788,6 +788,7 @@ const TabularPane = React.createClass ({
 				axis = "horizontal"
 				_setScrollOffset = {this.setHorizontalScrollOffset}/>
 
+			
 			{this.state.contextSubject && this.props.focused ? 
 			<ContextMenu {...childProps}
 				subject={this.state.contextSubject}

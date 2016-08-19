@@ -1,4 +1,4 @@
-import React from "react"
+import React, { Component, PropTypes } from 'react'
 import { RouteHandler, Link } from "react-router"
 import ReactDOM from "react-dom"
 
@@ -21,71 +21,62 @@ import modelActionCreators from "../../actions/modelActionCreators"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import constants from "../../constants/MetasheetConstants"
 
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-var ModelPane = React.createClass({
+export default class ViewPane extends Component {
 
-	mixins: [PureRenderMixin],
-
-	getInitialState: function () {
-		return {
-			selection: "model",
-			viewListOpen: false,
-			miniaturized: false
+	constructor (props) {
+		super(props)
+		this.state = {
+			configElement: null
 		}
-	},
+	}
 
-	selectModel: function () {
-		this.setState({selection: "model"})
-	},
+	showConfigElement = (el) => {
+		console.log('showConfigElement')
+		this.setState({configElement: el})
+	}
 
-	selectView: function () {
-		this.setState({selection: "view"})
-	},
-
-	_onChange: function () {
-		this.forceUpdate()
-	},
-
-	toggleSidebar: function () {
-		this.props.toggleSidebar();
-	},
-
-	render: function() {
+	render () {	
 		const _this = this
-		const view = this.props.view
+		const {view, focus} = this.props
+		const {configElement} = this.state
+
 		const viewType = viewTypes[view.type]
 		const model = ModelStore.get(view.model_id);
 		const viewconfig = {}
 		const viewStr = 'v' + view.view_id
-		const isFocused = viewStr === this.props.focus.slice(0, viewStr.length)
+		const isFocused = (viewStr === focus.split('-')[0])
 
-		const content = React.createElement(viewType.mainElement, {
-				model: model,
-				view: view,
-				focused: isFocused,
-				viewconfig: viewconfig,
-				key: "view-pane-" + (view.cid || view.view_id)
-			})
+		const childProps =  {
+			model: model,
+			view: view,
+			focused: isFocused,
+			focus: focus,
+			viewconfig: viewconfig,
+			showConfigElement: this.showConfigElement
+		}
 
-		const config = React.createElement(viewType.configElement, {
-				model: model,
-				view: view,
-				focus: this.props.focus,
-				viewconfig: viewconfig,
-				key: "view-config-" + (view.cid || view.view_id)
-			})
+		const content = React.createElement(viewType.mainElement, childProps)
+
+		const config = React.createElement(viewType.configElement, childProps)
+
+		const configDetail = configElement ? React.createElement(configElement, childProps) : null
 
 		return <div className="model-views" >
 			
 			<div className="model-pane-header" style={{position: "relative"}}>
 				<span className="view-label">
-					<span className={`icon ${viewType.icon}`}/>
+					<span className={`icon ${viewType.icon}`} style={{marginTop: "1px"}}/>
 					{view.view}
 				</span>
 				{config}
-				<span className="icon icon-cross" style={{marginLeft: "auto"}}/>
-			</div> 
+				<span className="view-pane-rhs-cap">
+					<span className="icon icon-cross" style={{marginLeft: "auto"}}/>
+				</span>
+			</div>
+
+			{configDetail}
+
 			<ReactCSSTransitionGroup
 				ref="pane"
 				key="model-panes"
@@ -98,6 +89,4 @@ var ModelPane = React.createClass({
 
 		</div>
 	}
-});
-
-export default ModelPane
+}
