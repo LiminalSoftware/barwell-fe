@@ -5,7 +5,7 @@ import ColumnMenu from "./ColumnMenu"
 export default class ColumnConfig extends Component {
 	getPreview = () => {
 		const {view} = this.props
-		return <span>No hidden fields</span>
+		return <span>Define view</span>
 	}
 	render () {
 		return <ConfigItem {...this.props}

@@ -10,9 +10,9 @@ module.exports = {
       transitionAppear: true,
       transitionName: "slide-in" 
     },
-    zoomIn: {
-      transitionEnterTimeout: 150,
-      transitionLeaveTimeout: 150,
+    zoomin: {
+      transitionEnterTimeout: 500,
+      transitionLeaveTimeout: 500,
       transitionName: "zoomin" 
     },
     inandout: {

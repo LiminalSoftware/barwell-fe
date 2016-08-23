@@ -51,15 +51,11 @@ h1, h2, h3, h4, h5 {
 	position: relative;
 	display: flex;
 	line-height: 30px;
-	color: @red-bright;
-	background: desaturate(lighten(@red-bright, 43%),10%);
+	color: @gray2;
+	background: white;
 
 
-	margin: 3px;
-	margin-bottom: 2px;
-	// border: 1px solid @red-bright;
-	border-top-left-radius: 2px;
-	border-top-right-radius: 2px;
+	margin: 0;
 	
 	padding: 0;
 	height: 26px;
@@ -73,11 +69,12 @@ h1, h2, h3, h4, h5 {
 	display: flex;
 	flex: 2;
 	flex-grow: 3;
-	border-top-left-radius: 3px;
+	// border-top-left-radius: 3px;
 	// border-bottom-left-radius: 3px;
 	.ellipsis;
 	max-width: 300px;
 	min-width: 100px;
+	margin-left: 2px;
 }
 
 .view-config-item--focused {
@@ -102,12 +99,13 @@ h1, h2, h3, h4, h5 {
 	cursor: pointer;
 	transition: all 75ms linear;
 
-	color: @red-bright;
+	color: @gray2;
 	text-transform: uppercase;
 	font-size: 12px;
 
-	border: 1px solid @red-bright;
+	border: 1px solid @gray2;
 	border-right: none;
+	border-top: none;
 	
 
 	margin-right: 0;
@@ -122,14 +120,12 @@ h1, h2, h3, h4, h5 {
 }
 
 .view-pane-rhs-cap {
-	border-right: 1px solid @red-bright !important;
-	border-top-right-radius: 3px;
-	// border-bottom-right-radius: 3px;
+	border-right: 1px solid @gray2 !important;
 	flex: 1 0;
 }
 
 .header-item {
-	border-bottom: 1px dotted @red-bright;
+	border-bottom: 1px dotted @gray2;
 	margin-left: 3px;
 }
 
@@ -160,9 +156,6 @@ h1, h2, h3, h4, h5 {
 	
 }
 
-
-
-
 .model-pane {
 
 	flex: 1;
@@ -170,8 +163,8 @@ h1, h2, h3, h4, h5 {
 	display: flex;
 	position: relative;
 	overflow: visible;
-	margin: 3px;
-	margin-top: 0;
+	margin: 0;
+	margin-left: 2px;
 	.noselect;
 }
 

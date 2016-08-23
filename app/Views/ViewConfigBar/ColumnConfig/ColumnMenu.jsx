@@ -17,8 +17,9 @@ import ColumnConfigSection from "./ColumnConfigSection"
 
 const getItemState = (props) => {
 	const {view, sections} = props
-	let sectionItems = {}
-	sections.forEach(s => {
+	let sectionItems = {};
+	
+	(sections || []).forEach(s => {
 		sectionItems[s.section] = s.selector(view)
 	})
 	return {sectionItems};
@@ -51,21 +52,54 @@ export default class ColumnMenu extends Component {
 		const {sectionItems} = this.state
 		const {view, sections} = this.props
 
-		return <div className="view-config-menu" 
-			onClick={util.clickTrap} 
-			onMouseDown={util.clickTrap}>
+		// return <div className="view-config-menu" 
+		// 	onClick={util.clickTrap} 
+		// 	onMouseDown={util.clickTrap}>
 			
-			<div  className="menu-item menu-sub-item menu-title">
-				Column order and visiblity
-			</div>
+		// 	<div  className="menu-item menu-sub-item menu-title">
+		// 		Column order and visiblity
+		// 	</div>
 
-			{sections.map(s => <ColumnConfigSection 
-				{...this.props}
-				key={s.section}
-				items={sectionItems[s.section]}
-				section={s}/> 
-			)}
+		// 	{sections.map(s => <ColumnConfigSection 
+		// 		{...this.props}
+		// 		key={s.section}
+		// 		items={sectionItems[s.section]}
+		// 		section={s}/> 
+		// 	)}
 
+		// </div>
+
+		return <div className="view-config-menu" 
+			onClick={util.clickTrap}
+			onMouseDown={util.clickTrap}>
+
+			<span className="view-config-menu-col menu-explainer" style={{flex: "2 2"}}>
+				<h3>Define view</h3>
+				<p>Table views have two sections: fixed columns and scrollable columns.  In addition some attributes may be hidden</p>
+				<p>You can drag attributes into the fixed and scrolling sections and reorder to define the layout.</p>
+			</span>
+			<span className="view-config-menu-col menu-action">
+
+				<div className="menu-box menu-drop-zone">
+					<div className="config-style">Pinned columns</div>
+					<FlipMove  duration={150} staggerDelayBy={50}
+					enterAnimation="fade" leaveAnimation="fade">
+						
+					</FlipMove>
+				</div>
+			</span>
+			<span className="view-config-menu-col menu-action">
+				<div className="menu-box menu-drop-zone">
+					<div className="config-style">Scrollable columns</div>
+					<FlipMove  duration={150} staggerDelayBy={50}
+					enterAnimation="fade" leaveAnimation="fade">
+						
+					</FlipMove>
+				</div>
+			</span>
+			
 		</div>
 	}
+
+
 }

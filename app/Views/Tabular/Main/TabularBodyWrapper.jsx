@@ -174,11 +174,10 @@ var TabularBodyWrapper = React.createClass ({
 				width: (adjustedWidth + geo.colAddWidth + 2) + 'px',
 				top: 0,
 				bottom: 0,
-				
-				overflow: 'hidden',
+				overflow: 'hidden'
 			}}>
 			
-			{/*<RowResizer {...this.props} adjustedWidth = {adjustedWidth} />*/}
+			<RowResizer {...this.props} adjustedWidth = {adjustedWidth} />
 
 			<div className = " wrapper"
 				style = {{

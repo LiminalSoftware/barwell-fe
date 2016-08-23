@@ -1,3 +1,4 @@
+import update from 'react/lib/update'
 import _ from "underscore"
 import util from "../../../util/util"
 

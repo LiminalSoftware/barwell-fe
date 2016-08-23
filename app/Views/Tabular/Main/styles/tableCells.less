@@ -8,7 +8,8 @@
 	left: 0;
 	right: 1px;
 	overflow: hidden;
-	border-bottom: 1px solid desaturate(lighten(steelblue, 40%), 5%);
+	// border-bottom: 1px solid desaturate(lighten(steelblue, 40%), 5%);
+	border-bottom: 1px solid @gray3; 	
 	transition: all linear 75ms;
 }
 
@@ -72,10 +73,13 @@
 // 	.newgreen-stripe;
 // }
 
-.label-grab-handle {
+.table-row:hover .label-grab-handle {
 	background:url(
 		data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAGElEQVQIW2Nc4Lj/f8J+R0YGKIAziBcAAAF5BAVLxr7tAAAAAElFTkSuQmCC
     ) repeat;
+}
+
+.label-grab-handle {
 
 	.draggable;
 	position: absolute;
@@ -158,7 +162,7 @@
 	width: 100%;
 	height: 100%;
 	&::selection {
-	  background: @green-light !important;
+	  background: @green4 !important;
 	}
 }
 

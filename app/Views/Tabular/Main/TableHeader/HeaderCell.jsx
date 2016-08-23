@@ -76,7 +76,8 @@ export default class HeaderCell extends Component {
 
 		if (this.state.mouseover && !this.state.open && !this.state.renaming) 
 			return <span onClick = {this.props._handleContextMenu} 
-			className={`sort-th-label-focused icon icon-cog`}/>
+			style={{marginTop: "6px", marginRight: "-2px"}}
+			className={`sort-th-label-focused icon icon--small icon-chevron-down`}/>
 
 		else if (this.props.sorting && !this.state.open && !this.state.renaming)
 			return <span onClick={this.switch}
@@ -259,7 +260,7 @@ export default class HeaderCell extends Component {
 			className = "table-header-cell">
 			<span className = "table-cell-inner header-cell-inner " 
 			style = {innerStyle}>
-				{/*<span className = {`type-th-label-focused icon icon-${type.icon}`}/>*/}
+				{/*<span className="type-label">{type.description}</span>*/}
 				{this.state.renaming ?
 					<input className="table-cell-renamer" 
 						autofocus

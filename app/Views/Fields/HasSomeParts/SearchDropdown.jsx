@@ -153,16 +153,20 @@ var SearchDropdown = React.createClass({
 
 	render: function () {
 		var _this = this
-		var model = this.props.model;
-		var config = this.props.config;
+		const {model, config} = this.props
+
 		var shouldOpenDown = this.shouldOpenDown()
-		var relation = RelationStore.get(config.relation_id);
-		var oppModel = ModelStore.get(relation.related_model_id);
-		var searchTerm = this.state.searchTerm.toLowerCase();
-		var filteredRecords = this.state.filteredRecords
-		var showMoreIdx = this.getNumberOptions() - 2
-		var addOneIdx = this.getNumberOptions() - 1
-		var height = 35 * this.getNumberOptions()
+		var relation = RelationStore.get(config.relation_id)
+		var oppModel = ModelStore.get(relation.related_model_id)
+
+		var {searchTerm, filteredRecords, searching} = this.state
+
+		searchTerm = searchTerm.toLowerCase()
+
+		var numOptions = this.getNumberOptions()
+		var showMoreIdx = numOptions - 2
+		var addOneIdx = numOptions - 1
+		var height = 35 * numOptions
 
 		return <div className="pop-down-menu search-menu" 
 			onContextMenu = {this.handleContext}
@@ -173,6 +177,7 @@ var SearchDropdown = React.createClass({
 				left: 1,
 				right: 1,
 				top: 1,
+				margin: 0
 			}}>
           	
 			<div key = "search-li" className = {"popdown-item "}
@@ -184,8 +189,8 @@ var SearchDropdown = React.createClass({
 						value = {this.searchTerm}/>
 				</div>
 				{
-				this.state.loading ? 
-				<span className = "icon icon-loading2 rotate" style = {magnifierStyle}/> :
+				this.state.searching ? 
+				<span className = "icon icon-loading spin" style = {magnifierStyle}/> :
 				<span className = "icon icon-magnifier" style = {magnifierStyle}/>
 				}
 
@@ -213,7 +218,7 @@ var SearchDropdown = React.createClass({
 					<span className = "icon green icon-arrow-right" style = {{marginLeft: '5px'}}/>
 				</div>
 				:
-				filteredRecords.length === 0 && searchTerm.length > 0 ? 
+				filteredRecords.length === 0 && searchTerm.length && !searching > 0 ? 
 				<div className = "popdown-item popdown-item-grayed">
 					No records found...
 				</div>

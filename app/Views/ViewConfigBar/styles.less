@@ -20,12 +20,18 @@
 		padding: 5px;
 		margin: 0;
 	}
-	background: @gray4;
+	background: white;
 	padding: 5px;
 	margin: 5px;
 }
 
+.menu-drop-zone {
+	border-radius: 3px;
+	border: 1px solid @gray3;
+}
+
 .menu-action {
+	margin-left: 0;
 	flex: 2 2;
 	max-width: 600px;
 }
@@ -61,15 +67,15 @@
 	z-index: 50;
 	transform: translateZ(50px);
 
-	color: @red-bright;
+	color: @red2;
 	text-transform: none;
 	font-size: 16px;
 
 	background: white;
 
-	border: 1px solid @red-bright;
-	// border-radius: 3px;
-	box-shadow: 0 0 0 3px white;
+	border: 1px solid @red2;
+	border-radius: 0 0 3px 3px;
+	box-shadow: 0 0 0 2px white;
 }
 
 

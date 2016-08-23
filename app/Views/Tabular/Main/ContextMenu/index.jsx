@@ -1,10 +1,10 @@
 import React from "react"
 import update from 'react/lib/update';
 import _ from "underscore"
-import $ from 'jquery'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 import modelActionCreators from "../../../../actions/modelActionCreators"
-import constant from "../../../../constants/MetasheetConstants"
+import constants from "../../../../constants/MetasheetConstants"
 import fieldTypes from "../../../fields"
 
 import util from "../../../../util/util"
@@ -37,7 +37,7 @@ var TabularContextMenu = React.createClass ({
 	},
 
 	handleKeyPress: function (e) {
-		if (e.keyCode === constant.keycodes.ESC) this.props.blurContextMenu()
+		if (e.keyCode === constants.keycodes.ESC) this.props.blurContextMenu()
 	},
 
 	handleClick: function (e) {
@@ -54,6 +54,7 @@ var TabularContextMenu = React.createClass ({
 			return <TableBodyContext {...this.props}/>
 		else if (subject === 'newAttribute') 
 			return <NewAttributeContext {...this.props}/>
+			
 			
 	}
 })

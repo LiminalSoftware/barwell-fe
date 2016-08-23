@@ -33,7 +33,7 @@ const defaultState = {
 	name: "",
 	reverseName: "",
 	cardinality: [],
-	step: 0,
+	step: 1,
 	nameError: null,
 	hasBeenRenamed: false,
 	reverseHasBeenRenamed: false,

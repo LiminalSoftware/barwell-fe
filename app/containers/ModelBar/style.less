@@ -22,8 +22,9 @@
 	display: flex;
 	flex-direction: column;
 	// background: @headerMenuBgColor;
-	background: @gray4;
+	background: @gray2;
 	// background: @green1;
+	border-right: 2px solid white;
 }
 
 
@@ -41,9 +42,9 @@
 	margin: 0;
 	height: 28px;
 	line-height: 30px;
-	padding: 5px 10px;
+	padding: 5px 5px;
 
-	color: @blue1;
+	color: @red4;
 	
 	display: block;
 	text-decoration: none;
@@ -83,6 +84,7 @@
 	width: 50px;
 	top: 0;
 	bottom: 0;
+	color: @gray3;
 }
 
 .view-link--active {
@@ -93,9 +95,9 @@
 
 .view-link--focused {
 	// background: @headerBgLight2;
-	color: @lightFontColor;
-	// border-left: 4px solid @blue1;
-	background: @blue1;
+	// color: @lightFontColor;
+	border-left: 4px solid @blue1;
+	// background: @blue1;
 }
 
 .mdlbar-list {
@@ -142,7 +144,7 @@
 
 .mdlbar-section {
 	margin-bottom: 20px;
-	border-top: 1px solid fadeout(white, 10%);
+	border-top: 1px dotted @gray3;
 }
 
 .mdlbar-adder {

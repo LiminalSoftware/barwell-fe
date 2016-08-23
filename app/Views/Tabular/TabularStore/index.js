@@ -1,26 +1,34 @@
 import _ from "underscore"
-import $ from 'jquery'
+import update from 'react/lib/update'
+
 import assign from 'object-assign'
 import EventEmitter from 'events'
 import util from "../../../util/util"
 
 import ModelStore from "../../../stores/ModelStore"
+import ViewStore from "../../../stores/ViewStore"
 import RelationStore from "../../../stores/RelationStore"
 
 import choose from "../../../util/util"
 import storeFactory from 'flux-store-factory';
 import dispatcher from "../../../dispatcher/MetasheetDispatcher"
+
 import processUpdates from './processUpdates'
+import insertInOrder from "./insertInOrder"
+import insertAt from "./insertAt"
 
 import getGuid from "../../../stores/getGuid"
 
 const createTabularStore = function (view) {
 	let model = ModelStore.get(view.model_id)
 	let _state = {
+		view_id: view.view_id,
+		model_id: view.model_id,
 		records: [],
 		selection: {},
+		scrollStart: 0,
 		recordCount: null,
-		sortSpec: null,
+		sortSpec: view.data.sorting,
 		startIndex: 0,
 		endIndex: null
 	}
@@ -75,25 +83,8 @@ const createTabularStore = function (view) {
 		},
 
 		unregister: function () {
-			// console.log('unregister store id: ' + _storeId)
+			// console.log('unregist er store id: ' + _storeId)
 			dispatcher.unregister(this.dispatchToken);
-		},
-
-		indexOf: function(array, obj, iteratee, context) {
-			var low = 0;
-			var high = _state.records.length;
-			while (low < high) {
-				var mid = Math.floor((low + high) / 2);
-				if (this.compare(_state.records[mid], obj)) low = mid + 1; else high = mid;
-			}
-			return low;
-		},
-
-		isInRange: function (rec) {
-			var gtLowerBound = util.compare(_state.sortSpec, rec, _state.records[0])
-			var ltUpperBound = util.compare(_state.sortSpec, rec, _state.records[_state.records.length])
-
-			return gtLowerBound > 0 && ltUpperBound < 0
 		},
 
 		dispatchToken: dispatcher.register(function (action) {
@@ -127,14 +118,14 @@ const createTabularStore = function (view) {
 					break;
 
 				case 'RECORD_INSERT':
-					console.log('record insert...')
-					var object = action.data || {}
-					var index = action.index
-					object._outoforder = true
-					_state.records = _state.records.slice(0, index)
-						.concat(action.data)
-						.concat(_state.records.slice(index));
-					_state.recordCount++;
+					const rec = action.data || {}
+
+					
+					if (action.view_id === _state.view_id)
+						_state = insertAt(_state, rec, action.index)
+					else 
+						_state = insertInOrder(_state, rec)
+
 					TabularStore.emitChange()
 					break;
 
@@ -174,6 +165,8 @@ const createTabularStore = function (view) {
 					_state.recordCount = action.recordCount
 					_state.startIndex = action.startIndex
 					_state.endIndex = (action.recordCount + action.startIndex)
+					_state.upperBound = _.clone(objects[objects.length - 1])
+					_state.lowerBound = _.clone(objects[0])
 
 					_state.records.map(function (rec) {
 						rec._server = _.clone(rec)
@@ -200,17 +193,6 @@ const createTabularStore = function (view) {
 						else return rec;
 					})
 					TabularStore.emitChange()
-					// setTimeout(function () {
-					// 	_state.records = _state.records.map(function (rec) {
-					// 		if (rec._error) {
-					// 			var newrec = _.clone(rec)
-					// 			delete newrec._error
-					// 			return newrec
-					// 		}
-					// 		return rec
-					// 	});
-					// 	TabularStore.emitChange();
-					// }, 0);
 					break;
 
 				case 'RECORD_MULTIUPDATE':

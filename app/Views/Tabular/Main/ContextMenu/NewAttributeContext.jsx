@@ -12,17 +12,10 @@ import fieldTypes from "../../../fields"
 
 import util from "../../../../util/util"
 
+import ColumnAdder from "../../../../components/ColumnAdder"
+
 const FIELDS_PER_ROW = 2
 
-const getNameErrors = function (model_id, name) {
-	name = name || ""
-	const unique = AttributeStore.query().filter(a=>a.model_id === model_id && 
-		a.attribute === name).length === 0
-	const nonEmpty = name.length > 0
-
-	if (!unique) return "Attribute with this name already exists"
-	if (!nonEmpty) return "Attribute name cannot be blank"
-}
 
 export default class NewAttributeContext extends Component {
 
@@ -113,27 +106,14 @@ export default class NewAttributeContext extends Component {
 	}
 
 	render () {
-		const view = this.props.view
-		const style = Object.assign({}, 
-			this.props._getRangeStyle({left: view.data._visibleCols.length, top: 0}), {
-				height: "0",
-				marginLeft: "-1px",
-				top: view.data.geometry.headerHeight + 'px',
-				position: "absolute",
-				minWidth: "350px",
-				overflow: "visible",
-				pointerEvents: "auto"
-		})
+		const {view} = this.props
 		const type = fieldTypes[this.state.type]
 
 		return <ReactCSSTransitionGroup
-			{...constants.transitions.slideleft}
-			style={style} onClick={util.clickTrap}>
-			{type ? 
-				React.createElement(this.state.detailElement, 
-					update(this.props, {$merge: {blurSelf: this.blurMode, blurMenu: this.blurMenu}}) )
-				: this.renderMainMenu()
-			}
+			{...constants.transitions.fadeinout}
+			className="new-attribute-menu"
+			onClick={util.clickTrap}>
+			<ColumnAdder {...this.props}/>
 		</ReactCSSTransitionGroup>
 	}
 

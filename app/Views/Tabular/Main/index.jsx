@@ -229,23 +229,33 @@ const TabularPane = React.createClass ({
 		var cid = this.store.getClientId();
 		var obj = {cid: cid};
 		this.blurPointer();
-		modelActionCreators.insertRecord(this.props.model, obj, this.store.getRecordCount())
+		modelActionCreators.insertRecord(
+			this.props.model, 
+			this.props.view,
+			obj,
+			this.store.getRecordCount()
+		)
 		this.clearCopy();
 		this.setState({copyarea: null});
 	},
 
 	insertRecord: function () {
-		var cid = this.store.getClientId();
-		var obj = {cid: cid};
-		var pos = pos || this.state.pointer.top;
-		var sel = this.state.selection;
-		var model = this.props.model;
+		const {model, view} = this.props
+		let {selection: sel, pointer} = this.state
+		let obj = {cid: this.store.getClientId()};
+		let pos = pos || pointer.top;
+		
 		this.blurPointer();
 		
 		if (pos >= sel.top && pos <= sel.bottom)
 			sel = update(sel, {bottom: {$apply: (b=>b++)}})
 		
-		modelActionCreators.insertRecord(this.props.model, obj, pos)
+		modelActionCreators.insertRecord(
+			this.props.model, 
+			this.props.view,
+			obj, 
+			pos
+		)
 		this.setState({copyarea: null, selection: sel})
 	},
 
@@ -628,17 +638,8 @@ const TabularPane = React.createClass ({
 		
 		
 		if (hiddenColWidth !== this.state.hiddenColWidth) {
-			// if (this.pointerTimer) clearTimeout(this.pointerTimer)
-			// const pointer = ReactDOM.findDOMNode(pointer)
-			// if (pointer) pointer.classList.add('pointer-transitioned')
 			ReactDOM.findDOMNode(rhsHorizontalOffsetter).style.marginLeft = 
 				(-1 * hiddenColWidth) + 'px';
-			
-			// this.pointerTimer = setTimeout(function () {
-				// const pointer = ReactDOM.findDOMNode(pointer)
-				// if (pointer) pointer.classList.remove('pointer-transitioned')
-				// _this.pointerTimer = null
-			// }, 100);
 		}
 	},
 
@@ -796,7 +797,7 @@ const TabularPane = React.createClass ({
 				rc={this.state.contextRc}
 				position={this.state.contextPos}/> 
 			: null}
-
+			
 		</div>
 	}
 })

@@ -94,19 +94,21 @@ var modelActions = {
 		// TODO
 	},
 
-	insertRecord: function (model, obj, position) {
-		var message = {
+	insertRecord: function (model, view, obj, position) {
+		obj = obj || {}
+		obj.cid = getGuid()
+		MetasheetDispatcher.dispatch({
 			entity: 'record',
 			actionType: 'RECORD_INSERT',
 			model_id: model.model_id,
+			view_id: view.view_id,
 			model: model,
 			data: obj instanceof Array ? obj : [obj],
 			index: position,
 			narrative: 'New ${model} inserted',
 			icon: 'icon-flare',
 			cid: 'c' + getGuid() // action cid
-		}
-		MetasheetDispatcher.dispatch(message)
+		})
 	},
 
 	bulkDestroyRecords: function (model, selector) {

@@ -161,11 +161,12 @@ export default class SortMenu extends Component {
 							_moveItem = {_this.debounceMoveItem}
 							view = {view}  />
 						)}
+						<div className="menu-item menu-sub-item" style={{position: "relative", margin: "5px", height: 24}}>
+							{this.renderSelector()}
+						</div>
 					</FlipMove>
 					
-					<div className="menu-item menu-sub-item" style={{position: "relative", margin: "5px", height: 24}}>
-						{this.renderSelector()}
-					</div>
+					
 				</div>
 
 				<div  className="menu-item">
