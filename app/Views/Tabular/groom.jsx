@@ -48,11 +48,14 @@ var groomView = function (view) {
 	data.sorting = _.isArray(data.sorting) ? data.sorting : []
 	data.sorting = data.sorting.filter(function (sort) {
 		var attribute = data.columns['a' + sort.attribute_id]
-		if (!attribute) return false
+		if (!attribute)	 return false
 		var type = fieldTypes[attribute.type]
-		if (type.sortable) return true
-		else return false
-	})
+		return !!type.sortable
+	}).concat([{
+			attribute_id: parseInt(model._pk.slice(1)),
+			descending: false
+	}])
+
 	data.sortIndex = _.indexBy(data.sorting, 'attribute_id')
 
 	let geo = data.geometry || {}

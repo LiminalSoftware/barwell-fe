@@ -13,15 +13,19 @@ export default {
 	
 	defaultAlign: 'center',
 	
-	icon: 'key-hole',
+	icon: 'list2',
 	
-	description: 'Unique identifier',
+	description: 'Ordering',
+
+	category: "General",
 	
-	sortable: false,
+	sortable: true,
 	
 	sortIcon: 'sort-numeric-',
 	
 	uneditable: true,
+
+	changeMessage: 'Ordering cannot be directly modified.  You may drag and drop to re-sort items',
 	
 	unchangeable: true,
 
@@ -42,6 +46,7 @@ export default {
 		}
 
 		render () {
+			const value = this.props.index
 			return <GenericTextElement {...this.props}
 				ref = "genericField"
 				format = {_.identity}

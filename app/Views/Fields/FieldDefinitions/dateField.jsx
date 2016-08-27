@@ -27,7 +27,7 @@ import getFontStyles from "../ConfigParts/TextChoice/getStyles"
  */
 
 import DateFormatChoice from "../ConfigParts/DateFormatChoice"
-// import DatePicker from ""
+import DatePicker from "../../../components/DatePickerWidget"
 
 import detailStyle from "../ConfigParts/detailStyle"
 
@@ -119,10 +119,32 @@ export default {
 			this.refs.genericField.handleBlur(commit)
 		}
 
+		getDecoratorStyle () {
+			const config = this.props.config
+			let style = {
+				position: "absolute", 
+				top: 0, bottom: 0, 
+				width: 25,
+				lineHeight: `${config.rowHeight}px`
+			}
+			if (config.align === 'right') style.left = 0 
+			else style.right = 0
+
+			return style
+		}
+
+		getDecorator () {
+			return <span style={this.getDecoratorStyle()}
+			className="icon blue icon-calendar-31 clickable">
+			</span>
+		}
+
 		render () {
 			return <GenericTextElement {...this.props}
 				ref = "genericField"
 				format = {format}
+				decorator = {this.getDecorator()}
+				detailElement = {DatePicker}
 				validator = {_.identity}
 				parser = {parser}
 				stylers = {stylers}/>

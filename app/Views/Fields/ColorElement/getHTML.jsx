@@ -1,5 +1,6 @@
 import fieldUtils from "../fieldUtils"
 import _ from "underscore"
+import style from "./style.less"
 
 export default function getColorHTML (format, stylers, config, obj, pos) {
 	var value = obj[config.column_id];
@@ -17,7 +18,8 @@ export default function getColorHTML (format, stylers, config, obj, pos) {
 	">
 		${config.width > 100 ? prettyValue : ''}
 		
-			<div class="color-sample" style="background: ${prettyValue}"></div>
+			<div class="color-sample" style="background: ${prettyValue}">
+			</div>
 		
 	</span>`
 }

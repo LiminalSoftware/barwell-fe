@@ -31,7 +31,7 @@ var TableHeader = React.createClass ({
 		var sortAttrs = _.pluck(view.data.sorting, 'attribute_id').map(parseInt)
 		
 		const style = {
-			borderRight: this.props.side==='lhs' ? ("2px solid " + constants.colors.RED_BRIGHT_TRANS) : null,
+			borderRight: this.props.side==='lhs' ? ("1px solid " + constants.colors.RED_BRIGHT_TRANS) : null,
 			marginLeft: this.props.leftOffset + 'px',
 			height: (this.props.height || (geo.headerHeight + 1)) + 'px',
 			width: (this.props.totalWidth ) -1 + 'px',

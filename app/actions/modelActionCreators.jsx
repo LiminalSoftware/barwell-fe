@@ -95,8 +95,8 @@ var modelActions = {
 	},
 
 	insertRecord: function (model, view, obj, position) {
-		obj = obj || {}
-		obj.cid = getGuid()
+		obj = obj || {cid: 'c' + getGuid()}
+		
 		MetasheetDispatcher.dispatch({
 			entity: 'record',
 			actionType: 'RECORD_INSERT',
@@ -107,7 +107,7 @@ var modelActions = {
 			index: position,
 			narrative: 'New ${model} inserted',
 			icon: 'icon-flare',
-			cid: 'c' + getGuid() // action cid
+			cid: ('c' + getGuid()) // action cid
 		})
 	},
 

@@ -127,14 +127,20 @@ var ColumnConfigContext = React.createClass ({
 			</div>
 			}
 
+			{type.sortable ?
 			<div onClick={this.sort.bind(_this, false)} className = "popdown-item selectable">
 				<span className="icon icon-sort-amount-asc"/>
 				Sort in ascending order
-			</div>
+			</div> 
+			: null
+			}
+			{type.sortable ?
 			<div onClick={this.sort.bind(_this, true)} className = "popdown-item selectable bottom-divider">
 				<span className="icon icon-sort-amount-desc"/>
 				Sort in descending order
 			</div>
+			: null
+			}
 			{/*==============================================================*/}
 
 			

@@ -226,13 +226,11 @@ const TabularPane = React.createClass ({
 	},
 
 	addRecord: function () {
-		var cid = this.store.getClientId();
-		var obj = {cid: cid};
 		this.blurPointer();
 		modelActionCreators.insertRecord(
 			this.props.model, 
 			this.props.view,
-			obj,
+			null,
 			this.store.getRecordCount()
 		)
 		this.clearCopy();
@@ -242,7 +240,6 @@ const TabularPane = React.createClass ({
 	insertRecord: function () {
 		const {model, view} = this.props
 		let {selection: sel, pointer} = this.state
-		let obj = {cid: this.store.getClientId()};
 		let pos = pos || pointer.top;
 		
 		this.blurPointer();
@@ -253,7 +250,7 @@ const TabularPane = React.createClass ({
 		modelActionCreators.insertRecord(
 			this.props.model, 
 			this.props.view,
-			obj, 
+			null, 
 			pos
 		)
 		this.setState({copyarea: null, selection: sel})

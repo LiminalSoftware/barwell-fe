@@ -71,10 +71,6 @@ var ModelSection = React.createClass ({
 		this.setState({name: name})
 	},
 
-	handleDelete: function (e) {
-		modelActionCreators.destroy('model', true, this.props.model)
-	},
-
 	// RENDER =================================================================
 
 	render: function () {

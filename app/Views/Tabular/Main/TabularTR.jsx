@@ -14,7 +14,10 @@ class TabularTR extends React.Component {
 		var response =	oldProps.view !== newProps.view ||
 						oldProps.selected !== newProps.selected ||
 						oldProps.row !== newProps.row ||
-						oldProps.outoforder !== newProps.outoforder ||
+						oldProps.ooo !== newProps.ooo ||
+						oldProps.oooFirst !== newProps.oooFirst ||
+						oldProps.oooLast !== newProps.oooLast ||
+						oldProps.oooNext !== newProps.oooNext ||
 						newProps.obj !== oldProps.obj;
 		return response
 	}
@@ -40,8 +43,21 @@ class TabularTR extends React.Component {
 		var left = _this.props.hasRowLabel ? geo.labelWidth : 0;
 
 		var checkbox = this.props.selected ? `<span class="check purple icon icon-check"></span>` : '';
+		var oooBottomEdge = this.props.oooLast ? `<span class="ooo-jagged-edge-bottom"></span>` : '';
+		var oooTopEdge = this.props.oooFirst ? `<span class="ooo-jagged-edge-top"></span>` : '';
+
 		var html = _this.props.hasRowLabel ?
-				`<span class = "table-row-label table-cell ${obj._dirty ? ' dirty-label ' : ''}" style = "left: ${geo.leftGutter}px; width: ${geo.labelWidth}px"><span class="table-cell-inner"><span class="label-grab-handle"></span><span style = "margin-left: 2px;" class = "checkbox-surround " id = "${rowKey}-rowcheck">${checkbox}</span></span></span>`
+				`<span class = "table-row-label table-cell" style = "left: ${geo.leftGutter}px; width: ${geo.labelWidth}px">
+					<span class="table-cell-inner"><span class="label-grab-handle"></span>
+						<span style = "margin-left: 2px;" 
+						class = "checkbox-surround " 
+						id = "${rowKey}-rowcheck">
+						${checkbox}
+						</span>
+					</span>
+					${oooTopEdge}
+					${oooBottomEdge}
+				</span>`
 				: '';
 
 		html = html + _this.props.columns.map(function (col, j) {
@@ -49,7 +65,7 @@ class TabularTR extends React.Component {
 			var element = type.element;
 			var cellKey = rowKey + '-' + col.column_id;
 			var innerHtml = type.getDisplayHTML ? 
-				type.getDisplayHTML(col, obj, {left: left, width: col.width}) : 
+				type.getDisplayHTML(col, obj, {left: left, width: col.width}, row) : 
 				element.prototype.getDisplayHTML(col, obj) // deprecated, but have not yet migrated all field types
 
 			left += col.width
@@ -58,7 +74,8 @@ class TabularTR extends React.Component {
 		
 		return <div id = {rowKey} key = {rowKey} dangerouslySetInnerHTML = {{__html: html}}
 			className = {"table-row " 
-				+ (this.props.outoforder ? " table-row-outoforder " : "")
+				+ (this.props.ooo ? " table-row-outoforder " : "")
+				+ ((this.props.oooNext || this.props.oooLast) ? " table-row-ooo-edge " : "")
 				+ (this.props.selected ? " table-row-selected " : "")} 
 
 			style = {rowStyle}/>

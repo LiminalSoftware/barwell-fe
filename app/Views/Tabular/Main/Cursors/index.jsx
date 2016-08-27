@@ -90,8 +90,7 @@ var Cursors = React.createClass ({
 
 
 	renderCursor: function () {
-		const view = this.props.view
-		const model = this.props.model
+		const {view, model, columnOffset} = this.props
 		const focused = true
 
 		
@@ -99,7 +98,7 @@ var Cursors = React.createClass ({
 		const sel = this.props.selection
 		const cpy = this.props.copyarea
 		const showJaggedEdge = ((sel.right >= view.data._fixedCols.length)
-			&& (sel.left < view.data._fixedCols.length + this.props.columnOffset) && (this.props.columnOffset > 0));
+			&& (sel.left < view.data._fixedCols.length + columnOffset) && (columnOffset > 0));
 
 		const singleton = (sel.top === sel.bottom && sel.left === sel.right)
 		
@@ -159,7 +158,9 @@ var Cursors = React.createClass ({
 					top: sel.top,
 					bottom: sel.bottom
 				}}
-				fudge = {{left: -6, width: 10, top: 1, height: -4}} />
+				fudge = {{
+					left: (sel.right < view.data._fixedCols.length + columnOffset) ? -3 : -4, 
+					width: 10, top: 0, height: 1}} />
 			: null
 		]
 	},

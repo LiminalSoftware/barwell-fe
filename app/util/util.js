@@ -76,8 +76,9 @@ var compare = module.exports.compare = function (sortSpec, a, b) {
         var key = sortSpec[i].attribute;
         var inversion = sortSpec[i].descending ? 1 : -1;
 
-        if ((a[key] === null || a[key] === undefined) && 
-          (b[key] === null || b[key] === undefined)) continue;
+        // if ((a[key] === null || a[key] === undefined) && 
+          // (b[key] === null || b[key] === undefined)) continue;
+        
         if (a[key] === null || a[key] === undefined) return (-1 * inversion);
         if (b[key] === null || b[key] === undefined) return (1 * inversion);
         if (_.isString(a[key]) && _.isString(b[key])) {

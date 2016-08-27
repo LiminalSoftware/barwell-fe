@@ -9,11 +9,13 @@ import textField from './Fields/FieldDefinitions/textField'
 import dateField from './Fields/FieldDefinitions/dateField'
 import booleanField from './Fields/FieldDefinitions/booleanField'
 import primaryKeyField from './Fields/FieldDefinitions/primaryKeyField'
+import orderingField from './Fields/FieldDefinitions/orderingField'
 
 
 
 var fieldTypes = {
 	PRIMARY_KEY: primaryKeyField,
+	ORDERING: orderingField,
 	TEXT: textField,
 	BOOLEAN: booleanField,
 	HAS_ONE: hasOneField,

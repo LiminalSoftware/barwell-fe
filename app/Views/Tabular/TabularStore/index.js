@@ -19,6 +19,8 @@ import insertAt from "./insertAt"
 
 import getGuid from "../../../stores/getGuid"
 
+const MAX_LOCAL_RECORDS = 5000
+
 const createTabularStore = function (view) {
 	let model = ModelStore.get(view.model_id)
 	let _state = {
@@ -118,9 +120,8 @@ const createTabularStore = function (view) {
 					break;
 
 				case 'RECORD_INSERT':
-					const rec = action.data || {}
+					const rec = action.data
 
-					
 					if (action.view_id === _state.view_id)
 						_state = insertAt(_state, rec, action.index)
 					else 
@@ -165,10 +166,12 @@ const createTabularStore = function (view) {
 					_state.recordCount = action.recordCount
 					_state.startIndex = action.startIndex
 					_state.endIndex = (action.recordCount + action.startIndex)
-					_state.upperBound = _.clone(objects[objects.length - 1])
-					_state.lowerBound = _.clone(objects[0])
 
-					_state.records.map(function (rec) {
+					_state.upperBound = objects.length === MAX_LOCAL_RECORDS ? _.clone(objects[objects.length - 1]) : null
+					_state.lowerBound = objects.length === MAX_LOCAL_RECORDS ? _.clone(objects[0]) : null
+
+					_state.records.map(function (_rec) {
+						let rec = _.clone(_rec)
 						rec._server = _.clone(rec)
 						return rec
 					})

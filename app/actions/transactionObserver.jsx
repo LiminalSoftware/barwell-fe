@@ -21,14 +21,16 @@ let _cidLookup = {}
 /*
  * waits until the primary key (pk) is available, then populates the permanent key
  */
-const makePkPromise = function (obj, pk) {
-	if (obj[pk]) return Promise.resolve(obj)
+const makeKeyPromise = function (obj, key) {
+	if (obj[key]) return Promise.resolve(obj)
 	else return cidLookup.makeCidPromise(obj.cid)
 		.then(function (id) {
-			obj[pk] = id
+			obj[key] = id
 			return obj;
 		})
 }
+
+
 /*
  * checks for keys of the form ac123 indicating a temporary column.  For each one, creates
  */
@@ -82,10 +84,12 @@ class TransactionObserver {
 			// back (assigning ids to cids and such)
 
 			switch(action.actionType) {
+				case 'VIEW_CREATE':
+					return makeKeyPromise(action.data, 'model_id')
 				case 'RECORD_MULTIDELETE':
 				case 'RECORD_MULTIUPDATE':
 					return Promise.all(action.data.map(
-							rec => makePkPromise(rec, action.model._pk).then(makeAttrPromise)
+							rec => makeKeyPromise(rec, action.model._pk).then(makeAttrPromise)
 						))
 					break;
 				default:

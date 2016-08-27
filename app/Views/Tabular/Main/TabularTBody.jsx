@@ -103,14 +103,7 @@ var TabularTBody = React.createClass ({
 
 	isUnpainted: function () {
 		const tgt = this.getInterimTarget(this.state.target)
-
 		return (this.state.start !== tgt.start || this.state.end !== tgt.end)
-	},
-
-	formatRowKey: function (obj) {
-		var model = this.props.model;
-		var pk = model._pk;
-		return this.props.prefix + '-tr-' + (obj.cid || obj[pk]);
 	},
 
 	getNumberCols: function () {
@@ -127,13 +120,18 @@ var TabularTBody = React.createClass ({
 
 	// RENDER ================================================================
 
-	prepareRow: function (obj, index, ooo) {
-		var model = this.props.model;
-		var pk = model._pk;
-		var ptr = this.props.pointer;
-		var rowKey = this.props.prefix + '-tr-' + (obj.cid || obj[pk]);
-		var offset = this.state.start;
-		var selectedRecords = this.props.store.getSelection();
+	prepareRow: function (obj, index) {
+		const {store, model, pointer, prefix} = this.props
+		const {start: offset} = this.state
+		const pk = model._pk
+
+		const rowKey = prefix + '-tr-' + (obj.cid || obj[pk])
+		
+		const selectedRecords = this.props.store.getSelection()
+		const rowCount = store.getRecordCount()
+
+		const prev = index > 0 ? this.props.store.getObject(index - 1) : {}
+		const next = index + 1 < rowCount ? this.props.store.getObject(index + 1) : {}
 
 		return <TabularTR
 			view = {this.props.view}
@@ -146,38 +144,38 @@ var TabularTBody = React.createClass ({
 			rowKey = {rowKey}
 			ref = {rowKey}
 			key = {rowKey}
-			outoforder = {ooo}
+			ooo = {obj._outoforder}
+			oooFirst = {index > 0 && obj._outoforder && !prev._outoforder}
+			oooNext = {next._outoforder && !obj._outoforder}
+			oooLast = {!next._outoforder && obj._outoforder}
 			isScrolling = {this.state.scrolling}/>;
 	},
 
 	render: function () {
-		var _this = this
-		var view = this.props.view
-		var model = this.props.model
-		var pk = model._pk
-		var offset = Math.floor(this.state.offset/PAGE_SIZE) * PAGE_SIZE
-		var length = Math.floor(this.state.length/PAGE_SIZE) * PAGE_SIZE
-		var rows = this.props.store ? this.props.store.getObjects(
+		const {view, model, store} = this.props
+		const pk = model._pk
+		const rows = store ? store.getObjects(
 			this.state.start,
 			Math.min(this.state.end, this.props.fetchEnd)
-			// this.state.offset, this.state.offset + VISIBLE_ROWS
 		) : []
-		var rowCount = this.props.store ? this.props.store.getRecordCount() : 0
-		var geo = view.data.geometry
-		var floatOffset = this.props.floatOffset		
-		var style = {
+		const rowCount = store ? this.props.store.getRecordCount() : 0
+		const geo = view.data.geometry
+
+		const scrollOffset = -1 * this.state.rowOffset * geo.rowHeight
+
+		const style = {
 			left: 0,
-			top: 0,
+			top: HAS_3D ? 0 : (scrollOfset + 'px'),
 			height: rowCount * geo.rowHeight,
 			width: this.props.width,
 			transformStyle: "preserve-3d",
+			transform: HAS_3D ? 
+				`translate3d(0,${scrollOffset}px, 5px)`
+				: null,
 			zIndex: 5
 		}
-		var prevOutOfOrder = false
+
 		
-
-		style.transform = "translate3d(0, " + (-1 * this.state.rowOffset * geo.rowHeight ) + "px, 5px)"
-
 		return <div
 			className = {`tabular-body-${this.props.prefix} tabular-body`}
 			
@@ -187,17 +185,11 @@ var TabularTBody = React.createClass ({
 			onDrop = {this.props._handleDrop}
 			onDragOver = {this.props._handleDragOver}
 			onContextMenu = {this.props._handleContextMenu}
-			
 			ref = "tbody"
 			style = {this.props.style}>
-			{ rows.map(function (row, idx) {
-				var next = idx + 1 <rows.length  ? rows[idx + 1] : {}
-				var ooo = (next._outoforder && !row._outoforder) 
-				       || (!next._outoforder && row._outoforder)
 
-				return _this.prepareRow(row, idx, ooo);
-			}) 
-			}
+			{ rows.map(this.prepareRow) }
+
 			{
 			this.props.hasRowLabel ? 
 			<span className="new-adder" 
@@ -208,7 +200,8 @@ var TabularTBody = React.createClass ({
 				top: rowCount * geo.rowHeight + 10 + 'px',
 				width: 28,
 				height: 28,
-				left: 0
+				left: 0,
+				transition: "all linear 150ms"
 			}}>
 			<span className="icon icon-plus" style={{margin: 0}}/>
 			</span>

@@ -1,6 +1,9 @@
 import React from "react"
 import util from '../../util/util'
 
+// ACTIONS
+import modelActionCreators from "../../actions/modelActionCreators"
+
 // MIXINS
 import blurOnClickMixin from "../../blurOnClickMixin"
 import popdownClickmodMixin from '../../Views/Fields/popdownClickmodMixin'
@@ -17,6 +20,10 @@ var ModelContext = React.createClass ({
 	
 	handleClickDelete: function () {
 		this.setState({deleting: true})
+	},
+
+	handleConfirmDelete: function (e) {
+		modelActionCreators.destroy('model', true, this.props.model)
 	},
 
 	handleCancelDelete: function () {
@@ -50,17 +57,20 @@ var ModelContext = React.createClass ({
 				Delete this model?
 			</div>
 			:
-			<div div className = "selectable popdown-item" onClick = {this.handleClickDelete}>
+			<div div className = "selectable popdown-item" 
+				onClick = {this.handleClickDelete}>
 				<span className="icon icon-trash2"/>	
 				Delete model
 			</div>
 			}
 			{this.state.deleting ?
-				<div div className = "selectable popdown-item" onClick={this.props._delete}>Delete</div>
+				<div div className = "selectable popdown-item" 
+					onClick={this.handleConfirmDelete}>Delete</div>
 				: null
 			}
 			{this.state.deleting ?
-				<div div className = "selectable popdown-item" onClick={this.handleCancelDelete}>cancel</div>
+				<div div className = "selectable popdown-item" 
+					onClick={this.handleCancelDelete}>Nevermind</div>
 				: null
 			}
 		</div>
