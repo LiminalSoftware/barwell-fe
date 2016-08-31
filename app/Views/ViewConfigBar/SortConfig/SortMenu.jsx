@@ -56,23 +56,26 @@ export default class SortMenu extends Component {
 	}
 
 	save = () => {
-		var view = this.props.view
+		let {view} = this.props
 		const items = this.getItems()
+
 		if (!_.isEqual(view.data.sorting, items)) {
 			view.data.sorting = items
+			view = update(view, {data: {sorting: {$set: items}}})
 			modelActionCreators.createView(view, true, true);
 		}
 	}
 
 	renderSelector = () => {
 		const view = this.props.view
-		const existing = _.pluck(this.state.items, 'attribute_id')
+		const existing = _.pluck(this.state.items, 'attribute')
 
 		const choices = AttributeStore.query({model_id: view.model_id})
-			.filter(attr => fieldTypes[attr.type].sortable && 
-				existing.indexOf("" + attr.attribute_id) < 0)
-			.map(attr=>
-				<option value={attr.cid || attr.attribute_id} 
+			.filter(attr => 
+				fieldTypes[attr.type].sortable && 
+				existing.indexOf("a" + attr.attribute_id) < 0
+			).map(attr=>
+				<option value={'a' + (attr.cid || attr.attribute_id)} 
 				key={attr.attribute_id}>
 					{attr.attribute}
 				</option>
@@ -103,13 +106,13 @@ export default class SortMenu extends Component {
 
 	chooseItem = (e) => {
 		var choice = e.target.value
-		var item = {attribute_id: choice, descending: true};
+		var item = {attribute: choice, descending: true};
 		if (choice !== 0) this.addItem(item)
 		this.refs.selector
 	}
 
 	removeItem = (item) => {
-		var items = this.state.items.filter(a => a.attribute_id !== item.attribute_id);
+		var items = this.state.items.filter(a => (a.attribute) !== item.attribute);
 		this.setState({items: items});
 	}
 
@@ -138,48 +141,28 @@ export default class SortMenu extends Component {
 			onClick={util.clickTrap}
 			onMouseDown={util.clickTrap}>
 
-
-			<span className="view-config-menu-col menu-explainer">
-				<h3>Sort records</h3>
-				<p>You can choose how records in this table should be sorted by picking the attributes in the menu to the right.</p>
-				<p>Most attribute types are sortable, but some like has-many are not.</p>
-			</span>
-			<span className="view-config-menu-col menu-action">
-
-				<div className="menu-box">
-					<FlipMove  duration={150} staggerDelayBy={50}
-					enterAnimation="fade" leaveAnimation="fade">
-						{items.map((item, order) => 
-						<SortDetail 
-							key = {item.cid || item.attribute_id}
-							id = {item.cid || item.attribute_id}
-							item = {item}
-							index = {order}
-							sortSpec = {item}
-							_itemIndex = {_this.itemIndex}
-							_remove = {_this.removeItem}
-							_moveItem = {_this.debounceMoveItem}
-							view = {view}  />
-						)}
-						<div className="menu-item menu-sub-item" style={{position: "relative", margin: "5px", height: 24}}>
-							{this.renderSelector()}
-						</div>
-					</FlipMove>
-					
-					
-				</div>
-
-				<div  className="menu-item">
-					<span className="menu-sub-item menu-button" >
-						<span className="icon icon-check"/>
-						<span>Sort</span>
-					</span>
-					<span className="menu-sub-item menu-button">
-						<span className="icon icon-cross"/>
-						<span>Cancel</span>
-					</span>
-				</div>
-			</span>
+			<div className="menu-box">
+				<FlipMove  duration={150} staggerDelayBy={50}
+				enterAnimation="fade" leaveAnimation="fade">
+					{items.map((item, order) => 
+					<SortDetail 
+						key = {item.cid || item.attribute}
+						id = {item.cid || item.attribute}
+						item = {item}
+						index = {order}
+						sortSpec = {item}
+						_itemIndex = {_this.itemIndex}
+						_remove = {_this.removeItem}
+						_moveItem = {_this.debounceMoveItem}
+						view = {view}  />
+					)}
+					<div className="menu-item menu-sub-item" style={{position: "relative", margin: "5px", height: 24}}>
+						{this.renderSelector()}
+					</div>
+				</FlipMove>
+				
+			</div>
+			
 			
 		</div>
 	}

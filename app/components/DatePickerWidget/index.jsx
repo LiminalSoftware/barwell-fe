@@ -1,32 +1,33 @@
 import React from "react"
 import _ from "underscore"
+import update from 'react/lib/update'
 import moment from "moment"
 import { Link } from "react-router"
 import util from "../../util/util"
+
+const calculateState = function (props) {
+	var val = this.props.value ? moment(this.props.value) : moment();
+	var config = props.config
+	return {
+		year: val.year(),
+		month: val.month(),
+		date: val.format(config.formatString)
+	}
+}
 
 
 var DatePicker = React.createClass({
 
 	getInitialState: function () {
-		return this.calculateState(this.props);
+		return calculateState(this.props);
 	},
 
 	componentWillReceiveProps: function (next) {
-		this.setState(this.calculateState(next))
+		this.setState(calculateState(next))
 	},
 
 	componentDidMount: function () {
 		this._debounceChooseYear = _.debounce(this.chooseYear, 500);
-	},
-
-	calculateState: function (props) {
-		var val = this.props.value ? moment(this.props.value) : moment();
-		var config = props.config
-		return {
-			year: val.year(),
-			month: val.month(),
-			date: val.format(config.formatString)
-		}
 	},
 
 	chooseMonth: function (e) {
@@ -68,8 +69,6 @@ var DatePicker = React.createClass({
 		this.commitValue(date);
 		util.clickTrap(e)
 	},
-
-
 
 	render: function() {
 		var _this = this
@@ -128,7 +127,10 @@ var DatePicker = React.createClass({
 			weeks.push(<div className = "popdown-item menu-row" key = {firstDay.format('MMDDYYYY')}>{week}</div>);
 		}
 		
-		return <PopDownMenu {...this.props} green = {true} onMouseDown = {util.clickTrap} onDoubleClick = {util.clickTrap}>
+		return <div className="pop-down-menu"
+			onMouseDown = {util.clickTrap} 
+			onDoubleClick = {util.clickTrap}>
+
 			<div className = "popdown-item bottom-divider menu-row gray">
 				<span className = "menu-choice">
 					<span className = "icon green icon-arrow-left"
@@ -153,7 +155,7 @@ var DatePicker = React.createClass({
 				</span>
 			</div>
 			{weeks}
-		</PopDownMenu>
+		</div>
 	}
 });
 

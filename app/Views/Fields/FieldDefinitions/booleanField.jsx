@@ -11,6 +11,12 @@ import getHTML from "../CheckboxElement/getHTML"
 
 const stylers = [getBackgroundStyles]
 
+const parser = function (value) {
+	if ((/^(false|f|no)$/i).test(value)) return false
+	else if ((/^(true|t|yes|check)$/i).test(value)) return true
+	else return false
+}
+
 var booleanField = {
 
 	defaultWidth: 50,
@@ -28,6 +34,8 @@ var booleanField = {
 	configParts: [BackgroundChoice],
 
 	expandable: false,
+
+	parser: parser,
 
 	defaultAlign: 'center',
 
@@ -58,7 +66,7 @@ var booleanField = {
 		render () {
 			return <CheckboxElement {...this.props}
 				ref = "field"
-				validator = {_.identity}
+				serializer = {_.identity}
 				parser = {v=>!!v}
 				stylers = {stylers}/>
 		}

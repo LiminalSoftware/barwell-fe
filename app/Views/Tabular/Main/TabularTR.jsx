@@ -15,9 +15,9 @@ class TabularTR extends React.Component {
 						oldProps.selected !== newProps.selected ||
 						oldProps.row !== newProps.row ||
 						oldProps.ooo !== newProps.ooo ||
-						oldProps.oooFirst !== newProps.oooFirst ||
-						oldProps.oooLast !== newProps.oooLast ||
-						oldProps.oooNext !== newProps.oooNext ||
+						!!oldProps.oooFirst !== !!newProps.oooFirst ||
+						!!oldProps.oooLast !== !!newProps.oooLast ||
+						!!oldProps.oooNext !== !!newProps.oooNext ||
 						newProps.obj !== oldProps.obj;
 		return response
 	}
@@ -27,6 +27,7 @@ class TabularTR extends React.Component {
 	}
 
 	render = () => {
+
 		var _this = this
 		var model = this.props.model
 		var view = this.props.view
@@ -35,9 +36,9 @@ class TabularTR extends React.Component {
 		var obj = this.props.obj
 		var geo = view.data.geometry
 		var rowStyle = {
-			height: (geo.rowHeight) + 'px',
+			height: (geo.rowHeight),
 			lineHeight: (geo.rowHeight) + 'px',
-			top: (geo.rowHeight * (row) + 1) + 'px'
+			top: (geo.rowHeight * (row) + 1)
 		}
 
 		var left = _this.props.hasRowLabel ? geo.labelWidth : 0;

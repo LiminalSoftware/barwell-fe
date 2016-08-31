@@ -9,8 +9,10 @@ import constants from "../../../../constants/MetasheetConstants"
 
 import Overlay from '../Overlay'
 
-import PopDownMenu from "../../../../components/PopDownMenu"
 import util from "../../../../util/util"
+
+import Pointer from "./Pointer"
+
 
 const nav = window.navigator
 const userAgent = nav.userAgent
@@ -20,6 +22,27 @@ const HAS_3D = util.has3d()
 const RIGHT_FRINGE = 200
 
 var Cursors = React.createClass ({
+
+	componentWillMount: function () {
+		const _this = this
+		this._debounceSetPointer = _.debounce(ptr => _this.setState({pointer: ptr}), 75)
+	},
+
+	componentWillReceiveProps: function (props) {
+		const pointerChanged = props.pointer !== this.state.pointer
+		const selectionChanged = props.selection !== this.state.selection
+
+		if (selectionChanged && pointerChanged) {
+			this.setState({pointer: null, selection: props.selection})
+			this._debounceSetPointer(props.pointer)	
+		} else if (pointerChanged) {
+			this.setState({pointer: props.pointer})
+		}
+	},
+
+	getInitialState: function () {
+		return {pointer: this.props.pointer}
+	},
 
 	showContextMenu: function (e) {
 		var cursors = ReactDOM.findDOMNode(this.overlayInner)
@@ -31,63 +54,6 @@ var Cursors = React.createClass ({
 
 		this.setState({contextPos: {x: x, y: y}})
 	},
-
-	getPointerElement: function () {
-		// console.log('getPointerElement')
-		var view = this.props.view;
-		var model = this.props.model;
-		var geo = view.data.geometry;
-		var store = this.props.store;
-		var ptr = this.props.pointer;
-		var col = view.data._visibleCols[ptr.left];
-		var obj = store.getObject(ptr.top);
-		var element = col ? (fieldTypes[col.type]).element : null;
-		
-		if (!obj) return;
-
-		const commit = (value, extras) => {
-			let patch = {}
-			if (model._pk in obj) patch[model._pk] = obj[model._pk]
-			else patch.cid = obj.cid
-			patch[col.column_id] = value
-			modelActionCreators.multiPatchRecords(model, patch, {method: ' typing a new value'})
-		}
-		
-		if (element) return React.createElement(element, {
-			key: (obj.cid || obj[model._pk]) + '-' + col.columnId,
-			config: col,
-			model: model,
-			view: view,
-			selected: true,
-			object: obj,
-			value: obj[col.column_id],
-
-			spaceTop: ptr.top - this.props.rowOffset,
-			spaceBottom: this.props.visibleRows + this.props.rowOffset - ptr.top,
-
-			rowHeight: geo.rowHeight,
-
-			_handleBlur: this.props._handleBlur,
-			_handleClick: this.props._handleClick,
-			_handleWheel: this.props._handleWheel,
-
-			commit: commit,
-			
-			className: 'table-cell',
-			ref: 'pointerCell',
-			sorted: false,
-			style: {
-				left: '0px',
-				bottom: '0px',
-				top: '0px',
-				right: '0px',
-				border: 'none',
-				lineHeight: geo.rowHeight + 'px',
-				background: 'white'
-			}
-		})
-	},
-
 
 	renderCursor: function () {
 		const {view, model, columnOffset} = this.props
@@ -114,17 +80,8 @@ var Cursors = React.createClass ({
 		if (hideCursor) return null
 		return [
 
-			<Overlay
-				{...this.props}
-				className = "pointer"
-				ref = "pointer"
-				key={`pointer-${ptr.left}-${ptr.top}`}
-				fudge = {{width: -1, left: 1, top: 1, height: -1}}
-				position = {ptr}>
-				{this.getPointerElement()}
-			</Overlay>,
-
-
+			<Pointer {...this.props} position={this.state.pointer} key="pointer"/>,
+			
 			<Overlay
 				{...this.props}
 				className = {"selection-outer" + (singleton ? '-singleton' : '')}
@@ -202,6 +159,7 @@ var Cursors = React.createClass ({
 	},
 
 	render: function () {
+		console.log('render cursors')
 		const view = this.props.view
 		const model = this.props.model
 		const focused = this.props.focused

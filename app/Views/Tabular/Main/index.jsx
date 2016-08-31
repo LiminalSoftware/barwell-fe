@@ -163,7 +163,7 @@ const TabularPane = React.createClass ({
 	getColumnRefAt: function (pos) {
 		const data = this.props.view.data
 		const col = this.getColumnAt(pos)
-		const isPinned = (pos.left < data._visibleCols.length)
+		const isPinned = (pos.left < data._fixedCols.length)
 		const header = this.refs.tableWrapper.refs[isPinned ? "lhsHead":"rhsHead"]
 		
 		return header.refs['head-' + col.column_id]	
@@ -278,10 +278,12 @@ const TabularPane = React.createClass ({
 		}
 
 		modelActionCreators.deleteMultiRecords(model, records);
-
+		
 		ptr.top = ptr.bottom = Math.min(ptr.top, numRows - records.length - 1);
 		sel.bottom = sel.top = Math.min(sel.top, numRows - records.length );
 		this.setState({copyarea: null, selection: sel, pointer: ptr});
+
+		this.refreshTable()
 	},
 
 	copySelection: function (format) {
@@ -290,7 +292,7 @@ const TabularPane = React.createClass ({
 		csv.stringify(data, {delimiter: '\t'}, function (err, text) {
 			copyTextToClipboard(text);
 			_this.setState({
-				copytext: text,
+				copytext: text.trim(),
 				copyarea: _this.state.selection,
 				copydata: data
 			});
@@ -460,6 +462,7 @@ const TabularPane = React.createClass ({
 	},
 
 	putSelection: function (data, method, isValidated) {
+		console.log('isValidated: ' + isValidated)
 		const model = this.props.model
 		const sel = this.state.selection
 		const view = this.props.view
@@ -476,7 +479,9 @@ const TabularPane = React.createClass ({
 				const column = view.data._visibleCols[c]
 				const type = fieldTypes[column.type]
 				const parser = type.parser
-				const value = (isValidated || !parser) ? data[cbr][cbc] : parser(data[cbr][cbc])
+				const value = (isValidated || !parser) ? 
+					data[cbr][cbc] : 
+					parser(data[cbr][cbc], column)
 				if (!type.uneditable) {
 					patch[column.column_id] = value
 				}
@@ -489,7 +494,7 @@ const TabularPane = React.createClass ({
 	pasteSelection: function (e) {
 		if (!this.props.focused) return;
 		const _this = this;
-		const text = e.clipboardData.getData('text') || "";
+		const text = e.clipboardData.getData('text').trim() || "";
 		const isJsonValid = (text === this.state.copytext);
 
 		// if the copy data is the same as the data we saved when the 
@@ -497,7 +502,7 @@ const TabularPane = React.createClass ({
 		// the data was likely copied from somewhere else
 
 		if (isJsonValid) {
-			this.putSelection(this.state.copydata, 'copy/paste')
+			this.putSelection(this.state.copydata, 'copy/paste', true)
 		} else {
 			csv.parse(text, {delimiter: '\t'}, function (err, output) {
 				if (err) modelActionCreators.createNotification({
@@ -506,7 +511,7 @@ const TabularPane = React.createClass ({
 		        	icon: ' icon-warning ',
 					notification_key: 'paste',
 					notifyTime: 3000
-		        }); else _this.putSelection (output, 'copy/paste')
+		        }); else _this.putSelection (output, 'copy/paste', false)
 			});
 		}
 	},
@@ -706,7 +711,6 @@ const TabularPane = React.createClass ({
 		var geo = view.data.geometry
 
 		var childProps = {
-			_handleBlur: this.handleBlur,
 			_handleClick: this.handleClick,
 			_handlePaste: this.pasteSelection,
 			_copySelection: this.copySelection,

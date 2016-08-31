@@ -2,27 +2,18 @@
 
 
 .menu-input {
-  
-  position: relative;
-  display: inline-block;
-
-	height: 20px;
-  line-height: 20px;
-
-  left: 0;
-  right: 0;
-  padding: 2px;
-  margin: 0;
-  min-width: 50px;
-
-  // border-radius: @menuItemBorderRadius;
-  background: white;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: transparent;
 
   font-family: @bodyFont;
-  color: @headerFontColor;
   font-size: 16px;
   outline: none;
-  transition: background ease-in 100ms;
+  border: none;
+
+  text-align: left;
+  
   &:focus, &:hover {
     // border: 1px solid  @green1;
     // background: @headerBgLight3;
@@ -31,15 +22,7 @@
 
 }
 
-.text-input {
-  background: white;
-  border: 1px solid @menuLightBorder;
-  // border-radius: @menuItemBorderRadius;
-  outline: none;
-  &::selection {
-    background: @gray3 !important;
-  }
-}
+
 
 .menu-input-selector {
   padding: 5px;

@@ -1,5 +1,5 @@
 import React from "react"
-import update from 'react/lib/update';
+import update from 'react/lib/update'
 import _ from "underscore"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
@@ -37,7 +37,14 @@ var TabularContextMenu = React.createClass ({
 	},
 
 	handleKeyPress: function (e) {
-		if (e.keyCode === constants.keycodes.ESC) this.props.blurContextMenu()
+		const {ESC, ENTER} = constants.keycodes
+		const refs = this.refs
+		if (e.keyCode === ESC || e.keyCode === ENTER) {
+			Object.keys(refs).map(key => refs[key])
+				.filter(ref => !!ref.teardown)
+				.forEach(ref => ref.teardown(e.keyCode === ENTER))
+			this.props.blurContextMenu()
+		}
 	},
 
 	handleClick: function (e) {
@@ -47,13 +54,15 @@ var TabularContextMenu = React.createClass ({
 	render: function () {
 		const subject = this.props.subject
 		if (subject === 'column') 
-			return <ColumnConfigContext 
+			return <ColumnConfigContext
+				key = {this.getConfig().column_id}
+				ref = 'columnContext'
 				{...this.props}
 				config={this.getConfig()}/>
 		else if (subject === 'body') 
-			return <TableBodyContext {...this.props}/>
+			return <TableBodyContext {...this.props} ref = 'bodyContext'/>
 		else if (subject === 'newAttribute') 
-			return <NewAttributeContext {...this.props}/>
+			return <NewAttributeContext {...this.props} ref = 'newAttrContext'/>
 			
 			
 	}

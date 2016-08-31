@@ -57,10 +57,13 @@ export default class HeaderCell extends Component {
 
 		/* move cursor to the end of the input upon edit */
 		if (newState.renaming && !this.state.renaming) {
-			const val = this.refs.input.value
-			this.refs.input.value = ''
-			this.refs.input.value = val
-
+			const input = this.refs.input
+			if (input) {
+				const val = input.value
+				this.refs.input.value = ''
+				this.refs.input.value = val
+			}
+			
 			removeEventListener('keydown', this.handleKeyPress)
 			removeEventListener('click', this.handleClick)
 		}

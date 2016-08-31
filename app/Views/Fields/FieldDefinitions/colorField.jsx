@@ -13,7 +13,7 @@ const parser = function (input) {
 	else return 'rgba(255,255,255,0)'
 }
 
-const format = function (value, config) {
+const formatter = function (value, config) {
 	return value;
 }
 
@@ -60,9 +60,9 @@ export default {
 		render () {
 			return <GenericTextElement {...this.props}
 				ref = "genericField"
-				format = {format}
+				formatter = {formatter}
 				decorator = {this.getDecorator()}
-				validator = {_.identity}
+				serializer = {_.identity}
 				parser = {parser}
 				stylers = {stylers}/>
 		}

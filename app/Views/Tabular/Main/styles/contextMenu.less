@@ -1,7 +1,7 @@
 @import "../../../../styles/colors.less";
 
 
-.context-menu {
+.context-menu, .column-context-menu {
 	-webkit-font-smoothing: subpixel-antialiased !important;
 	padding:  0;
 	margin: 0;
@@ -21,6 +21,11 @@
 	}
 	border-color: @gray3;
 	.shadowed-menu;
+}
+
+.column-context-menu {
+	border-top-left-radius: 0 !important;
+	border-top-right-radius: 0 !important;
 }
 
 .new-attribute-menu {

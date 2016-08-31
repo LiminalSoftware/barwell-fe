@@ -160,21 +160,19 @@ const createTabularStore = function (view) {
 					if (action.storeId !== _storeId) return;
 					var objects = action.records
 					var startIndex = action.startIndex
-					var endIndex = action.endIndex
+					var endIndex = action.recordCount + action.startIndex
+					var upperBound = upperBound = objects.length === MAX_LOCAL_RECORDS ? _.clone(objects[objects.length - 1]) : null
+					var lowerBound = objects.length === MAX_LOCAL_RECORDS ? _.clone(objects[0]) : null
 
-					_state.records = objects
-					_state.recordCount = action.recordCount
-					_state.startIndex = action.startIndex
-					_state.endIndex = (action.recordCount + action.startIndex)
-
-					_state.upperBound = objects.length === MAX_LOCAL_RECORDS ? _.clone(objects[objects.length - 1]) : null
-					_state.lowerBound = objects.length === MAX_LOCAL_RECORDS ? _.clone(objects[0]) : null
-
-					_state.records.map(function (_rec) {
-						let rec = _.clone(_rec)
-						rec._server = _.clone(rec)
-						return rec
+					_state = update(_state, {
+						records: {$set: objects.map(util.clean)},
+						startIndex: {$set: startIndex},
+						endIndex: {$set: endIndex},
+						recordCount: {$set: action.recordCount},
+						upperBound: {$set: upperBound},
+						lowerBound: {$set: lowerBound},
 					})
+
 					TabularStore.emitChange()
 					break;
 

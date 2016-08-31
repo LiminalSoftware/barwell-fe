@@ -202,8 +202,8 @@ var TabularBodyWrapper = React.createClass ({
 					style = {{
 						top: '0',
 						height: (rowCount * rowHeight + 1),
-						borderRight: "1px solid " + constants.colors.RED_BRIGHT_TRANS,
-						
+						borderRight: `1px solid ${constants.colors.RED_BRIGHT_TRANS}`,
+						borderLeft: `1px solid ${constants.colors.TABLE_BORDER}`,
 						marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
 						transform: HAS_3D ? `translate(0, ${marginTop}px)` : null,
 						transition: IS_CHROME && HAS_3D ? 'transform 75ms linear' : null,
@@ -283,7 +283,7 @@ var TabularBodyWrapper = React.createClass ({
 							height: (rowCount * rowHeight),
 							width: (floatWidth + 1),
 							background: 'white',
-							borderRight: "1px solid steelblue"
+							borderRight: `1px solid ${constants.colors.TABLE_BORDER}`
 						}}>
 						<TabularTBody
 							{...this.props}

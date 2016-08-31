@@ -9,9 +9,11 @@ const isInRange = function (_state, rec) {
 	return gtLowerBound && ltUpperBound 
 }
 
+
 const findInsertionIndex = function (_state, rec) {
 	var i = 0;
-	while (i < _state.records.length && util.compare(_state.sortSpec, rec, _state.records[i]) <= 0) i++
+	// TODO binary search maybe...
+	while (i < _state.records.length && util.compare(_state.sortSpec, rec, _state.records[i]) >= 0) i++
 	return i
 }
 

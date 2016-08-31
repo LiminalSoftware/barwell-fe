@@ -192,7 +192,7 @@ export default {
 		}
 
 		render () {
-			return <div className="context-menu">
+			return <div className="column-context-menu">
 				{this.renderColorSection()}
 				<div className = "popdown-item selectable top-divider" onClick={this.props.blurSelf}>
 					<span className="icon icon-arrow-left icon-detail-left"/>

@@ -9,6 +9,7 @@ import constant from "../../../../constants/MetasheetConstants"
 
 import fieldTypes from "../../../fields"
 import ColumnUnhider from "./ColumnUnhider"
+import DefaultValueContext from "./DefaultValueContext"
 
 import util from "../../../../util/util"
 
@@ -53,7 +54,7 @@ var ColumnConfigContext = React.createClass ({
 		const updated = update(view, {
 			data: {
 				sorting: {$set: [{
-					attribute_id: this.props.config.attribute_id, 
+					attribute: 'a' + this.props.config.attribute_id, 
 					descending: !!desc
 				}]}
 			}
@@ -83,61 +84,73 @@ var ColumnConfigContext = React.createClass ({
 		modelActionCreators.destroy('attribute', true, attribute)
 		this.props.blurContextMenu()
 	},
+
+	teardown: function (commit) {
+		const el = this.refs.detailElement
+		if (el && el.teardown) return el.teardown(commit)
+	},
 	
 	renderMainMenu: function () {
 		const view = this.props.view
 		const config = this.props.config
 		const type = fieldTypes[config.type]
+		const sorting = view.data.sorting
+		const numVisibleCols = view.data._columnList.filter(col => !col.visible).length
+		const currentSort = sorting.length !== 1 ? null :
+			(sorting[0].attribute) !== ('a' +config.attribute_id) ?
+			null : sorting[0].descending ? 'descending' : 'ascending'
 
 		const _this = this
 		const innerStyle = {
 			top: 0, left: 0,
-			width: "350px"
+			width: "350px",
+			borderTopLeftRadius: 0,
+			borderTopRightRadius: 0
 		}
 
-		return <div className="context-menu slide-invert" style={innerStyle} key="main-menu">
+		return <div className="column-context-menu slide-invert" style={innerStyle} key="main-menu">
 			<div className="popdown-item title">
 				Change view settings
 			</div>
 			<div onClick={this.hideColumn} className = "popdown-item selectable">
-				<span className="icon icon-eye-crossed"/>
+				<span className="icon icon-selectable  icon-eye-crossed"/>
 				Hide this column from view
 			</div>
 			
-			{view.data._columnList.filter(col => !col.visible).length > 0 ?
+			
 			<div onClick={this.showDetail.bind(_this, ColumnUnhider)} 
-				className = "popdown-item selectable ">
-				<span className="icon icon-eye"/>
-				Show hidden columns
+				className = {`popdown-item ${numVisibleCols === 0 ? "un" : ""}selectable`}>
+				<span className="icon icon-selectable  icon-eye"/>
+				{numVisibleCols===0 ? "No hidden columns" : "Show hidden columns"}
 				<span className="icon icon-detail-right icon-arrow-right"/>
 			</div>
-			: null
-			}
 
 			{
 			config.fixed ? 
 			<div onClick={this.unpin} className = "popdown-item selectable bottom-divider">
-				<span className="icon icon-fingers-scroll-horizontal"/>
+				<span className="icon icon-selectable  icon-fingers-scroll-horizontal"/>
 				Un-pin this column
 			</div>
 			:
 			<div onClick={this.pin} className = "popdown-item selectable bottom-divider">
-				<span className="icon icon-pushpin2"/>
+				<span className="icon icon-selectable  icon-pushpin2"/>
 				Pin this column
 			</div>
 			}
 
 			{type.sortable ?
-			<div onClick={this.sort.bind(_this, false)} className = "popdown-item selectable">
-				<span className="icon icon-sort-amount-asc"/>
-				Sort in ascending order
+			<div onClick={this.sort.bind(_this, false)} 
+				className = {`popdown-item ${currentSort==='ascending'?'un':''}selectable`}>
+				<span className={`icon icon-selectable  icon-${type.sortIcon}asc`}/>
+				{currentSort==='ascending' ? "Sorted in ascending order" : "Sort in ascending order"}
 			</div> 
 			: null
 			}
 			{type.sortable ?
-			<div onClick={this.sort.bind(_this, true)} className = "popdown-item selectable bottom-divider">
-				<span className="icon icon-sort-amount-desc"/>
-				Sort in descending order
+			<div onClick={this.sort.bind(_this, true)} 
+			className = {`popdown-item bottom-divider ${currentSort==='descending'?'un':''}selectable`}>
+				<span className={`icon icon-selectable  icon-${type.sortIcon}desc`}/>
+				{currentSort==='descending' ? "Sorted in descending order" : "Sort in descending order"}
 			</div>
 			: null
 			}
@@ -153,7 +166,7 @@ var ColumnConfigContext = React.createClass ({
 				key={part.partLabel}
 				onClick={this.showDetail.bind(_this, part.element)}>
 
-				<span className={part.getIcon(config)}/>
+				<span className={part.getIcon(config) + " icon-selectable"}/>
 				{part.partLabel}
 				<span className="icon icon-detail-right icon-arrow-right"/>
 			</div>
@@ -166,26 +179,27 @@ var ColumnConfigContext = React.createClass ({
 			</div>
 
 			<div onClick={this.rename} className = "popdown-item selectable">
-				<span className="icon icon-quote-open"/>
+				<span className="icon icon-selectable icon-quote-open"/>
 				Rename
 			</div>
 
 			<div onClick={this.changeType} className = "popdown-item selectable">
-				<span className="icon icon-wrench"/>
+				<span className="icon icon-selectable icon-wrench"/>
 				Change attribute type
 				<span className="icon icon-detail-right icon-arrow-right"/>
 			</div>
 			<div onClick={this.makeUniq} className = "popdown-item selectable">
-				<span className="icon icon-snow2"/>
+				<span className="icon icon-selectable icon-snow2"/>
 				Make this attribute unique
 			</div>
-			<div onClick={this.setDefault} className = "popdown-item selectable">
-				<span className="icon icon-stamp"/>
+			<div onClick={this.showDetail.bind(_this, DefaultValueContext)}
+				className = "popdown-item selectable">
+				<span className="icon icon-selectable icon-stamp"/>
 				Set default value for this attribute
 				<span className="icon icon-detail-right icon-arrow-right"/>
 			</div>
 			<div onClick={this.deleteColumn} className = "popdown-item selectable">
-				<span className="icon icon-trash2"/>
+				<span className="icon icon-selectable icon-trash2"/>
 				Delete this attribute
 			</div>
 		</div>
@@ -197,7 +211,7 @@ var ColumnConfigContext = React.createClass ({
 		let style = Object.assign({}, 
 			this.props._getRangeStyle(this.props.rc), {
 				height: "0",
-				marginLeft: "-0",
+				marginLeft: 0,
 				top: view.data.geometry.headerHeight + 'px',
 				position: "absolute",
 				minWidth: "350px",
@@ -206,21 +220,25 @@ var ColumnConfigContext = React.createClass ({
 		})
 
 		return <ReactCSSTransitionGroup
+			key = {config.column_id}
 			{...constants.transitions.slideleft}
 			style={style} onClick={util.clickTrap}>
 			{this.state.detailElement ? 
-				React.createElement(this.state.detailElement, 
-					update(this.props, {$merge: {blurSelf: this.blurMode, blurMenu: this.blurMenu}}) )
+				React.createElement(this.state.detailElement,
+					update(this.props, {$merge: {
+						ref: "detailElement",
+						blurSelf: this.blurMode, 
+						blurMenu: this.blurMenu}}) )
 				: this.renderMainMenu()
 			}
 			<div style={{
 				position: "absolute", 
-				top: 0, left: 1, height: 0, 
-				marginTop: "-2px",
-				borderTop: "3px solid white",
+				top: 0, left: 0, height: 2, 
+				marginTop: "-1px",
+				background: "white",
 				zIndex: 51,
-				borderLeft: `1px solid constants.colors.GRAY_3`,
-				borderRight: `1px solid constants.colors.GRAY_3`,
+				borderLeft: `1px solid ${constants.colors.GRAY_3}`,
+				borderRight: `1px solid ${constants.colors.GRAY_3}`,
 				width: config.width - 1}}/>
 		</ReactCSSTransitionGroup>
 	}

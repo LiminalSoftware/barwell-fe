@@ -9,7 +9,7 @@
 	right: 1px;
 	overflow: visible;
 	// border-bottom: 1px solid desaturate(lighten(steelblue, 40%), 5%);
-	border-bottom: 1px solid @gray3; 	
+	border-bottom: 1px solid @cellBorder; 	
 	transition: all linear 150ms;
 }
 
@@ -27,6 +27,10 @@
 }
 
 .table-row-ooo-edge {
+	border-bottom: 1px solid @blue1 !important;
+}
+
+.table-row-last {
 	border-bottom: 1px solid @blue1 !important;
 }
 
@@ -70,7 +74,7 @@
 	cursor: default;
 	display: block;
 	position: absolute;
-	border-left: 1px solid @gray3;
+	border-left: 1px solid @cellBorder;
 	// border-bottom: 1px solid transparent;
 
 	margin: 0;

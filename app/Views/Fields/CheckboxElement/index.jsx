@@ -64,7 +64,7 @@ export default class BooleanElement extends Component {
 		return <span className= "table-cell" style={this.props.style}>
 			<span style = {styles} className = "table-cell-inner">
 				<span className = {`checkbox-surround${value?"-checked":""}`} onClick=  {this.handleClick}>
-					<span className={"check green icon " + (value ? "icon-check" : "")} >
+					<span className={"check icon " + (value ? "icon-check" : "")} >
 					</span>
 				</span>
 			</span>

@@ -91,7 +91,7 @@ export function commitValue (value, extras) {
 	extras._previous = {[column_id]: this.props.value};
 
 	if (this.parser) value = this.parser(value)
-	value = this.validator(value)
+	value = this.serializer(value)
 	this.setState({value: value})
 	patch[column_id] = value
 	
@@ -109,7 +109,7 @@ export function commitValue (value, extras) {
  * takes the values from the input element and commits it
  */
 export function commitChanges () {
-	var value = this.validator(this.parser(this.props.value))
+	var value = this.serializer(this.parser(this.props.value))
 	this.setState({open: false});
 	if (!this.state.editing) return;
 	this.commitValue(this.state.value)

@@ -89,7 +89,8 @@ class TransactionObserver {
 				case 'RECORD_MULTIDELETE':
 				case 'RECORD_MULTIUPDATE':
 					return Promise.all(action.data.map(
-							rec => makeKeyPromise(rec, action.model._pk).then(makeAttrPromise)
+							rec => makeKeyPromise(rec, action.model._pk)
+								.then(makeAttrPromise)
 						))
 					break;
 				default:
@@ -105,8 +106,8 @@ class TransactionObserver {
 			var url = BASE_URL + '/' + entityName
 			var verb
 			var json
-
-			switch(action.actionType) {
+			
+			switch (action.actionType) {
 				case 'VIEW_CREATE':
 				case 'ATTRIBUTE_CREATE':
 				case 'MODEL_CREATE':

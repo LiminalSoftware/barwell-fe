@@ -28,7 +28,7 @@ import GenericTextElement from "../GenericTextElement"
 import getHTML from "../GenericTextElement/getHTML"
 
 
-const parser = input => ((input===null || input===undefined) ? '' : String(input))
+const makeString = input => ((input===null || input===undefined) ? '' : String(input))
 
 const stylers = [getAlignStyles, getBackgroundStyles, getFontStyles]
 
@@ -52,7 +52,9 @@ const textField = {
 	
 	defaultWidth: 150,
 
-	parser: parser,
+	parser: makeString,
+
+	formatter: makeString,
 
 	getDisplayHTML: getHTML.bind(null, _.identity, stylers),
 
@@ -69,9 +71,9 @@ const textField = {
 		render () {
 			return <GenericTextElement {...this.props}
 				ref = "genericField"
-				format = {_.identity}
-				validator = {_.identity}
-				parser = {parser}
+				formatter = {_.identity}
+				serializer = {_.identity}
+				parser = {makeString}
 				stylers = {stylers}/>
 		}
 	}

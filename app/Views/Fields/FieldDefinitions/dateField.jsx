@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import _ from "underscore"
+import update from 'react/lib/update'
 import moment from "moment"
 
 /*
@@ -40,26 +41,22 @@ import dateStyles from "../ConfigParts/DateFormatChoice/dateStyles"
 
 const stylers = [getAlignStyles, getBackgroundStyles, getFontStyles, detailStyle]
 
-const format = function (value, _config) {
+const formatter = function (value, _config) {
 	var config = _config || this.props.config || {}
 	var format = config.formatString;
-	var dateObj = moment(value,'YYYY-MM-DD');
+	var dateObj = moment(value, 'YYYY-MM-DD');
 	var prettyDate = dateObj.isValid() ? dateObj.format(format) : '';
 	return prettyDate
 }
 
-const validator = function (input) {
-	var config = this.props.config || {}
-	var format = config.formatString || "YYYY-MM-DD";
-	var date = moment(input, format)
-	if (!date.isValid()) date = moment(input, "YYYY-MM-DD")
-		return date.isValid() ? date : null
+const serializer = function (input) {
+	return input
 }
 
 const parser = function (input, config) {
-	var format = config.formatString
-	var date = moment(input, format)
-	return date.format('YYYY-MM-DD')
+	var formatter = config.formatString
+	var date = moment(input, formatter)
+	return (date.isValid()) ? date.format('YYYY-MM-DD') : '-infinity'
 }
 
 export default {
@@ -88,9 +85,9 @@ export default {
 
 	parser: parser,
 
-	format: format,
+	formatter: formatter,
 
-	validator: validator,
+	serializer: serializer,
 
 	stringify: function (value) {
 		var val = moment(value)
@@ -103,9 +100,14 @@ export default {
 		return config
 	},
 
-	getDisplayHTML: getHTML.bind(null, format, stylers),
+	getDisplayHTML: getHTML.bind(null, formatter, stylers),
 
 	element: class DateField extends Component {
+
+		constructor (props) {
+			super(props)
+			this.state = {pickerOpen: false}
+		}
 
 		handleEdit (e) {
 			this.refs.genericField.handleEdit(e)
@@ -124,8 +126,11 @@ export default {
 			let style = {
 				position: "absolute", 
 				top: 0, bottom: 0, 
+				marginTop: 0,
+				marginRight: 3,
 				width: 25,
-				lineHeight: `${config.rowHeight}px`
+				lineHeight: `${this.props.rowHeight}px`,
+				zIndex: 12
 			}
 			if (config.align === 'right') style.left = 0 
 			else style.right = 0
@@ -133,19 +138,28 @@ export default {
 			return style
 		}
 
-		getDecorator () {
+		showPicker = () => {
+			console.log('showPicker')
+			this.setState(update(this.state, {
+				pickerOpen: {$set: true}
+			}))
+		}
+
+		getDecorator = () => {
 			return <span style={this.getDecoratorStyle()}
+			onClick={this.showPicker}
 			className="icon blue icon-calendar-31 clickable">
+			{this.state.pickerOpen ? <DatePicker value={this.props.value}/> : null}
 			</span>
 		}
 
 		render () {
 			return <GenericTextElement {...this.props}
 				ref = "genericField"
-				format = {format}
+				formatter = {formatter}
 				decorator = {this.getDecorator()}
 				detailElement = {DatePicker}
-				validator = {_.identity}
+				serializer = {_.identity}
 				parser = {parser}
 				stylers = {stylers}/>
 		}

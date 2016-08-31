@@ -24,9 +24,9 @@ module.exports = {
     },
     slideleft: {
       transitionEnterTimeout: 300,
-      // transitionAppearTimeout: 300,
-      transitionLeaveTimeout: 300,
-      // transitionAppear: true,
+      transitionAppearTimeout: 300,
+      transitionLeaveTimeout: 300, 
+      transitionAppear: true,
       transitionName: "slideleft" 
     },
     delayfade: {
@@ -83,6 +83,8 @@ module.exports = {
     GRAY_2: '#71646B',
     GRAY_3: '#CBC3B7',
     GRAY_4: '#FAFAF4',
+
+    TABLE_BORDER: '#ebe8e3',
 
     PURPLE_1: '#54365E',
     PURPLE_2: '#7F5E8A',

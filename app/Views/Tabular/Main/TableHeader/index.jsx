@@ -28,7 +28,6 @@ var TableHeader = React.createClass ({
 		const model = this.props.model
 		const geo = view.data.geometry
 		var left = (this.props.hasRowLabel ? geo.labelWidth : -1) + this.props.leftOffset
-		var sortAttrs = _.pluck(view.data.sorting, 'attribute_id').map(parseInt)
 		
 		const style = {
 			borderRight: this.props.side==='lhs' ? ("1px solid " + constants.colors.RED_BRIGHT_TRANS) : null,
@@ -59,7 +58,7 @@ var TableHeader = React.createClass ({
 			{
 			_this.props.columns.map(function (col, idx) {
 				var sortIndex = view.data.sortIndex || {};
-				var sorting = (col.attribute_id in sortIndex) ? sortIndex[col.attribute_id] : null;
+				var sorting = (('a' + col.attribute_id) in sortIndex) ? sortIndex['a' + col.attribute_id] : null;
 
 				var el = <HeaderCell {..._this.props}
 					key={col.column_id}
@@ -80,7 +79,15 @@ var TableHeader = React.createClass ({
 			{this.props.hasRowLabel ? null :
 			<span 
 				onClick = {this.props.showAttributeAdder}
-				style = {{left: left + 10 + 'px', top: "-1px", bottom: "2px", width: "32px", padding: 0}}
+				style = {{
+					left: left + 5, 
+					top: -1, 
+					bottom: 2, 
+					width: 32, 
+					padding: 0,
+					borderTopLeftRadius: 0,
+					borderBottomLeftRadius: 0
+				}}
 				className = 'table-header-cell new-adder'>
 					<span className="icon icon-plus" style={{margin: 0}}/>
 			</span>

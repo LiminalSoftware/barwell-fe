@@ -85,7 +85,7 @@ export default class SortDetail extends Component {
 	remove = () => {
 		this.props._remove(this.props.sortSpec)
 	}
-
+	
 	switch = () => {
 		var spec = this.props.sortSpec
 		spec.descending = !spec.descending
@@ -99,7 +99,7 @@ export default class SortDetail extends Component {
 	render () {
 		const {isDragging, index, connectDragSource, connectDropTarget} = this.props
 		const {view, sortSpec} = this.props
-		const attr = AttributeStore.get(sortSpec.attribute_id)
+		const attr = AttributeStore.get(sortSpec.attribute.slice(1))
 		const fieldType = fieldTypes[attr.type]
     	const opacity = isDragging ? 0 : 1
     	const style = {borderBottom: `1px solid ${constants.colors.RED_BRIGHT}`}

@@ -52,9 +52,8 @@ h1, h2, h3, h4, h5 {
 	position: relative;
 	display: flex;
 	line-height: 30px;
-	color: @gray2;
-	background: white;
-	border: 1px solid @blue1;
+	
+	border: 1px solid transparent;
 
 	margin: 0;
 	
@@ -87,6 +86,11 @@ h1, h2, h3, h4, h5 {
 .view-config-item--focused {
 	flex: 2 2;
 	background: white;
+	border: 1px solid @blue1;
+}
+
+.view-config-dropdown-item {
+	
 }
 
 
@@ -119,6 +123,7 @@ h1, h2, h3, h4, h5 {
 .view-config-item,
 .view-config-item--pushed,
 .view-config-item--active {
+	border: 1px solid transparent;
 	flex: 1 1;
 }
 

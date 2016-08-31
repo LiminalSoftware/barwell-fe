@@ -10,7 +10,7 @@ export default class FilterConfig extends Component {
 		return <span>
 			Sorted by
 			{sort.map((s,idx)=><span className="header-item">
-				{AttributeStore.get(s.attribute_id).attribute}
+				{AttributeStore.get(s.attribute.slice(1)).attribute}
 				{idx!==sort.length-1 ? "," : ""}
 			</span>)}
 		</span>

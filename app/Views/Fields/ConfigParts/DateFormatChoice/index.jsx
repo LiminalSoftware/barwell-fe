@@ -5,6 +5,8 @@ import modelActionCreators from "../../../../actions/modelActionCreators"
 import AttributeStore from "../../../../stores/AttributeStore"
 import util from "../../../../util/util"
 
+import constants from "../../../../constants/MetasheetConstants"
+
 import commitColumnConfig from "../commitColumnConfig"
 import dateStyles from "./dateStyles"
 
@@ -67,7 +69,7 @@ export default {
 			const config = this.props.config
 			const key = "attr-" + config.id
 
-			return <div className = "context-menu">
+			return <div className = "column-context-menu">
 				<div className = "popdown-item title bottom-divider">
 	              Date Format
 	        	</div>
@@ -78,7 +80,8 @@ export default {
 							onClick = {_this.chooseFormat.bind(_this, dateStyle)}>
 							<span className = {"icon icon-calendar-31 " + 
 							(_this.state.formatString === dateStyle.formatString ? 'icon-hilite' : 'icon-selectable')}/>
-							{dateStyle.description}
+							<span>{dateStyle.description}</span>
+							<span style={{marginLeft: "8px", color: constants.colors.GRAY_3}}>(e.g., {dateStyle.example})</span>
 						</div>)
 				}
 				
@@ -90,8 +93,8 @@ export default {
 				</div>
 
 				{
-				this.state.custom ? <div><input type = "text"
-					className = "menu-input text-input"
+				this.state.custom ? <div className="popdown-item"><input type = "text"
+					className = "menu-input text-input flush"
 					style = {{textAlign: 'center'}}
 					spellCheck = "false"
 					value = {this.state.formatString}

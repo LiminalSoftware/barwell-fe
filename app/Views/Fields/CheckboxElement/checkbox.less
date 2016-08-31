@@ -3,6 +3,8 @@
 .icon.check {
 	position: absolute;
 	left: -2px;
+	// left: 0;
+	margin: 0;
 	top: 0;
 	bottom: 0;
 	right: 0;
@@ -12,11 +14,20 @@
 	pointer-events: none;
 }
 
+.checkbox-surround-checked {
+	background: @green1;
+	color: white;
+}
+
+.checkbox-surround {
+	background: white;
+	color: @green1;
+	background: fadeout(@gray3, 90%);
+}
+
 .checkbox-surround, .checkbox-surround-checked {
 	border-radius: 3px;
-	background: white;
 	border: 1px solid transparent;
-	background: fadeout(@gray3, 90%);
 	z-index: 4;
 	
 	position: relative;
@@ -26,11 +37,6 @@
 	max-width: 14px;
 	min-width: 14px;
 	cursor: pointer;
-
-	&:hover {
-		background: 1px solid @green1 !important;
-		color: white !important;
-	}
 }
 
 

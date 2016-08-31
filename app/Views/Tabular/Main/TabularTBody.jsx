@@ -120,18 +120,14 @@ var TabularTBody = React.createClass ({
 
 	// RENDER ================================================================
 
-	prepareRow: function (obj, index) {
+	prepareRow: function (obj, index, orderProps) {
 		const {store, model, pointer, prefix} = this.props
 		const {start: offset} = this.state
 		const pk = model._pk
 
 		const rowKey = prefix + '-tr-' + (obj.cid || obj[pk])
-		
 		const selectedRecords = this.props.store.getSelection()
 		const rowCount = store.getRecordCount()
-
-		const prev = index > 0 ? this.props.store.getObject(index - 1) : {}
-		const next = index + 1 < rowCount ? this.props.store.getObject(index + 1) : {}
 
 		return <TabularTR
 			view = {this.props.view}
@@ -144,11 +140,7 @@ var TabularTBody = React.createClass ({
 			rowKey = {rowKey}
 			ref = {rowKey}
 			key = {rowKey}
-			ooo = {obj._outoforder}
-			oooFirst = {index > 0 && obj._outoforder && !prev._outoforder}
-			oooNext = {next._outoforder && !obj._outoforder}
-			oooLast = {!next._outoforder && obj._outoforder}
-			isScrolling = {this.state.scrolling}/>;
+			{...orderProps}/>;
 	},
 
 	render: function () {
@@ -188,7 +180,19 @@ var TabularTBody = React.createClass ({
 			ref = "tbody"
 			style = {this.props.style}>
 
-			{ rows.map(this.prepareRow) }
+			{ rows.map((obj, index) => {
+				let prev = index > 0 ? rows[index - 1] : {}
+				let next = index + 1 < rows.length ? rows[index + 1] : {}
+
+				const orderProps = {
+					ooo: !!obj._outoforder,
+					oooFirst: index > 0 && !!obj._outoforder && !prev._outoforder,
+					oooNext: !!next._outoforder && !obj._outoforder,
+					oooLast: index !== rows.length - 1 && !next._outoforder && !!obj._outoforder,
+				}
+
+				return this.prepareRow(obj, index, orderProps)
+			}) }
 
 			{
 			this.props.hasRowLabel ? 

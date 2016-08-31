@@ -49,8 +49,8 @@ export default {
 			const value = this.props.index
 			return <GenericTextElement {...this.props}
 				ref = "genericField"
-				format = {_.identity}
-				validator = {_.identity}
+				formatter = {_.identity}
+				serializer = {_.identity}
 				parser = {_.identity}
 				stylers = {[]}/>
 		}

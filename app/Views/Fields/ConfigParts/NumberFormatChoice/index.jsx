@@ -185,7 +185,7 @@ export default {
 		}
 
 		render = () => {
-			return <div className="context-menu">
+			return <div className="column-context-menu">
 				{
 				this.getPresetsMenu()
 				}

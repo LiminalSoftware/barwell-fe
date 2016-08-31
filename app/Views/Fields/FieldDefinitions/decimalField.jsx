@@ -39,7 +39,7 @@ import displayStyles from "../ConfigParts/NumberFormatChoice/displayStyles"
 
 const stylers = [getAlignStyles, getBackgroundStyles, getFontStyles]
 
-const format = function (value, config) {
+const formatter = function (value, config) {
 	var prettyVal = numeral(value).format(config.formatString);
 	return prettyVal;
 }
@@ -82,9 +82,9 @@ export default {
 
 	parser: parser,
 	
-	format: format,
+	formatter: formatter,
 	
-	getDisplayHTML: getHTML.bind(null, format, stylers),
+	getDisplayHTML: getHTML.bind(null, formatter, stylers),
 
 	element: class DecimalField extends Component {
 
@@ -103,7 +103,7 @@ export default {
 		render () {
 			return <GenericTextElement {...this.props}
 				ref = "genericField"
-				format = {format}
+				formatter = {formatter}
 				validator = {_.identity}
 				parser = {parser}
 				stylers = {stylers}/>

@@ -17,17 +17,17 @@ export default class GenericTextElement extends Component {
 		/*
 		 * informs the top level view element when the element exits edit mode
 		 */
-		_handleBlur: PropTypes.func,
+		// _handleBlur: PropTypes.func,
 
 		/*
 		 * prepares the content for rendering
 		 */
-		format: PropTypes.func.isRequired,
+		formatter: PropTypes.func.isRequired,
 		
 		/*
 		 * ensures that the content is valid before commit to the server 
 		 */
-		validator: PropTypes.func.isRequired,
+		serializer: PropTypes.func.isRequired,
 
 		/*
 		 * takes serialized input and converts to an internal representation 
@@ -51,7 +51,7 @@ export default class GenericTextElement extends Component {
 		const config = this.props.config
 		this.state = {
 			editing: false, 
-			value: this.props.format(props.value, config)
+			value: this.props.formatter(props.value, config)
 		}
 	}
 
@@ -64,7 +64,7 @@ export default class GenericTextElement extends Component {
 	componentWillReceiveProps = (props)  => {
 		const config = this.props.config
 		if (!this.state.editing)
-		this.setState({value: props.format(props.value, config)})
+		this.setState({value: props.formatter(props.value, config)})
 	}
 
 	/*
@@ -107,15 +107,14 @@ export default class GenericTextElement extends Component {
 		const hasChanged = this.state.value !== this.props.value
 		const parsedValue = this.props.parser(this.state.value, config)
 
-		if (revert !== true && this.state.editing && hasChanged) {
+		if (revert !== true && (this.state.editing || this.props.alwaysEdit) && hasChanged) {
 			this.props.commit(parsedValue)
 			this.setState({editing: false, open: false})
-		}
-		else {
+		} else {
 			this.setState({
 				editing: false,
 				open: false,
-				value: this.props.format(this.props.value, config)
+				value: this.props.formatter(this.props.value, config)
 			})
 		}
 	}
@@ -161,15 +160,16 @@ export default class GenericTextElement extends Component {
 
 			{this.props.alwaysEdit || this.state.editing ?
 			<input
+				style={this.getStyles()}
 				ref = "input"
 				className = "input-editor"
 				value = {this.state.value}
-				style = {this.getStyles()}
 				autoFocus = {!this.props.noAutoFocus}
 				onClick = {util.clickTrap}
 				onChange = {this.handleChange} />
 			:
-			<span style={this.getStyles()} className="table-cell-inner table-cell-inner-selected">
+			<span style={this.getStyles()} 
+				className="table-cell-inner table-cell-inner-selected">
 				{this.state.value}
 			</span>
 			}

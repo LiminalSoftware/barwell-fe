@@ -5,6 +5,7 @@ import _ from 'underscore'
 
 import getGuid from '../stores/getGuid'
 
+import AttributeStore from '../stores/AttributeStore'
 import ModelStore from '../stores/ModelStore'
 import ViewConfigStore from '../stores/ViewConfigStore'
 import RelationStore from '../stores/RelationStore'
@@ -15,6 +16,7 @@ import transactionObserver from './transactionObserver'
 import pluralize from 'pluralize'
 import groomView from '../Views/groomView'
 import util from '../util/util'
+import fieldTypes from "../Views/fields"
 
 var BASE_URL = 'http://api.metasheet.io'
 const MAX_CUBE_LEVELS = 5000
@@ -82,11 +84,12 @@ var modelActions = {
 	// == TRANSACTIONAL EVENTS
 	// ========================================================================
 
-	renameColumn: function (column_id, name) {
+	renameColumn: function (column, name) {
 		// if it is a regular attribute, just update it
-		if (column_id.slice(0,1) === 'a') {
-			const attribute = AttributeStore.get(column_id.slice(1))
-			modelActions.create('attribute', update(attribute, {
+
+		if (column.column_id.slice(0,1) === 'a') {
+			const attribute = AttributeStore.get(column.column_id.slice(1))
+			modelActions.create('attribute', true, update(attribute, {
 				attribute: {$set: name}
 			}))
 		}
@@ -94,9 +97,23 @@ var modelActions = {
 		// TODO
 	},
 
+	setColumnDefault: function (column, value) {
+		console.log(value)
+		if (column.column_id.slice(0,1) === 'a') {
+			const attribute = AttributeStore.get(column.column_id.slice(1))
+			modelActions.create('attribute', true, update(attribute, {
+				default_value: {$set: value}
+			}))
+		}
+	},
+
 	insertRecord: function (model, view, obj, position) {
 		obj = obj || {cid: 'c' + getGuid()}
-		
+		AttributeStore.query({model_id: model.model_id})
+		.forEach(attr=> {
+			obj['a' + (attr.attribute_id || attr.cid)] = attr.default_value
+		})
+
 		MetasheetDispatcher.dispatch({
 			entity: 'record',
 			actionType: 'RECORD_INSERT',
@@ -253,9 +270,8 @@ var modelActions = {
 		
 		url += '?order=' + 
 			(sortSpec || [])
-			.concat({attribute_id: model._pk.slice(1), descending: false})
 			.map(comp =>
-			`a${comp.attribute_id}.${comp.descending?'desc':'asc'}`
+			`${comp.attribute}.${comp.descending?'desc':'asc'}`
 			).join(",")
 		
 		return webUtils.ajax({
