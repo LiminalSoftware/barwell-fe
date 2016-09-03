@@ -45,27 +45,20 @@ h1, h2, h3, h4, h5 {
 	margin: 0;
 	// margin-left: 5px;
 	overflow: visible;
-	border-right: 2px solid white;
+	border-right: 1px solid @blue1;
 }
 
 .model-pane-header {
 	position: relative;
 	display: flex;
 	line-height: 30px;
-	
-	border: 1px solid transparent;
-
+	max-height: 46px;
+	border-bottom: 1px solid @blue1;
 	margin: 0;
 	
-	padding: 0;
-	height: 26px;
-	line-height: 24px;
-	
 	display: flex;
-	flex-direction: row;
-
-	margin: 3px 1px;
-	border-radius: 5px;
+	flex-direction: row;	
+	
 }
 
 .view-label {
@@ -77,10 +70,6 @@ h1, h2, h3, h4, h5 {
 	max-width: 300px;
 	min-width: 100px;
 	margin-left: 0px;
-
-	
-
-	
 }
 
 .view-config-item--focused {
@@ -101,7 +90,7 @@ h1, h2, h3, h4, h5 {
 .view-config-item--active,
 .view-config-item--focused
 {
-	padding: 0 8px;
+	padding: 8px;
 	display: flex;
 	
 	
@@ -116,8 +105,8 @@ h1, h2, h3, h4, h5 {
 	
 
 	margin-right: 0;
-	height: 24px;
-	line-height: 24px;
+	height: 30px;
+	line-height: 30px;
 }
 
 .view-config-item,
@@ -135,9 +124,6 @@ h1, h2, h3, h4, h5 {
 	border-bottom: 1px dotted @gray2;
 	margin-left: 0px;
 }
-
-
-
 
 
 .view-config-bar {

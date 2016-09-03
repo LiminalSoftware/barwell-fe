@@ -58,12 +58,11 @@ var TableMixin = {
 	
 	blurPointer: function (revert) {
 		var cursors = this.refs.cursors
-		var current = this.refs.cursors ? 
-			this.refs.cursors.refs.pointerCell
-			: null
+		const refPath = ['cursors','pointer','pointerCell']
+		const field = refPath.reduce((head, ref)=>head ? head.refs[ref] : null, this)
 
-		if (current && 'handleBlur' in current) {
-			current.handleBlur(revert)
+		if (field && 'handleBlur' in field) {
+			field.handleBlur(revert)
 		}
 		this.setState({editing: false})
 	},

@@ -6,7 +6,7 @@ import { Link } from "react-router"
 import util from "../../util/util"
 
 const calculateState = function (props) {
-	var val = this.props.value ? moment(this.props.value) : moment();
+	var val = props.value ? moment(props.value) : moment();
 	var config = props.config
 	return {
 		year: val.year(),

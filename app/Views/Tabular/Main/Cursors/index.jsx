@@ -25,7 +25,11 @@ var Cursors = React.createClass ({
 
 	componentWillMount: function () {
 		const _this = this
-		this._debounceSetPointer = _.debounce(ptr => _this.setState({pointer: ptr}), 75)
+		this._debounceSetPointer = _.debounce(this._setPointer, 100)
+	},
+
+	_setPointer: function (pointer) {
+		this.setState({pointer: pointer})
 	},
 
 	componentWillReceiveProps: function (props) {
@@ -34,14 +38,17 @@ var Cursors = React.createClass ({
 
 		if (selectionChanged && pointerChanged) {
 			this.setState({pointer: null, selection: props.selection})
-			this._debounceSetPointer(props.pointer)	
+			this._debounceSetPointer(props.pointer)
 		} else if (pointerChanged) {
-			this.setState({pointer: props.pointer})
+			this.setState({pointer: props.pointer, selection: props.selection})
 		}
 	},
 
 	getInitialState: function () {
-		return {pointer: this.props.pointer}
+		return {
+			pointer: this.props.pointer, 
+			selection: this.props.selection
+		}
 	},
 
 	showContextMenu: function (e) {
@@ -80,7 +87,10 @@ var Cursors = React.createClass ({
 		if (hideCursor) return null
 		return [
 
-			<Pointer {...this.props} position={this.state.pointer} key="pointer"/>,
+			<Pointer {...this.props} 
+				position={this.state.pointer}
+				fudge = {{width: -1, left: 0, top: 1, height: -1}}
+				ref="pointer" key="pointer"/>,
 			
 			<Overlay
 				{...this.props}
@@ -88,7 +98,7 @@ var Cursors = React.createClass ({
 				ref="selectionOuter"
 				key="selectionOuter"
 				position = {sel}
-				fudge = {{left: -3, top: -3.25, height: 7.5, width: 6.75}}>
+				fudge = {{left: -4, top: -3.25, height: 7.5, width: 6.75}}>
 				<div className = "selection-border selection-border"
 					style={{left: "-3px", right: "-3px", top: "-3px", bottom: "-3px"}}/>
 				
@@ -137,7 +147,7 @@ var Cursors = React.createClass ({
 			width: (fixedWidth + floatWidth + geo.labelWidth + RIGHT_FRINGE) + 'px',
 			overflow: 'hidden',
 			zIndex: 6,
-			pointerEvents: 'none',
+			pointerEvents: 'auto',
 		}
 	},
 
@@ -159,13 +169,13 @@ var Cursors = React.createClass ({
 	},
 
 	render: function () {
-		console.log('render cursors')
 		const view = this.props.view
 		const model = this.props.model
 		const focused = this.props.focused
 
 		return <div className = "wrapper overlay"
-				style = {this.getOuterWrapperStyle()} 
+				style = {this.getOuterWrapperStyle()}
+				onMouseDown = {this.props._handleClick}
 				onDoubleClick = {this.props._handleEdit}
 				onContextMenu = {this.props._handleContextMenu}
 				onWheel = {this.props._handleWheel}>

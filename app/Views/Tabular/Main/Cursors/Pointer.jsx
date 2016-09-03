@@ -68,9 +68,8 @@ export default class Pointer extends React.Component {
 		return <Overlay
 				{...this.props}
 				className = "pointer"
-				ref = "pointer"
 				key={`pointer-${position.left}-${position.top}`}
-				fudge = {{width: -1, left: 1, top: 1, height: -1}}
+				fudge={this.props.fudge}
 				position = {position}>
 			{this.getPointerElement()}
 		</Overlay>

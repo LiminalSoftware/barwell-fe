@@ -99,6 +99,8 @@ const TabularPane = React.createClass ({
 		var copyPasteDummy = document.getElementById('copy-paste-dummy')
 		copyPasteDummy.addEventListener('paste', this.pasteSelection)
 		copyPasteDummy.focus();
+
+		this.calibrate()
 		
 		// this.scrollTo(viewconfig.rowOffset || 0);
 	},
@@ -122,7 +124,9 @@ const TabularPane = React.createClass ({
 			this.state.contextSubject !== nextState.contextSubject || 
 			state.copyarea !== nextState.copyarea ||
 			state.contextOpen !== nextState.contextOpen ||
-			state.hiddenColWidth !== nextState.hiddenColWidth;
+			state.hiddenColWidth !== nextState.hiddenColWidth ||
+			state.clientWidth !== nextState.clientWidth || 
+			state.clientHeight !== nextState.clientHeight
 	},
 
 	_onStoreChange: function () {
@@ -216,9 +220,10 @@ const TabularPane = React.createClass ({
 
 	editCell: function (clobber) {
 		var pos = this.state.pointer
-		var field = this.refs.cursors.refs.pointerCell
-
-		if (field.handleEdit) {
+		const refPath = ['cursors','pointer','pointerCell']
+		const field = refPath.reduce((head, ref)=>head ? head.refs[ref] : null, this)
+		
+		if (field && field.handleEdit) {
 			this.clearCopy()
 			this.setState({editing: true})
 			field.handleEdit(clobber)
@@ -375,6 +380,14 @@ const TabularPane = React.createClass ({
 			data.push(dataRow);
 		}
 		return data;
+	},
+
+	calibrate: function () {
+		const el = ReactDOM.findDOMNode(this)
+		this.setState({
+			clientWidth: el.clientWidth,
+			clientHeight: el.clientHeight
+		})
 	},
 
 	calculateRhsSpace: function () {
@@ -655,7 +668,7 @@ const TabularPane = React.createClass ({
 		this.setState({rowOffset: rowOffset});
 		
 		if (!this._timer) this._timer = getFrame(this.refreshTable, CYCLE);
-		this._debounceCreateViewconfig({view_id: view.view_id, rowOffset: rowOffset});
+		// this._debounceCreateViewconfig({view_id: view.view_id, rowOffset: rowOffset});
 	},
 
 	updateVerticalOffset: function () {
@@ -775,7 +788,8 @@ const TabularPane = React.createClass ({
 			</div>
 
 			<ScrollBar {...childProps}
-				innerDimension = {(rowCount + 4) * geo.rowHeight + geo.headerHeight}	
+				totalDim = {(rowCount + 4) * geo.rowHeight + geo.headerHeight}	
+				visibleDim = {this.state.clientHeight}
 				rowCount = {rowCount}
 				offset = {geo.headerHeight}
 				ref = "verticalScrollBar"
@@ -783,7 +797,8 @@ const TabularPane = React.createClass ({
 				_setScrollOffset = {this.setVerticalScrollOffset}/>
 			
 			<ScrollBar {...childProps}
-				innerDimension = {view.data._floatWidth + view.data._fixedWidth + geo.labelWidth + 200}
+				totalDim = {view.data._floatWidth + view.data._fixedWidth + geo.labelWidth + 200}
+				visibleDim = {this.state.clientWidth}
 				rowCount = {rowCount}
 				offset = {0}
 				ref = "horizontalScrollBar"

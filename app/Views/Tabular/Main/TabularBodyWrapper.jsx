@@ -184,8 +184,8 @@ var TabularBodyWrapper = React.createClass ({
 					left: 0,
 					top: 0,
 					bottom: 0,
-					height: (rowCount + 2)  * geo.rowHeight + geo.headerHeight,
-					width: (fixedWidth + geo.labelWidth + 1) + 'px'
+					height: "100%",
+					width: (fixedWidth + geo.labelWidth + 1)
 				}}>
 
 
@@ -195,19 +195,22 @@ var TabularBodyWrapper = React.createClass ({
 				style = {{
 					top: geo.headerHeight + 'px',
 					overflow: 'hidden',
-					background: constants.colors.GRAY_4
+					background: constants.colors.GRAY_4,
+					borderRight: `1px solid ${constants.colors.RED_BRIGHT_TRANS}`,
+					
+					zIndex: 3
 				}}>
 				<div className = "wrapper lhs-offset-wrapper"
 					ref = "lhsOffsetter"
 					style = {{
 						top: '0',
 						height: (rowCount * rowHeight + 1),
-						borderRight: `1px solid ${constants.colors.RED_BRIGHT_TRANS}`,
-						borderLeft: `1px solid ${constants.colors.TABLE_BORDER}`,
+						
 						marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
-						transform: HAS_3D ? `translate(0, ${marginTop}px)` : null,
+						transform: HAS_3D ? `translate3d(0, ${marginTop}px, 0)` : null,
 						transition: IS_CHROME && HAS_3D ? 'transform 75ms linear' : null,
-						background: 'white'
+						background: 'white',
+						
 					}}>
 
 				<TabularTBody
@@ -244,10 +247,10 @@ var TabularBodyWrapper = React.createClass ({
 				ref = "rhsTableBody"
 				style = {{
 					top: 0,
-					left: (view.data._fixedWidth + geo.labelWidth + 1) + 'px',
+					left: (view.data._fixedWidth + geo.labelWidth) + 'px',
 					height: (rowCount * rowHeight + geo.headerHeight + 1),
 					width:  view.data._floatWidth + geo.colAddWidth + 'px',
-					// transform: IS_CHROME && HAS_3D ? 'translateZ(10px)' : null,
+					transform: IS_CHROME && HAS_3D ? 'translateZ(10px)' : null,
 					background: constants.colors.GRAY_4,
 					overflow: 'hidden'
 				}}>
@@ -277,8 +280,8 @@ var TabularBodyWrapper = React.createClass ({
 							left: 0,
 							right: 0,
 							marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
-							transform: HAS_3D ? `translate(0, ${marginTop}px)` : null,
-							// transformStyle: "preserve-3d",
+							transform: HAS_3D ? `translate3d(0, ${marginTop}px, 0)` : null,
+							transformStyle: "preserve-3d",
 							transition: IS_CHROME && HAS_3D ? 'transform 75ms linear' : null,
 							height: (rowCount * rowHeight),
 							width: (floatWidth + 1),
@@ -301,8 +304,8 @@ var TabularBodyWrapper = React.createClass ({
 					</div>
 					<TableHeader {...this.props}
 						ref = "rhsHead"
-						totalWidth = {floatWidth + 2}
-						leftOffset = {0}
+						totalWidth = {floatWidth + 1}
+						leftOffset = {1}
 						side = "rhs"
 						columns = {view.data._floatCols} />
 				</div>

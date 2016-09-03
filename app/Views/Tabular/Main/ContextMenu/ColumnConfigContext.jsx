@@ -113,14 +113,14 @@ var ColumnConfigContext = React.createClass ({
 				Change view settings
 			</div>
 			<div onClick={this.hideColumn} className = "popdown-item selectable">
-				<span className="icon icon-selectable  icon-eye-crossed"/>
+				<span className="icon icon-green icon-selectable  icon-eye-crossed"/>
 				Hide this column from view
 			</div>
 			
 			
 			<div onClick={this.showDetail.bind(_this, ColumnUnhider)} 
 				className = {`popdown-item ${numVisibleCols === 0 ? "un" : ""}selectable`}>
-				<span className="icon icon-selectable  icon-eye"/>
+				<span className={`icon ${numVisibleCols===0?'icon-gray':'icon-green'} icon-selectable  icon-eye`}/>
 				{numVisibleCols===0 ? "No hidden columns" : "Show hidden columns"}
 				<span className="icon icon-detail-right icon-arrow-right"/>
 			</div>
@@ -128,12 +128,12 @@ var ColumnConfigContext = React.createClass ({
 			{
 			config.fixed ? 
 			<div onClick={this.unpin} className = "popdown-item selectable bottom-divider">
-				<span className="icon icon-selectable  icon-fingers-scroll-horizontal"/>
+				<span className="icon icon-green icon-selectable  icon-fingers-scroll-horizontal"/>
 				Un-pin this column
 			</div>
 			:
 			<div onClick={this.pin} className = "popdown-item selectable bottom-divider">
-				<span className="icon icon-selectable  icon-pushpin2"/>
+				<span className="icon icon-green icon-selectable  icon-pushpin2"/>
 				Pin this column
 			</div>
 			}
@@ -141,7 +141,7 @@ var ColumnConfigContext = React.createClass ({
 			{type.sortable ?
 			<div onClick={this.sort.bind(_this, false)} 
 				className = {`popdown-item ${currentSort==='ascending'?'un':''}selectable`}>
-				<span className={`icon icon-selectable  icon-${type.sortIcon}asc`}/>
+				<span className={`icon icon-green icon-selectable  icon-${type.sortIcon}asc`}/>
 				{currentSort==='ascending' ? "Sorted in ascending order" : "Sort in ascending order"}
 			</div> 
 			: null
@@ -149,7 +149,7 @@ var ColumnConfigContext = React.createClass ({
 			{type.sortable ?
 			<div onClick={this.sort.bind(_this, true)} 
 			className = {`popdown-item bottom-divider ${currentSort==='descending'?'un':''}selectable`}>
-				<span className={`icon icon-selectable  icon-${type.sortIcon}desc`}/>
+				<span className={`icon icon-green icon-selectable  icon-${type.sortIcon}desc`}/>
 				{currentSort==='descending' ? "Sorted in descending order" : "Sort in descending order"}
 			</div>
 			: null
@@ -166,7 +166,7 @@ var ColumnConfigContext = React.createClass ({
 				key={part.partLabel}
 				onClick={this.showDetail.bind(_this, part.element)}>
 
-				<span className={part.getIcon(config) + " icon-selectable"}/>
+				<span className={part.getIcon(config) + " icon-green icon-selectable"}/>
 				{part.partLabel}
 				<span className="icon icon-detail-right icon-arrow-right"/>
 			</div>
@@ -179,27 +179,27 @@ var ColumnConfigContext = React.createClass ({
 			</div>
 
 			<div onClick={this.rename} className = "popdown-item selectable">
-				<span className="icon icon-selectable icon-quote-open"/>
+				<span className="icon icon-purple icon-selectable icon-quote-open"/>
 				Rename
 			</div>
 
 			<div onClick={this.changeType} className = "popdown-item selectable">
-				<span className="icon icon-selectable icon-wrench"/>
+				<span className="icon icon-purple icon-selectable icon-wrench"/>
 				Change attribute type
 				<span className="icon icon-detail-right icon-arrow-right"/>
 			</div>
 			<div onClick={this.makeUniq} className = "popdown-item selectable">
-				<span className="icon icon-selectable icon-snow2"/>
+				<span className="icon icon-purple icon-selectable icon-snow2"/>
 				Make this attribute unique
 			</div>
 			<div onClick={this.showDetail.bind(_this, DefaultValueContext)}
 				className = "popdown-item selectable">
-				<span className="icon icon-selectable icon-stamp"/>
+				<span className="icon icon-purple icon-selectable icon-stamp"/>
 				Set default value for this attribute
 				<span className="icon icon-detail-right icon-arrow-right"/>
 			</div>
 			<div onClick={this.deleteColumn} className = "popdown-item selectable">
-				<span className="icon icon-selectable icon-trash2"/>
+				<span className="icon icon-purple icon-selectable icon-trash2"/>
 				Delete this attribute
 			</div>
 		</div>

@@ -93,7 +93,6 @@ export default class HeaderCell extends Component {
 	 */
 
 	onResizerMouseDown = (e) => {
-		var pos = $(ReactDOM.findDOMNode(this)).offset()
 		this.setState({
 			dragging: true,
 			rel: e.pageX
@@ -217,8 +216,9 @@ export default class HeaderCell extends Component {
 
 	getCellStyle = () => {
 		return {
-			width: this.props.column.width - 2,
-			left: this.props.left
+			width: this.props.column.width,
+			left: this.props.left,
+			background: "white"
 		}
 	}
 
@@ -260,8 +260,8 @@ export default class HeaderCell extends Component {
 			onDoubleClick = {this.handleRename}
 			onMouseEnter = {e => this.setState({mouseover: true})}
 			onMouseLeave = {e => this.setState({mouseover: false})}
-			className = "table-header-cell">
-			<span className = "table-cell-inner header-cell-inner " 
+			className = "table-cell">
+			<span className = "table-cell-inner" 
 			style = {innerStyle}>
 				{/*<span className="type-label">{type.description}</span>*/}
 				{this.state.renaming ?

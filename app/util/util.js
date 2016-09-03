@@ -18,7 +18,7 @@ module.exports.cidNum = function (cid) {
 
 module.exports.makePercent = function (num) {
   return _.isNumber(num) ? 
-    Math.round(num * 1000) / 10 + '%'
+    Math.round(num * 10000) / 100 + '%'
     : num
 }
 

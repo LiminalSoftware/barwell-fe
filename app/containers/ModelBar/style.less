@@ -1,12 +1,16 @@
 @import "../../global.less";
 
 .branding {
-	font-size: 18px;
-	padding: 5px 10px;
+	font-size: 20px;
+	padding: 8px;
+	margin: 0;
+	height: 30px;
 	// color: @lightFontColor;
-	color: @gray1;
+	color: @blue1;
 	font-weight: 400;
-	flex: 1 1;
+	border-bottom: 1px solid @blue1;
+	text-align: center;
+	
 	overflow: hidden;
 }
 
@@ -21,15 +25,13 @@
 	flex: 1 1 ;
 	display: flex;
 	flex-direction: column;
-	// background: @headerMenuBgColor;
-	background: @green1;
-	// background: @green1;
-	border-right: 2px solid white;
+	color: @gray2;
+	border-right: 1px solid @blue1;
 }
 
 
 .mdlbar-tab {
-	.flex-direction(column);
+	flex-direction: column;
 	padding: 0;
 	margin-right: 2px;
 	position: relative;
@@ -44,7 +46,7 @@
 	line-height: 30px;
 	padding: 5px 5px;
 
-	color: @red4;
+	color: @gray2;
 	
 	display: block;
 	text-decoration: none;
@@ -144,7 +146,7 @@
 
 .mdlbar-section {
 	margin-bottom: 20px;
-	border-top: 1px dotted @gray3;
+	// border-top: 1px dotted @gray3;
 }
 
 .mdlbar-adder {
@@ -155,12 +157,13 @@
 	padding: 10px;
 	margin: 10px;
 	margin-right: 15px;
-	color: @lightFontColor;
+	
 	cursor: pointer;
 
-	transition: background ease-in 100ms;
+	transition: all linear 150ms;
 	&:hover {
-		background: @headerBgLight1;
+		border: 1px solid @green1;
+		color: @green1;
 	}
 
 }

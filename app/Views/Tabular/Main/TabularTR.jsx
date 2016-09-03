@@ -1,4 +1,5 @@
 import React from "react"
+import ReactDOM from "react-dom"
 import fieldTypes from "../../fields"
 import _ from "underscore"
 
@@ -13,7 +14,7 @@ class TabularTR extends React.Component {
 		var oldProps = this.props
 		var response =	oldProps.view !== newProps.view ||
 						oldProps.selected !== newProps.selected ||
-						oldProps.row !== newProps.row ||
+						// oldProps.row !== newProps.row ||
 						oldProps.ooo !== newProps.ooo ||
 						!!oldProps.oooFirst !== !!newProps.oooFirst ||
 						!!oldProps.oooLast !== !!newProps.oooLast ||
@@ -23,7 +24,11 @@ class TabularTR extends React.Component {
 	}
 
 	componentWillReceiveProps = (newProps) => {
-
+		const geo = this.props.view.data.geometry
+		if (newProps.row !== this.props.row) {
+			const row = ReactDOM.findDOMNode(this)
+			row.style.top = geo.rowHeight * (newProps.row) + 1 + 'px'
+		}
 	}
 
 	render = () => {
