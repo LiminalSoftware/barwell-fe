@@ -101,8 +101,6 @@ var ModelSection = React.createClass ({
 					<ModelContext {...this.props} 
 						_parent = {this} direction = "left"/>
 
-					<ViewAddContext {...this.props}
-						_parent = {this} direction = "left"/>
 					
 				</span>
 			</div>
@@ -110,6 +108,7 @@ var ModelSection = React.createClass ({
 			{views.map(v => 
 			<ViewLink {..._this.props} key={v.view_id} view={v}/>
 			)}
+			<ViewAddContext {...this.props}/>
 		</div>
 	}
 })

@@ -1,6 +1,17 @@
 var _ = require('underscore')
 var tinycolor = require("tinycolor2")
 
+
+const getFrame = module.exports.getFrame = function (f, cycle) {
+  if (window.requestAnimationFrame) return window.requestAnimationFrame(f)
+  else return window.setTimeout(f, cycle)
+}
+
+const cancelFrame = module.exports.cancelFrame = function (id) {
+  if (window.cancelAnimationFrame) return window.cancelAnimationFrame(id)
+  else return window.clearTimeout(id)
+}
+
 var wait = module.exports.wait = function (duration) {
   return new Promise (function (resolve, reject) {
     window.setTimeout(resolve, duration);

@@ -5,9 +5,10 @@
 	padding: 8px;
 	margin: 0;
 	height: 30px;
-	// color: @lightFontColor;
-	color: @blue1;
+	line-height: 30px;
+	color: @lightFontColor;
 	font-weight: 400;
+	background: @blue1;
 	border-bottom: 1px solid @blue1;
 	text-align: center;
 	
@@ -25,8 +26,9 @@
 	flex: 1 1 ;
 	display: flex;
 	flex-direction: column;
-	color: @gray2;
-	border-right: 1px solid @blue1;
+	color: @table-font-color;
+	background: @view-backing;
+	border-right: 3px solid @cell-border;
 }
 
 
@@ -90,16 +92,15 @@
 }
 
 .view-link--active {
-	// background: @headerBgLight2;
-	// color: @lightFontColor;
 	border-left: 4px solid @gray2;
+
 }
 
 .view-link--focused {
-	// background: @headerBgLight2;
-	// color: @lightFontColor;
+	
+	
 	border-left: 4px solid @blue1;
-	// background: @blue1;
+	color: @table-font-color;
 }
 
 .mdlbar-list {
@@ -134,7 +135,7 @@
 	font-size: inherit;
 	.msInput;
 	-webkit-user-drag: none;
-	background: white;
+	background: @table-fade-bg;
 
 	border-radius: 1px;
 	padding: 2px;

@@ -79,7 +79,7 @@ export default {
 		}
 
 		render () {
-			return <div className = "context-menu" key="color">
+			return <div className = "context-menu" key="color" style={this.props.style}>
 				{this.renderFontStyleMenu()}
 				<div className = "popdown-item selectable top-divider" onClick={this.props.blurSelf}>
 					<span className="icon icon-arrow-left icon-detail-left"/>

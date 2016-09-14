@@ -46,6 +46,10 @@ export default class BooleanElement extends Component {
 		this.setState({value: !this.state.value})
 	}
 
+	setValue = (value) => {
+		this.toggle('keyboard toggle')
+	}
+
 	getStyles = () => {
 		return fieldUtils.getStyles(
 			this.props.stylers,

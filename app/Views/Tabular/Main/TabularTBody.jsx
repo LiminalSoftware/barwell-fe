@@ -15,10 +15,10 @@ import TabularTR from './TabularTR'
 
 var VISIBLE_ROWS = 45
 var MAX_ROWS = 45
-var SLOW_SKIP = 2
+var SLOW_SKIP = 3
 var FAST_SKIP = 3
-var FASTER_SKIP = 2
-var FAST_THRESHOLD = 5
+var FASTER_SKIP = 5
+var FAST_THRESHOLD = 10
 var FASTER_THRESHOLD = 25
 var CYCLE = 25
 var MIN_CYCLE = 15
@@ -42,7 +42,8 @@ var TabularTBody = React.createClass ({
 			length: VISIBLE_ROWS,
 			scrollDirection: 1,
 			speed: 0,
-			rowOffset: 0
+			rowOffset: 0,
+			pages: []
 		}
 	},
 
@@ -119,6 +120,10 @@ var TabularTBody = React.createClass ({
 	},
 
 	// RENDER ================================================================
+
+	preparePage: function (objects, index) {
+
+	},
 
 	prepareRow: function (obj, index, orderProps) {
 		const {store, model, pointer, prefix} = this.props

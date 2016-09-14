@@ -84,7 +84,12 @@ module.exports = {
     GRAY_3: '#CBC3B7',
     GRAY_4: '#FAFAF4',
 
-    TABLE_BORDER: '#ebe8e3',
+    TABLE_BORDER: '#CBC3B7', //'#ebe8e3',
+    TABLE_BACKING: '#FFFFFF',
+    VIEW_BACKING: '#F5F5F2',
+    TABLE_FONT_COLOR: '#333333',
+    TABLE_EDGE: '#079538', //'#524A50',
+    TABLE_SHADOW: 'rgba(160,65,191,0.2)',
 
     PURPLE_1: '#54365E',
     PURPLE_2: '#7F5E8A',
@@ -273,6 +278,10 @@ module.exports = {
     TAB: 9,
     PLUS: 187,
     MINUS: 189
+  },
+
+  currencySymbols: {
+
   },
 
   calcFunctions: {

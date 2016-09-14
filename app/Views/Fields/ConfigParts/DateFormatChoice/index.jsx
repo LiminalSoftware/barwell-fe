@@ -69,7 +69,7 @@ export default {
 			const config = this.props.config
 			const key = "attr-" + config.id
 
-			return <div className = "column-context-menu">
+			return <div className = "column-context-menu" style={this.props.style}>
 				<div className = "popdown-item title bottom-divider">
 	              Date Format
 	        	</div>

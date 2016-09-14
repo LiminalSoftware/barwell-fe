@@ -167,11 +167,11 @@ var TabularBodyWrapper = React.createClass ({
 			return <div><div className="loader"/></div>
 
 		return <div
-			className = "wrapper overlay"
+			className = "wrapper"
 			ref="tbodyWrapper"
 			style = {{
 				left: 0,
-				width: (adjustedWidth + geo.colAddWidth + 2) + 'px',
+				right: 0,
 				top: 0,
 				bottom: 0,
 				overflow: 'hidden'
@@ -185,7 +185,8 @@ var TabularBodyWrapper = React.createClass ({
 					top: 0,
 					bottom: 0,
 					height: "100%",
-					width: (fixedWidth + geo.labelWidth + 1)
+					width: (fixedWidth + geo.labelWidth + 1),
+
 				}}>
 
 
@@ -195,10 +196,10 @@ var TabularBodyWrapper = React.createClass ({
 				style = {{
 					top: geo.headerHeight + 'px',
 					overflow: 'hidden',
-					background: constants.colors.GRAY_4,
-					borderRight: `1px solid ${constants.colors.RED_BRIGHT_TRANS}`,
-					
-					zIndex: 3
+					background: constants.colors.VIEW_BACKING,
+					borderRight: `1px solid ${constants.colors.TABLE_EDGE}`,
+					zIndex: 3,
+					boxShadow:`0 0 0 3px ${constants.colors.TABLE_SHADOW}`,
 				}}>
 				<div className = "wrapper lhs-offset-wrapper"
 					ref = "lhsOffsetter"
@@ -209,8 +210,10 @@ var TabularBodyWrapper = React.createClass ({
 						marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
 						transform: HAS_3D ? `translate3d(0, ${marginTop}px, 0)` : null,
 						transition: IS_CHROME && HAS_3D ? 'transform 75ms linear' : null,
-						background: 'white',
-						
+						background: constants.colors.TABLE_BACKING,
+						overflow: "hidden",
+						borderBottom: `1px solid ${constants.colors.TABLE_BORDER}`,
+						zIndex: 0
 					}}>
 
 				<TabularTBody
@@ -231,7 +234,7 @@ var TabularBodyWrapper = React.createClass ({
 			{/*LHS HEADER*/}
 			<TableHeader {...this.props}
 				ref = "lhsHead"
-				totalWidth = {fixedWidth +  geo.labelWidth + 2}
+				totalWidth = {fixedWidth +  geo.labelWidth + 1}
 				leftOffset = {0}
 				side = {'lhs'}
 				hasRowLabel = {true}
@@ -249,9 +252,9 @@ var TabularBodyWrapper = React.createClass ({
 					top: 0,
 					left: (view.data._fixedWidth + geo.labelWidth) + 'px',
 					height: (rowCount * rowHeight + geo.headerHeight + 1),
-					width:  view.data._floatWidth + geo.colAddWidth + 'px',
+					right: 0,
 					transform: IS_CHROME && HAS_3D ? 'translateZ(10px)' : null,
-					background: constants.colors.GRAY_4,
+					background: constants.colors.VIEW_BACKING,
 					overflow: 'hidden'
 				}}>
 				<div className = "rhs-h-scroll wrapper"
@@ -263,16 +266,6 @@ var TabularBodyWrapper = React.createClass ({
 					}}>
 
 					{/*RHS TABLE BODY WRAPPER*/}
-					{/*<div className = "wrapper"
-						style = {{
-							left: 0,
-							top: geo.headerHeight,
-							width: (floatWidth + 1),
-							height: (rowCount * rowHeight - marginTop),
-							transform: HAS_3D ? 'translateZ(10px)' : null,
-							background: 'white',
-							overflow: 'hidden'
-						}}>*/}
 					<div className = "wrapper"
 						ref = "rhsOffsetter"
 						style = {{
@@ -283,10 +276,12 @@ var TabularBodyWrapper = React.createClass ({
 							transform: HAS_3D ? `translate3d(0, ${marginTop}px, 0)` : null,
 							transformStyle: "preserve-3d",
 							transition: IS_CHROME && HAS_3D ? 'transform 75ms linear' : null,
-							height: (rowCount * rowHeight),
+							height: (rowCount * rowHeight + 1),
 							width: (floatWidth + 1),
-							background: 'white',
-							borderRight: `1px solid ${constants.colors.TABLE_BORDER}`
+							background: constants.colors.TABLE_BACKING,
+							borderRight: `1px solid ${constants.colors.TABLE_BORDER}`,
+							overflow: "hidden",
+							borderBottom: `1px solid ${constants.colors.TABLE_BORDER}`,
 						}}>
 						<TabularTBody
 							{...this.props}
@@ -298,14 +293,13 @@ var TabularBodyWrapper = React.createClass ({
 							offsetCols = {view.data._fixedCols.length}
 							fetchStart = {fetchStart}
 							fetchEnd = {fetchEnd}
-							width={view.data._floatWidth + 1} />
+							width={view.data._floatWidth} />
 					
 
 					</div>
 					<TableHeader {...this.props}
 						ref = "rhsHead"
-						totalWidth = {floatWidth + 1}
-						leftOffset = {1}
+						leftOffset = {0}
 						side = "rhs"
 						columns = {view.data._floatCols} />
 				</div>

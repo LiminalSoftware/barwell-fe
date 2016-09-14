@@ -73,6 +73,7 @@ export default class GenericTextElement extends Component {
 
 	componentDidUpdate = (prevProps, prevState)  => {
 		if (this.state.editing && !prevState.editing) {
+			console.log('move cursor to front')
 			var val = this.refs.input.value
 			this.refs.input.value = ''
 			this.refs.input.value = val
@@ -166,6 +167,7 @@ export default class GenericTextElement extends Component {
 				value = {this.state.value}
 				autoFocus = {!this.props.noAutoFocus}
 				onClick = {util.clickTrap}
+				onMouseDown = {util.clickTrap}
 				onChange = {this.handleChange} />
 			:
 			<span style={this.getStyles()} 

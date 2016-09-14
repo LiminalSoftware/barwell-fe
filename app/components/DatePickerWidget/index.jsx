@@ -7,7 +7,7 @@ import util from "../../util/util"
 
 const calculateState = function (props) {
 	var val = props.value ? moment(props.value) : moment();
-	var config = props.config
+	var config = props.config || {}
 	return {
 		year: val.year(),
 		month: val.month(),

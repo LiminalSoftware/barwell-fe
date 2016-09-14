@@ -8,7 +8,13 @@
 @gray3: #CBC3B7;
 @gray4: #FAFAF4;
 
-@cellBorder: lighten(@gray3, 15%);
+@cell-border: lighten(@gray3, 15%);
+@selection-color: fadeout(desaturate(@gray3,40%),80%);
+@table-fade-bg: white;
+@table-backing: white;
+@view-backing: #F5F5F2;
+@table-border: #CBC3B7;
+@table-font-color: #333;
 
 @purple1: #54365E;
 @purple2: #7F5E8A;
@@ -53,17 +59,15 @@
 @bluegray-2: #504854;
 
 .shadowed-menu {
+  border-width: 1px;
   border-top-width: 1px;
   border-left-width: 1px;
-  border-bottom-width: 3px;
-  border-right-width: 3px;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
   border-style: solid;
-  
-  border-radius: 3px;
-  border-top-right-radius: 4px;
-  border-bottom-left-radius: 4px;
 
-  box-shadow: 0 0 0 2px white;
+  // box-shadow: 0 1px 3px 1px #DDD;
+  box-shadow: 0 0 0 3px #FFF;
 }
 
 

@@ -65,6 +65,7 @@ var modelActions = {
 
 	selectRecord: function (view, id) {
 		var message = {
+			view_id: view.view_id,
 			model_id: view.model_id,
 			actionType: 'RECORD_TOGGLESELECT',
 			id: id
@@ -74,6 +75,7 @@ var modelActions = {
 
 	unselectRecords: function (view) {
 		var message = {
+			view_id: view.view_id,
 			model_id: view.model_id,
 			actionType: 'UNSELECT'
 		}

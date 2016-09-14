@@ -54,7 +54,7 @@ export default class ColumnUnhider extends Component {
 		const _this = this
 		const view = this.props.view
 
-		return <div className="column-context-menu">
+		return <div className="column-context-menu" style={this.props.style}>
 			<div className="popdown-item bottom-divider">
 				<span className="title">Unhide columns </span> 
 				<span> (shift to select multiple)</span>

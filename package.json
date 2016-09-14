@@ -48,6 +48,7 @@
     "less-loader": "^2.0.0",
     "moment": "^2.10.3",
     "null-loader": "^0.1.0",
+    "numbro": "^1.9.3",
     "numeral": "^1.5.3",
     "object-assign": "*",
     "papaparse": "git+https://github.com/mholt/PapaParse.git",

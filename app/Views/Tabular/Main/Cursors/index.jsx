@@ -5,6 +5,9 @@ import modelActionCreators from "../../../../actions/modelActionCreators"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
+
+import style from "./style.less"
+
 import constants from "../../../../constants/MetasheetConstants"
 
 import Overlay from '../Overlay'
@@ -62,14 +65,10 @@ var Cursors = React.createClass ({
 		this.setState({contextPos: {x: x, y: y}})
 	},
 
-	renderCursor: function () {
-		const {view, model, columnOffset} = this.props
-		const focused = true
-
+	renderOverlays: function () {
+		const {view, model, columnOffset, focused, pointer: ptr, 
+			selection: sel, copyarea: cpy} = this.props
 		
-		const ptr = this.props.pointer
-		const sel = this.props.selection
-		const cpy = this.props.copyarea
 		const showJaggedEdge = ((sel.right >= view.data._fixedCols.length)
 			&& (sel.left < view.data._fixedCols.length + columnOffset) && (columnOffset > 0));
 
@@ -85,7 +84,7 @@ var Cursors = React.createClass ({
 		const hideCursor = (rowsSelected || rowCount === 0);
 
 		if (hideCursor) return null
-		return [
+		return (!focused ? [] : [
 
 			<Pointer {...this.props} 
 				position={this.state.pointer}
@@ -98,7 +97,7 @@ var Cursors = React.createClass ({
 				ref="selectionOuter"
 				key="selectionOuter"
 				position = {sel}
-				fudge = {{left: -4, top: -3.25, height: 7.5, width: 6.75}}>
+				fudge = {{left: -4, top: -3.25, height: 7.5, width: 7}}>
 				<div className = "selection-border selection-border"
 					style={{left: "-3px", right: "-3px", top: "-3px", bottom: "-3px"}}/>
 				
@@ -111,7 +110,7 @@ var Cursors = React.createClass ({
 				ref = "copyarea"
 				key="copyare"
 				position = {cpy}
-				fudge = {{left: 0.25, top: 0.25, height: 1, width: 1}}/>,
+				fudge = {{left: -1, top: 0.25, height: 1, width: 1}}/>,
 
 			showJaggedEdge ? <Overlay
 				{...this.props}
@@ -129,7 +128,21 @@ var Cursors = React.createClass ({
 					left: (sel.right < view.data._fixedCols.length + columnOffset) ? -3 : -4, 
 					width: 10, top: 0, height: 1}} />
 			: null
-		]
+		]).concat(view.data.sorting.map(s => {
+			const column = view.data.columns[s.attribute]
+			const left = view.data._visibleCols.indexOf(column)
+			return <Overlay
+				{...this.props}
+				key={"sort-" + (s.attribute)}
+				className = {`sort-${s.descending ? 'desc': 'asc'}-overlay`}
+				fudge = {{left: -1, width: 1, height: 1}}
+				position = {{
+					left: left,
+					right: left,
+					top: 0,
+					bottom: rowCount - 1
+				}}/>
+		}))
 	},
 
 	getOuterWrapperStyle: function () {
@@ -171,7 +184,6 @@ var Cursors = React.createClass ({
 	render: function () {
 		const view = this.props.view
 		const model = this.props.model
-		const focused = this.props.focused
 
 		return <div className = "wrapper overlay"
 				style = {this.getOuterWrapperStyle()}
@@ -183,11 +195,9 @@ var Cursors = React.createClass ({
 				<div className = "wrapper force-layer"
 					ref = "overlayInner"
 					style = {this.getInnerWrapperStyle()}>
-					{
-					!focused ? 
-						null : 
-						this.renderCursor()
-					}
+					
+					{this.renderOverlays()}
+					
 				</div>
 			</div>
 	}

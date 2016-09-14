@@ -17,8 +17,6 @@ import modelActionCreators from "../../actions/modelActionCreators"
 
 var ViewAddContext = React.createClass ({
 
-	mixins: [blurOnClickMixin, popdownClickmodMixin],
-
 	getInitialState: function () {
 		return {}
 	},
@@ -28,41 +26,42 @@ var ViewAddContext = React.createClass ({
 	},
 
 	createNewView: function (type) {
-		console.log('create new view: ' + type)
 		const model = this.props.model
-		var iterator = 1
 		const nameRoot = model.model + ' ' + type
-		var name = nameRoot
+		let iterator = 1
+		let name = nameRoot
 
-		while (ViewStore.query({model_id: model.model_id, view: name}).length > 0) {
-			name = nameRoot + ' ' + iterator++
-		}
+		while (ViewStore.query({model_id: model.model_id, view: name}).length > 0)
+			name = `${nameRoot} ${iterator++}`
 
 		modelActionCreators.createView({
 			view: name,
 			type: type,
-			model_id: model.model_id
+			model: model.cid || model.model_id
 		}, true)
 
 		this.handleBlur()
 	},
 
-	renderMenu: function () {
+	render: function () {
 		const model = this.props.model
 		const _this = this
 
-		return <div className = "popdown-section">
-			<div className="popdown-item header bottom-divider title">
-				Choose type for new view:
-			</div>
-			{_.map(viewTypes, (type, typeKey) =>
-        	<div className = "selectable popdown-item" key = {typeKey}
-        		onClick = {_this.createNewView.bind(_this, typeKey)}>
-            	<span className = {"icon " + type.icon}/>
-            	{type.type}
-            </div>
-	        )}
+		return <div className="view-link">
+			<span className="icon icon-plus">Add additional view</span>
+			{
+			this.state.open ? <div className = "popdown">
+				{_.map(viewTypes, (type, typeKey) =>
+	        	<div className = "selectable popdown-item" key = {typeKey}
+	        		onClick = {_this.createNewView.bind(_this, typeKey)}>
+	            	<span className = {"icon " + type.icon}/>
+	            	{type.type}
+	            </div>
+		        )}
+			</div> : null
+			}
 		</div>
+
 	}
 })
 

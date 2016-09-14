@@ -57,7 +57,7 @@ export default class Pointer extends React.Component {
 				right: '0px',
 				border: 'none',
 				lineHeight: geo.rowHeight + 'px',
-				background: 'white'
+				background: constants.colors.TABLE_BACKING
 			}
 		})
 	}

@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react'
+ import update from 'react/lib/update'
 import _ from "underscore"
 
 import modelActionCreators from "../../../../actions/modelActionCreators"
@@ -9,17 +10,30 @@ import commitColumnConfig from "../commitColumnConfig"
 import displayStyles from "./displayStyles"
 
 const parseFormatString = function (string) {
-	var regex = /^([$€¥£])?\d(,\d)?([.,]\d+)?(%)?$/;
-	var str, prefix, commaClause, decimalDigits, suffix;
-	var hits = regex.exec(string)
-	var format = {}
+	const regex = /^([$€¥£])?(\s*)([\(])?\d(([,.'])?\d)?(([.,]|\[[.,]\])?(\d*))?(\))?(a)?(\))?([$€¥£%])?$/;
+	let str, prefix, space, leftParen, commaClause, thousandMark, decimalClause, decimalMark, decimalDigits, rightParen, abbr, rightParen2, suffix;
+	const hits = regex.exec(string)
+	let format = {}
 
 	if (hits) {
-		[str, prefix, commaClause, decimalDigits, suffix] = hits;
-		format.numDigits = decimalDigits ? (decimalDigits.length - 1) : 0;
-		format.hasCommas = (commaClause === undefined)
+		[str, prefix, space, leftParen, commaClause, thousandMark, decimalClause, decimalMark, decimalDigits, rightParen, abbr, rightParen2, suffix] = hits;
+		format.prefix = prefix
+		
+		format.optionalDecimal = decimalMark && decimalMark.slice(0,1) === '['
+		format.decimalMark = format.optionalDecimal ? decimalMark.slice(1,2) : decimalMark
+
+		format.numDigits = (decimalDigits || '').length
+		format.thousandMark = thousandMark
+		format.hasParens = (!!leftParen && (!!rightParen || !!rightParen2))
+		format.space = space
+		
+		format.suffix = suffix
+		format.abbreviated = abbr !== undefined
+
+		console.log(format)
+
 		if (prefix !== undefined && suffix === undefined) {
-			format.type = 'CURRENCY';
+			format.type = format.hasParens ? 'ACCOUNTING' : 'CURRENCY';
 			format.currencySymbol = prefix;
 		} else if (suffix === '%' && prefix === undefined) {
 			format.type = 'PERCENTAGE';
@@ -34,14 +48,11 @@ const parseFormatString = function (string) {
 	return format;
 }
 
-const makeFormatString = function ({prefix, commaClause, decimalDigits, suffix}) {
-	let formatString = '';
-	if (prefix) formatString += prefix
-	formatString += '0'
-	if (commaClause) formatString += commaClause
-	if (decimalDigits) formatString += decimalDigits
-	if (suffix) formatString += suffix
-	return formatString
+const makeFormatString = function ({prefix, thousandMark, hasParens, space, numDigits, decimalMark, suffix, abbreviated}) {
+	
+	let str = `${prefix || ''}${space || ''}${hasParens ? '(' : ''}0${thousandMark ? (thousandMark + '0') : ''}${decimalMark || ''}${numDigits ? Array(numDigits + 1).join('0') : ''}${suffix || ''}${hasParens ? ')' : ''}${abbreviated ? 'a' : ''}`
+	console.log(str)
+	return str
 }
 
 export default {
@@ -51,8 +62,7 @@ export default {
 	partLabel: "Numeric format",
 
 	getIcon: function (config) {
-		var formatAttr = parseFormatString(config.formatString)
-		var displayObj = displayStyles[formatAttr.type]
+		var displayObj = displayStyles[config.numericFormatType]
 		return ` icon ${displayObj ? displayObj.icon : "icon-icons2"}`;
 	},
 
@@ -61,21 +71,39 @@ export default {
 			super(props)
 			const config = props.config
 			const formatAttr = parseFormatString(config.format)
+
+			this._debounceUpdateFormat = _.debounce(this.updateFormat, 1000)
 			
 			this.state = Object.assign({
 				formatString: config.formatString,
+				formatAttr: formatAttr,
 				custom: formatAttr.type === 'CUSTOM'
 			}, formatAttr)
 		}
 
-		handleFormatChange = (e) => {
-			var value = e.target.value
-			this.setState({formatString: value})
+		componentWillUnmount = () => {
+			this.handleBlur()
 		}
 
-		onBlur = (e) => {
+		handleFormatChange = (e) => {
+			const value = e.target.value
+			const attr = parseFormatString(value)
+			this.setState({
+				formatString: value,
+				formatAttr: attr ? attr : this.state.formatAttr
+			})
+			
+		}
+
+		updateFormat = (formatString) => {
+			const formatAttr = parseFormatString(formatString)
+			this.setState({formatAttr: formatAttr})
+		}
+
+		handleBlur = () => {
 			const patch = {
-				formatString: this.state.formatString
+				formatString: this.state.formatString,
+				numericFormatType: this.state.formatAttr.type
 			}
 			commitColumnConfig(
 				this.props.view, 
@@ -87,7 +115,32 @@ export default {
 			this.setState({custom: true})
 		}
 
-		chooseFormat = (format, e) => {
+		setFormat = (formatString) => {
+			commitColumnConfig(
+				this.props.view, 
+				this.props.config.column_id, 
+				{formatString: formatString})
+
+			this.setState({
+				formatString: format.formatString,
+				formatAttr: parseFormatString(format.formatString)
+			})
+		}
+
+		setFormatAttr = (attr, value) =>  {
+			const config = this.props.config
+			const format = config.displayStyle
+			let formatAttr = update(this.state.formatAttr, {
+				[attr]: {$set: value}
+			})
+
+			this.setState({
+				formatString: makeFormatString(formatAttr),
+				formatAttr: formatAttr
+			})
+		}
+
+		choosePreset = (format, e) => {
 			commitColumnConfig(
 				this.props.view, 
 				this.props.config.column_id, 
@@ -99,18 +152,10 @@ export default {
 			})
 		}
 
-		setDecimalPlaces = (length) => {
-			const format = parseFormatString(this.state.formatString);
-			let decimalDigits = format.decimalDigits.slice(0,1);
-			for (var i = 0; i < length; i++) decimalDigits += '0';
-			format.decimalDigits = decimalDigits;
-		}
-
 		getPresetsMenu = () => {
 			var _this = this
 			var config = this.props.config
 			var format = config.displayStyle
-			var formatAttr = parseFormatString(config.formatString)
 
 			return <div key = "presets">
 				<div className="popdown-item title bottom-divider">
@@ -122,10 +167,10 @@ export default {
 						key = {ds.displayStyle} 
 						className = "popdown-item selectable " 
 						
-						onClick = {_this.chooseFormat.bind(_this, ds)}>
+						onClick = {_this.choosePreset.bind(_this, ds)}>
 
 						<span className = 
-						{`icon ${ds.icon} ${(formatAttr.type===k?'icon-hilite':'icon-selectable')}`}/>
+						{`icon ${ds.icon} ${(config.numericFormatType===k?'icon-hilite':'icon-selectable')}`}/>
 						{ds.description}
 					</div>
 				})
@@ -133,24 +178,26 @@ export default {
 
 				<div key="format-header" className = "popdown-item  top-divider "
 					onClick = {this.handleChooseCustom}>
-					
 					<span className = 
 					{`icon icon-code ${this.state.custom?'icon-hilite':'icon-selectable'}`}/>
-					Custom:
-					{
-						this.state.custom ?
-							<input
-								type = "text"
-								style = {{textAlign: 'center', width: '120px'}}
-								className = "popdown-item menu-input text-input" 
-								value = {this.state.formatString}
-								onBlur = {this.onBlur}
-								onChange = {_this.handleFormatChange}/> 
-							: null
-						}
+					Custom
 				</div>
+				
+				{
+				this.state.custom ?
+				<div className = "popdown-item">
+					<input
+						type = "text"
+						style = {{textAlign: 'center', width: '120px'}}
+						className = "menu-input text-input flush" 
+						value = {this.state.formatString}
+						onBlur = {this.handleBlur}
+						onChange = {_this.handleFormatChange}/> 
+				</div>
+				: null}
 			</div>
 		}
+
 
 		getCustomMenu = () => {
 			var _this = this
@@ -160,37 +207,62 @@ export default {
 
 			
 			return <div className = "popdown-section" key="custom">
-				<li className="popdown-item title bottom-divider">
+				<li className="popdown-item title bottom-divider top-divider">
 					Customize
 				</li>
-				<li className  = "popdown-item">
-					<span className = "clicklabel">Decimal places:</span>
-					<span className = "clickbox icon icon-arrow-left"/>
-					<span className = "clickbox">{formatAttr.numDigits}</span>
-					<span className = "clickbox icon icon-arrow-right"/>
+				<li className  = "popdown-item popdown-item-flush bottom-divider">
+					<span className = "clicklabel" style={{minWidth: 150}}>
+						Decimal places:
+					</span>
+					<span className = "clickbox icon icon-arrow-left"
+						onClick={this.setFormatAttr.bind(this, 'numDigits', Math.max(formatAttr.numDigits - 1, 0))}/>
+					<span className = "clickbox">
+						{formatAttr.numDigits}
+					</span>
+					<span className = "clickbox icon icon-arrow-right"
+						onClick={this.setFormatAttr.bind(this, 'numDigits', formatAttr.numDigits + 1)}/>
 				</li>
-				<li className  = "popdown-item">
-					<span className = "clicklabel">Thousands separator:</span> 
-					<span className={"clickbox " + (formatAttr.commaClause === undefined ? " clickbox-active " : "")}>none</span>
-					<span className={"clickbox bold"  + (/[,]\d/.test(formatAttr.commaClause) ? " clickbox-active " : "")}>,</span>
-					<span className={"clickbox bold"  + (/[.]\d/.test(formatAttr.commaClause) ? " clickbox-active " : "")}>.</span>
+				
+
+				<li className  = "popdown-item popdown-item-flush bottom-divider">
+					<span className = "clicklabel" style={{minWidth: 150}}>Thousand separator:</span> 
+					<span className={"clickbox commabold "  + 
+						(formatAttr.thousandMark === ',' ? " clickbox-active " : "")}
+						onClick={this.setFormatAttr.bind(this, 'thousandMark', ',')}>
+						,
+					</span>
+					<span className={"clickbox commabold "  + 
+						(formatAttr.thousandMark === '.' ? " clickbox-active " : "")}
+						onClick={this.setFormatAttr.bind(this, 'thousandMark', '.')}>
+						.
+					</span>
+					<span className={"clickbox " + (!formatAttr.thousandMark ? " clickbox-active " : "")}
+						onClick={this.setFormatAttr.bind(this, 'thousandMark', '')}>
+						none
+					</span>
 				</li>
-				<li className  = "popdown-item">
-					<span className = "clicklabel">Decimal mark:</span>
-					<span className = "clickbox icon icon-arrow-left"/>
-					<span className = "clickbox"></span>
-					<span className = "clickbox icon icon-arrow-right"/>
+
+				<li className  = "popdown-item popdown-item-flush ">
+					<span className = "clicklabel" style={{minWidth: 150}}>Decimal mark:</span>
+					<span className={"clickbox commabold "  + 
+						(formatAttr.decimalMark === ',' ? " clickbox-active " : "")}
+						onClick={this.setFormatAttr.bind(this, 'decimalMark', ',')}>,</span>
+					<span className={"clickbox commabold "  + 
+						(formatAttr.decimalMark === '.' ? " clickbox-active " : "")}
+						onClick={this.setFormatAttr.bind(this, 'decimalMark', '.')}>.</span>
 				</li>
 			</div>
 		}
 
 		render = () => {
-			return <div className="column-context-menu">
+			return <div className="column-context-menu" style={this.props.style}>
 				{
 				this.getPresetsMenu()
 				}
 				{
+				this.state.custom ?
 				this.getCustomMenu()
+				: null
 				}
 				<div className = "popdown-item selectable top-divider" onClick={this.props.blurSelf}>
 					<span className="icon icon-arrow-left icon-detail-left"/>

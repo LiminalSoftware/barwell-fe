@@ -101,11 +101,10 @@ var ColumnConfigContext = React.createClass ({
 			null : sorting[0].descending ? 'descending' : 'ascending'
 
 		const _this = this
+		
 		const innerStyle = {
-			top: 0, left: 0,
-			width: "350px",
-			borderTopLeftRadius: 0,
-			borderTopRightRadius: 0
+			top: 0, left: 15,
+			width: "350px"
 		}
 
 		return <div className="column-context-menu slide-invert" style={innerStyle} key="main-menu">
@@ -179,27 +178,27 @@ var ColumnConfigContext = React.createClass ({
 			</div>
 
 			<div onClick={this.rename} className = "popdown-item selectable">
-				<span className="icon icon-purple icon-selectable icon-quote-open"/>
+				<span className="icon icon-green icon-selectable icon-quote-open"/>
 				Rename
 			</div>
 
 			<div onClick={this.changeType} className = "popdown-item selectable">
-				<span className="icon icon-purple icon-selectable icon-wrench"/>
+				<span className="icon icon-green icon-selectable icon-wrench"/>
 				Change attribute type
 				<span className="icon icon-detail-right icon-arrow-right"/>
 			</div>
 			<div onClick={this.makeUniq} className = "popdown-item selectable">
-				<span className="icon icon-purple icon-selectable icon-snow2"/>
+				<span className="icon icon-green icon-selectable icon-snow2"/>
 				Make this attribute unique
 			</div>
 			<div onClick={this.showDetail.bind(_this, DefaultValueContext)}
 				className = "popdown-item selectable">
-				<span className="icon icon-purple icon-selectable icon-stamp"/>
+				<span className="icon icon-green icon-selectable icon-stamp"/>
 				Set default value for this attribute
 				<span className="icon icon-detail-right icon-arrow-right"/>
 			</div>
 			<div onClick={this.deleteColumn} className = "popdown-item selectable">
-				<span className="icon icon-purple icon-selectable icon-trash2"/>
+				<span className="icon icon-green icon-selectable icon-trash2"/>
 				Delete this attribute
 			</div>
 		</div>
@@ -210,14 +209,22 @@ var ColumnConfigContext = React.createClass ({
 		const config = this.props.config
 		let style = Object.assign({}, 
 			this.props._getRangeStyle(this.props.rc), {
-				height: "0",
-				marginLeft: 0,
+				bottom: 0,
+				marginLeft: -16,
+				marginRight: -5,
+				marginBottom: -5,
 				top: view.data.geometry.headerHeight + 'px',
+				height: 'auto',
 				position: "absolute",
-				minWidth: "350px",
-				overflow: "visible",
+				minWidth: "380px",
+				overflow: "hidden",
 				pointerEvents: "auto"
 		})
+
+		const innerStyle = {
+			top: 0, left: 15,
+			width: "350px"
+		}
 
 		return <ReactCSSTransitionGroup
 			key = {config.column_id}
@@ -227,16 +234,16 @@ var ColumnConfigContext = React.createClass ({
 				React.createElement(this.state.detailElement,
 					update(this.props, {$merge: {
 						ref: "detailElement",
+						style: innerStyle,
 						blurSelf: this.blurMode, 
 						blurMenu: this.blurMenu}}) )
 				: this.renderMainMenu()
 			}
 			<div style={{
 				position: "absolute", 
-				top: 0, left: 0, height: 2, 
-				marginTop: "-1px",
+				top: -4, left: 15, minHeight: 5, 
 				background: "white",
-				zIndex: 51,
+				zIndex: 101,
 				borderLeft: `1px solid ${constants.colors.GRAY_3}`,
 				borderRight: `1px solid ${constants.colors.GRAY_3}`,
 				width: config.width - 1}}/>

@@ -8,9 +8,11 @@
 	left: 0;
 	right: 1px;
 	overflow: visible;
-	border-bottom: 1px solid @cellBorder; 	
+	border-bottom: 1px solid @cell-border; 	
 	transition: all linear 150ms;
+	background: @table-backing;
 }
+
 
 .table-row-label {
 	border-left: 1px solid transparent !important;
@@ -73,13 +75,14 @@
 	cursor: default;
 	display: block;
 	position: absolute;
-	border-left: 1px solid @cellBorder;
+	border-left: 1px solid @cell-border;
 	
 	margin: 0;
 	padding: 0;
 	top: 0;
 	bottom: 0;
 	z-index: 2;
+	color: @table-font-color;
 
 	.border-box;
 	.noselect;
@@ -120,6 +123,7 @@
 	.ellipsis;
 	padding-left: 7px;
 	padding-right: 7px;
+
 }
 
 
@@ -133,6 +137,7 @@
 	font-size: 16px;
 	font-family: @bodyFont;
 	font-weight: 400;
+
 	
 	left: 0;
 	right: 0;
@@ -145,9 +150,10 @@
 .input-editor {
 	pointer-events: auto;
 	z-index: 3;
-	background: white !important;
+	background: @table-fade-bg !important;
 	outline: 0;
 	border: none;
+	user-select: text;
 
 	padding: 0 7px;
 	
@@ -176,7 +182,7 @@
 	background: @gray4;
 	margin-right: 5px;
 	z-index: 4;
-	border: 1px solid white;
+	border: 1px solid @table-fade-bg;
 }
 
 .editor-icon, .sort-th-label-focused {
@@ -222,7 +228,7 @@
 	left: 5px;
 	top: 3px;
 	bottom: 3px;
-	border: 1px solid white;
+	// border: 1px solid white;
 	border-radius: 3px;
 }
 

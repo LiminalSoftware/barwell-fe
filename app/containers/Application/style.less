@@ -1,4 +1,4 @@
-@import "../../global.less";
+@import "../../styles/colors.less";
  	
 #copy-paste-dummy {
 	position: absolute;
@@ -32,7 +32,8 @@ h1, h2, h3, h4, h5 {
 	// background:url(
 	// 	data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEklEQVQIW2P8////f0YQYIACAD4dBAOyWWJYAAAAAElFTkSuQmCC
 	// ) repeat;
-	background: @gray4;
+	background: @view-backing;
+	.noselect;
 }
 
 .model-views {
@@ -45,7 +46,7 @@ h1, h2, h3, h4, h5 {
 	margin: 0;
 	// margin-left: 5px;
 	overflow: visible;
-	border-right: 1px solid @blue1;
+	border-right: 3px solid @cell-border;
 }
 
 .model-pane-header {
@@ -53,7 +54,8 @@ h1, h2, h3, h4, h5 {
 	display: flex;
 	line-height: 30px;
 	max-height: 46px;
-	border-bottom: 1px solid @blue1;
+	border-bottom: 1px solid @table-border;
+	background: white;
 	margin: 0;
 	
 	display: flex;

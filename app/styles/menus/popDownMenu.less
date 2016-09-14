@@ -108,5 +108,45 @@
 .popdown-section {
 	flex: 1;
 	flex-grow: 1;
-	padding: 5px;
+	padding: 0;
+	margin: 0;
+}
+
+.popdown-item-flush {
+	padding: 0 !important;
+	display: flex;
+	flex-direction: row;
+}
+
+.clicklabel {
+	line-height: 24px;
+	padding: 3px 0 !important;
+	padding-left: 15px !important;
+}
+
+.clickbox, .clickbox-right{
+	text-align: center;
+	height: 20px;
+	line-height: 26px;
+	flex: 1 1;
+	max-height: 26px;
+	min-height: 22px;
+	padding: 3px;
+	min-width: 40px;
+	border-left: 1px solid @gray3;
+	display: inline-block;
+	margin: 0;
+
+	&:hover {
+		background: @gray4;
+	}
+}
+
+.clickbox-right {
+	border-right: 1px solid @gray3;
+}
+
+.clickbox-active {
+	background: @green1 !important;
+	color: white;
 }

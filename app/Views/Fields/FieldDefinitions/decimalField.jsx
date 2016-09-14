@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import _ from "underscore"
 
-import numeral from "numeral"
+import numbro from "numbro"
 
 /*
  *	Align styler
@@ -40,7 +40,7 @@ import displayStyles from "../ConfigParts/NumberFormatChoice/displayStyles"
 const stylers = [getAlignStyles, getBackgroundStyles, getFontStyles]
 
 const formatter = function (value, config) {
-	var prettyVal = numeral(value).format(config.formatString);
+	var prettyVal = numbro(value).format(config.formatString);
 	return prettyVal;
 }
 
@@ -48,7 +48,7 @@ const parser = function (input, config) {
 	const format = config.formatString || ''
 	input = String(input).trim()
 	if (format.slice(-1) === '%' && input.slice(-1) !== '%') input = input + '%'; 
-	return numeral().unformat(input)
+	return numbro().unformat(input)
 }
 
 export default {
@@ -81,6 +81,8 @@ export default {
 	},
 
 	parser: parser,
+
+	serializer: _.identity,
 	
 	formatter: formatter,
 	
@@ -100,11 +102,16 @@ export default {
 			this.refs.genericField.handleBlur(commit)
 		}
 
+		getDecorator () {
+			return <span style={{left: 0}}>$</span>
+		}
+
 		render () {
 			return <GenericTextElement {...this.props}
 				ref = "genericField"
+				decorator = {this.getDecorator()}
 				formatter = {formatter}
-				validator = {_.identity}
+				serializer = {_.identity}
 				parser = {parser}
 				stylers = {stylers}/>
 		}

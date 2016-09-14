@@ -1,6 +1,6 @@
 import React from "react"
 import $ from "jquery"
-import styles from "../styles/headers.less"
+import styles from "./style.less"
 
 import _ from 'underscore'
 import fieldTypes from "../../../fields"
@@ -27,14 +27,20 @@ var TableHeader = React.createClass ({
 		const view = this.props.view
 		const model = this.props.model
 		const geo = view.data.geometry
-		var left = (this.props.hasRowLabel ? geo.labelWidth : -1) + this.props.leftOffset
+		var left = (this.props.hasRowLabel ? geo.labelWidth : 0) + this.props.leftOffset
 		
 		const style = {
-			borderRight: this.props.side==='lhs' ? ("1px solid " + constants.colors.RED_BRIGHT_TRANS) : null,
-			marginLeft: this.props.leftOffset + 'px',
+			borderRight:  "1px solid " + (this.props.side==='lhs' ? constants.colors.TABLE_EDGE : constants.colors.TABLE_BORDER),
+			borderBottom: `1px solid ${constants.colors.TABLE_EDGE}`,
 			height: (this.props.height || (geo.headerHeight + 1)) + 'px',
-			width: (this.props.totalWidth ) -1 + 'px',
-			transform: HAS_3D ? 'translateZ(1px)' : ''
+			width: this.props.totalWidth ? (this.props.totalWidth) : null,
+			right: this.props.totalWidth ? null : 0,
+			transform: HAS_3D ? 'translateZ(2px)' : '',
+			boxShadow: this.props.side === 'lhs' ? 
+				`0 2px 0 ${constants.colors.TABLE_SHADOW}` : 
+				`2px 2px 0 ${constants.colors.TABLE_SHADOW}`,
+			zIndex: 5,
+			background: constants.colors.TABLE_BACKING
 		}
 
 		const classes = `tabular-view-header wrapper 
@@ -48,7 +54,7 @@ var TableHeader = React.createClass ({
 			this.props.hasRowLabel ?
 			<span style = {{left: 0, width: geo.labelWidth + 'px', top: 0, bottom: 0}}
 				className = "table-row-label table-cell" >
-				<span className = "table-cell-inner" style = {{background: 'white'}}>
+				<span className = "table-cell-inner">
 				<span style = {{marginLeft: "2px"}} className = "checkbox-surround "></span>
 				</span>
 			</span>
@@ -63,14 +69,11 @@ var TableHeader = React.createClass ({
 				var el = <HeaderCell {..._this.props}
 					key={col.column_id}
 					ref={"head-" + col.column_id}
-					scrollTop={_this.props.scrollTop}
 					column = {col}
 					sorting = {sorting}
-					view = {view}
-					model = {model}
 					idx = {idx}
 					left = {left}
-					width = {col.width - 2}/>;
+					width = {col.width - 1}/>;
 				left += col.width
 				return el
 			})

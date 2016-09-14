@@ -3,7 +3,7 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 
 export default function (view, columnId, patch, safe) {
 	const updated = update(view, {
-		data : {
+		data : {	
 			columns: {
 				[columnId]: {
 					$merge: patch

@@ -11,7 +11,6 @@ export default function getGenericTextHTML (format, stylers, config, obj, pos) {
 		text-align: ${styles.textAlign}; 
 		font-style: ${styles.fontStyle || 'inherit'};
 		background: ${styles.background || 'transparent'}; 
-		color: black; 
 		font-family: ${styles.fontFamily || 'inherit'}; 
 		${pos?`left:${pos.left}px; width: ${pos.width}px;`:''}
 	">

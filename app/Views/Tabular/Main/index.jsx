@@ -2,7 +2,6 @@ import React from "react"
 import update from 'react/lib/update'
 import ReactDOM from "react-dom"
 import { RouteHandler } from "react-router"
-import cursorStyles from "./styles/cursors.less"
 
 import csv from 'csv'
 import _ from 'underscore'
@@ -36,15 +35,6 @@ const THROTTLE_DELAY = 14;
 const MIN_CYCLE = 10;
 const CYCLE = 25;
 
-const getFrame = function (f, cycle) {
-	if (window.requestAnimationFrame) return window.requestAnimationFrame(f)
-	else return window.setTimeout(f, cycle)
-}
-
-const cancelFrame = function (id) {
-	if (window.cancelAnimationFrame) return window.cancelAnimationFrame(id)
-	else return window.clearTimeout(id)
-}
 
 const TabularPane = React.createClass ({
 
@@ -88,7 +78,7 @@ const TabularPane = React.createClass ({
 		document.body.removeEventListener('keydown', this.onKey);
 		copyPasteDummy.removeEventListener('paste', this.pasteSelection);
 		
-		if (this._timer) cancelFrame(this._timer)
+		if (this._timer) util.cancelFrame(this._timer)
 
 		this.store.removeChangeListener(this._onStoreChange);
 		this.store.unregister();
@@ -270,24 +260,34 @@ const TabularPane = React.createClass ({
 	},
 
 	deleteRecords: function () {
-		var ptr = _.clone(this.state.pointer)
-		var sel = _.clone(this.state.selection)
-		var model = this.props.model
+		const {view, model} = this.props
+		const {pointer: ptr, selection: sel} = this.state
 		var records = this.store.getSelectedRecords();
 		var numRows = this.getNumberRows();
+		const top = Math.min(ptr.top, numRows - records.length - 1);
+		const bottom = top
+		
 		this.blurPointer();
 
 		if (records.length === 0) {
-			this.selectRow()
+			this.selectRow(view)
 			records = this.store.getSelectedRecords();
 		}
 
 		modelActionCreators.deleteMultiRecords(model, records);
-		
-		ptr.top = ptr.bottom = Math.min(ptr.top, numRows - records.length - 1);
-		sel.bottom = sel.top = Math.min(sel.top, numRows - records.length );
-		this.setState({copyarea: null, selection: sel, pointer: ptr});
 
+		this.setState({
+			copyarea: null, 
+			selection: update(sel, {
+				top: {$set: top},
+				bottom: {$set: bottom}
+			}), 
+			pointer: update(ptr, {
+				top: {$set: top}
+			})
+		});
+
+		modelActionCreators.unselectRecords(view)
 		this.refreshTable()
 	},
 
@@ -667,7 +667,7 @@ const TabularPane = React.createClass ({
 
 		this.setState({rowOffset: rowOffset});
 		
-		if (!this._timer) this._timer = getFrame(this.refreshTable, CYCLE);
+		if (!this._timer) this._timer = util.getFrame(this.refreshTable, CYCLE);
 		// this._debounceCreateViewconfig({view_id: view.view_id, rowOffset: rowOffset});
 	},
 
@@ -703,7 +703,7 @@ const TabularPane = React.createClass ({
 		
 		
 		if (isUnpainted)
-			this._timer = getFrame(this.refreshTable, CYCLE)
+			this._timer = util.getFrame(this.refreshTable, CYCLE)
 		else 
 			this._timer = null
 

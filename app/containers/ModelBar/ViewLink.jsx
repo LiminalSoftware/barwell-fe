@@ -82,28 +82,29 @@ const ViewLink = React.createClass ({
 
 	handleClick: function (e) {
 		const _this = this
+		const {view, params} = this.props
 
 		e.preventDefault()
-
 
 		if (("which" in e && e.which === 3) || 
   		("button" in e && e.button === 2)) {
 			// right click don't do anything!
 
   		} else if (e.shiftKey && !this.isActive()) {
-			const newViewIds = this.props.params.viewId 
-				+ "," + this.props.view.view_id
+			const newViewIds = this.props.params.viewId
+				+ "," + (view.cid || view_id)
+
 			this.props.history.push(`${this.getRootPath()}/view/${newViewIds}`)
 
 		} else if (e.shiftKey && this.isActive()) {
 			const newViewIds = this.props.activeViews
-				.map(v=>v.view_id)
-				.filter(id => id !== _this.props.view.view_id)
-				.map(id => '' + id)
+				.filter(v => v.view_id !== view.view_id)
+				.map(v => '' + (v.cid || v.view_id))
 				.join(",")
 				
 			this.props.history.push(`${this.getRootPath()}/view/${newViewIds}`)
 		} else {
+
 			this.props.history.push(`${this.getRootPath()}/view/${this.props.view.view_id}`)
 		}
 

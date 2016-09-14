@@ -33,7 +33,7 @@ export default {
 			const _this = this
 			const config = this.props.config
 
-			return <div className="column-context-menu">
+			return <div className="column-context-menu" style={this.props.style}>
 				<div className = "popdown-item bottom-divider title">Text Alignment</div>
 				{
 					['left', 'center', 'right'].map(align =>

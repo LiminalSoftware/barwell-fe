@@ -1,8 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import update from 'react/lib/update'
 import ReactDOM from "react-dom"
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
-import $ from "jquery"
+import constants from "../../../../constants/MetasheetConstants"
 
 import FocusStore from "../../../../stores/FocusStore"
 
@@ -79,13 +80,14 @@ export default class HeaderCell extends Component {
 
 		if (this.state.mouseover && !this.state.open && !this.state.renaming) 
 			return <span onClick = {this.props._handleContextMenu} 
-			style={{marginTop: "6px", marginRight: "-2px"}}
-			className={`sort-th-label-focused icon icon--small icon-chevron-down`}/>
+			key="menu-icon"
+			style = {{marginTop: 8, marginRight: 2, marginLeft: 6}}
+			className={`flush clickable icon icon--small icon-chevron-down`}/>
 
 		else if (this.props.sorting && !this.state.open && !this.state.renaming)
 			return <span onClick={this.switch}
-			className={`sort-th-label-focused 
-			icon icon-${type.sortIcon}${sortDir}`}/>
+			key="sort-icon"
+			className={`sort-th-label-focused flush icon icon-${type.sortIcon}${sortDir}`}/>
 	}
 
 	/*
@@ -216,9 +218,14 @@ export default class HeaderCell extends Component {
 
 	getCellStyle = () => {
 		return {
-			width: this.props.column.width,
+			width: this.props.column.width + (this.props.sorting ? 1 : 0),
 			left: this.props.left,
-			background: "white"
+			borderTop: (this.state.open ? '1px solid ' : this.props.sorting ? `1px solid ${constants.colors.BLUE_1}` : null),
+			marginTop: (this.props.sorting ? -1 : 0),
+			borderLeft: (this.props.sorting ? `1px solid ${constants.colors.BLUE_1}` : null),
+			borderRight: (this.props.sorting ? `1px solid ${constants.colors.BLUE_1}` : null),
+			// background: (this.state.mouseover ? constants.colors.GRAY_4 : constants.colors.GRAY_4 ),
+			zIndex: (this.props.sorting ? 12 : null)
 		}
 	}
 
@@ -273,7 +280,12 @@ export default class HeaderCell extends Component {
 						onBlur={this.handleBlur}
 						onClick={util.clickTrap}/>
 					: <span>{this.state.name}</span>}
+				<ReactCSSTransitionGroup
+				class="column-context-box"
+				style={{position: 'absolute', right: 2, top: 0, bottom: 2, width: 25, padding: 0}}
+				{...constants.transitions.fadeinout}>
 				{this.renderIcons()}
+				</ReactCSSTransitionGroup>
 			</span>
 	        {this.renderResizer()}
 		</span>

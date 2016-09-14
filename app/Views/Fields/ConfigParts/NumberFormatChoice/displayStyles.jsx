@@ -17,4 +17,10 @@ export default {
   	icon: 'icon-coin-dollar',
   	formatString: '$0,0.00'
   },
+  'ACCOUNTING': {
+    displayStyle: 'ACCOUNTING',
+    description: 'Accounting', 
+    icon: 'icon-coin-dollar',
+    formatString: '$(0,0.00)'
+  },
 }
