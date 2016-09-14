@@ -106,11 +106,21 @@ var Cursors = React.createClass ({
 			<Overlay
 				{...this.props}
 				columns = {view.data._visibleCols}
-				className = {" copyarea running marching-ants " + (focused ? " focused" : "")}
+				className = {" copyarea running marching-ants "}
 				ref = "copyarea"
 				key="copyare"
 				position = {cpy}
 				fudge = {{left: -1, top: 0.25, height: 1, width: 1}}/>,
+
+			<Overlay
+				{...this.props}
+				columns = {view.data._visibleCols}
+				className = {" new-row-adder "}
+				ref = "rowadder"
+				key="rowadder"
+				position = {{left: 0, right: view.data._visibleCols.length, top: rowCount, bottom: rowCount + 1}}>
+				Add new row
+			</Overlay>,
 
 			showJaggedEdge ? <Overlay
 				{...this.props}
