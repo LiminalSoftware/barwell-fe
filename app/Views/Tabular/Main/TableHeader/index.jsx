@@ -27,7 +27,7 @@ var TableHeader = React.createClass ({
 		const view = this.props.view
 		const model = this.props.model
 		const geo = view.data.geometry
-		var left = (this.props.hasRowLabel ? geo.labelWidth : 0) + this.props.leftOffset
+		let left = (this.props.hasRowLabel ? geo.labelWidth : 0) + this.props.leftOffset
 		
 		const style = {
 			borderRight:  "1px solid " + (this.props.side==='lhs' ? constants.colors.TABLE_EDGE : constants.colors.TABLE_BORDER),
@@ -40,7 +40,7 @@ var TableHeader = React.createClass ({
 				`0 2px 0 ${constants.colors.TABLE_SHADOW}` : 
 				`2px 2px 0 ${constants.colors.TABLE_SHADOW}`,
 			zIndex: 5,
-			background: constants.colors.TABLE_BACKING
+			background: constants.colors.VIEW_BACKING
 		}
 
 		const classes = `tabular-view-header wrapper 
@@ -52,7 +52,7 @@ var TableHeader = React.createClass ({
 			ref = {this.props.side + "-thead"}>
 			{
 			this.props.hasRowLabel ?
-			<span style = {{left: 0, width: geo.labelWidth + 'px', top: 0, bottom: 0}}
+			<span style = {{left: 0, width: geo.labelWidth + 'px', top: 0, bottom: 0, background: constants.colors.TABLE_BACKING}}
 				className = "table-row-label table-cell" >
 				<span className = "table-cell-inner">
 				<span style = {{marginLeft: "2px"}} className = "checkbox-surround "></span>

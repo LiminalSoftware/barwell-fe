@@ -46,6 +46,7 @@ const formatter = function (value, config) {
 
 const parser = function (input, config) {
 	const format = config.formatString || ''
+	if (input === null) return 0
 	input = String(input).trim()
 	if (format.slice(-1) === '%' && input.slice(-1) !== '%') input = input + '%'; 
 	return numbro().unformat(input)
@@ -103,7 +104,8 @@ export default {
 		}
 
 		getDecorator () {
-			return <span style={{left: 0}}>$</span>
+			const config = this.props.config
+			return <span style={{left: 2}}>{config.prefix}</span>
 		}
 
 		render () {

@@ -268,7 +268,7 @@ export default class HeaderCell extends Component {
 			onMouseEnter = {e => this.setState({mouseover: true})}
 			onMouseLeave = {e => this.setState({mouseover: false})}
 			className = "table-cell">
-			<span className = "table-cell-inner" 
+			<span className = "table-cell-inner header-cell-inner" 
 			style = {innerStyle}>
 				{/*<span className="type-label">{type.description}</span>*/}
 				{this.state.renaming ?
@@ -282,7 +282,7 @@ export default class HeaderCell extends Component {
 					: <span>{this.state.name}</span>}
 				<ReactCSSTransitionGroup
 				class="column-context-box"
-				style={{position: 'absolute', right: 2, top: 0, bottom: 2, width: 25, padding: 0}}
+				style={{position: 'absolute', right: 2, top: this.props.top || 0, bottom: 2, width: 25, padding: 0}}
 				{...constants.transitions.fadeinout}>
 				{this.renderIcons()}
 				</ReactCSSTransitionGroup>

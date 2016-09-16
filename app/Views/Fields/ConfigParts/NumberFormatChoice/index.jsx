@@ -1,10 +1,12 @@
 import React, { Component, PropTypes } from 'react'
- import update from 'react/lib/update'
+import update from 'react/lib/update'
 import _ from "underscore"
 
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import AttributeStore from "../../../../stores/AttributeStore"
 import util from "../../../../util/util"
+
+import constants from "../../../../constants/MetasheetConstants"
 
 import commitColumnConfig from "../commitColumnConfig"
 import displayStyles from "./displayStyles"
@@ -30,17 +32,15 @@ const parseFormatString = function (string) {
 		format.suffix = suffix
 		format.abbreviated = abbr !== undefined
 
-		console.log(format)
-
 		if (prefix !== undefined && suffix === undefined) {
-			format.type = format.hasParens ? 'ACCOUNTING' : 'CURRENCY';
+			format.type = format.hasParens ? format.abbreviated ? 'FINANCIAL' : 'ACCOUNTING' : 'CURRENCY';
 			format.currencySymbol = prefix;
 		} else if (suffix === '%' && prefix === undefined) {
 			format.type = 'PERCENTAGE';
 		} else if (suffix === undefined && prefix === undefined) {
 			format.type = 'DECIMAL';
 		} else {
-			format.type = 'CUSTOM'; 
+			format.type = 'CUSTOM';
 		}
 	}
 	else format.type = 'CUSTOM';
@@ -101,9 +101,12 @@ export default {
 		}
 
 		handleBlur = () => {
+			const {formatString, formatAttr} = this.state
+			const prefix = formatAttr.prefix || ''
+			const truncFormatString = formatString.slice(prefix.length)
 			const patch = {
-				formatString: this.state.formatString,
-				numericFormatType: this.state.formatAttr.type
+				formatString: truncFormatString,
+				prefix: formatAttr.prefix
 			}
 			commitColumnConfig(
 				this.props.view, 
@@ -156,6 +159,7 @@ export default {
 			var _this = this
 			var config = this.props.config
 			var format = config.displayStyle
+			var formatAttr = parseFormatString(config.formatString)
 
 			return <div key = "presets">
 				<div className="popdown-item title bottom-divider">
@@ -170,8 +174,9 @@ export default {
 						onClick = {_this.choosePreset.bind(_this, ds)}>
 
 						<span className = 
-						{`icon ${ds.icon} ${(config.numericFormatType===k?'icon-hilite':'icon-selectable')}`}/>
+						{`icon ${ds.icon} ${(formatAttr.type===k?'icon-hilite':'icon-selectable')}`}/>
 						{ds.description}
+						<span style={{marginLeft: "8px", color: constants.colors.GRAY_3}}>(e.g., {ds.example})</span>
 					</div>
 				})
 				}
@@ -260,9 +265,9 @@ export default {
 				this.getPresetsMenu()
 				}
 				{
-				this.state.custom ?
-				this.getCustomMenu()
-				: null
+				// this.state.custom ?
+				// this.getCustomMenu()
+				// : null
 				}
 				<div className = "popdown-item selectable top-divider" onClick={this.props.blurSelf}>
 					<span className="icon icon-arrow-left icon-detail-left"/>

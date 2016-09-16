@@ -397,15 +397,6 @@ const TabularPane = React.createClass ({
 			$(el).outerWidth()
 	},
 
-	showAttributeAdder: function () {
-		this.getFocus()
-		this.setState({
-			contextSubject: 'newAttribute', 
-			contextPos: {}, 
-			contextRc: {}}
-		)
-	},
-
 	showContext: function (e) {
 		var offset = $(this.refs.wrapper).offset()
 		var y = e.pageY - offset.top
@@ -414,18 +405,16 @@ const TabularPane = React.createClass ({
 		var sel = this.state.selection
 		const geo = this.props.view.data.geometry
 
-		this.getFocus()
+		this.getFocus('-context')
 
 		if (y < geo.headerHeight) {
-			let column = this.getColumnRefAt(rc)
-			
-			this.setState({
-				contextSubject: 'column', 
-				contextRc: rc,
-				contextElement: column
-			})
+			this.setState({columnContext: this.getColumnRefAt(rc)})
 		} else {
-			this.setState({contextSubject: 'body', contextPos: {x: x, y: y}, contextRc: rc})
+			this.setState({
+				contextPos: {x: x, y: y}, 
+				contextOpen: true,
+				contextRc: rc
+			})
 			if (rc.left < sel.left ||
 			rc.left > sel.right || 
 			rc.top < sel.top || 
@@ -475,7 +464,6 @@ const TabularPane = React.createClass ({
 	},
 
 	putSelection: function (data, method, isValidated) {
-		console.log('isValidated: ' + isValidated)
 		const model = this.props.model
 		const sel = this.state.selection
 		const view = this.props.view
@@ -751,6 +739,7 @@ const TabularPane = React.createClass ({
 			rowOffset: this.state.rowOffset,
 			visibleRows: this.state.visibleRows,
 			visibleHeight: this.state.visibleHeight,
+			columnContext: this.state.columnContext,
 
 			spaceTop: this.state.pointer.top - this.state.rowOffset,
     		spaceBottom: this.state.visibleRows + this.state.rowOffset - this.state.pointer.top,
@@ -806,10 +795,8 @@ const TabularPane = React.createClass ({
 				_setScrollOffset = {this.setHorizontalScrollOffset}/>
 
 			
-			{this.state.contextSubject && this.props.focused ? 
+			{this.state.contextOpen && focused ? 
 			<ContextMenu {...childProps}
-				subject={this.state.contextSubject}
-				element={this.state.contextElement}
 				rc={this.state.contextRc}
 				position={this.state.contextPos}/> 
 			: null}

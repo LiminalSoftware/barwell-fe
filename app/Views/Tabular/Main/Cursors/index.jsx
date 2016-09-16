@@ -118,8 +118,9 @@ var Cursors = React.createClass ({
 				className = {" new-row-adder "}
 				ref = "rowadder"
 				key="rowadder"
-				position = {{left: 0, right: view.data._visibleCols.length, top: rowCount, bottom: rowCount + 1}}>
-				Add new row
+				fudge = {{left: -66, width: 66}}
+				position = {{left: 0, right: view.data._visibleCols.length, top: rowCount, bottom: rowCount}}>
+				add new row
 			</Overlay>,
 
 			showJaggedEdge ? <Overlay

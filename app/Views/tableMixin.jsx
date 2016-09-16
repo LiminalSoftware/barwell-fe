@@ -48,7 +48,7 @@ var TableMixin = {
 	},
 
 	hideContext: function (e) {
-		this.setState({contextSubject: null})
+		this.setState({contextOpen: false})
 	},
 
 	handleMouseWheel: function (e) {

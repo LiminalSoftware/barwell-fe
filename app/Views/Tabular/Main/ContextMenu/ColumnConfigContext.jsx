@@ -11,6 +11,8 @@ import fieldTypes from "../../../fields"
 import ColumnUnhider from "./ColumnUnhider"
 import DefaultValueContext from "./DefaultValueContext"
 
+import HeaderCell from "../TableHeader/HeaderCell"
+
 import util from "../../../../util/util"
 
 var ColumnConfigContext = React.createClass ({
@@ -213,7 +215,7 @@ var ColumnConfigContext = React.createClass ({
 				marginLeft: -16,
 				marginRight: -5,
 				marginBottom: -5,
-				top: view.data.geometry.headerHeight + 'px',
+				top: view.data.geometry.headerHeight,
 				height: 'auto',
 				position: "absolute",
 				minWidth: "380px",
@@ -239,14 +241,17 @@ var ColumnConfigContext = React.createClass ({
 						blurMenu: this.blurMenu}}) )
 				: this.renderMainMenu()
 			}
-			<div style={{
-				position: "absolute", 
-				top: -4, left: 15, minHeight: 5, 
-				background: "white",
-				zIndex: 101,
-				borderLeft: `1px solid ${constants.colors.GRAY_3}`,
-				borderRight: `1px solid ${constants.colors.GRAY_3}`,
-				width: config.width - 1}}/>
+			
+			<HeaderCell {...this.props}
+				key={config.column_id}
+				ref={"head-" + config.column_id}
+				column = {config}
+				isOpen = {true}
+				idx = {0}
+				left = {15}
+				top = {-1 * view.data.geometry.headerHeight}
+				width = {config.width - 1}/>
+
 		</ReactCSSTransitionGroup>
 	}
 

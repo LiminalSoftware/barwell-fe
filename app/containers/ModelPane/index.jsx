@@ -69,7 +69,7 @@ export default class ViewPane extends Component {
 					<span className={`icon ${viewType.icon}`} style={{marginTop: "1px"}}/>
 					{view.view}
 				</span>
-				{config}
+				
 				<span className="view-pane-rhs-cap">
 					<span className="icon icon-cross" style={{marginLeft: "auto"}}/>
 				</span>

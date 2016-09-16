@@ -23,7 +23,7 @@ var TableBodyContext = React.createClass ({
 	clickDeleteRow: function (e) {
 		this.props._deleteRecords()
 	},
-
+	
 	clickCopySelection: function (e) {
 		this.props._copySelection()
 	},
