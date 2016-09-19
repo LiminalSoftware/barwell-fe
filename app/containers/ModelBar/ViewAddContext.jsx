@@ -48,7 +48,8 @@ var ViewAddContext = React.createClass ({
 		const _this = this
 
 		return <div className="view-link">
-			<span className="icon icon-plus">Add additional view</span>
+			<span className="icon green icon-plus"/>
+			<span>Add additional view</span>
 			{
 			this.state.open ? <div className = "popdown">
 				{_.map(viewTypes, (type, typeKey) =>

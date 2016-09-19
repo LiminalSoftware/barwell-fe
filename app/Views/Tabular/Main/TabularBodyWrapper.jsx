@@ -33,6 +33,7 @@ const CYCLE = 60
 
 import TabularTBody from "./TabularTBody"
 import TableHeader from "./TableHeader"
+import TableFooter from "./TableFooter"
 import RowResizer from "./RowResizer"
 
 var TabularBodyWrapper = React.createClass ({
@@ -156,6 +157,8 @@ var TabularBodyWrapper = React.createClass ({
 		var adjustedWidth = fixedWidth + floatWidth + geo.labelWidth
 			- this.state.hiddenColWidth
 
+		const lhsWidth = Math.floor((fixedWidth +  geo.labelWidth) / 2) * 2
+
 		var fetchStart = this.state.fetchOffset
 		var fetchEnd = Math.min(this.state.fetchOffset + MAX_ROWS, rowCount)
 
@@ -185,8 +188,7 @@ var TabularBodyWrapper = React.createClass ({
 					top: 0,
 					bottom: 0,
 					height: "100%",
-					width: (fixedWidth + geo.labelWidth + 1),
-
+					width: lhsWidth
 				}}>
 
 
@@ -194,21 +196,24 @@ var TabularBodyWrapper = React.createClass ({
 			<div className = "wrapper outer-table-wrapper lhs-pane"
 				ref = "lhsTableBody"
 				style = {{
-					top: geo.headerHeight + 'px',
+					left: 0,
+					top: geo.headerHeight,
+					width: lhsWidth + 1,
 					overflow: 'hidden',
 					background: constants.colors.VIEW_BACKING,
 					borderRight: `1px solid ${constants.colors.TABLE_EDGE}`,
 					zIndex: 3,
-					boxShadow:`0 0 0 3px ${constants.colors.TABLE_SHADOW}`,
+					// boxShadow:`0 0 0 3px ${constants.colors.TABLE_SHADOW}`,
 				}}>
 				<div className = "wrapper lhs-offset-wrapper"
 					ref = "lhsOffsetter"
 					style = {{
-						top: '0',
+						left: 0,
+						top: 0,
 						height: (rowCount * rowHeight + 1),
 						
 						marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
-						transform: HAS_3D ? `translate3d(0, ${marginTop}px, 0)` : null,
+						transform: HAS_3D ? `translate3d(1, ${marginTop}px, 0)` : null,
 						transition: IS_CHROME && HAS_3D ? 'transform 75ms linear' : null,
 						background: constants.colors.TABLE_BACKING,
 						overflow: "hidden",
@@ -225,7 +230,7 @@ var TabularBodyWrapper = React.createClass ({
 					offsetCols = {0}
 					fetchStart = {fetchStart}
 					fetchEnd = {fetchEnd}
-					width = {view.data._fixedWidth + geo.labelWidth -1 }
+					width = {lhsWidth}
 					columns = {view.data._fixedCols}/>
 				</div>
 			</div>
@@ -234,11 +239,20 @@ var TabularBodyWrapper = React.createClass ({
 			{/*LHS HEADER*/}
 			<TableHeader {...this.props}
 				ref = "lhsHead"
-				totalWidth = {fixedWidth +  geo.labelWidth + 1}
+				totalWidth = {lhsWidth + 1}
 				leftOffset = {0}
 				side = {'lhs'}
 				hasRowLabel = {true}
 				columns = {view.data._fixedCols} />
+
+			<TableFooter {...this.props}
+				ref = "lhsHead"
+				totalWidth = {lhsWidth + 1}
+				leftOffset = {0}
+				side = {'lhs'}
+				hasRowLabel = {true}
+				columns = {view.data._fixedCols} />
+
 			{/*END LHS HEADER*/}
 			</div>
 			{/*LHS OUTER*/}
@@ -250,18 +264,22 @@ var TabularBodyWrapper = React.createClass ({
 				ref = "rhsTableBody"
 				style = {{
 					top: 0,
-					left: (view.data._fixedWidth + geo.labelWidth) + 'px',
-					height: (rowCount * rowHeight + geo.headerHeight + 1),
+					left: lhsWidth,
+					bottom: 0,
 					right: 0,
-					transform: IS_CHROME && HAS_3D ? 'translateZ(10px)' : null,
+					
 					background: constants.colors.VIEW_BACKING,
 					overflow: 'hidden'
 				}}>
+
 				<div className = "rhs-h-scroll wrapper"
 					ref = "rhsHorizontalOffsetter"
 					style = {{
 						marginLeft: (-1 * this.props.hiddenColWidth ) + 'px',
-						transition: 'margin-left 75ms linear'
+						transition: 'margin-left cubic-bezier(.16,.85,.5,1) 75ms',
+						position: 'absolute',
+						top: 0,
+						bottom: 0,
 						// use marginLeft instead of translate here because translate will clobber the other offset
 					}}>
 
@@ -273,7 +291,7 @@ var TabularBodyWrapper = React.createClass ({
 							left: 0,
 							right: 0,
 							marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
-							transform: HAS_3D ? `translate3d(0, ${marginTop}px, 0)` : null,
+							transform: HAS_3D ? `translate3d(1, ${marginTop}px, 0)` : null,
 							transformStyle: "preserve-3d",
 							transition: IS_CHROME && HAS_3D ? 'transform 75ms linear' : null,
 							height: (rowCount * rowHeight + 1),
@@ -302,9 +320,23 @@ var TabularBodyWrapper = React.createClass ({
 						leftOffset = {0}
 						side = "rhs"
 						columns = {view.data._floatCols} />
+
+					<TableFooter {...this.props}
+						ref = "rhsFooter"
+						leftOffset = {0}
+						side = {'rhs'}
+						columns = {view.data._floatCols} />
+
+					
 				</div>
 
+
+				
+
+
 			</div>
+
+
 			
 			
 		</div>;

@@ -162,12 +162,12 @@ var TabularTBody = React.createClass ({
 
 		const style = {
 			left: 0,
+			margin: 0,
 			top: HAS_3D ? 0 : (scrollOfset + 'px'),
 			height: rowCount * geo.rowHeight,
 			width: this.props.width,
-			transformStyle: "preserve-3d",
-			transform: HAS_3D ? 
-				`translate3d(0,${scrollOffset}px, 5px)`
+			transform: HAS_3D ?
+				`translate3d(0, ${scrollOffset}px, 5px)`
 				: null,
 			zIndex: 5
 		}

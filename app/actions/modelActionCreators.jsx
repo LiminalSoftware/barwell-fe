@@ -33,6 +33,7 @@ var modelActions = {
 	// ========================================================================
 
 	createNotification: function (notification) {
+		console.log(notification)
 		notification.actionType = 'NOTIFY';
 		MetasheetDispatcher.dispatch(notification);
 	},

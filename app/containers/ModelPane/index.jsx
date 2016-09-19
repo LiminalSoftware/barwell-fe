@@ -64,18 +64,9 @@ export default class ViewPane extends Component {
 
 		return <div className="model-views" >
 			
-			<div className="model-pane-header" style={{position: "relative"}}>
-				<span className="view-label">
-					<span className={`icon ${viewType.icon}`} style={{marginTop: "1px"}}/>
-					{view.view}
-				</span>
-				
-				<span className="view-pane-rhs-cap">
-					<span className="icon icon-cross" style={{marginLeft: "auto"}}/>
-				</span>
-			</div>
+			
 
-			{configDetail}
+			
 
 			<ReactCSSTransitionGroup
 				ref="pane"

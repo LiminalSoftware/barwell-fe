@@ -68,9 +68,11 @@ var Cursors = React.createClass ({
 	renderOverlays: function () {
 		const {view, model, columnOffset, focused, pointer: ptr, 
 			selection: sel, copyarea: cpy} = this.props
+
+		const numFixed = view.data._fixedCols.length
 		
-		const showJaggedEdge = ((sel.right >= view.data._fixedCols.length)
-			&& (sel.left < view.data._fixedCols.length + columnOffset) && (columnOffset > 0));
+		const showJaggedEdge = ((sel.right >= numFixed)
+			&& (sel.left < numFixed + columnOffset) && (columnOffset > 0));
 
 		const singleton = (sel.top === sel.bottom && sel.left === sel.right)
 		
@@ -80,18 +82,20 @@ var Cursors = React.createClass ({
 		const store = this.props.store
 		const rowCount = store.getRecordCount()
 		const geo = view.data.geometry
+
+		
 		
 		const hideCursor = (rowsSelected || rowCount === 0);
 
-		if (hideCursor) return null
+		
 		return (!focused ? [] : [
 
-			<Pointer {...this.props} 
+			hideCursor ? null : <Pointer {...this.props} 
 				position={this.state.pointer}
 				fudge = {{width: -1, left: 0, top: 1, height: -1}}
 				ref="pointer" key="pointer"/>,
 			
-			<Overlay
+			hideCursor ? null : <Overlay
 				{...this.props}
 				className = {"selection-outer" + (singleton ? '-singleton' : '')}
 				ref="selectionOuter"
@@ -118,12 +122,12 @@ var Cursors = React.createClass ({
 				className = {" new-row-adder "}
 				ref = "rowadder"
 				key="rowadder"
-				fudge = {{left: -66, width: 66}}
+				fudge = {{left: -1 * geo.labelWidth - 2, width: geo.labelWidth + 2}}
 				position = {{left: 0, right: view.data._visibleCols.length, top: rowCount, bottom: rowCount}}>
-				add new row
+				<div className="flush" onClick={this.props._addRecord}>add new row</div>
 			</Overlay>,
 
-			showJaggedEdge ? <Overlay
+			!hideCursor && showJaggedEdge ? <Overlay
 				{...this.props}
 				className = " jagged-edge "
 				ref = "jaggedEdge"
@@ -136,7 +140,8 @@ var Cursors = React.createClass ({
 					bottom: sel.bottom
 				}}
 				fudge = {{
-					left: (sel.right < view.data._fixedCols.length + columnOffset) ? -3 : -4, 
+					left: (sel.right < numFixed + columnOffset) ? -4 :
+						 (sel.left < numFixed + columnOffset) ? -5 : -4, 
 					width: 10, top: 0, height: 1}} />
 			: null
 		]).concat(view.data.sorting.map(s => {
@@ -166,7 +171,7 @@ var Cursors = React.createClass ({
 
 		return {
 			top: geo.headerHeight - 3,
-			bottom: 0,
+			bottom: geo.footerHeight + 1,
 			left: 0,
 			width: (fixedWidth + floatWidth + geo.labelWidth + RIGHT_FRINGE) + 'px',
 			overflow: 'hidden',
@@ -189,6 +194,7 @@ var Cursors = React.createClass ({
 			transition: IS_CHROME ? 'transform 75ms linear' : null,
 			transform: HAS_3D ? `translate(0,${marginTop + 2}px)` : null,
 			marginTop: HAS_3D ? null : (marginTop + 2 + 'px'),
+			cursor: "cell"
 		}
 	},
 

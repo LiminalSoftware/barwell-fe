@@ -43,6 +43,7 @@ class TabularTR extends React.Component {
 			height: (geo.rowHeight),
 			lineHeight: (geo.rowHeight) + 'px',
 			top: (geo.rowHeight * (row) + 1),
+			transform: 'translateZ(0)'
 		}
 
 		var left = _this.props.hasRowLabel ? geo.labelWidth : 0;
@@ -70,7 +71,7 @@ class TabularTR extends React.Component {
 			var element = type.element;
 			var cellKey = rowKey + '-' + col.column_id;
 			var innerHtml = type.getDisplayHTML ? 
-				type.getDisplayHTML(col, obj, {left: left, width: col.width}, row) : 
+				type.getDisplayHTML(col, obj, {left: Math.floor(left), width: col.width}, row) : 
 				element.prototype.getDisplayHTML(col, obj) // deprecated, but have not yet migrated all field types
 
 			left += col.width

@@ -32,8 +32,8 @@ import PureRenderMixin from 'react-addons-pure-render-mixin'
 import ViewConfigBar from "../ViewConfigBar"
 
 const THROTTLE_DELAY = 14;
-const MIN_CYCLE = 10;
-const CYCLE = 25;
+const MIN_CYCLE = 5;
+const CYCLE = 0;
 
 
 const TabularPane = React.createClass ({
@@ -671,11 +671,11 @@ const TabularPane = React.createClass ({
 			: null
 
 		lhsOffsetter.style.transform = 
-			"translate(0, " + Math.floor(-1 * rowOffset * geo.rowHeight ) + "px)"
+			"translate3d(0, " + Math.floor(-1 * rowOffset * geo.rowHeight) + "px, 0)"
 		rhsOffsetter.style.transform = 
-			"translate(0, " + Math.floor(-1 * rowOffset * geo.rowHeight ) + "px)"
+			"translate3d(0, " + Math.floor(-1 * rowOffset * geo.rowHeight ) + "px, 0)"
 		if (overlay) overlay.style.transform = 
-			"translate(0, " + Math.floor( -1 * rowOffset * geo.rowHeight + 2 ) + "px)"
+			"translate3d(0, " + Math.floor( -1 * rowOffset * geo.rowHeight + 2 ) + "px, 0)"
 	},
 
 	refreshTable: function () {
@@ -780,7 +780,8 @@ const TabularPane = React.createClass ({
 				totalDim = {(rowCount + 4) * geo.rowHeight + geo.headerHeight}	
 				visibleDim = {this.state.clientHeight}
 				rowCount = {rowCount}
-				offset = {geo.headerHeight}
+				startOffset = {geo.headerHeight}
+				endOffset = {geo.footerHeight}
 				ref = "verticalScrollBar"
 				axis = "vertical"
 				_setScrollOffset = {this.setVerticalScrollOffset}/>
@@ -789,7 +790,8 @@ const TabularPane = React.createClass ({
 				totalDim = {view.data._floatWidth + view.data._fixedWidth + geo.labelWidth + 200}
 				visibleDim = {this.state.clientWidth}
 				rowCount = {rowCount}
-				offset = {0}
+				startOffset = {0}
+				endOffset = {15}
 				ref = "horizontalScrollBar"
 				axis = "horizontal"
 				_setScrollOffset = {this.setHorizontalScrollOffset}/>
@@ -800,6 +802,8 @@ const TabularPane = React.createClass ({
 				rc={this.state.contextRc}
 				position={this.state.contextPos}/> 
 			: null}
+
+			<ViewConfigBar {...this.props}/>
 			
 		</div>
 	}

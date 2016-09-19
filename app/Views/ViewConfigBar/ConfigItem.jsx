@@ -90,8 +90,9 @@ export default class ConfigItem extends Component {
 		const focused = this.isFocused()
 		const classes = `view-config-item${
 			focused ? "--focused" :
-			this.state.pushed ? "--pushed" : 
+			this.state.pushed ? "--pushed" :
 			this.props.isActive ? "--active" : ''}`
+			+ (this.props.extraClass || '')
 
 		return <div 
 		onClick={this.handleOpen}

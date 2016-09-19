@@ -74,86 +74,10 @@ h1, h2, h3, h4, h5 {
 	margin-left: 0px;
 }
 
-.view-config-item--focused {
-	flex: 2 2;
-	background: white;
-	border: 1px solid @blue1;
-}
-
-.view-config-dropdown-item {
-	
-}
 
 
-.view-label,
-.view-pane-rhs-cap,
-.view-config-item,
-.view-config-item--pushed,
-.view-config-item--active,
-.view-config-item--focused
-{
-	padding: 4px 8px;
-	display: flex;
-	
-	
-	text-align: center;
-
-	cursor: pointer;
-	transition: all 75ms linear;
-
-	color: @lightFontColor;
-	background: @gray1;
-	text-transform: uppercase;
-	font-size: 12px;
-	
-
-	margin-right: 0;
-	height: 20px;
-	line-height: 22px;
-}
-
-.view-config-item,
-.view-config-item--pushed,
-.view-config-item--active {
-	border: 1px solid transparent;
-	flex: 1 1;
-}
-
-.view-pane-rhs-cap {
-	flex: 1 0;
-}
-
-.header-item {
-	border-bottom: 1px dotted @gray2;
-	margin-left: 0px;
-}
-
-
-.view-config-bar {
-	display: flex;
-	felx-direction: row;
-	flex-grow: 4;
-	margin: 0;
-	max-width: 800px;
-}
-
-.view-config-item {
-	// background: white;
-	// color: @blue1;
-	// &:hover {background: @gray4;}
-}
-.view-config-item--pushed {
-	// color: white;
-	background: @gray4;
-}
-.view-config-item--active {
-	
-	// color: @blue1;
-	
-}
 
 .model-pane {
-
 	flex: 1;
 	flex-grow: 1;
 	display: flex;
@@ -176,17 +100,6 @@ h1, h2, h3, h4, h5 {
 
 	overflow-y: auto;
 	overflow-x: hidden;
-}
-
-.view-config {
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 0;
-	padding : 15px;
-	overflow: visilbe;
-	color: @lightFontColor;
 }
 
 .view-body-wrapper {

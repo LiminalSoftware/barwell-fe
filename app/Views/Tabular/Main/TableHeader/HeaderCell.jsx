@@ -10,6 +10,8 @@ import FocusStore from "../../../../stores/FocusStore"
 import constant from "../../../../constants/MetasheetConstants"
 import fieldTypes from "../../../fields"
 
+import ColumnContext from "./ColumnContext"
+
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import util from "../../../../util/util"
 

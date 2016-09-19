@@ -88,7 +88,7 @@ module.exports = {
     TABLE_BACKING: '#FFFFFF',
     VIEW_BACKING: '#F5F5F2',
     TABLE_FONT_COLOR: '#333333',
-    TABLE_EDGE: '#079538', //'#524A50',
+    TABLE_EDGE: '#A041BF', //'#524A50',
     TABLE_SHADOW: 'rgba(160,65,191,0.2)',
 
     PURPLE_1: '#54365E',

@@ -16,7 +16,7 @@ export default function getColorHTML (format, stylers, config, obj, pos) {
 		font-family: ${styles.fontFamily || 'inherit'}; 
 		${pos?`left:${pos.left}px; width: ${pos.width}px;`:''}
 	">
-		${config.width > 100 ? prettyValue : ''}
+		
 		
 			<div class="color-sample" style="background: ${prettyValue}">
 			</div>

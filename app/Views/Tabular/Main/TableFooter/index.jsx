@@ -10,11 +10,11 @@ import FocusStore from "../../../../stores/FocusStore"
 import util from "../../../../util/util"
 import constants from "../../../../constants/MetasheetConstants"
 
-import HeaderCell from "./HeaderCell"
+import FooterCell from "./FooterCell"
 
 const HAS_3D = util.has3d()
 
-var TableHeader = React.createClass ({
+var TableFooter = React.createClass ({
 
 	shouldComponentUpdate: function (nextProps) {
 		return nextProps.leftOffset !== this.props.leftOffset ||
@@ -29,17 +29,15 @@ var TableHeader = React.createClass ({
 		let left = (this.props.hasRowLabel ? geo.labelWidth : 0) + this.props.leftOffset
 		
 		const style = {
-			borderRight:  `1px solid ${this.props.side==='lhs' ?
-				constants.colors.TABLE_EDGE : constants.colors.TABLE_BORDER}`,
-			borderBottom: `1px solid ${constants.colors.TABLE_EDGE}`,
-			height: (this.props.height || (geo.headerHeight + 1)) + 'px',
+			borderRight:  "1px solid " + (this.props.side==='lhs' ? constants.colors.TABLE_EDGE : constants.colors.TABLE_BORDER),
+			borderTop: `1px solid ${constants.colors.TABLE_EDGE}`,
+			height: (this.props.height || (geo.footerHeight + 1)) + 'px',
+			bottom: 0,
+			top: 'auto',
 			width: this.props.totalWidth ? (this.props.totalWidth) : null,
 			right: this.props.totalWidth ? null : 0,
 			transform: HAS_3D ? side === 'lhs' ? 'translateZ(5px)' : 'translateZ(4px)' : '',
-			// boxShadow: this.props.side === 'lhs' ? 
-			// 	`0 2px 0 ${constants.colors.TABLE_SHADOW}` : 
-			// 	`2px 2px 0 ${constants.colors.TABLE_SHADOW}`,
-			zIndex: side === 'lhs' ? 6 : 4,
+			zIndex: side === 'lhs' ? 5 : 4,
 			background: constants.colors.VIEW_BACKING
 		}
 
@@ -66,7 +64,7 @@ var TableHeader = React.createClass ({
 				var sortIndex = view.data.sortIndex || {};
 				var sorting = (('a' + col.attribute_id) in sortIndex) ? sortIndex['a' + col.attribute_id] : null;
 
-				var el = <HeaderCell {..._this.props}
+				var el = <FooterCell {..._this.props}
 					key={col.column_id}
 					ref={"head-" + col.column_id}
 					column = {col}
@@ -79,24 +77,8 @@ var TableHeader = React.createClass ({
 			})
 			}
 
-			{this.props.hasRowLabel ? null :
-			<span 
-				onClick = {this.props.showAttributeAdder}
-				style = {{
-					left: left + 5, 
-					top: -1, 
-					bottom: 2, 
-					width: 32, 
-					padding: 0,
-					borderTopLeftRadius: 0,
-					borderBottomLeftRadius: 0
-				}}
-				className = 'table-header-cell new-adder'>
-					<span className="icon icon-plus" style={{margin: 0}}/>
-			</span>
-			}
 		</div>
 	}
 })
 
-export default TableHeader
+export default TableFooter

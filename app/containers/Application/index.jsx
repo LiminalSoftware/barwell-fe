@@ -85,7 +85,7 @@ export default class Application extends Component {
 
 		return <div className = "application" id="application">
 			{
-			this.state.loaded ?
+			true ?
 			<ModelBar 
 				{...this.props}
 				focus={FocusStore.getFocus()}

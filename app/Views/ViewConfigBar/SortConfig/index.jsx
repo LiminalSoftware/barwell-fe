@@ -20,6 +20,7 @@ export default class FilterConfig extends Component {
 		return <ConfigItem
 			menu={SortMenu}
 			icon="icon-tab"
+			extraClass="sort-config-colors"
 			hoverText="Sort records"
 			preview={this.getPreview()}
 			title="Ordering"

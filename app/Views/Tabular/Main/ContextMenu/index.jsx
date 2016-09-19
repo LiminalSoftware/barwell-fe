@@ -9,7 +9,6 @@ import fieldTypes from "../../../fields"
 
 import util from "../../../../util/util"
 
-import ColumnConfigContext from "./ColumnConfigContext"
 import TableBodyContext from "./TableBodyContext"
 import NewAttributeContext from "./NewAttributeContext"
 

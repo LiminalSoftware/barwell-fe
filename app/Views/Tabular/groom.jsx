@@ -61,6 +61,7 @@ var groomView = function (view) {
 		labelWidth: 64,
 		topGutter: 0,
 		headerHeight: 32,
+		footerHeight: 50,
 		rowHeight: Math.floor(geo.rowHeight * 2)/2 || 24,
 		rowPadding: 2,
 		colAddWidth: 100

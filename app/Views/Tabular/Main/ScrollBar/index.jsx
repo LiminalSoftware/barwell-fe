@@ -96,7 +96,7 @@ var ScrollBar = React.createClass ({
 
 	render: function () {
 		
-		const {axis, totalDim, offset, side, visibleDim} = this.props
+		const {axis, totalDim, startOffset, endOffset, side, visibleDim} = this.props
 
 		if (!visibleDim || (visibleDim > totalDim))
 			return <div className = "scroll-bar-outer" style = {outerStyle}/>
@@ -115,8 +115,8 @@ var ScrollBar = React.createClass ({
 		}
 		if (axis === 'vertical') {
 			outerStyle.right = 0
-			outerStyle.top = offset
-			outerStyle.bottom = 15
+			outerStyle.top = startOffset
+			outerStyle.bottom = endOffset
 
 			outerStyle.width = 25
 
@@ -125,8 +125,8 @@ var ScrollBar = React.createClass ({
 
 		} else if (axis === 'horizontal') {
 			outerStyle.bottom = 0
-			outerStyle.right = 15
-			outerStyle.left = offset
+			outerStyle.right = endOffset
+			outerStyle.left = startOffset
 
 			outerStyle.height = 25
 			innerStyle.left = util.makePercent(this.state.offset)

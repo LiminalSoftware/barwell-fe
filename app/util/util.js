@@ -3,12 +3,15 @@ var tinycolor = require("tinycolor2")
 
 
 const getFrame = module.exports.getFrame = function (f, cycle) {
-  if (window.requestAnimationFrame) return window.requestAnimationFrame(f)
-  else return window.setTimeout(f, cycle)
+  if (requestAnimationFrame) return requestAnimationFrame(f)
+  else {
+    console.log('no requestAnimationFrame available')
+    return window.setTimeout(f, cycle)
+  }
 }
 
 const cancelFrame = module.exports.cancelFrame = function (id) {
-  if (window.cancelAnimationFrame) return window.cancelAnimationFrame(id)
+  if (cancelAnimationFrame) return cancelAnimationFrame(id)
   else return window.clearTimeout(id)
 }
 
