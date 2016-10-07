@@ -30,7 +30,7 @@ var TableHeader = React.createClass ({
 		
 		const style = {
 			borderRight:  `1px solid ${this.props.side==='lhs' ?
-				constants.colors.TABLE_EDGE : constants.colors.TABLE_BORDER}`,
+				constants.colors.TABLE_EDGE : "transparent"}`,
 			borderBottom: `1px solid ${constants.colors.TABLE_EDGE}`,
 			height: (this.props.height || (geo.headerHeight + 1)) + 'px',
 			width: this.props.totalWidth ? (this.props.totalWidth) : null,
@@ -83,9 +83,9 @@ var TableHeader = React.createClass ({
 			<span 
 				onClick = {this.props.showAttributeAdder}
 				style = {{
-					left: left + 5, 
-					top: -1, 
-					bottom: 2, 
+					left: left + 1, 
+					top: 0, 
+					bottom: 0, 
 					width: 32, 
 					padding: 0,
 					borderTopLeftRadius: 0,

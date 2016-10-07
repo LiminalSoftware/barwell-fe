@@ -104,7 +104,7 @@ export default class ColumnConfig extends Component {
 		const _this = this
 		
 		const innerStyle = {
-			top: 0, left: 15,
+			top: 0, left: 0,
 			width: "350px"
 		}
 
@@ -211,19 +211,13 @@ export default class ColumnConfig extends Component {
 		let style = Object.assign({}, 
 			this.props._getRangeStyle(this.props.rc), {
 				bottom: 0,
-				marginLeft: -16,
-				marginRight: -5,
-				marginBottom: -5,
 				top: view.data.geometry.headerHeight,
-				height: 'auto',
 				position: "absolute",
-				minWidth: "380px",
-				overflow: "hidden",
 				pointerEvents: "auto"
 		})
 
 		const innerStyle = {
-			top: 0, left: 15,
+			top: 0, left: 0,
 			width: "350px"
 		}
 

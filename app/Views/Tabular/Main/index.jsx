@@ -408,10 +408,17 @@ const TabularPane = React.createClass ({
 		this.getFocus('-context')
 
 		if (y < geo.headerHeight) {
-			this.setState({columnContext: this.getColumnRefAt(rc)})
+			this.setState({
+				contextPos: {x: x, y: y}, 
+				contextColumn: this.getColumnAt(rc),
+				contextElement: this.getColumnRefAt(rc),
+				contextOpen: true,
+				contextRc: rc
+			})
 		} else {
 			this.setState({
 				contextPos: {x: x, y: y}, 
+				contextElement: null,
 				contextOpen: true,
 				contextRc: rc
 			})
@@ -800,6 +807,8 @@ const TabularPane = React.createClass ({
 			{this.state.contextOpen && focused ? 
 			<ContextMenu {...childProps}
 				rc={this.state.contextRc}
+				column={this.state.contextColumn}
+				element={this.state.contextElement}
 				position={this.state.contextPos}/> 
 			: null}
 

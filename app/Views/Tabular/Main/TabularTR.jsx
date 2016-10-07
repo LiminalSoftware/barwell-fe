@@ -43,7 +43,8 @@ class TabularTR extends React.Component {
 			height: (geo.rowHeight),
 			lineHeight: (geo.rowHeight) + 'px',
 			top: (geo.rowHeight * (row) + 1),
-			transform: 'translateZ(0)'
+			transform: 'translateZ(0)',
+			zIndex: this.props.ooo ? 2 : 1
 		}
 
 		var left = _this.props.hasRowLabel ? geo.labelWidth : 0;

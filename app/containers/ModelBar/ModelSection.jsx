@@ -92,7 +92,7 @@ var ModelSection = React.createClass ({
 			:
 			<span onDoubleClick = {this.handleRename} className="ellipsis">{this.state.name}</span>
 
-		return <div className="mdlbar-section ">
+		return <div className="mdlbar-section">
 
 			<div className="model-link">
 				{modelDisplay}

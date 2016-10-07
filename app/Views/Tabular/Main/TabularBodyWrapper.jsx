@@ -26,7 +26,7 @@ const HAS_3D = util.has3d()
 const OFFSET_TOLERANCE = 100
 const WINDOW_ROWS = 50
 const FETCH_DEBOUNCE = 500
-const MAX_ROWS = 300
+const MAX_ROWS = 500
 const RHS_PADDING = 100
 const CYCLE = 60
 
@@ -86,7 +86,7 @@ var TabularBodyWrapper = React.createClass ({
 
 		var target = ((nextState ? nextState : this.state).rowOffset - (MAX_ROWS - WINDOW_ROWS) / 2)
 		var boundedTarget = util.limit(0, this.props.nRows - MAX_ROWS, target)
-
+		
 		var delta = Math.abs(offset - target)
 		var sorting = nextProps ? nextProps.view.data.sorting : view.data.sorting
 
@@ -267,7 +267,6 @@ var TabularBodyWrapper = React.createClass ({
 					left: lhsWidth,
 					bottom: 0,
 					right: 0,
-					
 					background: constants.colors.VIEW_BACKING,
 					overflow: 'hidden'
 				}}>

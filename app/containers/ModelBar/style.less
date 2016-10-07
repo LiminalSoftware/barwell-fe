@@ -60,6 +60,23 @@
 
 	transition: background cubic-bezier(.16,.85,.5,1) 400ms;
 	transition: border cubic-bezier(.16,.85,.5,1) 400ms;
+
+	&:hover {
+		background: lighten(@gray2,5%);
+		& > .icon {
+			color: lighten(@green1,5%);
+		}
+	}
+}
+
+.add-new-item {
+	transition: background cubic-bezier(.16,.85,.5,1) 300ms;
+	&:hover {
+		background: lighten(@gray2,5%);
+		& > .icon {
+			color: lighten(@green1,5%);
+		}
+	}
 }
 
 .model-link {
@@ -160,10 +177,13 @@
 	
 	cursor: pointer;
 
-	transition: all linear 150ms;
+	
+	transition: all cubic-bezier(.16,.85,.5,1) 300ms;
 	&:hover {
-		border: 1px solid @green1;
-		color: @green1;
+		background: lighten(@gray2,5%);
+		& > .icon {
+			color: lighten(@green1,5%);
+		}
 	}
 
 }

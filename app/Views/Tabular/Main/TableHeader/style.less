@@ -13,19 +13,15 @@
 
 
 .new-adder {
+	position: absolute;
 	text-align: center;
 	line-height: 28px;
 	padding: 0;
 
-	border-radius: 3px;
-
 	background: @table-backing;
 	cursor: pointer;
-
-	border: 1px solid @cell-border;
-	border-top: none;
+	
 	color: @gray3;
-
 	transition: all linear 75ms;
 	&:hover {
 		color: @green1;
@@ -33,7 +29,13 @@
 }
 
 .header-cell-inner {
+	overflow: hidden;
 	background: @table-backing;
+	cursor: pointer !important;
+	transition: background 75ms linear;
+	&:hover {
+		background: @gray4;
+	}
 }
 
 .table-cell-inner {
@@ -71,10 +73,6 @@
 	background: @green-trans;
 }
 
-.column-context-box {
-	background: @gray4;
-	cursor: pointer;
-}
 
 .row-resizer {
 	cursor: row-resize;
@@ -89,12 +87,12 @@
 	background: @red-bright-trans !important;
 }
 
-.sort-th-label {
 
-}
-
-.th-menu-arrow {
-	z-index: 10;
-	background: white;
-	transition: opacity 150ms linear;
+.column-decorator {
+	position: absolute;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	width: 22px;
+	line-height: 30px;
 }

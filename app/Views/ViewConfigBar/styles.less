@@ -11,6 +11,19 @@
 	min-height: 250px;
 }
 
+.view-config-bar {
+	position: absolute;
+	right: 20px;
+	margin-left: auto;
+	bottom: 65px;
+	z-index: 30;
+	display: flex;
+}
+
+.view-config-dots {
+	margin-left: 4px;
+	border-bottom: 1px dotted @purple4;
+}
 
 .view-config-item,
 .view-config-item--pushed,
@@ -18,6 +31,7 @@
 .view-config-item--focused
 {
 	padding: 4px 8px;
+
 	
 	display: inline-block;
 	
@@ -25,16 +39,32 @@
 	text-align: center;
 
 	cursor: pointer;
-	transition: all 75ms linear;
-
+	
 	text-transform: uppercase;
 	font-size: 12px;
-	
+	color: @purple4;
 
-	margin-right: 0;
+	background: white;
+	border-radius: 20px;
+	border: 2px solid @purple4;
+	border-top-width: 1px;
+	border-left-width: 1px;
+	box-shadow: 0 0 0 3px white;
+
+	margin-right: 8px;
 	height: 20px;
-	line-height: 22px;
+	line-height: 24px;
+
+	transition: all ease-in 150ms;
+
+
 }
+.view-config-item:hover, .view-config-item--active:hover {
+	background: @gray4;
+	
+}
+
+
 
 .sort-config-colors {
 	border: 1px solid @blue1;
@@ -56,7 +86,7 @@
 
 .menu-drop-zone {
 	border-radius: 3px;
-	border: 1px solid @gray3;
+	border: 2px solid @gray3;
 }
 
 .menu-action {
@@ -101,7 +131,7 @@
 
 	background: white;
 
-	border: 1px solid @blue1;
+	border: 2px solid @blue1;
 	border-radius: 0 0 3px 3px;
 	box-shadow: 0 0 0 2px white;
 }

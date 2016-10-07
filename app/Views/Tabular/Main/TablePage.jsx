@@ -12,7 +12,7 @@ export default class TabularPage extends React.Component {
 
 	prepareRow (obj, index, orderProps) {
 		const {store, model, pointer, prefix} = this.props
-		const {start: offset} = this.state
+		
 		const pk = model._pk
 
 		const rowKey = prefix + '-tr-' + (obj.cid || obj[pk])
@@ -26,7 +26,7 @@ export default class TabularPage extends React.Component {
 			selected = {(obj.cid || obj[pk]) in selectedRecords}
 			columns = {this.props.columns}
 			obj = {obj}
-			row = {index + offset}
+			row = {index}
 			rowKey = {rowKey}
 			ref = {rowKey}
 			key = {rowKey}
@@ -34,7 +34,20 @@ export default class TabularPage extends React.Component {
 	}
 
 	render = () => {
+		const {view} = this.props
+		const geo = view.data.geometry
 
+		return <div className="table-row" 
+		style = {{
+			left: 0,
+			top: this.props.start * geo.rowHeight,
+			height: this.props.end * geo.rowHeight,
+			overflow: "hidden"
+		}}>
+		{
+			this.props.rows.slice().map(r=>this.prepareRow()
+		}
+		</div>
 		
 	}
 }

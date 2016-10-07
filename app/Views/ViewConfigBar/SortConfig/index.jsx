@@ -9,8 +9,8 @@ export default class FilterConfig extends Component {
 		const sort = view.data.sorting
 		return <span>
 			Sorted by
-			{sort.map((s,idx)=><span className="header-item">
-				{AttributeStore.get(s.attribute.slice(1)).attribute}
+			{sort.length > 1 ? ' multiple columns' : sort.map((s,idx)=><span className="view-config-dots">
+				{" " + AttributeStore.get(s.attribute.slice(1)).attribute}
 				{idx!==sort.length-1 ? "," : ""}
 			</span>)}
 		</span>
@@ -20,7 +20,6 @@ export default class FilterConfig extends Component {
 		return <ConfigItem
 			menu={SortMenu}
 			icon="icon-tab"
-			extraClass="sort-config-colors"
 			hoverText="Sort records"
 			preview={this.getPreview()}
 			title="Ordering"

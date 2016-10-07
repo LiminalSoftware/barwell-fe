@@ -101,11 +101,13 @@ export default {
 		}
 
 		handleBlur = () => {
-			const {formatString, formatAttr} = this.state
+			const {formatString} = this.state
+			const formatAttr = parseFormatString(formatString)
 			const prefix = formatAttr.prefix || ''
 			const truncFormatString = formatString.slice(prefix.length)
 			const patch = {
 				formatString: truncFormatString,
+				formatFamily: formatAttr.type,
 				prefix: formatAttr.prefix
 			}
 			commitColumnConfig(
@@ -144,15 +146,16 @@ export default {
 		}
 
 		choosePreset = (format, e) => {
+			const patch = {
+				formatFamily: format.type,
+				formatString: format.formatString
+			}
 			commitColumnConfig(
 				this.props.view, 
 				this.props.config.column_id, 
-				{formatString: format.formatString})
+				patch)
 			
-			this.setState({
-				formatString: format.formatString,
-				custom: false
-			})
+			this.setState(patch)
 		}
 
 		getPresetsMenu = () => {

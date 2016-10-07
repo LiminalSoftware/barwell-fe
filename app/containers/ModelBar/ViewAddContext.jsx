@@ -47,7 +47,7 @@ var ViewAddContext = React.createClass ({
 		const model = this.props.model
 		const _this = this
 
-		return <div className="view-link">
+		return <div className="view-link add-new-item">
 			<span className="icon green icon-plus"/>
 			<span>Add additional view</span>
 			{

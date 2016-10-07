@@ -15,9 +15,9 @@ import TabularTR from './TabularTR'
 
 var VISIBLE_ROWS = 45
 var MAX_ROWS = 45
-var SLOW_SKIP = 3
+var SLOW_SKIP = 2
 var FAST_SKIP = 3
-var FASTER_SKIP = 5
+var FASTER_SKIP = 4
 var FAST_THRESHOLD = 10
 var FASTER_THRESHOLD = 25
 var CYCLE = 25

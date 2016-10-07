@@ -84,16 +84,25 @@ var Cursors = React.createClass ({
 		const geo = view.data.geometry
 
 		
+
+		const col = view.data._visibleCols[ptr.left];
+		const obj = store.getObject(ptr.top);
+		
 		
 		const hideCursor = (rowsSelected || rowCount === 0);
 
 		
 		return (!focused ? [] : [
-
-			hideCursor ? null : <Pointer {...this.props} 
+			<ReactCSSTransitionGroup {...constants.transitions.fadein}>{
+			hideCursor ? null :
+				<Pointer {...this.props}
+				col = {col}
+				obj = {obj}
+				key={"pointer-" + obj[model._pk] + '-' + col.column_id}
 				position={this.state.pointer}
 				fudge = {{width: -1, left: 0, top: 1, height: -1}}
-				ref="pointer" key="pointer"/>,
+				ref="pointer" key="pointer"/>
+			}</ReactCSSTransitionGroup>,
 			
 			hideCursor ? null : <Overlay
 				{...this.props}

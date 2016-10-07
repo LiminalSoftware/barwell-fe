@@ -1,4 +1,4 @@
-import React from "react"
+import React, { Component, PropTypes } from 'react';
 import update from 'react/lib/update'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
@@ -15,15 +15,14 @@ import HeaderCell from "../TableHeader/HeaderCell"
 
 import util from "../../../../util/util"
 
-var ColumnConfigContext = React.createClass ({
+export default class ColumnConfig extends Component {
 
-	getInitialState: function () {
-		return {
-			detailElement: null
-		}
-	},
+	constructor (props) {
+		super(props)
+		this.state = {detailElement: null}
+	}
 
-	updateColumnConfig: function (patch) {
+	updateColumnConfig = (patch) => {
 		const view = this.props.view
 		const column = this.props.config
 		
@@ -36,22 +35,22 @@ var ColumnConfigContext = React.createClass ({
 				}
 			}
 		}), true)
-	},
+	}
 
-	rename: function () {
+	rename = () => {
 		const colHeader = this.props.element.handleRename()
 		this.props.blurContextMenu()
-	},
+	}
 
-	showDetail: function (element, e) {
+	showDetail = (element, e) => {
 		this.setState({detailElement: element})
-	},	
+	}	
 
-	blurMode: function (e) {
+	blurMode = (e) => {
 		this.setState({detailElement: null})
-	},
+	}
 
-	sort: function (desc) {
+	sort = (desc) => {
 		const view = this.props.view
 		const updated = update(view, {
 			data: {
@@ -63,36 +62,36 @@ var ColumnConfigContext = React.createClass ({
 		})
 		modelActionCreators.createView(updated, true)
 		this.props.blurContextMenu()
-	},
+	}
 
-	pin: function () {
+	pin = () => {
 		this.updateColumnConfig({fixed: true, visible: true})
 		this.props.blurContextMenu()
-	},
+	}
 
-	unpin: function () {
+	unpin = () => {
 		this.updateColumnConfig({fixed: false})
 		this.props.blurContextMenu()
-	},
+	}
 
-	hideColumn: function () {
+	hideColumn = () => {
 		this.updateColumnConfig({visible: false})
 		this.props.blurContextMenu()
-	},
+	}
 
-	deleteColumn: function () {
+	function = () => {
 		const config = this.props.config
 		const attribute = AttributeStore.get(config.attribute_id)
 		modelActionCreators.destroy('attribute', true, attribute)
 		this.props.blurContextMenu()
-	},
+	}
 
-	teardown: function (commit) {
+	teardown = (commit) => {
 		const el = this.refs.detailElement
 		if (el && el.teardown) return el.teardown(commit)
-	},
+	}
 	
-	renderMainMenu: function () {
+	renderMainMenu = () => {
 		const view = this.props.view
 		const config = this.props.config
 		const type = fieldTypes[config.type]
@@ -105,7 +104,7 @@ var ColumnConfigContext = React.createClass ({
 		const _this = this
 		
 		const innerStyle = {
-			top: 0, left: 15,
+			top: 0, left: 0,
 			width: "350px"
 		}
 
@@ -204,27 +203,26 @@ var ColumnConfigContext = React.createClass ({
 				Delete this attribute
 			</div>
 		</div>
-	},
+	}
 
-	render: function () {
-		const view = this.props.view
-		const config = this.props.config
+	render () {
+		const {view, config} = this.props
+		
 		let style = Object.assign({}, 
 			this.props._getRangeStyle(this.props.rc), {
 				bottom: 0,
-				marginLeft: -16,
-				marginRight: -5,
-				marginBottom: -5,
 				top: view.data.geometry.headerHeight,
-				height: 'auto',
 				position: "absolute",
-				minWidth: "380px",
-				overflow: "hidden",
-				pointerEvents: "auto"
+				pointerEvents: "auto",
+				overflow: "hidden"
+		}, {
+			marginLeft: -30,
+			marginRight: -30,
+			height: "100%",
 		})
 
 		const innerStyle = {
-			top: 0, left: 15,
+			top: 0, left: 30,
 			width: "350px"
 		}
 
@@ -255,6 +253,4 @@ var ColumnConfigContext = React.createClass ({
 		</ReactCSSTransitionGroup>
 	}
 
-})
-
-export default ColumnConfigContext
+}

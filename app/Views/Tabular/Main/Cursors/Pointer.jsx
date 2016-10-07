@@ -5,16 +5,25 @@ import constants from "../../../../constants/MetasheetConstants"
 
 import modelActionCreators from "../../../../actions/modelActionCreators"
 
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+
 import Overlay from '../Overlay'
 
 export default class Pointer extends React.Component {
+	shouldComponentUpdate = (nextProps, nextState) => {
+		return nextProps.position != this.props.position ||
+			nextProps.view != this.props.view ||
+			nextProps.obj != this.props.obj ||
+			nextProps.col != this.props.col ||
+			nextProps.columnOffset != this.props.columnOffset
+	}
+
 	getPointerElement = () => {
-		const {view, model, store, position} = this.props
+		const {view, model, store, position, col, obj} = this.props
 		if (!position) return null
 		var geo = view.data.geometry;
+			
 		
-		var col = view.data._visibleCols[position.left];
-		var obj = store.getObject(position.top);
 		var element = col ? (fieldTypes[col.type]).element : null;
 		
 		if (!obj) return;

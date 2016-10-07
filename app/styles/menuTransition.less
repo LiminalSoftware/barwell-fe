@@ -5,9 +5,15 @@
 
 // ============================================================================
 
-.fadeinout-appear, .fadeinout-enter {
+.fadeinout-appear, .fadeinout-enter, .fadein-enter {
   opacity: 0.01;
   transform: translate3D(0,0,0);
+}
+
+.fade-in-enter-active {
+  opacity: 1;
+  transform: translate3D(0,0,0);
+  transition: opacity cubic-bezier(.16,.85,.5,1) 1000ms;
 }
 
 .fadeinout-appear-active, .fadeinout-enter-active {
@@ -16,13 +22,13 @@
   transition: opacity cubic-bezier(.16,.85,.5,1) 300ms;
 }
 
-.fadeinout-leave, .fadeout-leave {
+.fadeinout-leave {
   transform: translate3D(0,0,0);
   opacity: 1;
   
 }
 
-.fadeinout-leave-active, .fadeout-leave-active {
+.fadeinout-leave-active {
   opacity: 0.01;
   transform: translate3D(0,0,0);
   transition: opacity cubic-bezier(.16,.85,.5,1) 300ms;

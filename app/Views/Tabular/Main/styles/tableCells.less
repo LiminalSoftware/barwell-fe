@@ -7,15 +7,16 @@
 	z-index: 1;
 	left: 0;
 	right: 1px;
-	overflow: visible;
+	overflow: hidden;
 	border-bottom: 1px solid @cell-border;
-	transition: all cubic-bezier(.16,.85,.5,1) 150ms;
+	transition: all linear 200ms;
 	background: @table-backing;
 }
 
 
 .table-row-label {
 	border-left: 1px solid transparent !important;
+	overflow: visible !important;
 }
 
 .table-cell-error {
@@ -28,7 +29,7 @@
 }
 
 .table-row-ooo-edge, .table-row-last {
-	border-bottom: 1px solid @blue1 !important;
+	border-bottom: 1px dashed @blue1 !important;
 }
 
 .ooo-jagged-edge-bottom {
@@ -44,9 +45,9 @@
 	left: -1px;
 	right: 0;
 	height: 9px;
-	background:url(
-		data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAICAYAAADA+m62AAAAW0lEQVQYV22QQQ6AQAgD6ef04Ju8uF9yD/s6TE1KENkLSzo0Bbi7m5kBAGv3yGC7bl/n8eodHEb87GOa4DwgiDpyk2FFkEmAFKpz7mOB6vyBavguhpjfSQTXKzx9ZEV0MeaUuwAAAABJRU5ErkJggg==
-    ) repeat-x;
+	// background:url(
+	// 	data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAICAYAAADA+m62AAAAW0lEQVQYV22QQQ6AQAgD6ef04Ju8uF9yD/s6TE1KENkLSzo0Bbi7m5kBAGv3yGC7bl/n8eodHEb87GOa4DwgiDpyk2FFkEmAFKpz7mOB6vyBavguhpjfSQTXKzx9ZEV0MeaUuwAAAABJRU5ErkJggg==
+ //    ) repeat-x;
     z-index: 20;
     transform: translateZ(20px);
 }
@@ -70,6 +71,7 @@
 .table-cell {
 	cursor: cell;
 	position: absolute;
+	overflow: hidden;
 	border-left: 1px solid @cell-border;
 	
 	margin: 0;

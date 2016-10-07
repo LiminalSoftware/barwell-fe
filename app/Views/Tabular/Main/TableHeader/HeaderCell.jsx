@@ -8,11 +8,12 @@ import constants from "../../../../constants/MetasheetConstants"
 import FocusStore from "../../../../stores/FocusStore"
 
 import constant from "../../../../constants/MetasheetConstants"
+
 import fieldTypes from "../../../fields"
 
-import ColumnContext from "./ColumnContext"
-
 import modelActionCreators from "../../../../actions/modelActionCreators"
+
+import ColumnContext from "./ColumnContext"
 import util from "../../../../util/util"
 
 const COLUMN_MIN_WIDTH = 50
@@ -53,19 +54,21 @@ export default class HeaderCell extends Component {
 		   removeEventListener('mouseup', this.onMouseUp)
 		}
 
-		if (!newState.renaming && this.state.renaming ) {
+		if ((!newState.renaming && this.state.renaming) || 
+			(!newState.context && this.state.context)) {
 			addEventListener('keydown', this.handleKeyPress)
 			addEventListener('click', this.handleClick)
 		}
 
 		/* move cursor to the end of the input upon edit */
-		if (newState.renaming && !this.state.renaming) {
-			const input = this.refs.input
-			if (input) {
-				const val = input.value
-				this.refs.input.value = ''
-				this.refs.input.value = val
-			}
+		if ((newState.renaming && !this.state.renaming) ||
+			(newState.context && !this.state.context)) {
+			// const input = this.refs.input
+			// if (input) {
+			// 	const val = input.value
+			// 	this.refs.input.value = ''
+			// 	this.refs.input.value = val
+			// }
 			
 			removeEventListener('keydown', this.handleKeyPress)
 			removeEventListener('click', this.handleClick)
@@ -81,15 +84,12 @@ export default class HeaderCell extends Component {
 		const sortDir = this.props.sortDirection ? 'desc' : 'asc'
 
 		if (this.state.mouseover && !this.state.open && !this.state.renaming) 
-			return <span onClick = {this.props._handleContextMenu} 
-			key="menu-icon"
-			style = {{marginTop: 8, marginRight: 2, marginLeft: 6}}
-			className={`flush clickable icon icon--small icon-chevron-down`}/>
+			return <span onClick = {this.handleContextMenu} key="menu-icon"
+			className={`column-decorator clickable icon icon--small icon-chevron-down`}/>
 
 		else if (this.props.sorting && !this.state.open && !this.state.renaming)
-			return <span onClick={this.switch}
-			key="sort-icon"
-			className={`sort-th-label-focused flush icon icon-${type.sortIcon}${sortDir}`}/>
+			return <span onClick={this.switch} key="sort-icon"
+			className={`column-decorator  icon-blue icon icon-${type.sortIcon}${sortDir}`}/>
 	}
 
 	/*
@@ -177,10 +177,6 @@ export default class HeaderCell extends Component {
   		}))
 	}
 
-	componentDidMount = () => {
-		
-	}
-
 	componentWillUnmount = () => {
 		removeEventListener('keyup', this.handleKeyPress)
 		removeEventListener('click', this.handleClick)
@@ -250,9 +246,14 @@ export default class HeaderCell extends Component {
 		</span>
 	}
 
-	/*
-	 * 
-	 */
+	renderContext = () => {
+		if (this.state.context) return <ColumnContext {...this.props} config={this.props.column}/>
+	}
+
+
+	handleContextMenu = (e) => {
+		this.props._handleContextMenu(e)
+	}
 	 
 	render = () => {
 		const _this = this
@@ -265,7 +266,7 @@ export default class HeaderCell extends Component {
 		}
 
 		return <span style = {this.getCellStyle()}
-			onContextMenu = {this.props._handleContextMenu}
+			onContextMenu = {this.handleContextMenu}
 			onDoubleClick = {this.handleRename}
 			onMouseEnter = {e => this.setState({mouseover: true})}
 			onMouseLeave = {e => this.setState({mouseover: false})}
@@ -282,14 +283,10 @@ export default class HeaderCell extends Component {
 						onBlur={this.handleBlur}
 						onClick={util.clickTrap}/>
 					: <span>{this.state.name}</span>}
-				<ReactCSSTransitionGroup
-				class="column-context-box"
-				style={{position: 'absolute', right: 2, top: this.props.top || 0, bottom: 2, width: 25, padding: 0}}
-				{...constants.transitions.fadeinout}>
 				{this.renderIcons()}
-				</ReactCSSTransitionGroup>
 			</span>
 	        {this.renderResizer()}
+        	{this.renderContext()}
 		</span>
 	}
 
