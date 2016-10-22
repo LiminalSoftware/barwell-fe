@@ -7,9 +7,9 @@ import getHTML from "../ColorElement/getHTML"
 
 import detailStyle from "../ConfigParts/detailStyle"
 
-const parser = function (input) {
+const parser = function (input, config) {
 	const color = tinycolor(input)
-	if (color.isValid) return color.toString()
+	if (color.isValid && input !== null) return color.toString()
 	else return 'rgba(255,255,255,0)'
 }
 
@@ -32,6 +32,8 @@ export default {
 	description: 'Color',
 
 	icon: 'eye-dropper',
+
+	parser: parser,
 
 	getDisplayHTML: getHTML.bind(null, _.identity, stylers),
 

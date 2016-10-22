@@ -54,7 +54,7 @@ export default class ColumnUnhider extends Component {
 		const _this = this
 		const view = this.props.view
 
-		return <div className="column-context-menu" style={this.props.style}>
+		return <div style={this.props.style}>
 			<div className="popdown-item bottom-divider">
 				<span className="title">Unhide columns </span> 
 				<span> (shift to select multiple)</span>
@@ -69,6 +69,8 @@ export default class ColumnUnhider extends Component {
 				<span className="icon icon-eye"/>
 				{column.name}
 			</div>)}
+
+			<div className="popdown-filler popdown-item"/>
 
 			<div className="popdown-item top-divider selectable" onClick={this.props.blurSelf}>
 				<span className="icon icon-arrow-left icon-detail-left"/>

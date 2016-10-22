@@ -8,6 +8,10 @@ import constants from "../../../constants/MetasheetConstants"
 import modelActionCreators from "../../../actions/modelActionCreators"
 import ViewStore from "../../../stores/ViewStore"
 
+const PER_ROW_DELAY = 10
+const MAX_DELAY = 800
+const GRANULARITY = 50
+
 class TabularTR extends React.Component {
 
 	shouldComponentUpdate (newProps) {
@@ -26,7 +30,12 @@ class TabularTR extends React.Component {
 		const geo = this.props.view.data.geometry
 		if (newProps.row !== this.props.row) {
 			const row = ReactDOM.findDOMNode(this)
-			row.style.top = geo.rowHeight * (newProps.row) + 1 + 'px'
+			const diff = Math.abs(newProps.row - this.props.row)
+			const time = Math.floor(Math.max(MAX_DELAY - PER_ROW_DELAY * diff, 0)/GRANULARITY) * GRANULARITY
+
+			// setTimeout(time, () => {
+				row.style.top = geo.rowHeight * (newProps.row) + 1 + 'px'
+			// })
 		}
 	}
 

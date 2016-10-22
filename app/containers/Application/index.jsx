@@ -8,7 +8,7 @@ import styles from "./style.less"
 
 import modelActionCreators from "../../actions/modelActionCreators"
 import util from '../../util/util'
-import contant from '../../constants/MetasheetConstants'
+import constants from '../../constants/MetasheetConstants'
 
 import ViewStore from "../../stores/ViewStore"
 import ModelStore from "../../stores/ModelStore"
@@ -80,8 +80,11 @@ export default class Application extends Component {
 	render () {
 		const workspaceId = this.props.params.workspaceId
 		const viewIdString = this.props.params.viewId
-		const activeViews = viewIdString ? viewIdString.split(',').map(id=>ViewStore.get(id)) : []
+		const activeViews = viewIdString ? viewIdString.split(',')
+			.map(id=>ViewStore.get(id))
+			.filter(_.identity) : []
 		const multiViews = activeViews.length > 1
+		let left = 0
 
 		return <div className = "application" id="application">
 			{
@@ -94,13 +97,19 @@ export default class Application extends Component {
 			: this.renderLoader()
 			}
 
-			{activeViews.filter(_.identity).map(v=>
-			<ModelPane {...this.props} 
+			<ReactCSSTransitionGroup
+			{...constants.transitions.zoomin}
+			className="model-views">
+
+			{activeViews.map((v,idx)=>
+			<ModelPane {...this.props}
 				view={v}
 				focus={FocusStore.getFocus()}
 				model={ModelStore.get(v.model_id)}
 				multiViews={multiViews}
+				style={{left: 0, top: 0, right: 0, bottom: 0, position: "absolute"}}
 				key={v.view_id}/>)}
+			</ReactCSSTransitionGroup>
 
 			<textarea style = {dummyStyle} id = "copy-paste-dummy" value=""></textarea>
 		</div>

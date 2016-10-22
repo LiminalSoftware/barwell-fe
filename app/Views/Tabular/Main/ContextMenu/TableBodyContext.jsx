@@ -28,6 +28,10 @@ var TableBodyContext = React.createClass ({
 		this.props._copySelection()
 	},
 
+	clickPasteSelection: function (e) {
+		this.props._handlePaste()
+	},
+
 	clickJSONCopySelection: function (e) {
 		this.props._copySelectionAsJSON()
 	},
@@ -50,11 +54,18 @@ var TableBodyContext = React.createClass ({
 				Copy selection  
 				<span className="key-shortcut">Ctrl+C</span>
 			</div>
-			<div onClick={this.clickJSONCopySelection} className = "popdown-item selectable bottom-divider">
+			<div onClick={this.clickJSONCopySelection} className = "popdown-item selectable ">
 				<span className="icon icon-code"/>
 				Copy as JSON  
 				<span className="key-shortcut">Ctrl+Shift+C</span>
 			</div>
+
+			<div onClick={this.clickPasteSelection} className = "popdown-item selectable bottom-divider">
+				<span className="icon icon-clipboard-down"/>
+				Paste  
+				<span className="key-shortcut">Ctrl+V</span>
+			</div>
+			
 			<div onClick={this.clickAddNewRow} className = "popdown-item selectable">
 				<span className="icon icon-flare"/>
 				Insert new record

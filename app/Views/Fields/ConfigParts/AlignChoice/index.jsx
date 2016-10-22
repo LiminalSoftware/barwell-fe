@@ -33,7 +33,7 @@ export default {
 			const _this = this
 			const config = this.props.config
 
-			return <div className="column-context-menu" style={this.props.style}>
+			return <div  style={this.props.style}>
 				<div className = "popdown-item bottom-divider title">Text Alignment</div>
 				{
 					['left', 'center', 'right'].map(align =>
@@ -47,6 +47,7 @@ export default {
 						</div>
 					)
 				}
+				<div className = "popdown-item popdown-filler"/>
 				<div className = "popdown-item selectable top-divider" onClick={this.props.blurSelf}>
 					<span className="icon icon-arrow-left icon-detail-left"/>
 					<span>Back</span>

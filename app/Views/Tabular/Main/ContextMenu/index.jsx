@@ -52,10 +52,13 @@ var TabularContextMenu = React.createClass ({
 	},
 	
 	render: function () {
-		const {view, column} = this.props
-		console.log(column)
+		const {view, column, element} = this.props
 		if (this.props.element) {
-			return <ColumnContext {...this.props} config={column} ref="ColumnContext"/>
+			return <ColumnContext {...this.props} 
+			key={column.column_id}
+			config={column} 
+			colHeader={element} 
+			ref="ColumnContext"/>
 		} else {
 			return <TableBodyContext {...this.props} ref = 'bodyContext'/>	
 		}

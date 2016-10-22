@@ -154,8 +154,8 @@ const ViewLink = React.createClass ({
 				onMouseOver = {this.handleMouseOver}
 				onMouseOut = {this.handleMouseOut}>
 
-				{active ? 
-				<span className="icon icon-arrow-right" 
+				{active ?
+				<span className={`icon icon-arrow-right view-link-arrow${isFocused ? '-selected' : ''}`}
 					style={{paddingTop: "2px", position: "absolute", right: "0"}}/>
 				:null}
 

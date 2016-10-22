@@ -53,34 +53,37 @@ export default {
 			var view = this.props.view
 			const style = _this.state.style
 
-			return <div key="fontstyle">
-				<li className = "popdown-item bottom-divider title " >
-					Font Style
-				</li>
+			return <div className = "popdown-filler">
+				
 
-				<li className = "popdown-item selectable "
+				<div className = "popdown-item selectable "
 				onClick = {_this.chooseStyle.bind(_this, 'bold')}>
 					<span className = {`icon icon-bold ${style==='bold'?'icon-hilite':'icon-selectable'}`}/>
 					Bold text
-				</li>
+				</div>
 
-				<li className = "popdown-item selectable "
+				<div className = "popdown-item selectable "
 				onClick = {_this.chooseStyle.bind(_this, 'italic')}>
 					<span className = {`icon icon-italic ${style==='italic'?'icon-hilite':'icon-selectable'}`}/>
 					Italic text
-				</li>
+				</div>
 
-				<li className = "popdown-item selectable "
+				<div className = "popdown-item selectable "
 				onClick = {_this.chooseStyle.bind(_this, 'none')}>
 					<span className = {`icon icon-text-format ${style==='none'?'icon-hilite':'icon-selectable'}`}/>
 					No font style
-				</li>
+				</div>
 			</div>
 		}
 
 		render () {
-			return <div className = "context-menu" key="color" style={this.props.style}>
+			return <div style={this.props.style}>
+				<div className = "popdown-item bottom-divider title " >
+					Font Style
+				</div>
+
 				{this.renderFontStyleMenu()}
+				
 				<div className = "popdown-item selectable top-divider" onClick={this.props.blurSelf}>
 					<span className="icon icon-arrow-left icon-detail-left"/>
 					<span>Back</span>

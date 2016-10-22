@@ -1,13 +1,21 @@
 import React, { Component, PropTypes } from 'react';
 import _ from "underscore"
 
+import AlignChoice from "../ConfigParts/AlignChoice"
+import getAlignStyles from "../ConfigParts/AlignChoice/getStyles"
+
 import GenericTextElement from "../GenericTextElement"
 import getHTML from "../GenericTextElement/getHTML"
 
+import uneditableStyle from "../ConfigParts/uneditableStyle"
+
+const stylers = [uneditableStyle, getAlignStyles]
 
 export default {
 
-	defaultHidden: true,
+	configParts: [AlignChoice],
+
+	defaultHidden: false,
 	
 	defaultWidth: 80,
 	
@@ -29,7 +37,13 @@ export default {
 	
 	unchangeable: true,
 
-	getDisplayHTML: getHTML.bind(null, _.identity, []),
+	parser: _.identity,
+
+	formatter: _.identity,
+
+	serializer: _.identity,
+
+	getDisplayHTML: getHTML.bind(null, _.identity, stylers),
 
 	element: class PrimaryKeyElement extends Component {
 
@@ -52,7 +66,7 @@ export default {
 				formatter = {_.identity}
 				serializer = {_.identity}
 				parser = {_.identity}
-				stylers = {[]}/>
+				stylers = {stylers}/>
 		}
 	}
 }

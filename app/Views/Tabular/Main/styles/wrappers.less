@@ -18,5 +18,21 @@
 
 	transition: linear 75ms;
 	
-	// -webkit-transform-style: preserve-3d;
+	-webkit-transform-style: flatten;
+	transform-style: flatten;
+}
+
+.loader-overlay {
+	background: white;
+	line-height: 100%;
+	background: @gray4;
+	font-size: 20px;
+	display: flex;
+}
+
+.loader-hero {
+	flex: 1 1;
+	width: 100%;
+	line-height: 100%;
+	text-align: center;
 }

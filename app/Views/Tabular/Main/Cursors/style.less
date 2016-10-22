@@ -20,10 +20,11 @@
 }
 
 .new-row-adder {
+	text-transform: uppercase;
 	background: @table-backing;
 	border: 1px solid @table-border; 	
 	color: @table-border;
-	padding: 2px;
+	line-height: 25px;
 	text-align: center;
 	cursor: pointer;
 	&:hover {
@@ -74,7 +75,7 @@
 .view-reference-box {
 	// transition: all linear 75ms;
 	// transition: all linear 75ms;
-	transition: all cubic-bezier(.16,.85,.5,1) 75ms;
+	transition: all cubic-bezier(.16,.85,.5,1) 100ms;
 }
 
 .selection-drag-box {
@@ -128,7 +129,7 @@
 }
 .selection-border {
 	// transform: translateZ(2px);
-	border: 2px solid @green1;
+	border: 1px solid @green1;
 	z-index: 4;
 }
 

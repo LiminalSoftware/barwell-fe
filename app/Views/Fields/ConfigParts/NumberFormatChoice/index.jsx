@@ -262,18 +262,33 @@ export default {
 			</div>
 		}
 
+		toggleZeroDash = () => {
+			commitColumnConfig(
+				this.props.view, 
+				this.props.config.column_id, 
+				{zeroDash: !this.props.zeroDash})
+		}
+
 		render = () => {
-			return <div className="column-context-menu" style={this.props.style}>
-				{
-				this.getPresetsMenu()
-				}
-				{
-				// this.state.custom ?
-				// this.getCustomMenu()
-				// : null
-				}
+			const {config} = this.props
+			return <div style={this.props.style}>
+				<div className = "popdown-filler">
+					{
+					this.getPresetsMenu()
+					}
+					{
+					// this.state.custom ?
+					// this.getCustomMenu()
+					// : null
+					}
+					<div className = "popdown-item top-divider">
+						<input type="checkbox" value={config.zeroDash} onChange={this.toggleZeroDash}/> 
+						<span>Apply financial formatting</span>
+					</div>
+				</div>
 				<div className = "popdown-item selectable top-divider" onClick={this.props.blurSelf}>
 					<span className="icon icon-arrow-left icon-detail-left"/>
+
 					<span>Back</span>
 				</div>
 			</div>;

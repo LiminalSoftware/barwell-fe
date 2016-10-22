@@ -8,7 +8,7 @@
 	border-bottom: 1px solid @red-bright-trans;
 	
 	background: @view-backing;
-	
+	-webkit-transform-style: flatten;
 }
 
 
@@ -23,6 +23,7 @@
 	
 	color: @gray3;
 	transition: all linear 75ms;
+	border-right: 1px solid @gray3;
 	&:hover {
 		color: @green1;
 	}
@@ -33,13 +34,21 @@
 	background: @table-backing;
 	cursor: pointer !important;
 	transition: background 75ms linear;
-	&:hover {
-		background: @gray4;
-	}
 }
 
 .table-cell-inner {
 	
+}
+
+.renamer {
+	font-family: @bodyFont;
+	font-size: 16px;
+	background: @table-fade-bg;
+	border: none;
+	outline: none;
+	border-bottom: 1px solid @gray3;
+	margin-bottom: -1px;
+	width: 150px;
 }
 
 .table-cell-renamer {

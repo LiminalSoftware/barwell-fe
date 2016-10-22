@@ -71,7 +71,7 @@ export default {
 
 	defaultDefault: null,
 
-	defaultWidth: 100,
+	defaultWidth: 120,
 	
 	defaultAlign: 'center',
 

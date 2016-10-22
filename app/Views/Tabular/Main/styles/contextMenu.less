@@ -8,7 +8,8 @@
 	list-style: none;
 	min-width: 350px;
 	position: absolute;
-	display: block;
+	display: flex;
+	flex-direction: column;
 	pointer-events: auto;
 	
 	z-index: 30;
@@ -20,12 +21,18 @@
 		padding: 5px 20px;
 	}
 	border-color: @green1;
+	border-width: 1px;
+	border-style: solid;
+
 	.shadowed-menu;
+
 }
 
 .column-context-menu {
 	border-top-left-radius: 0 !important;
 	border-top-right-radius: 0 !important;
+	overflow-x: hidden;
+	overflow-y: auto;
 }
 
 .new-attribute-menu {

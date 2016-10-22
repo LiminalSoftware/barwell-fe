@@ -11,8 +11,10 @@ module.exports = {
       transitionName: "slide-in" 
     },
     zoomin: {
-      transitionEnterTimeout: 500,
-      transitionLeaveTimeout: 500,
+      transitionEnterTimeout: 700,
+      transitionAppearTimeout: 700,
+      transitionLeaveTimeout: 700,
+      transitionAppear: true,
       transitionName: "zoomin" 
     },
     inandout: {
@@ -87,11 +89,11 @@ module.exports = {
     GRAY_3: '#CBC3B7',
     GRAY_4: '#FAFAF4',
 
-    TABLE_BORDER: '#71646B', //'#CBC3B7', //'#ebe8e3',
+    TABLE_BORDER: '#CBC3B7', //'#CBC3B7', //'#ebe8e3',
     TABLE_BACKING: '#FFFFFF',
     VIEW_BACKING: '#F5F5F2',
     TABLE_FONT_COLOR: '#333333',
-    TABLE_EDGE: '#71646B', //'#A041BF', //'#524A50',
+    TABLE_EDGE: "blue", //"rgb(204, 0, 48)", // '#CBC3B7', //'#A041BF', //'#524A50',
     TABLE_SHADOW: 'rgba(160,65,191,0.2)',
 
     PURPLE_1: '#54365E',

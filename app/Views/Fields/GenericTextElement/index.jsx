@@ -73,7 +73,6 @@ export default class GenericTextElement extends Component {
 
 	componentDidUpdate = (prevProps, prevState)  => {
 		if (this.state.editing && !prevState.editing) {
-			console.log('move cursor to front')
 			var val = this.refs.input.value
 			this.refs.input.value = ''
 			this.refs.input.value = val

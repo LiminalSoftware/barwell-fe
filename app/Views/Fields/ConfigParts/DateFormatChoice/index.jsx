@@ -69,10 +69,11 @@ export default {
 			const config = this.props.config
 			const key = "attr-" + config.id
 
-			return <div className = "column-context-menu" style={this.props.style}>
+			return <div style={this.props.style}>
 				<div className = "popdown-item title bottom-divider">
 	              Date Format
 	        	</div>
+	        	<div className = "popdown-filler">
 				{
 					_.map(dateStyles, (dateStyle, dateStyleId) =>
 						<div className = {"popdown-item selectable "}
@@ -104,6 +105,7 @@ export default {
 				: null
 				}
 
+				</div>
 				<div className = "popdown-item selectable top-divider" onClick={this.props.blurSelf}>
 					<span className="icon icon-arrow-left icon-detail-left"/>
 					<span>Back</span>

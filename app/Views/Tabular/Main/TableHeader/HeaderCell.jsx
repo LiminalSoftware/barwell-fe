@@ -13,7 +13,6 @@ import fieldTypes from "../../../fields"
 
 import modelActionCreators from "../../../../actions/modelActionCreators"
 
-import ColumnContext from "./ColumnContext"
 import util from "../../../../util/util"
 
 const COLUMN_MIN_WIDTH = 50
@@ -73,6 +72,10 @@ export default class HeaderCell extends Component {
 			removeEventListener('keydown', this.handleKeyPress)
 			removeEventListener('click', this.handleClick)
 		}
+	}
+
+	toggleMenuStyle = (val) => {
+		this.setState({open: val})
 	}
 
 	/*
@@ -215,15 +218,21 @@ export default class HeaderCell extends Component {
 	 */
 
 	getCellStyle = () => {
+		const borderStyle = 
+			this.state.open ?
+			`1px solid ${constants.colors.GREEN_1}` : 
+			this.props.sorting ? 
+			`1px solid ${constants.colors.BLUE_1}` : 
+			null
+
 		return {
-			width: this.props.column.width + (this.props.sorting ? 1 : 0),
+			width: this.props.column.width + (borderStyle ? 1 : 0),
 			left: this.props.left,
-			borderTop: (this.state.open ? '1px solid ' : this.props.sorting ? `1px solid ${constants.colors.BLUE_1}` : null),
 			marginTop: (this.props.sorting ? -1 : 0),
-			borderLeft: (this.props.sorting ? `1px solid ${constants.colors.BLUE_1}` : null),
-			borderRight: (this.props.sorting ? `1px solid ${constants.colors.BLUE_1}` : null),
-			// background: (this.state.mouseover ? constants.colors.GRAY_4 : constants.colors.GRAY_4 ),
-			zIndex: (this.props.sorting ? 12 : null)
+			borderLeft: borderStyle,
+			borderRight: borderStyle,
+			background: (this.state.mouseover ? constants.colors.GRAY_4 : constants.colors.GRAY_4 ),
+			zIndex: (borderStyle ? 12 : null)
 		}
 	}
 

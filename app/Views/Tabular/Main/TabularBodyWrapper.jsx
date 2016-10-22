@@ -161,25 +161,24 @@ var TabularBodyWrapper = React.createClass ({
 
 		var fetchStart = this.state.fetchOffset
 		var fetchEnd = Math.min(this.state.fetchOffset + MAX_ROWS, rowCount)
-
+		
 		var tableProps = _.extend(_.clone(this.props), {
-
+			
 		})
 		
-		if (!this.state.initialFetchComplete) 
-			return <div><div className="loader"/></div>
+		return <ReactCSSTransitionGroup {...constants.transitions.zoomin} className="flush wrapper" ref="tbodyWrapper">
+			{!this.state.initialFetchComplete ?
+			<div className="flush loader-overlay" key="loader">
+				<div className="wrapper flush loader-overlay" ref="loaderOverlay">
+					<p className="loader-hero">
+					{/*<span className="icon icon-loading-2 spin"/>
+					<span>Loading data from the server...</span>*/}
+					</p>
+				</div>
+			</div>
 
-		return <div
-			className = "wrapper"
-			ref="tbodyWrapper"
-			style = {{
-				left: 0,
-				right: 0,
-				top: 0,
-				bottom: 0,
-				overflow: 'hidden'
-			}}>
-			
+			:
+			<div className="flush wrapper" key="content">
 			<RowResizer {...this.props} adjustedWidth = {adjustedWidth} />
 
 			<div className = " wrapper"
@@ -214,7 +213,7 @@ var TabularBodyWrapper = React.createClass ({
 						
 						marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
 						transform: HAS_3D ? `translate3d(1, ${marginTop}px, 0)` : null,
-						transition: IS_CHROME && HAS_3D ? 'transform 75ms linear' : null,
+						transition: IS_CHROME && HAS_3D ? 'transform 100ms linear' : null,
 						background: constants.colors.TABLE_BACKING,
 						overflow: "hidden",
 						borderBottom: `1px solid ${constants.colors.TABLE_BORDER}`,
@@ -246,7 +245,7 @@ var TabularBodyWrapper = React.createClass ({
 				columns = {view.data._fixedCols} />
 
 			<TableFooter {...this.props}
-				ref = "lhsHead"
+				ref = "lhsFooter"
 				totalWidth = {lhsWidth + 1}
 				leftOffset = {0}
 				side = {'lhs'}
@@ -275,7 +274,7 @@ var TabularBodyWrapper = React.createClass ({
 					ref = "rhsHorizontalOffsetter"
 					style = {{
 						marginLeft: (-1 * this.props.hiddenColWidth ) + 'px',
-						transition: 'margin-left cubic-bezier(.16,.85,.5,1) 75ms',
+						transition: 'margin-left linear 100ms',
 						position: 'absolute',
 						top: 0,
 						bottom: 0,
@@ -325,20 +324,14 @@ var TabularBodyWrapper = React.createClass ({
 						leftOffset = {0}
 						side = {'rhs'}
 						columns = {view.data._floatCols} />
-
 					
 				</div>
 
-
-				
-
-
 			</div>
-
-
 			
-			
-		</div>;
+		</div>
+		}
+		</ReactCSSTransitionGroup>
 	}
 });
 

@@ -209,14 +209,10 @@ var ColumnAdder = React.createClass({
 			.map(type => fieldTypes[type].category))
 			.filter(_.identity);
 
-		return <div className="wizard-inner" key="chooseType">
-			<div className = "wizard-blocks">
-				{categories.map(c => <div className="block" key={c}>
-					<span className="block-header attr-style">{c}</span>
-					{_this.renderFieldList(c)}
-				</div>)}
-			</div>
-		</div>
+		return categories.map(c => <div className="" key={c}>
+			<div className="popdown-item title bottom-divider">{c}</div>
+			{_this.renderFieldList(c)}
+		</div>)
 	},
 
 	renderFieldList: function (category) {
@@ -228,48 +224,25 @@ var ColumnAdder = React.createClass({
 				var type = fieldTypes[id];
 				type.typeId = id
 				return type
-			}).filter(type => type.category === category)
+			})
+			.filter(type => category === type.category)
 
-		return types.map(type =>
-		<span className="block-body attr-style selectable-attr-style"
+		return<div style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
+		{
+		types.map(type =>
+		<span className="popdown-item selectable"
+		style = {{minWidth: 100, maxWidth: "50%", flex: '1 1'}}
 			key = {type.typeId}
 			onClick = {_this.handleChooseType.bind(_this, type.typeId)}>
-			<span className = {"icon icon-" + type.icon}/>
+			<span className = {"icon icon-green icon-selectable icon-" + type.icon}/>
 			{type.description}
-		</span>)
+		</span>
+		)}
+		</div>
 		
 	},
 
-	renderDefaultField: function () {
-		var fieldType = fieldTypes[this.state.type]
-
-		return <div className="menu-item menu-sub-item">
-			<span className="attr-style ">
-				Default value:
-			</span>
-			<span style = {{position: "relative"}}>
-				<span style = {{position: "absolute", background: "white", width: "100%", height: "100%"}}>
-				{React.createElement(fieldType.element, {
-					_recordCommit: this.handleSetDefault,
-					_handleBlur: this.handleSetDefault,
-					noAutoFocus: true,
-					value: this.state.defaultValue,
-					alwaysEdit: true,
-					config: {type: this.state.type},
-					selected: true,
-					rowHeight: '40px',
-					style: {
-				        left: '0px',
-				        bottom: '0px',
-				        top: '0px',
-				        right: '0px',
-				        border: 'none'
-				     }
-				})}
-				</span>
-			</span>
-		</div>
-	},
+	
 
 	renderRelatedModelPicker: function () {
 		const model = this.props.model
@@ -301,31 +274,31 @@ var ColumnAdder = React.createClass({
 		var fwdCardinality = this.state.cardinality[0]
 		var bwdCardinality = this.state.cardinality[1]
 
-		return <div className="wizard-inner" key = "steup3">
+		return <div  key = "steup3">
 
-			<div className="attr-style menu-item menu-sub-item">
-				<span className="attr-style ">
+			<div className="popdown-item">
+				<span className=" ">
 					Attribute type:
 				</span>
-				<span style={{}} className="attr-style selectable-attr-style"
+				<span style={{}} className=" selectable"
 				onClick={e => _this.setState({step: 1})}>
 					<span className={"icon icon-" + fieldType.icon} style={{marginLeft: "5px"}}/>
 					<span>{fieldType.description}</span>
 				</span>
 			</div>
 
-			<div className="attr-style menu-item menu-sub-item">
+			<div className="popdown-item">
 				<span className="attr-style ">
 					Related item
 				</span>
 				<span style={{position: "relative"}} 
 					onClick={e => _this.setState({step: 2})}
-					className="attr-style selectable-attr-style">
+					className="">
 					<span style={{marginLeft: "5px"}}>{relatedModel.model}</span>
 				</span>
 			</div>
 
-			<div className="attr-style menu-item menu-sub-item">
+			<div className="popdown-item">
 				{this.renderCadinalityLeg(
 					thisModel, 
 					fwdCardinality, 
@@ -335,7 +308,7 @@ var ColumnAdder = React.createClass({
 				)}
 			</div>
 
-			<div className="attr-style menu-item menu-sub-item">
+			<div className="popdown-item">
 				{this.renderCadinalityLeg(
 					relatedModel, 
 					bwdCardinality, 
@@ -345,13 +318,14 @@ var ColumnAdder = React.createClass({
 				)}
 			</div>
 
-			{this.renderConfirmButtons()}
+			<div className="popdown-filler popdown-item"/>
+
 		</div>
 	},
 
 	renderCadinalityLeg: function (model, cardinality, selectCardinality, name, changeName) {
 
-		return <span className="attr-style" style = {{position: "relative"}}>
+		return <span className="" style = {{display: "block"}}>
 			Each <span>{model.model}</span> can have
 
 			<select className="renamer" value = {cardinality}
@@ -371,20 +345,40 @@ var ColumnAdder = React.createClass({
 
 
 	renderConfirmButtons: function () {
-		return <div className="menu-item menu-config-item" 
-		style={{position: "absolute", bottom: 0, left: 0, right: 0}}>
+		var {step, type} = this.state
+		var fieldType = type ? fieldTypes[type] : {}
+		var isRelation = (fieldType.category === 'Relations' )
+
+		if (step === 1 || (step === 2 && isRelation)) return <div className="popdown-item top-divider selectable" onClick={this.props.blurSelf}>
+			<span className="icon icon-arrow-left icon-detail-left"/>
+			<span>Back</span>
+		</div>
+
+		else if (step === 2 && !isRelation || step === 3 && isRelation) return <div className="popdown-item popdown-inline top-divider" >
 			<span 
 				onClick = {this.handleCommit}
-				className="menu-sub-item  selectable-attr-style attr-border  attr-style">
-				<span className="icon icon-cross"/>
+				className="selectable">
+				<span className="icon icon-green icon-selectable icon-cross"/>
 				<span>Nevermind</span>
 			</span>
 			<span 
 				onClick = {this.handleConfirm}
-				className="menu-sub-item selectable-attr-style attr-border attr-style">
-				<span className="icon icon-check"/>
+				className="selectable">
+				<span className="icon icon-green icon-selectable icon-check"/>
 				<span>Done</span>
 			</span>
+		</div>
+	},
+
+	renderStepLabel: function () {
+		var {step, type} = this.state
+		var fieldType = type ? fieldTypes[type] : {}
+		var isRelation = (fieldType.category === 'Relations' )
+		const numSteps = isRelation || step === 1 ? 3 : 2
+
+		return <div className="popdown-item bottom-divider title" key="title">
+			<span>{stepDescriptions[this.state.step]}</span>
+			<span style = {{float: "right"}}>(Step {this.state.step} of {numSteps})</span>
 		</div>
 	},
 
@@ -394,76 +388,73 @@ var ColumnAdder = React.createClass({
 		var isRelation = (fieldType.category === 'Relations' )
 
 
-		return <div className="wizard-inner" key = "step2">
-			
-				<div className="attr-style menu-item menu-sub-item">
-					<span className="attr-style ">
-						Attribute type:
-					</span>
-					<span style={{}} className="attr-style selectable-attr-style"
-					onClick={e => _this.setState({step: 1})}>
-						<span className={"icon icon-" + fieldType.icon} style={{marginLeft: "5px"}}/>
-						<span>{fieldType.description}</span>
-					</span>
-				</div>
+		return <div key = "step2">
+			<div className="popdown-item">
+				<span className="attr-style ">
+					Attribute type:
+				</span>
+				<span style={{}} className=""
+				onClick={e => _this.setState({step: 1})}>
+					<span className={"icon icon-" + fieldType.icon} style={{marginLeft: "5px"}}/>
+					<span>{fieldType.description}</span>
+				</span>
+			</div>
 
-				{isRelation ?
-				this.renderRelatedModelPicker()
-				: 
-				<div className="attr-style menu-item menu-sub-item">
-					<span className="attr-style ">
-						Attribute name:
-					</span>
-					<span style={{ position: "relative"}}>
-						<input style={{}} 
-						autoFocus
-						className = "flush renamer" value={this.state.name}
-						onChange = {this.handleNameChange}/>
-					</span>
-				</div>
-				}
-				
-				{!isRelation?
-					this.renderDefaultField()
-					: null
-				}
-				
-				{
-					this.state.nameError  ? 
-					<div className="menu-item menu-sub-item"><span style = {{color: "lightcoral"}}>
+			{isRelation ?
+			this.renderRelatedModelPicker()
+			: 
+			<div className="popdown-item">
+				<span className="attr-style ">
+					Attribute name:
+				</span>
+				<span style={{ position: "relative"}}>
+					<input style={{}} 
+					autoFocus
+					className = "flush renamer" value={this.state.name}
+					onChange = {this.handleNameChange}/>
+				</span>
+			</div>
+			}
+			
+			
+			{
+			this.state.nameError  ? 
+			<div className="popdown-item warning">
+				<span style = {{color: "crimson"}}>
 					<span className="icon icon-warning"/>
 					{this.state.nameError}
-					</span></div>
-					: null
-				}
+				</span>
+			</div>
+			: null
+			}
 
-			{!isRelation? this.renderConfirmButtons() : null}
+			<div className="popdown-filler popdown-item"/>
+
+			
 		</div>
 	},
 
 	render: function () {
-		var step = this.state.step
+		var {step, type} = this.state
 
-		return <div className="wizard-overlay">
+		return <div style={this.props.style}>
 			
-			<div className="wizard-title" key="title">
-				<span>{stepDescriptions[this.state.step]}</span>
-				<span style = {{float: "right"}}>(Step {this.state.step})</span>
-			</div>
+			{this.renderStepLabel()}
 			<ReactCSSTransitionGroup
-				className="wizard-inner"
+				className="popdown-filler"
 				{...constants.transitions.slideleft}
 				onMouseDown={util.clickTrap}>
 				{
-				this.state.step === 1 ?
-				this.renderCategoriesList()
-				: this.state.step === 2 ?
-				this.renderDetailForm()
-				: this.state.step === 3 ?
+				step === 1 ?
+				this.renderCategoriesList() :
+				step === 2 ?
+				this.renderDetailForm() :
+				step === 3 ?
 				this.renderCardinalityForm()
 				: <span key="done">done!</span>			
 				}
 			</ReactCSSTransitionGroup>
+			{this.renderConfirmButtons()}
 		</div>
 	
 	},

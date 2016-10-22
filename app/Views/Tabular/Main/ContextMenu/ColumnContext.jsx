@@ -15,6 +15,17 @@ import HeaderCell from "../TableHeader/HeaderCell"
 
 import util from "../../../../util/util"
 
+import ColumnAdder from "../../../../components/ColumnAdder"
+
+const INNER_STYLE = {
+	position: "absolute",
+	top: 0, left: 0,
+	width: "100%",
+	height: "100%",
+	display: "flex",
+	flexDirection: "column"
+}
+
 export default class ColumnConfig extends Component {
 
 	constructor (props) {
@@ -37,8 +48,19 @@ export default class ColumnConfig extends Component {
 		}), true)
 	}
 
+	componentWillMount = () => {
+		const {colHeader} = this.props
+		colHeader.toggleMenuStyle(true)
+	}
+
+	componentWillUnmount = () => {
+		const {colHeader} = this.props
+		colHeader.toggleMenuStyle(false)
+	}
+
 	rename = () => {
-		const colHeader = this.props.element.handleRename()
+		const {colHeader} = this.props
+		colHeader.handleRename()
 		this.props.blurContextMenu()
 	}
 
@@ -79,7 +101,7 @@ export default class ColumnConfig extends Component {
 		this.props.blurContextMenu()
 	}
 
-	function = () => {
+	deleteColumn = () => {
 		const config = this.props.config
 		const attribute = AttributeStore.get(config.attribute_id)
 		modelActionCreators.destroy('attribute', true, attribute)
@@ -102,13 +124,8 @@ export default class ColumnConfig extends Component {
 			null : sorting[0].descending ? 'descending' : 'ascending'
 
 		const _this = this
-		
-		const innerStyle = {
-			top: 0, left: 0,
-			width: "350px"
-		}
 
-		return <div className="column-context-menu slide-invert" style={innerStyle} key="main-menu">
+		return <div key="main-menu slide-invert" style={INNER_STYLE}>
 			<div className="popdown-item title">
 				Change view settings
 			</div>
@@ -139,21 +156,24 @@ export default class ColumnConfig extends Component {
 			}
 
 			{type.sortable ?
-			<div onClick={this.sort.bind(_this, false)} 
-				className = {`popdown-item ${currentSort==='ascending'?'un':''}selectable`}>
-				<span className={`icon icon-green icon-selectable  icon-${type.sortIcon}asc`}/>
-				{currentSort==='ascending' ? "Sorted in ascending order" : "Sort in ascending order"}
+			<div className = "popdown-item popdown-inline bottom-divider">
+				<span>Sort: </span>
+				<span onClick={this.sort.bind(_this, false)} className="selectable left-divider">
+					<span className={`icon icon-green 
+						${currentSort === 'ascending' ? 'icon-hilite' : 'icon-selectable'} 
+						icon-${type.sortIcon}asc`}/>
+					<span>Ascending</span>
+				</span>
+				<span onClick={this.sort.bind(_this, true)} className="selectable left-divider">
+					<span className={`icon icon-green 
+						${currentSort === 'descending' ? 'icon-hilite' : 'icon-selectable'} 
+						icon-${type.sortIcon}desc`}/>
+					<span>Descending</span>
+				</span>
 			</div> 
 			: null
 			}
-			{type.sortable ?
-			<div onClick={this.sort.bind(_this, true)} 
-			className = {`popdown-item bottom-divider ${currentSort==='descending'?'un':''}selectable`}>
-				<span className={`icon icon-green icon-selectable  icon-${type.sortIcon}desc`}/>
-				{currentSort==='descending' ? "Sorted in descending order" : "Sort in descending order"}
-			</div>
-			: null
-			}
+			
 			{/*==============================================================*/}
 
 			
@@ -172,11 +192,26 @@ export default class ColumnConfig extends Component {
 			</div>
 			)}
 
+			
 			{/*==============================================================*/}
 
 			<div className="popdown-item title">
 				Change attribute details
 			</div>
+
+			<div className = "popdown-item popdown-inline bottom-divider top-divider">
+				<span>Add column: </span>
+				<span onClick={this.sort.bind(_this, false)} className="selectable left-divider"
+					onClick={this.showDetail.bind(_this, ColumnAdder)} >
+					<span className={`icon icon-green icon-selectable icon-arrow-left`}/>
+					<span>To left</span>
+				</span>
+				<span onClick={this.sort.bind(_this, false)} className="selectable left-divider" 
+					onClick={this.showDetail.bind(_this, ColumnAdder)} >
+					<span className={`icon icon-green icon-selectable icon-arrow-right`}/>
+					<span>To right</span>
+				</span>
+			</div> 
 
 			<div onClick={this.rename} className = "popdown-item selectable">
 				<span className="icon icon-green icon-selectable icon-quote-open"/>
@@ -207,50 +242,70 @@ export default class ColumnConfig extends Component {
 
 	render () {
 		const {view, config} = this.props
+		const windowWidth = document.getElementById('application').clientWidth
+		const viewLeft = document.getElementById(`view-${view.view_id}`).getBoundingClientRect().left
 		
-		let style = Object.assign({}, 
+		let style = Object.assign({},
 			this.props._getRangeStyle(this.props.rc), {
 				bottom: 0,
-				top: view.data.geometry.headerHeight,
+				top: view.data.geometry.headerHeight - 1,
 				position: "absolute",
-				pointerEvents: "auto",
-				overflow: "hidden"
+				pointerEvents: "auto"
 		}, {
-			marginLeft: -30,
-			marginRight: -30,
+			marginLeft: -1,
+			maxWidth: 410,
+			width: 410,
 			height: "100%",
+			background: "transparent",
+			transition: 'all linear 100ms'
 		})
 
-		const innerStyle = {
-			top: 0, left: 30,
-			width: "350px"
+		let bridgeStyle = {
+			position: "absolute", 
+			top: -5, 
+			left: style.marginLeft + 1, 
+			minHeight: 6, 
+			background: "white",
+			zIndex: 1001,
+			borderLeft: `1px solid ${constants.colors.GREEN_1}`,
+			borderRight: `1px solid ${constants.colors.GREEN_1}`,
+			width: config.width - 1,
+			transition: 'all linear 100ms'
 		}
 
-		return <ReactCSSTransitionGroup
+		if (style.left + viewLeft > windowWidth - 410){
+			style.marginLeft = -350 + config.width - 2
+			bridgeStyle.left = 350 - config.width + 1
+		}
+
+		
+
+		return <div
 			key = {config.column_id}
-			{...constants.transitions.slideleft}
+			
 			style={style} onClick={util.clickTrap}>
+
+			<ReactCSSTransitionGroup
+			style={{minHeight: 550, maxHeight: 550}}
+			className={"column-context-menu "}
+			{...constants.transitions.slideleft}>
+
 			{this.state.detailElement ? 
 				React.createElement(this.state.detailElement,
 					update(this.props, {$merge: {
 						ref: "detailElement",
-						style: innerStyle,
+						style: INNER_STYLE,
+						viewContext: {order: config.order, view_id: view.view_id},
 						blurSelf: this.blurMode, 
 						blurMenu: this.blurMenu}}) )
 				: this.renderMainMenu()
 			}
-			
-			<HeaderCell {...this.props}
-				key={config.column_id}
-				ref={"head-" + config.column_id}
-				column = {config}
-				isOpen = {true}
-				idx = {0}
-				left = {15}
-				top = {-1 * view.data.geometry.headerHeight}
-				width = {config.width - 1}/>
 
-		</ReactCSSTransitionGroup>
+			</ReactCSSTransitionGroup>
+
+			<div style={bridgeStyle}/>
+
+		</div>
 	}
 
 }

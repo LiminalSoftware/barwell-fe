@@ -16,7 +16,6 @@ export default function (config, object) {
 	let hsl = c.toHsl()
 
 	if (config.adjustColor) hsl.l = Math.max(hsl.l, MIN_LIGHTNESS);
-
 	else if (c.isDark()) style.color = 'white';
 
 	style.background = tinycolor(hsl).toRgbString();

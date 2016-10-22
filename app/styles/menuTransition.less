@@ -2,6 +2,32 @@
 
 
 
+// ============================================================================
+
+.zoomin-appear, .zoomin-enter, {
+  opacity: 0.01;
+  transform: translate3D(0,0,40px);
+}
+
+.zoomin-appear-active, .zoomin-enter-active {
+  opacity: 1;
+  transform: translate3D(0,0,0);
+  transition: all 200ms cubic-bezier(.16,.85,.5,1) 300ms;
+}
+
+.zoomin-leave {
+  transform: translate3D(0,0,0);
+  opacity: 1;
+  
+}
+
+.zoomin-leave-active {
+  opacity: 0.01;
+  transform: translate3D(0,0,-40px);
+  transition: all  cubic-bezier(.16,.85,.5,1) 300ms;
+}
+
+
 
 // ============================================================================
 
@@ -43,9 +69,13 @@
   transform: translate3D(80px,0,0);
 }
 
+.slide-invert.slideleft-enter {
+  transform: translate3D(80px,0,0) !important;
+}
+
 .slideleft-appear {
   opacity: 0.01;
-  transform: translate3D(0,-400px,0);
+  // transform: translate3D(0,-100px,0);
 }
 
 .slideleft-enter-active, .slideleft-appear-active {
@@ -53,6 +83,10 @@
   transform: translate3D(0,0,0);
   transition: all cubic-bezier(.16,.85,.5,1) 125ms;
 }
+
+
+
+
 
 .slideleft-leave {
   transform: translate3D(0,0,0);
@@ -64,6 +98,10 @@
   opacity: 0.01;
   transform: translate3D(-80px,0,0);
   transition: all cubic-bezier(.16,.85,.5,1) 125ms;
+}
+
+.slide-invert.slideleft-leave-active {
+  transform: translate3D(-80px,0,0) !important;
 }
 
 

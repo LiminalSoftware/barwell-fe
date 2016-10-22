@@ -90,7 +90,6 @@ var Cursors = React.createClass ({
 		
 		
 		const hideCursor = (rowsSelected || rowCount === 0);
-
 		
 		return (!focused ? [] : [
 			<ReactCSSTransitionGroup {...constants.transitions.fadein}>{
@@ -153,7 +152,7 @@ var Cursors = React.createClass ({
 						 (sel.left < numFixed + columnOffset) ? -5 : -4, 
 					width: 10, top: 0, height: 1}} />
 			: null
-		]).concat(view.data.sorting.map(s => {
+		]).concat(!focused ? [] : view.data.sorting.map(s => {
 			const column = view.data.columns[s.attribute]
 			const left = view.data._visibleCols.indexOf(column)
 			return <Overlay

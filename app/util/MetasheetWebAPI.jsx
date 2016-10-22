@@ -26,9 +26,11 @@ var stripInternalVars = module.exports.stripInternalVars = function (obj) {
 
 
 
-var ajax = module.exports.ajax = function ({method, url, json, headers}) {
+var ajax = module.exports.ajax = function ({method, url, json, headers, retry}) {
   console.log(method + '->' + url);
   console.log(JSON.parse(json));
+
+  retry = retry || {}
   
   return util.wait(0).then(function () {
     return new Promise(function (resolve, reject) {

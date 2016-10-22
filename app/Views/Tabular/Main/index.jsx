@@ -129,7 +129,7 @@ const TabularPane = React.createClass ({
 		if (tableWrapper) tableWrapper.forceUpdate()
 		if (cursors) cursors.forceUpdate()
 		if (lhs) lhs.forceUpdate()
-		if (rhs) rhs.forceUpdate()
+		if (rhs) rhs.forceUpdate()	
 	},
 
 	getTotalWidth: function () {
@@ -220,7 +220,7 @@ const TabularPane = React.createClass ({
 		}
 	},
 
-	addRecord: function () {
+	addRecord: function (e) {
 		this.blurPointer();
 		modelActionCreators.insertRecord(
 			this.props.model, 
@@ -230,6 +230,7 @@ const TabularPane = React.createClass ({
 		)
 		this.clearCopy();
 		this.setState({copyarea: null});
+		if (e) e.preventDefault() && util.clickTrap(e)
 	},
 
 	insertRecord: function () {
@@ -454,16 +455,16 @@ const TabularPane = React.createClass ({
 	    		width += col.width
 	    })
 		
-	    style.top = (pos.top * geo.rowHeight + (fudge.top || 0)) + 'px'
-	    style.left = (left + (fudge.left || 0)) + 'px'
-	    style.height = (geo.rowHeight * ((pos.bottom || pos.top) - pos.top + 1) + (fudge.height || 0)) + 'px'
-	    style.width = (width + (fudge.width || 0)) + 'px'
+	    style.top = (pos.top * geo.rowHeight + (fudge.top || 0))
+	    style.left = (left + (fudge.left || 0))
+	    style.height = (geo.rowHeight * ((pos.bottom || pos.top) - pos.top + 1) + (fudge.height || 0))
+	    style.width = (width + (fudge.width || 0))	
 
 	    if (!showHiddenHack && pos.left >= numFixed && (pos.right || pos.left) < numFixed + columnOffset) {
 	    	style.maxWidth = 0
 	    	style.opacity = 0
 	    } else {
-	    	style.maxWidth = (width + (fudge.width || 0)) + 'px'
+	    	style.maxWidth = (width + (fudge.width || 0))
 	    	style.opacity = 1
 	    }
 
@@ -490,6 +491,7 @@ const TabularPane = React.createClass ({
 				const value = (isValidated || !parser) ? 
 					data[cbr][cbc] : 
 					parser(data[cbr][cbc], column)
+				
 				if (!type.uneditable) {
 					patch[column.column_id] = value
 				}
@@ -502,7 +504,9 @@ const TabularPane = React.createClass ({
 	pasteSelection: function (e) {
 		if (!this.props.focused) return;
 		const _this = this;
-		const text = e.clipboardData.getData('text').trim() || "";
+		const text = (e ? e.clipboardData.getData('text').trim() 
+				: window.clipboardData.getData('Text'))
+		 || "";
 		const isJsonValid = (text === this.state.copytext);
 
 		// if the copy data is the same as the data we saved when the 
@@ -555,12 +559,14 @@ const TabularPane = React.createClass ({
 	},
 
 	updateSelect: function (pos, shift) {
-		var model = this.props.model;
-		var sel = this.state.selection;
-		var ptr = this.state.pointer;
-		var view = this.props.view;
+		const {model, view} = this.props
+		let {selection: sel, pointer: ptr, visibleRows} = this.state
+		
 		var numCols = this.getNumberCols();
 		var numRows = this.getNumberRows();
+
+		var rowHeight = view.data.geometry.rowHeight
+		
 
 		if (shift) {
 			sel = {
@@ -579,6 +585,9 @@ const TabularPane = React.createClass ({
 			}
 			this.updatePointer(ptr)
 		}
+
+		if (pos.top < this.state.rowOffset) this.scrollTo(pos.top - 1)
+		else if (pos.top > this.state.rowOffset + visibleRows) this.scrollTo(pos.top + 1 - visibleRows)
 		
 		this.setState({
 			selection: sel,
@@ -771,20 +780,22 @@ const TabularPane = React.createClass ({
 		 */
 		
 		return <div ref="wrapper"
+			
 			className = {`wrapper table-outermost-wrapper`}
 			beforePaste = {this.beforePaste}>
 
-			<div className=" wrapper" style={{overflow: "hidden"}}>
+			<ReactCSSTransitionGroup className=" wrapper" style={{overflow: "hidden"}} {...constants.transitions.zoomin}>
 				<TabularBodyWrapper {...childProps}
+					key="tableWrapper"
 					ref="tableWrapper"/>
 				
 				<Cursors {...childProps}
 					key="cursors"
 					ref="cursors"/>
-			</div>
+			</ReactCSSTransitionGroup>
 
 			<ScrollBar {...childProps}
-				totalDim = {(rowCount + 4) * geo.rowHeight + geo.headerHeight}	
+				totalDim = {(rowCount) * geo.rowHeight + geo.headerHeight + 200}	
 				visibleDim = {this.state.clientHeight}
 				rowCount = {rowCount}
 				startOffset = {geo.headerHeight}

@@ -63,12 +63,7 @@ export default {
 		}
 
 		chooseFixedColor = (color) => {
-			const patch = {color: color}
-			this.setState(patch)
-			commitColumnConfig(
-				this.props.view, 
-				this.props.config.column_id, 
-				patch)
+			this.commitChanges({color: color})
 		}
 
 		chooseCustom = () => {
@@ -79,22 +74,31 @@ export default {
 			this.setState({chooser: 'palette'})
 		}
 
+		chooseCondition = (attr) => {
+			this.commitChanges({colorConditionAttr: attr})
+		}
+
 		chooseNone = () => {
-			const patch = {
+			this.commitChanges({
 				chooser: 'nocolor', 
 				color: null, 
 				conditional: false, 
 				colorAttr: null
-			}
+			})
+		}
+
+		commitChanges = (patch) => {
+			const {view, config} = this.props
 			this.setState(patch)
-			commitColumnConfig(
-				this.props.view, 
-				this.props.config.column_id,
-				patch)
+			commitColumnConfig(view, config.column_id, patch)
 		}
 
 		handleAdjustCheck = () => {
 			this.commitChanges({adjustColor: !this.state.adjustColor})
+		}
+
+		handleToggleConditional = () => {
+			this.commitChanges({colorConditional: !this.state.colorConditional})
 		}
 
 		blurChildren = () => {
@@ -103,6 +107,36 @@ export default {
 		}
 
 		// RENDER ===================================================================
+
+		renderConditional = () => {
+			const _this = this
+			const {view, model} = this.props
+			var {colorConditional, colorConditionAttr} = this.state
+			var boolAttrs = AttributeStore.query({type: 'BOOLEAN', model_id: view.model_id})
+
+			return <div key="color-condition">
+				<div className="popdown-item title top-divider">
+					Conditional
+				</div>
+				<div key = "no-condition" className={"popdown-item selectable "}
+					onClick = {_this.chooseCondition.bind(_this, null)}>
+					<span className = {" icon icon-square  " + 
+							(colorConditionAttr === null ?"icon-hilite":"icon-selectable")}/>
+					<span>No condition</span>
+				</div>
+				{
+				boolAttrs.map(function (attr) {
+					return <div key = {attr.attribute_id} className = "popdown-item selectable "
+						onClick = {_this.chooseCondition.bind(_this, attr.attribute_id)}>
+						<span className = {" icon icon-check-square  " + 
+							(colorConditionAttr === attr.attribute_id ? "icon-hilite":"icon-selectable")}/>
+						{attr.attribute}
+					</div>
+				})
+				}
+				
+			</div>
+		}
 
 		renderColorSection = () => {
 			var _this = this
@@ -114,8 +148,8 @@ export default {
 			return <div key="color">
 
 				<div key = "color-divider " 
-					className = 'popdown-item title bottom-divider'>
-					Configure Background Color:
+					className = 'popdown-item title'>
+					Cell color:
 				</div>
 
 				{
@@ -123,7 +157,7 @@ export default {
 					return <div key = {attr.attribute_id} className = {"popdown-item selectable "
 						+ (_this.state.colorAttr === attr.attribute_id ? ' menu-selected' : '')}
 						onClick = {_this.chooseColor.bind(_this, attr.attribute_id)}>
-						<span className = " icon icon-eye-dropper  "/>
+						<span className = " icon icon-bucket  "/>
 						{attr.attribute}
 					</div>
 				})
@@ -131,7 +165,7 @@ export default {
 				
 				<div className = "popdown-item selectable"
 					onClick = {_this.chooseNone}>
-					<span className = {"icon icon-square " + 
+					<span className = {"icon icon-3d-glasses " + 
 					(chooser === 'nocolor'?"icon-hilite":"icon-selectable")}/>
 					No cell color
 				</div>
@@ -147,6 +181,7 @@ export default {
 					chooser === 'palette' ? 
 					<div className = "popdown-item menu-row"> {
 						palette.map(function (color) {
+							console.log(color)
 							return <span className = "menu-choice" key = {color} style = {{background: color}}
 							onMouseDown = {_this.chooseFixedColor.bind(_this, color)}>
 								{
@@ -169,7 +204,7 @@ export default {
 				
 				
 				{
-				this.state.chooser === 'custom' ?
+				this.state.chooser === 'custom' ?	
 				<ColorPickerWidget  color = {this.state.color} height = {customHeight} 
 					_chooseColor = {this.chooseFixedColor}/>
 				: null
@@ -178,7 +213,7 @@ export default {
 
 
 				{
-				this.state.colorConditionAttr ?
+				this.state.colorAttr ?
 				<div className = "popdown-item top-divider">
 				Auto-lighten colors: <input type="checkbox"
 					onChange = {_this.handleAdjustCheck}
@@ -192,8 +227,11 @@ export default {
 		}
 
 		render () {
-			return <div className="column-context-menu" style={this.props.style}>
+			return <div style={this.props.style}>
+				<div className = "popdown-filler">
 				{this.renderColorSection()}
+				{this.renderConditional()}
+				</div>
 				<div className = "popdown-item selectable top-divider" onClick={this.props.blurSelf}>
 					<span className="icon icon-arrow-left icon-detail-left"/>
 					<span>Back</span>

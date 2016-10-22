@@ -2,27 +2,31 @@
 
 .icon.check {
 	position: absolute;
-	left: -2px;
-	// left: 0;
+	
+	left: -1px;
 	margin: 0;
 	top: 0;
 	bottom: 0;
 	right: 0;
 	text-align: center;
-	line-height: 14px;
-	font-size: 11px !important;
+	line-height: 16px;
+	font-size: 14px !important;
 	pointer-events: none;
 }
 
 .checkbox-surround-checked {
-	background: @green1;
-	color: white;
+	// background: @green1;
+	// color: white;
+	color: @green1;
+}
+
+.checkbox-surround-selected {
+	border: 1px solid @gray3 !important;
 }
 
 .checkbox-surround {
 	background: white;
 	color: @green1;
-	background: fadeout(@gray3, 90%);
 }
 
 .checkbox-surround, .checkbox-surround-checked {
@@ -32,10 +36,10 @@
 	
 	position: relative;
 	display: inline-block;
-	max-height: 14px;
-	min-height: 14px;
-	max-width: 14px;
-	min-width: 14px;
+	max-height: 16px;
+	min-height: 16px;
+	max-width: 16px;
+	min-width: 16px;
 	cursor: pointer;
 }
 

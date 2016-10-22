@@ -38,7 +38,7 @@ export default class ViewPane extends Component {
 
 	render () {	
 		const _this = this
-		const {view, focus} = this.props
+		const {view, focus, style} = this.props
 		const {configElement} = this.state
 
 		const viewType = viewTypes[view.type]
@@ -53,31 +53,18 @@ export default class ViewPane extends Component {
 			focused: isFocused,
 			focus: focus,
 			viewconfig: viewconfig,
-			showConfigElement: this.showConfigElement
+			showConfigElement: this.showConfigElement,
+			key: 'view-' + view.view_id
 		}
 
 		const content = React.createElement(viewType.mainElement, childProps)
 
-		const config = React.createElement(viewType.configElement, childProps)
+		// const config = React.createElement(viewType.configElement, childProps)
 
 		const configDetail = configElement ? React.createElement(configElement, childProps) : null
 
-		return <div className="model-views" >
-			
-			
-
-			
-
-			<ReactCSSTransitionGroup
-				ref="pane"
-				key="model-panes"
-				className="model-pane"
-				{...constants.transitions.fadeinout}>
-
-				{content}
-
-			</ReactCSSTransitionGroup>
-
+		return <div style={style} id={`view-${view.view_id}`}>
+			{content}
 		</div>
 	}
 }

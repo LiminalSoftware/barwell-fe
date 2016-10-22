@@ -40,6 +40,7 @@ import displayStyles from "../ConfigParts/NumberFormatChoice/displayStyles"
 const stylers = [getAlignStyles, getBackgroundStyles, getFontStyles]
 
 const formatter = function (value, config) {
+	if (config.zeroDash && value === 0) return '-'
 	var prettyVal = numbro(value).format(config.formatString);
 	return prettyVal;
 }

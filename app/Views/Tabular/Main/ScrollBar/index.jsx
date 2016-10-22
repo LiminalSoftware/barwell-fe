@@ -55,8 +55,9 @@ var ScrollBar = React.createClass ({
 	handleMouseWheel: function (e) {
 		const {visibleDim, totalDim} = this.props
 		const delta = (this.props.axis === 'vertical') ? e.deltaY : e.deltaX;
-		const limit = 1 - visibleDim / totalDim
-		const offset = Math.min(Math.max(this.state.offset + delta/totalDim, 0),limit)
+		const limit = visibleDim > totalDim ? 0 : (1 - visibleDim / totalDim)
+		const offset = Math.min(Math.max(this.state.offset + delta/totalDim, 0), limit)
+		
 		this.setState(update(this.state, {
 			offset: {$set: offset}
 		}))
