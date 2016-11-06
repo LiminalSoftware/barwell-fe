@@ -35,7 +35,7 @@ var TableHeader = React.createClass ({
 			height: (this.props.height || (geo.headerHeight + 1)) + 'px',
 			width: this.props.totalWidth ? (this.props.totalWidth) : null,
 			right: this.props.totalWidth ? null : 0,
-			transform: HAS_3D ? side === 'lhs' ? 'translateZ(5px)' : 'translateZ(4px)' : '',
+			transform: HAS_3D ? 'translateZ(0)' : '',
 			// boxShadow: this.props.side === 'lhs' ? 
 			// 	`0 2px 0 ${constants.colors.TABLE_SHADOW}` : 
 			// 	`2px 2px 0 ${constants.colors.TABLE_SHADOW}`,
@@ -73,6 +73,7 @@ var TableHeader = React.createClass ({
 					sorting = {sorting}
 					idx = {idx}
 					left = {left}
+					_setColumnMode = {_this.props._setColumnMode}
 					width = {col.width - 1}/>;
 				left += col.width
 				return el
@@ -81,12 +82,12 @@ var TableHeader = React.createClass ({
 
 			{this.props.hasRowLabel ? null :
 			<span 
-				onClick = {this.props.showAttributeAdder}
+				onClick = {this.props._handleAddAttribute}
 				style = {{
-					left: left + 1, 
+					left: left + 2, 
 					top: 0, 
 					bottom: 0, 
-					width: 32, 
+					width: geo.colAddWidth, 
 					padding: 0,
 					borderTopLeftRadius: 0,
 					borderBottomLeftRadius: 0

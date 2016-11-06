@@ -6,9 +6,10 @@ import modelActionCreators from "../../actions/modelActionCreators"
 import NotificationStore from "../../stores/NotificationStore"
 import ModelStore from '../../stores/ModelStore'
 import TransactionStore from "../../stores/TransactionStore"
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import util from '../../util/util'
 import PopDownMenu from '../../components/PopDownMenu'
+import constants from "../../constants/MetasheetConstants"
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import Note from './Note'
 
@@ -76,6 +77,7 @@ var Notifier = React.createClass({
 		var notifications = (this.state.mouseOver || this.state.showPreview) ? NotificationStore.query({}) : []; 
 		var transactions = TransactionStore.query({});
 		var events
+		const style = {cursor: 'pointer', position: "absolute", bottom: 0, left: 0, right: 0, height: 0}
 
 		if (this.state.mouseOver) transactions
 		else transactions = transactions.filter(txn => moment(txn.timestamp).isAfter(cutoff))
@@ -83,23 +85,13 @@ var Notifier = React.createClass({
 		transactions = transactions.slice(transactions.length - (this.state.mouseOver ? 10 : 1))
 		events = util.merge({attribute: 'timestamp', descending: true}, null, notifications, transactions)
 
-
-		var transitionProps = {
-			transitionName: "fade-in",
-			transitionAppear: true,
-			transitionEnterTimeout: 500,
-			transitionLeaveTimeout: 500,
-			transitionAppearTimeout: 500
-		};
-
 		return <ReactCSSTransitionGroup 
-			className = "model-bar-extra--right height-transition"
-			style = {{cursor: 'pointer'}}
-			{...transitionProps}
+			className = "notification-bar"
+			style = {style}
+			{...constants.transitions.fadein}
 			component = "span"
 			onMouseOver = {this.handleMouseOver}
 			onMouseOut = {this.handleMouseOut}>
-			<a onClick = {this.handleShowHistory} className = "icon icon-history2" />
 			{
 			events.length === 0 && !this.state.mouseOver ? null :
 			<div className = "pop-up-menu" 
@@ -109,8 +101,6 @@ var Notifier = React.createClass({
 					cursor: 'pointer',
 					minWidth: '300px'
 				}}>
-				<span className = "pop-up-pointer-outer " style = {{left: 'auto',right: '20px'}}/>
-	          	<span className = "pop-up-pointer-inner " style = {{left: 'auto',right: '20px'}}/>
 			{
 			events.map(function (note, idx) {
 				return <Note 

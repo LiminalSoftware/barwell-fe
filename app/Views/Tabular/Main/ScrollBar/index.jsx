@@ -8,7 +8,8 @@ import _ from 'underscore'
 import util from "../../../../util/util"
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-var RHS_PADDING = 100
+const RHS_PADDING = 100
+const SCROLL_MOUSE_MOVE_THROTTLE = 30
 
 var ScrollBar = React.createClass ({
 
@@ -25,9 +26,7 @@ var ScrollBar = React.createClass ({
 	},
 
 	componentWillMount: function () {
-		this._throttleMouseMove = _.throttle(this.handleMouseMove, 30, true);
-		// this._debounceHandleScroll = _.throttle(this.handleScroll, 15, true);
-		this._debounceHandleScroll = this.handleScroll
+		this._throttleMouseMove = _.throttle(this.handleMouseMove, SCROLL_MOUSE_MOVE_THROTTLE, true);
 	},
 
 	componentDidMount: function () {
@@ -58,12 +57,14 @@ var ScrollBar = React.createClass ({
 		const limit = visibleDim > totalDim ? 0 : (1 - visibleDim / totalDim)
 		const offset = Math.min(Math.max(this.state.offset + delta/totalDim, 0), limit)
 		
-		this.setState(update(this.state, {
-			offset: {$set: offset}
-		}))
-		this._debounceHandleScroll()
+		this.doScroll(offset)
 		e.preventDefault();
-		
+	},
+
+	doScroll: function (offset) {
+
+		this.setState({offset: offset})
+		this.props._setScrollOffset(offset * this.props.totalDim);
 	},
 
 	handleMouseUp: function (e) {
@@ -73,26 +74,23 @@ var ScrollBar = React.createClass ({
 	},
 
 	handleMouseDown: function (e) {
+		const {axis} = this.props
 		this.setState(update(this.state, {$merge: {
 			dragging: true,
 			initialDragOffset: this.state.offset,
-			rel: this.props.axis === 'vertical' ? e.pageY : e.pageX
+			rel: axis === 'vertical' ? e.pageY : e.pageX
 		}}))
 	},
 
 	handleMouseMove: function (e) {
-		const {axis, totalDim, offset, visibleDim} = this.props
+		const {axis, totalDim, visibleDim} = this.props
 		const {initialDragOffset, rel} = this.state
 		const limit = 1 - visibleDim / totalDim
 		const cursorPos = (axis === 'vertical') ? e.pageY : e.pageX
 		const target = (cursorPos - rel)/visibleDim + initialDragOffset
-		const dragOffset = Math.max(Math.min(target, limit), 0)
+		const offset = Math.max(Math.min(target, limit), 0)
 
-		this.setState(update(this.state, {$merge: {
-	      offset: dragOffset
-		}}))
-
-		this._debounceHandleScroll()
+		this.doScroll(offset)
 	},
 
 	render: function () {

@@ -112,7 +112,23 @@ export default class ColumnConfig extends Component {
 		const el = this.refs.detailElement
 		if (el && el.teardown) return el.teardown(commit)
 	}
+
+	insertRight = () => {
+		const {view, config} = this.props
+		this.setState({
+			detailElement: ColumnAdder,
+			insertOrder: config.order - 1 + 0.5
+		})
+	}
 	
+	insertleft = () => {
+		const {view, config} = this.props
+		this.setState({
+			detailElement: ColumnAdder,
+			insertOrder: config.order - 0.5
+		})
+	}
+
 	renderMainMenu = () => {
 		const view = this.props.view
 		const config = this.props.config
@@ -201,13 +217,11 @@ export default class ColumnConfig extends Component {
 
 			<div className = "popdown-item popdown-inline bottom-divider top-divider">
 				<span>Add column: </span>
-				<span onClick={this.sort.bind(_this, false)} className="selectable left-divider"
-					onClick={this.showDetail.bind(_this, ColumnAdder)} >
+				<span className="selectable left-divider" onClick={this.insertLeft} >
 					<span className={`icon icon-green icon-selectable icon-arrow-left`}/>
 					<span>To left</span>
 				</span>
-				<span onClick={this.sort.bind(_this, false)} className="selectable left-divider" 
-					onClick={this.showDetail.bind(_this, ColumnAdder)} >
+				<span className="selectable left-divider" onClick={this.insertRight} >
 					<span className={`icon icon-green icon-selectable icon-arrow-right`}/>
 					<span>To right</span>
 				</span>
@@ -253,11 +267,8 @@ export default class ColumnConfig extends Component {
 				pointerEvents: "auto"
 		}, {
 			marginLeft: -1,
-			maxWidth: 410,
-			width: 410,
 			height: "100%",
 			background: "transparent",
-			transition: 'all linear 100ms'
 		})
 
 		let bridgeStyle = {
@@ -270,16 +281,13 @@ export default class ColumnConfig extends Component {
 			borderLeft: `1px solid ${constants.colors.GREEN_1}`,
 			borderRight: `1px solid ${constants.colors.GREEN_1}`,
 			width: config.width - 1,
-			transition: 'all linear 100ms'
 		}
 
 		if (style.left + viewLeft > windowWidth - 410){
 			style.marginLeft = -350 + config.width - 2
 			bridgeStyle.left = 350 - config.width + 1
 		}
-
 		
-
 		return <div
 			key = {config.column_id}
 			
@@ -295,7 +303,7 @@ export default class ColumnConfig extends Component {
 					update(this.props, {$merge: {
 						ref: "detailElement",
 						style: INNER_STYLE,
-						viewContext: {order: config.order, view_id: view.view_id},
+						viewContext: {order: this.state.insertOrder, view_id: view.view_id},
 						blurSelf: this.blurMode, 
 						blurMenu: this.blurMenu}}) )
 				: this.renderMainMenu()

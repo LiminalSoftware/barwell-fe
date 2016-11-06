@@ -59,6 +59,10 @@ const parser = function (input, config) {
 	return (date.isValid()) ? date.format('YYYY-MM-DD') : '-infinity'
 }
 
+const defaultConfig = {
+	formatString: 'YYYY-MM-DD'
+}
+
 export default {
 
 	configParts: [AlignChoice, BackgroundChoice, TextChoice, DateFormatChoice],
@@ -74,6 +78,8 @@ export default {
 	defaultWidth: 120,
 	
 	defaultAlign: 'center',
+
+	standardConfig: defaultConfig,
 
 	sortIcon: 'sort-time-',
 
@@ -96,8 +102,7 @@ export default {
 	},
 
 	configCleanser: function (config) {
-		config.formatString = config.formatString || "MM/DD/YYYY"
-		return config
+		return Object.assign({}, defaultConfig, config)
 	},
 
 	getDisplayHTML: getHTML.bind(null, formatter, stylers),

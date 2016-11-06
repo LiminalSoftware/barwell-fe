@@ -22,6 +22,7 @@ export default class DefaultValueContext extends Component {
 
 	componentWillUnmount = () => {
 		// this.setDefault(this.state.defaultValue)
+		this.teardown(true)
 	}
 
 	handleSetDefault = (value) => {
@@ -38,6 +39,8 @@ export default class DefaultValueContext extends Component {
 	renderDefaultField = () => {
 		const {config} = this.props
 		const fieldType = fieldTypes[config.type]
+		const fieldConfig = fieldType.standardConfig
+		const parser = fieldType.parser || _.identity
 		const attribute = AttributeStore.get(config.attribute_id)
 
 
@@ -45,7 +48,7 @@ export default class DefaultValueContext extends Component {
 			ref: 'field',
 			noAutoFocus: true,
 			commit: this.handleSetDefault,
-			value: attribute.default_value,
+			value: parser(attribute.default_value, fieldConfig),
 			alwaysEdit: true,
 			config: config,
 			selected: true,

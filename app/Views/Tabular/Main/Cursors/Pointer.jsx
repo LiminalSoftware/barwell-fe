@@ -5,8 +5,6 @@ import constants from "../../../../constants/MetasheetConstants"
 
 import modelActionCreators from "../../../../actions/modelActionCreators"
 
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-
 import Overlay from '../Overlay'
 
 export default class Pointer extends React.Component {
@@ -17,6 +15,8 @@ export default class Pointer extends React.Component {
 			nextProps.col != this.props.col ||
 			nextProps.columnOffset != this.props.columnOffset
 	}
+
+	
 
 	getPointerElement = () => {
 		const {view, model, store, position, col, obj} = this.props
@@ -35,6 +35,8 @@ export default class Pointer extends React.Component {
 			patch[col.column_id] = value
 			modelActionCreators.multiPatchRecords(model, patch, {method: ' typing a new value'})
 		}
+
+
 		
 		if (element) return React.createElement(element, {
 			key: (obj.cid || obj[model._pk]) + '-' + col.columnId,

@@ -197,6 +197,7 @@ var TableMixin = {
 
 		if (!this.isFocused()) this.getFocus()
 		this.updateSelect(this.getBoundedRCCoords(e), e.shiftKey)
+		this.setState({isMouseDown: true})
 		
 		addEventListener('selectstart', util.returnFalse)
 		addEventListener('mousemove', this.onSelectMouseMove)
@@ -211,6 +212,8 @@ var TableMixin = {
 		removeEventListener('selectstart', util.returnFalse);
 		removeEventListener('mousemove', this.onSelectMouseMove);
 		removeEventListener('mouseup', this.onMouseUp);
+		this.setState({isMouseDown: false})
+		
 		document.getElementById("copy-paste-dummy").focus();
 	},
 

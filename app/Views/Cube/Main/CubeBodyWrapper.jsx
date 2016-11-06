@@ -19,7 +19,6 @@ import CubeTBody from './CubeTBody'
 
 import util from "../../../util/util"
 
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 import cubeFetchMixin from './cubeFetchMixin'
 

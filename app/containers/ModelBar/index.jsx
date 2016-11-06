@@ -73,6 +73,7 @@ var ModelBar = React.createClass({
 					<span className="ellipsis">Add new dataset</span>
 				</div>
 			</div>
+			<Notifier {...this.props}/>
 		</div>
 	}
 

@@ -1,4 +1,5 @@
 import TableConfig from "./Tabular/ViewConfigBar"
+import TableInlineConfig from "./Tabular/InlineConfig"
 import TabularMain from "./Tabular/Main/index.jsx"
 import TabularGroomer from "./Tabular/groom"
 
@@ -32,6 +33,7 @@ var viewTypes = {
 		groomer: TabularGroomer,
 		mainElement: TabularMain,
 		configElement: TableConfig,
+		inlineConfigElement: TableInlineConfig,
 		category: "Tables",
 		description: "Simple, tabular format. Each row represents a single record."
 	},

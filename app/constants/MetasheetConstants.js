@@ -11,9 +11,9 @@ module.exports = {
       transitionName: "slide-in" 
     },
     zoomin: {
-      transitionEnterTimeout: 700,
-      transitionAppearTimeout: 700,
-      transitionLeaveTimeout: 700,
+      transitionEnterTimeout: 200,
+      transitionAppearTimeout: 200,
+      transitionLeaveTimeout: 200,
       transitionAppear: true,
       transitionName: "zoomin" 
     },
@@ -46,11 +46,18 @@ module.exports = {
       transitionAppearTimeout: 500,
     },
     fadein: {
-      transitionLeaveTimeout: 200,
-      transitionEnterTimeout: 200,
-      transitionAppearTimeout: 200,
+      transitionLeaveTimeout: 100,
+      transitionEnterTimeout: 100,
+      transitionAppearTimeout: 100,
       transitionAppear: true,
       transitionName: "fadein",
+    },
+    fadeout: {
+      transitionLeaveTimeout: 100,
+      transitionEnterTimeout: 100,
+      transitionAppearTimeout: 100,
+      transitionAppear: true,
+      transitionName: "fadeout",
     }
   },
 

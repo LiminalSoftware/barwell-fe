@@ -4,27 +4,27 @@
 
 // ============================================================================
 
-.zoomin-appear, .zoomin-enter, {
+.fadein-appear, .fadein-enter, {
   opacity: 0.01;
-  transform: translate3D(0,0,40px);
+  transform: translate3D(0,0,0);
 }
 
-.zoomin-appear-active, .zoomin-enter-active {
+.fadein-appear-active, .fadein-enter-active {
   opacity: 1;
   transform: translate3D(0,0,0);
-  transition: all 200ms cubic-bezier(.16,.85,.5,1) 300ms;
+  transition: opacity linear 50ms;
 }
 
-.zoomin-leave {
+.fadein-leave {
   transform: translate3D(0,0,0);
   opacity: 1;
   
 }
 
-.zoomin-leave-active {
+.fadein-leave-active {
   opacity: 0.01;
-  transform: translate3D(0,0,-40px);
-  transition: all  cubic-bezier(.16,.85,.5,1) 300ms;
+  transform: translate3D(0,0,0);
+  transition: all  cubic-bezier(.16,.85,.5,1) 50ms;
 }
 
 

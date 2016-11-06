@@ -157,6 +157,7 @@ var ColumnAdder = React.createClass({
 				related_model_id: parseInt(this.state.relatedModel),
 				relation: this.state.name,
 				related_relation: this.state.reverseName,
+				_viewContext: this.props.viewContext  || {},
 				type: this.state.type
 			})
 		} else {
@@ -164,7 +165,8 @@ var ColumnAdder = React.createClass({
 				attribute: this.state.name,
 				model_id: model.cid || model.model_id,
 				type: this.state.type,
-				default_value: this.state.defaultValue
+				default_value: this.state.defaultValue,
+				_viewContext: this.props.viewContext || {}
 			})
 		}
 		
@@ -173,6 +175,37 @@ var ColumnAdder = React.createClass({
 
 	handleSetDefault: function (value) {
 		if (value !== null) this.setState({defaultValue: value})
+	},
+
+	renderDefaultForm: function () {
+		const {type} = this.state
+		const fieldType = fieldTypes[type]
+
+		const defaultEditor = React.createElement(fieldType.element, {
+			ref: 'field',
+			noAutoFocus: true,
+			commit: this.handleSetDefault,
+			value: fieldType.defaultDefault,
+			alwaysEdit: true,
+			config: {},
+			selected: true,
+			rowHeight: 35,
+			style: {
+				// border: 'none',
+				border: `1px solid ${constants.colors.GRAY_3}`,
+		        left: '10px',
+		        bottom: '0px',
+		        top: '0px',
+		        right: '10px',
+		     }
+		})
+
+		return <div className="popdown-item popdown-inline">
+			<span>Default:</span>
+			<span style={{position: "relative"}}>
+				{defaultEditor}
+			</span>
+		</div>
 	},
 
 	handleSelectCardinality: function (dir, e) {
@@ -247,8 +280,8 @@ var ColumnAdder = React.createClass({
 	renderRelatedModelPicker: function () {
 		const model = this.props.model
 
-		return <div className="attr-style menu-item menu-sub-item">
-			<span className="attr-style ">
+		return <div className="popdown-item popdown-inline">
+			<span className="popdown-label">
 				Related item:
 			</span>
 			<span style={{position: "relative"}} className="attr-style">
@@ -274,31 +307,31 @@ var ColumnAdder = React.createClass({
 		var fwdCardinality = this.state.cardinality[0]
 		var bwdCardinality = this.state.cardinality[1]
 
-		return <div  key = "steup3">
+		return <div  key = "setup3">
 
-			<div className="popdown-item">
-				<span className=" ">
+			<div className="popdown-item popdown-inline">
+				<span className="popdown-label">
 					Attribute type:
 				</span>
 				<span style={{}} className=" selectable"
 				onClick={e => _this.setState({step: 1})}>
-					<span className={"icon icon-" + fieldType.icon} style={{marginLeft: "5px"}}/>
+					<span className={"icon icon-green icon-selectable icon-" + fieldType.icon} style={{marginLeft: "5px"}}/>
 					<span>{fieldType.description}</span>
 				</span>
 			</div>
 
-			<div className="popdown-item">
-				<span className="attr-style ">
-					Related item
+			<div className="popdown-item popdown-inline">
+				<span className="popdown-label">
+					Related item:
 				</span>
 				<span style={{position: "relative"}} 
 					onClick={e => _this.setState({step: 2})}
-					className="">
+					className="selectable">
 					<span style={{marginLeft: "5px"}}>{relatedModel.model}</span>
 				</span>
 			</div>
 
-			<div className="popdown-item">
+			
 				{this.renderCadinalityLeg(
 					thisModel, 
 					fwdCardinality, 
@@ -306,9 +339,7 @@ var ColumnAdder = React.createClass({
 					this.state.name,
 					this.handleNameChange
 				)}
-			</div>
-
-			<div className="popdown-item">
+			
 				{this.renderCadinalityLeg(
 					relatedModel, 
 					bwdCardinality, 
@@ -316,7 +347,7 @@ var ColumnAdder = React.createClass({
 					this.state.reverseName,
 					this.handleReverseNameChange
 				)}
-			</div>
+			
 
 			<div className="popdown-filler popdown-item"/>
 
@@ -325,24 +356,27 @@ var ColumnAdder = React.createClass({
 
 	renderCadinalityLeg: function (model, cardinality, selectCardinality, name, changeName) {
 
-		return <span className="" style = {{display: "block"}}>
-			Each <span>{model.model}</span> can have
+		return [<div className="popdown-item popdown-inline top-divider" key="1">
+			<span>Each {model.model} can have... </span>
+		</div>,
+		<div className="popdown-item popdown-inline" key="2">
 
+			<span>
 			<select className="renamer" value = {cardinality}
 				onChange = {selectCardinality}
-				style={{marginRight: "5px", marginLeft: "5px", height: "32px"}}>
+				style={{marginRight: 5, marginLeft: 5, }}>
 				<option value="HAS_ONE"> at most one </option>
 				<option value="HAS_MANY"> many </option>
 			</select>
+			</span>
 
 			<span>
-				<input style={{height: "28px"}} 
+				<input style={{ width: 100}} 
 					autoFocus className = "renamer" value={name}
 					onChange = {changeName}/>
 			</span>
-		</span>
+		</div>]
 	},
-
 
 	renderConfirmButtons: function () {
 		var {step, type} = this.state
@@ -373,7 +407,7 @@ var ColumnAdder = React.createClass({
 	renderStepLabel: function () {
 		var {step, type} = this.state
 		var fieldType = type ? fieldTypes[type] : {}
-		var isRelation = (fieldType.category === 'Relations' )
+		var isRelation = (fieldType.category === 'Relations')
 		const numSteps = isRelation || step === 1 ? 3 : 2
 
 		return <div className="popdown-item bottom-divider title" key="title">
@@ -389,13 +423,11 @@ var ColumnAdder = React.createClass({
 
 
 		return <div key = "step2">
-			<div className="popdown-item">
-				<span className="attr-style ">
-					Attribute type:
-				</span>
-				<span style={{}} className=""
+			<div className="popdown-item popdown-inline">
+				<span className="popdown-label">Attribute type:</span>
+				<span style={{}} className="selectable"
 				onClick={e => _this.setState({step: 1})}>
-					<span className={"icon icon-" + fieldType.icon} style={{marginLeft: "5px"}}/>
+					<span className={"icon icon-green icon-selectable icon-" + fieldType.icon} style={{marginLeft: "5px"}}/>
 					<span>{fieldType.description}</span>
 				</span>
 			</div>
@@ -403,17 +435,21 @@ var ColumnAdder = React.createClass({
 			{isRelation ?
 			this.renderRelatedModelPicker()
 			: 
-			<div className="popdown-item">
-				<span className="attr-style ">
+			<div className="popdown-item popdown-inline">
+				<span>
 					Attribute name:
 				</span>
 				<span style={{ position: "relative"}}>
 					<input style={{}} 
 					autoFocus
-					className = "flush renamer" value={this.state.name}
+					className = "renamer" value={this.state.name}
 					onChange = {this.handleNameChange}/>
 				</span>
 			</div>
+			}
+
+			{
+				isRelation ? null : this.renderDefaultForm()
 			}
 			
 			

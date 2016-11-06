@@ -13,17 +13,16 @@ import ReactPerf from "react-addons-perf"
 import TabularTR from './TabularTR'
 
 
-var VISIBLE_ROWS = 45
-var MAX_ROWS = 45
+var VISIBLE_ROWS = 50
+var MAX_ROWS = 50
 var SLOW_SKIP = 2
 var FAST_SKIP = 3
-var FASTER_SKIP = 4
+var FASTER_SKIP = 3
 var FAST_THRESHOLD = 10
 var FASTER_THRESHOLD = 25
 var CYCLE = 25
 var MIN_CYCLE = 15
-var BACKWARD_BUFFER = 10
-var BUFFER_SIZE = 5
+var BUFFER_SIZE = 10
 var PAGE_SIZE = SLOW_SKIP
 var BAILOUT = SLOW_SKIP
 
@@ -174,7 +173,7 @@ var TabularTBody = React.createClass ({
 
 		
 		return <div
-			className = {`tabular-body-${this.props.prefix} tabular-body`}
+			className = {`tabular-body-${this.props.prefix} tabular-body wrapper`}
 			
 			onMouseDown = {this.props._handleClick}
 			onDoubleClick = {this.props._handleEdit}
@@ -199,23 +198,6 @@ var TabularTBody = React.createClass ({
 				return this.prepareRow(obj, index, orderProps)
 			}) }
 
-			{
-			this.props.hasRowLabel ? 
-			<span className="new-adder" 
-			onClick = {this.props._addRecord}
-			onContextMenu = {util.clickTrap}
-			style={{
-				position: "absolute",
-				top: rowCount * geo.rowHeight + 10 + 'px',
-				width: 28,
-				height: 28,
-				left: 0,
-				transition: "all linear 150ms"
-			}}>
-			<span className="icon icon-plus" style={{margin: 0}}/>
-			</span>
-			: null
-			}
 		</div>
 	}
 })

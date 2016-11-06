@@ -97,9 +97,7 @@ export default class Application extends Component {
 			: this.renderLoader()
 			}
 
-			<ReactCSSTransitionGroup
-			{...constants.transitions.zoomin}
-			className="model-views">
+			<div className="model-views">
 
 			{activeViews.map((v,idx)=>
 			<ModelPane {...this.props}
@@ -109,7 +107,7 @@ export default class Application extends Component {
 				multiViews={multiViews}
 				style={{left: 0, top: 0, right: 0, bottom: 0, position: "absolute"}}
 				key={v.view_id}/>)}
-			</ReactCSSTransitionGroup>
+			</div>
 
 			<textarea style = {dummyStyle} id = "copy-paste-dummy" value=""></textarea>
 		</div>

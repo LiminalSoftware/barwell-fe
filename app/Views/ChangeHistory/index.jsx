@@ -11,8 +11,6 @@ import constants from "../../constants/MetasheetConstants"
 import _ from 'underscore'
 import moment from "moment"
 
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 var ChangeHistory = React.createClass({

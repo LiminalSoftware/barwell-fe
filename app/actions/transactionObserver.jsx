@@ -7,19 +7,9 @@ import cidLookup from './cidLookup'
 
 const BASE_URL = 'http://api.metasheet.io'
 
-/*
- * a lookup from cid to an array of promises that are waiting for that cid
- */
-
-let _cidPromises = {}
 
 /*
- * a lookup from cid to the permanent id
- */
-let _cidLookup = {}
-
-/*
- * waits until the primary key (pk) is available, then populates the permanent key
+ * waits until the key is available, then populates the permanent key
  */
 const makeKeyPromise = function (obj, key) {
 	if (obj[key]) return Promise.resolve(obj)

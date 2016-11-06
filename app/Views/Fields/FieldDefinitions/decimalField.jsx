@@ -73,6 +73,10 @@ export default {
 
 	defaultWidth: 150,
 
+	standardConfig: {
+		formatString: '0,0.[0000000]'
+	},
+
 	configCleanser: (config) => {
 		var style = config.displayStyle
 		if (!(config.displayStyle in displayStyles))

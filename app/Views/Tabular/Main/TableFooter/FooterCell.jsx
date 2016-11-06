@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import update from 'react/lib/update'
 import ReactDOM from "react-dom"
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 import constants from "../../../../constants/MetasheetConstants"
 

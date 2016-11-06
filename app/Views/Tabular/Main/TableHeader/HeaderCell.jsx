@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import update from 'react/lib/update'
 import ReactDOM from "react-dom"
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 import constants from "../../../../constants/MetasheetConstants"
 
@@ -22,6 +21,7 @@ export default class HeaderCell extends Component {
 	constructor (props) {
 		super(props)
 		this.state = {
+			resizing: false,
 			dragging: false,
 			rel: null,
 			pos: 0,
@@ -45,16 +45,20 @@ export default class HeaderCell extends Component {
 
 	componentDidUpdate = (newProps, newState) => {
 		/* global listener setup and cleanup for drag bar */
-		if (this.state.dragging && !newState.dragging) {
+		if ((this.state.dragging && !newState.dragging) ||
+			(this.state.resizing && !newState.resizing)
+		) {
 			addEventListener('mousemove', this.onMouseMove)
 			addEventListener('mouseup', this.onMouseUp)
-		} else if (!this.state.dragging && newState.dragging) {
+			this.props._setColumnMode(true)
+		} else if ( (!this.state.dragging && newState.dragging) ||
+					(!this.state.resizing && newState.resizing)) {
 		   removeEventListener('mousemove', this.onMouseMove)
 		   removeEventListener('mouseup', this.onMouseUp)
+		   this.props._setColumnMode(false)
 		}
 
-		if ((!newState.renaming && this.state.renaming) || 
-			(!newState.context && this.state.context)) {
+		if (!newState.renaming && this.state.renaming) {
 			addEventListener('keydown', this.handleKeyPress)
 			addEventListener('click', this.handleClick)
 		}
@@ -101,23 +105,21 @@ export default class HeaderCell extends Component {
 
 	onResizerMouseDown = (e) => {
 		this.setState({
-			dragging: true,
+			resizing: true,
 			rel: e.pageX
 		})
 		e.stopPropagation()
 		e.preventDefault()
 	}
 
-	/*
-	 * set column width
-	 */
-
-	// setColumnWidth = (width, commit) => {
-	// 	const view = this.props.view
-	// 	const col = this.props.column
- 	//  	view.data.columns[col.column_id].width = width
-	// 	modelActionCreators.createView(view, !!commit, false)
-	// }
+	onDragMouseDown = (e) => {
+		this.setState({
+			dragging: true,
+			rel: e.pageX
+		})
+		e.stopPropagation()
+		e.preventDefault()
+	}
 
 	/*
 	 * if mouseup occurs during drag, cancel drag and commit view changes
@@ -140,6 +142,7 @@ export default class HeaderCell extends Component {
 		
 		modelActionCreators.createView(updated, true)
 		this.setState({
+			resizing: false,
 			dragging: false,
 			pos: 0
 		})
@@ -152,7 +155,7 @@ export default class HeaderCell extends Component {
 	 */
 
 	onMouseMove = (e) => {
-		if (!this.state.dragging) {
+		if (!this.state.resizing) {
 			throw new Error('onMouseMove event when no drag in place')
 		}
 		this.setState({
@@ -244,19 +247,20 @@ export default class HeaderCell extends Component {
 		const style = {
 			right: (-1 * this.state.pos - 2),
 			top: 0,
-			height: this.state.dragging ? 1000 : "100%",
-			width: this.state.dragging ? 2 : 10
+			height: this.state.resizing ? 1000 : "100%",
+			width: this.state.resizing ? 2 : 10
 		}
 
 		if (!this.state.open) return <span ref = "resizer"
-			className = {`table-resizer col-resizer ${this.state.dragging ? "dragging" : ""}`}
+			className = {`table-resizer col-resizer ${this.state.resizing ? "dragging" : ""}`}
 			onMouseDown = {this.onResizerMouseDown}
 			style = {style}>
 		</span>
 	}
 
 	renderContext = () => {
-		if (this.state.context) return <ColumnContext {...this.props} config={this.props.column}/>
+		if (this.state.context) return <ColumnContext 
+			{...this.props} config={this.props.column}/>
 	}
 
 

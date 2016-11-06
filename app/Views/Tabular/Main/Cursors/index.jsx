@@ -15,6 +15,7 @@ import Overlay from '../Overlay'
 import util from "../../../../util/util"
 
 import Pointer from "./Pointer"
+import ColumnOverlay from "./ColumnOverlay"
 
 
 const nav = window.navigator
@@ -24,37 +25,37 @@ const IS_CHROME = userAgent.indexOf("Chrome") > -1
 const HAS_3D = util.has3d()
 const RIGHT_FRINGE = 200
 
-var Cursors = React.createClass ({
+export default class Cursors extends React.Component {
 
-	componentWillMount: function () {
+	constructor (props) {
+		super(props)
+		this.state = {
+			pointer: props.pointer, 
+			selection: props.selection
+		}
+	}
+
+	componentWillMount = () => {
 		const _this = this
-		this._debounceSetPointer = _.debounce(this._setPointer, 100)
-	},
+		this._debounceSetPointer = _.debounce(this._setPointer, 150)
+	}
 
-	_setPointer: function (pointer) {
+	_setPointer = (pointer) => {
 		this.setState({pointer: pointer})
-	},
+	}
 
-	componentWillReceiveProps: function (props) {
+	componentWillReceiveProps = (props) => {
 		const pointerChanged = props.pointer !== this.state.pointer
 		const selectionChanged = props.selection !== this.state.selection
 
 		if (selectionChanged && pointerChanged) {
-			this.setState({pointer: null, selection: props.selection})
+			this.setState({pointer: null, selection: props.selection, moving: true})
 			this._debounceSetPointer(props.pointer)
 		} else if (pointerChanged) {
 			this.setState({pointer: props.pointer, selection: props.selection})
 		}
-	},
-
-	getInitialState: function () {
-		return {
-			pointer: this.props.pointer, 
-			selection: this.props.selection
-		}
-	},
-
-	showContextMenu: function (e) {
+	}
+	showContextMenu = (e) => {
 		var cursors = ReactDOM.findDOMNode(this.overlayInner)
 		var view = this.props.view
 		var geo = view.data.geometry
@@ -63,10 +64,10 @@ var Cursors = React.createClass ({
 		var x = e.pageX - offset.left
 
 		this.setState({contextPos: {x: x, y: y}})
-	},
+	}
 
-	renderOverlays: function () {
-		const {view, model, columnOffset, focused, pointer: ptr, 
+	renderOverlays = () => {
+		const {view, columnMode, model, columnOffset, focused, pointer: ptr, 
 			selection: sel, copyarea: cpy} = this.props
 
 		const numFixed = view.data._fixedCols.length
@@ -82,9 +83,7 @@ var Cursors = React.createClass ({
 		const store = this.props.store
 		const rowCount = store.getRecordCount()
 		const geo = view.data.geometry
-
 		
-
 		const col = view.data._visibleCols[ptr.left];
 		const obj = store.getObject(ptr.top);
 		
@@ -97,20 +96,20 @@ var Cursors = React.createClass ({
 				<Pointer {...this.props}
 				col = {col}
 				obj = {obj}
-				key={"pointer-" + obj[model._pk] + '-' + col.column_id}
+				key = "pointer"
 				position={this.state.pointer}
 				fudge = {{width: -1, left: 0, top: 1, height: -1}}
-				ref="pointer" key="pointer"/>
+				ref="pointer" />
 			}</ReactCSSTransitionGroup>,
 			
 			hideCursor ? null : <Overlay
 				{...this.props}
-				className = {"selection-outer" + (singleton ? '-singleton' : '')}
+				className = {"selection-outer" + (singleton ? '-singleton ' : ' ')}
 				ref="selectionOuter"
 				key="selectionOuter"
 				position = {sel}
-				fudge = {{left: -4, top: -3.25, height: 7.5, width: 7}}>
-				<div className = "selection-border selection-border"
+				fudge = {{left: -4, top: -3, height: 7, width: 7}}>
+				<div className = {"selection-border "}
 					style={{left: "-3px", right: "-3px", top: "-3px", bottom: "-3px"}}/>
 				
 			</Overlay>,
@@ -157,7 +156,7 @@ var Cursors = React.createClass ({
 			const left = view.data._visibleCols.indexOf(column)
 			return <Overlay
 				{...this.props}
-				key={"sort-" + (s.attribute)}
+				key={"sort-" + (s.column_id)}
 				className = {`sort-${s.descending ? 'desc': 'asc'}-overlay`}
 				fudge = {{left: -1, width: 1, height: 1}}
 				position = {{
@@ -166,10 +165,26 @@ var Cursors = React.createClass ({
 					top: 0,
 					bottom: rowCount - 1
 				}}/>
-		}))
-	},
+		})).concat(columnMode ? this.getColumnOverlays() : [])
+	}
 
-	getOuterWrapperStyle: function () {
+	getColumnOverlays = () => {
+		const {view, model, store, _getRangeStyle} = this.props
+		const rowCount = store.getRecordCount()
+		const columns = view.data._visibleCols
+
+		return columns.map((column, idx) => 
+			<ColumnOverlay 
+				model = {model} 
+				view={view} 
+				column={column} 
+				index={idx}
+				rowCount={rowCount} 
+				_getRangeStyle={_getRangeStyle}/>
+		)
+	}
+
+	getOuterWrapperStyle = () => {
 		const view = this.props.view
 		const geo = view.data.geometry
 		const fixedWidth = view.data._fixedWidth
@@ -186,9 +201,9 @@ var Cursors = React.createClass ({
 			zIndex: 6,
 			pointerEvents: 'auto',
 		}
-	},
+	}
 
-	getInnerWrapperStyle: function () {
+	getInnerWrapperStyle = () => {
 		const geo = this.props.view.data.geometry
 		const marginTop = (-1 * this.props.rowOffset * geo.rowHeight)
 		const store = this.props.store
@@ -198,15 +213,16 @@ var Cursors = React.createClass ({
 			top: 1,
 			left: 0,
 			right: 0,
-			height: rowCount  * geo.rowHeight + 3,
-			transition: IS_CHROME ? 'transform 75ms linear' : null,
+			height: (rowCount + 1)  * geo.rowHeight + 1,
+			transition: IS_CHROME ? 'transform 100ms linear' : null,
 			transform: HAS_3D ? `translate(0,${marginTop + 2}px)` : null,
 			marginTop: HAS_3D ? null : (marginTop + 2 + 'px'),
-			cursor: "cell"
+			cursor: "cell",
+			overflow: "visible"
 		}
-	},
+	}
 
-	render: function () {
+	render = () => {
 		const view = this.props.view
 		const model = this.props.model
 
@@ -226,6 +242,4 @@ var Cursors = React.createClass ({
 				</div>
 			</div>
 	}
-});
-
-export default Cursors
+}

@@ -32,7 +32,11 @@ var groomView = function (view) {
 	var iter =  BIG_NUM;
 
   	var columns = groomFields(view)
-	var columnList = util.enumerate(_.values(columns), util.sortByOrder)
+  	var columnList = _.values(columns).map(c => {
+  		if (c._viewContext) c.order = c._viewContext.order
+  		return c
+  	})
+	columnList = util.enumerate(columnList, util.sortByOrder)
 
 	data.columns = columns
 	data._columnList = columnList
@@ -64,7 +68,7 @@ var groomView = function (view) {
 		footerHeight: 50,
 		rowHeight: Math.floor(geo.rowHeight * 2)/2 || 24,
 		rowPadding: 2,
-		colAddWidth: 100
+		colAddWidth: 32
 	}
 
 	

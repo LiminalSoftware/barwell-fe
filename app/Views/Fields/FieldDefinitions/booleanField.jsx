@@ -41,6 +41,8 @@ var booleanField = {
 
 	uneditable: false,
 
+	defaultDefault: false,
+
 	getDisplayHTML: getHTML.bind(null, _.identity, stylers),
 
 	stringify: function (input) {

@@ -32,16 +32,17 @@ export default class ViewPane extends Component {
 	}
 
 	showConfigElement = (el) => {
-		console.log('showConfigElement')
 		this.setState({configElement: el})
 	}
 
-	render () {	
+	render () {
 		const _this = this
 		const {view, focus, style} = this.props
-		const {configElement} = this.state
-
+		// const {configElement} = this.state
 		const viewType = viewTypes[view.type]
+		const configElement = viewType.inlineConfigElement
+
+		
 		const model = ModelStore.get(view.model_id);
 		const viewconfig = {}
 		const viewStr = 'v' + view.view_id
@@ -64,7 +65,10 @@ export default class ViewPane extends Component {
 		const configDetail = configElement ? React.createElement(configElement, childProps) : null
 
 		return <div style={style} id={`view-${view.view_id}`}>
+			<div className="model-pane-header">{view.view}</div>
+			<div className="wrapper flush" style={{top: 30}}>
 			{content}
+			</div>
 		</div>
 	}
 }

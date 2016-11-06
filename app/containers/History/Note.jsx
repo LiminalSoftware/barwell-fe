@@ -2,8 +2,6 @@ import React from "react";
 import moment from "moment";
 
 import modelActionCreators from "../../../actions/modelActionCreators"
-
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import util from '../../../util/util'
 
 var HIDE_TIMER = 250;

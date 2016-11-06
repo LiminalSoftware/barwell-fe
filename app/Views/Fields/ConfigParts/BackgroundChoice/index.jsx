@@ -80,7 +80,7 @@ export default {
 
 		chooseNone = () => {
 			this.commitChanges({
-				chooser: 'nocolor', 
+				chooser: null, 
 				color: null, 
 				conditional: false, 
 				colorAttr: null
@@ -121,7 +121,7 @@ export default {
 				<div key = "no-condition" className={"popdown-item selectable "}
 					onClick = {_this.chooseCondition.bind(_this, null)}>
 					<span className = {" icon icon-square  " + 
-							(colorConditionAttr === null ?"icon-hilite":"icon-selectable")}/>
+							(!colorConditionAttr ?"icon-hilite":"icon-selectable")}/>
 					<span>No condition</span>
 				</div>
 				{
@@ -140,10 +140,11 @@ export default {
 
 		renderColorSection = () => {
 			var _this = this
-			var view = this.props.view
+			var {view} = this.props
+			const {chooser} = this.state
 			var colorAttrs = AttributeStore.query({type: 'COLOR', model_id: view.model_id})
 			var customHeight = (this.state.chooser === 'custom' ? '80px' : '0');
-			const chooser = this.state.chooser
+			
 
 			return <div key="color">
 
@@ -157,7 +158,8 @@ export default {
 					return <div key = {attr.attribute_id} className = {"popdown-item selectable "
 						+ (_this.state.colorAttr === attr.attribute_id ? ' menu-selected' : '')}
 						onClick = {_this.chooseColor.bind(_this, attr.attribute_id)}>
-						<span className = " icon icon-bucket  "/>
+						<span className = {" icon icon-bucket  " +
+							(_this.state.colorAttr === attr.attribute_id ?"icon-hilite":"icon-selectable")}/>
 						{attr.attribute}
 					</div>
 				})
@@ -166,7 +168,7 @@ export default {
 				<div className = "popdown-item selectable"
 					onClick = {_this.chooseNone}>
 					<span className = {"icon icon-3d-glasses " + 
-					(chooser === 'nocolor'?"icon-hilite":"icon-selectable")}/>
+					(chooser === 'nocolor' ?"icon-hilite":"icon-selectable")}/>
 					No cell color
 				</div>
 

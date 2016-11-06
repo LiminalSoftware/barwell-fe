@@ -114,9 +114,11 @@ const TabularPane = React.createClass ({
 			this.state.contextSubject !== nextState.contextSubject || 
 			state.copyarea !== nextState.copyarea ||
 			state.contextOpen !== nextState.contextOpen ||
+			state.contextPosition !== nextState.contextPosition ||
 			state.hiddenColWidth !== nextState.hiddenColWidth ||
 			state.clientWidth !== nextState.clientWidth || 
-			state.clientHeight !== nextState.clientHeight
+			state.clientHeight !== nextState.clientHeight ||
+			state.columnMode !== nextState.columnMode
 	},
 
 	_onStoreChange: function () {
@@ -184,17 +186,18 @@ const TabularPane = React.createClass ({
 	},
 
 	getRCCoords: function (e) {
-		var lhs = ReactDOM.findDOMNode(this.refs.tableWrapper.refs.lhs)
-		var view = this.props.view
-		var geo = view.data.geometry
-		var visibleCols = view.data._visibleCols
-		var scrolledCols = this.state.columnOffset
-		var numFixed = view.data._fixedCols.length
-		var offset = $(lhs).offset()
-		var y = e.pageY - offset.top
-		var x = e.pageX - offset.left
-		var xx = x - geo.labelWidth
-		var r = Math.floor((y) / geo.rowHeight, 1)
+		const lhs = ReactDOM.findDOMNode(this.refs.tableWrapper.refs.lhs)
+		const offset = $(lhs).offset()
+		const {view} = this.props
+		const {geometry: geo, _visibleCols: visibleCols} = view.data
+		
+		const scrolledCols = this.state.columnOffset
+		const numFixed = view.data._fixedCols.length
+		
+		const y = e.pageY - offset.top
+		const x = e.pageX - offset.left
+		let xx = x - geo.labelWidth
+		const r = Math.floor((y) / geo.rowHeight, 1)
 		var c = 0
 
 		if (x < geo.labelWidth) return {top: r, left: -1}
@@ -204,19 +207,23 @@ const TabularPane = React.createClass ({
 			if (xx > 0) c++
 			else return true
 		})
+		if (xx > geo.colAddWidth) c = null
 
 		return {top: r, left: c}
 	},
 
 	editCell: function (clobber) {
-		var pos = this.state.pointer
+		console.log('handleEdit')
+		
 		const refPath = ['cursors','pointer','pointerCell']
-		const field = refPath.reduce((head, ref)=>head ? head.refs[ref] : null, this)
+		const field = refPath.reduce((head, ref) => head ? head.refs[ref] : null, this)
 		
 		if (field && field.handleEdit) {
 			this.clearCopy()
 			this.setState({editing: true})
 			field.handleEdit(clobber)
+		} else {
+			console.log('couldnt find path')
 		}
 	},
 
@@ -246,7 +253,7 @@ const TabularPane = React.createClass ({
 		modelActionCreators.insertRecord(
 			this.props.model, 
 			this.props.view,
-			null, 
+			null,
 			pos
 		)
 		this.setState({copyarea: null, selection: sel})
@@ -398,40 +405,69 @@ const TabularPane = React.createClass ({
 			$(el).outerWidth()
 	},
 
-	showContext: function (e) {
-		var offset = $(this.refs.wrapper).offset()
-		var y = e.pageY - offset.top
-		var x = e.pageX - offset.left
-		var rc = this.getRCCoords(e)
-		var sel = this.state.selection
-		const geo = this.props.view.data.geometry
+	showAddAttribute: function (e) {
+		const {view, model} = this.props
+		const numVisCols = view.data._visibleCols.length
+		rc = {
+			left: numVisCols,
+			top: 0
+		}
 
 		this.getFocus('-context')
+		this.setState({
+			contextPos: {x: 0, y: 0}, 
+			contextColumn: this.getColumnAt(rc),
+			contextType: 'newAttribute',
+			contextElement: this.getColumnRefAt(rc),
+			contextOpen: true,
+			contextRc: rc
+		})
+		
+	},
 
-		if (y < geo.headerHeight) {
+	showContext: function (e) {
+		const {view, model} = this.props
+		const offset = $(this.refs.wrapper).offset()
+		const y = e.pageY - offset.top
+		const x = e.pageX - offset.left
+		const rc = this.getRCCoords(e)
+		const sel = this.state.selection
+		const geo = view.data.geometry
+		const numVisCols = view.data._visibleCols.length
+		
+		if (y < geo.headerHeight && rc.left <= numVisCols) {
+			this.getFocus('-context')
 			this.setState({
 				contextPos: {x: x, y: y}, 
 				contextColumn: this.getColumnAt(rc),
+				contextType: 'header',
 				contextElement: this.getColumnRefAt(rc),
 				contextOpen: true,
 				contextRc: rc
 			})
-		} else {
-			this.setState({
-				contextPos: {x: x, y: y}, 
-				contextElement: null,
-				contextOpen: true,
-				contextRc: rc
-			})
+		} else if (rc.left < numVisCols) {
+			this.getFocus('-context')
+			
 			if (rc.left < sel.left ||
 			rc.left > sel.right || 
 			rc.top < sel.top || 
 			rc.top > sel.bottom) {
 				this.updateSelect(rc, false)
 			}
-		}
+
+			this.setState({
+				contextPos: {x: x, y: y}, 
+				contextElement: null,
+				contextOpen: true,
+				contextRc: rc
+			})
+		} 
 
 		e.preventDefault();
+	},
+
+	setColumnMode: function (toggle) {
+		this.setState({columnMode: toggle})
 	},
 	
 	getRangeStyle: function (pos, fudge, showHiddenHack) {
@@ -543,19 +579,11 @@ const TabularPane = React.createClass ({
 		
 		this.setState({
 			pointer: pos,
-			expanded: false,
 			contextOpen: false
 		});
 		
 		// focus the paste area just in case
 		document.getElementById("copy-paste-dummy").focus();
-
-		// commit the pointer position to the view object, but debounce
-		// view.data.pointer = pos
-		// this._debounceCreateViewconfig({
-		// 	view_id: view.view_id,
-		// 	pointer: pos
-		// });
 	},
 
 	updateSelect: function (pos, shift) {
@@ -638,7 +666,6 @@ const TabularPane = React.createClass ({
 		var hiddenColWidth = 0;
 		var columnOffset = 0;
 		var rhsHorizontalOffsetter = this.refs.tableWrapper.refs.rhsHorizontalOffsetter;
-		// var pointer = this.refs.cursors ? this.refs.cursors.refs.pointer : null
 
 
 		floatCols.some(function (col) {
@@ -650,16 +677,17 @@ const TabularPane = React.createClass ({
 			return (col.width + hiddenColWidth > hOffset)
 		});
 
-		this.setState({
-			columnOffset: columnOffset,
-			hiddenColWidth: hiddenColWidth
-		});
-		
-		
 		if (hiddenColWidth !== this.state.hiddenColWidth) {
 			ReactDOM.findDOMNode(rhsHorizontalOffsetter).style.marginLeft = 
 				(-1 * hiddenColWidth) + 'px';
 		}
+
+		this.setState({
+			columnOffset: columnOffset,
+			hiddenColWidth: hiddenColWidth
+		});
+
+		this.enqueueRefresh()
 	},
 
 	setVerticalScrollOffset: function (vOffset) {
@@ -671,8 +699,7 @@ const TabularPane = React.createClass ({
 
 		this.setState({rowOffset: rowOffset});
 		
-		if (!this._timer) this._timer = util.getFrame(this.refreshTable, CYCLE);
-		// this._debounceCreateViewconfig({view_id: view.view_id, rowOffset: rowOffset});
+		this.enqueueRefresh()
 	},
 
 	updateVerticalOffset: function () {
@@ -692,6 +719,10 @@ const TabularPane = React.createClass ({
 			"translate3d(0, " + Math.floor(-1 * rowOffset * geo.rowHeight ) + "px, 0)"
 		if (overlay) overlay.style.transform = 
 			"translate3d(0, " + Math.floor( -1 * rowOffset * geo.rowHeight + 2 ) + "px, 0)"
+	},
+
+	enqueueRefresh: function () {
+		if (!this._timer) this._timer = util.getFrame(this.refreshTable, CYCLE);
 	},
 
 	refreshTable: function () {
@@ -736,6 +767,7 @@ const TabularPane = React.createClass ({
 			_deleteRecords: this.deleteRecords,
 			_insertRecord: this.insertRecord,
 			_handleContextMenu: this.showContext,
+			_handleAddAttribute: this.showAddAttribute,
 			blurContextMenu: this.hideContext,
 			showAttributeAdder: this.showAttributeAdder,
 			_handleWheel: this.handleMouseWheel,
@@ -746,6 +778,7 @@ const TabularPane = React.createClass ({
 			_handleDrop: this.handleDrop,
 			_handleDragOver: this.handleDragOver,
 			_selectRow: this.selectRow,
+			_setColumnMode: this.setColumnMode,
 			// _handleStartDrag: this.handleStartDrag,
 
 			_setScrollOffset: this.setHorizontalScrollOffset,
@@ -768,7 +801,8 @@ const TabularPane = React.createClass ({
 			store: this.store,
 			sorting: view.data.sorting,
 			focused: this.props.focused,
-			expanded: this.state.expanded
+			expanded: this.state.expanded,
+			columnMode: this.state.columnMode
 		}
 
 		/*
@@ -778,6 +812,7 @@ const TabularPane = React.createClass ({
 		 * Scrollbars are... scrollbars
 		 * table-clip-wrapper
 		 */
+
 		
 		return <div ref="wrapper"
 			
@@ -822,8 +857,6 @@ const TabularPane = React.createClass ({
 				element={this.state.contextElement}
 				position={this.state.contextPos}/> 
 			: null}
-
-			<ViewConfigBar {...this.props}/>
 			
 		</div>
 	}

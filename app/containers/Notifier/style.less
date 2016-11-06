@@ -9,7 +9,7 @@
   display: flex;
   font-size: 12px;
   line-height: 12px;
-  border-bottom: 1px dotted @gray2;
+  border-bottom: 1px solid @gray4;
   &:last-child {
   	border-bottom: none; 	
   }
@@ -20,23 +20,28 @@
 }
 
 .note-error-item {
-  color: @red-bright;
+  background: @red-bright;
+  color: @lightFontColor;
 }
 
 .warning-item {
-  color: orange;
+  background: orange;
+  color: @lightFontColor;
 }
 
 .note-success-item {
-  color: @green1;
+  background: @green1;
+  color: @lightFontColor;
 }
 
 .note-pending-item {
-  color: @gray2;
+  background: @gray2;
+  color: @lightFontColor;
 }
 
 .note-info, .note-loading {
-  color: @blue1;
+  background: @blue1;
+  color: @lightFontColor;
 }
 
 .note-short-left-column {

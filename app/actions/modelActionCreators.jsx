@@ -114,7 +114,12 @@ var modelActions = {
 		obj = obj || {cid: 'c' + getGuid()}
 		AttributeStore.query({model_id: model.model_id})
 		.forEach(attr=> {
-			obj['a' + (attr.attribute_id || attr.cid)] = attr.default_value
+			const type = fieldTypes[attr.type]
+			const parser = type.parser || _.identity
+			// we use the standard config for persisting default values so that they are 
+			// robust when the column format changes
+			const config = type.standardConfig || {} 
+			obj['a' + (attr.attribute_id || attr.cid)] = parser(attr.default_value, config)
 		})
 
 		MetasheetDispatcher.dispatch({

@@ -15,8 +15,6 @@ import AttributeDetail from './AttributeDetail'
 import ConfirmationMixin from '../ConfirmationMixin'
 import PureRenderMixin from 'react-addons-pure-render-mixin';
 
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-
 var AttributeDetailList = React.createClass({
 
 	mixins: [ConfirmationMixin],

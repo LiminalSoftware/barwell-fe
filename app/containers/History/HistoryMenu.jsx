@@ -6,7 +6,6 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 import NotificationStore from "../../../stores/NotificationStore"
 import ModelStore from '../../../stores/ModelStore'
 import TransactionStore from "../../../stores/TransactionStore"
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import util from '../../../util/util'
 
 import Note from './Note'

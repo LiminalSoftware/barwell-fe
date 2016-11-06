@@ -135,19 +135,15 @@ var TabularBodyWrapper = React.createClass ({
 
 	shouldComponentUpdate: function (newProps, nextState) {
 		var oldProps = this.props
-		return oldProps.view !== newProps.view 
+		return oldProps.view !== newProps.view || 
+		oldProps.columnMode !== newProps.columnMode
 	},
 
 
 	render: function () {
-		var view = this.props.view
-		var model = this.props.model
-		var store = this.props.store
-		var rowCount = store.getRecordCount()
-		var geo = view.data.geometry
-
-		var rowOffset = this.props.rowOffset
-		var colOffset = this.props.hiddenColWidth
+		const {view, model, store, columnMode, rowOffset, hiddenColWidth: colOffset} = this.props
+		const rowCount = store.getRecordCount()
+		const geo = view.data.geometry
 
 		const rowHeight = Math.floor(geo.rowHeight)
 
@@ -166,13 +162,13 @@ var TabularBodyWrapper = React.createClass ({
 			
 		})
 		
-		return <ReactCSSTransitionGroup {...constants.transitions.zoomin} className="flush wrapper" ref="tbodyWrapper">
-			{!this.state.initialFetchComplete ?
+		return <ReactCSSTransitionGroup {...constants.transitions.fadein} className="flush wrapper" ref="tbodyWrapper">
+			{!this.state.initialFetchComplete || this.state.fetching ?
 			<div className="flush loader-overlay" key="loader">
 				<div className="wrapper flush loader-overlay" ref="loaderOverlay">
 					<p className="loader-hero">
-					{/*<span className="icon icon-loading-2 spin"/>
-					<span>Loading data from the server...</span>*/}
+					<span className="icon icon-loading-2 spin"/>
+					<span>Loading data from the server...</span>
 					</p>
 				</div>
 			</div>
@@ -187,7 +183,7 @@ var TabularBodyWrapper = React.createClass ({
 					top: 0,
 					bottom: 0,
 					height: "100%",
-					width: lhsWidth
+					width: (lhsWidth + 1)
 				}}>
 
 
@@ -197,7 +193,7 @@ var TabularBodyWrapper = React.createClass ({
 				style = {{
 					left: 0,
 					top: geo.headerHeight,
-					width: lhsWidth + 1,
+					width: (lhsWidth + 1),
 					overflow: 'hidden',
 					background: constants.colors.VIEW_BACKING,
 					borderRight: `1px solid ${constants.colors.TABLE_EDGE}`,
@@ -220,6 +216,7 @@ var TabularBodyWrapper = React.createClass ({
 						zIndex: 0
 					}}>
 
+				{columnMode ? null : 
 				<TabularTBody
 					{...this.props}
 					rowOffset = {rowOffset}
@@ -231,6 +228,7 @@ var TabularBodyWrapper = React.createClass ({
 					fetchEnd = {fetchEnd}
 					width = {lhsWidth}
 					columns = {view.data._fixedCols}/>
+				}
 				</div>
 			</div>
 			{/*END LHS TABLE BODY*/}
@@ -273,7 +271,7 @@ var TabularBodyWrapper = React.createClass ({
 				<div className = "rhs-h-scroll wrapper"
 					ref = "rhsHorizontalOffsetter"
 					style = {{
-						marginLeft: (-1 * this.props.hiddenColWidth ) + 'px',
+						marginLeft: (-1 * this.props.hiddenColWidth ),
 						transition: 'margin-left linear 100ms',
 						position: 'absolute',
 						top: 0,
@@ -291,7 +289,7 @@ var TabularBodyWrapper = React.createClass ({
 							marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
 							transform: HAS_3D ? `translate3d(1, ${marginTop}px, 0)` : null,
 							transformStyle: "preserve-3d",
-							transition: IS_CHROME && HAS_3D ? 'transform 75ms linear' : null,
+							transition: IS_CHROME && HAS_3D ? 'transform 100ms linear' : null,
 							height: (rowCount * rowHeight + 1),
 							width: (floatWidth + 1),
 							background: constants.colors.TABLE_BACKING,
@@ -299,17 +297,18 @@ var TabularBodyWrapper = React.createClass ({
 							overflow: "hidden",
 							borderBottom: `1px solid ${constants.colors.TABLE_BORDER}`,
 						}}>
-						<TabularTBody
+						{columnMode ? null : <TabularTBody
 							{...this.props}
 							_handleDetail = {this.handleDetail}
 							rowOffset = {rowOffset}
 							ref = "rhs"
 							prefix = "rhs"
+							style={{marginLeft: 0}}
 							columns = {view.data._floatCols}
 							offsetCols = {view.data._fixedCols.length}
 							fetchStart = {fetchStart}
 							fetchEnd = {fetchEnd}
-							width={view.data._floatWidth} />
+							width={view.data._floatWidth} />}
 					
 
 					</div>

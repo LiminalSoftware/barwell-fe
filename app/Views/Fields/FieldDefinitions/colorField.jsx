@@ -33,6 +33,8 @@ export default {
 
 	icon: 'eye-dropper',
 
+	defaultDefault: '#FFF',
+
 	parser: parser,
 
 	getDisplayHTML: getHTML.bind(null, _.identity, stylers),

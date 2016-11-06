@@ -9,6 +9,7 @@
 .selection-border,
 .sort-asc-overlay,
 .sort-desc-overlay,
+.column-overlay,
 .jagged-edge {
 	.border-box;
 	position: absolute;
@@ -18,6 +19,13 @@
 	// pointer-events: none;
 	.noselect;
 }
+
+
+.column-overlay {
+	border: 1px solid red;
+	background: white;
+}
+
 
 .new-row-adder {
 	text-transform: uppercase;
@@ -42,7 +50,7 @@
 	background: -ms-linear-gradient(top, rgba(7,149,56,0.1) 0%, rgba(255,255,255,0) 100%);
 	background: linear-gradient(to bottom, rgba(7,149,56,0.1) 0%, rgba(255,255,255,0) 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#079538', endColorstr='#ffffff', GradientType=0 );
-	transition: all linear 75ms;
+	transition: all linear 100ms;
 	transform: translateZ(1px);
 	border-left: 1px solid @blue1;
 	border-right: 1px solid @blue1;
@@ -58,7 +66,7 @@
 	background: -ms-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(7,149,56,0.1) 100%);
 	background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(7,149,56,0.1) 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#079538', GradientType=0 );
-	transition: all linear 75ms;
+	transition: all linear 100ms;
 	transform: translateZ(1px);
 	border-left: 1px solid @blue1;
 	border-right: 1px solid @blue1;
@@ -73,10 +81,10 @@
 .selection-outer-singleton, 
 .pointer,
 .view-reference-box {
-	// transition: all linear 75ms;
-	// transition: all linear 75ms;
-	transition: all cubic-bezier(.16,.85,.5,1) 100ms;
+	transition: all linear 100ms;
+	transform: translateZ(0px);
 }
+
 
 .selection-drag-box {
 	position: absolute;
@@ -89,7 +97,7 @@
 	
 	background: @table-backing;
 	z-index: 11;
-	// transform: translateZ(11px);
+	
 	pointer-events: auto;
 	cursor: crosshair !important;
 }
@@ -108,27 +116,30 @@
 
 .copyarea {
 	z-index: 10;
-	// transform: translateZ(10px);
-}
-
-.selection-outer-singleton {
-	background: transparent !important;
+	transform: translateZ(0);
 }
 
 .pointer {
 	z-index: 5;
 	pointer-events: auto;
-	transform: translateZ(5px);
+	transform: translateZ(0);
+}
+
+.selection-outer-singleton {
+	background: none !important;
+}
+
+.selection-outer {
+	background-color: @selection-color;
 }
 
 .selection-outer, .selection-outer-singleton {
 	border: 5px solid @table-backing;
-	background-color: @selection-color;
-	// transform: translateZ(2px);
 	z-index: 2;
 }
+
 .selection-border {
-	// transform: translateZ(2px);
+	transform: translateZ(0);
 	border: 1px solid @green1;
 	z-index: 4;
 }

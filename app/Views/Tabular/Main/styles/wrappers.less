@@ -13,13 +13,16 @@
 	right: 0;
 	left: 0;
 	.noselect;
-	.border-box;
+	
 	border: none;
 
 	transition: linear 75ms;
+	perspective: 0;
 	
 	-webkit-transform-style: flatten;
 	transform-style: flatten;
+	.border-box;
+	overflow: hidden;
 }
 
 .loader-overlay {

@@ -5,7 +5,6 @@ import styles from "./style.less";
 import modelActionCreators from "../../actions/modelActionCreators"
 import NotificationStore from "../../stores/NotificationStore"
 import TransactionStore from "../../stores/TransactionStore"
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import util from '../../util/util'
 
 var HIDE_TIMER = 250;

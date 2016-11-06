@@ -1,6 +1,5 @@
 // LIBRARIES
 import React from "react";
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { Link } from "react-router";
 import _ from 'underscore';
 
@@ -17,7 +16,6 @@ import blurOnClickMixin from "../../../../blurOnClickMixin";
 import sortable from 'react-sortable-mixin';
 
 // COMPONENTS
-import ColumnAdder from './ColumnAdder'
 import ColumnList from "./ColumnList";
 
 
@@ -95,8 +93,6 @@ var ColumnDropdownMenu = React.createClass({
 					{...this.props} ref = "list"
 					_markDirty = {this.markDirty}
 					_blurChildren = {this.blurChildren}/>
-
-				<ColumnAdder {...this.props} config = {{}}/>
 				
 			</div>					
 

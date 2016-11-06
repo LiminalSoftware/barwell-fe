@@ -16,7 +16,7 @@ var ViewStore = storeFactory({
 	identifier: 'view_id',
 	dispatcher: dispatcher,
 	guidGenerator: getGuid,
-	pivot: function(payload) {
+	pivot: function (payload) {
 
 		switch (payload.actionType) {
 

@@ -1,7 +1,6 @@
 import React from "react"
 import update from 'react/lib/update'
 import _ from "underscore"
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import constants from "../../../../constants/MetasheetConstants"

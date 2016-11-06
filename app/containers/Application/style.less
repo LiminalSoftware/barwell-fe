@@ -49,12 +49,17 @@ h1, h2, h3, h4, h5 {
 .model-pane-header {
 	position: relative;
 	display: flex;
-	line-height: 30px;
-	max-height: 46px;
-	border-bottom: 1px solid @table-border;
-	background: white;
+	line-height: 28px;
+	height: 29px;
+	min-height: 29px;
+	max-height: 29px;
+	padding-left: 20px;
 	margin: 0;
 	
+	border-bottom: 1px solid @gray3;
+	color: blue;
+
+
 	display: flex;
 	flex-direction: row;	
 	
@@ -79,7 +84,7 @@ h1, h2, h3, h4, h5 {
 	flex-grow: 1;
 	display: flex;
 	position: relative;
-	overflow: visible;
+	overflow: hidden;
 	margin: 0;
 	margin-left: 0px;
 	.noselect;
