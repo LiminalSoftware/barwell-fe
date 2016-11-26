@@ -9,11 +9,12 @@ import Overlay from '../Overlay'
 
 export default class Pointer extends React.Component {
 	shouldComponentUpdate = (nextProps, nextState) => {
-		return nextProps.position != this.props.position ||
-			nextProps.view != this.props.view ||
-			nextProps.obj != this.props.obj ||
-			nextProps.col != this.props.col ||
-			nextProps.columnOffset != this.props.columnOffset
+		return nextProps.position !== this.props.position ||
+			nextProps.view !== this.props.view ||
+			nextProps.obj !== this.props.obj ||
+			nextProps.col !== this.props.col ||
+			nextProps.columnOffset !== this.props.columnOffset
+			nextProps.dragOffset !== this.props.dragOffset
 	}
 
 	
@@ -68,7 +69,8 @@ export default class Pointer extends React.Component {
 				right: '0px',
 				border: 'none',
 				lineHeight: geo.rowHeight + 'px',
-				background: constants.colors.TABLE_BACKING
+				background: constants.colors.TABLE_BACKING,
+				overflow: 'visible'
 			}
 		})
 	}

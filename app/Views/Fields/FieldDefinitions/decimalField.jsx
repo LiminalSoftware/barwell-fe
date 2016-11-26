@@ -32,7 +32,7 @@ import NumberFormatChoice from "../ConfigParts/NumberFormatChoice"
 import fieldUtils from "../fieldUtils"
 
 import GenericTextElement from "../GenericTextElement"
-import getHTML from "../GenericTextElement/getHTML"
+import getHTML from "../DecimalElement/getHTML"
 
 import displayStyles from "../ConfigParts/NumberFormatChoice/displayStyles"
 
@@ -110,7 +110,7 @@ export default {
 
 		getDecorator () {
 			const config = this.props.config
-			return <span style={{left: 2}}>{config.prefix}</span>
+			return <span className="decimal-prefix">{config.prefix}</span>
 		}
 
 		render () {

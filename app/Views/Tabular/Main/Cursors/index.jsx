@@ -47,13 +47,29 @@ export default class Cursors extends React.Component {
 	componentWillReceiveProps = (props) => {
 		const pointerChanged = props.pointer !== this.state.pointer
 		const selectionChanged = props.selection !== this.state.selection
+		const resizeColumnChanged = props.resizeColumn !== this.props.resizeColumn
+		const {view} = this.props
+
+		let newState = {}
+
+		if (resizeColumnChanged) {
+			newState = _.extend(newState, 
+				{resizeWidth: view.data.columns[props.resizeColumn]}
+			)
+		}
 
 		if (selectionChanged && pointerChanged) {
-			this.setState({pointer: null, selection: props.selection, moving: true})
+			newState = _.extend(newState, 
+				{pointer: null, selection: props.selection, moving: true}
+			)
 			this._debounceSetPointer(props.pointer)
 		} else if (pointerChanged) {
-			this.setState({pointer: props.pointer, selection: props.selection})
+			newState = _.extend(newState, 
+				{pointer: props.pointer, selection: props.selection}
+			)
 		}
+
+		this.setState(newState)
 	}
 	showContextMenu = (e) => {
 		var cursors = ReactDOM.findDOMNode(this.overlayInner)
@@ -67,13 +83,16 @@ export default class Cursors extends React.Component {
 	}
 
 	renderOverlays = () => {
-		const {view, columnMode, model, columnOffset, focused, pointer: ptr, 
+		const {view, resizeColumn, model, columnOffset, focused, pointer: ptr, 
 			selection: sel, copyarea: cpy} = this.props
+		const {dragOffset} = this.state
 
 		const numFixed = view.data._fixedCols.length
 		
 		const showJaggedEdge = ((sel.right >= numFixed)
 			&& (sel.left < numFixed + columnOffset) && (columnOffset > 0));
+
+		const jaggedEdgeIsLight = (sel.right > numFixed + columnOffset)
 
 		const singleton = (sel.top === sel.bottom && sel.left === sel.right)
 		
@@ -88,7 +107,7 @@ export default class Cursors extends React.Component {
 		const obj = store.getObject(ptr.top);
 		
 		
-		const hideCursor = (rowsSelected || rowCount === 0);
+		const hideCursor = (rowsSelected || rowCount === 0 || resizeColumn);
 		
 		return (!focused ? [] : [
 			<ReactCSSTransitionGroup {...constants.transitions.fadein}>{
@@ -97,6 +116,7 @@ export default class Cursors extends React.Component {
 				col = {col}
 				obj = {obj}
 				key = "pointer"
+				dragOffset = {dragOffset}
 				position={this.state.pointer}
 				fudge = {{width: -1, left: 0, top: 1, height: -1}}
 				ref="pointer" />
@@ -104,24 +124,28 @@ export default class Cursors extends React.Component {
 			
 			hideCursor ? null : <Overlay
 				{...this.props}
-				className = {"selection-outer" + (singleton ? '-singleton ' : ' ')}
+				className = {"selection-outer" + 
+					(singleton ? '-singleton ' : ' ') +
+					(this.props.isMouseDown ? " selection-outer-pressed " : "")}
 				ref="selectionOuter"
 				key="selectionOuter"
 				position = {sel}
+				dragOffset = {dragOffset}
 				fudge = {{left: -4, top: -3, height: 7, width: 7}}>
-				<div className = {"selection-border "}
+				<div className = {"selection-border " + (this.props.isMouseDown ? " selection-border-pressed " : "")}
 					style={{left: "-3px", right: "-3px", top: "-3px", bottom: "-3px"}}/>
 				
 			</Overlay>,
 
-			<Overlay
+			cpy ? <Overlay
 				{...this.props}
 				columns = {view.data._visibleCols}
 				className = {" copyarea running marching-ants "}
 				ref = "copyarea"
-				key="copyare"
+				key="copyarea"
+				dragOffset = {dragOffset}
 				position = {cpy}
-				fudge = {{left: -1, top: 0.25, height: 1, width: 1}}/>,
+				fudge = {{left: -1, top: 0.25, height: 1, width: 1}}/> : null,
 
 			<Overlay
 				{...this.props}
@@ -129,16 +153,18 @@ export default class Cursors extends React.Component {
 				className = {" new-row-adder "}
 				ref = "rowadder"
 				key="rowadder"
+				dragOffset = {dragOffset}
 				fudge = {{left: -1 * geo.labelWidth - 2, width: geo.labelWidth + 2}}
 				position = {{left: 0, right: view.data._visibleCols.length, top: rowCount, bottom: rowCount}}>
 				<div className="flush" onClick={this.props._addRecord}>add new row</div>
 			</Overlay>,
 
-			!hideCursor && showJaggedEdge ? <Overlay
+			!hideCursor && !this.props.isMouseDown && showJaggedEdge ? <Overlay
 				{...this.props}
-				className = " jagged-edge "
+				className = {" jagged-edge" + (jaggedEdgeIsLight ? "":"")}
 				ref = "jaggedEdge"
 				key="jaggedEdge"
+				dragOffset = {dragOffset}
 				showHiddenHack = {true}
 				position = {{
 					left: view.data._fixedCols.length,
@@ -151,7 +177,7 @@ export default class Cursors extends React.Component {
 						 (sel.left < numFixed + columnOffset) ? -5 : -4, 
 					width: 10, top: 0, height: 1}} />
 			: null
-		]).concat(!focused ? [] : view.data.sorting.map(s => {
+		]).concat(!focused || hideCursor ? [] : view.data.sorting.map(s => {
 			const column = view.data.columns[s.attribute]
 			const left = view.data._visibleCols.indexOf(column)
 			return <Overlay
@@ -159,24 +185,29 @@ export default class Cursors extends React.Component {
 				key={"sort-" + (s.column_id)}
 				className = {`sort-${s.descending ? 'desc': 'asc'}-overlay`}
 				fudge = {{left: -1, width: 1, height: 1}}
+				dragOffset = {dragOffset}
 				position = {{
 					left: left,
 					right: left,
 					top: 0,
 					bottom: rowCount - 1
 				}}/>
-		})).concat(columnMode ? this.getColumnOverlays() : [])
+		})).concat(resizeColumn ? this.getColumnOverlays() : [])
 	}
 
 	getColumnOverlays = () => {
-		const {view, model, store, _getRangeStyle} = this.props
+		const {view, model, store, _getRangeStyle, rowOffset} = this.props
 		const rowCount = store.getRecordCount()
 		const columns = view.data._visibleCols
+		const {dragOffset} = this.state
 
 		return columns.map((column, idx) => 
 			<ColumnOverlay 
 				model = {model} 
-				view={view} 
+				store = {store}
+				rowOffset = {rowOffset}
+				view={view}
+				dragOffset = {dragOffset}
 				column={column} 
 				index={idx}
 				rowCount={rowCount} 

@@ -32,7 +32,6 @@
 .header-cell-inner {
 	overflow: hidden;
 	background: @table-backing;
-	cursor: pointer !important;
 	transition: background 75ms linear;
 }
 
@@ -100,8 +99,15 @@
 .column-decorator {
 	position: absolute;
 	right: 0;
-	top: 0;
-	bottom: 0;
+	top: 3px;
+	bottom: 4px;
 	width: 22px;
-	line-height: 30px;
+	line-height: 22px;
+	text-align: center;
+}
+
+.column-menu-icon {
+	background: @gray4;
+	border-radius: 3px;
+	height: 22px;
 }

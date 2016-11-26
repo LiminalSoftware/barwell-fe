@@ -136,7 +136,7 @@ const ViewLink = React.createClass ({
 				onBlur={this.commitChanges} /> 
 			:
 			<span onDoubleClick = {this.handleRename} className="view-link-inner ellipsis ">
-				<span className = {`icon ${viewTypes[view.type].icon}`}/>
+				
 				{this.state.name}
 			</span>
 
@@ -145,25 +145,22 @@ const ViewLink = React.createClass ({
 			onContextMenu = {this.handleShowContext}
 			className = {`view-link view-link--${isFocused ? 'focused' : active ? 'active' : ''}`}>
 
-			
+			<span className = {`icon ${viewTypes[view.type].icon}`} style={{color: 'blue'}}/>
 			{viewDisplay}
 			
-			<ReactCSSTransitionGroup {...constants.transitions.inandout}
-				component = "div"
-				className = "view-link-actions"
-				onMouseOver = {this.handleMouseOver}
-				onMouseOut = {this.handleMouseOut}>
+			
+			
+
+				
+				{active ? 
+				<ViewContext {...this.props} ref="context"
+				_parent = {this} direction = "left" visible = {this.state.mouseover}/> : null}
 
 				{active ?
-				<span className={`icon icon-arrow-right view-link-arrow${isFocused ? '-selected' : ''}`}
-					style={{paddingTop: "2px", position: "absolute", right: "0"}}/>
+				<span className={`icon icon-arrow-right view-link-arrow${isFocused ? '-selected' : ''}`}/>
 				:null}
 
-
-				<ViewContext {...this.props} ref="context"
-				style={{float: "right", marginRight: "30px"}}
-				_parent = {this} direction = "left" visible = {this.state.mouseover}/>
-			</ReactCSSTransitionGroup>
+			
 
 		</Link>
 	}

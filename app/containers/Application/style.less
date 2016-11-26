@@ -49,15 +49,18 @@ h1, h2, h3, h4, h5 {
 .model-pane-header {
 	position: relative;
 	display: flex;
-	line-height: 28px;
-	height: 29px;
-	min-height: 29px;
-	max-height: 29px;
+	line-height: 30px;
+	height: 30px;
+	min-height: 30px;
+	max-height: 30px;
 	padding-left: 20px;
 	margin: 0;
 	
 	border-bottom: 1px solid @gray3;
 	color: blue;
+
+	background: @gray4;
+	font-family: @headerFont;
 
 
 	display: flex;
@@ -76,6 +79,14 @@ h1, h2, h3, h4, h5 {
 	margin-left: 0px;
 }
 
+.pane-dots {
+	flex: 1;
+	margin: 5px;
+	margin-left: 10px;
+	background:url(
+	data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAGklEQVQYV2NkwAIYCQj+/8/AwAhWREglwiAAaJwCBomQQ6QAAAAASUVORK5CYII=
+    ) repeat;
+}
 
 
 

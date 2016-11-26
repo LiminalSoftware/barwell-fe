@@ -59,17 +59,18 @@
 @bluegray-2: #504854;
 
 .shadowed-menu {
-  // border-width: 1px;
+  border-color: @gray2;
+  border-width: 1px;
   // border-top-width: 1px;
   // border-left-width: 1px;
   // border-bottom-width: 3px;
   // border-right-width: 2px;
-  // border-style: solid;
+  border-style: solid;
 
   border-radius: 3px;
 
-  // box-shadow: 0 1px 3px 3px #777;
-  box-shadow: 0 0 0 3px #FFF;
+  // box-shadow: 0 1px 2px 3px #777;
+  box-shadow: 0 0 0 2px #FFF;
 }
 
 
@@ -198,8 +199,8 @@
 }
 
 .draggable {
-  cursor: move;
-  cursor: grab;
-  cursor: -moz-grab;
-  cursor: -webkit-grab;
+  cursor: move !important;
+  cursor: grab !important;
+  cursor: -moz-grab !important;
+  cursor: -webkit-grab !important;
 }

@@ -2,13 +2,16 @@
 
 .branding {
 	font-size: 20px;
-	padding: 8px;
+	padding: 0;
 	margin: 0;
 	height: 30px;
 	line-height: 30px;
-	color: @lightFontColor;
+	// color: @lightFontColor;
+	color: blue;
+	background: #FAFAF4;
 	font-weight: 400;
-	// background: @blue1;
+	
+	border-bottom: 1px solid @gray3;
 	
 	text-align: center;
 	
@@ -26,8 +29,9 @@
 	flex: 1 1 ;
 	display: flex;
 	flex-direction: column;
-	color: @lightFontColor;
-	background: @gray2;
+	// color: @lightFontColor;
+	background: #FAFAF4;
+
 	border-right: 3px solid @cell-border;
 }
 
@@ -48,7 +52,7 @@
 	line-height: 30px;
 	padding: 5px 5px;
 
-	color: @lightFontColor;
+	// color: @lightFontColor;
 	
 	display: block;
 	text-decoration: none;
@@ -58,40 +62,35 @@
 
 	border-left: 4px solid transparent;
 
-	transition: background cubic-bezier(.16,.85,.5,1) 400ms;
-	transition: border cubic-bezier(.16,.85,.5,1) 400ms;
+	transition: all cubic-bezier(.16,.85,.5,1) 200ms;
 
 	&:hover {
-		background: lighten(@gray2,5%);
-		& > .icon {
-			color: lighten(@green1,5%);
+		.view-link-inner {
+			border-bottom: 1px solid blue;
 		}
 	}
 }
 
 .view-link-arrow, .view-link-arrow-selected {
-	
-	border-radius: 3px;
-	padding: 4px;
-	margin: 5px !important;
 	transition: background cubic-bezier(.16,.85,.5,1) 200ms; 
 }
 
 .view-link-arrow {
-	background: @gray1;
+	// color: white;
+	// background: @gray1;
+	color: @gray1;
 }
 
 .view-link-arrow-selected {
-	background: @blue1;
+	// background: @blue1;
+	// border: 1px solid @blue1;
+	color: blue;
 }
 
 .add-new-item {
 	transition: background cubic-bezier(.16,.85,.5,1) 300ms;
 	&:hover {
-		background: lighten(@gray2,5%);
-		& > .icon {
-			color: lighten(@green1,5%);
-		}
+		color: @green1;
 	}
 }
 
@@ -101,38 +100,35 @@
 
 .view-link {
 	font-family: @bodyFont;
+	display: flex;
+	
 }
 
-// .view-link {
+.view-link-inner {
 // 	position: absolute;
 // 	right: 65px;
 // 	left: 8px;
 // 	top: 0;
 // 	bottom: 0;
-// 	line-height: 35px;
-
-
-// 	display: block;
-// }
+	
+	color: blue;
+	
+	.ellipsis;
+}
 
 .view-link-actions {
-	position: absolute;
-	right: 0;
-	width: 50px;
-	top: 0;
-	bottom: 0;
-	color: @lightFontColor;
+	margin-left: auto;
 }
 
 .view-link--active {
-	border-left: 4px solid @gray2;
+	// border-left: 4px solid @gray2;
 
 }
 
 .view-link--focused {
 	
 	
-	border-left: 4px solid @blue1;
+	// border-left: 4px solid @blue1;	
 }
 
 .mdlbar-list {
@@ -196,10 +192,7 @@
 	
 	transition: all cubic-bezier(.16,.85,.5,1) 300ms;
 	&:hover {
-		background: lighten(@gray2,5%);
-		& > .icon {
-			color: lighten(@green1,5%);
-		}
+		background: @gray4;
 	}
 
 }

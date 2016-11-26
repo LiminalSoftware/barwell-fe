@@ -17,8 +17,12 @@ export default class FilterConfig extends Component {
 	}
 
 	render () {
+		const {view} = this.props
+		const sort = view.data.sorting
+
 		return <ConfigItem
 			menu={SortMenu}
+			isActive={sort && sort.length}
 			icon="icon-tab"
 			hoverText="Sort records"
 			preview={this.getPreview()}

@@ -54,6 +54,7 @@ var TabularBodyWrapper = React.createClass ({
 			colOffset: 0,
 			detailOpen: false,
 			contextOpen: false,
+			resizing: false
 		}
 	},
 	
@@ -71,11 +72,16 @@ var TabularBodyWrapper = React.createClass ({
 	},
 
 	componentWillUpdate: function (nextProps, nextState) {
-		// if (this.__timer) clearTimeout(this.__timer);
-		this.debounceFetch(false, nextProps, nextState);
+		
 	},
 
 	componentWillReceiveProps: function (nextProps) {
+		const {view} = this.props
+		const fixedCols = view.data._fixedCols
+		const numFixed = fixedCols.length
+
+		// if (nextProps.resizeColumn) this.setState({resizing: true})
+		
 		this.debounceFetch(false, nextProps);
 	},
 
@@ -136,12 +142,12 @@ var TabularBodyWrapper = React.createClass ({
 	shouldComponentUpdate: function (newProps, nextState) {
 		var oldProps = this.props
 		return oldProps.view !== newProps.view || 
-		oldProps.columnMode !== newProps.columnMode
+		oldProps.resizeColumn !== newProps.resizeColumn
 	},
 
 
 	render: function () {
-		const {view, model, store, columnMode, rowOffset, hiddenColWidth: colOffset} = this.props
+		const {view, model, store, resizeColumn, rowOffset, hiddenColWidth: colOffset} = this.props
 		const rowCount = store.getRecordCount()
 		const geo = view.data.geometry
 
@@ -167,7 +173,7 @@ var TabularBodyWrapper = React.createClass ({
 			<div className="flush loader-overlay" key="loader">
 				<div className="wrapper flush loader-overlay" ref="loaderOverlay">
 					<p className="loader-hero">
-					<span className="icon icon-loading-2 spin"/>
+					<span className="loader"/>
 					<span>Loading data from the server...</span>
 					</p>
 				</div>
@@ -209,14 +215,14 @@ var TabularBodyWrapper = React.createClass ({
 						
 						marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
 						transform: HAS_3D ? `translate3d(1, ${marginTop}px, 0)` : null,
-						transition: IS_CHROME && HAS_3D ? 'transform 100ms linear' : null,
+						transition: IS_CHROME && !resizeColumn && HAS_3D ? 'transform 100ms linear' : null,
 						background: constants.colors.TABLE_BACKING,
 						overflow: "hidden",
 						borderBottom: `1px solid ${constants.colors.TABLE_BORDER}`,
 						zIndex: 0
 					}}>
 
-				{columnMode ? null : 
+				{resizeColumn ? null : 
 				<TabularTBody
 					{...this.props}
 					rowOffset = {rowOffset}
@@ -272,7 +278,7 @@ var TabularBodyWrapper = React.createClass ({
 					ref = "rhsHorizontalOffsetter"
 					style = {{
 						marginLeft: (-1 * this.props.hiddenColWidth ),
-						transition: 'margin-left linear 100ms',
+						transition: resizeColumn ? null : 'margin-left linear 100ms',
 						position: 'absolute',
 						top: 0,
 						bottom: 0,
@@ -289,7 +295,7 @@ var TabularBodyWrapper = React.createClass ({
 							marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
 							transform: HAS_3D ? `translate3d(1, ${marginTop}px, 0)` : null,
 							transformStyle: "preserve-3d",
-							transition: IS_CHROME && HAS_3D ? 'transform 100ms linear' : null,
+							transition: IS_CHROME && !resizeColumn && HAS_3D ? 'transform 100ms linear' : null,
 							height: (rowCount * rowHeight + 1),
 							width: (floatWidth + 1),
 							background: constants.colors.TABLE_BACKING,
@@ -297,7 +303,7 @@ var TabularBodyWrapper = React.createClass ({
 							overflow: "hidden",
 							borderBottom: `1px solid ${constants.colors.TABLE_BORDER}`,
 						}}>
-						{columnMode ? null : <TabularTBody
+						{resizeColumn ? null : <TabularTBody
 							{...this.props}
 							_handleDetail = {this.handleDetail}
 							rowOffset = {rowOffset}

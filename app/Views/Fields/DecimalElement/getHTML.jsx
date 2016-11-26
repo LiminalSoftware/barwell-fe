@@ -1,3 +1,4 @@
+import style from "./style.less"
 import fieldUtils from "../fieldUtils"
 import _ from "underscore"
 
@@ -8,16 +9,16 @@ export default function getDecimalHTML (format, stylers, config, obj, pos) {
 	
 	return `<span class = "table-cell table-cell-inner" 
 	style = "
-		text-align: left; 
+		text-align: ${styles.textAlign || auto}; 
 		font-style: ${styles.fontStyle || 'inherit'};
 		background: ${styles.background || 'transparent'}; 
 		color: black; 
 		font-family: ${styles.fontFamily || 'inherit'}; 
 		${pos?`left:${pos.left}px; width: ${pos.width}px;`:''}
 	">
-		
-		
-			<div class="decimal-prefix"></div>
-			
+			${config.prefix ? 
+			('<div class="decimal-prefix">' + config.prefix + "</div>")
+			: ''}
+			<span>${prettyValue}</span>
 	</span>`
 }

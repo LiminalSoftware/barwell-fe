@@ -12,17 +12,13 @@
 }
 
 .view-config-bar {
-	position: absolute;
-	right: 20px;
-	margin-left: auto;
-	bottom: 65px;
-	z-index: 30;
 	display: flex;
+	position: relative;
 }
 
 .view-config-dots {
 	margin-left: 4px;
-	border-bottom: 1px dotted @purple4;
+	border-bottom: 1px dotted blue;
 }
 
 .view-config-item,
@@ -30,8 +26,9 @@
 .view-config-item--active,
 .view-config-item--focused
 {
-	padding: 4px 8px;
-
+	padding: 0 8px;
+	margin: 4px;
+	font-family: @bodyFont;
 	
 	display: inline-block;
 	
@@ -42,33 +39,45 @@
 	
 	text-transform: uppercase;
 	font-size: 12px;
-	color: @purple4;
-
-	background: white;
-	border-radius: 20px;
-	border: 2px solid @purple4;
-	border-top-width: 1px;
-	border-left-width: 1px;
-	box-shadow: 0 0 0 3px white;
-
-	margin-right: 8px;
+	
+	border-radius: 0;
+	
 	height: 20px;
-	line-height: 24px;
+	line-height: 20px;
 
 	transition: all ease-in 150ms;
-
-
 }
-.view-config-item:hover, .view-config-item--active:hover {
-	background: @gray4;
-	
+
+.view-config-item--pushed {
+	background: blue;
+	color: white;
+	border: 1px solid blue;
+}
+
+.view-config-item--focused {
+	background: white;
+	border: 1px solid blue;
+	color: blue;
+}
+
+.view-config-item {
+	color: @gray3;
+	border: 1px solid @gray3;
+	&:hover {
+		border: 1px solid blue;
+	}
+}
+
+.view-config-item--active {
+	border: 1px solid blue;
+	color: blue;
 }
 
 
 
 .sort-config-colors {
-	border: 1px solid @blue1;
-	color: @blue1;
+	border: 1px solid blue;
+	color: blue;
 }
 
 .menu-explainer {
@@ -131,8 +140,7 @@
 
 	background: white;
 
-	border: 2px solid @blue1;
-	border-radius: 0 0 3px 3px;
+	border: 1px solid @blue1;
 	box-shadow: 0 0 0 2px white;
 }
 

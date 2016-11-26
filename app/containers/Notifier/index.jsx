@@ -13,7 +13,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import Note from './Note'
 
-var HIDE_TIMEOUT = 250;
+var HIDE_TIMEOUT = 50;
 var PREVIEW_TIMEOUT = 4000;
 
 var Notifier = React.createClass({
@@ -77,29 +77,40 @@ var Notifier = React.createClass({
 		var notifications = (this.state.mouseOver || this.state.showPreview) ? NotificationStore.query({}) : []; 
 		var transactions = TransactionStore.query({});
 		var events
-		const style = {cursor: 'pointer', position: "absolute", bottom: 0, left: 0, right: 0, height: 0}
+		const style = {
+			cursor: 'pointer', 
+			position: "absolute", 
+			bottom: 0, left: 0, right: 0, 
+			height: (this.state.mouseOver ? 
+				(util.limit(1,5, transactions.length) * 50) : 50),
+			maxHeight: (this.state.mouseOver ? 
+				(util.limit(1,5, transactions.length) * 50) : 50),
+			overflow: "hidden"
+		}
 
-		if (this.state.mouseOver) transactions
-		else transactions = transactions.filter(txn => moment(txn.timestamp).isAfter(cutoff))
+		// if (this.state.mouseOver) transactions
+		// else transactions = transactions.filter(txn => moment(txn.timestamp).isAfter(cutoff))
 
-		transactions = transactions.slice(transactions.length - (this.state.mouseOver ? 10 : 1))
+		transactions = transactions.slice(transactions.length - 5)
 		events = util.merge({attribute: 'timestamp', descending: true}, null, notifications, transactions)
 
 		return <ReactCSSTransitionGroup 
 			className = "notification-bar"
 			style = {style}
-			{...constants.transitions.fadein}
+			{...constants.transitions.slideup}
 			component = "span"
 			onMouseOver = {this.handleMouseOver}
 			onMouseOut = {this.handleMouseOut}>
 			{
 			events.length === 0 && !this.state.mouseOver ? null :
-			<div className = "pop-up-menu" 
+			<div className = "pop-up-menu" key="1" 
 				style = {{
 					left: 'auto', 
 					right: 0,
 					cursor: 'pointer',
-					minWidth: '300px'
+					width: '100%',
+					bottom: 0,
+					
 				}}>
 			{
 			events.map(function (note, idx) {
@@ -122,22 +133,6 @@ var Notifier = React.createClass({
 					</span>
 					<span className = "note-right-column"/>
 				</div> : null
-			}
-			{
-			this.state.mouseOver ?
-			<div className = "note-item" onClick={this.handleTogglePreview} key = "preview-toggle">
-				<span className = "note-left-column" style = {{lineHeight: '25px'}}>
-				<input type="checkbox"
-					checked={this.state.showPreview}
-					onChange={this.handleTogglePreview}/>
-				</span>
-				<span className = "note-middle-column" style = {{lineHeight: '25px'}}>
-					Show preview of latest item
-				</span>
-				<span className = "note-right-column"/>
-			</div>
-			:
-			null
 			}
 		</div>
 		}

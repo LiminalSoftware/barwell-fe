@@ -13,16 +13,16 @@ var Note = React.createClass({
 
 	render: function() {
 		var note = this.props.note;
-		var idx = this.props.index;
+		var index = this.props.index;
 		var model = this.props.model
 		var substitutions = model ? {
 			'${model}': model.model
 		} : {}
 		var narrative = note.narrative
 
-		return <div className = {'note-item note-' + note.type + " pop-down-item"}
+		return <div className = {'note-item note-' + note.type + " "}
 			key = {note.cid || note.notification_key || note.action_id}
-			style = {{zIndex: note.notificationId, cursorEvents: 'auto', top: (-70 * (idx + 1)) + 'px'}}>
+			style = {{zIndex: note.notificationId, cursorEvents: 'auto', top: (-50 * index)}}>
 			<span className = {note.notification_key ? "note-short-left-column" : "note-left-column"}>
 				<span className={'icon ' + note.icon}/>
 			</span>

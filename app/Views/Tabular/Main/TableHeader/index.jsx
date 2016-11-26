@@ -73,7 +73,8 @@ var TableHeader = React.createClass ({
 					sorting = {sorting}
 					idx = {idx}
 					left = {left}
-					_setColumnMode = {_this.props._setColumnMode}
+					_setResizeColumn = {_this.props._setResizeColumn}
+					_setColumnSize = {_this.props._setColumnSize}
 					width = {col.width - 1}/>;
 				left += col.width
 				return el
@@ -84,7 +85,7 @@ var TableHeader = React.createClass ({
 			<span 
 				onClick = {this.props._handleAddAttribute}
 				style = {{
-					left: left + 2, 
+					left: left + 1, 
 					top: 0, 
 					bottom: 0, 
 					width: geo.colAddWidth, 

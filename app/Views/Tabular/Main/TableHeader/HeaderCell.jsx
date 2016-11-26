@@ -43,29 +43,34 @@ export default class HeaderCell extends Component {
 	 * clean them up when it ends
 	 */
 
-	componentDidUpdate = (newProps, newState) => {
+	componentDidUpdate = (prevProps, prevState) => {
+		const {column: config} = this.props
+
 		/* global listener setup and cleanup for drag bar */
-		if ((this.state.dragging && !newState.dragging) ||
-			(this.state.resizing && !newState.resizing)
+		if ((this.state.dragging && !prevState.dragging) ||
+			(this.state.resizing && !prevState.resizing)
 		) {
 			addEventListener('mousemove', this.onMouseMove)
 			addEventListener('mouseup', this.onMouseUp)
-			this.props._setColumnMode(true)
-		} else if ( (!this.state.dragging && newState.dragging) ||
-					(!this.state.resizing && newState.resizing)) {
+			this.props._setResizeColumn(config.column_id)
+		} 
+
+		else if ( (!this.state.dragging && prevState.dragging) ||
+					(!this.state.resizing && prevState.resizing)) {
 		   removeEventListener('mousemove', this.onMouseMove)
 		   removeEventListener('mouseup', this.onMouseUp)
-		   this.props._setColumnMode(false)
+		   this.props._setResizeColumn(null)
+		   
 		}
 
-		if (!newState.renaming && this.state.renaming) {
+		if (!prevState.renaming && this.state.renaming) {
 			addEventListener('keydown', this.handleKeyPress)
 			addEventListener('click', this.handleClick)
 		}
 
 		/* move cursor to the end of the input upon edit */
-		if ((newState.renaming && !this.state.renaming) ||
-			(newState.context && !this.state.context)) {
+		if ((prevState.renaming && !this.state.renaming) ||
+			(prevState.context && !this.state.context)) {
 			// const input = this.refs.input
 			// if (input) {
 			// 	const val = input.value
@@ -92,7 +97,7 @@ export default class HeaderCell extends Component {
 
 		if (this.state.mouseover && !this.state.open && !this.state.renaming) 
 			return <span onClick = {this.handleContextMenu} key="menu-icon"
-			className={`column-decorator clickable icon icon--small icon-chevron-down`}/>
+			className={`column-decorator column-menu-icon clickable icon icon--small icon-chevron-down`}/>
 
 		else if (this.props.sorting && !this.state.open && !this.state.renaming)
 			return <span onClick={this.switch} key="sort-icon"
@@ -155,17 +160,21 @@ export default class HeaderCell extends Component {
 	 */
 
 	onMouseMove = (e) => {
+		
 		if (!this.state.resizing) {
 			throw new Error('onMouseMove event when no drag in place')
 		}
+		const width = Math.max(
+			e.pageX - this.state.rel,
+			COLUMN_MIN_WIDTH - this.state.rel - this.props.column.width
+		)
+
 		this.setState({
-	      pos: Math.max(
-	      	e.pageX - this.state.rel,
-	      	COLUMN_MIN_WIDTH - this.state.rel - this.props.column.width
-	      )
-	   })
-	   e.stopPropagation()
-	   e.preventDefault()
+			pos: width
+		})
+		this.props._setColumnSize(width)
+		e.stopPropagation()
+		e.preventDefault()
 	}
 
 	/*
@@ -284,7 +293,7 @@ export default class HeaderCell extends Component {
 			onMouseEnter = {e => this.setState({mouseover: true})}
 			onMouseLeave = {e => this.setState({mouseover: false})}
 			className = "table-cell">
-			<span className = "table-cell-inner header-cell-inner" 
+			<span className = "table-cell-inner header-cell-inner draggable" 
 			style = {innerStyle}>
 				{/*<span className="type-label">{type.description}</span>*/}
 				{this.state.renaming ?

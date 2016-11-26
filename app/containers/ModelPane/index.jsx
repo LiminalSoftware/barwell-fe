@@ -26,22 +26,13 @@ export default class ViewPane extends Component {
 
 	constructor (props) {
 		super(props)
-		this.state = {
-			configElement: null
-		}
-	}
-
-	showConfigElement = (el) => {
-		this.setState({configElement: el})
 	}
 
 	render () {
 		const _this = this
 		const {view, focus, style} = this.props
-		// const {configElement} = this.state
 		const viewType = viewTypes[view.type]
-		const configElement = viewType.inlineConfigElement
-
+		const configElement = viewType.configElement
 		
 		const model = ModelStore.get(view.model_id);
 		const viewconfig = {}
@@ -59,14 +50,18 @@ export default class ViewPane extends Component {
 		}
 
 		const content = React.createElement(viewType.mainElement, childProps)
-
 		// const config = React.createElement(viewType.configElement, childProps)
-
 		const configDetail = configElement ? React.createElement(configElement, childProps) : null
 
 		return <div style={style} id={`view-${view.view_id}`}>
-			<div className="model-pane-header">{view.view}</div>
-			<div className="wrapper flush" style={{top: 30}}>
+			<div className="model-pane-header">{view.view}
+
+			<span className="pane-dots" style={{maxWidth: 20}}/>
+			{configDetail}
+			<span className="pane-dots">
+				
+			</span></div>
+			<div className="wrapper flush" style={{top: 31}}>
 			{content}
 			</div>
 		</div>

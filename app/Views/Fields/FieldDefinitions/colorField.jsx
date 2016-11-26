@@ -41,6 +41,11 @@ export default {
 
 	element: class ColorElement extends Component {
 
+		constructor (props) {
+			super(props)
+			this.state = {pickerOpen: false}
+		}
+
 		handleEdit (e) {
 			this.refs.genericField.handleEdit(e)
 		}
@@ -53,12 +58,33 @@ export default {
 			this.refs.genericField.handleBlur(commit)
 		}
 
+		getDecoratorStyle () {
+			return {
+				position: "absolute", 
+				top: 0, bottom: 0, 
+				marginTop: 0,
+				marginRight: 3,
+				width: 25,
+				lineHeight: `${this.props.rowHeight}px`,
+				zIndex: 12,
+				right: 0
+			}
+		}
+
 		getDecorator = () => {
-			return <div className="cell-decorator" style={{right: 0}}>
-				<div className="color-sample" style={{
-					background: this.props.value
-				}}/>
-			</div>
+			return [
+				<span style={this.getDecoratorStyle()}
+				onClick={this.showPicker}
+				className="icon blue icon-palette clickable">
+				{this.state.pickerOpen ? null : null}
+				</span>,
+				<div className="cell-decorator" style={{right: 0}}>
+					<div className="color-sample" style={{
+						background: this.props.value,
+						right: 28
+					}}/>
+				</div>
+			]
 		}
 
 		render () {

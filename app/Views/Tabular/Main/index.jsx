@@ -64,18 +64,23 @@ const TabularPane = React.createClass ({
 
 	componentWillMount: function () {
 		const copyPasteDummy = document.getElementById('copy-paste-dummy')
+		this._debounceCalibrate = _.debounce(this.calibrate, 100)
 
 		document.body.addEventListener('keydown', this.onKey);
+		window.addEventListener('resize', this._debounceCalibrate)
 		copyPasteDummy.addEventListener('paste', this.pasteSelection);
 
 		this.store = createTabularStore(this.props.view);
 		this.store.addChangeListener(this._onStoreChange);
+		
+
 	},
 
 	componentWillUnmount: function () {
 		const copyPasteDummy = document.getElementById('copy-paste-dummy');
 
 		document.body.removeEventListener('keydown', this.onKey);
+		window.removeEventListener('resize', this._debounceCalibrate)
 		copyPasteDummy.removeEventListener('paste', this.pasteSelection);
 		
 		if (this._timer) util.cancelFrame(this._timer)
@@ -109,16 +114,17 @@ const TabularPane = React.createClass ({
 		return props.view !== nextProps.view ||
 			!_.isEqual(state.selection, nextState.selection) ||
 			!_.isEqual(state.pointer, nextState.pointer) ||
-			this.props.focused !== nextProps.focused ||
-			this.state.contextRc !== nextState.contextRc || 
-			this.state.contextSubject !== nextState.contextSubject || 
+			props.focused !== nextProps.focused ||
+			state.contextRc !== nextState.contextRc || 
+			state.contextSubject !== nextState.contextSubject || 
+			state.isMouseDown !== nextState.isMouseDown ||
 			state.copyarea !== nextState.copyarea ||
 			state.contextOpen !== nextState.contextOpen ||
 			state.contextPosition !== nextState.contextPosition ||
 			state.hiddenColWidth !== nextState.hiddenColWidth ||
 			state.clientWidth !== nextState.clientWidth || 
 			state.clientHeight !== nextState.clientHeight ||
-			state.columnMode !== nextState.columnMode
+			state.resizeColumn !== nextState.resizeColumn
 	},
 
 	_onStoreChange: function () {
@@ -212,11 +218,24 @@ const TabularPane = React.createClass ({
 		return {top: r, left: c}
 	},
 
+	setResizeColumn: function (resizeColumn) {
+		if (resizeColumn === null) this.setState({resizeColumn: resizeColumn, dragOffset: 0})
+		else this.setState({resizeColumn: resizeColumn})
+	},
+
+	setColumnSize: function (offset) {
+		this.setState({dragOffset: offset})
+		this.refs.cursors.setState({dragOffset: offset})
+		this.refs.tableWrapper.setState({dragOffset: offset})
+	},
+	// ========================================================================
+	// data operations (edit, add new, delete, copy/paste)
+	// ========================================================================
+
 	editCell: function (clobber) {
-		console.log('handleEdit')
-		
 		const refPath = ['cursors','pointer','pointerCell']
-		const field = refPath.reduce((head, ref) => head ? head.refs[ref] : null, this)
+		const field = refPath.reduce(
+			(head, ref) => head ? head.refs[ref] : null, this)
 		
 		if (field && field.handleEdit) {
 			this.clearCopy()
@@ -461,50 +480,44 @@ const TabularPane = React.createClass ({
 				contextOpen: true,
 				contextRc: rc
 			})
-		} 
+		}
 
 		e.preventDefault();
 	},
-
-	setColumnMode: function (toggle) {
-		this.setState({columnMode: toggle})
-	},
 	
-	getRangeStyle: function (pos, fudge, showHiddenHack) {
-		var view = this.props.view
-	    var columnOffset = this.state.columnOffset
-	    var visibleCols = view.data._visibleCols
-	    var fixedCols = view.data._fixedCols
-	    var numFixed = fixedCols.length
-	    var geo = view.data.geometry
-	    var width = 0
-	    var left = geo.leftGutter + geo.labelWidth + 1
-	    var style = this.props.style || {}
-	    pos = pos || {}
-	    fudge = fudge || {}
-
+	getRangeStyle: function (pos = {}, fudge = {}, showHiddenHack = false) {
+		const {view} = this.props
+		const {resizeColumn, dragOffset, columnOffset} = this.state
+		const {_visibleCols: visibleCols, _fixedCols: fixedCols} = view.data
+	    const numFixed = fixedCols.length
+	    const geo = view.data.geometry
+	    const isHidden = (
+			!showHiddenHack && 
+			pos.left >= numFixed && 
+			(pos.right || pos.left) < numFixed + columnOffset
+		)
+	    let width = 0
+	    let left = geo.leftGutter + geo.labelWidth + 1
+	    
 		visibleCols.forEach(function (col, idx) {
+			const colWidth = col.width + (resizeColumn === col.column_id ? dragOffset : 0)
+
 	    	if (idx >= numFixed && idx < numFixed + columnOffset) return
+	    	
 	    	if (idx < pos.left)
-	        	left += col.width
+	        	left += colWidth
 	    	else if (idx <= (pos.right || pos.left))
-	    		width += col.width
+	    		width += colWidth
 	    })
 		
-	    style.top = (pos.top * geo.rowHeight + (fudge.top || 0))
-	    style.left = (left + (fudge.left || 0))
-	    style.height = (geo.rowHeight * ((pos.bottom || pos.top) - pos.top + 1) + (fudge.height || 0))
-	    style.width = (width + (fudge.width || 0))	
-
-	    if (!showHiddenHack && pos.left >= numFixed && (pos.right || pos.left) < numFixed + columnOffset) {
-	    	style.maxWidth = 0
-	    	style.opacity = 0
-	    } else {
-	    	style.maxWidth = (width + (fudge.width || 0))
-	    	style.opacity = 1
-	    }
-
-	  	return style
+	  	return {
+	  		top: (pos.top * geo.rowHeight + (fudge.top || 0)),
+		    left: (left + (fudge.left || 0)),
+		    height: (geo.rowHeight * ((pos.bottom || pos.top) - pos.top + 1) + (fudge.height || 0)),
+		    width: (width + (fudge.width || 0)),
+		    maxWidth: isHidden ? 0 : (width + (fudge.width || 0)),
+		    opacity: isHidden ? 0 : 1
+	  	}
 	},
 
 	putSelection: function (data, method, isValidated) {
@@ -778,7 +791,8 @@ const TabularPane = React.createClass ({
 			_handleDrop: this.handleDrop,
 			_handleDragOver: this.handleDragOver,
 			_selectRow: this.selectRow,
-			_setColumnMode: this.setColumnMode,
+			_setResizeColumn: this.setResizeColumn,
+			_setColumnSize: this.setColumnSize,
 			// _handleStartDrag: this.handleStartDrag,
 
 			_setScrollOffset: this.setHorizontalScrollOffset,
@@ -798,11 +812,12 @@ const TabularPane = React.createClass ({
 			pointer: this.state.pointer,
 			selection: this.state.selection,
 			copyarea: this.state.copyarea,
+			isMouseDown: this.state.isMouseDown,
 			store: this.store,
 			sorting: view.data.sorting,
 			focused: this.props.focused,
 			expanded: this.state.expanded,
-			columnMode: this.state.columnMode
+			resizeColumn: this.state.resizeColumn
 		}
 
 		/*
@@ -815,7 +830,6 @@ const TabularPane = React.createClass ({
 
 		
 		return <div ref="wrapper"
-			
 			className = {`wrapper table-outermost-wrapper`}
 			beforePaste = {this.beforePaste}>
 

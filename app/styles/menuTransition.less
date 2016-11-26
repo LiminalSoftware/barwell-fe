@@ -27,7 +27,31 @@
   transition: all  cubic-bezier(.16,.85,.5,1) 50ms;
 }
 
+// ===========================================================================
 
+.slideup-appear, .slideup-enter {
+  opacity: 0.01;
+  transform: translate3D(0,-50px,0);
+}
+
+.slideup-appear-active, .slideup-enter-active {
+  opacity: 1;
+  transform: translate3d(0,0,0);
+  transition: all  cubic-bezier(.16,.85,.5,1) 50ms;
+}
+
+
+.slideup-leave {
+  transform: translate3D(0,0,0);
+  opacity: 1;
+  
+}
+
+.slideup-leave-active {
+  opacity: 0.01;
+  transform: translate3D(0,50,0);
+  transition: all  cubic-bezier(.16,.85,.5,1) 50ms;
+}
 
 // ============================================================================
 

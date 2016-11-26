@@ -3,16 +3,18 @@ import React from "react"
 var Overlay = React.createClass ({
 	shouldComponentUpdate: function (nextProps, nextState) {
 		return	this.props.position !== nextProps.position || 
-						this.props.view !== nextProps.view ||
-						this.props.columnOffset !== nextProps.columnOffset ||
-						this.props.className !== nextProps.className ||
-						this.props.children !== nextProps.children ||
-						this.props.focused !== nextProps.focused
+				this.props.view !== nextProps.view ||
+				this.props.columnOffset !== nextProps.columnOffset ||
+				this.props.className !== nextProps.className ||
+				this.props.children !== nextProps.children ||
+				this.props.focused !== nextProps.focused ||
+				this.props.dragOffset !== nextProps.dragOffset
 	},
 
 	render: function () {
+		// console.log('render overlay')
 		var classes = this.props.className || ""
-		var pos = this.props.position
+		var pos = this.props.position || {}
 		var view = this.props.view
 		var style = this.props._getRangeStyle(pos, this.props.fudge, this.props.showHiddenHack)
 

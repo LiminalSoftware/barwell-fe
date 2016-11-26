@@ -7,8 +7,6 @@ import $ from 'jquery'
 
 import constants from "../../../../constants/MetasheetConstants"
 
-import TypePicker from './TypePicker'
-
 import AttributeStore from "../../../../stores/AttributeStore"
 
 import modelActionCreators from "../../../../actions/modelActionCreators.jsx"
@@ -155,13 +153,6 @@ var ColumnDetailListable = React.createClass({
 		var config = this.props.config
 		var fieldType = fieldTypes[config.type] || {}
 		this.setState({configPart: null})
-		if (fieldType.configParts) fieldType.configParts.forEach(function (el) {
-			var part = _this.refs[el.prototype.partName]
-			if (part) part.handleBlur();
-			
-		})
-		// if (this.refs.typePicker) this.refs.typePicker.handleBlur();
-		// this.props._clearPopUp()
 	},
 
 	// RENDER ===================================================================
@@ -228,45 +219,6 @@ var ColumnDetailListable = React.createClass({
 				}
 			</span>
 
-			<span style = {{color: "khaki"}}>
-				<span className = {"icon icon-" + fieldType.icon}/>
-				<span>
-					{fieldType.description}
-					{
-						// fieldType.category === 'Relations' ? <span> ({config.related_model_id})</span> : null
-					}
-				</span>
-			</span>
-
-			
-			<span>
-			{
-				(fieldType.configParts || []) /* config parts associated with the field type*/
-				.concat(this.props.viewConfigParts || []) /* config parts passed down from the view*/
-				.map(function (part, idx) {
-					
-					var localProps = {
-						key: part.prototype.partName,
-						ref: part.prototype.partName,
-						direction: "left",
-						classes: part.prototype.structural ? 
-							"popdown-struct" : "popdown-prez"
-					}
-					return React.createElement(part, _.extend(
-						localProps,
-						configProps
-					));
-				})
-			}
-			</span>
-			
-			<span style={{flexDirection: 'row-reverse', maxWidth: '35px', marginRight: '10px'}}>
-				{
-					fieldType.unchangeable ? null :
-					<AttributeConfig {...this.props} 
-					{...configProps} direction = "left" key = "attributeConfig"/>
-				}
-			</span>
 			
 		</div>
 	},
@@ -274,10 +226,7 @@ var ColumnDetailListable = React.createClass({
 	render: function() {
 	    return	<div className={"menu-item " + (this.singleton ? "menu-item-singleton" : "")}>
 
-			{this.props.editing ? 
-				this.renderEditMode() 
-				: this.renderFormatMode()
-			}
+			{this.renderFormatMode()}
 		</div>
 	}
 

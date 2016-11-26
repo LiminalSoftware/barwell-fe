@@ -5,18 +5,26 @@
   .transition(all cubic-bezier(.1,.85,.5,1) 150ms);
 }
 
+.notification-bar {
+  border-top: 1px solid blue;
+  .transition(all cubic-bezier(.1,.85,.5,1) 150ms);
+  background: white;
+}
+
 .note-item {
   display: flex;
   font-size: 12px;
-  line-height: 12px;
-  border-bottom: 1px solid @gray4;
-  &:last-child {
-  	border-bottom: none; 	
-  }
+  line-height: 10px;
+  max-height: 49px;
+  min-height: 49px;
+  height: 49px;
+  
   p {
   	padding: 0;
   	margin: 6px;
   }
+  border-bottom: 1px solid transparent;
+  .transition(all cubic-bezier(.1,.85,.5,1) 150ms);
 }
 
 .note-error-item {
@@ -30,18 +38,15 @@
 }
 
 .note-success-item {
-  background: @green1;
-  color: @lightFontColor;
+  color: @green1;
 }
 
 .note-pending-item {
-  background: @gray2;
-  color: @lightFontColor;
+  color: @gray2;
 }
 
 .note-info, .note-loading {
-  background: @blue1;
-  color: @lightFontColor;
+  color: @blue1;
 }
 
 .note-short-left-column {

@@ -24,6 +24,13 @@ module.exports = {
       transitionAppear: true,
       transitionName: "inandout" 
     },
+    slideup: {
+      transitionEnterTimeout: 300,
+      transitionAppearTimeout: 300,
+      transitionLeaveTimeout: 300, 
+      transitionAppear: true,
+      transitionName: "slideup" 
+    },
     slideleft: {
       transitionEnterTimeout: 300,
       transitionAppearTimeout: 300,

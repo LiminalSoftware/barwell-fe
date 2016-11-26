@@ -19,11 +19,15 @@
 	border: none;
 	z-index: 20;
 	transform: translateZ(100px);
-	// transition: all 75ms linear
+	
+	transition: background cubic-bezier(.16,.85,.5,1) 75ms;
 
-	&:hover, .scrollbar-dragging {
-		background: rgba(100,100,100,0.3);
-	}
+	border-radius: 20px;
+
+}
+
+.scrollbar-dragging {
+	background: rgba(100,100,100,0.3);
 }
 
 .scroll-bar-outer:hover {
@@ -38,7 +42,7 @@
 	height: 15px;
 
 	&:hover, .scrollbar-dragging  {
-		height: 25px;
+		// height: 25px;
 	}
 	
 }
@@ -49,7 +53,7 @@
 	width: 15px;
 
 	&:hover, &.scrollbar-dragging  {
-		width: 25px;
+		// width: 25px;
 	}
 	
 }

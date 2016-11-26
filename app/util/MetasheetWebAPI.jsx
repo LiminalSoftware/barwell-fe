@@ -6,35 +6,33 @@ import util from './util'
 
 var Promise = require('es6-promise').Promise;
 
+const MAX_RETRIES = 2
+const INITIAL_WAIT = 25
+const BASE_URL = 'https://api.metasheet.io'
+
+
+// FIFO stack of actions that may have failed to persist
 let persistBacklog = []
+let retryDelay = 25
 
 $.ajaxSetup({
     headers: {"Prefer": 'return=representation'}
 });
 
-var MAX_RETRIES = 2
-var INITIAL_WAIT = 100
-var BASE_URL = 'http://api.metasheet.io'
-
-var stripInternalVars = module.exports.stripInternalVars = function (obj) {
-  var newObj = {}
-  Object.keys(obj).forEach(function (key) {
-    if (key.slice(0, 1) !== '_') newObj[key] = obj[key];
-  });
-  return newObj;
+const backlogRetry = function () {
+  const params = persistBacklog.shift()
+  ajax(params)
 }
 
 
-
-var ajax = module.exports.ajax = function ({method, url, json, headers, retry}) {
+var ajax = module.exports.ajax = function (_params) {
+  const {method, url, json, headers} = _params
   console.log(method + '->' + url);
   console.log(JSON.parse(json));
-
-  retry = retry || {}
   
-  return util.wait(0).then(function () {
+  return util.wait(100).then(function () {
     return new Promise(function (resolve, reject) {
-    var params = {
+    var settings = {
       type: method,
       url: url,
       beforeSend: function (xhr) {
@@ -43,6 +41,7 @@ var ajax = module.exports.ajax = function ({method, url, json, headers, retry}) 
         })
       },
       success: function (data, status, xhr) {
+        retryDelay = INITIAL_WAIT
         resolve({
           data: data,
           status: status,
@@ -50,36 +49,28 @@ var ajax = module.exports.ajax = function ({method, url, json, headers, retry}) 
         })
       },
       error: function (xhr, error, status) {
+        const {readyState, status: xhrStatus, statusText: xhrStatusText} = xhr
         console.log('===========')
         console.log(xhr)
-        console.log(error)
-        console.log(status)
         console.log('===========')
 
-        if (error && error.statusText === 'error') {
-          if ('notification_key' in retry)
-            modelActionCreators.updateNotification({
-              notification_key: retry.notification_key, 
-              statusMessage: 'Couldn\'t reach server, trying again in a bit'});
-          retry.period = retry.period * 2;
-          retry.tries = (retry.tries || 1) + 1
-          setTimeout(ajax.bind(null, method, url, json, retry, headers), retry.period)
-        }
-        else {
-          if ('notification_key' in retry)
-            modelActionCreators.updateNotification({
-                notification_key: retry.notification_key, 
-                status: 'error',
-                statusMessage: ('Error: ' + status)});
-          reject(xhr.responseJSON);
+        if (xhrStatusText === 'error') {
+          console.log('connectivity error')
+          modelActionCreators.updateNotification({
+            notification_key: 'connectivity',
+            statusMessage: 'We are having trouble reaching the server. The internet connection may be down or weak.'});
+          
+          persistBacklog.push(_params)
+          retryDelay *= 2
+          setTimeout(backlogRetry, retryDelay)
         }
       }
     };
     if (json) {
-      params.data = json
-      params.contentType = 'application/json'
+      settings.data = json
+      settings.contentType = 'application/json'
     }
-    $.ajax(params)
+    $.ajax(settings)
   })
   })
 }

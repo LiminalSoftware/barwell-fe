@@ -33,15 +33,16 @@ var TabularTBody = React.createClass ({
 	// LIFECYCLE ==============================================================
 
 	getInitialState: function () {
+		const offset = this.props.rowOffset || 0;
 		return {
-			start: 0,
-			end: VISIBLE_ROWS,
+			start: offset || 0,
+			end:  offset + VISIBLE_ROWS,
 			offset: 0,
 			target: 0,
 			length: VISIBLE_ROWS,
 			scrollDirection: 1,
 			speed: 0,
-			rowOffset: 0,
+			rowOffset: offset || 0,
 			pages: []
 		}
 	},
@@ -152,7 +153,7 @@ var TabularTBody = React.createClass ({
 		const pk = model._pk
 		const rows = store ? store.getObjects(
 			this.state.start,
-			Math.min(this.state.end, this.props.fetchEnd)
+			this.state.end
 		) : []
 		const rowCount = store ? this.props.store.getRecordCount() : 0
 		const geo = view.data.geometry
@@ -170,7 +171,6 @@ var TabularTBody = React.createClass ({
 				: null,
 			zIndex: 5
 		}
-
 		
 		return <div
 			className = {`tabular-body-${this.props.prefix} tabular-body wrapper`}
