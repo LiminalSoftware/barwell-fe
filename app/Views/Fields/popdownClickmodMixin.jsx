@@ -47,7 +47,7 @@ var popdownClickmodMixin = {
 	        {
 	        // <ReactCSSTransitionGroup {...constant.transitions.slideIn}>
 	        	this.state.open ? 
-	        	<div key="popdown" className = "pop-down-menu"  style = {popstyle} 
+	        	<div key="popdown" className = "popdown-menu"  style = {popstyle} 
 	        		onMouseDown = {this.handleInnerMouseDown}>
 
 	        		<span className = "pop-down-overlay" style = {overlayStyle}>

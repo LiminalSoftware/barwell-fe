@@ -35,10 +35,23 @@ export default class BooleanElement extends Component {
 	}
 
 	handleClick = (e) => {
-		this.toggle('mouse click')
 		e.preventDefault()
 		e.stopPropagation()
 		e.nativeEvent.stopPropagation()
+	}
+
+	handleMouseDown = (e) => {
+		e.preventDefault()
+		e.stopPropagation()
+		e.nativeEvent.stopPropagation()
+		this.setState({clicked: true})
+		document.body.addEventListener('mouseup', this.handleMouseUp);
+	}
+
+	handleMouseUp = (e) => {
+		e.preventDefault()
+		this.setState({clicked: false})
+		document.body.removeEventListener('mouseup', this.handleMouseUp);
 	}
 
 	toggle = (method) => {
@@ -67,7 +80,8 @@ export default class BooleanElement extends Component {
 
 		return <span className= "table-cell" style={this.props.style}>
 			<span style = {styles} className = "table-cell-inner">
-				<span className = {`checkbox-surround${value?"-checked":""} checkbox-surround-selected`} onClick=  {this.handleClick}>
+				<span className = {`checkbox-surround${value?"-checked":"-unchecked"} checkbox-surround-selected 
+				${this.state.clicked ? 'checkbox-surround-clicked' : ''}`} onMouseDown = {this.handleMouseDown} onClick=  {this.handleClick}>
 					<span className={"check icon " + (value ? "icon-check" : "")} >
 					</span>
 				</span>

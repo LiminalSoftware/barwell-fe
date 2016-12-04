@@ -42,7 +42,7 @@ export default class GenericTextElement extends Component {
 		/*
 		 * an optional element to be displayed within the cell
 		 */
-		decorator: PropTypes.element
+		decorators: PropTypes.arrayOf(React.PropTypes.element)
 
 	}
 
@@ -156,7 +156,7 @@ export default class GenericTextElement extends Component {
 		
 		return <span className= "table-cell table-cell-selected" style={this.props.style}>
 			
-			{this.props.decorator}
+			{this.props.decorators}
 
 			{this.props.alwaysEdit || this.state.editing ?
 			<input

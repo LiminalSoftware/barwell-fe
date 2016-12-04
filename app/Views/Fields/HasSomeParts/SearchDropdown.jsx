@@ -168,7 +168,7 @@ var SearchDropdown = React.createClass({
 		var addOneIdx = numOptions - 1
 		var height = 35 * numOptions
 
-		return <div className="pop-down-menu search-menu" 
+		return <div className="popdown-menu search-menu" 
 			onContextMenu = {this.handleContext}
 			style = {{
 				opacity: this.state.expanded ? 1 : 0.01,

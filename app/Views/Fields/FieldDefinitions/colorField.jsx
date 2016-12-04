@@ -74,11 +74,15 @@ export default {
 		getDecorator = () => {
 			return [
 				<span style={this.getDecoratorStyle()}
-				onClick={this.showPicker}
-				className="icon blue icon-palette clickable">
-				{this.state.pickerOpen ? null : null}
+					key="palette"
+					onClick={this.showPicker}
+					className="icon blue icon-palette clickable">
+					{this.state.pickerOpen ? null : null}
 				</span>,
-				<div className="cell-decorator" style={{right: 0}}>
+				<div className="cell-decorator" 
+				key="color-sample" 
+				style={{right: 0}}>
+				
 					<div className="color-sample" style={{
 						background: this.props.value,
 						right: 28
@@ -91,7 +95,7 @@ export default {
 			return <GenericTextElement {...this.props}
 				ref = "genericField"
 				formatter = {formatter}
-				decorator = {this.getDecorator()}
+				decorators = {this.getDecorator()}
 				serializer = {_.identity}
 				parser = {parser}
 				stylers = {stylers}/>

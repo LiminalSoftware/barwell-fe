@@ -127,7 +127,7 @@ var DatePicker = React.createClass({
 			weeks.push(<div className = "popdown-item menu-row" key = {firstDay.format('MMDDYYYY')}>{week}</div>);
 		}
 		
-		return <div className="pop-down-menu"
+		return <div className="popdown-menu"
 			onMouseDown = {util.clickTrap} 
 			onDoubleClick = {util.clickTrap}>
 

@@ -110,13 +110,13 @@ export default {
 
 		getDecorator () {
 			const config = this.props.config
-			return <span className="decimal-prefix">{config.prefix}</span>
+			return [<span className="decimal-prefix" key="prefix">{config.prefix}</span>]
 		}
 
 		render () {
 			return <GenericTextElement {...this.props}
 				ref = "genericField"
-				decorator = {this.getDecorator()}
+				decorators = {this.getDecorator()}
 				formatter = {formatter}
 				serializer = {_.identity}
 				parser = {parser}
