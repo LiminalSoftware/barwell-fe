@@ -1,53 +1,51 @@
-import React from "react"
+import React, { Component, PropTypes } from 'react'
 import util from '../../util/util'
+import * as ui from '../../util/uiHelpers'
 
-// ACTIONS
-import modelActionCreators from "../../actions/modelActionCreators"
+import Dropdown from "../../components/Dropdown"
 
-// MIXINS
-import blurOnClickMixin from "../../blurOnClickMixin"
-import popdownClickmodMixin from '../../Views/Fields/popdownClickmodMixin'
+class ModelContextMenu extends Component {
 
-var ModelContext = React.createClass ({
+	constructor (props) {
+		super(props)
 
-	mixins: [blurOnClickMixin, popdownClickmodMixin],
+		this.state = {open: false}
+	}
 
-	getInitialState: function () {
-		return {
-			deleting: false
-		}
-	},
+	componentWillUpdate = ui.blurListeners.bind(this)
+
+	handleOpenClick = () => {
+		this.setState({open: true})
+	}
 	
-	handleClickDelete: function () {
+	handleClickDelete = () => {
 		this.setState({deleting: true})
-	},
+	}
 
-	handleConfirmDelete: function (e) {
+	handleConfirmDelete = (e) => {
 		modelActionCreators.destroy('model', true, this.props.model)
-	},
+	}
 
-	handleCancelDelete: function () {
+	handleCancelDelete = () => {
 		this.setState({deleting: false})
-	},
+	}
 
-	handleRename: function () {
+	handleRename = () => {
 		this.props._parent.handleRename()
 		this.handleBlur()
-	},
+	}
 
-	getIcon: function () {
-		return "icon icon-ellipsis"
-	},
+	render = () => {
+		const {model} = this.props
 
-	renderMenu: function() {
-		const model = this.props.model
+		return <div className = "popdown-menu popdown-sidebar " style={{maxWidth: 200, minWidth: 200}}>
 
-		return <div className = "popdown-section">
-			<div className="popdown-item header bottom-divider title">
-				Model actions:
-			</div>
+			<div className="popdown-pointer-outer"/>
+			<div className="popdown-pointer-inner"/>
 
-			<div div className = "selectable popdown-item" onClick = {this.handleRename}>
+			<div className = "popdown-item title">modify details...</div>
+
+			<div className = "selectable popdown-item" onClick = {this.handleRename}>
 				<span className="icon icon-pencil"/>
 				Rename model
 			</div>
@@ -75,6 +73,14 @@ var ModelContext = React.createClass ({
 			}
 		</div>
 	}
-})
+}
 
-export default ModelContext
+
+export default class ModelContext extends Component {
+	render = () => {
+		return <Dropdown 
+			title="configure model"
+			menu={ModelContextMenu} 
+			icon="icon-ellipsis" {...this.props}/>
+	}
+}

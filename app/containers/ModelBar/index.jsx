@@ -1,4 +1,5 @@
-import React from "react"
+import React, { Component, PropTypes } from 'react'
+import ReactDOM from "react-dom"
 import { Link } from "react-router"
 
 import styles from "./style.less"
@@ -21,34 +22,64 @@ import Notifier from '../Notifier'
 import ModelContext from './ModelContext'
 import ModelSection from './ModelSection'
 
+import ScrollBar from "../../components/ScrollBar"
+
 import util from '../../util/util'
 
-var ModelBar = React.createClass({
+export default class ModelBar extends Component {
 
-	
-	getInitialState: function () {
-		return {
+	constructor (props) {
+		super(props)
+		this.state = {
 			keyControl: false,
-			editing: false
+			editing: false,
+			scrollOffset: 0
 		}
-	},
+	}
+	
+
+	componentDidMount = () => {
+		this.calibrate()
+	}
+
+	componentDidReceiveProps = () => {
+		this.calibrate()
+	}
+
+	calibrate = () => {
+		const inner = ReactDOM.findDOMNode(this.refs.inner)
+		const outer = ReactDOM.findDOMNode(this.refs.outer)
+
+		this.setState({
+			innerHeight: inner.clientHeight,
+			outerHeight: outer.clientHeight
+		})
+	}
+
+	setScrollOffset = (offset) => {
+		this.setState({scrollOffset: offset})
+	}
 
 
 	// HANDLERS ===============================================================
 	
-	handleAddModel: function (e) {
+	handleAddModel = (e) => {
 		modelActionCreators.createNewModel(this.props.workspaceId)
 		e.preventDefault();
-	},
+	}
 	
 	
-	focus: function () {
+	focus = () => {
 		modelActionCreators.setFocus('view-config');
-	},
+	}
+
+	handleMouseWheel = (e) => {
+		this.refs.scroll.handleMouseWheel(e)
+	}
 
 	// RENDER =================================================================	
 
-	render: function () {
+	render = () => {
 		const workspaceId = this.props.params.workspaceId
 		const models  = ModelStore.query({workspace_id: workspaceId}, 'model');
 		const activeViews = this.props.activeViews
@@ -56,8 +87,22 @@ var ModelBar = React.createClass({
 		const focusedViewId = (/^v\d+/).test(focus) ? parseInt(focus.slice(1)) : null
 
 		return <div className="mdlbar" onClick = {this.focus}>
-			<h1 className="branding">metasheet.io</h1>
-			<div className="mdlbar-list">
+			<h1 className="branding">
+				metasheet.io
+				<span className="icon icon-contract expander popdown"></span>
+			</h1>
+			<div className="mdlbar-list" ref="outer" onWheel={this.handleMouseWheel}>
+			<div ref="inner" style={{marginTop: -1 * this.state.scrollOffset}}>
+				<ScrollBar
+					totalDim = {this.state.innerHeight}
+					visibleDim = {this.state.outerHeight}
+					startOffset = {0}
+					endOffset = {0}
+					ref = "scroll"
+					axis = "vertical"
+					side = "left"
+					_setScrollOffset = {this.setScrollOffset}/>
+
 				{models.map((mdl, idx) => 
 				<ModelSection
 					{...this.props}
@@ -73,9 +118,9 @@ var ModelBar = React.createClass({
 					<span className="ellipsis">Add new dataset</span>
 				</div>
 			</div>
-			<Notifier {...this.props}/>
+			</div>
+			{/*<Notifier {...this.props}/>*/}
 		</div>
 	}
 
-})
-export default ModelBar
+}

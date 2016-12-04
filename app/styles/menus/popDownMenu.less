@@ -1,3 +1,113 @@
+.popdown {
+	margin-left: 8px;
+	height: 18px;
+	width: 18px;
+	margin-right: 0;
+	position: relative;
+	padding: 4px;
+	border: 1px solid transparent;
+	&:hover {
+		color: @green1;
+	}
+	transition: all linear 75ms;
+}
+
+.popdown-sidebar {
+	border-radius: 2px;
+	border: 1px solid blue;
+	color: blue !important;
+	box-shadow: 0 0 0 2px #FFF;
+	
+}
+
+.sidebar-popdown-item-label {
+	font-style: italic;
+}
+
+.popdown-label-box {
+	height: 12px;
+	max-height: 18px;
+	padding: 3px;
+	line-height: 12px;
+	position: absolute;
+	top: 0;
+	margin-top: -25px;
+	left: -30px;
+	min-width: 100px;
+	max-width: 100px;
+	width: auto;
+	background: black;
+	color: white;
+	font-size: 12px;
+	text-align: center;
+	border-radius: 3px;
+	// text-transform: uppercase;
+}
+
+.popdown-label-pointer {
+	height: 12px;
+	width: 12px;
+	position: absolute;
+	border-style: solid;
+	border-width: 6px;
+	max-width: 0; max-height: 0; padding: 0;
+	border-color: transparent;
+	border-top-color: black;
+	margin-bottom: -12px;
+	bottom: 0;
+	left: 50%;
+	margin-left: -6px;
+}
+
+.popdown-offset {
+	top: 100%;
+	margin-top: @pointerSize/2 + 4;
+	width: 250px;
+	left: 0;
+	z-index: 1;
+}
+
+.popdown-pointer-outer, .popdown-pointer-inner {
+	position: absolute;
+	border-style: solid;
+	border-width: @pointerSize;
+	max-width: 0; max-height: 0; padding: 0;
+	border-color: transparent;
+	
+	margin-top: -2*@pointerSize;
+	left: 10px;
+}
+
+.popdown-pointer-inner {
+	top: 1px;
+	z-index: 104;
+	border-bottom-color: white;
+}
+
+.popdown-pointer-outer {
+	top: 0;
+	z-index: 103;
+	border-bottom-color: blue;
+}
+
+.popdown-active {
+	border-radius: 15px ;
+	background: white;
+	color: blue;
+}
+
+.popdown-cancel {
+	background: blue !important;
+	color: white !important;
+	border-radius: 2px;
+}
+
+.popdown-clicked {
+	background: blue !important;
+	color: white !important;
+	border-radius: 15px;
+}
+
 .title {
 	font-family: @headerFont;
 }
@@ -10,10 +120,11 @@
 	} &:not(.invert) {
 		flex-direction: column;
 	}
-	margin-bottom: @pointerSize/2 - 4px;
+	
 }
 
-.pop-down-menu {
+.popdown-menu {
+	position: absolute;
 	// top: 100%;
 
 	&.invert {
@@ -29,10 +140,9 @@
 	float: right;
 }
 
-.pop-down-menu, .pop-up-menu {
+.popdown-menu, .pop-up-menu {
 
 	padding:  0;
-	margin: 0;
 
 	list-style: none;
 
@@ -54,7 +164,7 @@
 
 	transform: translateZ(12px);
 	pointer-events: auto;
-	z-index: 1000;
+	z-index: 100;
 }
 
 .popdown-item {

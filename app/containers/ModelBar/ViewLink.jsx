@@ -104,7 +104,6 @@ const ViewLink = React.createClass ({
 				
 			this.props.history.push(`${this.getRootPath()}/view/${newViewIds}`)
 		} else {
-
 			this.props.history.push(`${this.getRootPath()}/view/${this.props.view.view_id}`)
 		}
 
@@ -123,6 +122,7 @@ const ViewLink = React.createClass ({
 	render: function () {
 		const view = this.props.view
 		const active = this.isActive()
+		const {open} = this.state
 		const isFocused = view.view_id === this.props.focusedViewId
 
 		const viewDisplay = this.state.editing ?
@@ -130,7 +130,7 @@ const ViewLink = React.createClass ({
 				className="renamer header-renamer" 
 				autoFocus
 				ref="renamer" 
-				value={this.state.name} 
+				value={this.state.name}
 				onChange={this.handleNameUpdate}
 				onMouseDown = {util.clickTrap}
 				onBlur={this.commitChanges} /> 
@@ -146,21 +146,20 @@ const ViewLink = React.createClass ({
 			className = {`view-link view-link--${isFocused ? 'focused' : active ? 'active' : ''}`}>
 
 			<span className = {`icon ${viewTypes[view.type].icon}`} style={{color: 'blue'}}/>
-			{viewDisplay}
 			
-			
-			
+			<span className="link-label ellipsis">
+				{viewDisplay}
+			</span>
 
-				
-				{active ? 
-				<ViewContext {...this.props} ref="context"
-				_parent = {this} direction = "left" visible = {this.state.mouseover}/> : null}
+			<span className="spacer"/>
+		
+			<ViewContext {...this.props} ref="context"
+			style={{visibility: ((active || open) ? "visible" : "hidden")}}
+			_parent = {this} direction = "left" visible = {this.state.mouseover}/>
 
-				{active ?
-				<span className={`icon icon-arrow-right view-link-arrow${isFocused ? '-selected' : ''}`}/>
-				:null}
-
-			
+			{active ?
+			<span className={`icon icon-arrow-right view-link-arrow${isFocused ? '-selected' : ''}`}/>
+			:null}
 
 		</Link>
 	}

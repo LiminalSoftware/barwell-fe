@@ -61,12 +61,12 @@ var Dropdown = React.createClass({
 			marginTop: selectedIndex * 2 + 'px'
 		}
 		
-		return <div className = "pop-down-menu-bordered" 
+		return <div className = "popdown-menu-bordered" 
 			style={outerStyle}
 			onMouseDown = {this.handleClick}>
 			{
 			this.state.open ? 
-			<div className = "pop-down-menu-bordered" style = {style}>{
+			<div className = "popdown-menu-bordered" style = {style}>{
 				this.props.choices
 				.map(c => <DropdownItem {...this.props}
 					key = {c.key} choice = {c}/>)

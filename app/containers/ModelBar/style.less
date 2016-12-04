@@ -14,14 +14,28 @@
 	border-bottom: 1px solid @gray3;
 	
 	text-align: center;
-	
-	overflow: hidden;
+	z-index: 120;
+		
+}
+
+.expander {
+	position: absolute !important;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	width: 30px;
+	line-height: 20px;
+}
+
+.spacer {
+	margin-left: auto;
+	max-width: 0
 }
 
 
 .mdlbar {
+	z-index: 1000;
 	position: relative;
-	overflow: hidden;
 	min-width: 300px;
 	max-width: 300px;
 	min-height: 100vh;
@@ -29,8 +43,8 @@
 	flex: 1 1 ;
 	display: flex;
 	flex-direction: column;
-	// color: @lightFontColor;
 	background: #FAFAF4;
+	overflow: visible;
 
 	border-right: 3px solid @cell-border;
 }
@@ -44,17 +58,14 @@
 }
 
 .model-link, .view-link {
-	overflow: visible !important;
-	direction: ltr !important;
+	overflow: visible;
 	position: relative;
 	margin: 0;
 	height: 28px;
 	line-height: 30px;
 	padding: 5px 5px;
-
-	// color: @lightFontColor;
 	
-	display: block;
+	display: flex;
 	text-decoration: none;
 
 	font-size: 16px;
@@ -71,8 +82,12 @@
 	}
 }
 
+
+
+
 .view-link-arrow, .view-link-arrow-selected {
 	transition: background cubic-bezier(.16,.85,.5,1) 200ms; 
+	margin-left: auto;
 }
 
 .view-link-arrow {
@@ -84,7 +99,7 @@
 .view-link-arrow-selected {
 	// background: @blue1;
 	// border: 1px solid @blue1;
-	color: blue;
+	color: @green1;
 }
 
 .add-new-item {
@@ -134,6 +149,7 @@
 .mdlbar-list {
 	display: flex;
 	position: absolute;
+	overflow: visible;
 
 	left: 0;
 	right: 0;
@@ -143,9 +159,8 @@
 	flex-direction: column;
 	padding: 0;
 	// padding-left: 10px;
-	overflow-y: auto;
-	overflow-x: hidden;
-	direction: rtl;
+
+	transition: margin linear 100ms;
 }
 
 .flush {
@@ -175,6 +190,8 @@
 
 .mdlbar-section {
 	margin-bottom: 20px;
+	margin-left: 20px;
+	overflow: visible;
 	// border-top: 1px dotted @gray3;
 }
 

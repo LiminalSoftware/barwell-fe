@@ -71,10 +71,10 @@ export default class Application extends Component {
 
 	// RENDER ===================================================================
 	renderLoader () {
-		return <div className = "hero-banner">
-			<span className="three-quarters-loader"/>
-			<h1 className = "hero-header">Loading workspace data...</h1>
-		</div>
+		return <div className = "loader-overlay"><div className="loader-hero">
+			<span className="loader" style={{display: "inline-block", marginRight: 20, marginBottom: -8}}/>
+			<span>Loading workspace data...</span>
+		</div></div>
 	}
 	
 	render () {
@@ -88,7 +88,7 @@ export default class Application extends Component {
 
 		return <div className = "application" id="application">
 			{
-			true ?
+			this.state.loaded ?
 			<ModelBar 
 				{...this.props}
 				focus={FocusStore.getFocus()}

@@ -49,7 +49,7 @@ var PopDownMenu = React.createClass({
 		return <div
 			{...this.props}
 			className = {
-				(shouldOpenUp ? " pop-up-menu " : " pop-down-menu") + 
+				(shouldOpenUp ? " pop-up-menu " : " popdown-menu") + 
 				(this.props.green ? " green " : "") +
 				(this.props.split ? " split-menu " : "")
 			}

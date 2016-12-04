@@ -95,20 +95,21 @@ var ModelSection = React.createClass ({
 		return <div className="mdlbar-section">
 
 			<div className="model-link">
-				{modelDisplay}
-				<span style = {{float: 'right'}}>
-					
-					<ModelContext {...this.props} 
-						_parent = {this} direction = "left"/>
-
-					
+				<span className="link-label ellipsis">
+					{modelDisplay}
 				</span>
+
+				<span className="spacer"/>
+
+				<ViewAddContext {...this.props}/>
+				<ModelContext {...this.props} 
+					_parent = {this} direction = "left"/>
 			</div>
 
 			{views.map(v => 
 			<ViewLink {..._this.props} key={v.view_id} view={v}/>
 			)}
-			<ViewAddContext {...this.props}/>
+			
 		</div>
 	}
 })

@@ -1,10 +1,9 @@
-import React from "react"
+import React, { Component, PropTypes } from 'react'
 import util from '../../util/util'
+import * as ui from '../../util/uiHelpers'
 import _ from "underscore"
 
-// MIXINS
-import blurOnClickMixin from "../../blurOnClickMixin"
-import popdownClickmodMixin from '../../Views/Fields/popdownClickmodMixin'
+import Dropdown from "../../components/Dropdown"
 
 // CONSTANTS
 import viewTypes from "../../Views/viewTypes"
@@ -15,18 +14,14 @@ import ViewStore from "../../stores/ViewStore"
 // ACTIONS
 import modelActionCreators from "../../actions/modelActionCreators"
 
-var ViewAddContext = React.createClass ({
+class AddViewMenu extends Component {
 
-	getInitialState: function () {
-		return {}
-	},
+	constructor (props) {
+		super(props)
+	}
 
-	getIcon: function () {
-		return "icon icon-plus-square"
-	},
-
-	createNewView: function (type) {
-		const model = this.props.model
+	createNewView = (type) => {
+		const {model} = this.props
 		const nameRoot = model.model + ' ' + type
 		let iterator = 1
 		let name = nameRoot
@@ -36,34 +31,40 @@ var ViewAddContext = React.createClass ({
 
 		modelActionCreators.createView({
 			view: name,
+			data: {},
 			type: type,
-			model: model.cid || model.model_id
+			model_id: model.model_id || model.cid
 		}, true)
 
-		this.handleBlur()
-	},
+		this.props.handleBlur()
+	}
 
-	render: function () {
-		const model = this.props.model
+	render = () => {
+		const {model} = this.props
 		const _this = this
 
-		return <div className="view-link add-new-item">
-			<span className="icon green icon-plus"/>
-			<span>Add additional view</span>
-			{
-			this.state.open ? <div className = "popdown">
-				{_.map(viewTypes, (type, typeKey) =>
-	        	<div className = "selectable popdown-item" key = {typeKey}
-	        		onClick = {_this.createNewView.bind(_this, typeKey)}>
-	            	<span className = {"icon " + type.icon}/>
-	            	{type.type}
-	            </div>
-		        )}
-			</div> : null
-			}
+		return <div className = "popdown-menu popdown-sidebar  popdown-offset" 
+			onMouseDown={util.clickTrap}>
+			<div className="popdown-pointer-outer"/>
+			<div className="popdown-pointer-inner"/>
+			<div className="popdown-item title"> add new view of type...</div>
+			{_.map(viewTypes, (type, typeKey) =>
+        	<div className = "selectable popdown-item" key = {typeKey}
+        		onClick = {_this.createNewView.bind(_this, typeKey)}>
+            	<span className = {"icon " + type.icon}/>
+            	<span className="sidebar-popdown-item-label">{type.type}</span>
+            </div>
+	        )}
 		</div>
-
 	}
-})
+}
 
-export default ViewAddContext
+
+export default class ViewAddContext extends Component {
+	render = () => {
+		return <Dropdown {...this.props} 
+			title="add new view"
+			menu={AddViewMenu} 
+			icon="icon-eye-plus"/>
+	}
+}
