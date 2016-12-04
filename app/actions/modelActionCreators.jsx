@@ -478,6 +478,7 @@ var modelActions = {
 	},
 
 	create: function (subject, persist, obj, extras) {
+		console.log('create')
 		var pk = subject + '_id'
 		obj._dirty = true;
 		obj._destroy = false;
@@ -607,9 +608,8 @@ var modelActions = {
 	},
 
 	// views
-	createView: function(view, persist, extras) {
-		// view.data = util.stripInternalVars(view.data)
-		extras = (extras || {})
+	createView: function(view, persist, extras = {}) {
+		view.data = util.stripInternalVars(view.data)
 		extras.hiddenTxn = true
 		modelActions.create('view', persist, view, extras)
 	},
