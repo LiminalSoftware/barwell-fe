@@ -1,4 +1,4 @@
-import React from "react"
+import React, { Component, PropTypes } from 'react';
 import fieldTypes from "../../fields"
 import _ from "underscore"
 
@@ -33,18 +33,19 @@ const CYCLE = 60
 
 import TabularTBody from "./TabularTBody"
 import TableHeader from "./TableHeader"
-import TableFooter from "./TableFooter"
 import RowResizer from "./RowResizer"
 
-var TabularBodyWrapper = React.createClass ({
-
-	_lastFetch: 0,
-	_lastPaint: 0,
-
-	getInitialState: function () {
+export default class TabularBodyWrapper extends Component {
+	
+	constructor (props) {
+		super(props)
 		var view = this.props.view
 		var geo = view.data.geometry
-		return {
+
+		this._lastFetch = 0
+		this._lastPaint = 0
+
+		this.state = {
 			initialFetchComplete: false,
 			fetchOffset: 0,
 			requestedOffset: 0,
@@ -54,38 +55,35 @@ var TabularBodyWrapper = React.createClass ({
 			colOffset: 0,
 			detailOpen: false,
 			contextOpen: false,
-			resizing: false
+			resizing: false,
+			dragOffset: 0
 		}
-	},
+	}
 	
-	componentWillMount: function () {
+	componentWillMount = () => {
 		this.debounceFetch = _.debounce(this.fetch, FETCH_DEBOUNCE)
-	},
+	}
 
-	componentDidMount: function () {
+	componentDidMount = () => {
 		var _this = this;
 		/* 
 		 * Delay the fetch until the current dispatch is complete
 		 * (only relevant if the view is loaded directly from url)
 		 */
 		setTimeout(() => _this.fetch(true), 0)
-	},
+	}
 
-	componentWillUpdate: function (nextProps, nextState) {
-		
-	},
-
-	componentWillReceiveProps: function (nextProps) {
+	componentWillReceiveProps = (nextProps) => {
 		const {view} = this.props
 		const fixedCols = view.data._fixedCols
 		const numFixed = fixedCols.length
 
-		// if (nextProps.resizeColumn) this.setState({resizing: true})
+		if (nextProps.resizeColumn) this.setState({dragOffset: 0})
 		
 		this.debounceFetch(false, nextProps);
-	},
+	}
 
-	fetch: function (force, nextProps, nextState) {
+	fetch = (force, nextProps, nextState) => {
 		var _this = this
 		var view = this.props.view
 		var offset = this.state.requestedOffset
@@ -101,8 +99,6 @@ var TabularBodyWrapper = React.createClass ({
 			|| !_.isEqual(sorting, this.state.sorting) 
 		)) {
 			console.log('FETCH RECORDS, start: ' + boundedTarget + ', end: ' + (boundedTarget + MAX_ROWS))
-			
-			
 
 			this.setState({
 				requestedOffset: boundedTarget,
@@ -137,32 +133,39 @@ var TabularBodyWrapper = React.createClass ({
 				})
 			})
 		}
-	},
+	}
 
-	shouldComponentUpdate: function (newProps, nextState) {
+	shouldComponentUpdate = (newProps, nextState) => {
 		var oldProps = this.props
 		return oldProps.view !== newProps.view || 
-		oldProps.resizeColumn !== newProps.resizeColumn
-	},
+		oldProps.resizeColumn !== newProps.resizeColumn ||
+		this.state.dragOffset !== nextState.dragOffset
+	}
 
-
-	render: function () {
+	render = () => {
 		const {view, model, store, resizeColumn, rowOffset, hiddenColWidth: colOffset} = this.props
+		const {dragOffset, fetchOffset} = this.state
 		const rowCount = store.getRecordCount()
 		const geo = view.data.geometry
 
 		const rowHeight = Math.floor(geo.rowHeight)
 
 		var marginTop = -1 * rowOffset * rowHeight
-		var fixedWidth = view.data._fixedWidth
-		var floatWidth = view.data._floatWidth
+		
+
+		const resizeSide = view.data._fixedCols.some(col => col.column_id === resizeColumn) ? 'lhs' : 
+					view.data._floatCols.some(col => col.column_id === resizeColumn) ? 'rhs' : ''
+
+		var fixedWidth = view.data._fixedWidth + (resizeSide === 'lhs' ? dragOffset : 0)
+		var floatWidth = view.data._floatWidth + (resizeSide === 'rhs' ? dragOffset : 0)
+
 		var adjustedWidth = fixedWidth + floatWidth + geo.labelWidth
 			- this.state.hiddenColWidth
 
 		const lhsWidth = Math.floor((fixedWidth +  geo.labelWidth) / 2) * 2
 
-		var fetchStart = this.state.fetchOffset
-		var fetchEnd = Math.min(this.state.fetchOffset + MAX_ROWS, rowCount)
+		var fetchStart = fetchOffset
+		var fetchEnd = Math.min(fetchOffset + MAX_ROWS, rowCount)
 		
 		var tableProps = _.extend(_.clone(this.props), {
 			
@@ -173,7 +176,7 @@ var TabularBodyWrapper = React.createClass ({
 			<div className="flush loader-overlay" key="loader">
 				<div className="wrapper flush loader-overlay" ref="loaderOverlay">
 					<p className="loader-hero">
-					<span className="loader"/>
+					<span className="loader" style={{display: "inline-block", marginRight: 20, marginBottom: -8}}/>
 					<span>Loading data from the server...</span>
 					</p>
 				</div>
@@ -204,6 +207,7 @@ var TabularBodyWrapper = React.createClass ({
 					background: constants.colors.VIEW_BACKING,
 					borderRight: `1px solid ${constants.colors.TABLE_EDGE}`,
 					zIndex: 3,
+					transition: resizeColumn ? 'none' : 'linear 100ms',
 					// boxShadow:`0 0 0 3px ${constants.colors.TABLE_SHADOW}`,
 				}}>
 				<div className = "wrapper lhs-offset-wrapper"
@@ -215,7 +219,7 @@ var TabularBodyWrapper = React.createClass ({
 						
 						marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
 						transform: HAS_3D ? `translate3d(1, ${marginTop}px, 0)` : null,
-						transition: IS_CHROME && !resizeColumn && HAS_3D ? 'transform 100ms linear' : null,
+						transition: IS_CHROME && !resizeColumn && HAS_3D ? 'transform 100ms linear' : 'none',
 						background: constants.colors.TABLE_BACKING,
 						overflow: "hidden",
 						borderBottom: `1px solid ${constants.colors.TABLE_BORDER}`,
@@ -244,21 +248,28 @@ var TabularBodyWrapper = React.createClass ({
 				ref = "lhsHead"
 				totalWidth = {lhsWidth + 1}
 				leftOffset = {0}
-				side = {'lhs'}
-				hasRowLabel = {true}
+				resizeColumn = {resizeSide === 'lhs' ? resizeColumn : null}
+				dragOffset = {resizeSide === 'lhs' ? dragOffset : 0}
+				side='lhs'
+				headerOrFooter="header"
+				hasRowLabel={true}
 				columns = {view.data._fixedCols} />
 
-			<TableFooter {...this.props}
+			{/*LHS FOOTER*/}
+			<TableHeader {...this.props}
 				ref = "lhsFooter"
 				totalWidth = {lhsWidth + 1}
 				leftOffset = {0}
-				side = {'lhs'}
-				hasRowLabel = {true}
-				columns = {view.data._fixedCols} />
+				resizeColumn = {resizeSide === 'lhs' ? resizeColumn : null}
+				dragOffset = {resizeSide === 'lhs' ? dragOffset : 0}
+				side="lhs"
+				headerOrFooter="footer"
+				hasRowLabel={true}
+				columns={view.data._fixedCols} />
 
 			{/*END LHS HEADER*/}
 			</div>
-			{/*LHS OUTER*/}
+			{/*END LHS OUTER*/}
 			
 
 
@@ -271,6 +282,7 @@ var TabularBodyWrapper = React.createClass ({
 					bottom: 0,
 					right: 0,
 					background: constants.colors.VIEW_BACKING,
+					transition: resizeColumn ? 'none' : 'linear 100ms',
 					overflow: 'hidden'
 				}}>
 
@@ -278,7 +290,7 @@ var TabularBodyWrapper = React.createClass ({
 					ref = "rhsHorizontalOffsetter"
 					style = {{
 						marginLeft: (-1 * this.props.hiddenColWidth ),
-						transition: resizeColumn ? null : 'margin-left linear 100ms',
+						transition: resizeColumn ? 'none' : 'margin-left linear 100ms',
 						position: 'absolute',
 						top: 0,
 						bottom: 0,
@@ -295,7 +307,7 @@ var TabularBodyWrapper = React.createClass ({
 							marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
 							transform: HAS_3D ? `translate3d(1, ${marginTop}px, 0)` : null,
 							transformStyle: "preserve-3d",
-							transition: IS_CHROME && !resizeColumn && HAS_3D ? 'transform 100ms linear' : null,
+							transition: IS_CHROME && !resizeColumn && HAS_3D ? 'transform 100ms linear' : 'none',
 							height: (rowCount * rowHeight + 1),
 							width: (floatWidth + 1),
 							background: constants.colors.TABLE_BACKING,
@@ -322,12 +334,19 @@ var TabularBodyWrapper = React.createClass ({
 						ref = "rhsHead"
 						leftOffset = {0}
 						side = "rhs"
+						headerOrFooter="header"
+						hasColumnAdder = {true}
+						resizeColumn = {resizeSide === 'rhs' ? resizeColumn : null}
+						dragOffset = {resizeSide === 'rhs' ? dragOffset : 0}
 						columns = {view.data._floatCols} />
 
-					<TableFooter {...this.props}
+					<TableHeader {...this.props}
 						ref = "rhsFooter"
 						leftOffset = {0}
-						side = {'rhs'}
+						side = "rhs"
+						resizeColumn = {resizeSide === 'rhs' ? resizeColumn : null}
+						dragOffset = {resizeSide === 'rhs' ? dragOffset : 0}
+						headerOrFooter="footer"
 						columns = {view.data._floatCols} />
 					
 				</div>
@@ -338,7 +357,4 @@ var TabularBodyWrapper = React.createClass ({
 		}
 		</ReactCSSTransitionGroup>
 	}
-});
-
-
-export default TabularBodyWrapper
+}

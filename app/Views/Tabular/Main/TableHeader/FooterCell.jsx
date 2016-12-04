@@ -29,17 +29,24 @@ export default class FooterCell extends Component {
 		}
 	}
 
-	getCellStyle = () => {
-		return {
-			width: this.props.column.width + (this.props.sorting ? 1 : 0),
-			left: this.props.left,
-			borderLeft: (this.props.sorting ? `1px solid ${constants.colors.BLUE_1}` : null),
-			borderRight: (this.props.sorting ? `1px solid ${constants.colors.BLUE_1}` : null),
-			// background: (this.state.mouseover ? constants.colors.GRAY_4 : constants.colors.GRAY_4 ),
-			zIndex: (this.props.sorting ? 12 : null)
-		}
+	shouldComponentUpdate = (nextProps, nextState) => {
+		return this.state.renaming !== nextState.renaming ||
+		this.props.width !== nextProps.width ||
+		this.props.config !== nextProps.config ||
+		this.props.width !== nextProps.width ||
+		this.props.left !== nextProps.left ||
+		this.state.name !== nextState.name ||
+		this.state.resizing !== nextState.resizing
 	}
 
+	getCellStyle = () => {
+		return {
+			width: this.props.width,
+			left: this.props.left,
+			marginTop: (this.props.sorting ? -1 : 0),
+			background: (this.state.mouseover ? constants.colors.GRAY_4 : constants.colors.GRAY_4 )
+		}
+	}
 	/*
 	 * 
 	 */
@@ -65,9 +72,9 @@ export default class FooterCell extends Component {
 	 
 	render = () => {
 		const _this = this
-		const col = this.props.column
+		const {column: col, view} = this.props
 		const type = fieldTypes[col.type]
-		const geo = this.props.view.data.geometry
+		const geo = view.data.geometry
 		const innerStyle = {
 			paddingRight: this.props.sorting || this.state.mouseover ? '25px' : null,
 			lineHeight: geo.headerHeight + 'px'

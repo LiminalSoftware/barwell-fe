@@ -1,5 +1,4 @@
-import React from "react"
-import $ from "jquery"
+import React, { Component, PropTypes } from 'react';
 import styles from "./style.less"
 
 import _ from 'underscore'
@@ -11,45 +10,89 @@ import util from "../../../../util/util"
 import constants from "../../../../constants/MetasheetConstants"
 
 import HeaderCell from "./HeaderCell"
+import FooterCell from "./FooterCell"
 
 const HAS_3D = util.has3d()
 
-var TableHeader = React.createClass ({
+export default class TableHeaderFooter extends Component {
 
-	shouldComponentUpdate: function (nextProps) {
+	static propTypes = {
+		
+		/*
+		 * must be either 'header' or 'footer'
+		 */
+		headerOrFooter: PropTypes.oneOf(['header','footer']),
+		
+		/*
+		 * must be either 'lhs' or 'rhs'
+		 */
+		serializer: PropTypes.oneOf(['lhs','rhs']),
+
+		/*
+		 * 
+		 */
+		view: PropTypes.object,
+
+		/*
+		 * 
+		 */
+		leftOffset: PropTypes.number
+
+	}
+
+
+	constructor (props) {
+		super(props)
+		this.state = {}
+	}
+
+	shouldComponentUpdate = (nextProps, nextState) => {
 		return nextProps.leftOffset !== this.props.leftOffset ||
 				nextProps.view !== this.props.view || 
-				nextProps.focused !== this.props.focused
-	},
+				// nextProps.focused !== this.props.focused ||
+				nextProps.dragOffset !== this.props.dragOffset ||
+				nextProps.totalWidth !== this.props.totalWidth ||
+				nextProps.resizeColumn !== this.props.resizeColumn
+	}
 
-	render: function () {
-		const _this = this
-		const {view, model, side} = this.props
+	getStyle = () => {
+		const {view, model, side, headerOrFooter, height, totalWidth} = this.props
 		const geo = view.data.geometry
-		let left = (this.props.hasRowLabel ? geo.labelWidth : 0) + this.props.leftOffset
-		
-		const style = {
-			borderRight:  `1px solid ${this.props.side==='lhs' ?
-				constants.colors.TABLE_EDGE : "transparent"}`,
-			borderBottom: `1px solid ${constants.colors.TABLE_EDGE}`,
-			height: (this.props.height || (geo.headerHeight + 1)) + 'px',
-			width: this.props.totalWidth ? (this.props.totalWidth) : null,
-			right: this.props.totalWidth ? null : 0,
-			transform: HAS_3D ? 'translateZ(0)' : '',
-			// boxShadow: this.props.side === 'lhs' ? 
-			// 	`0 2px 0 ${constants.colors.TABLE_SHADOW}` : 
-			// 	`2px 2px 0 ${constants.colors.TABLE_SHADOW}`,
-			zIndex: side === 'lhs' ? 6 : 4,
-			background: constants.colors.VIEW_BACKING
-		}
+		const colors = constants.colors
 
-		const classes = `tabular-view-header wrapper 
-			${this.props.side}-header--focused 
-			tabular-view-header--focused`
+		return {
+			borderRight:  `1px solid ${side==='lhs' ?
+				colors.TABLE_EDGE : "transparent"}`,
+			borderBottom: headerOrFooter === 'header' ? `1px solid ${colors.TABLE_EDGE}` : 'none',
+			borderTop: headerOrFooter === 'footer' ? `1px solid ${colors.TABLE_EDGE}` : 'none',
+
+			height: (height || (geo[headerOrFooter + "Height"] + 1)) + 'px',
+			width: totalWidth || "auto",
+			right: totalWidth ? "auto" : 0,
+			transform: HAS_3D ? 'translateZ(0)' : '',
+			zIndex: side === 'lhs' ? 6 : 4,
+			background: constants.colors.VIEW_BACKING,
+			top: headerOrFooter === 'header' ? 0 : "auto",
+			bottom: headerOrFooter === 'footer' ? 0 : "auto"
+		}
+	}
+
+	render = () => {
+		const _this = this
+		const {view, model, side, dragOffset, resizeColumn, headerOrFooter, hasRowLabel} = this.props
+		const sortIndex = view.data.sortIndex || {};
+		const geo = view.data.geometry
+		const classes = `tabular-view-${headerOrFooter} wrapper`
+		const childType = headerOrFooter === 'footer' ? FooterCell : HeaderCell
+
+		let left = (hasRowLabel ? geo.labelWidth : 0) + this.props.leftOffset
+		
+
+		
 
 		return <div
-			className={classes} style={style}
-			ref = {this.props.side + "-thead"}>
+			className={classes} style={this.getStyle()}
+			ref = {this.props.side + "-" + headerOrFooter}>
 			{
 			this.props.hasRowLabel ?
 			<span style = {{left: 0, width: geo.labelWidth + 'px', top: 0, bottom: 0, background: constants.colors.TABLE_BACKING}}
@@ -60,33 +103,36 @@ var TableHeader = React.createClass ({
 			</span>
 			: null 
 			}
-
+			
 			{
 			_this.props.columns.map(function (col, idx) {
-				var sortIndex = view.data.sortIndex || {};
-				var sorting = (('a' + col.attribute_id) in sortIndex) ? sortIndex['a' + col.attribute_id] : null;
-
-				var el = <HeaderCell {..._this.props}
-					key={col.column_id}
-					ref={"head-" + col.column_id}
-					column = {col}
-					sorting = {sorting}
-					idx = {idx}
-					left = {left}
-					_setResizeColumn = {_this.props._setResizeColumn}
-					_setColumnSize = {_this.props._setColumnSize}
-					width = {col.width - 1}/>;
-				left += col.width
-				return el
+				const sorting = (('a' + col.attribute_id) in sortIndex) ? sortIndex['a' + col.attribute_id] : null;
+				console.log(sorting)
+				const width = col.width + (col.column_id === resizeColumn ? dragOffset : 0)
+				const cellProps = Object.assign({
+					key: col.column_id,
+					ref: "head-" + col.column_id,
+					column: col,
+					sorting: sorting,
+					idx: idx,
+					left: left,
+					_setResizeColumn: _this.props._setResizeColumn,
+					_setColumnSize: _this.props._setColumnSize,
+					width: width - 1,
+					view: view,
+					_handleContextMenu: _this.props._handleContextMenu
+				})
+				left += width
+				return React.createElement(childType, cellProps)
 			})
 			}
 
-			{this.props.hasRowLabel ? null :
+			{!this.props.hasColumnAdder ? null :
 			<span 
 				onClick = {this.props._handleAddAttribute}
 				style = {{
-					left: left + 1, 
-					top: 0, 
+					left: left + 1,
+					top: 0,
 					bottom: 0, 
 					width: geo.colAddWidth, 
 					padding: 0,
@@ -99,6 +145,4 @@ var TableHeader = React.createClass ({
 			}
 		</div>
 	}
-})
-
-export default TableHeader
+}

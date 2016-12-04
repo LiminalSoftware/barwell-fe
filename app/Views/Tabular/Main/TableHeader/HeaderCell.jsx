@@ -32,6 +32,16 @@ export default class HeaderCell extends Component {
 		}
 	}
 
+	shouldComponentUpdate = (nextProps, nextState) => {
+		return this.state.renaming !== nextState.renaming ||
+		this.props.width !== nextProps.width ||
+		this.props.config !== nextProps.config ||
+		this.props.width !== nextProps.width ||
+		this.props.left !== nextProps.left ||
+		this.state.name !== nextState.name ||
+		this.state.resizing !== nextState.resizing
+	}
+
 	/*
 	 * 
 	 */
@@ -71,12 +81,6 @@ export default class HeaderCell extends Component {
 		/* move cursor to the end of the input upon edit */
 		if ((prevState.renaming && !this.state.renaming) ||
 			(prevState.context && !this.state.context)) {
-			// const input = this.refs.input
-			// if (input) {
-			// 	const val = input.value
-			// 	this.refs.input.value = ''
-			// 	this.refs.input.value = val
-			// }
 			
 			removeEventListener('keydown', this.handleKeyPress)
 			removeEventListener('click', this.handleClick)
@@ -92,6 +96,7 @@ export default class HeaderCell extends Component {
 	 */
 
 	renderIcons = () => {
+		console.log(this.props.sorting)
 		const type = fieldTypes[this.props.column.type];
 		const sortDir = this.props.sortDirection ? 'desc' : 'asc'
 
@@ -230,21 +235,11 @@ export default class HeaderCell extends Component {
 	 */
 
 	getCellStyle = () => {
-		const borderStyle = 
-			this.state.open ?
-			`1px solid ${constants.colors.GREEN_1}` : 
-			this.props.sorting ? 
-			`1px solid ${constants.colors.BLUE_1}` : 
-			null
-
 		return {
-			width: this.props.column.width + (borderStyle ? 1 : 0),
+			width: this.props.width,
 			left: this.props.left,
 			marginTop: (this.props.sorting ? -1 : 0),
-			borderLeft: borderStyle,
-			borderRight: borderStyle,
-			background: (this.state.mouseover ? constants.colors.GRAY_4 : constants.colors.GRAY_4 ),
-			zIndex: (borderStyle ? 12 : null)
+			background: (this.state.mouseover ? constants.colors.GRAY_4 : constants.colors.GRAY_4 )
 		}
 	}
 
@@ -254,13 +249,13 @@ export default class HeaderCell extends Component {
 
 	renderResizer = () => {
 		const style = {
-			right: (-1 * this.state.pos - 2),
+			right: 0,
 			top: 0,
-			height: this.state.resizing ? 1000 : "100%",
-			width: this.state.resizing ? 2 : 10
+			bottom: 0,
+			width: 10
 		}
 
-		if (!this.state.open) return <span ref = "resizer"
+		return <span ref = "resizer"
 			className = {`table-resizer col-resizer ${this.state.resizing ? "dragging" : ""}`}
 			onMouseDown = {this.onResizerMouseDown}
 			style = {style}>
@@ -282,8 +277,9 @@ export default class HeaderCell extends Component {
 		const col = this.props.column
 		const type = fieldTypes[col.type]
 		const geo = this.props.view.data.geometry
+		const hasDecorator = this.props.sorting || this.state.mouseover
 		const innerStyle = {
-			paddingRight: this.props.sorting || this.state.mouseover ? '25px' : null,
+			paddingRight: hasDecorator ? '25px' : null,
 			lineHeight: geo.headerHeight + 'px'
 		}
 
@@ -295,7 +291,6 @@ export default class HeaderCell extends Component {
 			className = "table-cell">
 			<span className = "table-cell-inner header-cell-inner draggable" 
 			style = {innerStyle}>
-				{/*<span className="type-label">{type.description}</span>*/}
 				{this.state.renaming ?
 					<input className="table-cell-renamer" 
 						autofocus
@@ -308,7 +303,6 @@ export default class HeaderCell extends Component {
 				{this.renderIcons()}
 			</span>
 	        {this.renderResizer()}
-        	{this.renderContext()}
 		</span>
 	}
 

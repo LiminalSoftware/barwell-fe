@@ -1,8 +1,9 @@
 import React from "react"
+import _ from "underscore"
 
 var Overlay = React.createClass ({
 	shouldComponentUpdate: function (nextProps, nextState) {
-		return	this.props.position !== nextProps.position || 
+		return	!_.isEqual(this.props.position, nextProps.position) || 
 				this.props.view !== nextProps.view ||
 				this.props.columnOffset !== nextProps.columnOffset ||
 				this.props.className !== nextProps.className ||
@@ -12,11 +13,14 @@ var Overlay = React.createClass ({
 	},
 
 	render: function () {
-		// console.log('render overlay')
-		var classes = this.props.className || ""
-		var pos = this.props.position || {}
-		var view = this.props.view
-		var style = this.props._getRangeStyle(pos, this.props.fudge, this.props.showHiddenHack)
+		const {view, position: pos, className, fudge, showHiddenHack} = this.props
+		const style = this.props._getRangeStyle(pos, showHiddenHack)
+		let classes = className
+		
+		style.top = style.top + (fudge.top || 0)
+		style.left = style.left + (fudge.left || 0)
+		style.height = style.height + (fudge.height || 0)
+		style.width = style.maxWidth = style.width + (fudge.width || 0)
 
 		if (pos && (pos.left === pos.right) && (pos.top === pos.bottom))
 			classes += ' singleton';

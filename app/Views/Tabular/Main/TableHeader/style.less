@@ -22,7 +22,7 @@
 	cursor: pointer;
 	
 	color: @gray3;
-	transition: all linear 75ms;
+	
 	border-right: 1px solid @gray3;
 	&:hover {
 		color: @green1;
@@ -72,9 +72,10 @@
 	position: absolute;
 	z-index: 203;
 
-	&:hover {
+	&:hover, &.dragging  {
 		background: @green-trans;
 	}
+	
 }
 
 .table-resizer-hover {
@@ -91,9 +92,7 @@
 	cursor: col-resize;
 }
 
-.dragging {
-	background: @red-bright-trans !important;
-}
+
 
 
 .column-decorator {

@@ -21,7 +21,7 @@ import TabularBodyWrapper from "./TabularBodyWrapper"
 import TableMixin from '../../TableMixin'
 
 import ContextMenu from './ContextMenu'
-import ScrollBar from "./ScrollBar"
+import ScrollBar from "../../../components/ScrollBar"
 import Cursors from "./Cursors"
 
 import constants from "../../../constants/MetasheetConstants"
@@ -67,6 +67,7 @@ const TabularPane = React.createClass ({
 		this._debounceCalibrate = _.debounce(this.calibrate, 100)
 
 		document.body.addEventListener('keydown', this.onKey);
+		document.body.addEventListener('keyup', this.onKeyUp);
 		window.addEventListener('resize', this._debounceCalibrate)
 		copyPasteDummy.addEventListener('paste', this.pasteSelection);
 
@@ -80,10 +81,11 @@ const TabularPane = React.createClass ({
 		const copyPasteDummy = document.getElementById('copy-paste-dummy');
 
 		document.body.removeEventListener('keydown', this.onKey);
+		document.body.removeEventListener('keyup', this.onKeyUp);
 		window.removeEventListener('resize', this._debounceCalibrate)
 		copyPasteDummy.removeEventListener('paste', this.pasteSelection);
 		
-		if (this._timer) util.cancelFrame(this._timer)
+		if (this._frameTimer) util.cancelFrame(this._frameTimer)
 
 		this.store.removeChangeListener(this._onStoreChange);
 		this.store.unregister();
@@ -181,14 +183,18 @@ const TabularPane = React.createClass ({
 		}
 	},
 
-	getBoundedRCCoords: function (e) {
+	boundRCCoords: function (rc) {
+		rc = rc || {}
 		var visibleCols = this.props.view.data._visibleCols
-		var rc = this.getRCCoords(e)
 		rc.left = Math.min(visibleCols.length - 1, rc.left)
 		rc.left = Math.max(0, rc.left)
 		rc.top = Math.max(0, rc.top)
 		rc.top = Math.min(rc.top, this.store.getRecordCount() - 1)
 		return rc
+	},
+
+	getBoundedRCCoords: function (e) {
+		return this.boundRCCoords(this.getRCCoords(e))
 	},
 
 	getRCCoords: function (e) {
@@ -485,7 +491,7 @@ const TabularPane = React.createClass ({
 		e.preventDefault();
 	},
 	
-	getRangeStyle: function (pos = {}, fudge = {}, showHiddenHack = false) {
+	getRangeStyle: function (pos = {}, showHiddenHack = false) {
 		const {view} = this.props
 		const {resizeColumn, dragOffset, columnOffset} = this.state
 		const {_visibleCols: visibleCols, _fixedCols: fixedCols} = view.data
@@ -500,7 +506,7 @@ const TabularPane = React.createClass ({
 	    let left = geo.leftGutter + geo.labelWidth + 1
 	    
 		visibleCols.forEach(function (col, idx) {
-			const colWidth = col.width + (resizeColumn === col.column_id ? dragOffset : 0)
+			const colWidth = col.width + (resizeColumn === col.column_id ? (dragOffset || 0) : 0)
 
 	    	if (idx >= numFixed && idx < numFixed + columnOffset) return
 	    	
@@ -511,11 +517,11 @@ const TabularPane = React.createClass ({
 	    })
 		
 	  	return {
-	  		top: (pos.top * geo.rowHeight + (fudge.top || 0)),
-		    left: (left + (fudge.left || 0)),
-		    height: (geo.rowHeight * ((pos.bottom || pos.top) - pos.top + 1) + (fudge.height || 0)),
-		    width: (width + (fudge.width || 0)),
-		    maxWidth: isHidden ? 0 : (width + (fudge.width || 0)),
+	  		top: pos.top * geo.rowHeight,
+		    left: left,
+		    height: geo.rowHeight * ((pos.bottom || pos.top) - pos.top + 1),
+		    width: width,
+		    maxWidth: isHidden ? 0 : width,
 		    opacity: isHidden ? 0 : 1
 	  	}
 	},
@@ -599,9 +605,11 @@ const TabularPane = React.createClass ({
 		document.getElementById("copy-paste-dummy").focus();
 	},
 
-	updateSelect: function (pos, shift) {
+	updateSelect: function (_pos, shift) {
 		const {model, view} = this.props
-		let {selection: sel, pointer: ptr, visibleRows} = this.state
+		const geo = view.data.geometry
+		let {selection: sel, pointer: ptr, visibleRows, rowOffset} = this.state
+		const pos = this.boundRCCoords(_pos)
 		
 		var numCols = this.getNumberCols();
 		var numRows = this.getNumberRows();
@@ -626,9 +634,11 @@ const TabularPane = React.createClass ({
 			}
 			this.updatePointer(ptr)
 		}
-
-		if (pos.top < this.state.rowOffset) this.scrollTo(pos.top - 1)
-		else if (pos.top > this.state.rowOffset + visibleRows) this.scrollTo(pos.top + 1 - visibleRows)
+		
+		if (pos.top < rowOffset)
+			this.refs.verticalScrollBar.scrollTo(pos.top * geo.rowHeight)
+		else if (pos.top > rowOffset + visibleRows) 
+			this.refs.verticalScrollBar.scrollTo((pos.top + 1 - visibleRows) * geo.rowHeight)
 		
 		this.setState({
 			selection: sel,
@@ -666,9 +676,9 @@ const TabularPane = React.createClass ({
 		var visibleRows = this.state.visibleRows
 
 		if (pos.top < rowOffset) 
-			this.refs.verticalScrollBar.scroll(pos.top * geo.rowHeight)
+			this.refs.verticalScrollBar.doScroll(pos.top * geo.rowHeight)
 		if (pos.top > (rowOffset + visibleRows - 1)) 
-			this.refs.verticalScrollBar.scroll((pos.top - visibleRows) * geo.rowHeight)
+			this.refs.verticalScrollBar.doScroll((pos.top - visibleRows) * geo.rowHeight)
 	},
 
 	setHorizontalScrollOffset: function (hOffset) {
@@ -735,7 +745,7 @@ const TabularPane = React.createClass ({
 	},
 
 	enqueueRefresh: function () {
-		if (!this._timer) this._timer = util.getFrame(this.refreshTable, CYCLE);
+		if (!this._frameTimer) this._frameTimer = util.getFrame(this.refreshTable, CYCLE);
 	},
 
 	refreshTable: function () {
@@ -751,9 +761,9 @@ const TabularPane = React.createClass ({
 		
 		
 		if (isUnpainted)
-			this._timer = util.getFrame(this.refreshTable, CYCLE)
+			this._frameTimer = util.getFrame(this.refreshTable, CYCLE)
 		else 
-			this._timer = null
+			this._frameTimer = null
 
 		this.setState({
 			previousOffset: this.state.rowOffset,
@@ -770,6 +780,7 @@ const TabularPane = React.createClass ({
 		var focused = this.props.focused
 		var totalWidth = this.getTotalWidth()
 		var geo = view.data.geometry
+		const firstColWidth = view.data._floatCols.length > 0 ? view.data._floatCols[0].width : 0
 
 		var childProps = {
 			_handleClick: this.handleClick,
@@ -854,7 +865,7 @@ const TabularPane = React.createClass ({
 				_setScrollOffset = {this.setVerticalScrollOffset}/>
 			
 			<ScrollBar {...childProps}
-				totalDim = {view.data._floatWidth + view.data._fixedWidth + geo.labelWidth + 200}
+				totalDim = {view.data._floatWidth + view.data._fixedWidth + geo.labelWidth + firstColWidth + 250}
 				visibleDim = {this.state.clientWidth}
 				rowCount = {rowCount}
 				startOffset = {0}

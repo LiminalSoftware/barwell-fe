@@ -8,7 +8,7 @@ import modelActionCreators from "../../../../actions/modelActionCreators"
 import Overlay from '../Overlay'
 import TabularTBody from "../TabularTBody"
 
-export default class Pointer extends React.Component {
+export default class ColumnOverlay extends React.Component {
 	shouldComponentUpdate = (nextProps, nextState) => {
 		return true
 	}

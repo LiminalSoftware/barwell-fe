@@ -37,7 +37,7 @@ export default class Cursors extends React.Component {
 
 	componentWillMount = () => {
 		const _this = this
-		this._debounceSetPointer = _.debounce(this._setPointer, 150)
+		this._debounceSetPointer = this._setPointer //_.debounce(this._setPointer, 300)
 	}
 
 	_setPointer = (pointer) => {
@@ -45,8 +45,8 @@ export default class Cursors extends React.Component {
 	}
 
 	componentWillReceiveProps = (props) => {
-		const pointerChanged = props.pointer !== this.state.pointer
-		const selectionChanged = props.selection !== this.state.selection
+		const pointerChanged = !_.isEqual(props.pointer, this.state.pointer)
+		const selectionChanged = !_.isEqual(props.selection, this.state.selection)
 		const resizeColumnChanged = props.resizeColumn !== this.props.resizeColumn
 		const {view} = this.props
 
@@ -122,16 +122,17 @@ export default class Cursors extends React.Component {
 				ref="pointer" />
 			}</ReactCSSTransitionGroup>,
 			
-			hideCursor ? null : <Overlay
-				{...this.props}
-				className = {"selection-outer" + 
-					(singleton ? '-singleton ' : ' ') +
-					(this.props.isMouseDown ? " selection-outer-pressed " : "")}
-				ref="selectionOuter"
-				key="selectionOuter"
-				position = {sel}
-				dragOffset = {dragOffset}
-				fudge = {{left: -4, top: -3, height: 7, width: 7}}>
+			hideCursor ? null : 
+			<Overlay
+			{...this.props}
+			className = {"selection-outer" + 
+				(singleton ? '-singleton ' : ' ') +
+				(this.props.isMouseDown ? " selection-outer-pressed " : "")}
+			ref="selectionOuter"
+			key="selectionOuter"
+			position = {sel}
+			dragOffset = {dragOffset}
+			fudge = {{left: -4, top: -3, height: 7, width: 7}}>
 				<div className = {"selection-border " + (this.props.isMouseDown ? " selection-border-pressed " : "")}
 					style={{left: "-3px", right: "-3px", top: "-3px", bottom: "-3px"}}/>
 				
@@ -139,15 +140,15 @@ export default class Cursors extends React.Component {
 
 			cpy ? <Overlay
 				{...this.props}
-				columns = {view.data._visibleCols}
-				className = {" copyarea running marching-ants "}
-				ref = "copyarea"
+				columns={view.data._visibleCols}
+				className={" copyarea running marching-ants "}
+				ref="copyarea"
 				key="copyarea"
 				dragOffset = {dragOffset}
 				position = {cpy}
 				fudge = {{left: -1, top: 0.25, height: 1, width: 1}}/> : null,
 
-			<Overlay
+			hideCursor ? null : <Overlay
 				{...this.props}
 				columns = {view.data._visibleCols}
 				className = {" new-row-adder "}
@@ -208,7 +209,8 @@ export default class Cursors extends React.Component {
 				rowOffset = {rowOffset}
 				view={view}
 				dragOffset = {dragOffset}
-				column={column} 
+				column={column}
+				key={column.cid || column.column_id}				
 				index={idx}
 				rowCount={rowCount} 
 				_getRangeStyle={_getRangeStyle}/>

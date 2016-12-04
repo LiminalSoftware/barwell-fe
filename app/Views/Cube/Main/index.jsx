@@ -25,7 +25,7 @@ import fieldTypes from "../../fields"
 import CubeBodyWrapper from "./CubeBodyWrapper"
 import Cursors from './Cursors'
 
-import ScrollBar from '../../Tabular/Main/ScrollBar'
+import ScrollBar from '../../../components/ScrollBar'
 import TableMixin from '../../TableMixin.jsx'
 
 var CLIPPING_FUDGE = 3;

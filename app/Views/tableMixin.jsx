@@ -9,6 +9,8 @@ import constants from "../constants/MetasheetConstants"
 import _ from 'underscore'
 import util from "../util/util"
 
+const KEY_DELAY = 50
+
 var TableMixin = {
 
 	// ========================================================================
@@ -20,6 +22,8 @@ var TableMixin = {
 		var viewconfig = this.props.viewconfig;
 
 		return {
+			lastKeyEvent: 0,
+			keydown: null,
 			selection: _.extend({
 				left: 0,
 				top: 0,
@@ -67,6 +71,11 @@ var TableMixin = {
 		this.setState({editing: false})
 	},
 
+	onKeyUp: function (e) {
+		this.setState({keydown: null, lastKeyEvent: 0})
+		if (this._keyTimer) util.cancelFrame(this._keyTimer)
+	},
+
 	onKey: function (e) {
 		var sel = this.state.selection
 		var view = this.props.view
@@ -77,8 +86,19 @@ var TableMixin = {
 		var mode = e.shiftKey ? 'SHIFT' : 'MOVE';
 		var left = ptr.left
 		var top = ptr.top
-
 		var ctrlKey = (e.ctrlKey || e.metaKey)
+		const now = Date.now()
+		const {lastKeyEvent} = this.state
+
+		if (this.state.keydown !== e.keyCode) {
+			this.setState({keydown: e.keyCode, lastKeyEvent: now})
+		} else if (now - lastKeyEvent < KEY_DELAY) {
+			if (!this._keyTimer) this._keyTimer = util.getFrame(this.onKey.bind(this, e), KEY_DELAY - (now - lastKeyEvent))
+			return
+		} else {
+			this.setState({lastKeyEvent: now})
+		}
+		
 
 		if (!this.isFocused() || (
 			this.state.editing &&
