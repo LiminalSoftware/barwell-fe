@@ -95,6 +95,7 @@ var ModelSection = React.createClass ({
 		return <div className="mdlbar-section">
 
 			<div className="model-link">
+				<span className="section-expander"/>
 				<span className="link-label ellipsis">
 					{modelDisplay}
 				</span>

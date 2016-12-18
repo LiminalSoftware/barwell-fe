@@ -13,6 +13,7 @@ const isLocalId = function (id) {
 const makeCidPromise = function (cid) {
 	if (cid in _cidLookup) return Promise.resolve(_cidLookup[cid])
 	else return new Promise(function (resolve, reject) {
+		// console.log("resolving a promise for: " + cid + " --> " + _cidPromises[_cid])
 		_cidPromises[cid] = (_cidPromises[cid] || []).concat(resolve)
 	})
 }
@@ -35,7 +36,6 @@ const resolveCidPromise = function (obj, pk) {
 const makeKeyPromise = function (obj, key) {
 	if (obj[key] && !isLocalId(obj[key])) return Promise.resolve(obj)
 	else {
-		console.log('p4')
 		return makeCidPromise(obj.cid)
 		.then(function (id) {
 			obj[key] = id

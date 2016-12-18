@@ -117,7 +117,7 @@ class TransactionObserver {
 			var message = _.extend({}, action, {
 				action_id: action_id,
 				changes: action.data,
-				data: results.data,
+				data: resultantData,
 				type: 'success-item',
 				timestamp: Date.now(),
 				isClean: true
@@ -129,6 +129,10 @@ class TransactionObserver {
 				case 'RECORD_MULTIUPDATE':
 				case 'RECORD_INSERT':
 					message.actionType = 'RECORD_MULTIUPDATE'
+					message.data = resultantData
+					break;
+				default:
+					message.actionType = action.actionType
 					message.data = resultantData
 					break;
 			}

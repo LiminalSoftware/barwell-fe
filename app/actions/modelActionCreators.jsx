@@ -1,5 +1,6 @@
 import MetasheetDispatcher from "../dispatcher/MetasheetDispatcher"
 import webUtils from "../util/MetasheetWebAPI.jsx"
+import cidLookup from "./cidLookup"
 import update from 'react/lib/update'
 import _ from 'underscore'
 
@@ -175,7 +176,7 @@ var modelActions = {
 			cid: 'c' + getGuid(), // action cid
 			narrative: obj.length > 1 ? 
 				(obj.length + ' ${plural}' + ' deleted')
-				: ('${capsModel} deleted'),
+				: ('${model} deleted'),
 			icon: 'icon-trash2'
 		});
 		MetasheetDispatcher.dispatch(message);
@@ -191,7 +192,7 @@ var modelActions = {
 			model_id: model.model_id,
 			data: obj instanceof Array ? obj : [obj],
 			cid: 'c' + getGuid(), // action cid
-			narrative: (obj.length > 1 ? (obj.length + ' ${plural}') : '${capsModel}') + ' updated'
+			narrative: (obj.length > 1 ? (obj.length + ' ${plural}') : '${model}') + ' updated'
 					+ (extras.method ? (' by ' + extras.method) : ''),
 			icon: extras.method === 'copy/paste' ? 
 				'icon-clipboard-check' : 
@@ -272,28 +273,32 @@ var modelActions = {
 	},
 
 	fetchRecords: function (view, offset, limit, sortSpec, storeId) {
-		const view_id = view.view_id
-		const model = ModelStore.get(view.model_id)
-		let url = BASE_URL + '/v' + view_id;
 		
-		url += '?order=' + 
-			(sortSpec || [])
-			.map(comp =>
-			`${comp.attribute}.${comp.descending?'desc':'asc'}`
-			).join(",")
+		let url = BASE_URL
 		
-		return webUtils.ajax({
-			method: 'GET', 
-			url: url, 
-			json: null,
-			header: {
-				'Range-Unit': 'items',
-				'Range': (offset + '-' + (offset + limit))
-			}
+		
+		return cidLookup.makeKeyPromise(view, 'view_id').then(function (view) {
+			const view_id = view.view_id
+			
+			url += '/v' + view_id + '?order=' + 
+				(sortSpec || [])
+				.map(comp =>
+				`${comp.attribute}.${comp.descending?'desc':'asc'}`
+				).join(",")
+
+			return webUtils.ajax({
+				method: 'GET', 
+				url: url, 
+				json: null,
+				header: {
+					'Range-Unit': 'items',
+					'Range': (offset + '-' + (offset + limit))
+				}
+			})
 		}).then(function (results) {
-			var message = {}
-			var range = results.xhr.getResponseHeader('Content-Range')
-			var rangeParts = range.split(/[-/]/)
+			const model = ModelStore.get(view.model_id)
+			const range = results.xhr.getResponseHeader('Content-Range')
+			const rangeParts = range.split(/[-/]/)
 
 			MetasheetDispatcher.dispatch({
 				startIndex: parseInt(rangeParts[0]),
