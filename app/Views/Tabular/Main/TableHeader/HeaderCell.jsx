@@ -96,7 +96,6 @@ export default class HeaderCell extends Component {
 	 */
 
 	renderIcons = () => {
-		console.log(this.props.sorting)
 		const type = fieldTypes[this.props.column.type];
 		const sortDir = this.props.sortDirection ? 'desc' : 'asc'
 

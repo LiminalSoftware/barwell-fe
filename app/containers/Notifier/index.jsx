@@ -13,10 +13,12 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import Note from './Note'
 
-var HIDE_TIMEOUT = 50;
-var PREVIEW_TIMEOUT = 4000;
+const HIDE_TIMEOUT = 50;
+const CUTOFF = 3
+const PREVIEW_TIMEOUT = 1000;
 
-var Notifier = React.createClass({
+
+const Notifier = React.createClass({
 
 	// LIFECYCLE ==============================================================
 	
@@ -40,25 +42,26 @@ var Notifier = React.createClass({
 	},
 
 	componentDidUpdate: function () {
+		if (this._previewTimer) clearTimeout(this._onChange)
 		this._previewTimer = setTimeout(this._onChange, PREVIEW_TIMEOUT)
 	},
 
 	_onChange: function () {
-		this.forceUpdate();
+		this.forceUpdate()
 	},
 
 	// HANDLERS ================================================================
 
 	handleMouseOver: function () {
-		if (this._mouseOutTimer) {
-			window.clearTimeout(this._mouseOutTimer);
-			this._mouseOutTimer = null;
-		}
-		this.setState({mouseOver: true});
+		// if (this._mouseOutTimer) {
+		// 	window.clearTimeout(this._mouseOutTimer);
+		// 	this._mouseOutTimer = null;
+		// }
+		// this.setState({mouseOver: true});
 	},
 
 	handleMouseOut: function () {
-		if(!this._mouseOutTimer) this._mouseOutTimer = window.setTimeout(this.handleHide, HIDE_TIMEOUT)
+		// if(!this._mouseOutTimer) this._mouseOutTimer = window.setTimeout(this.handleHide, HIDE_TIMEOUT)
 	},
 
 	handleHide: function () {
@@ -69,30 +72,38 @@ var Notifier = React.createClass({
 		this.setState({showPreview: !this.state.showPreview})
 	},
 
+	getEvents: function () {
+		var cutoff = moment(Date.now()).subtract(CUTOFF, 'seconds')
+		var notifications = (this.state.mouseOver || this.state.showPreview) ? NotificationStore.query({}) : []; 
+		var transactions = TransactionStore.query({}).filter(txn => !txn.hiddenTxn);
+		transactions = transactions.slice(transactions.length - 5)
+		if (this.state.mouseOver) transactions
+		else transactions = transactions.filter(txn => moment(txn.timestamp).isAfter(cutoff))
+
+		let events = util.merge({attribute: 'timestamp', descending: true}, null, notifications, transactions)
+
+		
+
+		return events
+	},
+
 	// RENDER =================================================================
 
 	render: function() {
 		var _this = this;
-		var cutoff = moment(Date.now()).subtract(3, 'seconds')
-		var notifications = (this.state.mouseOver || this.state.showPreview) ? NotificationStore.query({}) : []; 
-		var transactions = TransactionStore.query({});
-		var events
+		
+		
+		const events = this.getEvents()
 		const style = {
 			cursor: 'pointer', 
 			position: "absolute", 
-			bottom: 0, left: 0, right: 0, 
-			height: (this.state.mouseOver ? 
-				(util.limit(1,5, transactions.length) * 50) : 50),
-			maxHeight: (this.state.mouseOver ? 
-				(util.limit(1,5, transactions.length) * 50) : 50),
-			overflow: "hidden"
+			bottom: 120, 
+			right: 20,
+			height: 0,
+			width: 300,
 		}
 
-		// if (this.state.mouseOver) transactions
-		// else transactions = transactions.filter(txn => moment(txn.timestamp).isAfter(cutoff))
-
-		transactions = transactions.slice(transactions.length - 5)
-		events = util.merge({attribute: 'timestamp', descending: true}, null, notifications, transactions)
+		
 
 		return <ReactCSSTransitionGroup 
 			className = "notification-bar"
@@ -101,41 +112,20 @@ var Notifier = React.createClass({
 			component = "span"
 			onMouseOver = {this.handleMouseOver}
 			onMouseOut = {this.handleMouseOut}>
-			{
-			events.length === 0 && !this.state.mouseOver ? null :
-			<div className = "pop-up-menu" key="1" 
-				style = {{
-					left: 'auto', 
-					right: 0,
-					cursor: 'pointer',
-					width: '100%',
-					bottom: 0,
-					
-				}}>
+			
+
 			{
 			events.map(function (note, idx) {
 				return <Note 
 					_handleMouseOver = {_this.handleMouseOver} 
 					key = {note.cid || note.notification_key} 
 					model = {ModelStore.get(note.model_id)}
-					note = {note} 
+					note = {note}
 					index = {idx} />;
 			})
 			}
-			{
-			(events.length === 0 && this.state.mouseOver)  ? 
-				<div className="note-item note-info" key = "no-notifications">
-					<span className = "note-left-column" style = {{lineHeight: '25px'}}>
-						<span className = "icon icon-notification"/>
-					</span>
-					<span className = "note-middle-column" style = {{lineHeight: '25px'}}>
-						No notifications to show
-					</span>
-					<span className = "note-right-column"/>
-				</div> : null
-			}
-		</div>
-		}
+			
+		
 		</ReactCSSTransitionGroup>;
 	}
 })

@@ -107,7 +107,6 @@ export default class TableHeaderFooter extends Component {
 			{
 			_this.props.columns.map(function (col, idx) {
 				const sorting = (('a' + col.attribute_id) in sortIndex) ? sortIndex['a' + col.attribute_id] : null;
-				console.log(sorting)
 				const width = col.width + (col.column_id === resizeColumn ? dragOffset : 0)
 				const cellProps = Object.assign({
 					key: col.column_id,
@@ -118,7 +117,7 @@ export default class TableHeaderFooter extends Component {
 					left: left,
 					_setResizeColumn: _this.props._setResizeColumn,
 					_setColumnSize: _this.props._setColumnSize,
-					width: width - 1,
+					width: width,
 					view: view,
 					_handleContextMenu: _this.props._handleContextMenu
 				})

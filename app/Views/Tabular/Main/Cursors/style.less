@@ -44,35 +44,21 @@
 }
 
 .sort-desc-overlay {
-	background: rgba(7,149,56,0.1);
-	background: -moz-linear-gradient(top, rgba(7,149,56,0.1) 0%, rgba(255,255,255,0) 100%);
-	background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(7,149,56,0.1)), color-stop(100%, rgba(255,255,255,0)));
-	background: -webkit-linear-gradient(top, rgba(7,149,56,0.1) 0%, rgba(255,255,255,0) 100%);
-	background: -o-linear-gradient(top, rgba(7,149,56,0.1) 0%, rgba(255,255,255,0) 100%);
-	background: -ms-linear-gradient(top, rgba(7,149,56,0.1) 0%, rgba(255,255,255,0) 100%);
-	background: linear-gradient(to bottom, rgba(7,149,56,0.1) 0%, rgba(255,255,255,0) 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#079538', endColorstr='#ffffff', GradientType=0 );
-	transition: all linear 100ms;
-	transform: translateZ(1px);
-	// border-left: 1px solid @blue1;
-	// border-right: 1px solid @blue1;
-	// border-bottom: 1px solid @blue1;
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#0000ff+0,0000ff+100&0+0,0.2+100 */
+background: -moz-linear-gradient(top,  rgba(0,0,255,0) 0%, rgba(0,0,255,0.2) 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top,  rgba(0,0,255,0) 0%,rgba(0,0,255,0.2) 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom,  rgba(0,0,255,0) 0%,rgba(0,0,255,0.2) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000ff', endColorstr='#330000ff',GradientType=0 ); /* IE6-9 */
+
 }
 
 .sort-asc-overlay {
-	background: rgba(255,255,255,0);
-	background: -moz-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(7,149,56,0.1) 100%);
-	background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(255,255,255,0)), color-stop(100%, rgba(7,149,56,0.1)));
-	background: -webkit-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(7,149,56,0.1) 100%);
-	background: -o-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(7,149,56,0.1) 100%);
-	background: -ms-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(7,149,56,0.1) 100%);
-	background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(7,149,56,0.1) 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#079538', GradientType=0 );
-	transition: all linear 100ms;
-	transform: translateZ(1px);
-	// border-left: 1px solid @blue1;
-	// border-right: 1px solid @blue1;
-	// border-bottom: 1px solid @blue1;
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#0000ff+0,0000ff+100&0+0,0.2+100 */
+background: -moz-linear-gradient(top,  rgba(0,0,255,0) 0%, rgba(0,0,255,0.2) 100%); /* FF3.6-15 */
+background: -webkit-linear-gradient(top,  rgba(0,0,255,0) 0%,rgba(0,0,255,0.2) 100%); /* Chrome10-25,Safari5.1-6 */
+background: linear-gradient(to bottom,  rgba(0,0,255,0) 0%,rgba(0,0,255,0.2) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000ff', endColorstr='#330000ff',GradientType=0 ); /* IE6-9 */
+
 }
 
 
@@ -82,6 +68,8 @@
 .new-row-adder,
 .selection-outer-singleton, 
 .pointer,
+.sort-asc-overlay,
+.sort-desc-overlay,
 .view-reference-box {
 	transition: all linear 100ms;
 	transform: translateZ(0);
@@ -142,7 +130,7 @@
 }
 
 .selection-border-pressed {
-	border: 1px solid @gray3 !important;
+	border: 1.1px solid @gray3 !important;
 	transition: all cubic-bezier(.16,.85,.5,1) 75ms;
 }
 
@@ -152,13 +140,13 @@
 }
 
 .selection-outer, .selection-outer-singleton {
-	border: 5px solid @table-backing;
+	border: 6px solid @table-backing;
 	z-index: 2;
 }
 
 .selection-border {
 	transform: translateZ(0);
-	border: 1px solid @green1;
+	border: 1.1px solid @green1;
 	z-index: 4;
 }
 

@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import ReactDOM from "react-dom"
 import update from 'react/lib/update'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
@@ -19,11 +20,12 @@ import ColumnAdder from "../../../../components/ColumnAdder"
 
 const INNER_STYLE = {
 	position: "absolute",
-	top: 0, left: 0,
-	width: "100%",
-	height: "100%",
+	top: 30, left: 0,
+	right: 0,
+	height: 'auto',
 	display: "flex",
-	flexDirection: "column"
+	flexDirection: "column",
+	overflow: "hidden"
 }
 
 export default class ColumnConfig extends Component {
@@ -46,6 +48,18 @@ export default class ColumnConfig extends Component {
 				}
 			}
 		}), true)
+	}
+
+	componentDidMount = () => {
+		const detailDom = ReactDOM.findDOMNode(this.refs.detailElement)
+		this.setState({height: detailDom.offsetHeight})
+	}
+
+	componentDidUpdate = (prevProps, prevState) => {
+		if (prevState.detailElement !== this.state.detailElement) {
+			const detailDom = ReactDOM.findDOMNode(this.refs.detailElement)
+			this.setState({height: detailDom.offsetHeight})
+		}
 	}
 
 	componentWillMount = () => {
@@ -141,10 +155,7 @@ export default class ColumnConfig extends Component {
 
 		const _this = this
 
-		return <div key="main-menu slide-invert" style={INNER_STYLE}>
-			<div className="popdown-item title">
-				Change view settings
-			</div>
+		return <div key="main-menu " style={INNER_STYLE} ref="detailElement" id="detail-main">
 			<div onClick={this.hideColumn} className = "popdown-item selectable">
 				<span className="icon icon-green icon-selectable  icon-eye-crossed"/>
 				Hide this column from view
@@ -173,7 +184,7 @@ export default class ColumnConfig extends Component {
 
 			{type.sortable ?
 			<div className = "popdown-item popdown-inline bottom-divider">
-				<span>Sort: </span>
+				<span style={{maxWidth: 40}}>Sort: </span>
 				<span onClick={this.sort.bind(_this, false)} className="selectable left-divider">
 					<span className={`icon icon-green 
 						${currentSort === 'ascending' ? 'icon-hilite' : 'icon-selectable'} 
@@ -258,45 +269,46 @@ export default class ColumnConfig extends Component {
 		const {view, config} = this.props
 		const windowWidth = document.getElementById('application').clientWidth
 		const viewLeft = document.getElementById(`view-${view.view_id}`).getBoundingClientRect().left
-		
-		let style = Object.assign({},
-			this.props._getRangeStyle(this.props.rc), {
+		let pointerStyle={}
+		let style = Object.assign(
+			{},
+			this.props._getRangeStyle(this.props.rc), 
+			{
 				bottom: 0,
-				top: view.data.geometry.headerHeight - 1,
+				top: view.data.geometry.headerHeight + 5,
 				position: "absolute",
-				pointerEvents: "auto"
-		}, {
-			marginLeft: -1,
-			height: "100%",
-			background: "transparent",
-		})
-
-		let bridgeStyle = {
-			position: "absolute", 
-			top: -5, 
-			left: style.marginLeft + 1, 
-			minHeight: 6, 
-			background: "white",
-			zIndex: 1001,
-			borderLeft: `1px solid ${constants.colors.GREEN_1}`,
-			borderRight: `1px solid ${constants.colors.GREEN_1}`,
-			width: config.width - 1,
-		}
+				pointerEvents: "auto",
+				marginLeft: -1,
+				height: "100%",
+				background: "white",
+				dropShadow: "0 0 0 4px white"
+			}
+		)
 
 		if (style.left + viewLeft > windowWidth - 410){
 			style.marginLeft = -350 + config.width - 2
-			bridgeStyle.left = 350 - config.width + 1
+			pointerStyle.left = 350 - config.width + 10
 		}
 		
 		return <div
 			key = {config.column_id}
-			
 			style={style} onClick={util.clickTrap}>
 
+			<div className="popdown-pointer-outer" style={pointerStyle}/>
+			<div className="popdown-pointer-inner" style={pointerStyle}/>
+
+
 			<ReactCSSTransitionGroup
-			style={{minHeight: 550, maxHeight: 550}}
+			style={{
+				minHeight: this.state.height + 30, 
+				maxHeight: this.state.height + 30
+			}}
 			className={"column-context-menu "}
 			{...constants.transitions.slideleft}>
+
+			<div className="popdown-item menu-title">
+				Column options:
+			</div>
 
 			{this.state.detailElement ? 
 				React.createElement(this.state.detailElement,
@@ -311,7 +323,7 @@ export default class ColumnConfig extends Component {
 
 			</ReactCSSTransitionGroup>
 
-			<div style={bridgeStyle}/>
+			
 
 		</div>
 	}

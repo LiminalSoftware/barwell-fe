@@ -30,7 +30,7 @@ var ajax = module.exports.ajax = function (_params) {
   console.log(method + '->' + url);
   console.log(JSON.parse(json));
   
-  return util.wait(100).then(function () {
+  return util.wait(1).then(function () {
     return new Promise(function (resolve, reject) {
     var settings = {
       type: method,
@@ -47,6 +47,7 @@ var ajax = module.exports.ajax = function (_params) {
           status: status,
           xhr: xhr
         })
+        modelActionCreators.clearNotification({notification_key: 'connectivity'});
       },
       error: function (xhr, error, status) {
         const {readyState, status: xhrStatus, statusText: xhrStatusText} = xhr
@@ -56,9 +57,10 @@ var ajax = module.exports.ajax = function (_params) {
 
         if (xhrStatusText === 'error') {
           console.log('connectivity error')
+
           modelActionCreators.updateNotification({
             notification_key: 'connectivity',
-            statusMessage: 'We are having trouble reaching the server. The internet connection may be down or weak.'});
+            statusMessage: 'Server is temporarily unavailable'});
           
           persistBacklog.push(_params)
           retryDelay *= 2

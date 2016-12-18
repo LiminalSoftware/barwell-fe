@@ -32,8 +32,8 @@ var ViewStore = storeFactory({
 				var _this = this;
 				var entity = payload.data;
 				var views = this.query({model_id: entity.model_id});
-				views.map(function (view) {
-					view = groomView(view)
+				views.map(function (v) {
+					const view = groomView(v)
 					_this.create(view)
 				})
 				this.emitChange()
@@ -42,6 +42,7 @@ var ViewStore = storeFactory({
 
 
 			case 'VIEW_CREATE':
+				console.log(payload)
 				dispatcher.waitFor([
 					AttributeStore.dispatchToken, 
 					ModelStore.dispatchToken, 
@@ -52,25 +53,8 @@ var ViewStore = storeFactory({
 				let views = payload.data
 				if (views instanceof Object) views = [views]
 
-				views.forEach(view => {
-					var oldView = this.get(view.view_id) || {}
-					var oldVersion = oldView._version || 0
-					var newVersion = util.cidNum(payload.cid)
-					
-					// we ignore server side confirmations for views unless 
-					// there are structural changes (aggregates)
-					if (oldVersion > newVersion || 
-						(oldView && payload.isClean)) 
-						return;
-
-					if (!payload.safe)
-						view = groomView(view)
-
-					view._version = newVersion;
-					this.create(view);
-					isChanged = true
-				})
-				if (isChanged) this.emitChange();
+				views.map(payload.isClean ? util.clean : _.identity).map(groomView).forEach(this.create)
+				this.emitChange();
 				break;
 
 			case 'VIEW_DESTROY':

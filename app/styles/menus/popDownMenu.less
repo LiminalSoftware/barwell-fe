@@ -7,17 +7,15 @@
 	padding: 4px;
 	border: 1px solid transparent;
 	&:hover {
-		color: @green1;
+		background: @gray35;
 	}
 	transition: all linear 75ms;
 }
 
 .popdown-sidebar {
 	border-radius: 2px;
-	border: 1px solid blue;
-	color: blue !important;
+	border: 1px solid @gray2;
 	box-shadow: 0 0 0 2px #FFF;
-	
 }
 
 .sidebar-popdown-item-label {
@@ -30,6 +28,7 @@
 	padding: 3px;
 	line-height: 12px;
 	position: absolute;
+	overflow: visible;
 	top: 0;
 	margin-top: -25px;
 	left: -30px;
@@ -41,7 +40,6 @@
 	font-size: 12px;
 	text-align: center;
 	border-radius: 3px;
-	// text-transform: uppercase;
 }
 
 .popdown-label-pointer {
@@ -53,7 +51,7 @@
 	max-width: 0; max-height: 0; padding: 0;
 	border-color: transparent;
 	border-top-color: black;
-	margin-bottom: -12px;
+	margin-bottom: -11px;
 	bottom: 0;
 	left: 50%;
 	margin-left: -6px;
@@ -92,8 +90,7 @@
 
 .popdown-active {
 	border-radius: 15px ;
-	background: white;
-	color: blue;
+	background: @gray35;
 }
 
 .popdown-cancel {
@@ -103,13 +100,19 @@
 }
 
 .popdown-clicked {
-	background: blue !important;
-	color: white !important;
+	background: @gray35;
 	border-radius: 15px;
 }
 
 .title {
 	font-family: @headerFont;
+}
+
+.menu-title {
+	font-family: @headerFont;
+	// background: blue;
+	// color: white;
+	border-bottom: 1px solid blue;
 }
 
 .pop-up-menu {
@@ -183,7 +186,7 @@
 }
 
 .popdown-filler {
-	flex: 1 1;
+	// flex: 1 1;
 }
 
 .popdown-inline {
@@ -207,15 +210,15 @@
 }
 .bottom-divider {
 	min-width: 150px;
-	border-bottom: 1px dotted @green1;
+	border-bottom: 1px solid @gray3;
 }
 
 .left-divider {
-	border-left: 1px dotted @green1;
+	border-left: 1px solid @gray3;
 }
 
 .top-divider {
-	border-top: 1px dotted @green1;
+	border-top: 1px solid @gray3;
 	
 }
 .right-divider {
@@ -225,10 +228,11 @@
 	border-top: 1px solid @headerMenuBorderColor;
 }
 .selectable:hover {
-	background: @gray4;
+	// background: @gray4;
+	.graygrad;
 }
 .selectable {
-	transition: background cubic-bezier(.16,.85,.5,1) 100ms; 
+	transition: background linear 100ms; 
 }
 .unselectable {
 	color: @gray3;

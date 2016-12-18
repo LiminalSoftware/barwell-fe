@@ -7,32 +7,32 @@
 	margin: 0;
 	list-style: none;
 	min-width: 350px;
-	position: absolute;
+	position: relative;
+
 	display: flex;
 	flex-direction: column;
 	pointer-events: auto;
 	
 	z-index: 30;
-	transform: translateZ(10px);
-
-	background: white;
+	transform: translateZ(10px); 
 	
 	& > li {
 		padding: 5px 20px;
 	}
-	border-color: @green1;
 	border-width: 1px;
 	border-style: solid;
 
-	.shadowed-menu;
+	// box-shadow: 0 0 0 3px #FFF;
+	box-shadow:  2px 2px 0 @gray3;
+	
+	background: white;
+	border: 1px solid blue;
 
 }
 
 .column-context-menu {
-	border-top-left-radius: 0 !important;
-	border-top-right-radius: 0 !important;
-	overflow-x: hidden;
-	overflow-y: auto;
+	overflow: hidden;
+	transition: all linear 100ms;
 }
 
 .new-attribute-menu {

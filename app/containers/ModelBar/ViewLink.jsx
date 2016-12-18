@@ -25,8 +25,6 @@ import util from "../../util/util"
 
 const ViewLink = React.createClass ({
 
-	mixins: [blurOnClickMixin],
-
 	shouldComponentUpdate: function (nextProps, nextState) {
 		return nextState !== this.state || 
 			nextProps.activeViews !== this.props.activeViews ||
@@ -54,15 +52,20 @@ const ViewLink = React.createClass ({
 		this.setState({editing: true})
 	},
 
+	handleBlur: function () {
+		const {view} = this.props.view
+		this.setState({editing: false, name: view.view})
+	},
+
 	handleNameUpdate: function (e) {
 		this.setState({name: e.target.value})
 	},
 
-	handleDelete: function () {
-		var view = this.props.view
+	handleDelete: function (e) {
+		const {view} = this.props
 		modelActionCreators.destroy("view", true, {view_id: view.view_id})
 	},
-
+	
 	handleCommit: function () {
 		var view = this.props.view
 		this.setState({editing: false})
@@ -104,7 +107,7 @@ const ViewLink = React.createClass ({
 				
 			this.props.history.push(`${this.getRootPath()}/view/${newViewIds}`)
 		} else {
-			this.props.history.push(`${this.getRootPath()}/view/${this.props.view.view_id}`)
+			this.props.history.push(`${this.getRootPath()}/view/${view.cid || view.view_id}`)
 		}
 
 	},
@@ -140,28 +143,29 @@ const ViewLink = React.createClass ({
 				{this.state.name}
 			</span>
 
-		return <Link to = {`${this.getRootPath()}/view/${view.view_id}`}
-			onClick={this.handleClick}
+		return <div
 			onContextMenu = {this.handleShowContext}
-			className = {`view-link view-link--${isFocused ? 'focused' : active ? 'active' : ''}`}>
+			className = {`view-link view-link--${isFocused ? 
+				'focused' : active ? 'active' : ''}`}>
 
-			<span className = {`icon ${viewTypes[view.type].icon}`} style={{color: 'blue'}}/>
-			
-			<span className="link-label ellipsis">
-				{viewDisplay}
-			</span>
+			<span className = {`icon ${viewTypes[view.type].icon}`} />
+			<Link to = {`${this.getRootPath()}/view/${view.cid || view.view_id}`}
+				className="ellipsis view-link-label"
+				onClick={this.handleClick}>
+					{viewDisplay}
+			</Link>
 
 			<span className="spacer"/>
 		
 			<ViewContext {...this.props} ref="context"
-			style={{visibility: ((active || open) ? "visible" : "hidden")}}
-			_parent = {this} direction = "left" visible = {this.state.mouseover}/>
+				style={{visibility: ((active || open) ? "visible" : "hidden")}}
+				_parent = {this} direction = "left" visible = {this.state.mouseover}/>
 
 			{active ?
 			<span className={`icon icon-arrow-right view-link-arrow${isFocused ? '-selected' : ''}`}/>
 			:null}
 
-		</Link>
+		</div>
 	}
 })
 

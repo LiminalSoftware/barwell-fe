@@ -1,17 +1,14 @@
 @import "../../global.less";
 
 
-.height-transition {
-  .transition(all cubic-bezier(.1,.85,.5,1) 150ms);
-}
-
-.notification-bar {
-  border-top: 1px solid blue;
-  .transition(all cubic-bezier(.1,.85,.5,1) 150ms);
-  background: white;
-}
 
 .note-item {
+  position: absolute;
+  min-width: 300px;
+  max-width: 300px;
+
+  transform: translateZ(100px);
+  z-index: 12;
   display: flex;
   font-size: 12px;
   line-height: 10px;
@@ -23,8 +20,11 @@
   	padding: 0;
   	margin: 6px;
   }
-  border-bottom: 1px solid transparent;
-  .transition(all cubic-bezier(.1,.85,.5,1) 150ms);
+  background: @gray2;
+  border-radius: 4px;
+  transition: all linear 100ms;
+  border: 1px solid white;
+  // box-shadow: 2px 2px 0 0 @gray3;
 }
 
 .note-error-item {
@@ -33,20 +33,19 @@
 }
 
 .warning-item {
-  background: orange;
   color: @lightFontColor;
 }
 
 .note-success-item {
-  color: @green1;
+  color: @lightFontColor;
 }
 
 .note-pending-item {
-  color: @gray2;
+  color: @lightFontColor;
 }
 
 .note-info, .note-loading {
-  color: @blue1;
+  color: @lightFontColor;
 }
 
 .note-short-left-column {
@@ -66,15 +65,11 @@
 	text-align: left;
 }
 
-.note-short-right-column {
-  flex: 1;
-  flex-grow: 0;
-  text-align: center;
-}
-
-.note-right-column {
-  padding-right: 5px;
-	flex: 1;
-	flex-grow: 0;
-	text-align: center;
+.undo-button {
+  float: right;
+  margin-left: auto;
+  color: aliceblue;
+  &:hover {
+    color: darken(aliceblue, 5%);
+  }
 }

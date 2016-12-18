@@ -14,42 +14,44 @@ var Note = React.createClass({
 	render: function() {
 		var note = this.props.note;
 		var index = this.props.index;
-		var model = this.props.model
-		var substitutions = model ? {
-			'${model}': model.model
-		} : {}
-		var narrative = note.narrative
+		var model = this.props.model || {}
+		const modelName = model.model || ''
+		const pluralName = model.plural || ''
+		var narrative = (note.copy || note.narrative)
+		// .replace('${model}', modelName).replace('${plural}', pluralName)
+
+
 
 		return <div className = {'note-item note-' + note.type + " "}
 			key = {note.cid || note.notification_key || note.action_id}
-			style = {{zIndex: note.notificationId, cursorEvents: 'auto', top: (-50 * index)}}>
+			style = {{zIndex: note.notificationId, cursorEvents: 'auto', top: (-55 * index)}}>
 			<span className = {note.notification_key ? "note-short-left-column" : "note-left-column"}>
 				<span className={'icon ' + note.icon}/>
 			</span>
 			<span className = "note-middle-column">
-				<p className = "">[{note.action_id || note.cid}] {narrative}</p>
+				<p className = "">{narrative}</p>
 				
 				{note.notification_key ? null :
-				<p className = "" style = {{fontStyle: 'italic'}}>
+				<p className = "" >
 					{
 					note.action_id ? 
 					moment(note.timestamp).fromNow()
 					: note.statusMessage ? note.statusMessage
 					: 'Syncing to server...'
 					}
+					[{note.action_id || note.cid}]
+					{
+					note.action_id ? 
+					<span className = "undo-button" onClick = {util.clickTrap}>
+						UNDO
+					</span>
+					: 
+					<span className = "note-right-column"/>
+					}
 				</p>
 				}
 			</span>
-			{
-			note.action_id ? 
-			<span 
-				className = {note.notification_key ? "note-short-right-column" : "note-right-column"}
-				onClick = {util.clickTrap}>
-				<span className = 'icon icon-undo'/> Undo
-			</span>
-			: 
-			<span className = "note-right-column"/>
-			}
+			
 		</div>
 	}
 })

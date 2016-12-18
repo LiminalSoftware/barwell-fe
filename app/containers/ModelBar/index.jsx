@@ -87,9 +87,10 @@ export default class ModelBar extends Component {
 		const focusedViewId = (/^v\d+/).test(focus) ? parseInt(focus.slice(1)) : null
 
 		return <div className="mdlbar" onClick = {this.focus}>
-			<h1 className="branding">
-				metasheet.io
-				<span className="icon icon-contract expander popdown"></span>
+			<h1 className="branding" width="100" height="30" xmlns="http://www.w3.org/2000/svg">
+				<svg>
+					<path d="M10 10 H 20 V 20 H 10 L 10 10"/>
+				</svg>
 			</h1>
 			<div className="mdlbar-list" ref="outer" onWheel={this.handleMouseWheel}>
 			<div ref="inner" style={{marginTop: -1 * this.state.scrollOffset}}>

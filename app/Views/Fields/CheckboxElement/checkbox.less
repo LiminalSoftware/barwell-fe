@@ -23,7 +23,7 @@
 
 
 .checkbox-surround-selected {
-	border: 1px solid @gray3 !important;
+	border: 1px solid darken(@gray4,5%) !important;
 }
 
 
@@ -40,15 +40,16 @@
 }
 
 .checkbox-surround-unchecked, .checkbox-surround-checked, {
+	margin-top: 1px;
 	border-radius: 3px;
 	
 	z-index: 4;
 	
 	position: relative;
 	display: inline-block;
-	max-height: 16px;
-	min-height: 16px;
-	max-width: 16px;
-	min-width: 16px;
+	max-height: 17px;
+	min-height: 17px;
+	max-width: 17px;
+	min-width: 17px;
 	cursor: pointer;
 }

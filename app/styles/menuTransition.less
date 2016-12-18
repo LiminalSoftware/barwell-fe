@@ -31,27 +31,27 @@
 
 .slideup-appear, .slideup-enter {
   opacity: 0.01;
-  transform: translate3D(0,-50px,0);
+  transform: translate3D(0,50px,0);
 }
 
 .slideup-appear-active, .slideup-enter-active {
   opacity: 1;
   transform: translate3d(0,0,0);
-  transition: all  cubic-bezier(.16,.85,.5,1) 50ms;
+  transition: all  linear 100ms;
 }
 
 
 .slideup-leave {
   transform: translate3D(0,0,0);
   opacity: 1;
-  transition: all  cubic-bezier(.16,.85,.5,1) 50ms;
+  transition: all  linear 100ms;
   
 }
 
 .slideup-leave-active {
   opacity: 0.01;
-  transform: translate3D(0,50,0);
-  transition: all  cubic-bezier(.16,.85,.5,1) 50ms;
+  // transform: translate3D(0,-50,0);
+  transition: all  linear 100ms;
 }
 
 // ============================================================================
@@ -106,7 +106,7 @@
 .slideleft-enter-active, .slideleft-appear-active {
   opacity: 1;
   transform: translate3D(0,0,0);
-  transition: all cubic-bezier(.16,.85,.5,1) 125ms;
+  transition: all cubic-bezier(.16,.85,.5,1) 150ms;
 }
 
 
@@ -122,7 +122,7 @@
 .slideleft-leave-active {
   opacity: 0.01;
   transform: translate3D(-80px,0,0);
-  transition: all cubic-bezier(.16,.85,.5,1) 125ms;
+  transition: all cubic-bezier(.16,.85,.5,1) 150ms;
 }
 
 .slide-invert.slideleft-leave-active {

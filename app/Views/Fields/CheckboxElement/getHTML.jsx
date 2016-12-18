@@ -8,12 +8,15 @@ export default function (format, stylers, config, obj, pos) {
 	return `<span class = "table-cell table-cell-inner"
 	style = "
 		text-align: center; 
-		background: ${styles.background || 'transparent'}; 
+		background: ${styles.background || 'transparent'};
+		color: ${styles.color || 'inherit'};
 		font-family: ${styles.fontFamily || 'inherit'}; 
 		${pos?`left:${pos.left}px; width: ${pos.width}px;`:''}
 	">
 		<span class = "checkbox-surround${value?"-checked":"-unchecked"}">
-			<span class="check icon ${value ? 'icon-check' : ''}">
+			<span class="check icon ${value ? 'icon-check' : ''}" style = "
+				color: ${styles.color || 'inherit'};
+			">
 			</span>
 		</span>
 	</span>`;

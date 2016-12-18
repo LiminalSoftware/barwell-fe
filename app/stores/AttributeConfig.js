@@ -20,10 +20,8 @@ var AttributeViewConfigStore = storeFactory({
         dispatcher.waitFor([AttributeStore.dispatchToken]);
         dispatcher.waitFor([ViewStore.dispatchToken]);
 
-        let models = payload.data
         const _this = this;
-        if (!(models instanceof Array)) models = [models]
-
+        let models = payload.data instanceof Array ? payload.data : [payload.data]
         
         views.forEach(view => {
           view.columns.forEach(column => {

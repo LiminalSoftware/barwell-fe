@@ -26,8 +26,11 @@ h1, h2, h3, h4, h5 {
 	overflow: hidden;
 	display: flex;
 	flex-direction: row;
-	min-height: 100vh;
-	height: 100%;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
 	background: @gray4;
 	.noselect;
 }
@@ -42,7 +45,7 @@ h1, h2, h3, h4, h5 {
 	margin: 0;
 	// margin-left: 5px;
 	overflow: hidden;
-	border-right: 3px solid @cell-border;
+	
 	// perspective: 1000px;
 }
 
@@ -59,7 +62,7 @@ h1, h2, h3, h4, h5 {
 	border-bottom: 1px solid @gray3;
 	color: blue;
 
-	background: @gray4;
+	background: @headerBgColor;
 	font-family: @headerFont;
 
 

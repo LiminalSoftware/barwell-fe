@@ -5,6 +5,7 @@ import _ from "underscore"
 import styles from "./styles/wrappers.less"
 
 import modelActionCreators from "../../../actions/modelActionCreators"
+import cidLookup from "../../../actions/cidLookup"
 import constants from "../../../constants/MetasheetConstants"
 import ViewStore from "../../../stores/ViewStore"
 
@@ -70,6 +71,7 @@ export default class TabularBodyWrapper extends Component {
 		 * Delay the fetch until the current dispatch is complete
 		 * (only relevant if the view is loaded directly from url)
 		 */
+
 		setTimeout(() => _this.fetch(true), 0)
 	}
 
@@ -80,12 +82,13 @@ export default class TabularBodyWrapper extends Component {
 
 		if (nextProps.resizeColumn) this.setState({dragOffset: 0})
 		
-		this.debounceFetch(false, nextProps);
+		this.debounceFetch((view.view_id !== nextProps.view.view_id), nextProps);
 	}
 
 	fetch = (force, nextProps, nextState) => {
 		var _this = this
-		var view = this.props.view
+		var _view = this.props.view
+		const view = ViewStore.get(_view.cid || _view.view_id)
 		var offset = this.state.requestedOffset
 
 		var target = ((nextState ? nextState : this.state).rowOffset - (MAX_ROWS - WINDOW_ROWS) / 2)
@@ -94,6 +97,7 @@ export default class TabularBodyWrapper extends Component {
 		var delta = Math.abs(offset - target)
 		var sorting = nextProps ? nextProps.view.data.sorting : view.data.sorting
 
+		console.log('about to fetch')
 		if (view.view_id && ((force === true)
 			|| (delta > OFFSET_TOLERANCE && offset !== boundedTarget)
 			|| !_.isEqual(sorting, this.state.sorting) 
@@ -106,13 +110,13 @@ export default class TabularBodyWrapper extends Component {
 				sorting: sorting
 			})
 
-			modelActionCreators.createNotification({
-				narrative: 'Loading view data',
-				type: 'loading',
-				icon: ' icon-loading spin ',
-				notification_key: 'loadingRecords',
-				notificationTime: 0,
-			});
+			// modelActionCreators.createNotification({
+			// 	narrative: 'Loading view data',
+			// 	type: 'loading',
+			// 	icon: ' icon-loading spin ',
+			// 	notification_key: 'loadingRecords',
+			// 	notificationTime: 0,
+			// });
 			
 			modelActionCreators.fetchRecords(
 				view,
@@ -139,6 +143,7 @@ export default class TabularBodyWrapper extends Component {
 		var oldProps = this.props
 		return oldProps.view !== newProps.view || 
 		oldProps.resizeColumn !== newProps.resizeColumn ||
+		this.state.fetching !== nextState.fetching || 
 		this.state.dragOffset !== nextState.dragOffset
 	}
 
@@ -172,7 +177,7 @@ export default class TabularBodyWrapper extends Component {
 		})
 		
 		return <ReactCSSTransitionGroup {...constants.transitions.fadein} className="flush wrapper" ref="tbodyWrapper">
-			{!this.state.initialFetchComplete || this.state.fetching ?
+			{!this.state.initialFetchComplete ?
 			<div className="flush loader-overlay" key="loader">
 				<div className="wrapper flush loader-overlay" ref="loaderOverlay">
 					<p className="loader-hero">

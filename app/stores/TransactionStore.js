@@ -16,7 +16,7 @@ var TransactionStore = storeFactory({
 	identifier: 'action_id',
 	dispatcher: dispatcher,
 	guidGenerator: getGuid,
-	pivot: function(action) {
+	pivot: function (action) {
 		var _this = this;
 		if (action.isTemporary) return;
 		// process the action
@@ -42,10 +42,12 @@ var TransactionStore = storeFactory({
 				if (!('type' in action)) action.type = 'pending-item'
 				if (!('status' in action)) action.status = 'active'
 	        	_this.create(action);
+	        	// console.log(action)
 	        	_this.emitChange();
 	        	break;
 	        case 'ACTION_CREATE':
 	        	if (action.isClean) action.data.map(function(a){ a.type = 'success-item'; return a}).map(_this.create)
+	        	// console.log(action)
 	        	_this.emitChange()
 	        	break;
 		}

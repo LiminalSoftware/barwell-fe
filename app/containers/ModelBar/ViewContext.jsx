@@ -4,6 +4,8 @@ import * as ui from '../../util/uiHelpers'
 
 import Dropdown from "../../components/Dropdown"
 
+import modelActionCreators from "../../actions/modelActionCreators"
+
 // MIXINS
 import blurOnClickMixin from "../../blurOnClickMixin"
 import popdownClickmodMixin from '../../Views/Fields/popdownClickmodMixin'
@@ -21,12 +23,17 @@ class ViewContextMenu extends Component {
 	
 	handleClickDelete = () => {
 		this.props._parent.handleDelete()
-		this.handleBlur()
+		this.props._parent.handleBlur()
 	}
 
 	handleRename = () => {
 		this.props._parent.handleRename()
-		this.handleBlur()
+		this.props._parent.handleBlur()
+	}
+
+	handleDelete = () => {
+		const {view} = this.props
+		modelActionCreators.destroy("view", true, {view_id: view.view_id})
 	}
 
 
@@ -54,7 +61,8 @@ export default class ViewContext extends Component {
 	render () {
 		return <Dropdown 
 			title="configure view"
-			menu={ViewContextMenu} 
+			menu={ViewContextMenu}
+			_parent = {this.props._parent}
 			icon="icon-ellipsis"/>
 	}
 }

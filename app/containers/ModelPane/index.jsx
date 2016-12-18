@@ -54,7 +54,12 @@ export default class ViewPane extends Component {
 		const configDetail = configElement ? React.createElement(configElement, childProps) : null
 
 		return <div style={style} id={`view-${view.view_id}`}>
-			<div className="model-pane-header">{view.view}
+			<div className="model-pane-header">
+
+			<span className={`icon icon--blue ${viewType.icon}`}/>
+			<span>
+				{view.view}
+			</span>
 
 			<span className="pane-dots" style={{maxWidth: 20}}/>
 			{configDetail}

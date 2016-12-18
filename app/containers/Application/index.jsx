@@ -4,6 +4,7 @@ import _ from "underscore"
 import { RouteHandler } from "react-router"
 import ModelBar from "containers/ModelBar"
 import ModelPane from "containers/ModelPane"
+import Notifier from "../Notifier"
 import styles from "./style.less"
 
 import modelActionCreators from "../../actions/modelActionCreators"
@@ -106,8 +107,10 @@ export default class Application extends Component {
 				model={ModelStore.get(v.model_id)}
 				multiViews={multiViews}
 				style={{left: 0, top: 0, right: 0, bottom: 0, position: "absolute"}}
-				key={v.view_id}/>)}
+				key={v.cid || v.view_id}/>)}
 			</div>
+
+			<Notifier/>
 
 			<textarea style = {dummyStyle} id = "copy-paste-dummy" value=""></textarea>
 		</div>

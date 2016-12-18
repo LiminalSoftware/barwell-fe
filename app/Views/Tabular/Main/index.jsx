@@ -297,7 +297,7 @@ const TabularPane = React.createClass ({
 		const {pointer: ptr, selection: sel} = this.state
 		var records = this.store.getSelectedRecords();
 		var numRows = this.getNumberRows();
-		const top = Math.min(ptr.top, numRows - records.length - 1);
+		const top = Math.min(ptr.top, numRows - records.length - 2);
 		const bottom = top
 		
 		this.blurPointer();

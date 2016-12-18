@@ -45,8 +45,6 @@ export default class Cursors extends React.Component {
 	}
 
 	componentWillReceiveProps = (props) => {
-		const pointerChanged = !_.isEqual(props.pointer, this.state.pointer)
-		const selectionChanged = !_.isEqual(props.selection, this.state.selection)
 		const resizeColumnChanged = props.resizeColumn !== this.props.resizeColumn
 		const {view} = this.props
 
@@ -58,19 +56,9 @@ export default class Cursors extends React.Component {
 			)
 		}
 
-		if (selectionChanged && pointerChanged) {
-			newState = _.extend(newState, 
-				{pointer: null, selection: props.selection, moving: true}
-			)
-			this._debounceSetPointer(props.pointer)
-		} else if (pointerChanged) {
-			newState = _.extend(newState, 
-				{pointer: props.pointer, selection: props.selection}
-			)
-		}
-
 		this.setState(newState)
 	}
+	
 	showContextMenu = (e) => {
 		var cursors = ReactDOM.findDOMNode(this.overlayInner)
 		var view = this.props.view
@@ -110,17 +98,16 @@ export default class Cursors extends React.Component {
 		const hideCursor = (rowsSelected || rowCount === 0 || resizeColumn);
 		
 		return (!focused ? [] : [
-			<ReactCSSTransitionGroup {...constants.transitions.fadein}>{
+			
 			hideCursor ? null :
 				<Pointer {...this.props}
 				col = {col}
 				obj = {obj}
 				key = "pointer"
 				dragOffset = {dragOffset}
-				position={this.state.pointer}
+				position={this.props.pointer}
 				fudge = {{width: -1, left: 0, top: 1, height: -1}}
-				ref="pointer" />
-			}</ReactCSSTransitionGroup>,
+				ref="pointer" />,
 			
 			hideCursor ? null : 
 			<Overlay
@@ -132,7 +119,7 @@ export default class Cursors extends React.Component {
 			key="selectionOuter"
 			position = {sel}
 			dragOffset = {dragOffset}
-			fudge = {{left: -4, top: -3, height: 7, width: 7}}>
+			fudge = {{left: -5, top: -4, height: 9, width: 9}}>
 				<div className = {"selection-border " + (this.props.isMouseDown ? " selection-border-pressed " : "")}
 					style={{left: "-3px", right: "-3px", top: "-3px", bottom: "-3px"}}/>
 				

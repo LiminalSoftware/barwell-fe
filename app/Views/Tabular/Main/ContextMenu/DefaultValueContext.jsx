@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import update from 'react/lib/update'
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import _ from "underscore"
 
 import AttributeStore from "../../../../stores/AttributeStore"
 

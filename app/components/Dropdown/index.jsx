@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import util from '../../util/util'
+import style from "./style.less"
 import * as ui from '../../util/uiHelpers'
 import _ from "underscore"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
@@ -61,16 +62,16 @@ export default class PopdownMenu extends Component {
 
 	handleKeyPress = ui.handleBlurKeyPress.bind(this)
 
-	handleOpenClick = () => {
+	handleOpenClick = (e) => {
 		this.setState({open: true})
 	}
 
-	handleMouseDown = () => {
+	handleMouseDown = (e) => {
 		this.setState({clicked: true})
 		document.addEventListener('mouseup', this.handleMouseUp)
 	}
 
-	handleMouseUp = () => {
+	handleMouseUp = (e) => {
 		this.setState({clicked: false})
 		document.removeEventListener('mouseup', this.handleMouseUp)
 	}

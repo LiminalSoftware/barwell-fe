@@ -7,6 +7,21 @@
 @gray2: #71646B;
 @gray3: #CBC3B7;
 @gray4: #FAFAF4;
+@gray35: darken(@gray4,8%);
+
+.graygrad {
+  background: rgba(237,242,252,1);
+/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#edf2fc+1,fafaf4+32,fafaf4+60,edf2fc+100 */
+// background: rgb(237,242,252); /* Old browsers */
+// background: -moz-linear-gradient(left,  rgba(237,242,252,1) 1%, rgba(250,250,244,1) 32%, rgba(250,250,244,1) 60%, rgba(237,242,252,1) 100%); /* FF3.6-15 */
+// background: -webkit-linear-gradient(left,  rgba(237,242,252,1) 1%,rgba(250,250,244,1) 32%,rgba(250,250,244,1) 60%,rgba(237,242,252,1) 100%);  Chrome10-25,Safari5.1-6 
+// background: linear-gradient(to right,  rgba(237,242,252,1) 1%,rgba(250,250,244,1) 32%,rgba(250,250,244,1) 60%,rgba(237,242,252,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+// filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#edf2fc', endColorstr='#edf2fc',GradientType=1 ); /* IE6-9 */
+
+//background: -webkit-linear-gradient(135deg,#fa1e64 0,rgba(250,30,100,.75) 33%,rgba(250,30,100,.3) 66%,rgba(250,30,100,.1) 100%),-webkit-linear-gradient(270deg,rgba(43,0,247,.1) 0,rgba(43,0,247,.3) 33%,rgba(43,0,247,.75) 66%,#2b00f7 100%)
+}
+
+
 
 @cell-border: lighten(@gray3, 15%);
 @selection-color: fadeout(desaturate(@gray3,40%),80%);
@@ -92,7 +107,7 @@
 @headerOuterBorderWidth: 5px;
 @headerOuterBorderColor: @green-trans;
 
-@headerBgColor: @gray4;
+@headerBgColor: white;
 
 @menuItemBorderRadius: 2px;
 @headerBorderWidth: 1px;
