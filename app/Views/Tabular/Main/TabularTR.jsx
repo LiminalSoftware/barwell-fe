@@ -65,9 +65,9 @@ class TabularTR extends React.Component {
 		var html = _this.props.hasRowLabel ?
 				`<span class = "table-row-label table-cell" style = "left: ${geo.leftGutter}px; width: ${geo.labelWidth}px">
 					<span class="table-cell-inner"><span class="label-grab-handle"></span>
-						<span style = "margin-left: 2px;" 
-						class = "checkbox-surround " 
-						id = "${rowKey}-rowcheck">
+						<span style = "margin-left: 18px;" 
+						class = "checkbox-surround-unchecked checkbox-surround-selected  " 
+						id = "${rowKey}-rowcheck">	
 						${checkbox}
 						</span>
 					</span>

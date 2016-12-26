@@ -143,17 +143,17 @@ const ViewLink = React.createClass ({
 				{this.state.name}
 			</span>
 
-		return <div
+		return <Link to = {`${this.getRootPath()}/view/${view.cid || view.view_id}`}
 			onContextMenu = {this.handleShowContext}
 			className = {`view-link view-link--${isFocused ? 
-				'focused' : active ? 'active' : ''}`}>
+				'focused' : active ? 'active' : 'inactive'}`}>
 
 			<span className = {`icon ${viewTypes[view.type].icon}`} />
-			<Link to = {`${this.getRootPath()}/view/${view.cid || view.view_id}`}
+			<span
 				className="ellipsis view-link-label"
 				onClick={this.handleClick}>
 					{viewDisplay}
-			</Link>
+			</span>
 
 			<span className="spacer"/>
 		
@@ -165,7 +165,7 @@ const ViewLink = React.createClass ({
 			<span className={`icon icon-arrow-right view-link-arrow${isFocused ? '-selected' : ''}`}/>
 			:null}
 
-		</div>
+		</Link>
 	}
 })
 

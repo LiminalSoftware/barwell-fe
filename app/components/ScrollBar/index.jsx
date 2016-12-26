@@ -47,10 +47,6 @@ var ScrollBar = React.createClass ({
 		}
 	},
 
-	// handleScroll: function (e) {
-	// 	this.props._setScrollOffset(this.state.offset * this.props.totalDim);
-	// },
-
 	handleMouseWheel: function (e) {
 		const {visibleDim, totalDim} = this.props
 		const delta = (this.props.axis === 'vertical') ? e.deltaY : e.deltaX;
@@ -104,22 +100,21 @@ var ScrollBar = React.createClass ({
 		
 		const {axis, totalDim, startOffset, endOffset, side, visibleDim} = this.props
 
-		if (!visibleDim || (visibleDim > totalDim))
-			return <div className = "scroll-bar-outer" style = {outerStyle}/>
+		// if (!visibleDim || (visibleDim > totalDim))
+			// return <div className = "scroll-bar-outer" style = {outerStyle}/>
 
-		var outerStyle =  {
+		let outerStyle =  {
 			position: 'absolute',
 			display: 'block'
 		}
 
-		var innerStyle = {}
+		let innerStyle = {}
 
-		if (axis === 'vertical' && side === 'left') {
-			outerStyle.left = 0;
-		} else if (axis === 'vertical') {
-			outerStyle.right = 0
-		}
+		if (!visibleDim || (visibleDim > totalDim)) innerStyle.opacity = 0
+
 		if (axis === 'vertical') {
+			if (side === 'left') outerStyle.left = 0
+			else outerStyle.right = 0
 			outerStyle[this.props.side || 'right'] = 0
 			outerStyle.top = startOffset
 			outerStyle.bottom = endOffset

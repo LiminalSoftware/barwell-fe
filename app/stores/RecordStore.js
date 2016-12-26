@@ -12,20 +12,22 @@ var createRecordStore = function (model) {
     identifier: model._pk,
     dispatcher: dispatcher,
     pivot: function (payload) {
+      
+      if (type === ('RECORD_CREATE')) {
+          const object = payload.data
+          const model = payload.model_id
+          const view_id = payload.view_id
+          const index = payload.index
 
-      if (type === (upperLabel + '_CREATE')) {
-          var object = payload[label]
-          var index = payload.index
-
-          TabularStore.emitChange()
+          RecordStore.emitChange()
       }
 
-      if (type === (upperLabel + '_DESTROY')) {
+      if (type === ('RECORD_DESTROY')) {
           _records = _.filter(_records, function (rec) {
               rec[model._pk] !== payload[label][model._pk]
           })
 
-          TabularStore.emitChange()
+          RecordStore.emitChange()
       }
     }
   })

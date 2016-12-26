@@ -473,7 +473,7 @@ var CubePane = React.createClass ({
 			bodyWidth: bodyWidth,
 			adjustedWidth: rowHeaderWidth + bodyWidth,
 
-			focused: focused,
+			focused: true,
 			context: this.state.contextOpen,
 
 			pointer: this.state.pointer,

@@ -43,7 +43,7 @@ class AddViewMenu extends Component {
 		const {model} = this.props
 		const _this = this
 
-		return <div className = "popdown-menu popdown-sidebar  popdown-offset" 
+		return <div className = "context-menu popdown-offset" 
 			onMouseDown={util.clickTrap}>
 			<div className="popdown-pointer-outer"/>
 			<div className="popdown-pointer-inner"/>

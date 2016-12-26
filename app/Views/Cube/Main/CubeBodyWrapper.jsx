@@ -121,11 +121,11 @@ var CubeBodyWrapper = React.createClass ({
 		var colOffset = this.props.hiddenColWidth
 		
 		return <div
-			className = {"wrapper force-layer " + (focused ? "focused" : "gray-out")}
+			className = {"wrapper force-layer " + ("focused")}
 			ref="tbodyWrapper"
 			style = {{
 				left: 0,
-				width: (this.props.adjustedWidth) + 'px',
+				right: 0,
 				transformStyle: 'preserve-3d'
 			}}>
 
@@ -169,13 +169,14 @@ var CubeBodyWrapper = React.createClass ({
 			{/*END ROW HEADER HEADERS*/}
 			
 			{/*RHS OUTER*/}
-			<div className = {"wrapper " + " rhs-h-scroll-outer--" + (focused ? "focused" : "blurred")}
+			<div className = {"wrapper " + " rhs-h-scroll-outer--" + "focused"}
 				style = {{
 					top: 0,
 					bottom: 0,
 					left: this.props.rowHeaderWidth + 'px',
+					right: 0,
 					marginLeft: '-1px',
-					width:  this.props.bodyWidth + 'px',
+					
 					transform: 'translateZ(1px)',
 					overflow: 'hidden',
 				}}>
@@ -194,7 +195,8 @@ var CubeBodyWrapper = React.createClass ({
 							height: this.props.columnHeaderHeight + 'px',
 							left: '-1px',
 							right: 0,
-							transform: 'translateZ(2px)'
+							transform: 'translateZ(2px)',
+							borderBottom: `1px solid ${constants.colors.TABLE_BORDER}`
 						}}
 						dimension = 'column'
 						store = {store}

@@ -234,10 +234,17 @@ export default class HeaderCell extends Component {
 	 */
 
 	getCellStyle = () => {
+		const {view} = this.props
+		const geo = view.data.geometry
 		return {
-			width: this.props.width,
+			width: this.props.width + 1,
 			left: this.props.left,
 			marginTop: (this.props.sorting ? -1 : 0),
+			height: this.props.menuDummy ? (geo.headerHeight + 1) : "auto",
+			zIndex: this.props.menuDummy ? 33 : null,
+			borderBottom: this.props.menuDummy ? "1px solid white" : null,
+			borderRight: this.props.menuDummy ? "1px solid blue" : null,
+			borderLeft: this.props.menuDummy ? "1px solid blue" : null,
 			background: (this.state.mouseover ? constants.colors.GRAY_4 : constants.colors.GRAY_4 )
 		}
 	}

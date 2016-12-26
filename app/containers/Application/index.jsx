@@ -109,8 +109,11 @@ export default class Application extends Component {
 				style={{left: 0, top: 0, right: 0, bottom: 0, position: "absolute"}}
 				key={v.cid || v.view_id}/>)}
 			</div>
-
+			{
+			this.state.loaded ?
 			<Notifier/>
+			: null
+			}
 
 			<textarea style = {dummyStyle} id = "copy-paste-dummy" value=""></textarea>
 		</div>

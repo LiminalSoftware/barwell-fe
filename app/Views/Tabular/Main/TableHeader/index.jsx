@@ -87,7 +87,7 @@ export default class TableHeaderFooter extends Component {
 
 		let left = (hasRowLabel ? geo.labelWidth : 0) + this.props.leftOffset
 		
-
+		const checkbox = false ? `<span className="check purple icon icon-check"></span>` : '';
 		
 
 		return <div
@@ -98,7 +98,10 @@ export default class TableHeaderFooter extends Component {
 			<span style = {{left: 0, width: geo.labelWidth + 'px', top: 0, bottom: 0, background: constants.colors.TABLE_BACKING}}
 				className = "table-row-label table-cell" >
 				<span className = "table-cell-inner">
-				<span style = {{marginLeft: "2px"}} className = "checkbox-surround "></span>
+				{this.props.headerOrFooter === 'header' ? <span style = {{marginLeft: 18, marginTop: 5}}
+					className = "checkbox-surround-unchecked checkbox-surround-selected">	
+					{checkbox}
+				</span> : null }
 				</span>
 			</span>
 			: null 
@@ -136,7 +139,8 @@ export default class TableHeaderFooter extends Component {
 					width: geo.colAddWidth, 
 					padding: 0,
 					borderTopLeftRadius: 0,
-					borderBottomLeftRadius: 0
+					borderBottomLeftRadius: 0,
+					zIndex: 35
 				}}
 				className = 'table-header-cell new-adder'>
 					<span className="icon icon-plus" style={{margin: 0}}/>

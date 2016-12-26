@@ -37,7 +37,7 @@ export default class Cursors extends React.Component {
 
 	componentWillMount = () => {
 		const _this = this
-		this._debounceSetPointer = this._setPointer //_.debounce(this._setPointer, 300)
+		this._debounceSetPointer = this._setPointer//_.debounce(this._setPointer, 300)
 	}
 
 	_setPointer = (pointer) => {
@@ -46,9 +46,10 @@ export default class Cursors extends React.Component {
 
 	componentWillReceiveProps = (props) => {
 		const resizeColumnChanged = props.resizeColumn !== this.props.resizeColumn
-		const {view} = this.props
-
+		const {view, pointer} = this.props
 		let newState = {}
+
+		this._debounceSetPointer(pointer)
 
 		if (resizeColumnChanged) {
 			newState = _.extend(newState, 
@@ -71,9 +72,9 @@ export default class Cursors extends React.Component {
 	}
 
 	renderOverlays = () => {
-		const {view, resizeColumn, model, columnOffset, focused, pointer: ptr, 
+		const {view, resizeColumn, model, columnOffset, focused, 
 			selection: sel, copyarea: cpy} = this.props
-		const {dragOffset} = this.state
+		const {dragOffset, pointer: ptr} = this.state
 
 		const numFixed = view.data._fixedCols.length
 		
@@ -97,19 +98,19 @@ export default class Cursors extends React.Component {
 		
 		const hideCursor = (rowsSelected || rowCount === 0 || resizeColumn);
 		
-		return (!focused ? [] : [
+		return ([
 			
-			hideCursor ? null :
+			(!focused || hideCursor) ? null :
 				<Pointer {...this.props}
 				col = {col}
 				obj = {obj}
 				key = "pointer"
 				dragOffset = {dragOffset}
-				position={this.props.pointer}
+				position={ptr}
 				fudge = {{width: -1, left: 0, top: 1, height: -1}}
 				ref="pointer" />,
 			
-			hideCursor ? null : 
+			(!focused || hideCursor)  ? null : 
 			<Overlay
 			{...this.props}
 			className = {"selection-outer" + 
@@ -135,10 +136,10 @@ export default class Cursors extends React.Component {
 				position = {cpy}
 				fudge = {{left: -1, top: 0.25, height: 1, width: 1}}/> : null,
 
-			hideCursor ? null : <Overlay
+			<Overlay
 				{...this.props}
 				columns = {view.data._visibleCols}
-				className = {" new-row-adder "}
+				className = {" new-row-adder " + (hideCursor ? " no-transition " : "")}
 				ref = "rowadder"
 				key="rowadder"
 				dragOffset = {dragOffset}
@@ -147,7 +148,7 @@ export default class Cursors extends React.Component {
 				<div className="flush" onClick={this.props._addRecord}>add new row</div>
 			</Overlay>,
 
-			!hideCursor && !this.props.isMouseDown && showJaggedEdge ? <Overlay
+			focused && !hideCursor && !this.props.isMouseDown && showJaggedEdge ? <Overlay
 				{...this.props}
 				className = {" jagged-edge" + (jaggedEdgeIsLight ? "":"")}
 				ref = "jaggedEdge"

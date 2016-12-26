@@ -18,9 +18,11 @@ import util from "../../../../util/util"
 
 import ColumnAdder from "../../../../components/ColumnAdder"
 
+const MENU_LABEL_HEIGHT = 40
 const INNER_STYLE = {
 	position: "absolute",
-	top: 30, left: 0,
+	top: MENU_LABEL_HEIGHT, 
+	left: 0,
 	right: 0,
 	height: 'auto',
 	display: "flex",
@@ -28,11 +30,16 @@ const INNER_STYLE = {
 	overflow: "hidden"
 }
 
-export default class ColumnConfig extends Component {
+
+
+export default class TotalConfig extends Component {
 
 	constructor (props) {
 		super(props)
-		this.state = {detailElement: null}
+		this.state = {
+			detailElement: null,
+			height: 0
+		}
 	}
 
 	updateColumnConfig = (patch) => {
@@ -51,14 +58,17 @@ export default class ColumnConfig extends Component {
 	}
 
 	componentDidMount = () => {
+		const _this = this
 		const detailDom = ReactDOM.findDOMNode(this.refs.detailElement)
-		this.setState({height: detailDom.offsetHeight})
+		// setTimeout(x => {
+		this.setState({height: detailDom.offsetHeight + MENU_LABEL_HEIGHT})	
+		// }, 0)
 	}
 
 	componentDidUpdate = (prevProps, prevState) => {
 		if (prevState.detailElement !== this.state.detailElement) {
 			const detailDom = ReactDOM.findDOMNode(this.refs.detailElement)
-			this.setState({height: detailDom.offsetHeight})
+			this.setState({height: detailDom.offsetHeight + MENU_LABEL_HEIGHT})
 		}
 	}
 
@@ -222,11 +232,8 @@ export default class ColumnConfig extends Component {
 			
 			{/*==============================================================*/}
 
-			<div className="popdown-item title">
-				Change attribute details
-			</div>
 
-			<div className = "popdown-item popdown-inline bottom-divider top-divider">
+			<div className = "popdown-item popdown-inline bottom-divider">
 				<span>Add column: </span>
 				<span className="selectable left-divider" onClick={this.insertLeft} >
 					<span className={`icon icon-green icon-selectable icon-arrow-left`}/>
@@ -269,23 +276,25 @@ export default class ColumnConfig extends Component {
 		const {view, config} = this.props
 		const windowWidth = document.getElementById('application').clientWidth
 		const viewLeft = document.getElementById(`view-${view.view_id}`).getBoundingClientRect().left
+		let dummyOffset = 0
 		let pointerStyle={}
 		let style = Object.assign(
 			{},
 			this.props._getRangeStyle(this.props.rc), 
 			{
 				bottom: 0,
-				top: view.data.geometry.headerHeight + 5,
+				top: 0,
 				position: "absolute",
 				pointerEvents: "auto",
 				marginLeft: -1,
 				height: "100%",
-				background: "white",
-				dropShadow: "0 0 0 4px white"
+				dropShadow: "0 0 0 4px white",
+				transition: "all linear 100ms"
 			}
 		)
 
 		if (style.left + viewLeft > windowWidth - 410){
+			dummyOffset = 350 - config.width + 1
 			style.marginLeft = -350 + config.width - 2
 			pointerStyle.left = 350 - config.width + 10
 		}
@@ -294,20 +303,25 @@ export default class ColumnConfig extends Component {
 			key = {config.column_id}
 			style={style} onClick={util.clickTrap}>
 
-			<div className="popdown-pointer-outer" style={pointerStyle}/>
-			<div className="popdown-pointer-inner" style={pointerStyle}/>
-
+			<HeaderCell
+				key="dummy"
+				column={config}
+				left={dummyOffset}
+				menuDummy={true}
+				width={config.width}
+				view={view}/>
 
 			<ReactCSSTransitionGroup
 			style={{
-				minHeight: this.state.height + 30, 
-				maxHeight: this.state.height + 30
+				top: view.data.geometry.headerHeight,
+				minHeight: this.state.height, 
+				maxHeight: this.state.height
 			}}
 			className={"column-context-menu "}
 			{...constants.transitions.slideleft}>
 
-			<div className="popdown-item menu-title">
-				Column options:
+			<div className="popdown-item menu-title" style={{color: "blue"}}>
+				Column actions
 			</div>
 
 			{this.state.detailElement ? 

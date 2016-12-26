@@ -262,7 +262,7 @@ const TabularPane = React.createClass ({
 		)
 		this.clearCopy();
 		this.setState({copyarea: null});
-		if (e) e.preventDefault() && util.clickTrap(e)
+		if (e) util.clickTrap(e)
 	},
 
 	insertRecord: function () {
@@ -295,8 +295,8 @@ const TabularPane = React.createClass ({
 	deleteRecords: function () {
 		const {view, model} = this.props
 		const {pointer: ptr, selection: sel} = this.state
-		var records = this.store.getSelectedRecords();
-		var numRows = this.getNumberRows();
+		let records = this.store.getSelectedRecords();
+		let numRows = this.getNumberRows();
 		const top = Math.min(ptr.top, numRows - records.length - 2);
 		const bottom = top
 		
@@ -306,6 +306,8 @@ const TabularPane = React.createClass ({
 			this.selectRow(view)
 			records = this.store.getSelectedRecords();
 		}
+
+		records = records.map(r => Object.assign({cid: r.cid || null}, r))
 
 		modelActionCreators.deleteMultiRecords(model, records);
 

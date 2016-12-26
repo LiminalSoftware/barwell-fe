@@ -16,8 +16,9 @@ import dispatcher from "../../../dispatcher/MetasheetDispatcher"
 import processUpdates from './processUpdates'
 import insertInOrder from "./insertInOrder"
 import insertAt from "./insertAt"
-
 import getGuid from "../../../stores/getGuid"
+
+import reducers from "../../../util/reducers"
 
 const MAX_LOCAL_RECORDS = 5000
 

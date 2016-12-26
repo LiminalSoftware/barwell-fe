@@ -15,7 +15,7 @@ import Note from './Note'
 
 const HIDE_TIMEOUT = 50;
 const CUTOFF = 3
-const PREVIEW_TIMEOUT = 1000;
+const PREVIEW_TIMEOUT = 5000;
 
 
 const Notifier = React.createClass({
@@ -118,7 +118,7 @@ const Notifier = React.createClass({
 			events.map(function (note, idx) {
 				return <Note 
 					_handleMouseOver = {_this.handleMouseOver} 
-					key = {note.cid || note.notification_key} 
+					key = {note.cid || note.notification_key || note.transaction_id} 
 					model = {ModelStore.get(note.model_id)}
 					note = {note}
 					index = {idx} />;

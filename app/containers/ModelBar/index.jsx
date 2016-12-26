@@ -1,6 +1,9 @@
 import React, { Component, PropTypes } from 'react'
+import _ from "underscore"
 import ReactDOM from "react-dom"
 import { Link } from "react-router"
+
+
 
 import styles from "./style.less"
 
@@ -36,7 +39,11 @@ export default class ModelBar extends Component {
 			scrollOffset: 0
 		}
 	}
-	
+
+	componentWillMount = () => {
+		this._debounceCalibrate = _.debounce(this.calibrate, 100)
+		window.addEventListener('resize', this._debounceCalibrate)
+	}
 
 	componentDidMount = () => {
 		this.calibrate()
@@ -46,7 +53,12 @@ export default class ModelBar extends Component {
 		this.calibrate()
 	}
 
+	componentWillUnmount = () => {
+		window.removeEventListener('resize', this._debounceCalibrate)
+	}
+
 	calibrate = () => {
+		console.log('mdlbar calibrate')
 		const inner = ReactDOM.findDOMNode(this.refs.inner)
 		const outer = ReactDOM.findDOMNode(this.refs.outer)
 
@@ -87,10 +99,16 @@ export default class ModelBar extends Component {
 		const focusedViewId = (/^v\d+/).test(focus) ? parseInt(focus.slice(1)) : null
 
 		return <div className="mdlbar" onClick = {this.focus}>
-			<h1 className="branding" width="100" height="30" xmlns="http://www.w3.org/2000/svg">
-				<svg>
-					<path d="M10 10 H 20 V 20 H 10 L 10 10"/>
-				</svg>
+			<h1 className="branding" width="100" height="25" xmlns="http://www.w3.org/2000/svg">
+				metasheet
+				{/*<svg>
+					<path d="M 5 5 h 10 l 10 10 l 10 -10 h 10 v 23 h -10 v -17 l -10 10 l -10 -10 v 17 h -10 Z" fill="gray"/>
+					<path d="M 48 5 h 25 v 4 h -15 v9 h15 v3 h-15 v4 h15 v3 h-25 Z" fill="gray"/>
+					<path d="M 76 5 h 24 v 4 h -7 v 19 h-10 v -19 h-7  Z" fill="gray"/>
+					<path d="M 104 5 h 17 l 10 23 h-4 l -3 -7 h -8 v7 h -12 Z" fill="gray"/>
+
+					<path d="M 140 5 h 25 v4 h-15 v4 h15 v15 h-25 v-3 h18 v-5 h-18 Z" fill="gray"/>
+				</svg>*/}
 			</h1>
 			<div className="mdlbar-list" ref="outer" onWheel={this.handleMouseWheel}>
 			<div ref="inner" style={{marginTop: -1 * this.state.scrollOffset}}>
@@ -107,6 +125,7 @@ export default class ModelBar extends Component {
 				{models.map((mdl, idx) => 
 				<ModelSection
 					{...this.props}
+					_calibrate = {this._debounceCalibrate}
 					index = {idx}
 					activeViews = {this.props.activeViews}
 					focusedViewId = {focusedViewId}

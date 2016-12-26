@@ -97,7 +97,7 @@ export default class TabularBodyWrapper extends Component {
 		var delta = Math.abs(offset - target)
 		var sorting = nextProps ? nextProps.view.data.sorting : view.data.sorting
 
-		console.log('about to fetch')
+
 		if (view.view_id && ((force === true)
 			|| (delta > OFFSET_TOLERANCE && offset !== boundedTarget)
 			|| !_.isEqual(sorting, this.state.sorting) 

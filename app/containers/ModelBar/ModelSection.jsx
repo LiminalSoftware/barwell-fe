@@ -1,6 +1,7 @@
 // LIBS AND SUCH
 import React from "react"
 import { Link } from "react-router"
+import _ from "underscore"
 
 // STORES
 import ViewStore from "../../stores/ViewStore"
@@ -12,6 +13,7 @@ import viewTypes from '../../Views/viewTypes'
 import ViewLink from "./ViewLink"
 import ModelContext from "./ModelContext"
 import ViewAddContext from "./ViewAddContext"
+import Dropdown from "../../components/Dropdown"
 
 // MIXINS
 import blurOnClickMixin from "../../blurOnClickMixin"
@@ -24,7 +26,9 @@ import modelActionCreators from "../../actions/modelActionCreators"
 
 var ModelSection = React.createClass ({
 
-	mixins: [blurOnClickMixin],
+	componentWillMount: function () {
+		this._debounceSetMouseOver = _.debounce(this.setMouseOver, 150)
+	},	
 
 	componentWillReceiveProps: function (nextProps) {
 		if (!this.renaming) this.setState({name: nextProps.model.model})
@@ -33,9 +37,15 @@ var ModelSection = React.createClass ({
 	getInitialState: function () {
 		return {
 			editing: false,
-			open: false,
+			expanding: false,
+			expanded: false,
 			name: this.props.model.model
 		}
+	},
+
+	componentDidUpdate: function (oldProps, oldState) {
+		if (oldState.expanded !== this.state.expanded)
+			this.props._calibrate()
 	},
 
 	revert: function () {
@@ -54,12 +64,54 @@ var ModelSection = React.createClass ({
 		})
 	},
 
+	handleClickExpand: function (e) {
+		const _this = this
+		if (this.state.expanded) return;
+		this.setState({
+			expanded: true,
+			expanding: true
+		})
+		clearTimeout(this._overflowTimer)
+		this._overflowTimer = setTimeout(f=>_this.setState({expanding: false}),200)
+	},
+
+	handleToggleExpand: function (e) {
+		const _this = this
+		this.setState({
+			expanded: !this.state.expanded, 
+			expanding: true
+		})
+		clearTimeout(this._overflowTimer)
+		this._overflowTimer = setTimeout(f=>_this.setState({expanding: false}),200)
+		e.stopPropagation()
+	},
+
 	handleCommit: function (e) {
 		modelActionCreators.updateModel({
 			model_id: this.props.model.model_id, 
 			model: this.state.name
 		})
 		this.setState({editing: false})
+	},
+
+	handleFocus: function () {
+		this.setState({focused: true})
+	},
+
+	handleBlur: function () {
+		this.setState({focused: false})
+	},
+
+	setMouseOver: function (toggle) {
+		this.setState({mouseover: toggle})
+	},
+
+	handleMouseOver: function () {
+		this._debounceSetMouseOver(true)
+	},
+
+	handleMouseOut: function () {
+		this._debounceSetMouseOver(false)
 	},
 
 	handleShowContext: function () {
@@ -75,10 +127,12 @@ var ModelSection = React.createClass ({
 
 	render: function () {
 		const _this = this
-		const model = this.props.model
+		const {model, activeViews} = this.props
 		const modelId = model.model_id || model.cid
 		const workspaceId = model.workspace_id
 		const views = ViewStore.query({model_id: modelId})
+			.filter(v => _this.state.expanded || activeViews.includes(v))
+
 
 		const modelDisplay = this.state.editing ?
 			<input 
@@ -92,25 +146,44 @@ var ModelSection = React.createClass ({
 			:
 			<span onDoubleClick = {this.handleRename} className="ellipsis">{this.state.name}</span>
 
-		return <div className="mdlbar-section">
+		return <div className="mdlbar-section " 
+		onFocus = {this.handleFocus}
+		onBlur = {this.handleBlur}
+		onMouseOver = {this.handleMouseOver}
+		onMouseOut = {this.handleMouseOut}
+		tabIndex={this.props.idx * 100}>
 
-			<div className="model-link">
-				<span className="section-expander"/>
+			<div className="model-link" onClick={this.handleClickExpand}>
+				<span onClick={this.handleToggleExpand}
+					className={"section-expander " + (this.state.expanded ? "section-expander--open" : "")}/>
 				<span className="link-label ellipsis">
 					{modelDisplay}
 				</span>
 
 				<span className="spacer"/>
-
-				<ViewAddContext {...this.props}/>
-				<ModelContext {...this.props} 
-					_parent = {this} direction = "left"/>
+				{this.state.focused || this.state.mouseover ? <span>
+					<Dropdown {...this.props}
+						title="configure this model"
+						onClick = {this.enterConfigMode}
+						icon="icon-cog"/>
+					<ViewAddContext {...this.props} idx={this.props.idx * 100}/>
+					<ModelContext {...this.props}
+						_parent = {this} direction = "left"/>
+				</span> : null}
 			</div>
-
-			{views.map(v => 
-			<ViewLink {..._this.props} key={v.view_id} view={v}/>
-			)}
-			
+			<div 
+				style={{
+					maxHeight: views.length * 41, 
+					minHeight: views.length * 41, 
+					// opacity: this.state.expanded ? 1 : 0, 
+					overflow: this.state.expanding ? "hidden" : "visible"}} 
+				className="model-view-list">
+			{
+			views.map(v => 
+				<ViewLink {..._this.props} key={v.view_id} view={v}/>
+			)
+			}
+			</div>
 		</div>
 	}
 })

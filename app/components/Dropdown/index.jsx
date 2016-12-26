@@ -94,7 +94,7 @@ export default class PopdownMenu extends Component {
 		const {icon, menu} = this.props
 
 		return  <ReactCSSTransitionGroup {...constants.transitions.fadeinout} style={{position: "relative"}}>
-			<span className={"icon popdown " + icon +
+			<span tabindex={this.props.tabIndex} className={"icon popdown " + icon +
 				(this.state.clicked? this.state.mouseover?" popdown-clicked ":" popdown-cancel ":"") + 
 				(this.state.open? " popdown-active":"")}
 				onMouseOver={this.handleMouseOver}
@@ -109,7 +109,7 @@ export default class PopdownMenu extends Component {
 				</div>
 				: null
 			}
-			{this.state.open ? 
+			{this.state.open && menu ? 
 				React.createElement(menu, Object.assign({handleBlur: this.handleBlur , key: "menu"}, this.props)) 
 				: null}
 			</ReactCSSTransitionGroup>

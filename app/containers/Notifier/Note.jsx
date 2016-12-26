@@ -17,15 +17,15 @@ var Note = React.createClass({
 		var model = this.props.model || {}
 		const modelName = model.model || ''
 		const pluralName = model.plural || ''
-		var narrative = (note.copy || note.narrative)
-		// .replace('${model}', modelName).replace('${plural}', pluralName)
+		var narrative = (note.copy || note.narrative || '')
+			.replace('${model}', modelName).replace('${plural}', pluralName)
 
 
 
 		return <div className = {'note-item note-' + note.type + " "}
 			key = {note.cid || note.notification_key || note.action_id}
 			style = {{zIndex: note.notificationId, cursorEvents: 'auto', top: (-55 * index)}}>
-			<span className = {note.notification_key ? "note-short-left-column" : "note-left-column"}>
+			<span className = {"note-left-column"}>
 				<span className={'icon ' + note.icon}/>
 			</span>
 			<span className = "note-middle-column">

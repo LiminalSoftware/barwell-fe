@@ -60,7 +60,8 @@ var ajax = module.exports.ajax = function (_params) {
 
           modelActionCreators.updateNotification({
             notification_key: 'connectivity',
-            statusMessage: 'Server is temporarily unavailable'});
+            icon: 'icon-warning',
+            narrative: 'Server is temporarily unavailable'});
           
           persistBacklog.push(_params)
           retryDelay *= 2

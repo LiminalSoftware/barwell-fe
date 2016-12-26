@@ -9,7 +9,7 @@ const reduceSum = function (prop, a, b) {
 const reduceAverage = function (prop, a, b) {
 	const aCount = a.count || 1
 	const bCount = b.count || 1
-	return (a[prop]aCount + b[prop]*bCount)/(aCount + bCount)
+	return (a[prop]*aCount + b[prop]*bCount)/(aCount + bCount)
 }
 
 const reduceMaximum = function (prop, a, b) {
@@ -33,4 +33,4 @@ const reduceStdDev = function (prop, a, b) {
 }
 
 
-export {blurListeners, handleClick, addListeners, removeListeners, handleBlur, handleBlurKeyPress}
+export {reduceSum, reduceAverage, reduceMaximum, reduceMinimum, reduceCount, reduceStdDev}

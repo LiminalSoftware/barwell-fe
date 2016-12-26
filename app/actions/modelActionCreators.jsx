@@ -66,22 +66,20 @@ var modelActions = {
 	},
 
 	selectRecord: function (view, id) {
-		var message = {
+		MetasheetDispatcher.dispatch({
 			view_id: view.view_id,
 			model_id: view.model_id,
 			actionType: 'RECORD_TOGGLESELECT',
 			id: id
-		}
-		MetasheetDispatcher.dispatch(message);
+		});
 	},
 
 	unselectRecords: function (view) {
-		var message = {
+		MetasheetDispatcher.dispatch({
 			view_id: view.view_id,
 			model_id: view.model_id,
 			actionType: 'UNSELECT'
-		}
-		MetasheetDispatcher.dispatch(message);
+		});
 	},
 
 	// ========================================================================
