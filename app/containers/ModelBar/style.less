@@ -9,11 +9,11 @@
 	// color: @lightFontColor;
 	color: black;
 	background: @headerBgColor;
-	
+
 	font-weight: 400;
-	
+
 	border-bottom: 1px solid @gray3;
-	
+
 	text-align: left;
 	z-index: 120;
 	box-shadow: 0 4px 0 white;
@@ -89,11 +89,12 @@
 .model-link, .view-link {
 	overflow: visible;
 	position: relative;
-	
+
 	height: 22px;
 	line-height: 22px;
 	padding: 8px 5px;
-	
+	margin: 1px;
+
 	display: flex;
 	text-decoration: none;
 
@@ -101,6 +102,7 @@
 	cursor: pointer;
 
 	border-radius: 2px;
+	border: 1px solid transparent;
 
 	transition: all cubic-bezier(.16,.85,.5,1) 200ms;
 
@@ -111,13 +113,10 @@
 		}
 	}
 	&:focus {
-		box-shadow: 0 0 3px blue;
+		// box-shadow: 0 0 3px @green1;
+		border: 1px solid @green1;
 		outline: none;
 	}
-}
-
-.view-link {
-	margin: 5px;
 }
 
 
@@ -130,7 +129,7 @@
 }
 
 .view-link-arrow, .view-link-arrow-selected {
-	transition: background cubic-bezier(.16,.85,.5,1) 200ms; 
+	transition: background cubic-bezier(.16,.85,.5,1) 200ms;
 	margin-left: auto;
 }
 
@@ -158,11 +157,10 @@
 	margin-left: 5px;
 	font-family: @bodyFont;
 	display: flex;
-	border-left: 5px solid transparent;
 }
 
 .view-link-inner {
-	
+
 	.ellipsis;
 }
 
@@ -234,15 +232,17 @@
 	overflow: visible;
 	transition: all linear 200ms;
 	color: black;
+	border: 1px solid transparent;
 	border-radius: 2px;
 	&:focus {
 		outline: none;
-		box-shadow: 0 0 3px blue;
+		border: 1px solid @green1;
+		// box-shadow: 0 0 3px @green1;
 	}
 }
 
 .mdlbar-adder {
-	
+
 	border: 1px solid @gray3;
 	border-radius: 5px;
 	padding: 8px;
@@ -253,7 +253,7 @@
 	cursor: pointer;
 	text-align: center;
 	text-transform: uppercase;
-	
+
 	transition: all cubic-bezier(.16,.85,.5,1) 300ms;
 	&:hover {
 		background: @gray4;

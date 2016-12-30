@@ -4,6 +4,7 @@ import webUtils from "../util/MetasheetWebAPI"
 import util from "../util/util"
 import _ from 'underscore'
 import cidLookup from './cidLookup'
+import reduxStore from "../stores/reduxStore"
 
 const BASE_URL = 'http://api.metasheet.io'
 
@@ -19,10 +20,10 @@ class TransactionObserver {
 
 	_onNewTransaction (action) {
 		const _this = this
-		const entityName = action.entity === 'record' ? 
+		const entityName = action.entity === 'record' ?
 			('m' + action.model.model_id) :
 			action.entity
-		const pk = action.entity === 'record' ? 
+		const pk = action.entity === 'record' ?
 			action.model._pk :
 			(action.entity + '_id')
 
@@ -35,12 +36,12 @@ class TransactionObserver {
 				cidLookup.resolveCidPromise(action.data, pk)
 			// else
 			// very important -- if we don't catch clean actions here then we enter a race condition
-			// this should probably be refactored 
+			// this should probably be refactored
 			return;
 		}
 
 		Promise.resolve().then(function () {
-			// first wait for any dependent queries to come 
+			// first wait for any dependent queries to come
 			// back (assigning ids to cids and such)
 
 			switch(action.actionType) {
@@ -60,7 +61,6 @@ class TransactionObserver {
 			}
 
 		}).then(function (data) {
-			console.log('p2')
 			// do some pre-processing on the request and send it off,
 			// records have a different API than metadata entities so
 			// we treat them a little differently
@@ -68,7 +68,7 @@ class TransactionObserver {
 			var url = BASE_URL + '/' + entityName
 			var verb
 			var json
-			
+
 			switch (action.actionType) {
 				case 'VIEW_CREATE':
 				case 'ATTRIBUTE_CREATE':
@@ -87,7 +87,7 @@ class TransactionObserver {
 				case 'MODEL_DESTROY':
 				case 'KEY_DESTROY':
 				case 'RELATION_DESTROY':
-					if (!(pk in data)) 
+					if (!(pk in data))
 						throw new Error('destroy without specifying primary key')
 					url += '?' + pk + '=eq.' + data[pk];
 					verb = 'DELETE'
@@ -110,7 +110,7 @@ class TransactionObserver {
 			json = JSON.stringify(util.stripInternalVars(data));
 			return webUtils.ajax({method: verb, url: url, json: json});
 		}).then(function (results) {
-			// get the response back, process it a bit and then dispatch 
+			// get the response back, process it a bit and then dispatch
 			// the result locally
 			var resultantData = results.data instanceof Array ? results.data : [results.data]
 			var action_id = resultantData[0].action_id
@@ -122,7 +122,7 @@ class TransactionObserver {
 				timestamp: Date.now(),
 				isClean: true
 			})
-			
+
 			// determine the return action type if necessary
 			// TODO - this should not really be necessary
 			switch (action.actionType) {
@@ -146,7 +146,7 @@ class TransactionObserver {
 
 			if (!(error instanceof Object)) error = {}
 			action.type = 'error-item'
-			action.statusMessage = 'Could not be completed: ' + error.message; 
+			action.statusMessage = 'Could not be completed: ' + error.message;
 			action.actionType = 'REVERT_ACTION'
 
 			MetasheetDispatcher.dispatch(action);

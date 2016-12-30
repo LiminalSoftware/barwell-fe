@@ -74,13 +74,13 @@ export default class ModelBar extends Component {
 
 
 	// HANDLERS ===============================================================
-	
+
 	handleAddModel = (e) => {
 		modelActionCreators.createNewModel(this.props.workspaceId)
 		e.preventDefault();
 	}
-	
-	
+
+
 	focus = () => {
 		modelActionCreators.setFocus('view-config');
 	}
@@ -89,7 +89,7 @@ export default class ModelBar extends Component {
 		this.refs.scroll.handleMouseWheel(e)
 	}
 
-	// RENDER =================================================================	
+	// RENDER =================================================================
 
 	render = () => {
 		const workspaceId = this.props.params.workspaceId
@@ -110,6 +110,7 @@ export default class ModelBar extends Component {
 					<path d="M 140 5 h 25 v4 h-15 v4 h15 v15 h-25 v-3 h18 v-5 h-18 Z" fill="gray"/>
 				</svg>*/}
 			</h1>
+
 			<div className="mdlbar-list" ref="outer" onWheel={this.handleMouseWheel}>
 			<div ref="inner" style={{marginTop: -1 * this.state.scrollOffset}}>
 				<ScrollBar
@@ -121,8 +122,15 @@ export default class ModelBar extends Component {
 					axis = "vertical"
 					side = "left"
 					_setScrollOffset = {this.setScrollOffset}/>
+				<div className="mdlbar-section"><span className="model-link">
+					<span className="icon icon-exit"/><span>Back to my workspaces</span>
+				</span></div>
+				<div className="mdlbar-section"><span className="model-link">
+						<span className="icon icon-glasses2"/><span>Focus (hide this sidebar)</span>
+				</span></div>
 
-				{models.map((mdl, idx) => 
+
+				{models.map((mdl, idx) =>
 				<ModelSection
 					{...this.props}
 					_calibrate = {this._debounceCalibrate}

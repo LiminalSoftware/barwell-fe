@@ -1,11 +1,11 @@
 @import "../../../../styles/colors.less";
 
-.selection, 
-.copyarea, 
-.pointer, 
+.selection,
+.copyarea,
+.pointer,
 .new-row-adder,
-.selection-outer, 
-.selection-outer-singleton, 
+.selection-outer,
+.selection-outer-singleton,
 .selection-border,
 .sort-asc-overlay,
 .sort-desc-overlay,
@@ -27,7 +27,7 @@
 
 
 .column-overlay {
-	
+
 	// background: white;
 }
 
@@ -35,7 +35,7 @@
 .new-row-adder {
 	text-transform: uppercase;
 	background: @table-backing;
-	border: 1px solid @table-border; 	
+	border: 1px solid @table-border;
 	color: @table-border;
 	line-height: 25px;
 	text-align: center;
@@ -66,11 +66,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000ff', e
 }
 
 
-.selection, 
-.selection-outer, 
-.selection-border, 
+.selection,
+.selection-outer,
+.selection-border,
 .new-row-adder,
-.selection-outer-singleton, 
+.selection-outer-singleton,
 .pointer,
 .sort-asc-overlay,
 .sort-desc-overlay,
@@ -88,10 +88,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000ff', e
 	height: 5px;
 	margin: 0;
 	padding: 0;
-	
+
 	background: @table-backing;
 	z-index: 11;
-	
+
 	pointer-events: auto;
 	cursor: crosshair !important;
 }
@@ -101,16 +101,11 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000ff', e
 }
 
 .jagged-edge {
-	background: url(
-		data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKCAYAAABmBXS+AAAASUlEQVQYV2P8////f45plgw/so4zwAAjIyMjnMPAwMAIUgQSQFaIoQikgJBCuLH4FKLYjUshVkUYbkT2BUGTCLqJoO8IKQA5BwAhj0YHX3Uv0QAAAABJRU5ErkJggg==
-	) repeat-y;
+	background: url('data:image/svg+xml;utf8,<svg width="16" height="14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 14" version="1.1"><line x1="2" y1="-1" x2="11" y2="8" stroke-width="5" stroke="white"/><line x1="10" y1="7" x2="2" y2="15" stroke-width="5" stroke="white"/>  <line x1="3" y1="0" x2="10" y2="7" stroke-width="0.7" stroke="#079538"/><line x1="10" y1="7" x2="3" y2="14" stroke-width="0.7" stroke="#079538"/></svg>') repeat-y;
 	z-index: 10;
 }
 
 .jagged-edge-light {
-	background: url(
-		data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAKCAYAAACJxx+AAAAAPElEQVQoU2NkYGBg+P///38QDQKMjIyMMDaYD+PgUoSiGpsiFAXYrMOrAMUNuNxCvBvw+gJvOCBLYgsoAH1ZKAcHIR5ZAAAAAElFTkSuQmCC
-	) repeat-y;
 	z-index: 10;
 }
 

@@ -4,6 +4,8 @@ import cidLookup from "./cidLookup"
 import update from 'react/lib/update'
 import _ from 'underscore'
 
+import reduxStore from "../stores/reduxStore"
+
 import getGuid from '../stores/getGuid'
 
 import AttributeStore from '../stores/AttributeStore'
@@ -100,7 +102,6 @@ var modelActions = {
 	},
 
 	setColumnDefault: function (column, value) {
-		console.log(value)
 		if (column.column_id.slice(0,1) === 'a') {
 			const attribute = AttributeStore.get(column.column_id.slice(1))
 			modelActions.create('attribute', true, update(attribute, {
@@ -115,9 +116,9 @@ var modelActions = {
 		.forEach(attr=> {
 			const type = fieldTypes[attr.type]
 			const parser = type.parser || _.identity
-			// we use the standard config for persisting default values so that they are 
+			// we use the standard config for persisting default values so that they are
 			// robust when the column format changes
-			const config = type.standardConfig || {} 
+			const config = type.standardConfig || {}
 			obj['a' + (attr.attribute_id || attr.cid)] = parser(attr.default_value, config)
 		})
 
@@ -172,7 +173,7 @@ var modelActions = {
 			model_id: model.model_id,
 			data: obj instanceof Array ? obj : [obj],
 			cid: 'c' + getGuid(), // action cid
-			narrative: obj.length > 1 ? 
+			narrative: obj.length > 1 ?
 				(obj.length + ' ${plural}' + ' deleted')
 				: ('${model} deleted'),
 			icon: 'icon-trash2'
@@ -192,9 +193,9 @@ var modelActions = {
 			cid: 'c' + getGuid(), // action cid
 			narrative: (obj.length > 1 ? (obj.length + ' ${plural}') : '${model}') + ' updated'
 					+ (extras.method ? (' by ' + extras.method) : ''),
-			icon: extras.method === 'copy/paste' ? 
-				'icon-clipboard-check' : 
-				extras.method === 'clearing selection' ? 
+			icon: extras.method === 'copy/paste' ?
+				'icon-clipboard-check' :
+				extras.method === 'clearing selection' ?
 				'icon-broom' :
 				'icon-keyboard'
 
@@ -206,9 +207,9 @@ var modelActions = {
 
 	moveHasMany: function (relationId, thisObj, relObj) {
 		var relation = RelationStore.get(relationId)
-		var hasOneRelation = RelationStore.get(relation.type === 'HAS_ONE' ? 
+		var hasOneRelation = RelationStore.get(relation.type === 'HAS_ONE' ?
 			relation.relation_id : relation.related_relation_id)
-		var hasManyRelation = RelationStore.get(relation.type === 'HAS_ONE' ? 
+		var hasManyRelation = RelationStore.get(relation.type === 'HAS_ONE' ?
 			relation.related_relation_id : relation.relation_id)
 		var hasOneObj = relation.type === 'HAS_MANY' ? relObj : thisObj
 		var hasManyObj = relation.type === 'HAS_MANY' ? thisObj : relObj
@@ -252,10 +253,10 @@ var modelActions = {
 		}
 		var workspaceId = model.workspace_id
 		var url = BASE_URL + '/w' + workspaceId + '_action?order=action_id.desc';
-		
+
 		return webUtils.ajax({
-			method: 'GET', 
-			url: url, 
+			method: 'GET',
+			url: url,
 			json: null,
 			header: {
 				'Range-Unit': 'items',
@@ -271,22 +272,22 @@ var modelActions = {
 	},
 
 	fetchRecords: function (view, offset, limit, sortSpec, storeId) {
-		
+
 		let url = BASE_URL
-		
-		
+
+
 		return cidLookup.makeKeyPromise(view, 'view_id').then(function (view) {
 			const view_id = view.view_id
-			
-			url += '/v' + view_id + '?order=' + 
+
+			url += '/v' + view_id + '?order=' +
 				(sortSpec || [])
 				.map(comp =>
 				`${comp.attribute}.${comp.descending?'desc':'asc'}`
 				).join(",")
 
 			return webUtils.ajax({
-				method: 'GET', 
-				url: url, 
+				method: 'GET',
+				url: url,
 				json: null,
 				header: {
 					'Range-Unit': 'items',
@@ -317,11 +318,11 @@ var modelActions = {
 		offset = offset || 0
 		limit = limit || 20
 
-		
+
 
 		return webUtils.ajax({
-			method: 'GET', 
-			url: url, 
+			method: 'GET',
+			url: url,
 			json: null,
 			header: {
 				'Range-Unit': 'items',
@@ -342,11 +343,11 @@ var modelActions = {
 	fetchVennValues: function (view, store) {
 		var view_id = view.view_id
 		var url = BASE_URL + '/v' + view_id
-		
+
 
 		return webUtils.ajax({
-			method: 'GET', 
-			url: url, 
+			method: 'GET',
+			url: url,
 			json: null,
 			header: {
 				'Range-Unit': 'items',
@@ -361,7 +362,7 @@ var modelActions = {
 				values: results.data,
 				view_id: view.view_id
 			};
-			
+
 			MetasheetDispatcher.dispatch(message);
 		});
 	},
@@ -381,7 +382,7 @@ var modelActions = {
 			return column.column_id + (column.descending ? '.desc' : '.asc')
 		}).join(',')
 
-		
+
 		MetasheetDispatcher.dispatch({
 			actionType: 'CUBE_REQUESTLEVELS',
 			dimension: dimension,
@@ -389,8 +390,8 @@ var modelActions = {
 		})
 
 		return webUtils.ajax({
-			method: 'GET', 
-			url: url, 
+			method: 'GET',
+			url: url,
 			json: null,
 			header: {
 				'Range-Unit': 'items',
@@ -425,7 +426,7 @@ var modelActions = {
 			var column = view.data.columns[s.attribute]
 			return 'a' + column.attribute_id + (column.descending ? '.desc' : '.asc')
 		}).join(',');
-		
+
 		var filter = [];
 		var makeFilterStr = function (agg, dimension, pos, invert) {
 			var obj = store.getLevel(dimension, pos)
@@ -438,18 +439,18 @@ var modelActions = {
 		}
 
 		if (!shouldFetch) return;
-		
+
 		// the current filter only uses the highest-level aggregator
 		// going deeper would require "or" conditions in the request or multiple requests
 		if (view.row_aggregates.length) {
 			makeFilterStr(view.row_aggregates[0], 'row', offset.row, false)
-			makeFilterStr(view.row_aggregates[0], 'row', offset.row + WINDOW_ROWS, true)	
+			makeFilterStr(view.row_aggregates[0], 'row', offset.row + WINDOW_ROWS, true)
 		}
 		if (view.column_aggregates.length) {
 			makeFilterStr(view.column_aggregates[0], 'column', offset.column, false)
 			makeFilterStr(view.column_aggregates[0], 'column', offset.column + WINDOW_COLS, true)
 		}
-		
+
 		url += '?' + filter.concat(sort || []).join('&')
 
 		var header = {
@@ -464,8 +465,8 @@ var modelActions = {
 		});
 
 		return webUtils.ajax({
-			method: 'GET', 
-			url: url, 
+			method: 'GET',
+			url: url,
 			json: null,
 			header: header
 		}).then(function (results) {
@@ -487,7 +488,7 @@ var modelActions = {
 		obj._destroy = false;
 
 		if (!obj[pk] && !obj.cid) obj.cid = 'c' + getGuid()
-		
+
 		MetasheetDispatcher.dispatch(Object.assign({
 			data: obj,
 			isTemporary: !persist,
@@ -508,7 +509,7 @@ var modelActions = {
 	destroy: function (subject, persist, obj, extras) {
 		obj._dirty = true;
 		obj._destroy = true;
-		
+
 		MetasheetDispatcher.dispatch(Object.assign({
 			data: obj,
 			isTemporary: !persist,
@@ -542,29 +543,48 @@ var modelActions = {
 		});
 	},
 
-	// models
-	fetchModels: function (workspace_id) {
-		var url = BASE_URL + '/model?workspace_id=eq.' + workspace_id;
+	fetchWorkspace: function () {
+		var url = BASE_URL + '/workspace?workspace_id=eq.' + workspace_id;
 
 		return webUtils.ajax({
-			method: 'GET', 
-			url: url, 
+			method: 'GET',
+			url: url,
 			json: null
 		}).then(function (result) {
 			return MetasheetDispatcher.dispatch({
-				actionType: 'MODEL_CREATE',
+				actionType: 'WORKSPACE_CREATE',
 				isClean: true,
 				data: result.data
 			})
 		})
 	},
 
+	// models
+	fetchModels: function (workspace_id) {
+		var url = BASE_URL + '/model?workspace_id=eq.' + workspace_id;
+
+		return webUtils.ajax({
+			method: 'GET',
+			url: url,
+			json: null
+		}).then(function (result) {
+			const action = {
+				actionType: 'MODEL_CREATE',
+				type: 'MODEL_RECEIVE',
+				isClean: true,
+				data: result.data
+			}
+			MetasheetDispatcher.dispatch(action)
+			reduxStore.dispatch(action);
+		})
+	},
+
 	fetchWorkspaces: function () {
 		var url = BASE_URL + '/workspace';
-		
+
 		return webUtils.ajax({
-			method: 'GET', 
-			url: url, 
+			method: 'GET',
+			url: url,
 			json: null
 		}).then(function (results) {
 
@@ -594,7 +614,7 @@ var modelActions = {
 	},
 
 	dropModel: function (model) {
-		
+
 	},
 
 	// keys
@@ -602,7 +622,7 @@ var modelActions = {
 	createKey: function(key) {
 		var keycomps = KeycompStore.query({key_id: key.key_id})
 		key.model_id = ModelStore.get(key.model_id).model_id
-		
+
 		MetasheetDispatcher.dispatch({
 			actionType: 'KEY_CREATE',
 			key: key

@@ -12,7 +12,7 @@ var palette = [
 	'rgb(77,179,113)',
 	'rgb(230,122,25)',
 	'rgb(179,77,77)',
-	 
+
 	'rgb(186,224,133)',
 	'rgb(240,233,117)',
 	'rgb(255, 192, 184)',
@@ -32,7 +32,7 @@ export default {
 	},
 
 	element: class BackgroundConfig extends Component {
-		
+
 		constructor (props) {
 			super(props)
 			const config = props.config
@@ -40,8 +40,8 @@ export default {
 				colorAttr: config.colorAttr,
 				colorConditionAttr: config.colorConditionAttr,
 				colorConditional: !!config.colorConditionAttr,
-				chooser: !!config.colorAttr ? 'colorAttr' : !!config.color ? 
-						(_.contains(palette, config.color) ? 'palette' : 'custom') 
+				chooser: !!config.colorAttr ? 'colorAttr' : !!config.color ?
+						(_.contains(palette, config.color) ? 'palette' : 'custom')
 						: 'nocolor',
 				color: config.color,
 				adjustColor: !(this.props.config.adjustColor === false),
@@ -57,8 +57,8 @@ export default {
 			}
 			this.setState(patch)
 			commitColumnConfig(
-				this.props.view, 
-				this.props.config.column_id, 
+				this.props.view,
+				this.props.config.column_id,
 				patch)
 		}
 
@@ -80,9 +80,9 @@ export default {
 
 		chooseNone = () => {
 			this.commitChanges({
-				chooser: null, 
-				color: null, 
-				conditional: false, 
+				chooser: null,
+				color: null,
+				conditional: false,
 				colorAttr: null
 			})
 		}
@@ -120,7 +120,7 @@ export default {
 				</div>
 				<div key = "no-condition" className={"popdown-item selectable "}
 					onClick = {_this.chooseCondition.bind(_this, null)}>
-					<span className = {" icon icon-square  " + 
+					<span className = {" icon icon-square  " +
 							(!colorConditionAttr ?"icon-hilite":"icon-selectable")}/>
 					<span>No condition</span>
 				</div>
@@ -128,13 +128,13 @@ export default {
 				boolAttrs.map(function (attr) {
 					return <div key = {attr.attribute_id} className = "popdown-item selectable "
 						onClick = {_this.chooseCondition.bind(_this, attr.attribute_id)}>
-						<span className = {" icon icon-check-square  " + 
+						<span className = {" icon icon-check-square  " +
 							(colorConditionAttr === attr.attribute_id ? "icon-hilite":"icon-selectable")}/>
 						{attr.attribute}
 					</div>
 				})
 				}
-				
+
 			</div>
 		}
 
@@ -144,11 +144,11 @@ export default {
 			const {chooser} = this.state
 			var colorAttrs = AttributeStore.query({type: 'COLOR', model_id: view.model_id})
 			var customHeight = (this.state.chooser === 'custom' ? '80px' : '0');
-			
+
 
 			return <div key="color">
 
-				<div key = "color-divider " 
+				<div key = "color-divider "
 					className = 'popdown-item title'>
 					Cell color:
 				</div>
@@ -164,31 +164,30 @@ export default {
 					</div>
 				})
 				}
-				
+
 				<div className = "popdown-item selectable"
 					onClick = {_this.chooseNone}>
-					<span className = {"icon icon-3d-glasses " + 
+					<span className = {"icon icon-3d-glasses " +
 					(chooser === 'nocolor' ?"icon-hilite":"icon-selectable")}/>
 					No cell color
 				</div>
 
 				<div className = "popdown-item selectable "
 					onClick = {_this.choosePalette}>
-					<span className = {"icon icon-color-sampler " + 
+					<span className = {"icon icon-color-sampler " +
 					(chooser === 'palette'?"icon-hilite":"icon-selectable")}/>
 					Quick colors
 				</div>
 
 				{
-					chooser === 'palette' ? 
+					chooser === 'palette' ?
 					<div className = "popdown-item menu-row"> {
 						palette.map(function (color) {
-							console.log(color)
 							return <span className = "menu-choice" key = {color} style = {{background: color}}
 							onMouseDown = {_this.chooseFixedColor.bind(_this, color)}>
 								{
-									(color === _this.state.color) ? 
-									<span className = "icon icon-check icon--small" 
+									(color === _this.state.color) ?
+									<span className = "icon icon-check icon--small"
 									style = {{color: 'white', textAlign: 'right', lineHeight: '25px'}} /> : null
 								}
 							</span>;
@@ -199,15 +198,15 @@ export default {
 
 				<div className = "popdown-item selectable "
 					onClick = {_this.chooseCustom}>
-					<span className = {"icon icon-code " + 
+					<span className = {"icon icon-code " +
 					(chooser === 'custom'?"icon-hilite":"icon-selectable")}/>
 					Custom color
 				</div>
-				
-				
+
+
 				{
-				this.state.chooser === 'custom' ?	
-				<ColorPickerWidget  color = {this.state.color} height = {customHeight} 
+				this.state.chooser === 'custom' ?
+				<ColorPickerWidget  color = {this.state.color} height = {customHeight}
 					_chooseColor = {this.chooseFixedColor}/>
 				: null
 				}
@@ -223,7 +222,7 @@ export default {
 				</div>
 				: null
 				}
-				
+
 
 			</div>
 		}
