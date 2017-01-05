@@ -1,17 +1,15 @@
 import React, { Component, PropTypes } from 'react'
+import ReactDOM from "react-dom"
+
 import util from '../../util/util'
 import style from "./style.less"
-import * as ui from '../../util/uiHelpers'
 import _ from "underscore"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
-import constants from "../../constants/MetasheetConstants"
 
-// MIXINS
-import blurOnClickMixin from "../../blurOnClickMixin"
-import popdownClickmodMixin from '../../Views/Fields/popdownClickmodMixin'
 
 // CONSTANTS
 import viewTypes from "../../Views/viewTypes"
+import constants from "../../constants/MetasheetConstants"
 
 // STORES
 import ViewStore from "../../stores/ViewStore"
@@ -25,7 +23,7 @@ const HELP_HOVER_DEBOUNCE = 300
 export default class PopdownMenu extends Component {
 
 	static propTypes = {
-		
+
 		/*
 		 * name of the icon class
 		 */
@@ -34,36 +32,54 @@ export default class PopdownMenu extends Component {
 		/*
 		 * renders the contents of the actual menu
 		 */
-		menu: PropTypes.class
+		menu: PropTypes.element
 
 	}
 
 	constructor (props) {
 		super(props)
-		this._debounceSetHover = _.debounce(this.setHover, HELP_HOVER_DEBOUNCE)
+		// this._debounceSetHover = _.debounce(this.setHover, HELP_HOVER_DEBOUNCE)
+		this._debounceSetHover = this.setHover
 		this.state = {
 			open: false,
-			hover: false,
-			mouseover: false,
+			hover: false
 		}
 	}
 
-	componentWillUpdate = ui.blurListeners.bind(this)
+	componentWillUnmount = () => {
+		removeEventListener('keydown', this.handleKeyPress)
+		removeEventListener('click', this.handleClick)
+  }
 
-	handleBlur = ui.handleBlur.bind(this)
+  componentDidUpdate = (prevProps, prevState) => {
 
-	addListeners = ui.addListeners.bind(this)
+		if (!prevState.open && this.state.open) {
+			addEventListener('keydown', this.handleKeyPress)
+			addEventListener('click', this.handleClick)
+		}
 
-	removeListeners = ui.removeListeners.bind(this)
+		if (prevState.open && !this.state.open) {
+			removeEventListener('keydown', this.handleKeyPress)
+			removeEventListener('click', this.handleClick)
+		}
+	}
 
-	handleClick = ui.handleClick.bind(this)
+	handleClick = (e) => {
+		var el = ReactDOM.findDOMNode(this)
+		if (!util.isDescendant(el, e.target)) this.handleBlur()
+	}
 
-	handleBlur = ui.handleBlur.bind(this)
+	handleBlur = () => {
+		this.setState({open: false})
+	}
 
-	handleKeyPress = ui.handleBlurKeyPress.bind(this)
+	handleKeyPress = (e) => {
+		if (e.keyCode === constants.keycodes.ESC)
+			this.handleBlur()
+	}
 
 	handleOpenClick = (e) => {
-		this.setState({open: true})
+		this.setState({open: !this.state.open})
 	}
 
 	handleMouseDown = (e) => {
@@ -77,41 +93,60 @@ export default class PopdownMenu extends Component {
 	}
 
 	handleMouseOver = () => {
-		this._debounceSetHover(true)
-		this.setState({mouseover: true})
+		this._timer = setTimeout(this.setHover, 250)
 	}
 
 	handleMouseOut = () => {
-		this._debounceSetHover(false)
-		this.setState({mouseover: false})
+		clearTimeout(this._timer)
+		this.unsetHover()
 	}
 
-	setHover = (hover) => {
-		this.setState({hover: hover})
+	setHover = () => {
+		this.setState({hover: true})
+	}
+
+	unsetHover = () => {
+		this.setState({hover: false})
 	}
 
 	render = () => {
-		const {icon, menu} = this.props
+		const {icon, menu, title} = this.props
+		const {open, hover} = this.state
+		const showLabel = (hover && title && !open)
+		const labelStyle = {opacity: (showLabel ? "50%" : "0%")}
+		const popdownClass = "icon popdown " + icon +
+			(this.state.clicked ?
+				this.state.mouseover ? " popdown-clicked ":
+				" popdown-cancel ":"") +
+			(this.state.open ? " popdown-active" : "")
 
-		return  <ReactCSSTransitionGroup {...constants.transitions.fadeinout} style={{position: "relative"}}>
-			<span tabindex={this.props.tabIndex} className={"icon popdown " + icon +
-				(this.state.clicked? this.state.mouseover?" popdown-clicked ":" popdown-cancel ":"") + 
-				(this.state.open? " popdown-active":"")}
+		return <ReactCSSTransitionGroup {...constants.transitions.fadein}
+			style={{position: "relative"}}>
+			<span tabindex={this.props.tabIndex}
+				className={popdownClass}
 				onMouseOver={this.handleMouseOver}
 				onMouseOut={this.handleMouseOut}
 				onMouseDown={this.handleMouseDown}
 				onMouseUp={this.handleMouseUp}
-				onClick={this.handleOpenClick}/>
-			{this.state.hover && this.props.title && !this.state.open ? 
+				onClick={this.handleOpenClick}>
+				{
+				showLabel ?
 				<div className="popdown-label-box">
-					{this.props.title}
+					<span>{this.props.title}</span>
 					<span className="popdown-label-pointer"/>
 				</div>
 				: null
+				}
+			</span>
+			{
+			(open && menu) ?
+			React.createElement(menu, {
+				handleBlur: this.handleBlur ,
+				key: "menu",
+				...this.props
+			})
+			: null
 			}
-			{this.state.open && menu ? 
-				React.createElement(menu, Object.assign({handleBlur: this.handleBlur , key: "menu"}, this.props)) 
-				: null}
-			</ReactCSSTransitionGroup>
+		</ReactCSSTransitionGroup>
 	}
 }

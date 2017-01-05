@@ -43,13 +43,13 @@ export default class HeaderCell extends Component {
 	}
 
 	/*
-	 * 
+	 *
 	 */
 
 	_onChange = () => {this.forceUpdate()}
 
 	/*
-	 * add global mousemove and mouseup listeners when the drag begins and 
+	 * add global mousemove and mouseup listeners when the drag begins and
 	 * clean them up when it ends
 	 */
 
@@ -63,14 +63,14 @@ export default class HeaderCell extends Component {
 			addEventListener('mousemove', this.onMouseMove)
 			addEventListener('mouseup', this.onMouseUp)
 			this.props._setResizeColumn(config.column_id)
-		} 
+		}
 
 		else if ( (!this.state.dragging && prevState.dragging) ||
 					(!this.state.resizing && prevState.resizing)) {
 		   removeEventListener('mousemove', this.onMouseMove)
 		   removeEventListener('mouseup', this.onMouseUp)
 		   this.props._setResizeColumn(null)
-		   
+
 		}
 
 		if (!prevState.renaming && this.state.renaming) {
@@ -81,7 +81,7 @@ export default class HeaderCell extends Component {
 		/* move cursor to the end of the input upon edit */
 		if ((prevState.renaming && !this.state.renaming) ||
 			(prevState.context && !this.state.context)) {
-			
+
 			removeEventListener('keydown', this.handleKeyPress)
 			removeEventListener('click', this.handleClick)
 		}
@@ -99,7 +99,7 @@ export default class HeaderCell extends Component {
 		const type = fieldTypes[this.props.column.type];
 		const sortDir = this.props.sortDirection ? 'desc' : 'asc'
 
-		if (this.state.mouseover && !this.state.open && !this.state.renaming) 
+		if (this.state.mouseover && !this.state.open && !this.state.renaming)
 			return <span onClick = {this.handleContextMenu} key="menu-icon"
 			className={`column-decorator column-menu-icon clickable icon icon--small icon-chevron-down`}/>
 
@@ -109,7 +109,7 @@ export default class HeaderCell extends Component {
 	}
 
 	/*
-	 * 
+	 *
 	 */
 
 	onResizerMouseDown = (e) => {
@@ -136,7 +136,7 @@ export default class HeaderCell extends Component {
 
 	onMouseUp = (e) => {
    		const {view, column} = this.props
-		
+
 		const updated = update(view, {
 			data : {
 				columns: {
@@ -148,7 +148,7 @@ export default class HeaderCell extends Component {
 				}
 			}
 		})
-		
+
 		modelActionCreators.createView(updated, true)
 		this.setState({
 			resizing: false,
@@ -164,7 +164,7 @@ export default class HeaderCell extends Component {
 	 */
 
 	onMouseMove = (e) => {
-		
+
 		if (!this.state.resizing) {
 			throw new Error('onMouseMove event when no drag in place')
 		}
@@ -182,7 +182,7 @@ export default class HeaderCell extends Component {
 	}
 
 	/*
-	 * 
+	 *
 	 */
 
 	handleBlurRenamer = (revert) => {
@@ -203,12 +203,7 @@ export default class HeaderCell extends Component {
 		removeEventListener('mouseup', this.onMouseUp)
 	}
 
-	handleKeyPress = (e) => {
-		if (event.keyCode === constant.keycodes.ESC)
-			this.handleBlurRenamer(true)
-		if (event.keyCode === constant.keycodes.ENTER)
-			this.handleBlurRenamer(false)
-	}
+	
 
 	handleClick = (e) => {
 		this.handleBlurRenamer()
@@ -230,7 +225,7 @@ export default class HeaderCell extends Component {
 	}
 
 	/*
-	 * 
+	 *
 	 */
 
 	getCellStyle = () => {
@@ -250,7 +245,7 @@ export default class HeaderCell extends Component {
 	}
 
 	/*
-	 * 
+	 *
 	 */
 
 	renderResizer = () => {
@@ -269,7 +264,7 @@ export default class HeaderCell extends Component {
 	}
 
 	renderContext = () => {
-		if (this.state.context) return <ColumnContext 
+		if (this.state.context) return <ColumnContext
 			{...this.props} config={this.props.column}/>
 	}
 
@@ -277,7 +272,7 @@ export default class HeaderCell extends Component {
 	handleContextMenu = (e) => {
 		this.props._handleContextMenu(e)
 	}
-	 
+
 	render = () => {
 		const _this = this
 		const col = this.props.column
@@ -295,10 +290,10 @@ export default class HeaderCell extends Component {
 			onMouseEnter = {e => this.setState({mouseover: true})}
 			onMouseLeave = {e => this.setState({mouseover: false})}
 			className = "table-cell">
-			<span className = "table-cell-inner header-cell-inner draggable" 
+			<span className = "table-cell-inner header-cell-inner draggable"
 			style = {innerStyle}>
 				{this.state.renaming ?
-					<input className="table-cell-renamer" 
+					<input className="table-cell-renamer"
 						autofocus
 						ref="input"
 						value={this.state.name}

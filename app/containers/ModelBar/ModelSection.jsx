@@ -1,5 +1,6 @@
 // LIBS AND SUCH
 import React from "react"
+import {pure} from "recompose"
 import { Link } from "react-router"
 import _ from "underscore"
 
@@ -14,6 +15,7 @@ import ViewLink from "./ViewLink"
 import ModelContext from "./ModelContext"
 import ViewAddContext from "./ViewAddContext"
 import Dropdown from "../../components/Dropdown"
+import Renameable from "../../components/Renameable"
 
 // MIXINS
 import blurOnClickMixin from "../../blurOnClickMixin"
@@ -28,7 +30,7 @@ var ModelSection = React.createClass ({
 
 	componentWillMount: function () {
 		this._debounceSetMouseOver = _.debounce(this.setMouseOver, 150)
-	},	
+	},
 
 	componentWillReceiveProps: function (nextProps) {
 		if (!this.renaming) this.setState({name: nextProps.model.model})
@@ -78,7 +80,7 @@ var ModelSection = React.createClass ({
 	handleToggleExpand: function (e) {
 		const _this = this
 		this.setState({
-			expanded: !this.state.expanded, 
+			expanded: !this.state.expanded,
 			expanding: true
 		})
 		clearTimeout(this._overflowTimer)
@@ -88,7 +90,7 @@ var ModelSection = React.createClass ({
 
 	handleCommit: function (e) {
 		modelActionCreators.updateModel({
-			model_id: this.props.model.model_id, 
+			model_id: this.props.model.model_id,
 			model: this.state.name
 		})
 		this.setState({editing: false})
@@ -125,39 +127,40 @@ var ModelSection = React.createClass ({
 
 	// RENDER =================================================================
 
+	renderModelName: function () {
+		return this.state.editing ?
+			<input
+				className="renamer header-renamer"
+				autoFocus
+				ref="renamer"
+				value={this.state.name}
+				onChange={this.handleNameUpdate}
+				onMouseDown={util.clickTrap}
+				onBlur={this.commitChanges} />
+			:
+			<span onDoubleClick = {this.handleRename} className="ellipsis">
+				{this.state.name}
+			</span>
+	},
+
 	render: function () {
 		const _this = this
-		const {model, activeViews} = this.props
-		const modelId = model.model_id || model.cid
-		const workspaceId = model.workspace_id
-		const views = ViewStore.query({model_id: modelId})
-			.filter(v => _this.state.expanded || activeViews.includes(v))
+		const {history, model: {model: name, views: views, collapsed}} = this.props
+		const {focused} = this.state
 
-
-		const modelDisplay = this.state.editing ?
-			<input 
-				className="renamer header-renamer" 
-				autoFocus
-				ref="renamer" 
-				value={this.state.name} 
-				onChange={this.handleNameUpdate}
-				onMouseDown = {util.clickTrap}
-				onBlur={this.commitChanges} /> 
-			:
-			<span onDoubleClick = {this.handleRename} className="ellipsis">{this.state.name}</span>
-
-		return <div className="mdlbar-section " 
-		onFocus = {this.handleFocus}
-		onBlur = {this.handleBlur}
-		onMouseOver = {this.handleMouseOver}
-		onMouseOut = {this.handleMouseOut}
-		tabIndex={this.props.idx * 100}>
+		return <div className="mdlbar-section"
+			onFocus = {this.handleFocus}
+			onBlur = {this.handleBlur}
+			onMouseOver = {this.handleMouseOver}
+			onMouseOut = {this.handleMouseOut}
+			tabIndex={this.props.idx * 100}>
 
 			<div className="model-link" onClick={this.handleClickExpand}>
 				<span onClick={this.handleToggleExpand}
-					className={"section-expander " + (this.state.expanded ? "section-expander--open" : "")}/>
+					className={"section-expander " + (collapsed ? "" : "section-expander--open")}/>
 				<span className="link-label ellipsis">
-					{modelDisplay}
+					{this.renderModelName}
+					<Renameable value={name} commit={f=>null}/>
 				</span>
 
 				<span className="spacer"/>
@@ -171,21 +174,19 @@ var ModelSection = React.createClass ({
 						_parent = {this} direction = "left"/>
 				</span> : null}
 			</div>
-			<div 
-				style={{
-					maxHeight: views.length * 41, 
-					minHeight: views.length * 41, 
-					// opacity: this.state.expanded ? 1 : 0, 
-					overflow: this.state.expanding ? "hidden" : "visible"}} 
+			<div style={{
+					maxHeight: views.length * 40,
+					overflow: this.state.expanding ? "hidden" : "visible"
+				}}
 				className="model-view-list">
-			{
-			views.map(v => 
-				<ViewLink {..._this.props} key={v.view_id} view={v}/>
-			)
-			}
+
+			{views.map(v => <ViewLink
+				key={v.view_id}
+				view={v}
+				history={history}/>)}
 			</div>
 		</div>
 	}
 })
 
-export default ModelSection
+export default pure(ModelSection)

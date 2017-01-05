@@ -1,16 +1,31 @@
 import { createStore, combineReducers } from 'redux'
 import makeCRUDReducer from '../reducers/makeCRUDReducer'
+import recordReducer from "../reducers/recordReducer"
+import focusReducer from "../reducers/focusReducer"
+import cidReducer from "../reducers/cidReducer"
+import actionReducer from "../reducers/actionReducer"
+import sidebarReducer from "../reducers/sidebarReducer"
 
 const reducer = combineReducers({
-  model: makeCRUDReducer({name: 'model'}),
-  attribute: makeCRUDReducer({name: 'attribute'}),
-  key: makeCRUDReducer({name: 'key'}),
-  keycomp: makeCRUDReducer({name: 'keycomp'}),
-  view: makeCRUDReducer({name: 'view'})
+  actions: actionReducer,
+  data: combineReducers({
+    models: makeCRUDReducer({name: 'model'}),
+    attributes: makeCRUDReducer({name: 'attribute'}),
+    keys: makeCRUDReducer({name: 'key'}),
+    keycomps: makeCRUDReducer({name: 'keycomp'}),
+    views: makeCRUDReducer({name: 'view'}),
+    // record: recordReducer,
+  }),
+  session: combineReducers({
+    cidCounter: cidReducer,
+    focus: focusReducer,
+    sidebar: sidebarReducer
+  })
 })
 
 let store = createStore(reducer)
 
+// for debugging...
 window._globalReduxStore = store
 
 export default store

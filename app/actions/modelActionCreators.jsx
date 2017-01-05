@@ -36,7 +36,6 @@ var modelActions = {
 	// ========================================================================
 
 	createNotification: function (notification) {
-		console.log(notification)
 		notification.actionType = 'NOTIFY';
 		MetasheetDispatcher.dispatch(notification);
 	},
@@ -559,27 +558,23 @@ var modelActions = {
 		})
 	},
 
-	// models
-	fetchModels: function (workspace_id) {
-		var url = BASE_URL + '/model?workspace_id=eq.' + workspace_id;
 
+	fetchWorkspace: function (workspace_id) {
+		const url = (`${BASE_URL}/workspace?workspace_id=eq.${workspace_id}`)
 		return webUtils.ajax({
 			method: 'GET',
 			url: url,
 			json: null
 		}).then(function (result) {
 			const action = {
-				actionType: 'MODEL_CREATE',
-				type: 'MODEL_RECEIVE',
-				isClean: true,
-				data: result.data
+				type: 'WORKSPACE_RECEIVE',
+				data: result.data[0]
 			}
-			MetasheetDispatcher.dispatch(action)
-			reduxStore.dispatch(action);
+			reduxStore.dispatch(action)
 		})
 	},
 
-	fetchWorkspaces: function () {
+	fetchWorkspaceList: function () {
 		var url = BASE_URL + '/workspace';
 
 		return webUtils.ajax({

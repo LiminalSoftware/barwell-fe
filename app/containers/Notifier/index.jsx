@@ -21,7 +21,7 @@ const PREVIEW_TIMEOUT = 5000;
 const Notifier = React.createClass({
 
 	// LIFECYCLE ==============================================================
-	
+
 	getInitialState: function () {
 		return {
 			mouseOver: false,
@@ -74,7 +74,7 @@ const Notifier = React.createClass({
 
 	getEvents: function () {
 		var cutoff = moment(Date.now()).subtract(CUTOFF, 'seconds')
-		var notifications = (this.state.mouseOver || this.state.showPreview) ? NotificationStore.query({}) : []; 
+		var notifications = (this.state.mouseOver || this.state.showPreview) ? NotificationStore.query({}) : [];
 		var transactions = TransactionStore.query({}).filter(txn => !txn.hiddenTxn);
 		transactions = transactions.slice(transactions.length - 5)
 		if (this.state.mouseOver) transactions
@@ -82,7 +82,7 @@ const Notifier = React.createClass({
 
 		let events = util.merge({attribute: 'timestamp', descending: true}, null, notifications, transactions)
 
-		
+
 
 		return events
 	},
@@ -91,41 +91,39 @@ const Notifier = React.createClass({
 
 	render: function() {
 		var _this = this;
-		
-		
+
+
 		const events = this.getEvents()
 		const style = {
-			cursor: 'pointer', 
-			position: "absolute", 
-			bottom: 120, 
+			cursor: 'pointer',
+			position: "absolute",
+			bottom: 120,
 			right: 20,
 			height: 0,
 			width: 300,
 		}
 
-		
-
-		return <ReactCSSTransitionGroup 
+		return <ReactCSSTransitionGroup
 			className = "notification-bar"
-			style = {style}
+			style={style}
 			{...constants.transitions.slideup}
-			component = "span"
-			onMouseOver = {this.handleMouseOver}
-			onMouseOut = {this.handleMouseOut}>
-			
+			component="span"
+			onMouseOver={this.handleMouseOver}
+			onMouseOut={this.handleMouseOut}>
+
 
 			{
 			events.map(function (note, idx) {
-				return <Note 
-					_handleMouseOver = {_this.handleMouseOver} 
-					key = {note.cid || note.notification_key || note.transaction_id} 
+				return <Note
+					_handleMouseOver = {_this.handleMouseOver}
+					key = {note.cid || note.notification_key || note.transaction_id}
 					model = {ModelStore.get(note.model_id)}
 					note = {note}
 					index = {idx} />;
 			})
 			}
-			
-		
+
+
 		</ReactCSSTransitionGroup>;
 	}
 })

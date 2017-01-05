@@ -1,7 +1,7 @@
 // LIBS AND SUCH
 import React from "react"
-import { Link, browserHistory } from "react-router"
-
+import {pure} from "recompose"
+import { Link } from "react-router"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 // STORES
@@ -13,6 +13,7 @@ import constants from '../../constants/MetasheetConstants'
 
 // COMPONENTS
 import ViewContext from "./ViewContext"
+import Renameable from "../../components/Renameable"
 
 // MIXINS
 import blurOnClickMixin from "../../blurOnClickMixin"
@@ -25,13 +26,6 @@ import util from "../../util/util"
 
 const ViewLink = React.createClass ({
 
-	shouldComponentUpdate: function (nextProps, nextState) {
-		return nextState !== this.state || 
-			nextProps.activeViews !== this.props.activeViews ||
-			nextProps.focusedViewId === this.props.view.view_id ||
-			this.props.focusedViewId === this.props.view.view_id
-	},
-
 	getInitialState: function () {
 		var view = this.props.view
 		return {
@@ -43,36 +37,10 @@ const ViewLink = React.createClass ({
 
 	// HANDLERS ===============================================================
 
-	handleShowContext: function (e) {
-		if (e) e.preventDefault()
-		this.refs.context.setState({open: true})
-	},
-
-	handleRename: function () {
-		this.setState({editing: true})
-	},
-
-	handleBlur: function () {
-		const {view} = this.props.view
-		this.setState({editing: false, name: view.view})
-	},
-
-	handleNameUpdate: function (e) {
-		this.setState({name: e.target.value})
-	},
 
 	handleDelete: function (e) {
 		const {view} = this.props
 		modelActionCreators.destroy("view", true, {view_id: view.view_id})
-	},
-	
-	handleCommit: function () {
-		var view = this.props.view
-		this.setState({editing: false})
-		if (view.view !== this.state.name) {
-			view.view = this.state.name		
-			modelActionCreators.create("view", true, view)
-		}
 	},
 
 	handleMouseOver: function () {
@@ -85,29 +53,31 @@ const ViewLink = React.createClass ({
 
 	handleClick: function (e) {
 		const _this = this
-		const {view, params} = this.props
+		const {view, active, focused, history} = this.props
 
 		e.preventDefault()
 
-		if (("which" in e && e.which === 3) || 
+
+
+		if (("which" in e && e.which === 3) ||
   		("button" in e && e.button === 2)) {
 			// right click don't do anything!
 
-  		} else if (e.shiftKey && !this.isActive()) {
-			const newViewIds = this.props.params.viewId
-				+ "," + (view.cid || view_id)
+  	} else if (e.shiftKey && !active) {
+			const newViewIds = view.view_id
 
-			this.props.history.push(`${this.getRootPath()}/view/${newViewIds}`)
 
-		} else if (e.shiftKey && this.isActive()) {
+			history.push(view.link)
+
+		} else if (e.shiftKey && active) {
 			const newViewIds = this.props.activeViews
 				.filter(v => v.view_id !== view.view_id)
 				.map(v => '' + (v.cid || v.view_id))
 				.join(",")
-				
-			this.props.history.push(`${this.getRootPath()}/view/${newViewIds}`)
+
+			history.push(`/workspace/${view.workspaceId}/view/${newViewIds}`)
 		} else {
-			this.props.history.push(`${this.getRootPath()}/view/${view.cid || view.view_id}`)
+			history.push(view.link)
 		}
 
 	},
@@ -123,50 +93,36 @@ const ViewLink = React.createClass ({
 	// RENDER =================================================================
 
 	render: function () {
-		const view = this.props.view
-		const active = this.isActive()
-		const {open} = this.state
-		const isFocused = view.view_id === this.props.focusedViewId
+		const {view, view: {active, focused}} = this.props
 
-		const viewDisplay = this.state.editing ?
-			<input 
-				className="renamer header-renamer" 
-				autoFocus
-				ref="renamer" 
-				value={this.state.name}
-				onChange={this.handleNameUpdate}
-				onMouseDown = {util.clickTrap}
-				onBlur={this.commitChanges} /> 
-			:
-			<span onDoubleClick = {this.handleRename} className="view-link-inner ellipsis ">
-				
-				{this.state.name}
-			</span>
+		// if (active || focused)
+			// console.log(view)
 
-		return <Link to = {`${this.getRootPath()}/view/${view.cid || view.view_id}`}
+		return <Link to = {view.link}
 			onContextMenu = {this.handleShowContext}
-			className = {`view-link view-link--${isFocused ? 
-				'focused' : active ? 'active' : 'inactive'}`}>
+			className = {`view-link view-link--${
+				focused ? 'focused' :
+				active ? 'active' :
+				'inactive'}`}>
 
 			<span className = {`icon ${viewTypes[view.type].icon}`} />
-			<span
-				className="ellipsis view-link-label"
+			<span className="ellipsis view-link-label"
 				onClick={this.handleClick}>
-					{viewDisplay}
+					<Renameable value={view.view} commit={f=>null}/>
 			</span>
 
 			<span className="spacer"/>
-		
+
 			<ViewContext {...this.props} ref="context"
-				style={{visibility: ((active || open) ? "visible" : "hidden")}}
+				style={{visibility: (active ? "visible" : "hidden")}}
 				_parent = {this} direction = "left" visible = {this.state.mouseover}/>
 
 			{active ?
-			<span className={`icon icon-arrow-right view-link-arrow${isFocused ? '-selected' : ''}`}/>
+			<span className={`icon icon-arrow-right view-link-arrow${focused ? '-selected' : ''}`}/>
 			:null}
 
 		</Link>
 	}
 })
 
-export default ViewLink
+export default pure(ViewLink)

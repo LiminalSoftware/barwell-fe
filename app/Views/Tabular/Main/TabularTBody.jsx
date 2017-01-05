@@ -17,9 +17,9 @@ var VISIBLE_ROWS = 50
 var MAX_ROWS = 50
 var SLOW_SKIP = 2
 var FAST_SKIP = 3
-var FASTER_SKIP = 3
+var FASTER_SKIP = 5
 var FAST_THRESHOLD = 10
-var FASTER_THRESHOLD = 25
+var FASTER_THRESHOLD = 15
 var CYCLE = 25
 var MIN_CYCLE = 15
 var BUFFER_SIZE = 10
@@ -68,11 +68,11 @@ var TabularTBody = React.createClass ({
 		var start = this.state.start
 		var end = this.state.end
 		var lag = Math.abs(target - start)
-		var skip = (lag >= FAST_THRESHOLD || !this.state.scrolling) ? 
+		var skip = (lag >= FAST_THRESHOLD || !this.state.scrolling) ?
 			(lag >= FASTER_THRESHOLD ? FASTER_SKIP : FAST_SKIP) : SLOW_SKIP
 		var startTarget = adjTarget
 		var endTarget = adjTarget + VISIBLE_ROWS
-		
+
 		// advance or retreat the begining of the range as appropriate
 
 		if (start > endTarget) {
@@ -82,9 +82,9 @@ var TabularTBody = React.createClass ({
 			end = startTarget + 2
 			start = startTarget
 		} else {
-			if (start > startTarget || start < startTarget) 
+			if (start > startTarget || start < startTarget)
 				start += util.magLimit(skip, startTarget - start);
-			if (end < endTarget || end > endTarget) 
+			if (end < endTarget || end > endTarget)
 				end += util.magLimit(skip, endTarget - end);
 		}
 
@@ -114,7 +114,7 @@ var TabularTBody = React.createClass ({
 	getNumberRows: function () {
 		return this.store.getRecordCount()
 	},
-	
+
 	getColumns: function () {
 		return this.props.columns
 	},
@@ -171,10 +171,10 @@ var TabularTBody = React.createClass ({
 				: null,
 			zIndex: 5
 		}
-		
+
 		return <div
 			className = {`tabular-body-${this.props.prefix} tabular-body wrapper`}
-			
+
 			onMouseDown = {this.props._handleClick}
 			onDoubleClick = {this.props._handleEdit}
 			onWheel = {this.props._handleWheel}

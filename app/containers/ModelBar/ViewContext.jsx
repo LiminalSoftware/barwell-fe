@@ -20,7 +20,7 @@ class ViewContextMenu extends Component {
 	handleOpenClick = () => {
 		this.setState({open: true})
 	}
-	
+
 	handleClickDelete = () => {
 		this.props._parent.handleDelete()
 		this.props._parent.handleBlur()
@@ -36,7 +36,6 @@ class ViewContextMenu extends Component {
 		modelActionCreators.destroy("view", true, {view_id: view.view_id})
 	}
 
-
 	render = () => {
 		const model = this.props.model
 
@@ -44,13 +43,13 @@ class ViewContextMenu extends Component {
 
 			<div className="popdown-pointer-outer"/>
 			<div className="popdown-pointer-inner"/>
-			
+
 			<div div className = "selectable popdown-item" onClick = {this.handleRename}>
 				<span className="icon icon-pencil"/>
 				Rename view
 			</div>
 			<div div className = "selectable popdown-item" onClick = {this.handleClickDelete}>
-				<span className="icon icon-trash2"/>	
+				<span className="icon icon-trash2"/>
 				Delete view
 			</div>
 		</div>
@@ -59,7 +58,7 @@ class ViewContextMenu extends Component {
 
 export default class ViewContext extends Component {
 	render () {
-		return <Dropdown 
+		return <Dropdown
 			title="configure view"
 			menu={ViewContextMenu}
 			_parent = {this.props._parent}
