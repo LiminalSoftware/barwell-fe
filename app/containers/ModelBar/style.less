@@ -67,6 +67,9 @@
 }
 
 .section-expander {
+	position: absolute;
+	left: 0;
+	top: 4px;
 	padding: 0;
 	margin: 2px;
 	max-width: 0;
@@ -80,8 +83,8 @@
 }
 
 .section-expander--open {
-	margin-top: 6px;
 	transform: rotate(90deg);
+	top: 8px !important;
 }
 
 .model-link, .view-link, .special-link {
@@ -103,7 +106,9 @@
 	border: 1px solid transparent;
 
 	transition: all cubic-bezier(.16,.85,.5,1) 200ms;
+}
 
+.special-link, .view-link {
 	&:hover {
 		background: @gray4;
 		.view-link-inner {
@@ -152,6 +157,7 @@
 
 .model-link {
 	font-family: @headerFont;
+	padding-left: 25px;
 }
 
 .model-link--open {
@@ -210,18 +216,7 @@
 	width: auto;
 }
 
-.renamer {
-	display: block;
-	font-size: inherit;
-	.msInput;
-	-webkit-user-drag: none;
-	background: @table-fade-bg;
 
-	padding: 2px;
-}
-.header-renamer {
-	font-size: @headerFontSize !important;
-}
 
 .model-view-list {
 	transition: all linear 100ms;

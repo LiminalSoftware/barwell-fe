@@ -3,8 +3,9 @@ import ReactDOM from "react-dom"
 
 import _ from "underscore"
 import util from "../../util/util"
-import constants from "../../constants/MetasheetConstants"
+import {keycodes} from "../../constants/MetasheetConstants"
 
+import styles from "./styles.less"
 
 export default class Renameable extends Component {
 
@@ -37,21 +38,26 @@ export default class Renameable extends Component {
 
   componentWillUnmount = () => {
 		removeEventListener('keydown', this.handleKeyPress)
-		removeEventListener('click', this.handleClick)
+		removeEventListener('mousedown', this.handleClick)
   }
 
   componentDidUpdate = (prevProps, prevState) => {
 
 		if (!prevState.editing && this.state.editing) {
 			addEventListener('keydown', this.handleKeyPress)
-			addEventListener('click', this.handleClick)
+			addEventListener('mousedown', this.handleClick)
 		}
 
 		if (prevState.editing && !this.state.editing) {
 			removeEventListener('keydown', this.handleKeyPress)
-			removeEventListener('click', this.handleClick)
+			removeEventListener('mousedown', this.handleClick)
 		}
 	}
+
+  componentWillReceiveProps = ({value: newValue}) => {
+    const {editing} = this.state
+    if (!editing) this.setState({value: newValue})
+  }
 
   handleEdit = (e) => {
     console.log('handleEdit')
@@ -68,26 +74,33 @@ export default class Renameable extends Component {
   }
 
   handleCommit = () => {
-    this.props.commit(this.state.value)
+    const {commit} = this.props
+    const {value} = this.state
+
+    commit(value)
+    this.setState({editing: false})
   }
 
   handleKeyPress = (e) => {
-		if (e.keyCode === constants.keycodes.ESC)
-			this.handleBlurRenamer(e)
-		if (e.keyCode === constants.keycodes.ENTER)
-			this.handleBlurRenamer(e)
+		if (e.keyCode === keycodes.ESC)
+			this.handleBlur(e)
+		if (e.keyCode === keycodes.ENTER)
+			this.handleBlur(e)
 	}
 
   handleClick = (e) => {
-    const renamer = ReactDOM.findDOMNode(this.refs.renamer)
-    if (e.target !== renamer) handleBlur(e)
+    var el = ReactDOM.findDOMNode(this)
+		if (!util.isDescendant(el, e.target)) this.handleBlur(e)
   }
 
   handleBlur = (e) => {
-		if (e.keyCode === constants.keycodes.ESC) {
-      this.setState({value: this.props.value})
+		if (e.keyCode === keycodes.ESC) this.setState({
+        value: this.props.value,
+        editing: false
+    })
+    else {
+      this.handleCommit()
     }
-    else this.handleCommit()
 	}
 
 	render = () => {

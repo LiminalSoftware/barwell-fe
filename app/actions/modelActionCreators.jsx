@@ -31,8 +31,36 @@ var _actionCid = 0;
 
 var modelActions = {
 
+
 	// ========================================================================
-	// == NON-TRANSACTIONAL EVENTS
+	// == REDUX REFACTOR ACTIONS
+	// ========================================================================
+
+	sidebarToggleCollapseModel: (modelId) => {
+			return {
+				type: 'SIDEBAR_TOGGLE_COLLAPSE_MODEL',
+				model_id: modelId
+			}
+	},
+
+	renameView: (viewId, name) => {
+			return {
+				type: 'VIEW_RENAME',
+				view_id: viewId,
+				view: name
+			}
+	},
+
+	renameModel: (modelId, name) => {
+			return {
+				type: 'MODEL_RENAME',
+				model_id: modelId,
+				model: name
+			}
+	},
+
+	// ========================================================================
+	// == OLD ACTIONS
 	// ========================================================================
 
 	createNotification: function (notification) {

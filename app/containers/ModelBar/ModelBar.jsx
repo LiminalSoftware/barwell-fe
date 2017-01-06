@@ -91,7 +91,7 @@ class ModelBar extends Component {
 
 	render = () => {
 		const _this = this
-    const {modelList, history} = this.props
+    const {modelList, history, onExpandClick} = this.props
 		const style = {minWidth: 300, maxWidth: 300}
 
 		return <div className="mdlbar" onClick = {this.focus} style={style}>
@@ -119,8 +119,8 @@ class ModelBar extends Component {
 				</div>
 
 				{modelList.map((mdl, idx) => <ModelSection
-					_calibrate = {_this._debounceCalibrate}
-					history = {history}
+					{..._this.props}
+					calibrate = {_this._debounceCalibrate}
 					key = {mdl.model_id}
 					index = {idx}
 					model = {mdl}/>

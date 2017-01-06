@@ -57,18 +57,13 @@ const ViewLink = React.createClass ({
 
 		e.preventDefault()
 
-
-
 		if (("which" in e && e.which === 3) ||
   		("button" in e && e.button === 2)) {
 			// right click don't do anything!
 
   	} else if (e.shiftKey && !active) {
 			const newViewIds = view.view_id
-
-
 			history.push(view.link)
-
 		} else if (e.shiftKey && active) {
 			const newViewIds = this.props.activeViews
 				.filter(v => v.view_id !== view.view_id)
@@ -86,14 +81,11 @@ const ViewLink = React.createClass ({
 		return `/workspace/${this.props.params.workspaceId}`
 	},
 
-	isActive: function () {
-		return this.props.activeViews.map(v=>v.view_id).indexOf(this.props.view.view_id) >= 0
-	},
-
 	// RENDER =================================================================
 
 	render: function () {
-		const {view, view: {active, focused}} = this.props
+		const {view, renameView,
+			view: {active, focused, view_id: viewId, view: name}} = this.props
 
 		// if (active || focused)
 			// console.log(view)
@@ -108,7 +100,7 @@ const ViewLink = React.createClass ({
 			<span className = {`icon ${viewTypes[view.type].icon}`} />
 			<span className="ellipsis view-link-label"
 				onClick={this.handleClick}>
-					<Renameable value={view.view} commit={f=>null}/>
+					<Renameable value={name} commit={renameView.bind(null, viewId)}/>
 			</span>
 
 			<span className="spacer"/>

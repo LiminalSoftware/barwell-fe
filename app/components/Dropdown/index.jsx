@@ -48,19 +48,19 @@ export default class PopdownMenu extends Component {
 
 	componentWillUnmount = () => {
 		removeEventListener('keydown', this.handleKeyPress)
-		removeEventListener('click', this.handleClick)
+		removeEventListener('mousedown', this.handleClick)
   }
 
   componentDidUpdate = (prevProps, prevState) => {
 
 		if (!prevState.open && this.state.open) {
 			addEventListener('keydown', this.handleKeyPress)
-			addEventListener('click', this.handleClick)
+			addEventListener('mousedown', this.handleClick)
 		}
 
 		if (prevState.open && !this.state.open) {
 			removeEventListener('keydown', this.handleKeyPress)
-			removeEventListener('click', this.handleClick)
+			removeEventListener('mousedown', this.handleClick)
 		}
 	}
 
@@ -128,16 +128,16 @@ export default class PopdownMenu extends Component {
 				onMouseOut={this.handleMouseOut}
 				onMouseDown={this.handleMouseDown}
 				onMouseUp={this.handleMouseUp}
-				onClick={this.handleOpenClick}>
-				{
-				showLabel ?
-				<div className="popdown-label-box">
-					<span>{this.props.title}</span>
-					<span className="popdown-label-pointer"/>
-				</div>
-				: null
-				}
-			</span>
+				onClick={this.handleOpenClick}/>
+			{
+			showLabel ?
+			<div className="popdown-label-box">
+				<span>{this.props.title}</span>
+				<span className="popdown-label-pointer"/>
+			</div>
+			: null
+			}
+
 			{
 			(open && menu) ?
 			React.createElement(menu, {

@@ -1,5 +1,10 @@
 import { connect } from 'react-redux'
 import ModelBar from './ModelBar'
+import {
+	sidebarToggleCollapseModel,
+	renameView,
+	renameModel
+} from "../../actions/modelActionCreators"
 import _ from 'underscore'
 
 const mapStateToProps = (state, ownProps) => {
@@ -11,8 +16,7 @@ const mapStateToProps = (state, ownProps) => {
 		},
 		data: {models, views}
 	} = state
-	console.log('b')
-	const focusedViewId = parseInt((focus.match(/^v(\d+)/) || [])[1])
+	const focusedViewId = "" + ((focus.match(/^v(\d+)/) || [])[1])
 	const modelList = [
 		// first extract the models in order from our modelOrder array
 		...modelOrder,
@@ -22,7 +26,7 @@ const mapStateToProps = (state, ownProps) => {
 		Object.assign({},
 			models.byKey[modelId],
 			{
-			collapsed: modelId in collapsedModels,
+			collapsed: !!(collapsedModels[modelId]),
 			views: [
 				// similarly, get the views that have an order defined
 				// ...(viewsByModel[modelId] || []),
@@ -30,7 +34,7 @@ const mapStateToProps = (state, ownProps) => {
 				...(_.values(views.byKey)
 					.filter(v => v.model_id === parseInt(modelId))
 					.map(v => Object.assign({}, v, {
-						active: activeViewIds.map(parseInt).includes(v.view_id),
+						active: activeViewIds.includes("" + v.view_id),
 						focused: v.view_id === focusedViewId,
 						link: `/workspace/${workspaceId}/view/${v.view_id}`
 					})))
@@ -41,9 +45,15 @@ const mapStateToProps = (state, ownProps) => {
 	return {modelList, focus}
 }
 
+const mapDispatchToProps = {
+  onExpandClick: sidebarToggleCollapseModel,
+	renameView: renameView,
+	renameModel: renameModel
+}
+
 const ConnectedModelBar = connect(
   mapStateToProps,
-  _.noop()
+  mapDispatchToProps
 )(ModelBar)
 
 export default ConnectedModelBar

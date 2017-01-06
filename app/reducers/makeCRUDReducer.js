@@ -10,7 +10,9 @@ const DELIMITER = '\u2661'
 export default ({
   name,
   key=(name + '_id').toLowerCase(),
-  indexes=[]
+  nameField=name,
+  indexes=[],
+  addlReducers={}
 }) => {
   name = name.toUpperCase()
 
@@ -61,15 +63,24 @@ export default ({
     })
   }
 
-  const actionTypeReducers = {
-    ['WORKSPACE_RECEIVE']: receiveReducer,
-    [name + '_CREATE']: createReducer,
-    [name + '_DESTROY']: deleteReducer,
+  const renameReducer = (state, action) => {
+    const existing = state.byKey[action[key]]
+    const patch = {
+      [key]: action[key],
+      [nameField]: action[nameField]
+    }
+    const renamed = Object.assign({}, existing, patch)
+    return createReducer(state, {data: renamed})
   }
 
-  return (state = initialState, action) => {
-    // console.log(action.type)
+  const actionTypeReducers = Object.assign({
+    ['WORKSPACE_RECEIVE']: receiveReducer,
+    [name + '_CREATE']: createReducer,
+    [name + '_RENAME']: renameReducer,
+    [name + '_DESTROY']: deleteReducer,
+  }, addlReducers)
 
+  return (state = initialState, action) => {
     const reducer = actionTypeReducers[action.type]
     if (reducer) return reducer (state, action)
     else return state

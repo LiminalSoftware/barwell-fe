@@ -1,11 +1,8 @@
 // LIBS AND SUCH
-import React from "react"
+import React, {Component} from "react"
 import {pure} from "recompose"
 import { Link } from "react-router"
 import _ from "underscore"
-
-// STORES
-import ViewStore from "../../stores/ViewStore"
 
 // CONSTANTS
 import viewTypes from '../../Views/viewTypes'
@@ -17,56 +14,59 @@ import ViewAddContext from "./ViewAddContext"
 import Dropdown from "../../components/Dropdown"
 import Renameable from "../../components/Renameable"
 
-// MIXINS
-import blurOnClickMixin from "../../blurOnClickMixin"
-
 // UTILS
 import util from "../../util/util"
 
-// ACTIONS
-import modelActionCreators from "../../actions/modelActionCreators"
+class ModelSection extends Component {
 
-var ModelSection = React.createClass ({
-
-	componentWillMount: function () {
-		this._debounceSetMouseOver = _.debounce(this.setMouseOver, 150)
-	},
-
-	componentWillReceiveProps: function (nextProps) {
-		if (!this.renaming) this.setState({name: nextProps.model.model})
-	},
-
-	getInitialState: function () {
-		return {
+	constructor (props) {
+		super(props)
+		this.state = {
 			editing: false,
 			expanding: false,
 			expanded: false,
-			name: this.props.model.model
 		}
-	},
+	}
 
-	componentDidUpdate: function (oldProps, oldState) {
+	componentWillMount = () => {
+		this._debounceSetMouseOver = _.debounce(this.setMouseOver, 150)
+	}
+
+	componentWillReceiveProps = (nextProps) => {
+		const isCollapsed = this.props.model.collapsed
+		const wasCollapsed = nextProps.model.collapsed
+		if (isCollapsed && !wasCollapsed) {
+			this.setState({expanding: true})
+			if (this._timer) clearTimeout(this._timer)
+			this._timer = setTimeout(this.setExpansionComplete, 200)
+		} else if (!isCollapsed && wasCollapsed) {
+			this.setState({expanding: true})
+			if (this._timer) clearTimeout(this._timer)
+			this._timer = setTimeout(this.setExpansionComplete, 200)
+		}
+	}
+
+	setExpansionComplete = () => {
+		this.setState({expanding: false})
+	}
+
+	componentDidUpdate = (oldProps, oldState) => {
 		if (oldState.expanded !== this.state.expanded)
-			this.props._calibrate()
-	},
-
-	revert: function () {
-		document.removeEventListener('keyup', this.handleKeyPress)
-		this.setState({editing: false})
-	},
+			this.props.calibrate()
+	}
 
 	// HANDLERS ===============================================================
 
-	handleRename: function () {
+	handleRename = () => {
 		var model = this.props.model;
 		if (this.state.renaming) return
 		this.setState({
 			editing: true,
 			name: model.model
 		})
-	},
+	}
 
-	handleClickExpand: function (e) {
+	handleClickExpand = (e) => {
 		const _this = this
 		if (this.state.expanded) return;
 		this.setState({
@@ -75,77 +75,30 @@ var ModelSection = React.createClass ({
 		})
 		clearTimeout(this._overflowTimer)
 		this._overflowTimer = setTimeout(f=>_this.setState({expanding: false}),200)
-	},
+	}
 
-	handleToggleExpand: function (e) {
-		const _this = this
-		this.setState({
-			expanded: !this.state.expanded,
-			expanding: true
-		})
-		clearTimeout(this._overflowTimer)
-		this._overflowTimer = setTimeout(f=>_this.setState({expanding: false}),200)
-		e.stopPropagation()
-	},
+	handleFocus = () => this.setState({focused: true})
 
-	handleCommit: function (e) {
-		modelActionCreators.updateModel({
-			model_id: this.props.model.model_id,
-			model: this.state.name
-		})
-		this.setState({editing: false})
-	},
+	handleBlur = () => this.setState({focused: false})
 
-	handleFocus: function () {
-		this.setState({focused: true})
-	},
+	setMouseOver = (toggle) => this.setState({mouseover: toggle})
 
-	handleBlur: function () {
-		this.setState({focused: false})
-	},
+	handleMouseOver = () =>	this._debounceSetMouseOver(true)
 
-	setMouseOver: function (toggle) {
-		this.setState({mouseover: toggle})
-	},
-
-	handleMouseOver: function () {
-		this._debounceSetMouseOver(true)
-	},
-
-	handleMouseOut: function () {
-		this._debounceSetMouseOver(false)
-	},
-
-	handleShowContext: function () {
-		this.setState({context: true})
-	},
-
-	handleNameUpdate: function (e) {
-		var name = e.target.value
-		this.setState({name: name})
-	},
+	handleMouseOut = () => this._debounceSetMouseOver(false)
 
 	// RENDER =================================================================
 
-	renderModelName: function () {
-		return this.state.editing ?
-			<input
-				className="renamer header-renamer"
-				autoFocus
-				ref="renamer"
-				value={this.state.name}
-				onChange={this.handleNameUpdate}
-				onMouseDown={util.clickTrap}
-				onBlur={this.commitChanges} />
-			:
-			<span onDoubleClick = {this.handleRename} className="ellipsis">
-				{this.state.name}
-			</span>
-	},
 
-	render: function () {
+	render = () => {
 		const _this = this
-		const {history, model: {model: name, views: views, collapsed}} = this.props
+		const {onExpandClick, history, renameModel, renameView,
+				model: {
+					model_id: modelId,
+					model: name,
+					views: views,
+					collapsed
+			}} = this.props
 		const {focused} = this.state
 
 		return <div className="mdlbar-section"
@@ -156,11 +109,10 @@ var ModelSection = React.createClass ({
 			tabIndex={this.props.idx * 100}>
 
 			<div className="model-link" onClick={this.handleClickExpand}>
-				<span onClick={this.handleToggleExpand}
+				<span onClick={() => onExpandClick(modelId)}
 					className={"section-expander " + (collapsed ? "" : "section-expander--open")}/>
 				<span className="link-label ellipsis">
-					{this.renderModelName}
-					<Renameable value={name} commit={f=>null}/>
+					<Renameable value={name} commit={renameModel.bind(null, modelId)}/>
 				</span>
 
 				<span className="spacer"/>
@@ -175,18 +127,20 @@ var ModelSection = React.createClass ({
 				</span> : null}
 			</div>
 			<div style={{
-					maxHeight: views.length * 40,
-					overflow: this.state.expanding ? "hidden" : "visible"
+					maxHeight: collapsed ? 0 : (views.length * 40),
+					overflow: (this.state.expanding || collapsed) ? "hidden" : "visible"
 				}}
 				className="model-view-list">
-
+			<div>
 			{views.map(v => <ViewLink
+				renameView={renameView}
 				key={v.view_id}
 				view={v}
 				history={history}/>)}
 			</div>
+			</div>
 		</div>
 	}
-})
+}
 
 export default pure(ModelSection)
