@@ -3,6 +3,7 @@ import ModelBar from './ModelBar'
 import {
 	sidebarToggleCollapseModel,
 	renameView,
+	deleteView,
 	renameModel
 } from "../../actions/modelActionCreators"
 import _ from 'underscore'
@@ -48,7 +49,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = {
   onExpandClick: sidebarToggleCollapseModel,
 	renameView: renameView,
-	renameModel: renameModel
+	renameModel: renameModel,
+	deleteView: deleteView,
 }
 
 const ConnectedModelBar = connect(

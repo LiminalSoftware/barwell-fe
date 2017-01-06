@@ -60,7 +60,6 @@ export default class Renameable extends Component {
   }
 
   handleEdit = (e) => {
-    console.log('handleEdit')
     this.setState({
       editing: true,
       value: this.props.value

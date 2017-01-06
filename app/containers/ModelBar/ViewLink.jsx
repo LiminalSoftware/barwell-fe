@@ -1,5 +1,5 @@
 // LIBS AND SUCH
-import React from "react"
+import React, {Component} from "react"
 import {pure} from "recompose"
 import { Link } from "react-router"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
@@ -9,14 +9,10 @@ import ViewStore from "../../stores/ViewStore"
 
 // CONSTANTS
 import viewTypes from '../../Views/viewTypes'
-import constants from '../../constants/MetasheetConstants'
 
 // COMPONENTS
 import ViewContext from "./ViewContext"
 import Renameable from "../../components/Renameable"
-
-// MIXINS
-import blurOnClickMixin from "../../blurOnClickMixin"
 
 // ACTIONS
 import modelActionCreators from "../../actions/modelActionCreators"
@@ -24,34 +20,37 @@ import modelActionCreators from "../../actions/modelActionCreators"
 // UTIL
 import util from "../../util/util"
 
-const ViewLink = React.createClass ({
+class ViewLink extends Component {
 
-	getInitialState: function () {
+	constructor (props) {
+		super(props)
 		var view = this.props.view
-		return {
-			editing: false,
-			name: view.view,
-			context: false
+		this.state = {
+			mouseover: false
 		}
-	},
+	}
 
 	// HANDLERS ===============================================================
 
 
-	handleDelete: function (e) {
+	handleDelete = (e) => {
 		const {view} = this.props
 		modelActionCreators.destroy("view", true, {view_id: view.view_id})
-	},
+	}
 
-	handleMouseOver: function () {
+	handleMouseOver = () => {
 		this.setState({mouseover: true})
-	},
+	}
 
-	handleMouseOut: function () {
+	handleMouseOut = () => {
 		this.setState({mouseover: false})
-	},
+	}
 
-	handleClick: function (e) {
+	handleRename = (e) => {
+		this.refs.renamer.handleEdit(e)
+	}
+
+	handleClick = (e) => {
 		const _this = this
 		const {view, active, focused, history} = this.props
 
@@ -75,15 +74,11 @@ const ViewLink = React.createClass ({
 			history.push(view.link)
 		}
 
-	},
-
-	getRootPath: function () {
-		return `/workspace/${this.props.params.workspaceId}`
-	},
+	}
 
 	// RENDER =================================================================
 
-	render: function () {
+	render = () => {
 		const {view, renameView,
 			view: {active, focused, view_id: viewId, view: name}} = this.props
 
@@ -100,7 +95,7 @@ const ViewLink = React.createClass ({
 			<span className = {`icon ${viewTypes[view.type].icon}`} />
 			<span className="ellipsis view-link-label"
 				onClick={this.handleClick}>
-					<Renameable value={name} commit={renameView.bind(null, viewId)}/>
+					<Renameable ref = "renamer" value={name} commit={renameView.bind(null, viewId)}/>
 			</span>
 
 			<span className="spacer"/>
@@ -115,6 +110,6 @@ const ViewLink = React.createClass ({
 
 		</Link>
 	}
-})
+}
 
 export default pure(ViewLink)

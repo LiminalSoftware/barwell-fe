@@ -50,20 +50,9 @@ class ModelSection extends Component {
 		this.setState({expanding: false})
 	}
 
-	componentDidUpdate = (oldProps, oldState) => {
-		if (oldState.expanded !== this.state.expanded)
-			this.props.calibrate()
-	}
-
-	// HANDLERS ===============================================================
-
-	handleRename = () => {
-		var model = this.props.model;
-		if (this.state.renaming) return
-		this.setState({
-			editing: true,
-			name: model.model
-		})
+	componentDidUpdate = ({model: {collapsed: wasCollapsed}}) => {
+		const {calibrate, model: {collpased: isCollapsed}} = this.props
+		if (isCollapsed !== wasCollapsed) calibrate()
 	}
 
 	handleClickExpand = (e) => {
@@ -86,10 +75,7 @@ class ModelSection extends Component {
 	handleMouseOver = () =>	this._debounceSetMouseOver(true)
 
 	handleMouseOut = () => this._debounceSetMouseOver(false)
-
-	// RENDER =================================================================
-
-
+	
 	render = () => {
 		const _this = this
 		const {onExpandClick, history, renameModel, renameView,

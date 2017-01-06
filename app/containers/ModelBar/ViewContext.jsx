@@ -22,18 +22,11 @@ class ViewContextMenu extends Component {
 	}
 
 	handleClickDelete = () => {
-		this.props._parent.handleDelete()
-		this.props._parent.handleBlur()
+		
 	}
 
 	handleRename = () => {
 		this.props._parent.handleRename()
-		this.props._parent.handleBlur()
-	}
-
-	handleDelete = () => {
-		const {view} = this.props
-		modelActionCreators.destroy("view", true, {view_id: view.view_id})
 	}
 
 	render = () => {

@@ -37,26 +37,33 @@ var modelActions = {
 	// ========================================================================
 
 	sidebarToggleCollapseModel: (modelId) => {
-			return {
-				type: 'SIDEBAR_TOGGLE_COLLAPSE_MODEL',
-				model_id: modelId
-			}
+		return {
+			type: 'SIDEBAR_TOGGLE_COLLAPSE_MODEL',
+			model_id: modelId
+		}
 	},
 
 	renameView: (viewId, name) => {
-			return {
-				type: 'VIEW_RENAME',
-				view_id: viewId,
-				view: name
-			}
+		return {
+			type: 'VIEW_RENAME',
+			view_id: viewId,
+			view: name
+		}
 	},
 
 	renameModel: (modelId, name) => {
-			return {
-				type: 'MODEL_RENAME',
-				model_id: modelId,
-				model: name
-			}
+		return {
+			type: 'MODEL_RENAME',
+			model_id: modelId,
+			model: name
+		}
+	},
+
+	deleteView: (viewId) => {
+		return {
+			type: 'VIEW_DESTROY',
+			view_id: viewId
+		}
 	},
 
 	// ========================================================================
