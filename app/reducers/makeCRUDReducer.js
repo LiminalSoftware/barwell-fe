@@ -39,21 +39,24 @@ export default ({
        byKey: _.omit(state.byKey, deleteKeys)
      })
    }
+
    const receiveReducer = (state, action) => ({
      deleted: state.deleted,
      byKey: _.indexBy(action.data[(name + 's').toLowerCase()], key),
-    // indexes: Object.assign.apply(null, [{}, ...indexes.map(idx => {
-    //     // the key should be sorted
-    //     const indexKey = idx.components.sort()
-    //     // a string version of the index will serve as object key
-    //     const indexKeyStr = indexKey.join(DELIMITER)
-    //     // return the index; indices will be consolidated by obj.assign
-    //     return {[indexKeyStr]: _.indexBy(
-    //       action.data,
-    //       // extract the keys in order and join them with a special delimiter
-    //       obj => indexKey.map(k => obj[k]).join(DELIMITER)
-    //     )};
-    //   })]
+     indexes: Object.assign.apply(null, [ {},
+       ...Object.keys(indexes).map(idx => {
+         const options = indexes[idx]
+         // the key should be sorted
+         const indexKey = idx.split(',').sort()
+         // a string version of the index will serve as object key
+         const indexKeyStr = indexKey.join(DELIMITER)
+         // return the index; indices will be consolidated by obj.assign
+         return {[indexKeyStr]: _.indexBy(
+           action.data,
+           // extract the keys in order and join them with a special delimiter
+           obj => indexKey.map(k => obj[k]).join(DELIMITER)
+         )};
+    })] )
   })
   const createReducer = (state, action) => {
     const updates = action.data instanceof Array ? action.data : [action.data]
