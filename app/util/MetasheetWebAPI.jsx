@@ -1,38 +1,44 @@
 import modelActionCreators from '../actions/modelActionCreators';
-import MetasheetDispatcher from "../dispatcher/MetasheetDispatcher"
 import $ from "jquery";
 import _ from 'underscore'
-import util from './util'
 
 var Promise = require('es6-promise').Promise;
-
-const MAX_RETRIES = 2
-const INITIAL_WAIT = 25
-const BASE_URL = 'https://api.metasheet.io'
-
-
-// FIFO stack of actions that may have failed to persist
-let persistBacklog = []
-let retryDelay = 25
 
 $.ajaxSetup({
     headers: {"Prefer": 'return=representation'}
 });
 
-const backlogRetry = function () {
-  const params = persistBacklog.shift()
-  ajax(params)
+var MAX_RETRIES = 5
+var INITIAL_WAIT = 100
+
+var stripInternalVars = module.exports.stripInternalVars = function (obj) {
+  var newObj = {}
+  Object.keys(obj).forEach(function (key) {
+    if (key.slice(0,1) !== '_') newObj[key] = obj[key];
+  });
+  return newObj;
+}
+
+var wait = module.exports.wait = function () {
+  return new Promise (function (resolve, reject) {
+    window.setTimeout(resolve, 0);
+  })
 }
 
 
-var ajax = module.exports.ajax = function (_params) {
-  const {method, url, json, headers} = _params
-  console.log(method + '->' + url);
-  console.log(JSON.parse(json));
-  
-  return util.wait(1).then(function () {
-    return new Promise(function (resolve, reject) {
-    var settings = {
+var ajax = module.exports.ajax  = function ({method, url, json, retry, headers}) {
+  return wait().then(function () {
+    return ajaxActual(method, url, json, retry, headers)
+  })
+}
+
+var ajaxActual = function (method, url, json, retry, headers) {
+  console.log(method + '->' + url)
+  console.log(JSON.parse(json))
+
+  retry = retry || 1;
+  return new Promise(function (resolve, reject) {
+    var params = {
       type: method,
       url: url,
       beforeSend: function (xhr) {
@@ -41,39 +47,35 @@ var ajax = module.exports.ajax = function (_params) {
         })
       },
       success: function (data, status, xhr) {
-        retryDelay = INITIAL_WAIT
+        console.log('ajax success')
         resolve({
           data: data,
           status: status,
           xhr: xhr
         })
-        modelActionCreators.clearNotification({notification_key: 'connectivity'});
       },
       error: function (xhr, error, status) {
-        const {readyState, status: xhrStatus, statusText: xhrStatusText} = xhr
-        console.log('===========')
-        console.log(xhr)
-        console.log('===========')
-
-        if (xhrStatusText === 'error') {
-          console.log('connectivity error')
-
-          modelActionCreators.updateNotification({
-            notification_key: 'connectivity',
-            icon: 'icon-warning',
-            narrative: 'Server is temporarily unavailable'});
-          
-          persistBacklog.push(_params)
-          retryDelay *= 2
-          setTimeout(backlogRetry, retryDelay)
+        if (error === 'timeout') {
+          if (retry++ >= MAX_RETRIES) return
+          console.log('timeout, trying again: ' + retry)
+          $.ajax(this);
+        } else {
+          console.log('xhr: '+ JSON.stringify(xhr, null, 2));
+          reject(status)
         }
       }
     };
     if (json) {
-      settings.data = json
-      settings.contentType = 'application/json'
+      params.data = json
+      params.contentType = 'application/json'
     }
-    $.ajax(settings)
+    $.ajax(params)
   })
+}
+
+var issueReceipt = function (subject, obj) {
+  store.dispatch({
+    type: subject.toUpperCase() + '_RECEIVE',
+    [subject]: obj
   })
 }

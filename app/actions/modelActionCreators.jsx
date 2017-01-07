@@ -10,10 +10,7 @@ import getGuid from '../stores/getGuid'
 
 import AttributeStore from '../stores/AttributeStore'
 import ModelStore from '../stores/ModelStore'
-import ViewConfigStore from '../stores/ViewConfigStore'
 import RelationStore from '../stores/RelationStore'
-import TransactionStore from '../stores/TransactionStore'
-import transactionObserver from './transactionObserver'
 
 
 import pluralize from 'pluralize'
@@ -585,7 +582,8 @@ var modelActions = {
 			url: url,
 			json: null
 		}).then(function (result) {
-			return MetasheetDispatcher.dispatch({
+			console.log('a')
+			return reduxStore.dispatch({
 				actionType: 'WORKSPACE_CREATE',
 				isClean: true,
 				data: result.data
@@ -595,7 +593,7 @@ var modelActions = {
 
 
 	fetchWorkspace: function (workspace_id) {
-		const url = (`${BASE_URL}/workspace?workspace_id=eq.${workspace_id}`)
+		const url = BASE_URL + '/workspace?workspace_id=eq.' + workspace_id;
 		return webUtils.ajax({
 			method: 'GET',
 			url: url,

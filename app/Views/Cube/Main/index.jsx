@@ -17,7 +17,7 @@ import AttributeStore from "../../../stores/AttributeStore"
 import FocusStore from "../../../stores/FocusStore"
 
 import ViewConfigStore from "../../../stores/ViewConfigStore"
-import storeFactory from 'flux-store-factory';
+
 import dispatcher from "../../../dispatcher/MetasheetDispatcher"
 
 import createCubeStore from '../CubeStore'

@@ -12,7 +12,7 @@ import modelActionCreators from "../../../actions/modelActionCreators.jsx"
 import util from "../../../util/util"
 import copyTextToClipboard from "../../../util/copyTextToClipboard"
 
-import storeFactory from 'flux-store-factory';
+
 import dispatcher from "../../../dispatcher/MetasheetDispatcher"
 import createTabularStore from '../TabularStore'
 

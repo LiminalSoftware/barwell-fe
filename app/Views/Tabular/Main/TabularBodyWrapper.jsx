@@ -9,7 +9,6 @@ import cidLookup from "../../../actions/cidLookup"
 import constants from "../../../constants/MetasheetConstants"
 import ViewStore from "../../../stores/ViewStore"
 
-import storeFactory from 'flux-store-factory';
 import dispatcher from "../../../dispatcher/MetasheetDispatcher"
 import createTabularStore from '../TabularStore'
 import Overlay from './Overlay'
@@ -17,7 +16,6 @@ import Overlay from './Overlay'
 import util from "../../../util/util"
 
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
 
 const nav = window.navigator
 const userAgent = nav.userAgent
@@ -31,13 +29,12 @@ const MAX_ROWS = 500
 const RHS_PADDING = 100
 const CYCLE = 60
 
-
 import TabularTBody from "./TabularTBody"
 import TableHeader from "./TableHeader"
 import RowResizer from "./RowResizer"
 
 export default class TabularBodyWrapper extends Component {
-	
+
 	constructor (props) {
 		super(props)
 		var view = this.props.view
@@ -60,14 +57,14 @@ export default class TabularBodyWrapper extends Component {
 			dragOffset: 0
 		}
 	}
-	
+
 	componentWillMount = () => {
 		this.debounceFetch = _.debounce(this.fetch, FETCH_DEBOUNCE)
 	}
 
 	componentDidMount = () => {
 		var _this = this;
-		/* 
+		/*
 		 * Delay the fetch until the current dispatch is complete
 		 * (only relevant if the view is loaded directly from url)
 		 */
@@ -81,7 +78,7 @@ export default class TabularBodyWrapper extends Component {
 		const numFixed = fixedCols.length
 
 		if (nextProps.resizeColumn) this.setState({dragOffset: 0})
-		
+
 		this.debounceFetch((view.view_id !== nextProps.view.view_id), nextProps);
 	}
 
@@ -93,14 +90,14 @@ export default class TabularBodyWrapper extends Component {
 
 		var target = ((nextState ? nextState : this.state).rowOffset - (MAX_ROWS - WINDOW_ROWS) / 2)
 		var boundedTarget = util.limit(0, this.props.nRows - MAX_ROWS, target)
-		
+
 		var delta = Math.abs(offset - target)
 		var sorting = nextProps ? nextProps.view.data.sorting : view.data.sorting
 
 
 		if (view.view_id && ((force === true)
 			|| (delta > OFFSET_TOLERANCE && offset !== boundedTarget)
-			|| !_.isEqual(sorting, this.state.sorting) 
+			|| !_.isEqual(sorting, this.state.sorting)
 		)) {
 			console.log('FETCH RECORDS, start: ' + boundedTarget + ', end: ' + (boundedTarget + MAX_ROWS))
 
@@ -117,7 +114,7 @@ export default class TabularBodyWrapper extends Component {
 			// 	notification_key: 'loadingRecords',
 			// 	notificationTime: 0,
 			// });
-			
+
 			modelActionCreators.fetchRecords(
 				view,
 				boundedTarget,
@@ -131,7 +128,7 @@ export default class TabularBodyWrapper extends Component {
 					fetching: false
 				});
 				_this.forceUpdate()
-				
+
 				modelActionCreators.clearNotification({
 					notification_key: 'loadingRecords'
 				})
@@ -141,9 +138,9 @@ export default class TabularBodyWrapper extends Component {
 
 	shouldComponentUpdate = (newProps, nextState) => {
 		var oldProps = this.props
-		return oldProps.view !== newProps.view || 
+		return oldProps.view !== newProps.view ||
 		oldProps.resizeColumn !== newProps.resizeColumn ||
-		this.state.fetching !== nextState.fetching || 
+		this.state.fetching !== nextState.fetching ||
 		this.state.dragOffset !== nextState.dragOffset
 	}
 
@@ -156,9 +153,9 @@ export default class TabularBodyWrapper extends Component {
 		const rowHeight = Math.floor(geo.rowHeight)
 
 		var marginTop = -1 * rowOffset * rowHeight
-		
 
-		const resizeSide = view.data._fixedCols.some(col => col.column_id === resizeColumn) ? 'lhs' : 
+
+		const resizeSide = view.data._fixedCols.some(col => col.column_id === resizeColumn) ? 'lhs' :
 					view.data._floatCols.some(col => col.column_id === resizeColumn) ? 'rhs' : ''
 
 		var fixedWidth = view.data._fixedWidth + (resizeSide === 'lhs' ? dragOffset : 0)
@@ -171,11 +168,11 @@ export default class TabularBodyWrapper extends Component {
 
 		var fetchStart = fetchOffset
 		var fetchEnd = Math.min(fetchOffset + MAX_ROWS, rowCount)
-		
+
 		var tableProps = _.extend(_.clone(this.props), {
-			
+
 		})
-		
+
 		return <ReactCSSTransitionGroup {...constants.transitions.fadein} className="flush wrapper" ref="tbodyWrapper">
 			{!this.state.initialFetchComplete ?
 			<div className="flush loader-overlay" key="loader">
@@ -221,7 +218,7 @@ export default class TabularBodyWrapper extends Component {
 						left: 0,
 						top: 0,
 						height: (rowCount * rowHeight + 1),
-						
+
 						marginTop: HAS_3D ? 0 : (marginTop + 2 + 'px'),
 						transform: HAS_3D ? `translate3d(1, ${marginTop}px, 0)` : null,
 						transition: IS_CHROME && !resizeColumn && HAS_3D ? 'transform 100ms linear' : 'none',
@@ -231,7 +228,7 @@ export default class TabularBodyWrapper extends Component {
 						zIndex: 0
 					}}>
 
-				{resizeColumn ? null : 
+				{resizeColumn ? null :
 				<TabularTBody
 					{...this.props}
 					rowOffset = {rowOffset}
@@ -275,7 +272,7 @@ export default class TabularBodyWrapper extends Component {
 			{/*END LHS HEADER*/}
 			</div>
 			{/*END LHS OUTER*/}
-			
+
 
 
 			{/*RHS OUTER*/}
@@ -332,7 +329,7 @@ export default class TabularBodyWrapper extends Component {
 							fetchStart = {fetchStart}
 							fetchEnd = {fetchEnd}
 							width={view.data._floatWidth} />}
-					
+
 
 					</div>
 					<TableHeader {...this.props}
@@ -353,11 +350,11 @@ export default class TabularBodyWrapper extends Component {
 						dragOffset = {resizeSide === 'rhs' ? dragOffset : 0}
 						headerOrFooter="footer"
 						columns = {view.data._floatCols} />
-					
+
 				</div>
 
 			</div>
-			
+
 		</div>
 		}
 		</ReactCSSTransitionGroup>

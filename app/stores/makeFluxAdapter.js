@@ -52,6 +52,7 @@ const makeFluxAdapter = (name) => ({
       return state.data[name].byKey[key]
     },
     query: function (filterSpec, sortSpec) {
+      console.log('query - ' + name)
       const state = store.getState()
       const filterer = makeFilterFunc(filterSpec)
       const sorter = makeSortFunc(sortSpec)

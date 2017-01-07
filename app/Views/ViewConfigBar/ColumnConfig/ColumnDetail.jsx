@@ -14,9 +14,6 @@ import constants from "../../../constants/MetasheetConstants"
 
 import fieldTypes from "../../fields"
 import modelActionCreators from "../../../actions/modelActionCreators.jsx"
-import PureRenderMixin from 'react-addons-pure-render-mixin';
-import sortable from 'react-sortable-mixin'
-
 
 const itemSource = {
 	beginDrag(props) {
@@ -99,27 +96,27 @@ export default class ColumnDetail extends Component {
 	}
 
 	toggleHidden = () => {
-		
+
 	}
 
 	render () {
 		const {isDragging, index, connectDragSource, connectDropTarget} = this.props
 		const {view, item} = this.props
-		
+
 		const opacity = isDragging ? 0 : 1
 		const style = {position: "relative"}
 		const color = isDragging ? constants.colors.GRAY_3 : null
-		
+
 		return connectDragSource(connectDropTarget(
 			<div className="menu-item menu-sub-item menu-sub-item-draggable"
 			style={{opacity, color, ...style}}>
-				
+
 
 				<span ref = "grabber" className="draggable drag-grid"/>
 				<span className = "ellipsis" style={{marginRight: '10px'}}>
 					{item.name}
 				</span>
-				<span onClick={this.toggleHidden} 
+				<span onClick={this.toggleHidden}
 					className={`tight icon icon-eye${item.visible?'':'-crossed grayed'} half-column-config`}/>
 
 		</div>))

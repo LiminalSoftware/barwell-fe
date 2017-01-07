@@ -3,7 +3,7 @@ import fieldTypes from "../../../fields"
 import _ from "underscore"
 import modelActionCreators from "../../../../actions/modelActionCreators"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+
 
 
 import style from "./style.less"

@@ -8,7 +8,7 @@ import ViewStore from "../../../stores/ViewStore"
 import modelActionCreators from "../../../actions/modelActionCreators"
 import groomView from '../../groomView'
 
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+
 import ColumnMenu from '../../Tabular/InlineConfig/ColumnMenu'
 
 

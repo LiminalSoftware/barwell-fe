@@ -8,8 +8,6 @@ import ViewStore from "../../../stores/ViewStore"
 import modelActionCreators from "../../../actions/modelActionCreators"
 import util from "../../../util/util"
 
-import ReactPerf from "react-addons-perf"
-
 import TabularTR from './TabularTR'
 
 

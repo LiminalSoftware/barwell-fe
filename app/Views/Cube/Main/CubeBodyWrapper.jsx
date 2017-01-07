@@ -8,7 +8,7 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 import ViewStore from "../../../stores/ViewStore"
 import FocusStore from "../../../stores/FocusStore"
 
-import storeFactory from 'flux-store-factory';
+
 import dispatcher from "../../../dispatcher/MetasheetDispatcher"
 import createCubeStore from '../CubeStore'
 import Overlay from '../../Tabular/Main/Overlay'
@@ -19,7 +19,7 @@ import CubeTBody from './CubeTBody'
 
 import util from "../../../util/util"
 
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+
 import cubeFetchMixin from './cubeFetchMixin'
 
 const FETCH_DEBOUNCE = 1000

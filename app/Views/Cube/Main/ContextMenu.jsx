@@ -6,7 +6,7 @@ import modelActionCreators from "../../../actions/modelActionCreators"
 
 import PopDownMenu from "../../../components/PopDownMenu"
 
-import storeFactory from 'flux-store-factory';
+
 import dispatcher from "../../../dispatcher/MetasheetDispatcher"
 
 import constant from "../../../constants/MetasheetConstants"
@@ -75,7 +75,7 @@ var CubeContextMenu = React.createClass ({
 			</li>
 			:
 			<li onClick = {this.clickCopySelection} className = "selectable">
-				Copy selection 
+				Copy selection
 				<span className="key-shortcut">ctrl+c</span>
 			</li>
 			}
@@ -89,7 +89,7 @@ var CubeContextMenu = React.createClass ({
 				Insert new record
 				<span className="key-shortcut">ctrl+shift+plus</span>
 			</li>
-			: 
+			:
 			null
 			}
 		</PopDownMenu>
@@ -97,7 +97,7 @@ var CubeContextMenu = React.createClass ({
 })
 
 // <li onClick={this.clickCopySelection} className = "selectable">
-// 	Copy selection as JSON  
+// 	Copy selection as JSON
 // 	<span className="key-shortcut">ctrl+shift+c</span>
 // </li>
 

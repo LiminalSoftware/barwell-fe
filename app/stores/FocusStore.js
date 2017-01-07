@@ -1,41 +1,18 @@
-import assign from 'object-assign'
-import dispatcher from "../dispatcher/MetasheetDispatcher"
-// var EventEmitter = require('events').EventEmitter
-import EventEmitter from 'events'
+import store from "./reduxStore"
 
-let _focus = 'LOADING'
-let _focusDetail = null
-let _focusElement = null
-
-const FocusStore = assign({}, EventEmitter.prototype, {
-	addChangeListener: function(callback) {
-		this.on('CHANGE_EVENT', callback)
-	},
-
-	removeChangeListener: function(callback) {
-		this.removeListener('CHANGE_EVENT', callback)
-	},
-
-	getFocus: function () {
-		return _focus
-	},
-
-	getElement: function () {
-		return _focusElement
-	},
-
-	dispatchToken: dispatcher.register(function (payload) {
-		switch(payload.actionType) {
-			case 'SET_FOCUS':
-				if (_focus !== payload.focus) {
-					if ("handleBlur" in (_focusElement || {})) _focusElement.handleBlur()
-					_focus = payload.focus
-					_focusElement = payload.element
-					FocusStore.emit('CHANGE_EVENT');
-				}
-				break;
-		}
-	})
-})
+const FocusStore = {
+    addChangeListener: (f) => {
+      const unsubscribe = store.subscribe(f)
+      unsubscribeLkup[f] = unsubscribe
+      return unsubscribe
+    },
+    removeChangeListener: (f) => {
+      unsubscribeLkup[f]()
+    },
+    getFocus: function (key) {
+      const state = store.getState()
+      return state.session.focus
+    }
+}
 
 export default FocusStore

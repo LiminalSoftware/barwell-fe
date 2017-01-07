@@ -10,7 +10,6 @@ import ViewStore from "../../../stores/ViewStore"
 import RelationStore from "../../../stores/RelationStore"
 
 import choose from "../../../util/util"
-import storeFactory from 'flux-store-factory';
 import dispatcher from "../../../dispatcher/MetasheetDispatcher"
 
 import processUpdates from './processUpdates'
@@ -44,7 +43,7 @@ const createTabularStore = function (view) {
 		getClientId: function () {
 			return 'c' + (getGuid());
 		},
-		
+
 		emitChange: function () {
 			this.emit('CHANGE_EVENT');
 		},
@@ -80,7 +79,7 @@ const createTabularStore = function (view) {
 
 		getRange: function () {
 			return {
-				start: _state.startIndex, 
+				start: _state.startIndex,
 				end: _state.endIndex
 			}
 		},
@@ -125,7 +124,7 @@ const createTabularStore = function (view) {
 
 					if (action.view_id === _state.view_id)
 						_state = insertAt(_state, rec, action.index)
-					else 
+					else
 						_state = insertInOrder(_state, rec)
 
 					TabularStore.emitChange()
@@ -210,7 +209,7 @@ const createTabularStore = function (view) {
 					break;
 			}
 			// TabularStore.emitChange();
-			
+
 			// this is crazy, but for now, loop through all the relations and update related items
 			// RelationStore.query({model_id: view.model_id}).forEach(function (rel) {
 			//     var relLabel = 'm' + rel.related_model_id

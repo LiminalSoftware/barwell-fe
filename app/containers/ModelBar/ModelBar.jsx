@@ -10,14 +10,10 @@ import modelActionCreators from '../../actions/modelActionCreators'
 import MetasheetDispatcher from '../../dispatcher/MetasheetDispatcher'
 
 import ModelStore from "../../stores/ModelStore"
-import ModelConfigStore from "../../stores/ModelConfigStore";
 import ViewStore from "../../stores/ViewStore"
 import FocusStore from "../../stores/FocusStore"
 
 import MetasheetConst from '../../constants/MetasheetConstants'
-
-import PureRenderMixin from 'react-addons-pure-render-mixin';
-import blurOnClickMixin from '../../blurOnClickMixin'
 
 import viewTypes from '../../Views/viewTypes'
 import Notifier from '../Notifier'

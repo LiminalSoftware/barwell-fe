@@ -5,7 +5,6 @@ import styles from "./style.less";
 import modelActionCreators from "../../actions/modelActionCreators"
 import NotificationStore from "../../stores/NotificationStore"
 import ModelStore from '../../stores/ModelStore'
-import TransactionStore from "../../stores/TransactionStore"
 import util from '../../util/util'
 import PopDownMenu from '../../components/PopDownMenu'
 import constants from "../../constants/MetasheetConstants"
@@ -31,7 +30,6 @@ const Notifier = React.createClass({
 
 	componentWillMount: function () {
 		NotificationStore.addChangeListener(this._onChange);
-		TransactionStore.addChangeListener(this._onChange);
 	},
 
 	componentWillUnmount: function () {
@@ -75,13 +73,13 @@ const Notifier = React.createClass({
 	getEvents: function () {
 		var cutoff = moment(Date.now()).subtract(CUTOFF, 'seconds')
 		var notifications = (this.state.mouseOver || this.state.showPreview) ? NotificationStore.query({}) : [];
-		var transactions = TransactionStore.query({}).filter(txn => !txn.hiddenTxn);
-		transactions = transactions.slice(transactions.length - 5)
-		if (this.state.mouseOver) transactions
-		else transactions = transactions.filter(txn => moment(txn.timestamp).isAfter(cutoff))
+		// var transactions = TransactionStore.query({}).filter(txn => !txn.hiddenTxn);
+		// transactions = transactions.slice(transactions.length - 5)
+		// if (this.state.mouseOver) transactions
+		// else transactions = transactions.filter(txn => moment(txn.timestamp).isAfter(cutoff))
 
-		let events = util.merge({attribute: 'timestamp', descending: true}, null, notifications, transactions)
-
+		// let events = util.merge({attribute: 'timestamp', descending: true}, null, notifications, transactions)
+		let events = notifications
 
 
 		return events

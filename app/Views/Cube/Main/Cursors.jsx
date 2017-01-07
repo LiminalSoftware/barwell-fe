@@ -2,7 +2,7 @@ import React from "react"
 import fieldTypes from "../../fields"
 import _ from "underscore"
 import modelActionCreators from "../../../actions/modelActionCreators"
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+
 
 import Overlay from '../../Tabular/Main/Overlay'
 import ContextMenu from './ContextMenu'

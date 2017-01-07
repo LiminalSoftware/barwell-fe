@@ -38,7 +38,7 @@ export default class Application extends Component {
 	constructor (props) {
 		super(props)
 		this.state = {
-			loaded: false,
+			loaded: true,
 			isSidebarHidden: false
 		}
 	}

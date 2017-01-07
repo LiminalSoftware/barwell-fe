@@ -6,7 +6,7 @@ import styles from "./style.less"
 
 import _ from 'underscore'
 import util from "../../util/util"
-import PureRenderMixin from 'react-addons-pure-render-mixin';
+
 
 const RHS_PADDING = 100
 const SCROLL_MOUSE_MOVE_THROTTLE = 30
@@ -32,7 +32,7 @@ var ScrollBar = React.createClass ({
 	componentDidMount: function () {
 		const el = ReactDOM.findDOMNode(this)
 
-		const dimension = el['offset' + 
+		const dimension = el['offset' +
 			(this.props.axis === 'vertical' ? 'Height' : 'Width')]
 		this.setState({dimension: dimension})
 	},
@@ -52,7 +52,7 @@ var ScrollBar = React.createClass ({
 		const delta = (this.props.axis === 'vertical') ? e.deltaY : e.deltaX;
 		const limit = visibleDim > totalDim ? 0 : (1 - visibleDim / totalDim)
 		const offset = Math.min(Math.max(this.state.offset + delta/totalDim, 0), limit)
-		
+
 		this.doScroll(offset)
 		e.preventDefault();
 	},
@@ -97,7 +97,7 @@ var ScrollBar = React.createClass ({
 	},
 
 	render: function () {
-		
+
 		const {axis, totalDim, startOffset, endOffset, side, visibleDim} = this.props
 
 		// if (!visibleDim || (visibleDim > totalDim))

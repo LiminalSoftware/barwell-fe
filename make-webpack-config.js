@@ -68,7 +68,6 @@ module.exports = function(options) {
 	];
 	var plugins = [
 		new webpack.PrefetchPlugin("react"),
-		new webpack.PrefetchPlugin("react/lib/ReactComponentBrowserEnvironment"),
 		new webpack.ProvidePlugin({
 		    $: "jquery",
 		    jQuery: "jquery",

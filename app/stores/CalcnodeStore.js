@@ -1,4 +1,4 @@
-import storeFactory from 'flux-store-factory';
+
 import dispatcher from '../dispatcher/MetasheetDispatcher'
 import _ from 'underscore'
 import util from '../util/util'

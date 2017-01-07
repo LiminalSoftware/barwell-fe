@@ -6,10 +6,6 @@ import Dropdown from "../../components/Dropdown"
 
 import modelActionCreators from "../../actions/modelActionCreators"
 
-// MIXINS
-import blurOnClickMixin from "../../blurOnClickMixin"
-import popdownClickmodMixin from '../../Views/Fields/popdownClickmodMixin'
-
 class ViewContextMenu extends Component {
 
 	constructor (props) {

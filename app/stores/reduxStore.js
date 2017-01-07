@@ -14,6 +14,7 @@ const reducer = combineReducers({
     keys: makeCRUDReducer({name: 'key'}),
     keycomps: makeCRUDReducer({name: 'keycomp'}),
     views: makeCRUDReducer({name: 'view'}),
+    notifications: makeCRUDReducer({name: 'notification'})
     // record: recordReducer,
   }),
   session: combineReducers({

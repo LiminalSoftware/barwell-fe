@@ -14,8 +14,6 @@ import constants from "../../../constants/MetasheetConstants"
 
 import fieldTypes from "../../fields"
 import modelActionCreators from "../../../actions/modelActionCreators.jsx"
-import PureRenderMixin from 'react-addons-pure-render-mixin';
-import sortable from 'react-sortable-mixin'
 
 
 const itemSource = {
@@ -85,7 +83,7 @@ export default class SortDetail extends Component {
 	remove = () => {
 		this.props._remove(this.props.sortSpec)
 	}
-	
+
 	switch = () => {
 		var spec = this.props.sortSpec
 		spec.descending = !spec.descending
@@ -104,7 +102,7 @@ export default class SortDetail extends Component {
     	const opacity = isDragging ? 0 : 1
     	const style = {borderBottom: `1px solid ${constants.colors.RED_BRIGHT}`}
     	// const color = isDragging ? constants.colors.GRAY_3 : null
-		
+
 	    return connectDragSource(connectDropTarget(
 	    <div className="menu-item menu-sub-item menu-sub-item-draggable"
 	    style={{opacity, ...style}}>

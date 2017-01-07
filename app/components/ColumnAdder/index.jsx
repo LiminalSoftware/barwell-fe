@@ -28,7 +28,7 @@ const cardinalityMap = {
 const inverseCardinalityMap = _.invert(cardinalityMap)
 
 const defaultState = {
-	open: false, 
+	open: false,
 	type: null,
 	name: "",
 	reverseName: "",
@@ -76,7 +76,7 @@ var ColumnAdder = React.createClass({
 	getNameErrors: function (name) {
 		name = name || ""
 		const model = this.props.model
-		const unique = AttributeStore.query().filter(a=>a.model_id === model.model_id && 
+		const unique = AttributeStore.query().filter(a=>a.model_id === model.model_id &&
 			a.attribute === name).length === 0
 		const nonEmpty = name.length > 0
 
@@ -99,8 +99,8 @@ var ColumnAdder = React.createClass({
 		}
 
 		this.setState({
-			type: type, 
-			step: 2, 
+			type: type,
+			step: 2,
 			name:  name
 		})
 	},
@@ -128,21 +128,21 @@ var ColumnAdder = React.createClass({
 			step: 3,
 			relatedModel: modelId,
 			cardinality: cardinality,
-			name: this.state.hasBeenRenamed ? 
-				this.state.name : 
-				cardinality[0] === 'HAS_MANY' ? 
+			name: this.state.hasBeenRenamed ?
+				this.state.name :
+				cardinality[0] === 'HAS_MANY' ?
 					relatedModel.plural :
 					relatedModel.model,
-			reverseName: this.state.reverseHasBeenRenamed ? 
-				this.state.reverseName : 
+			reverseName: this.state.reverseHasBeenRenamed ?
+				this.state.reverseName :
 				cardinality[1] === 'HAS_MANY' ?
 					thisModel.plural :
 					thisModel.model
 		})
-		
+
 	},
 
-	// really this should be called handle blur, but the mixin is written this way
+	// really this should be called handle blur
 	handleCommit: function () {
 		this.setState(defaultState)
 	},
@@ -169,7 +169,7 @@ var ColumnAdder = React.createClass({
 				_viewContext: this.props.viewContext || {}
 			})
 		}
-		
+
 		this.setState(defaultState)
 	},
 
@@ -216,17 +216,17 @@ var ColumnAdder = React.createClass({
 
 		if (dir === 'fwd') cardinality[0] = value
 		else cardinality[1] = value
-		
+
 		this.setState({
 			cardinality: cardinality,
 			type: inverseCardinalityMap[cardinality],
-			name: this.state.hasBeenRenamed ? 
-				this.state.name : 
-				cardinality[0] === 'HAS_MANY' ? 
+			name: this.state.hasBeenRenamed ?
+				this.state.name :
+				cardinality[0] === 'HAS_MANY' ?
 					relatedModel.plural :
 					relatedModel.model,
-			reverseName: this.state.reverseHasBeenRenamed ? 
-				this.state.reverseName : 
+			reverseName: this.state.reverseHasBeenRenamed ?
+				this.state.reverseName :
 				cardinality[1] === 'HAS_MANY' ?
 					thisModel.plural :
 					thisModel.model
@@ -272,10 +272,10 @@ var ColumnAdder = React.createClass({
 		</span>
 		)}
 		</div>
-		
+
 	},
 
-	
+
 
 	renderRelatedModelPicker: function () {
 		const model = this.props.model
@@ -324,30 +324,30 @@ var ColumnAdder = React.createClass({
 				<span className="popdown-label">
 					Related item:
 				</span>
-				<span style={{position: "relative"}} 
+				<span style={{position: "relative"}}
 					onClick={e => _this.setState({step: 2})}
 					className="selectable">
 					<span style={{marginLeft: "5px"}}>{relatedModel.model}</span>
 				</span>
 			</div>
 
-			
+
 				{this.renderCadinalityLeg(
-					thisModel, 
-					fwdCardinality, 
+					thisModel,
+					fwdCardinality,
 					this.handleSelectCardinality.bind(this, 'fwd'),
 					this.state.name,
 					this.handleNameChange
 				)}
-			
+
 				{this.renderCadinalityLeg(
-					relatedModel, 
-					bwdCardinality, 
+					relatedModel,
+					bwdCardinality,
 					this.handleSelectCardinality.bind(this, 'bwd'),
 					this.state.reverseName,
 					this.handleReverseNameChange
 				)}
-			
+
 
 			<div className="popdown-filler popdown-item"/>
 
@@ -371,7 +371,7 @@ var ColumnAdder = React.createClass({
 			</span>
 
 			<span>
-				<input style={{ width: 100}} 
+				<input style={{ width: 100}}
 					autoFocus className = "renamer" value={name}
 					onChange = {changeName}/>
 			</span>
@@ -389,13 +389,13 @@ var ColumnAdder = React.createClass({
 		</div>
 
 		else if (step === 2 && !isRelation || step === 3 && isRelation) return <div className="popdown-item popdown-inline top-divider" >
-			<span 
+			<span
 				onClick = {this.handleCommit}
 				className="selectable">
 				<span className="icon icon-green icon-selectable icon-cross"/>
 				<span>Nevermind</span>
 			</span>
-			<span 
+			<span
 				onClick = {this.handleConfirm}
 				className="selectable">
 				<span className="icon icon-green icon-selectable icon-check"/>
@@ -434,13 +434,13 @@ var ColumnAdder = React.createClass({
 
 			{isRelation ?
 			this.renderRelatedModelPicker()
-			: 
+			:
 			<div className="popdown-item popdown-inline">
 				<span>
 					Attribute name:
 				</span>
 				<span style={{ position: "relative"}}>
-					<input style={{}} 
+					<input style={{}}
 					autoFocus
 					className = "renamer" value={this.state.name}
 					onChange = {this.handleNameChange}/>
@@ -451,10 +451,10 @@ var ColumnAdder = React.createClass({
 			{
 				isRelation ? null : this.renderDefaultForm()
 			}
-			
-			
+
+
 			{
-			this.state.nameError  ? 
+			this.state.nameError  ?
 			<div className="popdown-item warning">
 				<span style = {{color: "crimson"}}>
 					<span className="icon icon-warning"/>
@@ -466,7 +466,7 @@ var ColumnAdder = React.createClass({
 
 			<div className="popdown-filler popdown-item"/>
 
-			
+
 		</div>
 	},
 
@@ -474,7 +474,7 @@ var ColumnAdder = React.createClass({
 		var {step, type} = this.state
 
 		return <div style={this.props.style}>
-			
+
 			{this.renderStepLabel()}
 			<ReactCSSTransitionGroup
 				className="popdown-filler"
@@ -487,12 +487,12 @@ var ColumnAdder = React.createClass({
 				this.renderDetailForm() :
 				step === 3 ?
 				this.renderCardinalityForm()
-				: <span key="done">done!</span>			
+				: <span key="done">done!</span>
 				}
 			</ReactCSSTransitionGroup>
 			{this.renderConfirmButtons()}
 		</div>
-	
+
 	},
 })
 

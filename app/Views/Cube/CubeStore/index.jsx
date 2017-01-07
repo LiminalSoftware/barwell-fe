@@ -8,7 +8,6 @@ import RelationStore from "../../../stores/RelationStore"
 
 import modelActionCreators from "../../../actions/modelActionCreators"
 
-import storeFactory from 'flux-store-factory';
 import dispatcher from "../../../dispatcher/MetasheetDispatcher"
 import util from "../../../util/util"
 import constants from "../../../constants/MetasheetConstants"
@@ -59,7 +58,7 @@ var createCubeStore = function (view, dimensions) {
         row: null,
         column: null
     };
-    
+
     var _values = [];
 
 
@@ -140,9 +139,9 @@ var createCubeStore = function (view, dimensions) {
                 var dirty = {dirty: (type === (upperLabel + '_UPDATE'))};
                 var matcher = _.matcher(selector);
                 var levels;
-                
+
                 /***
-                see which group is impacted (if any).  If any of the 
+                see which group is impacted (if any).  If any of the
                 dimensions are in the selector, then it is impacted
                 ***/
                 var impactedDim = _getImpactedGroup(selector);
@@ -162,7 +161,7 @@ var createCubeStore = function (view, dimensions) {
                 console.log('receive levels: ' + payload.dimension)
                 var dimension  = payload.dimension;
                 var groups = _dimensions[dimension].map(g => 'a' + g);
-                
+
                 _dimensions[dimension] = payload.aggregates
                 _levels[dimension] = payload.levels
 
@@ -185,7 +184,7 @@ var createCubeStore = function (view, dimensions) {
                     var key = formKey(v, dimensions); // _levels.map(l => v[l]).join(DELIMITER)
                     _values[key] = v;
                 })
-                
+
                 CubeStore.emitChange();
             }
 

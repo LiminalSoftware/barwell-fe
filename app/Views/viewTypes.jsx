@@ -1,9 +1,8 @@
 import TableConfig from "./Tabular/ViewConfigBar"
-import TableInlineConfig from "./Tabular/InlineConfig"
 import TabularMain from "./Tabular/Main/index.jsx"
 import TabularGroomer from "./Tabular/groom"
 
-import HistoryMain from "./ChangeHistory/index.jsx"
+// import HistoryMain from "./ChangeHistory/index.jsx"
 
 import CalendarMain from "./Calendar/Main/index.jsx"
 import CalendarGroomer from "./Calendar/groom.jsx"
@@ -12,7 +11,6 @@ import CubeConfig from "./Cube/ViewConfigBar"
 import CubeMain from "./Cube/Main/index.jsx"
 import CubeGroomer from "./Cube/groom"
 
-import VennInlineConfig from "./Venn/InlineConfig/index.jsx"
 import VennMain from "./Venn/Main/index.jsx"
 import VennGroomer from "./Venn/groom"
 
@@ -33,7 +31,6 @@ var viewTypes = {
 		groomer: TabularGroomer,
 		mainElement: TabularMain,
 		configElement: TableConfig,
-		inlineConfigElement: TableInlineConfig,
 		category: "Tables",
 		description: "Simple, tabular format. Each row represents a single record."
 	},
@@ -63,7 +60,6 @@ var viewTypes = {
 	"Venn Diagram": {
 		type: "Venn Diagram",
 		mainElement: VennMain,
-		inlineConfigElement: VennInlineConfig,
 		groomer: VennGroomer,
 		icon: "icon-exclude",
 		category: "Diagrams",

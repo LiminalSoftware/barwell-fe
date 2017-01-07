@@ -4,17 +4,13 @@ import ReactDOM from "react-dom"
 
 import styles from "./style.less"
 import detailStyles from "./detail.less"
-import ModelDefinition from "../ModelDefinition"
 import ModelStore from "../../stores/ModelStore"
 import ViewStore from "../../stores/ViewStore"
 import FocusStore from "../../stores/FocusStore"
 
 import ViewConfigStore from "../../stores/ViewConfigStore"
-import ModelConfigStore from '../../stores/ModelConfigStore'
 import groomView from '../../Views/groomView'
 import fieldTypes from "../../Views/fields"
-
-import ChangeHistory from '../../Views/ChangeHistory'
 
 import viewTypes from "../../Views/viewTypes"
 import modelActionCreators from "../../actions/modelActionCreators"

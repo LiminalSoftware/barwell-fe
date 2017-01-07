@@ -1,1 +1,0 @@
-const MAX_LOCAL_RECORDS = 5000
