@@ -91,7 +91,7 @@ class ModelBar extends Component {
 
 		return <div className="mdlbar" onClick = {this.focus} style={style}>
 			<h1 className="branding" style={{display: "flex"}}>
-				<span>metasheet</span> ``
+				<span>metasheet</span>
 			</h1>
 
 			<div className="mdlbar-list" ref="outer" onWheel={this.handleMouseWheel}>
