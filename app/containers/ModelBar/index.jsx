@@ -13,10 +13,12 @@ const sidebarSelector = state => state.session.sidebar
 const focusSelector = state => state.session.focus
 const modelSelector = state => state.data.models
 const viewSelector = state => state.data.views
+const activeSelector = (_, props={}) => props.activeViewIds || []
+
 
 const getSidebarState = createSelector(
-	sidebarSelector, focusSelector, modelSelector, viewSelector,
-	({modelOrder, collapsedModels, viewsByModel}, focus, models, views) => {
+	sidebarSelector, focusSelector, modelSelector, viewSelector, activeSelector,
+	({modelOrder, collapsedModels, viewsByModel}, focus, models, views, active) => {
 		const focusedViewId = "" + ((focus.match(/^v(\d+)/) || [])[1])
 		const modelList = [
 			// first extract the models in order from our modelOrder array
@@ -35,6 +37,7 @@ const getSidebarState = createSelector(
 					...(_.values(views.byKey)
 						.filter(v => v.model_id === parseInt(modelId))
 						.map(v => Object.assign({}, v, {
+							active: active.includes("" + v.view_id),
 							focused: v.view_id === focusedViewId,
 							link: `/workspace/${v.workspace_id}/view/${v.view_id}`
 						})))
@@ -46,7 +49,7 @@ const getSidebarState = createSelector(
 	})
 
 const mapStateToProps = (state, ownProps) => {
-	return getSidebarState(state)
+	return Object.assign({}, ownProps, getSidebarState(state))
 }
 
 const mapDispatchToProps = {

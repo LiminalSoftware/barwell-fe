@@ -69,8 +69,6 @@ export default class Application extends Component {
 			viewId.split(',')
 			.filter( id => id in views.byKey)
 
-		console.log('viewId: ' + viewId)
-
 		if (!this.state.loaded)
 		return <div className = "loader-overlay" key="application">
 			<div className="loader-hero">
@@ -97,7 +95,7 @@ export default class Application extends Component {
 						key={v.view_id}/>)}
 				</div>
 
-				<Notifier/>
+				{/*<Notifier/>*/}
 
 				<CopyPasteDummy key="copy-paste-dummy"/>
 		</div>

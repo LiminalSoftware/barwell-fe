@@ -1,7 +1,7 @@
 // LIBS AND SUCH
 import React, {Component} from "react"
 import {pure} from "recompose"
-import { Link } from "react-router"
+import { Link, browserHistory } from "react-router"
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 // STORES
@@ -62,17 +62,16 @@ class ViewLink extends Component {
 
   	} else if (e.shiftKey && !active) {
 			const newViewIds = view.view_id
-			history.push(view.link)
+			browserHistory.push(view.link)
 		} else if (e.shiftKey && active) {
 			const newViewIds = this.props.activeViews
 				.filter(v => v.view_id !== view.view_id)
 				.map(v => '' + (v.cid || v.view_id))
 				.join(",")
 
-			history.push(`/workspace/${view.workspaceId}/view/${newViewIds}`)
+			browserHistory.push(`/workspace/${view.workspaceId}/view/${newViewIds}`)
 		} else {
-			console.log('z')
-			history.push(view.link)
+			browserHistory.push(view.link)
 		}
 
 	}
@@ -82,9 +81,6 @@ class ViewLink extends Component {
 	render = () => {
 		const {view, renameView,
 			view: {active, focused, view_id: viewId, view: name}} = this.props
-
-		// if (active || focused)
-			// console.log(view)
 
 		return <Link to = {view.link}
 			onContextMenu = {this.handleShowContext}
