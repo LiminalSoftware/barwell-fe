@@ -20,7 +20,7 @@ import modelActionCreators from "../../actions/modelActionCreators"
 const HELP_HOVER_DEBOUNCE = 300
 
 
-export default class PopdownMenu extends Component {
+export default class DropdownMenu extends Component {
 
 	static propTypes = {
 
@@ -32,7 +32,7 @@ export default class PopdownMenu extends Component {
 		/*
 		 * renders the contents of the actual menu
 		 */
-		menu: PropTypes.element
+		menu: PropTypes.func
 
 	}
 
@@ -122,7 +122,7 @@ export default class PopdownMenu extends Component {
 
 		return <ReactCSSTransitionGroup {...constants.transitions.fadein}
 			style={{position: "relative"}}>
-			<span tabindex={this.props.tabIndex}
+			<span tabIndex={this.props.tabIndex}
 				className={popdownClass}
 				onMouseOver={this.handleMouseOver}
 				onMouseOut={this.handleMouseOut}

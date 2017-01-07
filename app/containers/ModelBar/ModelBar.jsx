@@ -44,8 +44,8 @@ class ModelBar extends Component {
 		this.calibrate()
 	}
 
-	componentDidReceiveProps = () => {
-		this.calibrate()
+	componentDidUpdate = () => {
+		// this.calibrate()
 	}
 
 	componentWillUnmount = () => {

@@ -71,6 +71,7 @@ class ViewLink extends Component {
 
 			history.push(`/workspace/${view.workspaceId}/view/${newViewIds}`)
 		} else {
+			console.log('z')
 			history.push(view.link)
 		}
 

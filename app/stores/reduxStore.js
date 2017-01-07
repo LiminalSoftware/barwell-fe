@@ -5,6 +5,7 @@ import focusReducer from "../reducers/focusReducer"
 import cidReducer from "../reducers/cidReducer"
 import actionReducer from "../reducers/actionReducer"
 import sidebarReducer from "../reducers/sidebarReducer"
+import selectionReducer from "../reducers/selectionReducer"
 
 const reducer = combineReducers({
   actions: actionReducer,
@@ -14,13 +15,14 @@ const reducer = combineReducers({
     keys: makeCRUDReducer({name: 'key'}),
     keycomps: makeCRUDReducer({name: 'keycomp'}),
     views: makeCRUDReducer({name: 'view'}),
-    notifications: makeCRUDReducer({name: 'notification'})
+    notifications: makeCRUDReducer({name: 'notification'}),
     // record: recordReducer,
   }),
   session: combineReducers({
     cidCounter: cidReducer,
     focus: focusReducer,
-    sidebar: sidebarReducer
+    sidebar: sidebarReducer,
+    selection: selectionReducer
   })
 })
 

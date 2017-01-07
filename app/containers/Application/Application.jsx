@@ -18,10 +18,6 @@ import modelActionCreators from "../../actions/modelActionCreators"
 import util from '../../util/util'
 import constants from '../../constants/MetasheetConstants'
 
-import ViewStore from "../../stores/ViewStore"
-import ModelStore from "../../stores/ModelStore"
-import FocusStore from "../../stores/FocusStore"
-
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 import { DragDropContext } from 'react-dnd'
