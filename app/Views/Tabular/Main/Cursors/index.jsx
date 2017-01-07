@@ -37,7 +37,7 @@ export default class Cursors extends React.Component {
 
 	componentWillMount = () => {
 		const _this = this
-		this._debounceSetPointer = this._setPointer//_.debounce(this._setPointer, 300)
+		this._debounceSetPointer = this._setPointer //_.debounce(this._setPointer, 300)
 	}
 
 	_setPointer = (pointer) => {
@@ -75,27 +75,18 @@ export default class Cursors extends React.Component {
 		const {view, resizeColumn, model, columnOffset, focused,
 			selection: sel, copyarea: cpy} = this.props
 		const {dragOffset, pointer: ptr} = this.state
-
 		const numFixed = view.data._fixedCols.length
-
 		const showJaggedEdge = ((sel.right >= numFixed)
 			&& (sel.left < numFixed + columnOffset) && (columnOffset > 0));
-
 		const jaggedEdgeIsLight = (sel.right > numFixed + columnOffset)
-
 		const singleton = (sel.top === sel.bottom && sel.left === sel.right)
-
 		const rowsSelected = Object.keys(this.props.store.getSelection()).length > 0;
 		const rowOffset = this.props.rowOffset
-
 		const store = this.props.store
 		const rowCount = store.getRecordCount()
 		const geo = view.data.geometry
-
 		const col = view.data._visibleCols[ptr.left];
 		const obj = store.getObject(ptr.top);
-
-
 		const hideCursor = (rowsSelected || rowCount === 0 || resizeColumn);
 
 		return ([
@@ -143,7 +134,7 @@ export default class Cursors extends React.Component {
 				ref = "rowadder"
 				key="rowadder"
 				dragOffset = {dragOffset}
-				fudge = {{left: -1 * geo.labelWidth - 2, width: geo.labelWidth + 2}}
+				fudge = {{top: -1, left: -1 * geo.labelWidth - 2, width: geo.labelWidth + 2}}
 				position = {{left: 0, right: view.data._visibleCols.length, top: rowCount, bottom: rowCount}}>
 				<div className="flush" onClick={this.props._addRecord}>add new row</div>
 			</Overlay>,
@@ -163,7 +154,7 @@ export default class Cursors extends React.Component {
 				}}
 				fudge = {{
 					left: (sel.right < numFixed + columnOffset) ? -6 :
-						 (sel.left < numFixed + columnOffset) ? -7 : 64, 
+						 (sel.left < numFixed + columnOffset) ? -7 : 64,
 					width: 10, top: 0, height: 1}} />
 			: null
 		]).concat(!focused || hideCursor ? [] : view.data.sorting.map(s => {
