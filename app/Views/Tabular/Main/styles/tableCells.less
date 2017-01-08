@@ -75,7 +75,7 @@
 	position: absolute;
 	overflow: hidden;
 	border-left: 1px solid @cell-border;
-	
+
 	margin: 0;
 	padding: 0;
 	top: 0;
@@ -97,20 +97,13 @@
 
 
 .label-grab-handle {
-	// data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAGElEQVQIW2Nc4Lj/f8J+R0YGKIAziBcAAAF5BAVLxr7tAAAAAElFTkSuQmCC
-	background:url(
-		
-		data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAF0lEQVQYV2NkYPj/n4GBkZEBCuAM4gUAgeYCBY8/1egAAAAASUVORK5CYII=
-    ) repeat;
-}
-
-.label-grab-handle {
+	background: url('data:image/svg+xml;utf8,<svg width="5" height="5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 5 5" version="1.1"><circle cx="2" cy="2" r="0.5" fill="gray"/></svg>') repeat;
 	.draggable;
 	position: absolute;
-	left: 3px;
+	left: 2px;
 	width: 15px;
-	top: 4px;
-	bottom: 3px;
+	top: 2px;
+	bottom: 2px;
 }
 
 
@@ -138,7 +131,7 @@
 	font-family: @bodyFont;
 	font-weight: 400;
 
-	
+
 	left: 0;
 	right: 0;
 	top: 0;
@@ -156,7 +149,7 @@
 	user-select: text;
 
 	padding: 0 7px;
-	
+
 	width: 100%;
 	height: 100%;
 	&::selection {

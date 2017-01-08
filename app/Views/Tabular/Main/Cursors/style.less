@@ -27,7 +27,6 @@
 
 
 .column-overlay {
-
 	// background: white;
 }
 
@@ -37,13 +36,15 @@
 	background: @table-backing;
 	border: 1px solid @table-border;
 	border-top: 1px solid @cell-border;
+	border-left: none;
 	color: @table-border;
 	line-height: 25px;
 	text-align: center;
 	cursor: pointer;
 	transition: all linear 100ms;
 	&:hover {
-		border: 1px solid @green1;
+		// border: 1px solid @green1;
+		background: @gray4;
 		color: @green1;
 	}
 }
