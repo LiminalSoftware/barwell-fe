@@ -81,7 +81,7 @@ class ViewLink extends Component {
 	render = () => {
 		const {view, renameView,
 			view: {active, focused, view_id: viewId, view: name}} = this.props
-
+			
 		return <Link to = {view.link}
 			onContextMenu = {this.handleShowContext}
 			className = {`view-link view-link--${

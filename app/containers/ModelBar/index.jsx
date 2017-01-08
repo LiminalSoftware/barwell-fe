@@ -13,7 +13,7 @@ const sidebarSelector = state => state.session.sidebar
 const focusSelector = state => state.session.focus
 const modelSelector = state => state.data.models
 const viewSelector = state => state.data.views
-const activeSelector = (_, props={}) => props.activeViewIds || []
+const activeSelector = (_, props={}) => (props.activeViewIds || [])
 
 
 const getSidebarState = createSelector(
@@ -48,8 +48,8 @@ const getSidebarState = createSelector(
 		return {modelList, focus}
 	})
 
-const mapStateToProps = (state, ownProps) => {
-	return Object.assign({}, ownProps, getSidebarState(state))
+const mapStateToProps = (state, props) => {
+	return Object.assign({}, props, getSidebarState(state, props))
 }
 
 const mapDispatchToProps = {

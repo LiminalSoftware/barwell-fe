@@ -53,9 +53,8 @@ export default class ViewPane extends Component {
 				<span className={`icon icon--blue ${viewType.icon}`}/>
 				<span>{view.view}</span>
 
-				<span className="pane-dots" style={{maxWidth: 20}}/>
+				<span style={{maxWidth: 20, flex: 1, minWidth: 10}}/>
 				{configDetail}
-				<span className="pane-dots"/>
 			</div>
 			<div className="wrapper flush" style={{top: 31}}>
 			{content}

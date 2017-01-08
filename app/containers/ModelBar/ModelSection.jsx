@@ -75,7 +75,7 @@ class ModelSection extends Component {
 	handleMouseOver = () =>	this._debounceSetMouseOver(true)
 
 	handleMouseOut = () => this._debounceSetMouseOver(false)
-	
+
 	render = () => {
 		const _this = this
 		const {onExpandClick, history, renameModel, renameView,
@@ -119,10 +119,11 @@ class ModelSection extends Component {
 				className="model-view-list">
 			<div>
 			{views.map(v => <ViewLink
-				renameView={renameView}
 				key={v.view_id}
+				renameView={renameView}
 				view={v}
-				history={history}/>)}
+				focused={v.focused}
+				active={v.active}/>)}
 			</div>
 			</div>
 		</div>
