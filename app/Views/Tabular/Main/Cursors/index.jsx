@@ -211,7 +211,7 @@ export default class Cursors extends React.Component {
 			width: (fixedWidth + floatWidth + geo.labelWidth + RIGHT_FRINGE) + 'px',
 			overflow: 'hidden',
 			zIndex: 6,
-			pointerEvents: 'auto',
+			pointerEvents: 'none',
 		}
 	}
 

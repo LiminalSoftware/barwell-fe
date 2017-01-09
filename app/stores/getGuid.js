@@ -1,5 +1,5 @@
-var _id = 0
-var getGuid = function () {
+let _id = 0
+const getGuid = function () {
 	return _id++
 }
 

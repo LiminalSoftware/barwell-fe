@@ -11,7 +11,7 @@ export default ({
   name,
   key=(name + '_id').toLowerCase(),
   nameField=name,
-  indexes=[],
+  indexes={},
   addlReducers={}
 }) => {
   name = name.toUpperCase()
@@ -22,8 +22,8 @@ export default ({
   const initialState = {
     deleted: {},
     byKey: {},
-    indexes: Object.assign.apply(null, [{}].concat(indexes.map(idx =>{
-        return {[idx.components.sort().join(DELIMITER)]: {}};
+    indexes: Object.assign.apply(null, [{}].concat(Object.keys(indexes).map(idx => {
+        return {[idx.split(',').sort().join(',')]: {}};
     })))
   }
 
@@ -43,26 +43,26 @@ export default ({
    const receiveReducer = (state, action) => ({
      deleted: state.deleted,
      byKey: _.indexBy(action.data[(name + 's').toLowerCase()], key),
-     indexes: Object.assign.apply(null, [ {},
-       ...Object.keys(indexes).map(idx => {
-         const options = indexes[idx]
-         // the key should be sorted
-         const indexKey = idx.split(',').sort()
-         // a string version of the index will serve as object key
-         const indexKeyStr = indexKey.join(DELIMITER)
-         // return the index; indices will be consolidated by obj.assign
-         return {[indexKeyStr]: _.indexBy(
-           action.data,
-           // extract the keys in order and join them with a special delimiter
-           obj => indexKey.map(k => obj[k]).join(DELIMITER)
-         )};
-    })] )
+    //  indexes: Object.assign.apply(null, [ {},
+    //    ...Object.keys(indexes).map(idx => {
+    //      const options = indexes[idx]
+    //      // the key should be sorted
+    //      const indexKey = idx.split(',').sort()
+    //      // return the index; indices will be consolidated by obj.assign
+    //      return {[idx]: (options.unique ? _.indexBy : _.groupBy)(
+    //        action.data,
+    //        // extract the keys in order and join them with a special delimiter
+    //        obj => (indexKey.map(k => obj[k]).join(DELIMITER))
+    //      )};
+    // })] )
   })
   const createReducer = (state, action) => {
     const updates = action.data instanceof Array ? action.data : [action.data]
     const patch = _.indexBy(updates, key)
     return Object.assign({}, state, {
-      byKey: Object.assign({}, state.byKey, patch)
+      deleted: state.deleted,
+      byKey: Object.assign({}, state.byKey, patch),
+      // indexes: Object.assign({}, _.indexBy(Object.keys(state.indexes).map(idx => {})
     })
   }
 

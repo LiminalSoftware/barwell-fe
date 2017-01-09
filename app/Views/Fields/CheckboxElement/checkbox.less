@@ -2,7 +2,7 @@
 
 .icon.check {
 	position: absolute;
-	
+
 	left: -1px;
 	margin: 0;
 	top: 0;
@@ -11,7 +11,8 @@
 	text-align: center;
 	line-height: 16px;
 	font-size: 14px !important;
-	pointer-events: none;
+	pointer-events: auto;
+	cursor: pointer;
 }
 
 .checkbox-surround-checked {
@@ -41,9 +42,9 @@
 .checkbox-surround-unchecked, .checkbox-surround-checked, {
 	margin-top: 1px;
 	border-radius: 3px;
-	
+
 	z-index: 4;
-	
+
 	position: relative;
 	display: inline-block;
 	max-height: 17px;

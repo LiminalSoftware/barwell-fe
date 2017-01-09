@@ -11,7 +11,12 @@ const reducer = combineReducers({
   actions: actionReducer,
   data: combineReducers({
     models: makeCRUDReducer({name: 'model'}),
-    attributes: makeCRUDReducer({name: 'attribute'}),
+    attributes: makeCRUDReducer({
+      name: 'attribute',
+      indexes: {
+        'model_id': {unique: false}
+      }
+    }),
     keys: makeCRUDReducer({name: 'key'}),
     keycomps: makeCRUDReducer({name: 'keycomp'}),
     views: makeCRUDReducer({name: 'view'}),
